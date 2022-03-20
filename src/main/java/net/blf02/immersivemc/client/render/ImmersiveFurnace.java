@@ -1,0 +1,111 @@
+package net.blf02.immersivemc.client.render;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.blf02.immersivemc.common.config.ClientConfig;
+import net.minecraft.block.AbstractFurnaceBlock;
+import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.AbstractFurnaceTileEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ImmersiveFurnace {
+
+    // We don't ever expect this to get too big (since this mod runs on clients separately)
+    public static List<ImmersiveFurnaceInfo> furnaces = new ArrayList<>();
+
+    public static final Vector3d toSmeltOffset = new Vector3d(0, 0.75, 0.25);
+
+    private static final ItemStack fireStack = new ItemStack(Blocks.FIRE);
+
+    public static void trackFurnace(AbstractFurnaceTileEntity furnace) {
+        for (ImmersiveFurnaceInfo info : furnaces) {
+            if (info.furnace == furnace) {
+                info.ticksLeft = ClientConfig.ticksToRenderFurnace;
+                return;
+            }
+        }
+        furnaces.add(new ImmersiveFurnaceInfo(furnace, ClientConfig.ticksToRenderFurnace));
+    }
+
+    public static Direction getLeftOfDirection(Direction forward) {
+        /**
+         * Gets the direction to the left from the Direction's perspective, assuming the Direction is
+         * looking at the player. This makes it to the right for the player.
+         */
+        if (forward == Direction.UP || forward == Direction.DOWN) {
+            throw new IllegalArgumentException("Direction cannot be up or down!");
+        }
+        if (forward == Direction.NORTH) {
+            return Direction.WEST;
+        } else if (forward == Direction.WEST) {
+            return Direction.SOUTH;
+        } else if (forward == Direction.SOUTH) {
+            return Direction.EAST;
+        }
+        return Direction.NORTH;
+    }
+
+    public static void renderFurnace(AbstractFurnaceTileEntity furnace, MatrixStack stack) {
+        Direction forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
+        BlockPos front = furnace.getBlockPos().relative(forward);
+        Vector3d pos = new Vector3d(front.getX(), front.getY(), front.getZ());
+        Direction left = getLeftOfDirection(forward);
+        Vector3d toSmeltAndFuelOffset = new Vector3d(
+                left.getNormal().getX() * 0.25, 0, left.getNormal().getZ() * 0.25);
+        Vector3d outputOffset = new Vector3d(
+                left.getNormal().getX() * 0.75, 0, left.getNormal().getZ() * 0.75);
+
+        ItemStack toSmelt = furnace.getItem(0);
+        ItemStack fuel = furnace.getItem(1);
+        ItemStack output = furnace.getItem(2);
+
+        Vector3d posToSmelt = pos.add(0, 0.75, 0).add(toSmeltAndFuelOffset);
+        renderItem(toSmelt, stack, posToSmelt);
+        Vector3d posFuel = pos.add(0, 0.25, 0).add(toSmeltAndFuelOffset);
+        renderItem(fuel, stack, posFuel);
+        Vector3d posOutput = pos.add(0, 0.5, 0).add(outputOffset);
+        renderItem(output, stack, posOutput);
+
+
+    }
+
+    public static void renderItem(ItemStack item, MatrixStack stack, Vector3d pos) {
+        if (item != ItemStack.EMPTY) {
+            stack.pushPose();
+
+            ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+            stack.translate(-renderInfo.getPosition().x + pos.x,
+                    -renderInfo.getPosition().y + pos.y,
+                    -renderInfo.getPosition().z + pos.z);
+
+            stack.scale(ClientConfig.itemScaleSize, ClientConfig.itemScaleSize, ClientConfig.itemScaleSize);
+
+            Minecraft.getInstance().getItemRenderer().renderStatic(item, ItemCameraTransforms.TransformType.FIXED,
+                    15728880,
+                    OverlayTexture.NO_OVERLAY,
+                    stack, Minecraft.getInstance().renderBuffers().bufferSource());
+
+            stack.popPose();
+        }
+    }
+
+    public static class ImmersiveFurnaceInfo {
+
+        public final AbstractFurnaceTileEntity furnace;
+        public int ticksLeft;
+
+        public ImmersiveFurnaceInfo(AbstractFurnaceTileEntity furnace, int ticksLeft) {
+            this.furnace = furnace;
+            this.ticksLeft = ticksLeft;
+        }
+    }
+}

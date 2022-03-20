@@ -1,6 +1,7 @@
 package net.blf02.immersivemc;
 
-import net.blf02.immersivemc.client.ClientSubscriber;
+import net.blf02.immersivemc.client.subscribe.ClientLogicSubscriber;
+import net.blf02.immersivemc.client.subscribe.ClientRenderSubscriber;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -17,7 +18,8 @@ public class ImmersiveMC {
 
     protected void clientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            MinecraftForge.EVENT_BUS.register(new ClientSubscriber());
+            MinecraftForge.EVENT_BUS.register(new ClientLogicSubscriber());
+            MinecraftForge.EVENT_BUS.register(new ClientRenderSubscriber());
         });
     }
 }
