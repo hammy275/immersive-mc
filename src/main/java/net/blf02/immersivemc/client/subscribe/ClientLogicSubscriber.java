@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.client.subscribe;
 
+import net.blf02.immersivemc.client.ClientUtil;
 import net.blf02.immersivemc.client.render.ImmersiveFurnace;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
@@ -14,10 +15,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.Optional;
@@ -46,23 +46,17 @@ public class ClientLogicSubscriber {
     }
 
     @SubscribeEvent
-    public void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
-        handleRightClick(event.getPlayer());
+    public void onClick(InputEvent.ClickInputEvent event) {
+        if (event.getHand() == Hand.MAIN_HAND && event.isUseItem()) {
+            if (handleRightClick(Minecraft.getInstance().player)) {
+                event.setCanceled(true);
+                ClientUtil.setRightClickCooldown();
+            }
+        }
     }
 
-    @SubscribeEvent
-    public void onRightClickNotEmpty(PlayerInteractEvent.RightClickItem event) {
-        if (event.getSide() != LogicalSide.CLIENT) return;
-        handleRightClick(event.getPlayer());
-    }
 
-    @SubscribeEvent
-    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getSide() != LogicalSide.CLIENT) return;
-        event.setCanceled(handleRightClick(event.getPlayer())); // Don't right click block if handling immersive-ness
-    }
-
-    public boolean handleRightClick(PlayerEntity player) {
+    public static boolean handleRightClick(PlayerEntity player) {
         double dist;
         try {
             dist = Minecraft.getInstance().gameMode.getPickRange();
@@ -81,7 +75,7 @@ public class ClientLogicSubscriber {
                     Network.INSTANCE.sendToServer(new SwapPacket(
                             info.furnace.getBlockPos(), closest.get(), Hand.MAIN_HAND
                     ));
-                    break;
+                    return true;
                 }
             }
         }

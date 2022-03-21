@@ -20,6 +20,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     // The mappings can be changed at any time, and must be in the following format.
     // Channel:   Version:
     // snapshot   YYYYMMDD   Snapshot are built nightly.

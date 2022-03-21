@@ -12,13 +12,14 @@ public class FurnaceSwap {
         ItemStack furnaceItem = furnace.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand).copy();
         if (slot != 2) {
-            if (!furnace.canPlaceItem(slot, playerItem)) return;
+            if (!furnace.canPlaceItem(slot, playerItem) && playerItem != ItemStack.EMPTY) return;
             player.setItemInHand(hand, furnaceItem);
             furnace.setItem(slot, playerItem);
         } else {
-            if (player.getItemInHand(hand) != ItemStack.EMPTY) return;
-            player.setItemInHand(hand, furnaceItem);
-            furnace.setItem(2, ItemStack.EMPTY);
+            if (playerItem == ItemStack.EMPTY) {
+                player.setItemInHand(hand, furnaceItem);
+                furnace.setItem(2, ItemStack.EMPTY);
+            }
         }
 
     }
