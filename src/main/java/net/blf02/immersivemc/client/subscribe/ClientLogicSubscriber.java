@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.client.subscribe;
 
 import net.blf02.immersivemc.client.ClientUtil;
-import net.blf02.immersivemc.client.render.ImmersiveFurnace;
+import net.blf02.immersivemc.client.immersive.ImmersiveFurnace;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;

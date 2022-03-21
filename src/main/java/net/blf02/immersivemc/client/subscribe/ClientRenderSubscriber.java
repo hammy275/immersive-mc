@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.client.subscribe;
 
-import net.blf02.immersivemc.client.render.ImmersiveFurnace;
+import net.blf02.immersivemc.client.immersive.ImmersiveFurnace;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

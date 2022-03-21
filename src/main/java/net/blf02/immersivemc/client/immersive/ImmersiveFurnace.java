@@ -1,4 +1,4 @@
-package net.blf02.immersivemc.client.render;
+package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConfig;
@@ -14,6 +14,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -56,6 +57,7 @@ public class ImmersiveFurnace {
     }
 
     public static void handleFurnace(ImmersiveFurnaceInfo info, MatrixStack stack) {
+        // Set the cooldown (transition time) based on how long we've existed or until we stop existing
         if (info.countdown > 1 && info.ticksLeft > 20) {
             info.countdown--;
         } else if (info.countdown < ClientConfig.transitionTime && info.ticksLeft <= 20) {
@@ -81,6 +83,7 @@ public class ImmersiveFurnace {
             throw new IllegalArgumentException("Furnaces can't point up or down?!?!");
         }
 
+        // Gets the offset on the x and z axis that the items should be placed in front of the furnace
         Direction left = getLeftOfDirection(forward);
         Vector3d toSmeltAndFuelOffset = new Vector3d(
                 left.getNormal().getX() * 0.25, 0, left.getNormal().getZ() * 0.25);
@@ -93,13 +96,15 @@ public class ImmersiveFurnace {
 
         float size = ClientConfig.itemScaleSize / info.countdown;
 
+        // Render all of the items
         Vector3d posToSmelt = pos.add(0, 0.75, 0).add(toSmeltAndFuelOffset);
-        renderItem(toSmelt, stack, posToSmelt, size);
+        renderItem(toSmelt, stack, posToSmelt, size, forward);
         Vector3d posFuel = pos.add(0, 0.25, 0).add(toSmeltAndFuelOffset);
-        renderItem(fuel, stack, posFuel, size);
+        renderItem(fuel, stack, posFuel, size, forward);
         Vector3d posOutput = pos.add(0, 0.5, 0).add(outputOffset);
-        renderItem(output, stack, posOutput, size);
+        renderItem(output, stack, posOutput, size, forward);
 
+        // Set hitboxes for logic to use
         info.toSmeltHitbox = new AxisAlignedBB(
                 posToSmelt.x - ClientConfig.itemScaleSize / 2.0,
                 posToSmelt.y - ClientConfig.itemScaleSize / 2.0,
@@ -125,22 +130,35 @@ public class ImmersiveFurnace {
                 posOutput.z + ClientConfig.itemScaleSize / 2.0);
     }
 
-    public static void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size) {
+    public static void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size, Direction facing) {
         if (item != ItemStack.EMPTY) {
             stack.pushPose();
 
+            // Move the stack to be relative to the camera
             ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
             stack.translate(-renderInfo.getPosition().x + pos.x,
                     -renderInfo.getPosition().y + pos.y,
                     -renderInfo.getPosition().z + pos.z);
 
+            // Scale the item to be a good size
             stack.scale(size, size, size);
+
+            // Rotate the item to face the player properly
+            int degreesRotation = 0; // If North, we're already good
+            if (facing == Direction.WEST) {
+                degreesRotation = 90;
+            } else if (facing == Direction.SOUTH) {
+                degreesRotation = 180;
+            } else if (facing == Direction.EAST) {
+                degreesRotation = 270;
+            }
+
+            stack.mulPose(Vector3f.YP.rotationDegrees(degreesRotation));
 
             Minecraft.getInstance().getItemRenderer().renderStatic(item, ItemCameraTransforms.TransformType.FIXED,
                     15728880,
                     OverlayTexture.NO_OVERLAY,
                     stack, Minecraft.getInstance().renderBuffers().bufferSource());
-
             stack.popPose();
         }
     }
