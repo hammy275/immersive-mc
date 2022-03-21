@@ -58,8 +58,24 @@ public class ImmersiveFurnace {
     public static void handleFurnace(ImmersiveFurnaceInfo info, MatrixStack stack) {
         AbstractFurnaceTileEntity furnace = info.furnace;
         Direction forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
-        BlockPos front = furnace.getBlockPos().relative(forward);
-        Vector3d pos = new Vector3d(front.getX(), front.getY(), front.getZ());
+        Vector3d pos;
+        // This mess sets pos to always be directly in front of the face of the furnace
+        if (forward == Direction.SOUTH) {
+            BlockPos front = furnace.getBlockPos().relative(forward);
+            pos = new Vector3d(front.getX(), front.getY(), front.getZ());
+        } else if (forward == Direction.WEST) {
+            BlockPos front = furnace.getBlockPos();
+            pos = new Vector3d(front.getX(), front.getY(), front.getZ());
+        } else if (forward == Direction.NORTH) {
+            BlockPos front = furnace.getBlockPos().relative(Direction.EAST);
+            pos = new Vector3d(front.getX(), front.getY(), front.getZ());
+        } else if (forward == Direction.EAST) {
+            BlockPos front = furnace.getBlockPos().relative(Direction.SOUTH).relative(Direction.EAST);
+            pos = new Vector3d(front.getX(), front.getY(), front.getZ());
+        } else {
+            throw new IllegalArgumentException("Furnaces can't point up or down?!?!");
+        }
+
         Direction left = getLeftOfDirection(forward);
         Vector3d toSmeltAndFuelOffset = new Vector3d(
                 left.getNormal().getX() * 0.25, 0, left.getNormal().getZ() * 0.25);

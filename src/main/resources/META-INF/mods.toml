@@ -37,6 +37,8 @@ description='''
 Minimizes the need to interact with GUIs in Minecraft!
 
 Works great both in and out of VR!
+
+Requires the MC VR API mod if you want to use this the best in VR!
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.examplemod]] #optional

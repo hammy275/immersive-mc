@@ -1,0 +1,47 @@
+package net.blf02.immersivemc.client.subscribe;
+
+import net.blf02.immersivemc.client.render.ImmersiveFurnace;
+import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.packet.SwapPacket;
+import net.blf02.immersivemc.common.util.Util;
+import net.blf02.vrapi.api.data.IVRData;
+import net.blf02.vrapi.event.VRPlayerTickEvent;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+
+import java.util.Optional;
+
+public class ClientVRSubscriber {
+
+    // Global cooldown to prevent rapid-fire VR interactions
+    protected int cooldown = 0;
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public void immersiveFurnaceTick(VRPlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (cooldown > 0) {
+            cooldown--;
+        } else {
+            for (ImmersiveFurnace.ImmersiveFurnaceInfo info : ImmersiveFurnace.furnaces) {
+                if (info.hasHitboxes()) {
+                    for (int c = 0; c <= 1; c++) {
+                        IVRData controller = event.vrPlayer.getController(c);
+                        Vector3d pos = controller.position();
+                        Optional<Integer> hit = Util.getFirstIntersect(pos, info.toSmeltHitbox, info.fuelHitbox, info.outputHitbox);
+                        if (hit.isPresent()) {
+                            Network.INSTANCE.sendToServer(new SwapPacket(info.furnace.getBlockPos(),
+                                    hit.get(), c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND));
+                            cooldown = 25;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -38,4 +38,15 @@ public class Util {
         }
         return Optional.ofNullable(winner);
     }
+
+    public static Optional<Integer> getFirstIntersect(Vector3d pos, AxisAlignedBB... targets) {
+        int i = 0;
+        for (AxisAlignedBB target : targets) {
+            if (target.contains(pos)) {
+                return Optional.of(i);
+            }
+            i++;
+        }
+        return Optional.empty();
+    }
 }
