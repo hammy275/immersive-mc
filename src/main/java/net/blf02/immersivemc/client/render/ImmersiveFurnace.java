@@ -11,16 +11,17 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ImmersiveFurnace {
 
     // We don't ever expect this to get too big (since this mod runs on clients separately)
-    public static List<ImmersiveFurnaceInfo> furnaces = new ArrayList<>();
+    public static List<ImmersiveFurnaceInfo> furnaces = new LinkedList<>();
 
     public static final Vector3d toSmeltOffset = new Vector3d(0, 0.75, 0.25);
 
@@ -54,7 +55,8 @@ public class ImmersiveFurnace {
         return Direction.NORTH;
     }
 
-    public static void renderFurnace(AbstractFurnaceTileEntity furnace, MatrixStack stack) {
+    public static void handleFurnace(ImmersiveFurnaceInfo info, MatrixStack stack) {
+        AbstractFurnaceTileEntity furnace = info.furnace;
         Direction forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
         BlockPos front = furnace.getBlockPos().relative(forward);
         Vector3d pos = new Vector3d(front.getX(), front.getY(), front.getZ());
@@ -75,7 +77,29 @@ public class ImmersiveFurnace {
         Vector3d posOutput = pos.add(0, 0.5, 0).add(outputOffset);
         renderItem(output, stack, posOutput);
 
+        info.toSmeltHitbox = new AxisAlignedBB(
+                posToSmelt.x - ClientConfig.itemScaleSize / 2.0,
+                posToSmelt.y - ClientConfig.itemScaleSize / 2.0,
+                posToSmelt.z - ClientConfig.itemScaleSize / 2.0,
+                posToSmelt.x + ClientConfig.itemScaleSize / 2.0,
+                posToSmelt.y + ClientConfig.itemScaleSize / 2.0,
+                posToSmelt.z + ClientConfig.itemScaleSize / 2.0);
 
+        info.fuelHitbox = new AxisAlignedBB(
+                posFuel.x - ClientConfig.itemScaleSize / 2.0,
+                posFuel.y - ClientConfig.itemScaleSize / 2.0,
+                posFuel.z - ClientConfig.itemScaleSize / 2.0,
+                posFuel.x + ClientConfig.itemScaleSize / 2.0,
+                posFuel.y + ClientConfig.itemScaleSize / 2.0,
+                posFuel.z + ClientConfig.itemScaleSize / 2.0);
+
+        info.outputHitbox = new AxisAlignedBB(
+                posOutput.x - ClientConfig.itemScaleSize / 2.0,
+                posOutput.y - ClientConfig.itemScaleSize / 2.0,
+                posOutput.z - ClientConfig.itemScaleSize / 2.0,
+                posOutput.x + ClientConfig.itemScaleSize / 2.0,
+                posOutput.y + ClientConfig.itemScaleSize / 2.0,
+                posOutput.z + ClientConfig.itemScaleSize / 2.0);
     }
 
     public static void renderItem(ItemStack item, MatrixStack stack, Vector3d pos) {
@@ -102,10 +126,18 @@ public class ImmersiveFurnace {
 
         public final AbstractFurnaceTileEntity furnace;
         public int ticksLeft;
+        public AxisAlignedBB toSmeltHitbox = null;
+        public AxisAlignedBB fuelHitbox = null;
+        public AxisAlignedBB outputHitbox = null;
 
         public ImmersiveFurnaceInfo(AbstractFurnaceTileEntity furnace, int ticksLeft) {
             this.furnace = furnace;
             this.ticksLeft = ticksLeft;
+        }
+
+        public boolean hasHitboxes() {
+            // If we have one hitbox, we have all 3
+            return toSmeltHitbox != null;
         }
     }
 }
