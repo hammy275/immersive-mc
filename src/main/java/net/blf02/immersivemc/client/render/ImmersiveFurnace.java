@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.client.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.blf02.immersivemc.common.config.ClientConfig;
+import net.blf02.immersivemc.client.config.ClientConfig;
 import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -56,6 +56,11 @@ public class ImmersiveFurnace {
     }
 
     public static void handleFurnace(ImmersiveFurnaceInfo info, MatrixStack stack) {
+        if (info.countdown > 1 && info.ticksLeft > 20) {
+            info.countdown--;
+        } else if (info.countdown < ClientConfig.transitionTime && info.ticksLeft <= 20) {
+            info.countdown++;
+        }
         AbstractFurnaceTileEntity furnace = info.furnace;
         Direction forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
         Vector3d pos;
@@ -86,12 +91,14 @@ public class ImmersiveFurnace {
         ItemStack fuel = furnace.getItem(1);
         ItemStack output = furnace.getItem(2);
 
+        float size = ClientConfig.itemScaleSize / info.countdown;
+
         Vector3d posToSmelt = pos.add(0, 0.75, 0).add(toSmeltAndFuelOffset);
-        renderItem(toSmelt, stack, posToSmelt);
+        renderItem(toSmelt, stack, posToSmelt, size);
         Vector3d posFuel = pos.add(0, 0.25, 0).add(toSmeltAndFuelOffset);
-        renderItem(fuel, stack, posFuel);
+        renderItem(fuel, stack, posFuel, size);
         Vector3d posOutput = pos.add(0, 0.5, 0).add(outputOffset);
-        renderItem(output, stack, posOutput);
+        renderItem(output, stack, posOutput, size);
 
         info.toSmeltHitbox = new AxisAlignedBB(
                 posToSmelt.x - ClientConfig.itemScaleSize / 2.0,
@@ -118,7 +125,7 @@ public class ImmersiveFurnace {
                 posOutput.z + ClientConfig.itemScaleSize / 2.0);
     }
 
-    public static void renderItem(ItemStack item, MatrixStack stack, Vector3d pos) {
+    public static void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size) {
         if (item != ItemStack.EMPTY) {
             stack.pushPose();
 
@@ -127,7 +134,7 @@ public class ImmersiveFurnace {
                     -renderInfo.getPosition().y + pos.y,
                     -renderInfo.getPosition().z + pos.z);
 
-            stack.scale(ClientConfig.itemScaleSize, ClientConfig.itemScaleSize, ClientConfig.itemScaleSize);
+            stack.scale(size, size, size);
 
             Minecraft.getInstance().getItemRenderer().renderStatic(item, ItemCameraTransforms.TransformType.FIXED,
                     15728880,
@@ -145,6 +152,7 @@ public class ImmersiveFurnace {
         public AxisAlignedBB toSmeltHitbox = null;
         public AxisAlignedBB fuelHitbox = null;
         public AxisAlignedBB outputHitbox = null;
+        public int countdown = 10; // Used for transitions for the items
 
         public ImmersiveFurnaceInfo(AbstractFurnaceTileEntity furnace, int ticksLeft) {
             this.furnace = furnace;
