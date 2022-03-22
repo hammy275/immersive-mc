@@ -2,6 +2,7 @@ package net.blf02.immersivemc.client.subscribe;
 
 import net.blf02.immersivemc.client.ClientUtil;
 import net.blf02.immersivemc.client.immersive.ImmersiveFurnace;
+import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;
@@ -41,7 +42,7 @@ public class ClientLogicSubscriber {
 
         if (tileEntity instanceof AbstractFurnaceTileEntity) {
             AbstractFurnaceTileEntity furnace = (AbstractFurnaceTileEntity) tileEntity;
-            ImmersiveFurnace.trackFurnace(furnace);
+            ImmersiveFurnace.getSingleton().trackObject(furnace);
         }
     }
 
@@ -67,13 +68,12 @@ public class ClientLogicSubscriber {
         Vector3d viewVec = player.getViewVector(1);
         Vector3d end = player.getEyePosition(1).add(viewVec.x * dist, viewVec.y * dist,
                 viewVec.z * dist);
-        for (ImmersiveFurnace.ImmersiveFurnaceInfo info : ImmersiveFurnace.furnaces) {
+        for (ImmersiveFurnaceInfo info : ImmersiveFurnace.getSingleton().getTrackedObjects()) {
             if (info.hasHitboxes()) {
-                Optional<Integer> closest = Util.rayTraceClosest(start, end, info.toSmeltHitbox,
-                        info.fuelHitbox, info.outputHitbox);
+                Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
                 if (closest.isPresent()) {
                     Network.INSTANCE.sendToServer(new SwapPacket(
-                            info.furnace.getBlockPos(), closest.get(), Hand.MAIN_HAND
+                            info.getTileEntity().getBlockPos(), closest.get(), Hand.MAIN_HAND
                     ));
                     return true;
                 }

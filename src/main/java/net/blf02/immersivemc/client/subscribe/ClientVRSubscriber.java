@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.client.subscribe;
 
 import net.blf02.immersivemc.client.immersive.ImmersiveFurnace;
+import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;
@@ -27,14 +28,14 @@ public class ClientVRSubscriber {
         if (cooldown > 0) {
             cooldown--;
         } else {
-            for (ImmersiveFurnace.ImmersiveFurnaceInfo info : ImmersiveFurnace.furnaces) {
+            for (ImmersiveFurnaceInfo info : ImmersiveFurnace.getSingleton().getTrackedObjects()) {
                 if (info.hasHitboxes()) {
                     for (int c = 0; c <= 1; c++) {
                         IVRData controller = event.vrPlayer.getController(c);
                         Vector3d pos = controller.position();
-                        Optional<Integer> hit = Util.getFirstIntersect(pos, info.toSmeltHitbox, info.fuelHitbox, info.outputHitbox);
+                        Optional<Integer> hit = Util.getFirstIntersect(pos, info.getAllHitboxes());
                         if (hit.isPresent()) {
-                            Network.INSTANCE.sendToServer(new SwapPacket(info.furnace.getBlockPos(),
+                            Network.INSTANCE.sendToServer(new SwapPacket(info.getTileEntity().getBlockPos(),
                                     hit.get(), c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND));
                             cooldown = 25;
                             return;
