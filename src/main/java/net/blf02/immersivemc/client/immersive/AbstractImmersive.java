@@ -5,11 +5,15 @@ import net.blf02.immersivemc.client.config.ClientConfig;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.OutlineLayerBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
@@ -68,8 +72,10 @@ public abstract class AbstractImmersive<T extends TileEntity, I extends Abstract
      * @param pos Position to render at
      * @param size Size to render at
      * @param facing Direction to face (should be the direction of the block)
+     * @param hitbox Hitbox for debug rendering
      */
-    public void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size, Direction facing) {
+    public void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size, Direction facing,
+                           AxisAlignedBB hitbox) {
         if (item != ItemStack.EMPTY) {
             stack.pushPose();
 
@@ -98,7 +104,23 @@ public abstract class AbstractImmersive<T extends TileEntity, I extends Abstract
                     15728880,
                     OverlayTexture.NO_OVERLAY,
                     stack, Minecraft.getInstance().renderBuffers().bufferSource());
+
             stack.popPose();
+
+            if (Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() &&
+            hitbox != null) {
+                // Use a new stack here, so we don't conflict with the stack.scale() for the item itself
+                stack.pushPose();
+                stack.translate(-renderInfo.getPosition().x + pos.x,
+                        -renderInfo.getPosition().y + pos.y,
+                        -renderInfo.getPosition().z + pos.z);
+                OutlineLayerBuffer buffer = Minecraft.getInstance().renderBuffers().outlineBufferSource();
+                buffer.setColor(255, 255, 255, 255);
+                WorldRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
+                        hitbox.move(-pos.x, -pos.y, -pos.z),
+                        1, 1, 1, 1);
+                stack.popPose();
+            }
         }
     }
 
