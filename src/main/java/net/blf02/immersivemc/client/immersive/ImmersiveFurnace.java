@@ -55,28 +55,28 @@ public class ImmersiveFurnace extends AbstractImmersive<AbstractFurnaceTileEntit
 
         // Set hitboxes for logic to use
         info.setHitbox(0, new AxisAlignedBB(
-                posToSmelt.x - ClientConfig.itemScaleSize / 4.0,
-                posToSmelt.y - ClientConfig.itemScaleSize / 4.0,
-                posToSmelt.z - ClientConfig.itemScaleSize / 4.0,
-                posToSmelt.x + ClientConfig.itemScaleSize / 4.0,
-                posToSmelt.y + ClientConfig.itemScaleSize / 4.0,
-                posToSmelt.z + ClientConfig.itemScaleSize / 4.0));
+                posToSmelt.x - ClientConfig.itemScaleSize / 3.0,
+                posToSmelt.y - ClientConfig.itemScaleSize / 3.0,
+                posToSmelt.z - ClientConfig.itemScaleSize / 3.0,
+                posToSmelt.x + ClientConfig.itemScaleSize / 3.0,
+                posToSmelt.y + ClientConfig.itemScaleSize / 3.0,
+                posToSmelt.z + ClientConfig.itemScaleSize / 3.0));
 
         info.setHitbox(1, new AxisAlignedBB(
-                posFuel.x - ClientConfig.itemScaleSize / 4.0,
-                posFuel.y - ClientConfig.itemScaleSize / 4.0,
-                posFuel.z - ClientConfig.itemScaleSize / 4.0,
-                posFuel.x + ClientConfig.itemScaleSize / 4.0,
-                posFuel.y + ClientConfig.itemScaleSize / 4.0,
-                posFuel.z + ClientConfig.itemScaleSize / 4.0));
+                posFuel.x - ClientConfig.itemScaleSize / 3.0,
+                posFuel.y - ClientConfig.itemScaleSize / 3.0,
+                posFuel.z - ClientConfig.itemScaleSize / 3.0,
+                posFuel.x + ClientConfig.itemScaleSize / 3.0,
+                posFuel.y + ClientConfig.itemScaleSize / 3.0,
+                posFuel.z + ClientConfig.itemScaleSize / 3.0));
 
         info.setHitbox(2, new AxisAlignedBB(
-                posOutput.x - ClientConfig.itemScaleSize / 4.0,
-                posOutput.y - ClientConfig.itemScaleSize / 4.0,
-                posOutput.z - ClientConfig.itemScaleSize / 4.0,
-                posOutput.x + ClientConfig.itemScaleSize / 4.0,
-                posOutput.y + ClientConfig.itemScaleSize / 4.0,
-                posOutput.z + ClientConfig.itemScaleSize / 4.0));
+                posOutput.x - ClientConfig.itemScaleSize / 3.0,
+                posOutput.y - ClientConfig.itemScaleSize / 3.0,
+                posOutput.z - ClientConfig.itemScaleSize / 3.0,
+                posOutput.x + ClientConfig.itemScaleSize / 3.0,
+                posOutput.y + ClientConfig.itemScaleSize / 3.0,
+                posOutput.z + ClientConfig.itemScaleSize / 3.0));
     }
 
 }
