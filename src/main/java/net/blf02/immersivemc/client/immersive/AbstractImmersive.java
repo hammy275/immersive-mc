@@ -23,7 +23,7 @@ import java.util.List;
 
 public abstract class AbstractImmersive<T extends TileEntity, I extends AbstractImmersiveInfo<T>> {
 
-    protected List<I> tileEnts = new LinkedList<>();
+    protected List<I> tileEntInfos = new LinkedList<>();
 
     /**
      * Get a new instance of info to track.
@@ -33,6 +33,8 @@ public abstract class AbstractImmersive<T extends TileEntity, I extends Abstract
      */
     public abstract I getNewInfo(T tileEnt);
 
+    public abstract boolean shouldHandleImmersion(T tileEnt);
+
     /**
      * Handles immersion. Should be called every tick by the render function.
      *
@@ -40,7 +42,7 @@ public abstract class AbstractImmersive<T extends TileEntity, I extends Abstract
      * @param info Info to handle
      * @param stack MatrixStack to render to
      */
-    public void handleImmersion(I info, MatrixStack stack) {
+    protected void handleImmersion(I info, MatrixStack stack) {
         // Set the cooldown (transition time) based on how long we've existed or until we stop existing
         if (info.getCountdown() > 1 && info.getTicksLeft() > 20) {
             info.changeCountdown(-1);
@@ -51,8 +53,19 @@ public abstract class AbstractImmersive<T extends TileEntity, I extends Abstract
 
     // Below this line are utility functions. Everything above MUST be overwritten, and have super() called!
 
+    /**
+     * Handle immersion.
+     *
+     * This is the method that should be called by outside functions.
+     */
+    public void doImmersion(I info, MatrixStack stack) {
+        if (shouldHandleImmersion(info.getTileEntity())) {
+            handleImmersion(info, stack);
+        }
+    }
+
     public List<I> getTrackedObjects() {
-        return tileEnts;
+        return tileEntInfos;
     }
 
     public void trackObject(T tileEnt) {
@@ -62,7 +75,7 @@ public abstract class AbstractImmersive<T extends TileEntity, I extends Abstract
                 return;
             }
         }
-        tileEnts.add(getNewInfo(tileEnt));
+        tileEntInfos.add(getNewInfo(tileEnt));
     }
 
     /**

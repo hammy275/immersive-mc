@@ -16,7 +16,7 @@ public class ClientRenderSubscriber {
     public void onWorldRender(RenderWorldLastEvent event) {
         List<ImmersiveFurnaceInfo> toRemove = new LinkedList<>();
         for (ImmersiveFurnaceInfo info : ImmersiveFurnace.getSingleton().getTrackedObjects()) {
-            ImmersiveFurnace.getSingleton().handleImmersion(info, event.getMatrixStack());
+            ImmersiveFurnace.getSingleton().doImmersion(info, event.getMatrixStack());
             info.changeTicksLeft(-1);
             if (info.getTicksLeft() <= 0) {
                 toRemove.add(info);

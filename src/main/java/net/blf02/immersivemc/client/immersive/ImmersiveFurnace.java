@@ -25,7 +25,14 @@ public class ImmersiveFurnace extends AbstractImmersive<AbstractFurnaceTileEntit
         return new ImmersiveFurnaceInfo(tileEnt, ClientConfig.ticksToRenderFurnace);
     }
 
-    public void handleImmersion(ImmersiveFurnaceInfo info, MatrixStack stack) {
+    @Override
+    public boolean shouldHandleImmersion(AbstractFurnaceTileEntity tileEnt) {
+        Direction forward = tileEnt.getBlockState().getValue(AbstractFurnaceBlock.FACING);
+        return tileEnt.getLevel() != null &&
+                tileEnt.getLevel().getBlockState(tileEnt.getBlockPos().relative(forward)).isAir();
+    }
+
+    protected void handleImmersion(ImmersiveFurnaceInfo info, MatrixStack stack) {
         super.handleImmersion(info, stack);
         AbstractFurnaceTileEntity furnace = info.getTileEntity();
         Direction forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
