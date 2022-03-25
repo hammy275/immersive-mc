@@ -10,7 +10,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3d;
 
-public class ImmersiveFurnace extends AbstractImmersive<AbstractFurnaceTileEntity, ImmersiveFurnaceInfo> {
+public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnaceTileEntity, ImmersiveFurnaceInfo> {
 
     // We don't ever expect this to get too big (since this mod runs on clients separately)
 
@@ -26,10 +26,10 @@ public class ImmersiveFurnace extends AbstractImmersive<AbstractFurnaceTileEntit
     }
 
     @Override
-    public boolean shouldHandleImmersion(AbstractFurnaceTileEntity tileEnt) {
-        Direction forward = tileEnt.getBlockState().getValue(AbstractFurnaceBlock.FACING);
-        return tileEnt.getLevel() != null &&
-                tileEnt.getLevel().getBlockState(tileEnt.getBlockPos().relative(forward)).isAir();
+    public boolean shouldHandleImmersion(ImmersiveFurnaceInfo info) {
+        Direction forward = info.getTileEntity().getBlockState().getValue(AbstractFurnaceBlock.FACING);
+        return info.getTileEntity().getLevel() != null &&
+                info.getTileEntity().getLevel().getBlockState(info.getTileEntity().getBlockPos().relative(forward)).isAir();
     }
 
     protected void handleImmersion(ImmersiveFurnaceInfo info, MatrixStack stack) {

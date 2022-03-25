@@ -3,14 +3,14 @@ package net.blf02.immersivemc.client.immersive.info;
 import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 
-public class BrewingInfo extends AbstractImmersiveInfo<BrewingStandTileEntity> {
+public class BrewingInfo extends AbstractTileEntityImmersiveInfo<BrewingStandTileEntity> {
 
     protected AxisAlignedBB fuelHitbox = null;
     protected AxisAlignedBB ingredientHitbox = null;
     protected AxisAlignedBB[] bottleHitboxes = new AxisAlignedBB[]{null, null, null};
 
-    public BrewingInfo(BrewingStandTileEntity tileEntity, int minSlot, int maxSlot, int ticksToExist) {
-        super(tileEntity, minSlot, maxSlot, ticksToExist);
+    public BrewingInfo(BrewingStandTileEntity tileEntity, int ticksToExist) {
+        super(tileEntity, ticksToExist);
     }
 
     @Override

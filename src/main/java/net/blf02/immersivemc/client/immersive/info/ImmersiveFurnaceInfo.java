@@ -3,14 +3,14 @@ package net.blf02.immersivemc.client.immersive.info;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 
-public class ImmersiveFurnaceInfo extends AbstractImmersiveInfo<AbstractFurnaceTileEntity> {
+public class ImmersiveFurnaceInfo extends AbstractTileEntityImmersiveInfo<AbstractFurnaceTileEntity> {
 
     protected AxisAlignedBB toSmeltHitbox = null;
     protected AxisAlignedBB fuelHitbox = null;
     protected AxisAlignedBB outputHitbox = null;
 
     public ImmersiveFurnaceInfo(AbstractFurnaceTileEntity furnace, int ticksLeft) {
-        super(furnace, 0, 2, ticksLeft);
+        super(furnace, ticksLeft);
     }
 
     public AxisAlignedBB getHibtox(int slot) {

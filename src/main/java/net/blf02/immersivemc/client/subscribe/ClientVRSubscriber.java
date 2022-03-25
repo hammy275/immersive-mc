@@ -2,7 +2,7 @@ package net.blf02.immersivemc.client.subscribe;
 
 import net.blf02.immersivemc.client.immersive.ImmersiveBrewing;
 import net.blf02.immersivemc.client.immersive.ImmersiveFurnace;
-import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import net.blf02.immersivemc.client.immersive.info.AbstractTileEntityImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
 import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.common.network.Network;
@@ -46,7 +46,7 @@ public class ClientVRSubscriber {
         }
     }
 
-    protected boolean handleInfo(AbstractImmersiveInfo<?> info, IVRPlayer vrPlayer) {
+    protected boolean handleInfo(AbstractTileEntityImmersiveInfo<?> info, IVRPlayer vrPlayer) {
         if (info.hasHitboxes()) {
             for (int c = 0; c <= 1; c++) {
                 IVRData controller = vrPlayer.getController(c);

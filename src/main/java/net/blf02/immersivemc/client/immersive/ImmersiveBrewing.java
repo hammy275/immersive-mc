@@ -9,7 +9,7 @@ import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.vector.Vector3d;
 
-public class ImmersiveBrewing extends AbstractImmersive<BrewingStandTileEntity, BrewingInfo> {
+public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTileEntity, BrewingInfo> {
 
     protected static final ImmersiveBrewing singleton = new ImmersiveBrewing();
 
@@ -19,17 +19,17 @@ public class ImmersiveBrewing extends AbstractImmersive<BrewingStandTileEntity, 
 
     @Override
     public BrewingInfo getNewInfo(BrewingStandTileEntity tileEnt) {
-        return new BrewingInfo(tileEnt, ClientConfig.ticksToRenderBrewing, 0, 4);
+        return new BrewingInfo(tileEnt, ClientConfig.ticksToRenderBrewing);
     }
 
     @Override
-    public boolean shouldHandleImmersion(BrewingStandTileEntity tileEnt) {
+    public boolean shouldHandleImmersion(BrewingInfo info) {
         if (Minecraft.getInstance().player == null) {
             return false;
         }
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
-        return tileEnt.getLevel() != null &&
-                tileEnt.getLevel().getBlockState(tileEnt.getBlockPos().relative(forward)).isAir();
+        return info.getTileEntity().getLevel() != null &&
+                info.getTileEntity().getLevel().getBlockState(info.getTileEntity().getBlockPos().relative(forward)).isAir();
     }
 
     @Override

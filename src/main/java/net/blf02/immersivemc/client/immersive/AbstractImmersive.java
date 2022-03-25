@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -22,27 +21,16 @@ import net.minecraft.util.math.vector.Vector3f;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class AbstractImmersive<T extends TileEntity, I extends AbstractImmersiveInfo<T>> {
+/**
+ * Abstract immersive anything
+ * @param <I> Info type
+ */
+public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
-    protected List<I> tileEntInfos = new LinkedList<>();
+    protected List<I> infos = new LinkedList<>();
 
-    /**
-     * Get a new instance of info to track.
-     *
-     * @param tileEnt Tile Entity that the info contains
-     * @return The instance
-     */
-    public abstract I getNewInfo(T tileEnt);
+    public abstract boolean shouldHandleImmersion(I info);
 
-    public abstract boolean shouldHandleImmersion(T tileEnt);
-
-    /**
-     * Handles immersion. Should be called every tick by the render function.
-     *
-     * The super() of this must always be called!
-     * @param info Info to handle
-     * @param stack MatrixStack to render to
-     */
     protected void handleImmersion(I info, MatrixStack stack) {
         // Set the cooldown (transition time) based on how long we've existed or until we stop existing
         if (info.getCountdown() > 1 && info.getTicksLeft() > 20) {
@@ -60,23 +48,13 @@ public abstract class AbstractImmersive<T extends TileEntity, I extends Abstract
      * This is the method that should be called by outside functions.
      */
     public void doImmersion(I info, MatrixStack stack) {
-        if (shouldHandleImmersion(info.getTileEntity())) {
+        if (shouldHandleImmersion(info)) {
             handleImmersion(info, stack);
         }
     }
 
     public List<I> getTrackedObjects() {
-        return tileEntInfos;
-    }
-
-    public void trackObject(T tileEnt) {
-        for (I info : getTrackedObjects()) {
-            if (info.getTileEntity() == tileEnt) {
-                info.setTicksLeft(ClientConfig.ticksToRenderFurnace);
-                return;
-            }
-        }
-        tileEntInfos.add(getNewInfo(tileEnt));
+        return infos;
     }
 
     /**
@@ -122,7 +100,7 @@ public abstract class AbstractImmersive<T extends TileEntity, I extends Abstract
             stack.popPose();
 
             if (Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() &&
-            hitbox != null) {
+                    hitbox != null) {
                 // Use a new stack here, so we don't conflict with the stack.scale() for the item itself
                 stack.pushPose();
                 stack.translate(-renderInfo.getPosition().x + pos.x,
@@ -215,4 +193,5 @@ public abstract class AbstractImmersive<T extends TileEntity, I extends Abstract
                 pos.y + size,
                 pos.z + size);
     }
+
 }

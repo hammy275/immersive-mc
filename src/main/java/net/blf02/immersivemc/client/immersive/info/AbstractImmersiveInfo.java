@@ -1,30 +1,15 @@
 package net.blf02.immersivemc.client.immersive.info;
 
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 
-public abstract class AbstractImmersiveInfo<T extends TileEntity> {
+public abstract class AbstractImmersiveInfo {
 
     protected int ticksLeft;
     protected int countdown = 10; // Used for transitions for the items
-    protected T tileEntity;
-    protected int minSlot; // minSlot and maxSlot currently unused, but may be used down the line
-    protected int maxSlot;
 
-    public AbstractImmersiveInfo(T tileEntity, int minSlot, int maxSlot, int ticksToExist) {
-        this.tileEntity = tileEntity;
-        this.minSlot = minSlot;
-        this.maxSlot = maxSlot;
+    public AbstractImmersiveInfo(int ticksToExist) {
         this.ticksLeft = ticksToExist;
     }
-
-    public abstract AxisAlignedBB getHibtox(int slot);
-
-    public abstract AxisAlignedBB[] getAllHitboxes();
-
-    public abstract void setHitbox(int slot, AxisAlignedBB hitbox);
-
-    public abstract boolean hasHitboxes();
 
     public int getTicksLeft() {
         return this.ticksLeft;
@@ -38,15 +23,19 @@ public abstract class AbstractImmersiveInfo<T extends TileEntity> {
         this.ticksLeft = value;
     }
 
+    public abstract AxisAlignedBB getHibtox(int slot);
+
+    public abstract AxisAlignedBB[] getAllHitboxes();
+
+    public abstract void setHitbox(int slot, AxisAlignedBB hitbox);
+
+    public abstract boolean hasHitboxes();
+
     public int getCountdown() {
         return this.countdown;
     }
 
     public void changeCountdown(int amount) {
         this.countdown += amount;
-    }
-
-    public T getTileEntity() {
-        return this.tileEntity;
     }
 }
