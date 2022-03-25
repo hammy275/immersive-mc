@@ -8,7 +8,7 @@ public abstract class AbstractImmersiveInfo<T extends TileEntity> {
     protected int ticksLeft;
     protected int countdown = 10; // Used for transitions for the items
     protected T tileEntity;
-    protected int minSlot;
+    protected int minSlot; // minSlot and maxSlot currently unused, but may be used down the line
     protected int maxSlot;
 
     public AbstractImmersiveInfo(T tileEntity, int minSlot, int maxSlot, int ticksToExist) {

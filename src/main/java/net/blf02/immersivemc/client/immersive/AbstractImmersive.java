@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -158,7 +159,11 @@ public abstract class AbstractImmersive<T extends TileEntity, I extends Abstract
     }
 
     /**
-     * Gets the position precisely to the front-right of pos given the direction forward
+     * Gets the position precisely to the front-right of pos given the direction forward.
+     *
+     * This is effectively the bottom right of the front face from the block's perspective, or the bottom left
+     * from the player's perspective facing the block.
+     *
      * @param forwardFromBlock Direction forward from block. Can also be opposite direction of player
      * @param pos BlockPos of block
      * @return Vector3d of the front-right of the block face from the block's perspective (front left from the player's)
@@ -180,5 +185,34 @@ public abstract class AbstractImmersive<T extends TileEntity, I extends Abstract
         } else {
             throw new IllegalArgumentException("Furnaces can't point up or down?!?!");
         }
+    }
+
+    /**
+     * Gets the forward direction of the block based on the player
+     *
+     * Put simply, this returns the opposite of the Direction the player is currently facing (only N/S/E/W)
+     * @param player Player to get forward from
+     * @return The forward direction of a block to use.
+     */
+    public Direction getForwardFromPlayer(PlayerEntity player) {
+        return player.getDirection().getOpposite();
+    }
+
+    /**
+     * Creates the hitbox for an item.
+     *
+     * Practically identical to how hitboxes are created manually in ImmersiveFurnace
+     * @param pos Position for center of hitbox
+     * @param size Size of hitbox
+     * @return
+     */
+    public AxisAlignedBB createHitbox(Vector3d pos, float size) {
+        return new AxisAlignedBB(
+                pos.x - size,
+                pos.y - size,
+                pos.z - size,
+                pos.x + size,
+                pos.y + size,
+                pos.z + size);
     }
 }

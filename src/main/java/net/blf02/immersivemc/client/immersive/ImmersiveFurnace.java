@@ -50,7 +50,7 @@ public class ImmersiveFurnace extends AbstractImmersive<AbstractFurnaceTileEntit
         ItemStack fuel = furnace.getItem(1);
         ItemStack output = furnace.getItem(2);
 
-        float size = ClientConfig.itemScaleSize / info.getCountdown();
+        float size = ClientConfig.itemScaleSizeFurnace / info.getCountdown();
 
         // Render all of the items
         Vector3d posToSmelt = pos.add(0, 0.75, 0).add(toSmeltAndFuelOffset);
@@ -62,28 +62,28 @@ public class ImmersiveFurnace extends AbstractImmersive<AbstractFurnaceTileEntit
 
         // Set hitboxes for logic to use
         info.setHitbox(0, new AxisAlignedBB(
-                posToSmelt.x - ClientConfig.itemScaleSize / 3.0,
-                posToSmelt.y - ClientConfig.itemScaleSize / 3.0,
-                posToSmelt.z - ClientConfig.itemScaleSize / 3.0,
-                posToSmelt.x + ClientConfig.itemScaleSize / 3.0,
-                posToSmelt.y + ClientConfig.itemScaleSize / 3.0,
-                posToSmelt.z + ClientConfig.itemScaleSize / 3.0));
+                posToSmelt.x - ClientConfig.itemScaleSizeFurnace / 3.0,
+                posToSmelt.y - ClientConfig.itemScaleSizeFurnace / 3.0,
+                posToSmelt.z - ClientConfig.itemScaleSizeFurnace / 3.0,
+                posToSmelt.x + ClientConfig.itemScaleSizeFurnace / 3.0,
+                posToSmelt.y + ClientConfig.itemScaleSizeFurnace / 3.0,
+                posToSmelt.z + ClientConfig.itemScaleSizeFurnace / 3.0));
 
         info.setHitbox(1, new AxisAlignedBB(
-                posFuel.x - ClientConfig.itemScaleSize / 3.0,
-                posFuel.y - ClientConfig.itemScaleSize / 3.0,
-                posFuel.z - ClientConfig.itemScaleSize / 3.0,
-                posFuel.x + ClientConfig.itemScaleSize / 3.0,
-                posFuel.y + ClientConfig.itemScaleSize / 3.0,
-                posFuel.z + ClientConfig.itemScaleSize / 3.0));
+                posFuel.x - ClientConfig.itemScaleSizeFurnace / 3.0,
+                posFuel.y - ClientConfig.itemScaleSizeFurnace / 3.0,
+                posFuel.z - ClientConfig.itemScaleSizeFurnace / 3.0,
+                posFuel.x + ClientConfig.itemScaleSizeFurnace / 3.0,
+                posFuel.y + ClientConfig.itemScaleSizeFurnace / 3.0,
+                posFuel.z + ClientConfig.itemScaleSizeFurnace / 3.0));
 
         info.setHitbox(2, new AxisAlignedBB(
-                posOutput.x - ClientConfig.itemScaleSize / 3.0,
-                posOutput.y - ClientConfig.itemScaleSize / 3.0,
-                posOutput.z - ClientConfig.itemScaleSize / 3.0,
-                posOutput.x + ClientConfig.itemScaleSize / 3.0,
-                posOutput.y + ClientConfig.itemScaleSize / 3.0,
-                posOutput.z + ClientConfig.itemScaleSize / 3.0));
+                posOutput.x - ClientConfig.itemScaleSizeFurnace / 3.0,
+                posOutput.y - ClientConfig.itemScaleSizeFurnace / 3.0,
+                posOutput.z - ClientConfig.itemScaleSizeFurnace / 3.0,
+                posOutput.x + ClientConfig.itemScaleSizeFurnace / 3.0,
+                posOutput.y + ClientConfig.itemScaleSizeFurnace / 3.0,
+                posOutput.z + ClientConfig.itemScaleSizeFurnace / 3.0));
     }
 
 }

@@ -1,9 +1,10 @@
 package net.blf02.immersivemc.common.network.packet;
 
-import net.blf02.immersivemc.common.swap.FurnaceSwap;
+import net.blf02.immersivemc.common.swap.Swap;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
+import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -41,7 +42,10 @@ public class SwapPacket {
                 TileEntity tileEnt = player.level.getBlockEntity(message.block);
                 if (tileEnt instanceof AbstractFurnaceTileEntity) {
                     AbstractFurnaceTileEntity furnace = (AbstractFurnaceTileEntity) tileEnt;
-                    FurnaceSwap.handleSwap(furnace, player, message.hand, message.slot);
+                    Swap.handleFurnaceSwap(furnace, player, message.hand, message.slot);
+                } else if (tileEnt instanceof BrewingStandTileEntity) {
+                    BrewingStandTileEntity stand = (BrewingStandTileEntity) tileEnt;
+                    Swap.handleBrewingSwap(stand, player, message.hand, message.slot);
                 }
             }
         });
