@@ -6,12 +6,10 @@ import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
 import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import java.util.LinkedList;
 import java.util.List;
 
-@Mod.EventBusSubscriber
 public class ClientRenderSubscriber {
 
     @SubscribeEvent

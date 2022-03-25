@@ -22,11 +22,9 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import java.util.Optional;
 
-@Mod.EventBusSubscriber
 public class ClientLogicSubscriber {
 
     @SubscribeEvent

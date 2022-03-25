@@ -27,7 +27,7 @@ public class ClientVRSubscriber {
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public void immersiveFurnaceTick(VRPlayerTickEvent event) {
+    public void immersiveTickVR(VRPlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         if (cooldown > 0) {
             cooldown--;
