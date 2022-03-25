@@ -3,6 +3,7 @@ package net.blf02.immersivemc;
 import net.blf02.immersivemc.client.subscribe.ClientLogicSubscriber;
 import net.blf02.immersivemc.client.subscribe.ClientRenderSubscriber;
 import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -32,6 +33,8 @@ public class ImmersiveMC {
             int index = 1;
             Network.INSTANCE.registerMessage(index++, SwapPacket.class, SwapPacket::encode,
                     SwapPacket::decode, SwapPacket::handle);
+            Network.INSTANCE.registerMessage(index++, DoCraftPacket.class, DoCraftPacket::encode,
+                    DoCraftPacket::decode, DoCraftPacket::handle);
         });
 
     }

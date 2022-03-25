@@ -2,13 +2,19 @@ package net.blf02.immersivemc.client.subscribe;
 
 import net.blf02.immersivemc.client.ClientUtil;
 import net.blf02.immersivemc.client.immersive.ImmersiveBrewing;
+import net.blf02.immersivemc.client.immersive.ImmersiveCrafting;
 import net.blf02.immersivemc.client.immersive.ImmersiveFurnace;
 import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
+import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
 import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
+import net.blf02.immersivemc.client.storage.ClientStorage;
+import net.blf02.immersivemc.client.swap.ClientSwap;
 import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
@@ -47,6 +53,8 @@ public class ClientLogicSubscriber {
         } else if (tileEntity instanceof BrewingStandTileEntity) {
             BrewingStandTileEntity stand = (BrewingStandTileEntity) tileEntity;
             ImmersiveBrewing.getSingleton().trackObject(stand);
+        } else if (state.getBlock() == Blocks.CRAFTING_TABLE) {
+            ImmersiveCrafting.singleton.trackObject(pos);
         }
     }
 
@@ -57,9 +65,30 @@ public class ClientLogicSubscriber {
                 event.setCanceled(true);
                 ClientUtil.setRightClickCooldown();
             }
+        } else if (event.getHand() == Hand.MAIN_HAND && event.isAttack()) {
+            if (handleLeftClick(Minecraft.getInstance().player)) {
+                event.setCanceled(true);
+            }
         }
     }
 
+    public static boolean handleLeftClick(PlayerEntity player) {
+        if (Minecraft.getInstance().gameMode == null) return false;
+
+        RayTraceResult looking = Minecraft.getInstance().hitResult;
+        if (looking == null || looking.getType() != RayTraceResult.Type.BLOCK) return false;
+
+        BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
+        BlockState state = player.level.getBlockState(pos);
+        if (state.getBlock() == Blocks.CRAFTING_TABLE) {
+            Network.INSTANCE.sendToServer(new DoCraftPacket(
+                    ClientStorage.craftingStorage, pos
+            ));
+            return true;
+        }
+
+        return false;
+    }
 
     public static boolean handleRightClick(PlayerEntity player) {
         double dist;
@@ -95,6 +124,14 @@ public class ClientLogicSubscriber {
                     ));
                     return true;
                 }
+            }
+        }
+
+        for (CraftingInfo info : ImmersiveCrafting.singleton.getTrackedObjects()) {
+            if (info.hasHitboxes()) {
+                Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
+                closest.ifPresent(integer -> ClientSwap.craftingSwap(integer, Hand.MAIN_HAND));
+                return true;
             }
         }
         return false;
