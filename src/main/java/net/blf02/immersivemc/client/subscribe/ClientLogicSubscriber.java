@@ -130,8 +130,10 @@ public class ClientLogicSubscriber {
         for (CraftingInfo info : ImmersiveCrafting.singleton.getTrackedObjects()) {
             if (info.hasHitboxes()) {
                 Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
-                closest.ifPresent(integer -> ClientSwap.craftingSwap(integer, Hand.MAIN_HAND));
-                return true;
+                if (closest.isPresent()) {
+                    ClientSwap.craftingSwap(closest.get(), Hand.MAIN_HAND);
+                    return true;
+                }
             }
         }
         return false;

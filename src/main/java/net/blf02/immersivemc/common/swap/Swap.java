@@ -13,6 +13,7 @@ import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.AbstractList;
 import java.util.Optional;
@@ -61,8 +62,9 @@ public class Swap {
             if (removeNeededIngredients(player, inv)) {
                 // Give our item to us
                 ItemStack stackOut = res.get().assemble(inv);
-                BlockPos pos = tablePos.above();
-                ItemEntity entOut = new ItemEntity(player.level, pos.getX(), pos.getY(), pos.getZ());
+                BlockPos posBlock = tablePos.above();
+                Vector3d pos = Vector3d.atCenterOf(posBlock);
+                ItemEntity entOut = new ItemEntity(player.level, pos.x, pos.y, pos.z);
                 entOut.setItem(stackOut);
                 entOut.setDeltaMovement(0, 0, 0);
                 player.level.addFreshEntity(entOut);
