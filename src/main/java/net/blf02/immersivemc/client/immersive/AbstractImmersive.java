@@ -57,6 +57,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         return infos;
     }
 
+    public void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size, Direction facing,
+                           AxisAlignedBB hitbox) {
+        renderItem(item, stack, pos, size, facing, null, hitbox);
+    }
+
     /**
      * Renders an item at the specified position
      * @param item Item to render
@@ -64,15 +69,16 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param pos Position to render at
      * @param size Size to render at
      * @param facing Direction to face (should be the direction of the block)
+     * @param upDown Direction upwards or downwards. Can be null if not facing up or down.
      * @param hitbox Hitbox for debug rendering
      */
-    public void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size, Direction facing,
+    public void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size, Direction facing, Direction upDown,
                            AxisAlignedBB hitbox) {
+        ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         if (item != ItemStack.EMPTY) {
             stack.pushPose();
 
             // Move the stack to be relative to the camera
-            ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
             stack.translate(-renderInfo.getPosition().x + pos.x,
                     -renderInfo.getPosition().y + pos.y,
                     -renderInfo.getPosition().z + pos.z);
@@ -90,7 +96,16 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 degreesRotation = 270;
             }
 
+            int upDownRot = 0; // If null, we're good
+            if (upDown == Direction.UP) {
+                upDownRot = 90;
+            } else if (upDown == Direction.DOWN) {
+                upDownRot = 270;
+            }
+
+
             stack.mulPose(Vector3f.YP.rotationDegrees(degreesRotation));
+            stack.mulPose(Vector3f.XP.rotationDegrees(upDownRot));
 
             Minecraft.getInstance().getItemRenderer().renderStatic(item, ItemCameraTransforms.TransformType.FIXED,
                     15728880,
@@ -98,21 +113,20 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                     stack, Minecraft.getInstance().renderBuffers().bufferSource());
 
             stack.popPose();
-
-            if (Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() &&
-                    hitbox != null) {
-                // Use a new stack here, so we don't conflict with the stack.scale() for the item itself
-                stack.pushPose();
-                stack.translate(-renderInfo.getPosition().x + pos.x,
-                        -renderInfo.getPosition().y + pos.y,
-                        -renderInfo.getPosition().z + pos.z);
-                OutlineLayerBuffer buffer = Minecraft.getInstance().renderBuffers().outlineBufferSource();
-                buffer.setColor(255, 255, 255, 255);
-                WorldRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
-                        hitbox.move(-pos.x, -pos.y, -pos.z),
-                        1, 1, 1, 1);
-                stack.popPose();
-            }
+        }
+        if (Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() &&
+                hitbox != null) {
+            // Use a new stack here, so we don't conflict with the stack.scale() for the item itself
+            stack.pushPose();
+            stack.translate(-renderInfo.getPosition().x + pos.x,
+                    -renderInfo.getPosition().y + pos.y,
+                    -renderInfo.getPosition().z + pos.z);
+            OutlineLayerBuffer buffer = Minecraft.getInstance().renderBuffers().outlineBufferSource();
+            buffer.setColor(255, 255, 255, 255);
+            WorldRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
+                    hitbox.move(-pos.x, -pos.y, -pos.z),
+                    1, 1, 1, 1);
+            stack.popPose();
         }
     }
 
@@ -163,6 +177,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         } else {
             throw new IllegalArgumentException("Furnaces can't point up or down?!?!");
         }
+    }
+
+    public Vector3d getTopCenterOfBlock(BlockPos pos) {
+        // Only add 0.5 to y since atCenterOf moves it up 0.5 for us
+        return Vector3d.upFromBottomCenterOf(pos, 1);
     }
 
     /**

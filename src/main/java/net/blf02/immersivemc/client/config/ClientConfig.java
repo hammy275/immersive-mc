@@ -10,7 +10,7 @@ public class ClientConfig {
     // Size of items when rendered in front of something immersive
     public static final float itemScaleSizeFurnace = 0.5f;
     public static final float itemScaleSizeBrewing = 1f/3f;
-    public static final float itemScaleSizeCrafting = 0.25f;
+    public static final float itemScaleSizeCrafting = 3f/16f; // Chosen for the texture of the table itself
 
     // Time to transition in ticks
     public static final int transitionTime = 20;

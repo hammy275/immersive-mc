@@ -7,6 +7,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class ClientUtil {
 
     @OnlyIn(Dist.CLIENT)
+    public static int immersiveLeftClickCooldown = 0;
+
+    @OnlyIn(Dist.CLIENT)
     public static void setRightClickCooldown() {
         Minecraft.getInstance().rightClickDelay = 4;
     }

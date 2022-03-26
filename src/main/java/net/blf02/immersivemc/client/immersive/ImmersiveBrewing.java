@@ -23,6 +23,11 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
     }
 
     @Override
+    public int getTickTime() {
+        return ClientConfig.ticksToRenderBrewing;
+    }
+
+    @Override
     public boolean shouldHandleImmersion(BrewingInfo info) {
         if (Minecraft.getInstance().player == null) {
             return false;

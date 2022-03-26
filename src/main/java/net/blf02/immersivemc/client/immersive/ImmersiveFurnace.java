@@ -26,6 +26,11 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
     }
 
     @Override
+    public int getTickTime() {
+        return ClientConfig.ticksToRenderFurnace;
+    }
+
+    @Override
     public boolean shouldHandleImmersion(ImmersiveFurnaceInfo info) {
         Direction forward = info.getTileEntity().getBlockState().getValue(AbstractFurnaceBlock.FACING);
         return info.getTileEntity().getLevel() != null &&

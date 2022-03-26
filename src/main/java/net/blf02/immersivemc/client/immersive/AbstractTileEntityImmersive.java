@@ -1,7 +1,6 @@
 package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.blf02.immersivemc.client.config.ClientConfig;
 import net.blf02.immersivemc.client.immersive.info.AbstractTileEntityImmersiveInfo;
 import net.minecraft.tileentity.TileEntity;
 
@@ -15,6 +14,8 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
      * @return The instance
      */
     public abstract I getNewInfo(T tileEnt);
+
+    public abstract int getTickTime();
 
     public abstract boolean shouldHandleImmersion(I info);
 
@@ -34,7 +35,7 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
     public void trackObject(T tileEnt) {
         for (I info : getTrackedObjects()) {
             if (info.getTileEntity() == tileEnt) {
-                info.setTicksLeft(ClientConfig.ticksToRenderFurnace);
+                info.setTicksLeft(getTickTime());
                 return;
             }
         }

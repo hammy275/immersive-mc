@@ -17,24 +17,24 @@ import java.util.List;
 public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
 
     public static final ImmersiveCrafting singleton = new ImmersiveCrafting();
+    private final double spacing = 3d/16d;
 
     @Override
     protected void handleImmersion(CraftingInfo info, MatrixStack stack) {
         super.handleImmersion(info, stack);
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
-        Vector3d pos = getDirectlyInFront(forward, info.tablePos);
+        Vector3d pos = getTopCenterOfBlock(info.tablePos);
         Direction left = getLeftOfDirection(forward);
 
         Vector3d leftOffset = new Vector3d(
-                left.getNormal().getX() * 0.25, 0, left.getNormal().getZ() * 0.25);
-        Vector3d midXOffset = new Vector3d(
-                left.getNormal().getX() * 0.5, 0, left.getNormal().getZ() * 0.5);
+                left.getNormal().getX() * spacing, 0, left.getNormal().getZ() * spacing);
         Vector3d rightOffset = new Vector3d(
-                left.getNormal().getX() * 0.75, 0, left.getNormal().getZ() * 0.75);
+                left.getNormal().getX() * -spacing, 0, left.getNormal().getZ() * -spacing);
 
-        Vector3d topOffset = new Vector3d(0, 0.75, 0);
-        Vector3d midYOffset = new Vector3d(0, 0.5, 0);
-        Vector3d botOffset = new Vector3d(0, 0.25, 0);
+        Vector3d topOffset = new Vector3d(
+                forward.getNormal().getX() * -spacing, 0, forward.getNormal().getZ() * -spacing);
+        Vector3d botOffset = new Vector3d(
+                forward.getNormal().getX() * spacing, 0, forward.getNormal().getZ() * spacing);
 
 
         List<ItemStack> slots = new ArrayList<>();
@@ -43,9 +43,9 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
         }
 
         Vector3d[] positions = new Vector3d[]{
-                pos.add(leftOffset).add(topOffset), pos.add(midXOffset).add(topOffset), pos.add(rightOffset).add(topOffset),
-                pos.add(leftOffset).add(midYOffset), pos.add(midXOffset).add(midYOffset), pos.add(rightOffset).add(midYOffset),
-                pos.add(leftOffset).add(botOffset), pos.add(midXOffset).add(botOffset), pos.add(rightOffset).add(botOffset)
+                pos.add(leftOffset).add(topOffset), pos.add(topOffset), pos.add(rightOffset).add(topOffset),
+                pos.add(leftOffset), pos, pos.add(rightOffset),
+                pos.add(leftOffset).add(botOffset), pos.add(botOffset), pos.add(rightOffset).add(botOffset)
         };
 
         float itemSize = ClientConfig.itemScaleSizeCrafting / info.getCountdown();
@@ -54,7 +54,7 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
         for (int i = 0; i < 9; i++) {
             info.setHitbox(i, createHitbox(positions[i], hitboxSize));
             renderItem(ClientStorage.craftingStorage.getItem(i), stack, positions[i],
-                    itemSize, forward, info.getHibtox(i));
+                    itemSize, forward, Direction.UP, info.getHibtox(i));
         }
 
     }

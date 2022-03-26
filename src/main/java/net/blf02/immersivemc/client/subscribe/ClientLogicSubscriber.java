@@ -35,6 +35,10 @@ public class ClientLogicSubscriber {
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (ClientUtil.immersiveLeftClickCooldown > 0) {
+            ClientUtil.immersiveLeftClickCooldown--;
+        }
         if (Minecraft.getInstance().gameMode == null) return;
 
         PlayerEntity player = event.player;
@@ -65,9 +69,11 @@ public class ClientLogicSubscriber {
                 event.setCanceled(true);
                 ClientUtil.setRightClickCooldown();
             }
-        } else if (event.getHand() == Hand.MAIN_HAND && event.isAttack()) {
+        } else if (event.getHand() == Hand.MAIN_HAND && event.isAttack()
+            && ClientUtil.immersiveLeftClickCooldown <= 0) {
             if (handleLeftClick(Minecraft.getInstance().player)) {
                 event.setCanceled(true);
+                ClientUtil.immersiveLeftClickCooldown = 8;
             }
         }
     }
