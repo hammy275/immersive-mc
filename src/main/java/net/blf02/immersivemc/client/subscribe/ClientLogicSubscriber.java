@@ -1,9 +1,12 @@
 package net.blf02.immersivemc.client.subscribe;
 
 import net.blf02.immersivemc.client.ClientUtil;
+import net.blf02.immersivemc.client.immersive.AbstractImmersive;
 import net.blf02.immersivemc.client.immersive.ImmersiveBrewing;
 import net.blf02.immersivemc.client.immersive.ImmersiveCrafting;
 import net.blf02.immersivemc.client.immersive.ImmersiveFurnace;
+import net.blf02.immersivemc.client.immersive.Immersives;
+import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
 import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
 import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
@@ -25,6 +28,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -76,6 +82,15 @@ public class ClientLogicSubscriber {
                 ClientUtil.immersiveLeftClickCooldown = 8;
             }
         }
+    }
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public void onDisconnect(ClientPlayerNetworkEvent.LoggedOutEvent event) {
+        for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
+            singleton.getTrackedObjects().clear();
+        }
+
     }
 
     public static boolean handleLeftClick(PlayerEntity player) {

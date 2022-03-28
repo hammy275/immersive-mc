@@ -29,6 +29,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected List<I> infos = new LinkedList<>();
 
+    public AbstractImmersive() {
+        Immersives.IMMERSIVES.add(this);
+    }
+
     public abstract boolean shouldHandleImmersion(I info);
 
     protected void handleImmersion(I info, MatrixStack stack) {

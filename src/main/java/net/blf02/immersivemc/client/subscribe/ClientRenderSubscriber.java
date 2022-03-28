@@ -2,9 +2,7 @@ package net.blf02.immersivemc.client.subscribe;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.immersive.AbstractImmersive;
-import net.blf02.immersivemc.client.immersive.ImmersiveBrewing;
-import net.blf02.immersivemc.client.immersive.ImmersiveCrafting;
-import net.blf02.immersivemc.client.immersive.ImmersiveFurnace;
+import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -16,9 +14,9 @@ public class ClientRenderSubscriber {
 
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent event) {
-        handleInfos(ImmersiveFurnace.getSingleton(), event.getMatrixStack());
-        handleInfos(ImmersiveBrewing.getSingleton(), event.getMatrixStack());
-        handleInfos(ImmersiveCrafting.singleton, event.getMatrixStack());
+        for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
+            handleInfos(singleton, event.getMatrixStack());
+        }
 
     }
 
