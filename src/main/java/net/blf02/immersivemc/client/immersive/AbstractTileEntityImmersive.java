@@ -5,7 +5,7 @@ import net.blf02.immersivemc.client.immersive.info.AbstractTileEntityImmersiveIn
 import net.minecraft.tileentity.TileEntity;
 
 public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extends AbstractTileEntityImmersiveInfo<T>>
-    extends AbstractImmersive<I>{
+    extends AbstractImmersive<I> {
 
     /**
      * Get a new instance of info to track.

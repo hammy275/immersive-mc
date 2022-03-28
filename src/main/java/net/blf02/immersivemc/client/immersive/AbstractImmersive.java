@@ -38,6 +38,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         } else if (info.getCountdown() < ClientConfig.transitionTime && info.getTicksLeft() <= 20) {
             info.changeCountdown(1);
         }
+
+        if (info.getTicksLeft() > 0) {
+            info.changeTicksLeft(-1);
+        }
     }
 
     // Below this line are utility functions. Everything above MUST be overwritten, and have super() called!

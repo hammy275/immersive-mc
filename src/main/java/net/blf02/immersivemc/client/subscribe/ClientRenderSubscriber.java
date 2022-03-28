@@ -1,11 +1,11 @@
 package net.blf02.immersivemc.client.subscribe;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.blf02.immersivemc.client.immersive.AbstractImmersive;
 import net.blf02.immersivemc.client.immersive.ImmersiveBrewing;
 import net.blf02.immersivemc.client.immersive.ImmersiveCrafting;
 import net.blf02.immersivemc.client.immersive.ImmersiveFurnace;
-import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
-import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
-import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
+import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -16,42 +16,26 @@ public class ClientRenderSubscriber {
 
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent event) {
-        List<ImmersiveFurnaceInfo> toRemoveFurnace = new LinkedList<>();
-        for (ImmersiveFurnaceInfo info : ImmersiveFurnace.getSingleton().getTrackedObjects()) {
-            ImmersiveFurnace.getSingleton().doImmersion(info, event.getMatrixStack());
+        handleInfos(ImmersiveFurnace.getSingleton(), event.getMatrixStack());
+        handleInfos(ImmersiveBrewing.getSingleton(), event.getMatrixStack());
+        handleInfos(ImmersiveCrafting.singleton, event.getMatrixStack());
+
+    }
+
+    protected <I extends AbstractImmersiveInfo> void handleInfos(AbstractImmersive<I> singleton,
+                                                                 MatrixStack stack) {
+        List<I> infos = singleton.getTrackedObjects();
+        List<I> toRemove = new LinkedList<>();
+        for (I info : infos) {
+            singleton.doImmersion(info, stack);
             if (info.getTicksLeft() <= 0) {
-                toRemoveFurnace.add(info);
+                toRemove.add(info);
             }
         }
 
-        for (ImmersiveFurnaceInfo info : toRemoveFurnace) {
-            ImmersiveFurnace.getSingleton().getTrackedObjects().remove(info);
+        for (I info : toRemove) {
+            infos.remove(info);
         }
-
-        List<BrewingInfo> toRemoveStand = new LinkedList<>();
-        for (BrewingInfo info : ImmersiveBrewing.getSingleton().getTrackedObjects()) {
-            ImmersiveBrewing.getSingleton().doImmersion(info, event.getMatrixStack());
-            if (info.getTicksLeft() <= 0) {
-                toRemoveStand.add(info);
-            }
-        }
-
-        for (BrewingInfo info : toRemoveStand) {
-            ImmersiveBrewing.getSingleton().getTrackedObjects().remove(info);
-        }
-
-        List<CraftingInfo> toRemoveTable = new LinkedList<>();
-        for (CraftingInfo info : ImmersiveCrafting.singleton.getTrackedObjects()) {
-            ImmersiveCrafting.singleton.doImmersion(info, event.getMatrixStack());
-            if (info.getTicksLeft() <= 0) {
-                toRemoveTable.add(info);
-            }
-        }
-
-        for (CraftingInfo info : toRemoveTable) {
-            ImmersiveCrafting.singleton.getTrackedObjects().remove(info);
-        }
-
     }
 
 }
