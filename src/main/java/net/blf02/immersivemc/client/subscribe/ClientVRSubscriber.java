@@ -1,13 +1,10 @@
 package net.blf02.immersivemc.client.subscribe;
 
-import net.blf02.immersivemc.client.immersive.ImmersiveBrewing;
-import net.blf02.immersivemc.client.immersive.ImmersiveCrafting;
-import net.blf02.immersivemc.client.immersive.ImmersiveFurnace;
+import net.blf02.immersivemc.client.immersive.AbstractImmersive;
+import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.AbstractTileEntityImmersiveInfo;
-import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
 import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
-import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.client.swap.ClientSwap;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
@@ -36,21 +33,11 @@ public class ClientVRSubscriber {
         if (cooldown > 0) {
             cooldown--;
         } else {
-            for (ImmersiveFurnaceInfo info : ImmersiveFurnace.getSingleton().getTrackedObjects()) {
-                if (handleInfo(info, event.vrPlayer)) {
-                    return;
-                }
-            }
-
-            for (BrewingInfo info : ImmersiveBrewing.getSingleton().getTrackedObjects()) {
-                if (handleInfo(info, event.vrPlayer)) {
-                    return;
-                }
-            }
-
-            for (CraftingInfo info : ImmersiveCrafting.singleton.getTrackedObjects()) {
-                if (handleInfo(info, event.vrPlayer)) {
-                    return;
+            for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
+                for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
+                    if (handleInfo(info, event.vrPlayer)) {
+                        return;
+                    }
                 }
             }
         }
