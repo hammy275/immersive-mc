@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConfig;
 import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.vector.Vector3d;
@@ -75,19 +74,14 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
 
     @Override
     protected void render(BrewingInfo info, MatrixStack stack) {
-        BrewingStandTileEntity stand = info.getTileEntity();
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
-
-        ItemStack[] bottles = new ItemStack[]{stand.getItem(0), stand.getItem(1), stand.getItem(2)};
-        ItemStack ingredient = stand.getItem(3);
-        ItemStack fuel = stand.getItem(4);
 
         float size = ClientConfig.itemScaleSizeBrewing / info.getCountdown();
 
-        renderItem(bottles[0], stack, info.getPosition(0), size, forward, info.getHibtox(0));
-        renderItem(bottles[1], stack, info.getPosition(1), size, forward, info.getHibtox(1));
-        renderItem(bottles[2], stack, info.getPosition(2), size, forward, info.getHibtox(2));
-        renderItem(ingredient, stack, info.getPosition(3), size, forward, info.getHibtox(3));
-        renderItem(fuel, stack, info.getPosition(4), size, forward, info.getHibtox(4));
+        renderItem(info.items[0], stack, info.getPosition(0), size, forward, info.getHibtox(0));
+        renderItem(info.items[1], stack, info.getPosition(1), size, forward, info.getHibtox(1));
+        renderItem(info.items[2], stack, info.getPosition(2), size, forward, info.getHibtox(2));
+        renderItem(info.items[3], stack, info.getPosition(3), size, forward, info.getHibtox(3));
+        renderItem(info.items[4], stack, info.getPosition(4), size, forward, info.getHibtox(4));
     }
 }

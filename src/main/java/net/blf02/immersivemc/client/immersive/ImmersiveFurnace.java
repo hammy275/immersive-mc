@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConfig;
 import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.minecraft.block.AbstractFurnaceBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -87,20 +86,13 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
     }
 
     protected void render(ImmersiveFurnaceInfo info, MatrixStack stack) {
-        AbstractFurnaceTileEntity furnace = info.getTileEntity();
-        Direction forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
-
-        ItemStack toSmelt = furnace.getItem(0);
-        ItemStack fuel = furnace.getItem(1);
-        ItemStack output = furnace.getItem(2);
-
         float size = ClientConfig.itemScaleSizeFurnace / info.getCountdown();
 
         // Render all of the items
 
-        renderItem(toSmelt, stack, info.getPosition(0), size, forward, info.getHibtox(0));
-        renderItem(fuel, stack, info.getPosition(1), size, forward, info.getHibtox(1));
-        renderItem(output, stack, info.getPosition(2), size, forward, info.getHibtox(2));
+        renderItem(info.items[0], stack, info.getPosition(0), size, info.forward, info.getHibtox(0));
+        renderItem(info.items[1], stack, info.getPosition(1), size, info.forward, info.getHibtox(1));
+        renderItem(info.items[2], stack, info.getPosition(2), size, info.forward, info.getHibtox(2));
 
 
     }

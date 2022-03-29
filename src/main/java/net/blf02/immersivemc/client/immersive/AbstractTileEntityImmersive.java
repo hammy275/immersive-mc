@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.client.immersive;
 
 import net.blf02.immersivemc.client.immersive.info.AbstractTileEntityImmersiveInfo;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 
 public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extends AbstractTileEntityImmersiveInfo<T>>
@@ -17,6 +18,18 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
     public abstract int getTickTime();
 
     public abstract boolean shouldRender(I info);
+
+    @Override
+    public void tick(I info) {
+        super.tick(info);
+        if (info.getTileEntity() instanceof IInventory) {
+            IInventory inv = (IInventory) info.getTileEntity();
+            for (int i = 0; i <= info.maxSlotIndex; i++) {
+                info.items[i] = inv.getItem(i);
+            }
+        }
+
+    }
 
     // EVERYTHING ABOVE MUST BE OVERRIDEN, AND HAVE SUPER() CALLED IF APPLICABLE!
 

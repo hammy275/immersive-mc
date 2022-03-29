@@ -1,6 +1,8 @@
 package net.blf02.immersivemc.client.immersive.info;
 
+import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 
 public class ImmersiveFurnaceInfo extends AbstractTileEntityImmersiveInfo<AbstractFurnaceTileEntity> {
@@ -8,9 +10,11 @@ public class ImmersiveFurnaceInfo extends AbstractTileEntityImmersiveInfo<Abstra
     protected AxisAlignedBB toSmeltHitbox = null;
     protected AxisAlignedBB fuelHitbox = null;
     protected AxisAlignedBB outputHitbox = null;
+    public final Direction forward;
 
     public ImmersiveFurnaceInfo(AbstractFurnaceTileEntity furnace, int ticksLeft) {
         super(furnace, ticksLeft, 2);
+        this.forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
     }
 
     public AxisAlignedBB getHibtox(int slot) {

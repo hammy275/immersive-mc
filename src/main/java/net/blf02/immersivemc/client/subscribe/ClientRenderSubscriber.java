@@ -7,6 +7,7 @@ import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class ClientRenderSubscriber {
@@ -21,7 +22,8 @@ public class ClientRenderSubscriber {
 
     protected <I extends AbstractImmersiveInfo> void handleInfos(AbstractImmersive<I> singleton,
                                                                  MatrixStack stack) {
-        List<I> infos = singleton.getTrackedObjects();
+        // Use a copy so we don't interfere with the logical thread
+        List<I> infos = new LinkedList<>(singleton.getTrackedObjects());
         for (I info : infos) {
             singleton.doRender(info, stack);
         }
