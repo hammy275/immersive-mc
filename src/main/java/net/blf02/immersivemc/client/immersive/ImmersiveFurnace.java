@@ -31,18 +31,20 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
     }
 
     @Override
-    public boolean shouldHandleImmersion(ImmersiveFurnaceInfo info) {
+    public boolean shouldRender(ImmersiveFurnaceInfo info) {
         Direction forward = info.getTileEntity().getBlockState().getValue(AbstractFurnaceBlock.FACING);
         return info.getTileEntity().getLevel() != null &&
-                info.getTileEntity().getLevel().getBlockState(info.getTileEntity().getBlockPos().relative(forward)).isAir();
+                info.getTileEntity().getLevel().getBlockState(info.getTileEntity().getBlockPos().relative(forward)).isAir()
+                && info.hasPositions();
     }
 
-    protected void handleImmersion(ImmersiveFurnaceInfo info, MatrixStack stack) {
-        super.handleImmersion(info, stack);
+    @Override
+    public void tick(ImmersiveFurnaceInfo info) {
+        super.tick(info);
+
         AbstractFurnaceTileEntity furnace = info.getTileEntity();
         Direction forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
         Vector3d pos = getDirectlyInFront(forward, furnace.getBlockPos());
-
 
         // Gets the offset on the x and z axis that the items should be placed in front of the furnace
         Direction left = getLeftOfDirection(forward);
@@ -51,19 +53,12 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
         Vector3d outputOffset = new Vector3d(
                 left.getNormal().getX() * 0.75, 0, left.getNormal().getZ() * 0.75);
 
-        ItemStack toSmelt = furnace.getItem(0);
-        ItemStack fuel = furnace.getItem(1);
-        ItemStack output = furnace.getItem(2);
-
-        float size = ClientConfig.itemScaleSizeFurnace / info.getCountdown();
-
-        // Render all of the items
         Vector3d posToSmelt = pos.add(0, 0.75, 0).add(toSmeltAndFuelOffset);
-        renderItem(toSmelt, stack, posToSmelt, size, forward, info.getHibtox(0));
+        info.setPosition(0, posToSmelt);
         Vector3d posFuel = pos.add(0, 0.25, 0).add(toSmeltAndFuelOffset);
-        renderItem(fuel, stack, posFuel, size, forward, info.getHibtox(1));
+        info.setPosition(1, posFuel);
         Vector3d posOutput = pos.add(0, 0.5, 0).add(outputOffset);
-        renderItem(output, stack, posOutput, size, forward, info.getHibtox(2));
+        info.setPosition(2, posOutput);
 
         // Set hitboxes for logic to use
         info.setHitbox(0, new AxisAlignedBB(
@@ -89,6 +84,25 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
                 posOutput.x + ClientConfig.itemScaleSizeFurnace / 3.0,
                 posOutput.y + ClientConfig.itemScaleSizeFurnace / 3.0,
                 posOutput.z + ClientConfig.itemScaleSizeFurnace / 3.0));
+    }
+
+    protected void render(ImmersiveFurnaceInfo info, MatrixStack stack) {
+        AbstractFurnaceTileEntity furnace = info.getTileEntity();
+        Direction forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
+
+        ItemStack toSmelt = furnace.getItem(0);
+        ItemStack fuel = furnace.getItem(1);
+        ItemStack output = furnace.getItem(2);
+
+        float size = ClientConfig.itemScaleSizeFurnace / info.getCountdown();
+
+        // Render all of the items
+
+        renderItem(toSmelt, stack, info.getPosition(0), size, forward, info.getHibtox(0));
+        renderItem(fuel, stack, info.getPosition(1), size, forward, info.getHibtox(1));
+        renderItem(output, stack, info.getPosition(2), size, forward, info.getHibtox(2));
+
+
     }
 
 }

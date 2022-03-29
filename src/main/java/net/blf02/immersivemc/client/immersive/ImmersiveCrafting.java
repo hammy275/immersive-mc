@@ -20,8 +20,8 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     private final double spacing = 3d/16d;
 
     @Override
-    protected void handleImmersion(CraftingInfo info, MatrixStack stack) {
-        super.handleImmersion(info, stack);
+    public void tick(CraftingInfo info) {
+        super.tick(info);
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         Vector3d pos = getTopCenterOfBlock(info.tablePos);
         Direction left = getLeftOfDirection(forward);
@@ -47,24 +47,33 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
                 pos.add(leftOffset), pos, pos.add(rightOffset),
                 pos.add(leftOffset).add(botOffset), pos.add(botOffset), pos.add(rightOffset).add(botOffset)
         };
-
-        float itemSize = ClientConfig.itemScaleSizeCrafting / info.getCountdown();
         float hitboxSize = ClientConfig.itemScaleSizeCrafting / 3f;
+        for (int i = 0; i < 9; i++) {
+            info.setPosition(i, positions[i]);
+            info.setHitbox(i, createHitbox(positions[i], hitboxSize));
+        }
+
+    }
+
+    @Override
+    protected void render(CraftingInfo info, MatrixStack stack) {
+        float itemSize = ClientConfig.itemScaleSizeCrafting / info.getCountdown();
+        Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
 
         for (int i = 0; i < 9; i++) {
-            info.setHitbox(i, createHitbox(positions[i], hitboxSize));
-            renderItem(ClientStorage.craftingStorage.getItem(i), stack, positions[i],
+            renderItem(ClientStorage.craftingStorage.getItem(i), stack, info.getPosition(i),
                     itemSize, forward, Direction.UP, info.getHibtox(i));
         }
 
     }
 
     @Override
-    public boolean shouldHandleImmersion(CraftingInfo info) {
+    public boolean shouldRender(CraftingInfo info) {
         if (Minecraft.getInstance().player == null) return false;
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         World level = Minecraft.getInstance().level;
-        return level != null && level.getBlockState(info.tablePos.relative(forward)).isAir();
+        return level != null && level.getBlockState(info.tablePos.relative(forward)).isAir()
+                && info.hasPositions();
     }
 
     public void trackObject(BlockPos tablePos) {

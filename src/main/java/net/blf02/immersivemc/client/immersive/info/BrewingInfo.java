@@ -10,7 +10,7 @@ public class BrewingInfo extends AbstractTileEntityImmersiveInfo<BrewingStandTil
     protected AxisAlignedBB[] bottleHitboxes = new AxisAlignedBB[]{null, null, null};
 
     public BrewingInfo(BrewingStandTileEntity tileEntity, int ticksToExist) {
-        super(tileEntity, ticksToExist);
+        super(tileEntity, ticksToExist, 4);
     }
 
     @Override

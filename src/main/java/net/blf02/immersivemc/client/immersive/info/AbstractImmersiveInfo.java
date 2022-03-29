@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.client.immersive.info;
 
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.vector.Vector3d;
 
 public abstract class AbstractImmersiveInfo {
 
@@ -30,6 +31,14 @@ public abstract class AbstractImmersiveInfo {
     public abstract void setHitbox(int slot, AxisAlignedBB hitbox);
 
     public abstract boolean hasHitboxes();
+
+    public abstract Vector3d getPosition(int slot);
+
+    public abstract Vector3d[] getAllPositions();
+
+    public abstract void setPosition(int slot, Vector3d position);
+
+    public abstract boolean hasPositions();
 
     public int getCountdown() {
         return this.countdown;

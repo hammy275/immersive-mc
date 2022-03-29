@@ -28,24 +28,23 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
     }
 
     @Override
-    public boolean shouldHandleImmersion(BrewingInfo info) {
+    public boolean shouldRender(BrewingInfo info) {
         if (Minecraft.getInstance().player == null) {
             return false;
         }
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         return info.getTileEntity().getLevel() != null &&
-                info.getTileEntity().getLevel().getBlockState(info.getTileEntity().getBlockPos().relative(forward)).isAir();
+                info.getTileEntity().getLevel().getBlockState(info.getTileEntity().getBlockPos().relative(forward)).isAir()
+                && info.hasPositions();
     }
 
     @Override
-    protected void handleImmersion(BrewingInfo info, MatrixStack stack) {
-        super.handleImmersion(info, stack);
-
+    public void tick(BrewingInfo info) {
+        super.tick(info);
         BrewingStandTileEntity stand = info.getTileEntity();
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         Vector3d pos = getDirectlyInFront(forward, stand.getBlockPos());
         Direction left = getLeftOfDirection(forward);
-
 
         Vector3d leftOffset = new Vector3d(
                 left.getNormal().getX() * 0.25, 0, left.getNormal().getZ() * 0.25);
@@ -54,17 +53,17 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
         Vector3d rightOffset = new Vector3d(
                 left.getNormal().getX() * 0.75, 0, left.getNormal().getZ() * 0.75);
 
-        ItemStack[] bottles = new ItemStack[]{stand.getItem(0), stand.getItem(1), stand.getItem(2)};
-        ItemStack ingredient = stand.getItem(3);
-        ItemStack fuel = stand.getItem(4);
-
-        float size = ClientConfig.itemScaleSizeBrewing / info.getCountdown();
 
         Vector3d posLeftBottle = pos.add(leftOffset).add(0, 1d/3d, 0);
+        info.setPosition(0, posLeftBottle);
         Vector3d posMidBottle = pos.add(midOffset).add(0, 0.25, 0);
+        info.setPosition(1, posMidBottle);
         Vector3d posRightBottle = pos.add(rightOffset).add(0, 1d/3d, 0);
+        info.setPosition(2, posRightBottle);
         Vector3d posIngredient = pos.add(midOffset).add(0, 0.75, 0);
+        info.setPosition(3, posIngredient);
         Vector3d posFuel = pos.add(leftOffset).add(0, 0.75, 0);
+        info.setPosition(4, posFuel);
 
         float hitboxSize = ClientConfig.itemScaleSizeBrewing / 3f;
         info.setHitbox(0, createHitbox(posLeftBottle, hitboxSize));
@@ -72,11 +71,23 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
         info.setHitbox(2, createHitbox(posRightBottle, hitboxSize));
         info.setHitbox(3, createHitbox(posIngredient, hitboxSize));
         info.setHitbox(4, createHitbox(posFuel, hitboxSize));
+    }
 
-        renderItem(bottles[0], stack, posLeftBottle, size, forward, info.getHibtox(0));
-        renderItem(bottles[1], stack, posMidBottle, size, forward, info.getHibtox(1));
-        renderItem(bottles[2], stack, posRightBottle, size, forward, info.getHibtox(2));
-        renderItem(ingredient, stack, posIngredient, size, forward, info.getHibtox(3));
-        renderItem(fuel, stack, posFuel, size, forward, info.getHibtox(4));
+    @Override
+    protected void render(BrewingInfo info, MatrixStack stack) {
+        BrewingStandTileEntity stand = info.getTileEntity();
+        Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
+
+        ItemStack[] bottles = new ItemStack[]{stand.getItem(0), stand.getItem(1), stand.getItem(2)};
+        ItemStack ingredient = stand.getItem(3);
+        ItemStack fuel = stand.getItem(4);
+
+        float size = ClientConfig.itemScaleSizeBrewing / info.getCountdown();
+
+        renderItem(bottles[0], stack, info.getPosition(0), size, forward, info.getHibtox(0));
+        renderItem(bottles[1], stack, info.getPosition(1), size, forward, info.getHibtox(1));
+        renderItem(bottles[2], stack, info.getPosition(2), size, forward, info.getHibtox(2));
+        renderItem(ingredient, stack, info.getPosition(3), size, forward, info.getHibtox(3));
+        renderItem(fuel, stack, info.getPosition(4), size, forward, info.getHibtox(4));
     }
 }

@@ -10,7 +10,7 @@ public class ImmersiveFurnaceInfo extends AbstractTileEntityImmersiveInfo<Abstra
     protected AxisAlignedBB outputHitbox = null;
 
     public ImmersiveFurnaceInfo(AbstractFurnaceTileEntity furnace, int ticksLeft) {
-        super(furnace, ticksLeft);
+        super(furnace, ticksLeft, 2);
     }
 
     public AxisAlignedBB getHibtox(int slot) {

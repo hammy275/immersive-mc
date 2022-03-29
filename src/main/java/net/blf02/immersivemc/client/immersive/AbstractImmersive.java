@@ -33,9 +33,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         Immersives.IMMERSIVES.add(this);
     }
 
-    public abstract boolean shouldHandleImmersion(I info);
+    public abstract boolean shouldRender(I info);
 
-    protected void handleImmersion(I info, MatrixStack stack) {
+    protected abstract void render(I info, MatrixStack stack);
+
+    public void tick(I info) {
         // Set the cooldown (transition time) based on how long we've existed or until we stop existing
         if (info.getCountdown() > 1 && info.getTicksLeft() > 20) {
             info.changeCountdown(-1);
@@ -51,13 +53,13 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     // Below this line are utility functions. Everything above MUST be overwritten, and have super() called!
 
     /**
-     * Handle immersion.
+     * Do rendering
      *
-     * This is the method that should be called by outside functions.
+     * This is the render method that should be called by outside functions
      */
-    public void doImmersion(I info, MatrixStack stack) {
-        if (shouldHandleImmersion(info)) {
-            handleImmersion(info, stack);
+    public void doRender(I info, MatrixStack stack) {
+        if (shouldRender(info)) {
+            render(info, stack);
         }
     }
 

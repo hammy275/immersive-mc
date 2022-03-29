@@ -35,6 +35,8 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 public class ClientLogicSubscriber {
@@ -44,6 +46,9 @@ public class ClientLogicSubscriber {
         if (event.phase != TickEvent.Phase.END) return;
         if (ClientUtil.immersiveLeftClickCooldown > 0) {
             ClientUtil.immersiveLeftClickCooldown--;
+        }
+        for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
+            handleInfos(singleton);
         }
         if (Minecraft.getInstance().gameMode == null) return;
 
@@ -91,6 +96,21 @@ public class ClientLogicSubscriber {
             singleton.getTrackedObjects().clear();
         }
 
+    }
+
+    protected <I extends AbstractImmersiveInfo> void handleInfos(AbstractImmersive<I> singleton) {
+        List<I> infos = singleton.getTrackedObjects();
+        List<I> toRemove = new LinkedList<>();
+        for (I info : infos) {
+            singleton.tick(info);
+            if (info.getTicksLeft() <= 0) {
+                toRemove.add(info);
+            }
+        }
+
+        for (I info : toRemove) {
+            infos.remove(info);
+        }
     }
 
     public static boolean handleLeftClick(PlayerEntity player) {
