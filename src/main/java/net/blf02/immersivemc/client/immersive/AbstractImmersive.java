@@ -122,6 +122,9 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                     OverlayTexture.NO_OVERLAY,
                     stack, Minecraft.getInstance().renderBuffers().bufferSource());
 
+            // Actually draw what's in our buffer to the screen
+            Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+
             stack.popPose();
         }
         if (Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() &&
@@ -136,6 +139,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             WorldRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
                     hitbox.move(-pos.x, -pos.y, -pos.z),
                     1, 1, 1, 1);
+            buffer.endOutlineBatch();
             stack.popPose();
         }
     }
