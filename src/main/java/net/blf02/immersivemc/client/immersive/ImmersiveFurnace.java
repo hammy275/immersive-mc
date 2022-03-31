@@ -30,16 +30,16 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
     }
 
     @Override
-    public boolean shouldRender(ImmersiveFurnaceInfo info) {
-        Direction forward = info.getTileEntity().getBlockState().getValue(AbstractFurnaceBlock.FACING);
-        return info.getTileEntity().getLevel() != null &&
+    public boolean shouldRender(ImmersiveFurnaceInfo info, boolean isInVR) {
+        Direction forward = info.forward;
+        return forward != null && info.getTileEntity().getLevel() != null &&
                 info.getTileEntity().getLevel().getBlockState(info.getTileEntity().getBlockPos().relative(forward)).isAir()
-                && info.hasPositions();
+                && info.readyToRender();
     }
 
     @Override
-    public void tick(ImmersiveFurnaceInfo info) {
-        super.tick(info);
+    public void tick(ImmersiveFurnaceInfo info, boolean isInVR) {
+        super.tick(info, isInVR);
 
         AbstractFurnaceTileEntity furnace = info.getTileEntity();
         Direction forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
@@ -85,7 +85,7 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
                 posOutput.z + ClientConfig.itemScaleSizeFurnace / 3.0));
     }
 
-    protected void render(ImmersiveFurnaceInfo info, MatrixStack stack) {
+    protected void render(ImmersiveFurnaceInfo info, MatrixStack stack, boolean isInVR) {
         float size = ClientConfig.itemScaleSizeFurnace / info.getCountdown();
 
         // Render all of the items

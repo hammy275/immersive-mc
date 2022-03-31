@@ -1,15 +1,21 @@
 package net.blf02.immersivemc.common.swap;
 
+import net.minecraft.block.Blocks;
+import net.minecraft.block.JukeboxBlock;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.MusicDiscItem;
 import net.minecraft.item.PotionItem;
 import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.BrewingStandTileEntity;
+import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -51,6 +57,20 @@ public class Swap {
             if (!stand.canPlaceItem(slot, playerItem) && playerItem != ItemStack.EMPTY) return;
             player.setItemInHand(hand, standItem);
             stand.setItem(slot, playerItem);
+        }
+    }
+
+    public static void handleJukebox(JukeboxTileEntity jukebox,
+                                     ServerPlayerEntity player, Hand hand) {
+        ItemStack playerItem = player.getItemInHand(hand);
+        if (jukebox.getRecord() == ItemStack.EMPTY &&
+                playerItem.getItem() instanceof MusicDiscItem) {
+            // Code from vanilla jukebox
+            ((JukeboxBlock) Blocks.JUKEBOX).setRecord(player.level, jukebox.getBlockPos(), jukebox.getBlockState(),
+                    playerItem);
+            player.level.levelEvent((PlayerEntity)null, 1010, jukebox.getBlockPos(), Item.getId(playerItem.getItem()));
+            playerItem.shrink(1);
+            player.awardStat(Stats.PLAY_RECORD);
         }
     }
 

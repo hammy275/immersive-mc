@@ -11,6 +11,13 @@ public abstract class AbstractTileEntityImmersiveInfo<T extends TileEntity> exte
     public ItemStack[] items;
     public final int maxSlotIndex;
 
+    /**
+     * Constructor
+     * @param tileEntity Tile entity for immersion
+     * @param ticksToExist Ticks this immersion should exist for after being hovered
+     * @param maxSlotIndex Maximum slot number if this tile entity represents an inventory.
+     *                     Set to the number of positions that need storing if no slots exist.
+     */
     public AbstractTileEntityImmersiveInfo(T tileEntity, int ticksToExist, int maxSlotIndex) {
         super(ticksToExist);
         this.tileEntity = tileEntity;
@@ -41,5 +48,10 @@ public abstract class AbstractTileEntityImmersiveInfo<T extends TileEntity> exte
     @Override
     public boolean hasPositions() {
         return positions[0] != null;
+    }
+
+    @Override
+    public boolean readyToRender() {
+        return this.hasHitboxes() && this.hasPositions();
     }
 }

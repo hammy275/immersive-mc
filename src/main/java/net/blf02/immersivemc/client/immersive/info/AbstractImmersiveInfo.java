@@ -47,4 +47,6 @@ public abstract class AbstractImmersiveInfo {
     public void changeCountdown(int amount) {
         this.countdown += amount;
     }
+
+    public abstract boolean readyToRender();
 }

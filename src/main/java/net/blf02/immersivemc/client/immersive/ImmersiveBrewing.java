@@ -27,19 +27,19 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
     }
 
     @Override
-    public boolean shouldRender(BrewingInfo info) {
+    public boolean shouldRender(BrewingInfo info, boolean isInVR) {
         if (Minecraft.getInstance().player == null) {
             return false;
         }
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         return info.getTileEntity().getLevel() != null &&
                 info.getTileEntity().getLevel().getBlockState(info.getTileEntity().getBlockPos().relative(forward)).isAir()
-                && info.hasPositions();
+                && info.readyToRender();
     }
 
     @Override
-    public void tick(BrewingInfo info) {
-        super.tick(info);
+    public void tick(BrewingInfo info, boolean isInVR) {
+        super.tick(info, isInVR);
         BrewingStandTileEntity stand = info.getTileEntity();
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         Vector3d pos = getDirectlyInFront(forward, stand.getBlockPos());
@@ -73,7 +73,7 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
     }
 
     @Override
-    protected void render(BrewingInfo info, MatrixStack stack) {
+    protected void render(BrewingInfo info, MatrixStack stack, boolean isInVR) {
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
 
         float size = ClientConfig.itemScaleSizeBrewing / info.getCountdown();

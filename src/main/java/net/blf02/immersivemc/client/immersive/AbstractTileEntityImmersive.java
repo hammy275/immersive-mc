@@ -17,11 +17,11 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
 
     public abstract int getTickTime();
 
-    public abstract boolean shouldRender(I info);
+    public abstract boolean shouldRender(I info, boolean isInVR);
 
     @Override
-    public void tick(I info) {
-        super.tick(info);
+    public void tick(I info, boolean isInVR) {
+        super.tick(info, isInVR);
         if (info.getTileEntity() instanceof IInventory) {
             IInventory inv = (IInventory) info.getTileEntity();
             for (int i = 0; i <= info.maxSlotIndex; i++) {

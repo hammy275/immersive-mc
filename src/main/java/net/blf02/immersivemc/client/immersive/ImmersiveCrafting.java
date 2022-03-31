@@ -20,8 +20,8 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     private final double spacing = 3d/16d;
 
     @Override
-    public void tick(CraftingInfo info) {
-        super.tick(info);
+    public void tick(CraftingInfo info, boolean isInVR) {
+        super.tick(info, isInVR);
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         Vector3d pos = getTopCenterOfBlock(info.tablePos);
         Direction left = getLeftOfDirection(forward);
@@ -56,7 +56,7 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     }
 
     @Override
-    protected void render(CraftingInfo info, MatrixStack stack) {
+    protected void render(CraftingInfo info, MatrixStack stack, boolean isInVR) {
         float itemSize = ClientConfig.itemScaleSizeCrafting / info.getCountdown();
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
 
@@ -68,12 +68,12 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     }
 
     @Override
-    public boolean shouldRender(CraftingInfo info) {
+    public boolean shouldRender(CraftingInfo info, boolean isInVR) {
         if (Minecraft.getInstance().player == null) return false;
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         World level = Minecraft.getInstance().level;
         return level != null && level.getBlockState(info.tablePos.relative(forward)).isAir()
-                && info.hasPositions();
+                && info.readyToRender();
     }
 
     public void trackObject(BlockPos tablePos) {

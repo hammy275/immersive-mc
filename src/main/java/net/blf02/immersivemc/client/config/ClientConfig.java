@@ -6,6 +6,7 @@ public class ClientConfig {
     public static final int ticksToRenderFurnace = 80;
     public static final int ticksToRenderBrewing = 120;
     public static final int ticksToRenderCrafting = 120;
+    public static final int ticksToHandleJukebox = 100;
 
     // Size of items when rendered in front of something immersive
     public static final float itemScaleSizeFurnace = 0.5f;

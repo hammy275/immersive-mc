@@ -33,11 +33,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         Immersives.IMMERSIVES.add(this);
     }
 
-    public abstract boolean shouldRender(I info);
+    public abstract boolean shouldRender(I info, boolean isInVR);
 
-    protected abstract void render(I info, MatrixStack stack);
+    protected abstract void render(I info, MatrixStack stack, boolean isInVR);
 
-    public void tick(I info) {
+    public void tick(I info, boolean isInVR) {
         // Set the cooldown (transition time) based on how long we've existed or until we stop existing
         if (info.getCountdown() > 1 && info.getTicksLeft() > 20) {
             info.changeCountdown(-1);
@@ -57,9 +57,9 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      *
      * This is the render method that should be called by outside functions
      */
-    public void doRender(I info, MatrixStack stack) {
-        if (shouldRender(info)) {
-            render(info, stack);
+    public void doRender(I info, MatrixStack stack, boolean isInVR) {
+        if (shouldRender(info, isInVR)) {
+            render(info, stack, isInVR);
         }
     }
 
@@ -127,8 +127,13 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
             stack.popPose();
         }
+        renderHitbox(stack, hitbox, pos);
+    }
+
+    protected void renderHitbox(MatrixStack stack, AxisAlignedBB hitbox, Vector3d pos) {
         if (Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() &&
                 hitbox != null) {
+            ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
             // Use a new stack here, so we don't conflict with the stack.scale() for the item itself
             stack.pushPose();
             stack.translate(-renderInfo.getPosition().x + pos.x,

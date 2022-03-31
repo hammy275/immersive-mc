@@ -5,6 +5,7 @@ import net.blf02.immersivemc.client.immersive.AbstractImmersive;
 import net.blf02.immersivemc.client.immersive.ImmersiveBrewing;
 import net.blf02.immersivemc.client.immersive.ImmersiveCrafting;
 import net.blf02.immersivemc.client.immersive.ImmersiveFurnace;
+import net.blf02.immersivemc.client.immersive.ImmersiveJukebox;
 import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
@@ -16,12 +17,14 @@ import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.BrewingStandTileEntity;
+import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -48,7 +51,7 @@ public class ClientLogicSubscriber {
             ClientUtil.immersiveLeftClickCooldown--;
         }
         for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
-            handleInfos(singleton);
+            tickInfos(singleton);
         }
         if (Minecraft.getInstance().gameMode == null) return;
 
@@ -70,6 +73,8 @@ public class ClientLogicSubscriber {
             ImmersiveBrewing.getSingleton().trackObject(stand);
         } else if (state.getBlock() == Blocks.CRAFTING_TABLE) {
             ImmersiveCrafting.singleton.trackObject(pos);
+        } else if (tileEntity instanceof JukeboxTileEntity) {
+            ImmersiveJukebox.getSingleton().trackObject((JukeboxTileEntity) tileEntity);
         }
     }
 
@@ -98,11 +103,11 @@ public class ClientLogicSubscriber {
 
     }
 
-    protected <I extends AbstractImmersiveInfo> void handleInfos(AbstractImmersive<I> singleton) {
+    protected <I extends AbstractImmersiveInfo> void tickInfos(AbstractImmersive<I> singleton) {
         List<I> infos = singleton.getTrackedObjects();
         List<I> toRemove = new LinkedList<>();
         for (I info : infos) {
-            singleton.tick(info);
+            singleton.tick(info, VRPluginVerify.hasVR);
             if (info.getTicksLeft() <= 0) {
                 toRemove.add(info);
             }
@@ -177,6 +182,7 @@ public class ClientLogicSubscriber {
                 }
             }
         }
+        // Don't handle jukeboxes since those are VR only
         return false;
     }
 
