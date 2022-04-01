@@ -68,4 +68,9 @@ public class CraftingInfo extends AbstractImmersiveInfo {
     public boolean readyToRender() {
         return this.hasPositions() && this.hasHitboxes();
     }
+
+    @Override
+    public BlockPos getBlockPosition() {
+        return this.tablePos;
+    }
 }

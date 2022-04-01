@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.client.immersive.info;
 
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 
 public abstract class AbstractImmersiveInfo {
@@ -49,4 +50,6 @@ public abstract class AbstractImmersiveInfo {
     }
 
     public abstract boolean readyToRender();
+
+    public abstract BlockPos getBlockPosition();
 }

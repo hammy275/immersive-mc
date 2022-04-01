@@ -2,6 +2,7 @@ package net.blf02.immersivemc.client.immersive.info;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 
 public abstract class AbstractTileEntityImmersiveInfo<T extends TileEntity> extends AbstractImmersiveInfo {
@@ -53,5 +54,10 @@ public abstract class AbstractTileEntityImmersiveInfo<T extends TileEntity> exte
     @Override
     public boolean readyToRender() {
         return this.hasHitboxes() && this.hasPositions();
+    }
+
+    @Override
+    public BlockPos getBlockPosition() {
+        return this.getTileEntity().getBlockPos();
     }
 }

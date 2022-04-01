@@ -4,7 +4,9 @@ import net.blf02.immersivemc.client.subscribe.ClientLogicSubscriber;
 import net.blf02.immersivemc.client.subscribe.ClientRenderSubscriber;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
+import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
+import net.blf02.immersivemc.server.ServerSubscriber;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -30,11 +32,15 @@ public class ImmersiveMC {
 
     protected void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
+            MinecraftForge.EVENT_BUS.register(new ServerSubscriber());
+
             int index = 1;
             Network.INSTANCE.registerMessage(index++, SwapPacket.class, SwapPacket::encode,
                     SwapPacket::decode, SwapPacket::handle);
             Network.INSTANCE.registerMessage(index++, DoCraftPacket.class, DoCraftPacket::encode,
                     DoCraftPacket::decode, DoCraftPacket::handle);
+            Network.INSTANCE.registerMessage(index++, ImmersiveBreakPacket.class, ImmersiveBreakPacket::encode,
+                    ImmersiveBreakPacket::decode, ImmersiveBreakPacket::handle);
         });
 
     }
