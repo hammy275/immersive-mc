@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.common.network.packet;
 
 import net.blf02.immersivemc.client.storage.NullContainer;
+import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.common.swap.Swap;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
@@ -39,7 +40,7 @@ public class DoCraftPacket {
     public static void handle(final DoCraftPacket message, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity player = ctx.get().getSender();
-            if (player != null) {
+            if (player != null && NetworkUtil.safeToRun(message.tablePos, player)) {
                 Swap.handleCrafting(player, message.inv, message.tablePos);
             }
         });

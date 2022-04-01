@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.common.network.packet;
 
+import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.common.swap.Swap;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -39,7 +40,7 @@ public class SwapPacket {
     public static void handle(final SwapPacket message, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity player = ctx.get().getSender();
-            if (player != null && player.level.isLoaded(message.block)) {
+            if (player != null && NetworkUtil.safeToRun(message.block, player)) {
                 TileEntity tileEnt = player.level.getBlockEntity(message.block);
                 if (tileEnt instanceof AbstractFurnaceTileEntity) {
                     AbstractFurnaceTileEntity furnace = (AbstractFurnaceTileEntity) tileEnt;
