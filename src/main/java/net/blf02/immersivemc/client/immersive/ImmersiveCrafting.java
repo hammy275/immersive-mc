@@ -26,6 +26,11 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
         Vector3d pos = getTopCenterOfBlock(info.tablePos);
         Direction left = getLeftOfDirection(forward);
 
+        List<ItemStack> slots = new ArrayList<>();
+        for (int i = 0; i < 9; i++) {
+            slots.add(ClientStorage.craftingStorage.getItem(i));
+        }
+
         Vector3d leftOffset = new Vector3d(
                 left.getNormal().getX() * spacing, 0, left.getNormal().getZ() * spacing);
         Vector3d rightOffset = new Vector3d(
@@ -36,11 +41,6 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
         Vector3d botOffset = new Vector3d(
                 forward.getNormal().getX() * spacing, 0, forward.getNormal().getZ() * spacing);
 
-
-        List<ItemStack> slots = new ArrayList<>();
-        for (int i = 0; i < 9; i++) {
-            slots.add(ClientStorage.craftingStorage.getItem(i));
-        }
 
         Vector3d[] positions = new Vector3d[]{
                 pos.add(leftOffset).add(topOffset), pos.add(topOffset), pos.add(rightOffset).add(topOffset),

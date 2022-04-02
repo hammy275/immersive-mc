@@ -7,11 +7,13 @@ public class ClientConfig {
     public static final int ticksToRenderBrewing = 120;
     public static final int ticksToRenderCrafting = 120;
     public static final int ticksToHandleJukebox = 100;
+    public static final int ticksToRenderChest = Integer.MAX_VALUE; // You manually close a chest
 
     // Size of items when rendered in front of something immersive
     public static final float itemScaleSizeFurnace = 0.5f;
     public static final float itemScaleSizeBrewing = 1f/3f;
     public static final float itemScaleSizeCrafting = 3f/16f; // Chosen for the texture of the table itself
+    public static final float itemScaleSizeChest = 3f/16f;
 
     // Time to transition in ticks
     public static final int transitionTime = 20;

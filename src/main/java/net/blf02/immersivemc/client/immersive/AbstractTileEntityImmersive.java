@@ -2,6 +2,7 @@ package net.blf02.immersivemc.client.immersive;
 
 import net.blf02.immersivemc.client.immersive.info.AbstractTileEntityImmersiveInfo;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extends AbstractTileEntityImmersiveInfo<T>>
@@ -22,7 +23,7 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
     @Override
     public void tick(I info, boolean isInVR) {
         super.tick(info, isInVR);
-        if (info.getTileEntity() instanceof IInventory) {
+        if (info.getTileEntity() instanceof IInventory && !(info.getTileEntity() instanceof ChestTileEntity)) {
             IInventory inv = (IInventory) info.getTileEntity();
             for (int i = 0; i <= info.maxSlotIndex; i++) {
                 info.items[i] = inv.getItem(i);
@@ -33,6 +34,15 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
 
     // EVERYTHING ABOVE MUST BE OVERRIDEN, AND HAVE SUPER() CALLED IF APPLICABLE!
 
+    /**
+     * Can be overriden as a final check before tracking an object.
+     * @param tileEnt Tile entity to check one last time before possibly tracking
+     * @return Whether or not we should track this
+     */
+    public boolean shouldTrack(T tileEnt) {
+        return true;
+    }
+
     public void trackObject(T tileEnt) {
         for (I info : getTrackedObjects()) {
             if (info.getTileEntity() == tileEnt) {
@@ -40,6 +50,6 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
                 return;
             }
         }
-        infos.add(getNewInfo(tileEnt));
+        if (shouldTrack(tileEnt)) infos.add(getNewInfo(tileEnt));
     }
 }

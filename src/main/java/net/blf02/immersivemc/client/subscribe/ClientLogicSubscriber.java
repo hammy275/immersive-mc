@@ -3,6 +3,7 @@ package net.blf02.immersivemc.client.subscribe;
 import net.blf02.immersivemc.client.ClientUtil;
 import net.blf02.immersivemc.client.immersive.AbstractImmersive;
 import net.blf02.immersivemc.client.immersive.ImmersiveBrewing;
+import net.blf02.immersivemc.client.immersive.ImmersiveChest;
 import net.blf02.immersivemc.client.immersive.ImmersiveCrafting;
 import net.blf02.immersivemc.client.immersive.ImmersiveFurnace;
 import net.blf02.immersivemc.client.immersive.ImmersiveJukebox;
@@ -24,6 +25,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.BrewingStandTileEntity;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
@@ -75,6 +77,8 @@ public class ClientLogicSubscriber {
             ImmersiveCrafting.singleton.trackObject(pos);
         } else if (tileEntity instanceof JukeboxTileEntity) {
             ImmersiveJukebox.getSingleton().trackObject((JukeboxTileEntity) tileEntity);
+        } else if (tileEntity instanceof ChestTileEntity) {
+            ImmersiveChest.singleton.trackObject((ChestTileEntity) tileEntity);
         }
     }
 
