@@ -3,16 +3,18 @@ package net.blf02.immersivemc.client.immersive;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConfig;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
+import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
+import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.block.AbstractChestBlock;
-import net.minecraft.block.ChestBlock;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity, ChestInfo> {
 
@@ -23,6 +25,11 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
     public void tick(ChestInfo info, boolean isInVR) {
         super.tick(info, isInVR);
         if (!chestsValid(info)) return; // Return if we're waiting to remove this immersive
+
+        // super.tick() does this for the main tileEntity. This does it for the other chest
+        if (ThreadLocalRandom.current().nextInt(ClientConfig.inventorySyncTime) == 0) {
+            Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.other.getBlockPos()));
+        }
         ChestTileEntity[] chests = new ChestTileEntity[]{info.getTileEntity(), info.other};
         for (int i = 0; i <= 1; i++) {
             ChestTileEntity chest = chests[i];
@@ -31,11 +38,6 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
             info.forward = forward;
             Vector3d pos = getTopCenterOfBlock(chest.getBlockPos());
             Direction left = getLeftOfDirection(forward);
-
-
-            for (int slot = 0; slot < chest.getContainerSize(); slot++) {
-                info.items[27 * i + slot] = chest.getItem(slot);
-            }
 
             Vector3d leftOffset = new Vector3d(
                     left.getNormal().getX() * spacing, 0, left.getNormal().getZ() * spacing);
@@ -101,7 +103,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
 
     @Override
     public ChestInfo getNewInfo(ChestTileEntity tileEnt) {
-        return new ChestInfo(tileEnt, ClientConfig.ticksToRenderChest, getOther(tileEnt));
+        return new ChestInfo(tileEnt, ClientConfig.ticksToRenderChest, Util.getOther(tileEnt));
     }
 
     @Override
@@ -126,7 +128,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
     @Override
     public boolean shouldTrack(ChestTileEntity tileEnt) {
         // Make sure this isn't an "other" chest.
-        ChestTileEntity other = getOther(tileEnt);
+        ChestTileEntity other = Util.getOther(tileEnt);
         if (other != null) { // If we have an other chest, make sure that one isn't already being tracked
             for (ChestInfo info : ImmersiveChest.singleton.getTrackedObjects()) {
                 if (info.getTileEntity() == other) { // If the info we're looking at is our neighboring chest
@@ -141,16 +143,6 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
             }
         }
         return super.shouldTrack(tileEnt);
-    }
-
-    public ChestTileEntity getOther(ChestTileEntity chest) {
-        // Gets the chest this one is connected to. Can be null.
-        Direction otherDir = ChestBlock.getConnectedDirection(chest.getBlockState());
-        BlockPos otherPos = chest.getBlockPos().relative(otherDir);
-        if (chest.getLevel() != null && chest.getLevel().getBlockEntity(otherPos) instanceof ChestTileEntity) {
-            return (ChestTileEntity) chest.getLevel().getBlockEntity(otherPos);
-        }
-        return null;
     }
 
     public static ChestInfo findImmersive(ChestTileEntity chest) {

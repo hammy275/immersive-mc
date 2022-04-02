@@ -1,6 +1,10 @@
 package net.blf02.immersivemc.common.util;
 
+import net.minecraft.block.ChestBlock;
+import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Optional;
@@ -48,5 +52,15 @@ public class Util {
             i++;
         }
         return Optional.empty();
+    }
+
+    public static ChestTileEntity getOther(ChestTileEntity chest) {
+        // Gets the chest this one is connected to. Can be null.
+        Direction otherDir = ChestBlock.getConnectedDirection(chest.getBlockState());
+        BlockPos otherPos = chest.getBlockPos().relative(otherDir);
+        if (chest.getLevel() != null && chest.getLevel().getBlockEntity(otherPos) instanceof ChestTileEntity) {
+            return (ChestTileEntity) chest.getLevel().getBlockEntity(otherPos);
+        }
+        return null;
     }
 }

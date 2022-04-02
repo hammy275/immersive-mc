@@ -53,11 +53,15 @@ public abstract class AbstractTileEntityImmersiveInfo<T extends TileEntity> exte
 
     @Override
     public boolean readyToRender() {
-        return this.hasHitboxes() && this.hasPositions();
+        return this.hasHitboxes() && this.hasPositions() && this.hasItems();
     }
 
     @Override
     public BlockPos getBlockPosition() {
         return this.getTileEntity().getBlockPos();
+    }
+
+    public boolean hasItems() {
+        return this.items[this.maxSlotIndex] != null;
     }
 }

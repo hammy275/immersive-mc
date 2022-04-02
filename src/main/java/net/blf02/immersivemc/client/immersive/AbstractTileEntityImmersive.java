@@ -1,9 +1,13 @@
 package net.blf02.immersivemc.client.immersive;
 
+import net.blf02.immersivemc.client.config.ClientConfig;
 import net.blf02.immersivemc.client.immersive.info.AbstractTileEntityImmersiveInfo;
+import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extends AbstractTileEntityImmersiveInfo<T>>
     extends AbstractImmersive<I> {
@@ -23,10 +27,9 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
     @Override
     public void tick(I info, boolean isInVR) {
         super.tick(info, isInVR);
-        if (info.getTileEntity() instanceof IInventory && !(info.getTileEntity() instanceof ChestTileEntity)) {
-            IInventory inv = (IInventory) info.getTileEntity();
-            for (int i = 0; i <= info.maxSlotIndex; i++) {
-                info.items[i] = inv.getItem(i);
+        if (info.getTileEntity() instanceof IInventory) {
+            if (ThreadLocalRandom.current().nextInt(ClientConfig.inventorySyncTime) == 0) {
+                Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
             }
         }
 

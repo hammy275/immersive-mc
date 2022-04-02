@@ -4,6 +4,7 @@ import net.blf02.immersivemc.client.subscribe.ClientLogicSubscriber;
 import net.blf02.immersivemc.client.subscribe.ClientRenderSubscriber;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
+import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.server.ServerSubscriber;
@@ -41,6 +42,8 @@ public class ImmersiveMC {
                     DoCraftPacket::decode, DoCraftPacket::handle);
             Network.INSTANCE.registerMessage(index++, ImmersiveBreakPacket.class, ImmersiveBreakPacket::encode,
                     ImmersiveBreakPacket::decode, ImmersiveBreakPacket::handle);
+            Network.INSTANCE.registerMessage(index++, FetchInventoryPacket.class, FetchInventoryPacket::encode,
+                    FetchInventoryPacket::decode, FetchInventoryPacket::handle);
         });
 
     }
