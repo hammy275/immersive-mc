@@ -3,12 +3,16 @@ package net.blf02.immersivemc.client.immersive;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConfig;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
+import net.blf02.immersivemc.common.vr.VRPluginVerify;
+import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+
+import java.util.Objects;
 
 public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity, ChestInfo> {
 
@@ -18,9 +22,11 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
     @Override
     public void tick(ChestInfo info, boolean isInVR) {
         super.tick(info, isInVR);
+        if (!chestsValid(info)) return; // Return if we're waiting to remove this immersive
         ChestTileEntity[] chests = new ChestTileEntity[]{info.getTileEntity(), info.other};
         for (int i = 0; i <= 1; i++) {
             ChestTileEntity chest = chests[i];
+            if (chest == null) continue;
             Direction forward = chest.getBlockState().getValue(HorizontalBlock.FACING);
             info.forward = forward;
             Vector3d pos = getTopCenterOfBlock(chest.getBlockPos());
@@ -47,10 +53,29 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
                     pos.add(leftOffset), pos, pos.add(rightOffset),
                     pos.add(leftOffset).add(botOffset), pos.add(botOffset), pos.add(rightOffset).add(botOffset)
             };
-            float hitboxSize = ClientConfig.itemScaleSizeCrafting / 3f;
-            for (int z = 18 + 27*i; z < 27 + 27*i; z++) {
-                info.setPosition(z, positions[z - 18 - 27*i]);
-                info.setHitbox(z, createHitbox(positions[z - 18 - 27*i], hitboxSize));
+            float hitboxSize = ClientConfig.itemScaleSizeChest / 3f;
+            int startTop = 9 * info.getRowNum() + 27*i;
+            int endTop = startTop + 9;
+            for (int z = startTop; z < endTop; z++) {
+                Vector3d posRaw = positions[z % 9];
+                info.setPosition(z, posRaw.add(0, -0.25, 0));
+                info.setHitbox(z, createHitbox(posRaw.add(0, -0.25, 0), hitboxSize));
+            }
+
+            int startMid = 9 * info.getNextRow(info.getRowNum()) + 27*i;
+            int endMid = startMid + 9;
+            for (int z = startMid; z < endMid; z++) {
+                Vector3d posRaw = positions[z % 9];
+                info.setPosition(z, posRaw.add(0, -0.5, 0));
+                info.setHitbox(z, createHitbox(posRaw.add(0, -0.5, 0), hitboxSize));
+            }
+
+            int startBot = 9 * info.getNextRow(info.getNextRow(info.getRowNum())) + 27*i;
+            int endBot = startBot + 9;
+            for (int z = startBot; z < endBot; z++) {
+                Vector3d posRaw = positions[z % 9];
+                info.setPosition(z, posRaw.add(0, -0.75, 0));
+                info.setHitbox(z, createHitbox(posRaw.add(0, -0.75, 0), hitboxSize));
             }
 
         }
@@ -58,23 +83,24 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
 
     @Override
     protected void render(ChestInfo info, MatrixStack stack, boolean isInVR) {
-        float itemSize = ClientConfig.itemScaleSizeCrafting / info.getCountdown();
+        float itemSize = ClientConfig.itemScaleSizeChest / info.getCountdown();
         Direction forward = info.forward;
 
-        for (int i = 18; i < 27; i++) {
+        for (int i = 0; i < 27; i++) {
             renderItem(info.items[i], stack, info.getPosition(i),
                     itemSize, forward, Direction.UP, info.getHibtox(i));
         }
 
-        for (int i = 18 + 27; i < 27*2; i++) {
-            renderItem(info.items[i], stack, info.getPosition(i),
-                    itemSize, forward, Direction.UP, info.getHibtox(i));
+        if (info.other != null) {
+            for (int i = 27; i < 27 * 2; i++) {
+                renderItem(info.items[i], stack, info.getPosition(i),
+                        itemSize, forward, Direction.UP, info.getHibtox(i));
+            }
         }
     }
 
     @Override
     public ChestInfo getNewInfo(ChestTileEntity tileEnt) {
-
         return new ChestInfo(tileEnt, ClientConfig.ticksToRenderChest, getOther(tileEnt));
     }
 
@@ -85,7 +111,16 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
 
     @Override
     public boolean shouldRender(ChestInfo info, boolean isInVR) {
-        return info.forward != null && info.readyToRender() ; // TODO: Add VR only check
+        boolean dataReady = info.forward != null && info.readyToRender();
+        return !info.failRender && dataReady && chestsValid(info);
+    }
+
+    public boolean chestsValid(ChestInfo info) {
+        boolean mainChestExists = info.getTileEntity().getLevel() != null &&
+                info.getTileEntity().getLevel().getBlockState(info.getBlockPosition()).getBlock() instanceof AbstractChestBlock;
+        boolean otherChestExists = info.other == null ? true : (info.getTileEntity().getLevel() != null &&
+                info.getTileEntity().getLevel().getBlockState(info.other.getBlockPos()).getBlock() instanceof AbstractChestBlock);
+        return mainChestExists && otherChestExists;
     }
 
     @Override
@@ -96,7 +131,10 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
             for (ChestInfo info : ImmersiveChest.singleton.getTrackedObjects()) {
                 if (info.getTileEntity() == other) { // If the info we're looking at is our neighboring chest
                     if (info.other == null) { // If our neighboring chest's info isn't tracking us
+                        info.failRender = true;
                         info.other = tileEnt; // Track us
+                        this.tick(info, VRPluginVerify.hasVR); // Tick so we can handle the items in our other chest
+                        info.failRender = false;
                     }
                     return false; // Return false so this one isn't tracked
                 }
@@ -111,6 +149,16 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
         BlockPos otherPos = chest.getBlockPos().relative(otherDir);
         if (chest.getLevel() != null && chest.getLevel().getBlockEntity(otherPos) instanceof ChestTileEntity) {
             return (ChestTileEntity) chest.getLevel().getBlockEntity(otherPos);
+        }
+        return null;
+    }
+
+    public static ChestInfo findImmersive(ChestTileEntity chest) {
+        Objects.requireNonNull(chest);
+        for (ChestInfo info : singleton.getTrackedObjects()) {
+            if (info.getTileEntity() == chest || info.other == chest) {
+                return info;
+            }
         }
         return null;
     }

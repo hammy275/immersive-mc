@@ -3,6 +3,7 @@ package net.blf02.immersivemc.common.network.packet;
 import net.blf02.immersivemc.client.immersive.AbstractImmersive;
 import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -37,7 +38,11 @@ public class ImmersiveBreakPacket {
                 boolean breakOut = false;
                 for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
                     for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
-                        if (info.getBlockPosition().equals(message.pos)) {
+                        if (
+                                info.getBlockPosition().equals(message.pos) || // if the position matches our thing
+                                (info instanceof ChestInfo && ((ChestInfo) info).other != null &&
+                                        ((ChestInfo) info).other.getBlockPos().equals(message.pos)) // If the position is
+                        ) {
                             singleton.getTrackedObjects().remove(info);
                             breakOut = true;
                             break;

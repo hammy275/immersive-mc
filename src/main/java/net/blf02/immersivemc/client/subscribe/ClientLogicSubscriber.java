@@ -10,6 +10,7 @@ import net.blf02.immersivemc.client.immersive.ImmersiveJukebox;
 import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
+import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
 import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.client.storage.ClientStorage;
@@ -33,6 +34,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -48,7 +50,7 @@ public class ClientLogicSubscriber {
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
+        if (event.phase != TickEvent.Phase.END || event.player.level instanceof ServerWorld) return;
         if (ClientUtil.immersiveLeftClickCooldown > 0) {
             ClientUtil.immersiveLeftClickCooldown--;
         }
@@ -134,6 +136,16 @@ public class ClientLogicSubscriber {
             Network.INSTANCE.sendToServer(new DoCraftPacket(
                     ClientStorage.craftingStorage, pos
             ));
+            return true;
+        }
+
+        TileEntity tileEnt = player.level.getBlockEntity(pos);
+        if (tileEnt instanceof ChestTileEntity) {
+            ChestTileEntity chest = (ChestTileEntity) tileEnt;
+            ChestInfo info = ImmersiveChest.findImmersive(chest);
+            if (info != null) {
+                info.nextRow();
+            }
             return true;
         }
 

@@ -48,7 +48,7 @@ public abstract class AbstractTileEntityImmersiveInfo<T extends TileEntity> exte
 
     @Override
     public boolean hasPositions() {
-        return positions[maxSlotIndex] != null;
+        return positions[0] != null;
     }
 
     @Override

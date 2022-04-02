@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.BrewingStandTileEntity;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.chunk.Chunk;
@@ -26,7 +27,8 @@ public class ServerSubscriber {
             TileEntity tileEntity = event.getWorld().getBlockEntity(event.getPos());
             sendBreakPacket = tileEntity instanceof AbstractFurnaceTileEntity ||
                     tileEntity instanceof JukeboxTileEntity ||
-                    tileEntity instanceof BrewingStandTileEntity;
+                    tileEntity instanceof BrewingStandTileEntity ||
+                    tileEntity instanceof ChestTileEntity;
         } else {
             sendBreakPacket = state.getBlock() == Blocks.CRAFTING_TABLE;
         }
