@@ -26,10 +26,16 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
         super.tick(info, isInVR);
         if (!chestsValid(info)) return; // Return if we're waiting to remove this immersive
 
-        // super.tick() does this for the main tileEntity. This does it for the other chest
-        if (ThreadLocalRandom.current().nextInt(ClientConfig.inventorySyncTime) == 0) {
-            Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.other.getBlockPos()));
+        // Chest can become null even if the above doesn't return us
+        try {
+            // super.tick() does this for the main tileEntity. This does it for the other chest
+            if (ThreadLocalRandom.current().nextInt(ClientConfig.inventorySyncTime) == 0) {
+                Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.other.getBlockPos()));
+            }
+        } catch (NullPointerException e) {
+            return;
         }
+
         ChestTileEntity[] chests = new ChestTileEntity[]{info.getTileEntity(), info.other};
         for (int i = 0; i <= 1; i++) {
             ChestTileEntity chest = chests[i];
@@ -60,24 +66,24 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
             int endTop = startTop + 9;
             for (int z = startTop; z < endTop; z++) {
                 Vector3d posRaw = positions[z % 9];
-                info.setPosition(z, posRaw.add(0, -0.25, 0));
-                info.setHitbox(z, createHitbox(posRaw.add(0, -0.25, 0), hitboxSize));
+                info.setPosition(z, posRaw.add(0, -0.2, 0));
+                info.setHitbox(z, createHitbox(posRaw.add(0, -0.2, 0), hitboxSize));
             }
 
             int startMid = 9 * info.getNextRow(info.getRowNum()) + 27*i;
             int endMid = startMid + 9;
             for (int z = startMid; z < endMid; z++) {
                 Vector3d posRaw = positions[z % 9];
-                info.setPosition(z, posRaw.add(0, -0.5, 0));
-                info.setHitbox(z, createHitbox(posRaw.add(0, -0.5, 0), hitboxSize));
+                info.setPosition(z, posRaw.add(0, -0.3, 0));
+                info.setHitbox(z, createHitbox(posRaw.add(0, -0.3, 0), hitboxSize));
             }
 
             int startBot = 9 * info.getNextRow(info.getNextRow(info.getRowNum())) + 27*i;
             int endBot = startBot + 9;
             for (int z = startBot; z < endBot; z++) {
                 Vector3d posRaw = positions[z % 9];
-                info.setPosition(z, posRaw.add(0, -0.75, 0));
-                info.setHitbox(z, createHitbox(posRaw.add(0, -0.75, 0), hitboxSize));
+                info.setPosition(z, posRaw.add(0, -0.4, 0));
+                info.setHitbox(z, createHitbox(posRaw.add(0, -0.4, 0), hitboxSize));
             }
 
         }
@@ -103,7 +109,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
 
     @Override
     public ChestInfo getNewInfo(ChestTileEntity tileEnt) {
-        return new ChestInfo(tileEnt, ClientConfig.ticksToRenderChest, Util.getOther(tileEnt));
+        return new ChestInfo(tileEnt, ClientConfig.ticksToRenderChest, Util.getOtherChest(tileEnt));
     }
 
     @Override
@@ -114,21 +120,26 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
     @Override
     public boolean shouldRender(ChestInfo info, boolean isInVR) {
         boolean dataReady = info.forward != null && info.readyToRender();
-        return !info.failRender && dataReady && chestsValid(info);
+        return !info.failRender && dataReady && chestsValid(info) && info.isOpen;
     }
 
     public boolean chestsValid(ChestInfo info) {
-        boolean mainChestExists = info.getTileEntity().getLevel() != null &&
-                info.getTileEntity().getLevel().getBlockState(info.getBlockPosition()).getBlock() instanceof AbstractChestBlock;
-        boolean otherChestExists = info.other == null ? true : (info.getTileEntity().getLevel() != null &&
-                info.getTileEntity().getLevel().getBlockState(info.other.getBlockPos()).getBlock() instanceof AbstractChestBlock);
-        return mainChestExists && otherChestExists;
+        try {
+            boolean mainChestExists = info.getTileEntity().getLevel() != null &&
+                    info.getTileEntity().getLevel().getBlockState(info.getBlockPosition()).getBlock() instanceof AbstractChestBlock;
+            boolean otherChestExists = info.other == null ? true : (info.getTileEntity().getLevel() != null &&
+                    info.getTileEntity().getLevel().getBlockState(info.other.getBlockPos()).getBlock() instanceof AbstractChestBlock);
+            return mainChestExists && otherChestExists;
+        } catch (NullPointerException e) {
+            return false;
+        }
+
     }
 
     @Override
     public boolean shouldTrack(ChestTileEntity tileEnt) {
         // Make sure this isn't an "other" chest.
-        ChestTileEntity other = Util.getOther(tileEnt);
+        ChestTileEntity other = Util.getOtherChest(tileEnt);
         if (other != null) { // If we have an other chest, make sure that one isn't already being tracked
             for (ChestInfo info : ImmersiveChest.singleton.getTrackedObjects()) {
                 if (info.getTileEntity() == other) { // If the info we're looking at is our neighboring chest
@@ -154,4 +165,6 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
         }
         return null;
     }
+
+
 }

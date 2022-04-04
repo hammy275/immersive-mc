@@ -16,6 +16,7 @@ import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.client.storage.ClientStorage;
 import net.blf02.immersivemc.client.swap.ClientSwap;
 import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
 import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;
@@ -86,6 +87,8 @@ public class ClientLogicSubscriber {
 
     @SubscribeEvent
     public void onClick(InputEvent.ClickInputEvent event) {
+        // Don't run code if we're on spectator mode
+        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSpectator()) return;
         if (event.getHand() == Hand.MAIN_HAND && event.isUseItem()) {
             if (handleRightClick(Minecraft.getInstance().player)) {
                 event.setCanceled(true);
@@ -196,6 +199,34 @@ public class ClientLogicSubscriber {
                     ClientSwap.craftingSwap(closest.get(), Hand.MAIN_HAND);
                     return true;
                 }
+            }
+        }
+
+        for (ChestInfo info : ImmersiveChest.singleton.getTrackedObjects()) {
+            if (info.hasHitboxes()) {
+                Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
+                if (closest.isPresent()) {
+                    Network.INSTANCE.sendToServer(new SwapPacket(
+                            info.getBlockPosition(), closest.get(), Hand.MAIN_HAND
+                    ));
+                    return true;
+                }
+            }
+        }
+
+        // TODO: Remove when switching to VR only chest
+        RayTraceResult looking = Minecraft.getInstance().hitResult;
+        if (looking == null || looking.getType() != RayTraceResult.Type.BLOCK) return false;
+
+        BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
+        BlockState state = player.level.getBlockState(pos);
+        if (state.getBlock() == Blocks.CHEST && player.level.getBlockEntity(pos) instanceof ChestTileEntity
+        && !player.isCrouching()) { // Crouch to still open chest for debugging purposes lol
+            ChestInfo info = ImmersiveChest.findImmersive((ChestTileEntity) player.level.getBlockEntity(pos));
+            if (info != null) {
+                info.isOpen = !info.isOpen;
+                Network.INSTANCE.sendToServer(new ChestOpenPacket(pos, info.isOpen));
+                return true;
             }
         }
         // Don't handle jukeboxes since those are VR only

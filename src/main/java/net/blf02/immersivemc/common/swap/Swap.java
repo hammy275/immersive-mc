@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.common.swap;
 
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
+import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.JukeboxBlock;
 import net.minecraft.entity.item.ItemEntity;
@@ -16,6 +17,7 @@ import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.BrewingStandTileEntity;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
@@ -74,6 +76,20 @@ public class Swap {
             player.level.levelEvent((PlayerEntity)null, 1010, jukebox.getBlockPos(), Item.getId(playerItem.getItem()));
             playerItem.shrink(1);
             player.awardStat(Stats.PLAY_RECORD);
+        }
+    }
+
+    public static void handleChest(ChestTileEntity chestIn,
+                                   PlayerEntity player, Hand hand,
+                                   int slot) {
+        ChestTileEntity chest = slot > 26 ? Util.getOtherChest(chestIn) : chestIn;
+        if (chest != null) {
+            slot = slot % 27;
+            ItemStack chestItem = chest.getItem(slot).copy();
+            ItemStack playerItem = player.getItemInHand(hand);
+            player.setItemInHand(hand, chestItem);
+            chest.setItem(slot, playerItem);
+            FetchInventoryPacket.handleServerToClient((ServerPlayerEntity) player, chest.getBlockPos());
         }
     }
 

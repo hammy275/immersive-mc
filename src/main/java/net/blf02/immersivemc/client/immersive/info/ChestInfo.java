@@ -11,6 +11,7 @@ public class ChestInfo extends AbstractTileEntityImmersiveInfo<ChestTileEntity> 
     public Direction forward = null;
     public boolean failRender = false; // Used for thread safety when changing `other`
     protected int rowNum = 0;
+    public boolean isOpen = false;
 
     public ChestInfo(ChestTileEntity tileEntity, int ticksToExist, ChestTileEntity other) {
         super(tileEntity, ticksToExist, 53); // Accounts for double chest
@@ -50,5 +51,12 @@ public class ChestInfo extends AbstractTileEntityImmersiveInfo<ChestTileEntity> 
     @Override
     public boolean hasHitboxes() {
         return hitboxes[26] != null;
+    }
+
+    @Override
+    public boolean hasItems() {
+        boolean mainChest = items[26] != null;
+        boolean otherChest = this.other == null || items[53] != null;
+        return mainChest && otherChest;
     }
 }

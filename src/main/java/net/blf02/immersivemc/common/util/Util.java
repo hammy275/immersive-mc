@@ -27,6 +27,9 @@ public class Util {
         Integer winner = null;
         int i = 0;
         for (AxisAlignedBB target : targets) {
+            // This is needed since, with chest immersives for example, we don't know
+            // if we have a single chest or double chest. As a result, we can have null targets.
+            if (target == null) continue;
             // If the start or end of the ray is in the target hitbox, we immediately return true
             if (target.contains(rayStart)) {
                 return Optional.of(i);
@@ -54,7 +57,7 @@ public class Util {
         return Optional.empty();
     }
 
-    public static ChestTileEntity getOther(ChestTileEntity chest) {
+    public static ChestTileEntity getOtherChest(ChestTileEntity chest) {
         // Gets the chest this one is connected to. Can be null.
         Direction otherDir = ChestBlock.getConnectedDirection(chest.getBlockState());
         BlockPos otherPos = chest.getBlockPos().relative(otherDir);
