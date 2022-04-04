@@ -61,7 +61,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
                     pos.add(leftOffset), pos, pos.add(rightOffset),
                     pos.add(leftOffset).add(botOffset), pos.add(botOffset), pos.add(rightOffset).add(botOffset)
             };
-            float hitboxSize = ClientConfig.itemScaleSizeChest / 3f;
+            float hitboxSize = ClientConfig.itemScaleSizeChest / 3f * 1.1f;
             int startTop = 9 * info.getRowNum() + 27*i;
             int endTop = startTop + 9;
             for (int z = startTop; z < endTop; z++) {
@@ -74,16 +74,16 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
             int endMid = startMid + 9;
             for (int z = startMid; z < endMid; z++) {
                 Vector3d posRaw = positions[z % 9];
-                info.setPosition(z, posRaw.add(0, -0.3, 0));
-                info.setHitbox(z, createHitbox(posRaw.add(0, -0.3, 0), hitboxSize));
+                info.setPosition(z, posRaw.add(0, -0.325, 0));
+                info.setHitbox(z, null);
             }
 
             int startBot = 9 * info.getNextRow(info.getNextRow(info.getRowNum())) + 27*i;
             int endBot = startBot + 9;
             for (int z = startBot; z < endBot; z++) {
                 Vector3d posRaw = positions[z % 9];
-                info.setPosition(z, posRaw.add(0, -0.4, 0));
-                info.setHitbox(z, createHitbox(posRaw.add(0, -0.4, 0), hitboxSize));
+                info.setPosition(z, posRaw.add(0, -0.45, 0));
+                info.setHitbox(z, null);
             }
 
         }
@@ -146,7 +146,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
                     if (info.other == null) { // If our neighboring chest's info isn't tracking us
                         info.failRender = true;
                         info.other = tileEnt; // Track us
-                        this.tick(info, VRPluginVerify.hasVR); // Tick so we can handle the items in our other chest
+                        this.tick(info, VRPluginVerify.isInVR); // Tick so we can handle the items in our other chest
                         info.failRender = false;
                     }
                     return false; // Return false so this one isn't tracked

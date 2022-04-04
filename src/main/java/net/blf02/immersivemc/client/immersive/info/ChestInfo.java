@@ -50,7 +50,8 @@ public class ChestInfo extends AbstractTileEntityImmersiveInfo<ChestTileEntity> 
 
     @Override
     public boolean hasHitboxes() {
-        return hitboxes[26] != null;
+        return (hitboxes[8] != null || hitboxes[17] != null || hitboxes[26] != null)
+                && isOpen;
     }
 
     @Override

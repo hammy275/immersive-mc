@@ -16,7 +16,7 @@ public class VRPlugin implements VRAPIPluginProvider {
     @Override
     public void getVRAPI(IVRAPI ivrapi) {
         API = ivrapi;
-        VRPluginVerify.hasVR = true;
+        VRPluginVerify.hasAPI = true;
         // Register Client VR Subscriber if we're running client side and we have VR
         if (FMLLoader.getDist() == Dist.CLIENT) {
             MinecraftForge.EVENT_BUS.register(new ClientVRSubscriber());

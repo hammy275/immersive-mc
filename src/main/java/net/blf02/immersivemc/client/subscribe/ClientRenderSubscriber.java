@@ -30,7 +30,7 @@ public class ClientRenderSubscriber {
                                                                  MatrixStack stack) {
         try {
             for (I info : singleton.getTrackedObjects()) {
-                singleton.doRender(info, stack, VRPluginVerify.hasVR);
+                singleton.doRender(info, stack, VRPluginVerify.isInVR);
             }
         } catch (ConcurrentModificationException ignored) {
             // Skip rendering if the list is modified mid-render

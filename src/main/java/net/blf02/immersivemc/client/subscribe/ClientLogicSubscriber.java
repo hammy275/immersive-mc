@@ -21,6 +21,7 @@ import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
+import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -116,7 +117,7 @@ public class ClientLogicSubscriber {
         List<I> infos = singleton.getTrackedObjects();
         List<I> toRemove = new LinkedList<>();
         for (I info : infos) {
-            singleton.tick(info, VRPluginVerify.hasVR);
+            singleton.tick(info, VRPluginVerify.isInVR);
             if (info.getTicksLeft() <= 0) {
                 toRemove.add(info);
             }
@@ -128,7 +129,7 @@ public class ClientLogicSubscriber {
     }
 
     public static boolean handleLeftClick(PlayerEntity player) {
-        if (Minecraft.getInstance().gameMode == null) return false;
+        if (Minecraft.getInstance().player == null) return false;
 
         RayTraceResult looking = Minecraft.getInstance().hitResult;
         if (looking == null || looking.getType() != RayTraceResult.Type.BLOCK) return false;
@@ -156,12 +157,8 @@ public class ClientLogicSubscriber {
     }
 
     public static boolean handleRightClick(PlayerEntity player) {
-        double dist;
-        try {
-            dist = Minecraft.getInstance().gameMode.getPickRange();
-        } catch (NullPointerException e) {
-            return false;
-        }
+        if (Minecraft.getInstance().gameMode == null) return false;
+        double dist = Minecraft.getInstance().gameMode.getPickRange();
         Vector3d start = player.getEyePosition(1);
         Vector3d viewVec = player.getViewVector(1);
         Vector3d end = player.getEyePosition(1).add(viewVec.x * dist, viewVec.y * dist,
@@ -214,22 +211,31 @@ public class ClientLogicSubscriber {
             }
         }
 
-        // TODO: Remove when switching to VR only chest
+        // If we handle things in the block ray tracing part of right click, we return true
+        if (handleRightClickBlockRayTrace(player)) {
+            return true;
+        }
+        // Don't handle jukeboxes since those are VR only
+        return false;
+    }
+
+    protected static boolean handleRightClickBlockRayTrace(PlayerEntity player) {
         RayTraceResult looking = Minecraft.getInstance().hitResult;
         if (looking == null || looking.getType() != RayTraceResult.Type.BLOCK) return false;
 
-        BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
-        BlockState state = player.level.getBlockState(pos);
-        if (state.getBlock() == Blocks.CHEST && player.level.getBlockEntity(pos) instanceof ChestTileEntity
-        && !player.isCrouching()) { // Crouch to still open chest for debugging purposes lol
-            ChestInfo info = ImmersiveChest.findImmersive((ChestTileEntity) player.level.getBlockEntity(pos));
-            if (info != null) {
-                info.isOpen = !info.isOpen;
-                Network.INSTANCE.sendToServer(new ChestOpenPacket(pos, info.isOpen));
-                return true;
+        if (VRPluginVerify.isInVR) {
+            BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
+            BlockState state = player.level.getBlockState(pos);
+            if (state.getBlock() instanceof AbstractChestBlock && player.level.getBlockEntity(pos) instanceof ChestTileEntity
+                    && !player.isCrouching()) { // Crouch to still open chest for debugging purposes lol
+                ChestInfo info = ImmersiveChest.findImmersive((ChestTileEntity) player.level.getBlockEntity(pos));
+                if (info != null) {
+                    info.isOpen = !info.isOpen;
+                    Network.INSTANCE.sendToServer(new ChestOpenPacket(pos, info.isOpen));
+                    return true;
+                }
             }
         }
-        // Don't handle jukeboxes since those are VR only
         return false;
     }
 

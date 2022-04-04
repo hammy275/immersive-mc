@@ -29,17 +29,18 @@ public class Util {
         for (AxisAlignedBB target : targets) {
             // This is needed since, with chest immersives for example, we don't know
             // if we have a single chest or double chest. As a result, we can have null targets.
-            if (target == null) continue;
-            // If the start or end of the ray is in the target hitbox, we immediately return true
-            if (target.contains(rayStart)) {
-                return Optional.of(i);
-            }
-            // Gets the "hit" for our ray.
-            Optional<Vector3d> closestHitOpt = target.clip(rayStart, rayEnd);
-            double distTemp = closestHitOpt.isPresent() ? closestHitOpt.get().distanceTo(rayStart) : -1;
-            if (closestHitOpt.isPresent() && distTemp < dist) {
-                winner = i;
-                dist = distTemp;
+            if (target != null) {
+                // If the start or end of the ray is in the target hitbox, we immediately return true
+                if (target.contains(rayStart)) {
+                    return Optional.of(i);
+                }
+                // Gets the "hit" for our ray.
+                Optional<Vector3d> closestHitOpt = target.clip(rayStart, rayEnd);
+                double distTemp = closestHitOpt.isPresent() ? closestHitOpt.get().distanceTo(rayStart) : -1;
+                if (closestHitOpt.isPresent() && distTemp < dist) {
+                    winner = i;
+                    dist = distTemp;
+                }
             }
             i++;
         }
@@ -49,7 +50,7 @@ public class Util {
     public static Optional<Integer> getFirstIntersect(Vector3d pos, AxisAlignedBB... targets) {
         int i = 0;
         for (AxisAlignedBB target : targets) {
-            if (target.contains(pos)) {
+            if (target != null && target.contains(pos)) {
                 return Optional.of(i);
             }
             i++;

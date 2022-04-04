@@ -84,6 +84,7 @@ public class Swap {
                                    int slot) {
         ChestTileEntity chest = slot > 26 ? Util.getOtherChest(chestIn) : chestIn;
         if (chest != null) {
+            // TODO: Item merging
             slot = slot % 27;
             ItemStack chestItem = chest.getItem(slot).copy();
             ItemStack playerItem = player.getItemInHand(hand);

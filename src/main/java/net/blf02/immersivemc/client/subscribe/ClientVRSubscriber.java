@@ -9,6 +9,7 @@ import net.blf02.immersivemc.client.swap.ClientSwap;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.blf02.vrapi.event.VRPlayerTickEvent;
@@ -18,6 +19,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 
 import java.util.Optional;
 
@@ -30,6 +32,8 @@ public class ClientVRSubscriber {
     @OnlyIn(Dist.CLIENT)
     public void immersiveTickVR(VRPlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
+        if (event.side != LogicalSide.CLIENT) return;
+        VRPluginVerify.isInVR = true;
         if (cooldown > 0) {
             cooldown--;
         } else {
