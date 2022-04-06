@@ -1,4 +1,4 @@
-package net.blf02.immersivemc.common.swap;
+package net.blf02.immersivemc.server.swap;
 
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.blf02.immersivemc.common.util.Util;

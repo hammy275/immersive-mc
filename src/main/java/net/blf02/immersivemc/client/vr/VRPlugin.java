@@ -1,4 +1,4 @@
-package net.blf02.immersivemc.common.vr;
+package net.blf02.immersivemc.client.vr;
 
 import net.blf02.immersivemc.client.subscribe.ClientVRSubscriber;
 import net.blf02.vrapi.api.IVRAPI;

@@ -6,7 +6,7 @@ import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.blf02.immersivemc.common.util.Util;
-import net.blf02.immersivemc.common.vr.VRPluginVerify;
+import net.blf02.immersivemc.client.vr.VRPluginVerify;
 import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.tileentity.ChestTileEntity;

@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.common.network.packet;
 
 import net.blf02.immersivemc.common.network.NetworkUtil;
-import net.blf02.immersivemc.common.swap.Swap;
+import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;

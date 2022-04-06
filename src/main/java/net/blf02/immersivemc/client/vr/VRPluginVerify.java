@@ -1,4 +1,4 @@
-package net.blf02.immersivemc.common.vr;
+package net.blf02.immersivemc.client.vr;
 
 public class VRPluginVerify {
 
