@@ -26,7 +26,7 @@ public class NetworkClientHandlers {
                         return;
                     } else if (info instanceof ChestInfo) {
                         ChestInfo chestInfo = (ChestInfo) info;
-                        if (chestInfo.other.getBlockPos().equals(pos)) {
+                        if (chestInfo.other != null && chestInfo.other.getBlockPos().equals(pos)) {
                             for (int i = 0; i < stacks.length; i++) {
                                 info.items[i + 27] = stacks[i];
                             }

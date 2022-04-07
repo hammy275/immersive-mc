@@ -34,14 +34,23 @@ public class Swap {
         ItemStack furnaceItem = furnace.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand).copy();
         if (slot != 2) {
-            // TODO: Item merging
-            if (!furnace.canPlaceItem(slot, playerItem) && playerItem != ItemStack.EMPTY) return;
-            player.setItemInHand(hand, furnaceItem);
-            furnace.setItem(slot, playerItem);
-        } else {
-            if (playerItem == ItemStack.EMPTY) {
+            if (!furnace.canPlaceItem(slot, playerItem) && !playerItem.isEmpty()) return;
+            if (playerItem.isEmpty() || furnaceItem.isEmpty() || !Util.stacksEqualBesidesCount(furnaceItem, playerItem)) {
                 player.setItemInHand(hand, furnaceItem);
-                furnace.setItem(2, ItemStack.EMPTY);
+                furnace.setItem(slot, playerItem);
+            } else {
+                Util.ItemStackMergeResult result = Util.mergeStacks(furnaceItem, playerItem, false);
+                player.setItemInHand(hand, result.mergedFrom);
+                furnace.setItem(slot, result.mergedInto);
+            }
+        } else {
+            if (playerItem.isEmpty() || furnaceItem.isEmpty() || !Util.stacksEqualBesidesCount(furnaceItem, playerItem)) {
+                player.setItemInHand(hand, furnaceItem);
+                furnace.setItem(2, playerItem);
+            } else {
+                Util.ItemStackMergeResult result = Util.mergeStacks(playerItem, furnaceItem, false);
+                player.setItemInHand(hand, result.mergedInto);
+                furnace.setItem(slot, result.mergedFrom);
             }
         }
         FetchInventoryPacket.handleServerToClient((ServerPlayerEntity) player, furnace.getBlockPos());
@@ -57,10 +66,15 @@ public class Swap {
             player.setItemInHand(hand, standItem);
             stand.setItem(slot, playerItem);
         } else { // Ingredient and Fuel
-            // TODO: Item merging
             if (!stand.canPlaceItem(slot, playerItem) && playerItem != ItemStack.EMPTY) return;
-            player.setItemInHand(hand, standItem);
-            stand.setItem(slot, playerItem);
+            if (playerItem.isEmpty() || standItem.isEmpty() || !Util.stacksEqualBesidesCount(standItem, playerItem)) {
+                player.setItemInHand(hand, standItem);
+                stand.setItem(slot, playerItem);
+            } else {
+                Util.ItemStackMergeResult result = Util.mergeStacks(standItem, playerItem, false);
+                player.setItemInHand(hand, result.mergedFrom);
+                stand.setItem(slot, result.mergedInto);
+            }
         }
         FetchInventoryPacket.handleServerToClient((ServerPlayerEntity) player, stand.getBlockPos());
     }
@@ -84,12 +98,17 @@ public class Swap {
                                    int slot) {
         ChestTileEntity chest = slot > 26 ? Util.getOtherChest(chestIn) : chestIn;
         if (chest != null) {
-            // TODO: Item merging
             slot = slot % 27;
             ItemStack chestItem = chest.getItem(slot).copy();
             ItemStack playerItem = player.getItemInHand(hand);
-            player.setItemInHand(hand, chestItem);
-            chest.setItem(slot, playerItem);
+            if (playerItem.isEmpty() || chestItem.isEmpty() || !Util.stacksEqualBesidesCount(chestItem, playerItem)) {
+                player.setItemInHand(hand, chestItem);
+                chest.setItem(slot, playerItem);
+            } else {
+                Util.ItemStackMergeResult result = Util.mergeStacks(chestItem, playerItem, false);
+                player.setItemInHand(hand, result.mergedFrom);
+                chest.setItem(slot, result.mergedInto);
+            }
             FetchInventoryPacket.handleServerToClient((ServerPlayerEntity) player, chest.getBlockPos());
         }
     }

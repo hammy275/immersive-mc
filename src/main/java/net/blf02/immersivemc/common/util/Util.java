@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.common.util;
 
 import net.minecraft.block.ChestBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -66,5 +67,52 @@ public class Util {
             return (ChestTileEntity) chest.getLevel().getBlockEntity(otherPos);
         }
         return null;
+    }
+
+    public static boolean stacksEqualBesidesCount(ItemStack a, ItemStack b) {
+        int oldCountA = a.getCount();
+        int oldCountB = b.getCount();
+        a.setCount(1);
+        b.setCount(1);
+        boolean res = ItemStack.matches(a, b);
+        a.setCount(oldCountA);
+        b.setCount(oldCountB);
+        return res;
+    }
+
+    /**
+     * Merges two ItemStacks together
+     * @param mergeIntoIn ItemStack to merge into
+     * @param mergeFromIn ItemStack to merge from
+     * @param useCopy Whether or not to use copies of the ItemStacks supplied
+     * @return An ItemStackMergeResult containing the results post-merge.
+     * If no merge takes place, the returned result just contains the inputted ItemStacks.
+     */
+    public static ItemStackMergeResult mergeStacks(ItemStack mergeIntoIn, ItemStack mergeFromIn, boolean useCopy) {
+        if (!stacksEqualBesidesCount(mergeIntoIn, mergeFromIn) || mergeIntoIn.getMaxStackSize() <= 1) {
+            return new ItemStackMergeResult(mergeIntoIn, mergeFromIn);
+        }
+        ItemStack into = useCopy ? mergeIntoIn.copy() : mergeIntoIn;
+        ItemStack from = useCopy ? mergeFromIn.copy() : mergeFromIn;
+        int totalCount = into.getCount() + from.getCount();
+        int fromAmount = 0;
+        if (totalCount > into.getMaxStackSize()) {
+            fromAmount = totalCount - into.getMaxStackSize();
+            totalCount = into.getMaxStackSize();
+        }
+        into.setCount(totalCount);
+        from.setCount(fromAmount);
+        return new ItemStackMergeResult(into, fromAmount == 0 ? ItemStack.EMPTY : from);
+    }
+
+    public static class ItemStackMergeResult {
+
+        public final ItemStack mergedInto;
+        public final ItemStack mergedFrom;
+
+        public ItemStackMergeResult(ItemStack mergedInto, ItemStack mergedFrom) {
+            this.mergedInto = mergedInto;
+            this.mergedFrom = mergedFrom;
+        }
     }
 }

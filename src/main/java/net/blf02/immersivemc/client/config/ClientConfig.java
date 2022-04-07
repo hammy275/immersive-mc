@@ -20,4 +20,8 @@ public class ClientConfig {
 
     // Average time between inventory syncs
     public static final int inventorySyncTime = 10;
+
+
+    // For Debugging Only!!!!one!
+    public static final boolean vrInteractionsOutsideVR = false; // Doesn't apply for all VR-only interactions!
 }
