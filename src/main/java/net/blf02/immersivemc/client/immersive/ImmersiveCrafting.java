@@ -28,7 +28,7 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
 
         List<ItemStack> slots = new ArrayList<>();
         for (int i = 0; i < 9; i++) {
-            slots.add(ClientStorage.craftingStorage.getItem(i));
+            slots.add(ClientStorage.craftingStorage[i]);
         }
 
         Vector3d leftOffset = new Vector3d(
@@ -61,7 +61,7 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
 
         for (int i = 0; i < 9; i++) {
-            renderItem(ClientStorage.craftingStorage.getItem(i), stack, info.getPosition(i),
+            renderItem(ClientStorage.craftingStorage[i], stack, info.getPosition(i),
                     itemSize, forward, Direction.UP, info.getHibtox(i));
         }
 

@@ -5,6 +5,7 @@ import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -13,25 +14,25 @@ import java.util.function.Supplier;
 
 public class DoCraftPacket {
 
-    protected final CraftingInventory inv;
+    protected final ItemStack[] inv;
     protected final BlockPos tablePos;
 
-    public DoCraftPacket(CraftingInventory inv, BlockPos tablePos) {
+    public DoCraftPacket(ItemStack[] inv, BlockPos tablePos) {
         this.inv = inv;
         this.tablePos = tablePos;
     }
 
     public static void encode(DoCraftPacket packet, PacketBuffer buffer) {
         for (int i = 0; i < 9; i++) {
-            buffer.writeItem(packet.inv.getItem(i));
+            buffer.writeItem(packet.inv[i]);
         }
         buffer.writeBlockPos(packet.tablePos);
     }
 
     public static DoCraftPacket decode(PacketBuffer buffer) {
-        CraftingInventory inv = new CraftingInventory(new NullContainer(), 3, 3);
+        ItemStack[] inv = new ItemStack[9];
         for (int i = 0; i < 9; i++) {
-            inv.setItem(i, buffer.readItem());
+            inv[i] = buffer.readItem();
         }
         return new DoCraftPacket(inv, buffer.readBlockPos());
 

@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.server.swap;
 
+import net.blf02.immersivemc.client.storage.NullContainer;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.block.Blocks;
@@ -113,8 +114,12 @@ public class Swap {
         }
     }
 
-    public static void handleCrafting(ServerPlayerEntity player, CraftingInventory inv,
+    public static void handleCrafting(ServerPlayerEntity player, ItemStack[] stacksIn,
                                       BlockPos tablePos) {
+        CraftingInventory inv = new CraftingInventory(new NullContainer(), 3, 3);
+        for (int i = 0; i < 9; i++) {
+            inv.setItem(i, stacksIn[i]);
+        }
         Optional<ICraftingRecipe> res = player.getServer().getRecipeManager().getRecipeFor(IRecipeType.CRAFTING,
                 inv, player.level);
         if (res.isPresent()) {

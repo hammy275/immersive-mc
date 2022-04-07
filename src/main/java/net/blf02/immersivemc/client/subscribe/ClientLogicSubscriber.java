@@ -141,6 +141,7 @@ public class ClientLogicSubscriber {
             Network.INSTANCE.sendToServer(new DoCraftPacket(
                     ClientStorage.craftingStorage, pos
             ));
+            ClientStorage.removeLackingIngredientsFromTable(player);
             return true;
         }
 

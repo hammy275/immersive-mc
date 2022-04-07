@@ -11,7 +11,7 @@ public class ClientSwap {
         if (Minecraft.getInstance().player == null) return;
         ItemStack playerItemCopy = Minecraft.getInstance().player.getItemInHand(hand).copy();
         playerItemCopy.setCount(1);
-        ClientStorage.craftingStorage.setItem(slot, playerItemCopy);
+        ClientStorage.craftingStorage[slot] = playerItemCopy;
 
     }
 
