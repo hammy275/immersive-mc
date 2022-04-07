@@ -228,11 +228,14 @@ public class ClientLogicSubscriber {
             BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
             BlockState state = player.level.getBlockState(pos);
             if (state.getBlock() instanceof AbstractChestBlock && player.level.getBlockEntity(pos) instanceof ChestTileEntity
-                    && !player.isCrouching()) { // Crouch to still open chest for debugging purposes lol
+                    && !player.isCrouching()) { // Crouch to still open chest
                 ChestInfo info = ImmersiveChest.findImmersive((ChestTileEntity) player.level.getBlockEntity(pos));
                 if (info != null) {
                     info.isOpen = !info.isOpen;
-                    Network.INSTANCE.sendToServer(new ChestOpenPacket(pos, info.isOpen));
+                    Network.INSTANCE.sendToServer(new ChestOpenPacket(info.getBlockPosition(), info.isOpen));
+                    if (!info.isOpen) {
+                        info.remove(); // Remove immersive if we're closing the chest
+                    }
                     return true;
                 }
             }

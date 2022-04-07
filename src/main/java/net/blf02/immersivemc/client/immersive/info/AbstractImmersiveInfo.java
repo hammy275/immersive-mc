@@ -52,4 +52,8 @@ public abstract class AbstractImmersiveInfo {
     public abstract boolean readyToRender();
 
     public abstract BlockPos getBlockPosition();
+
+    public void remove() {
+        this.ticksLeft = 0;
+    }
 }
