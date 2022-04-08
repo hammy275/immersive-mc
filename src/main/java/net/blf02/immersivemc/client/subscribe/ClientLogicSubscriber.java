@@ -16,6 +16,8 @@ import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
 import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.client.storage.ClientStorage;
 import net.blf02.immersivemc.client.swap.ClientSwap;
+import net.blf02.immersivemc.common.tracker.AbstractTracker;
+import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
 import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
@@ -56,6 +58,9 @@ public class ClientLogicSubscriber {
         if (event.phase != TickEvent.Phase.END || event.player.level instanceof ServerWorld) return;
         if (ClientUtil.immersiveLeftClickCooldown > 0) {
             ClientUtil.immersiveLeftClickCooldown--;
+        }
+        for (AbstractTracker tracker : ClientTrackerInit.trackers) {
+            tracker.doTick(event.player);
         }
         for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
             tickInfos(singleton);

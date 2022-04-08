@@ -2,6 +2,8 @@ package net.blf02.immersivemc.server;
 
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
+import net.blf02.immersivemc.common.tracker.AbstractTracker;
+import net.blf02.immersivemc.server.tracker.ServerTrackerInit;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
@@ -11,6 +13,7 @@ import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunk;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -40,6 +43,13 @@ public class ServerSubscriber {
                         new ImmersiveBreakPacket(event.getPos()));
             }
         }
+    }
 
+    @SubscribeEvent
+    public void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        for (AbstractTracker tracker : ServerTrackerInit.trackers) {
+            tracker.doTick(null);
+        }
     }
 }

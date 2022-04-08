@@ -6,6 +6,7 @@ import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
 import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
+import net.blf02.immersivemc.common.network.packet.GrabItemPacket;
 import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.server.ServerSubscriber;
@@ -47,6 +48,8 @@ public class ImmersiveMC {
                     FetchInventoryPacket::decode, FetchInventoryPacket::handle);
             Network.INSTANCE.registerMessage(index++, ChestOpenPacket.class, ChestOpenPacket::encode,
                     ChestOpenPacket::decode, ChestOpenPacket::handle);
+            Network.INSTANCE.registerMessage(index++, GrabItemPacket.class, GrabItemPacket::encode,
+                    GrabItemPacket::decode, GrabItemPacket::handle);
         });
 
     }
