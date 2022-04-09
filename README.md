@@ -4,7 +4,7 @@ Makes Minecraft more immersive!
 
 <img alt="Crafting Demo" src="docs/ImmersiveCrafting.gif" width="320"/>
 <img alt="VR Chest and Jukebox Demo" src="docs/ImmersiveVRChestAndJukebox.gif" width="320"/>
-<img alt="Crafting Demo" src="docs/ImmersiveVRGrab.gif" width="320"/>
+<img alt="VR Grab" src="docs/ImmersiveVRGrab.gif" width="320"/>
 
 ## What is it?
 
@@ -20,4 +20,4 @@ You'll need my API mod, [mc-vr-api](https://www.curseforge.com/minecraft/mc-mods
 
 ## Status
 
-This mod is currently a work in progress. There are available alpha builds, which you can grab from the [releases page](https://github.com/hammy3502/immersive-mc/releases)!
+This mod is currently a work in progress. There are available alpha builds, which you can grab from the [releases page](https://github.com/hammy3502/immersive-mc/releases) or from [CurseForge](https://www.curseforge.com/minecraft/mc-mods/immersivemc)!
