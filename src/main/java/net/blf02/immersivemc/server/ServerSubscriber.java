@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.server;
 
+import net.blf02.immersivemc.common.network.Distributors;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
@@ -11,12 +12,9 @@ import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunk;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 public class ServerSubscriber {
 
@@ -37,11 +35,9 @@ public class ServerSubscriber {
         }
 
         if (sendBreakPacket) {
-            IChunk chunk = event.getWorld().getChunk(event.getPos());
-            if (chunk instanceof Chunk) {
-                Network.INSTANCE.send(PacketDistributor.TRACKING_CHUNK.with(() -> (Chunk) chunk),
-                        new ImmersiveBreakPacket(event.getPos()));
-            }
+            Network.INSTANCE.send(
+                    Distributors.NEARBY_POSITION.with(() -> new Distributors.NearbyDistributorData(event.getPos(), 20)),
+                    new ImmersiveBreakPacket(event.getPos()));
         }
     }
 

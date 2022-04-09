@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.common.network.packet;
 
+import net.blf02.immersivemc.common.network.Distributors;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.NetworkClientHandlers;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -9,10 +10,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunk;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
@@ -81,9 +79,8 @@ public class FetchInventoryPacket {
                     for (int i = 0; i < inv.getContainerSize(); i++) {
                         stacks[i] = inv.getItem(i);
                     }
-                    IChunk chunk = player.level.getChunk(pos);
-                    Network.INSTANCE.send(PacketDistributor.TRACKING_CHUNK.with(() -> (Chunk) chunk), new FetchInventoryPacket(stacks,
-                            pos));
+                    Network.INSTANCE.send(Distributors.NEARBY_POSITION.with(() -> new Distributors.NearbyDistributorData(pos, 9)),
+                            new FetchInventoryPacket(stacks, pos));
                 }
             }
         }
