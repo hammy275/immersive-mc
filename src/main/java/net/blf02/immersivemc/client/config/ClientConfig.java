@@ -21,8 +21,6 @@ public class ClientConfig {
     // Average time between inventory syncs
     public static final int inventorySyncTime = 10;
 
-    public static final int distanceSquaredToRemoveImmersive = 20*20; // Distance to stop tracking immersives from
-
     // For Debugging Only!!!!one!
     public static final boolean vrInteractionsOutsideVR = false; // Doesn't apply for all VR-only interactions!
 }

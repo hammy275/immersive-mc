@@ -2,6 +2,7 @@ package net.blf02.immersivemc.client.immersive;
 
 import net.blf02.immersivemc.client.config.ClientConfig;
 import net.blf02.immersivemc.client.immersive.info.AbstractTileEntityImmersiveInfo;
+import net.blf02.immersivemc.common.config.CommonConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.minecraft.client.Minecraft;
@@ -37,7 +38,7 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
 
         if (Minecraft.getInstance().player != null && info.getTileEntity() != null &&
                 Minecraft.getInstance().player.distanceToSqr(Vector3d.atCenterOf(info.getTileEntity().getBlockPos())) >
-                ClientConfig.distanceSquaredToRemoveImmersive) {
+                CommonConfig.distanceSquaredToRemoveImmersive) {
             info.remove();
         }
 

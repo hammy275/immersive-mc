@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConfig;
 import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
 import net.blf02.immersivemc.client.storage.ClientStorage;
+import net.blf02.immersivemc.common.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
@@ -27,7 +28,7 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
 
         if (info.tablePos != null &&
                 Minecraft.getInstance().player.distanceToSqr(Vector3d.atCenterOf(info.tablePos)) >
-                        ClientConfig.distanceSquaredToRemoveImmersive) {
+                        CommonConfig.distanceSquaredToRemoveImmersive) {
             info.remove();
         }
 
