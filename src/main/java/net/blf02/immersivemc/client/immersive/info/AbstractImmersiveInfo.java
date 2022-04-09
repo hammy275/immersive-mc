@@ -56,4 +56,9 @@ public abstract class AbstractImmersiveInfo {
     public void remove() {
         this.ticksLeft = 0;
     }
+
+    @Override
+    public String toString() {
+        return "[ImmersiveInfo type " + this.getClass().getName() + "] Block Position: " + getBlockPosition();
+    }
 }

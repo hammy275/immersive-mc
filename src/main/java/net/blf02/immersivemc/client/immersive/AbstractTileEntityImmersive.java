@@ -4,8 +4,10 @@ import net.blf02.immersivemc.client.config.ClientConfig;
 import net.blf02.immersivemc.client.immersive.info.AbstractTileEntityImmersiveInfo;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -31,6 +33,12 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
             if (ThreadLocalRandom.current().nextInt(ClientConfig.inventorySyncTime) == 0) {
                 Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
             }
+        }
+
+        if (Minecraft.getInstance().player != null && info.getTileEntity() != null &&
+                Minecraft.getInstance().player.distanceToSqr(Vector3d.atCenterOf(info.getTileEntity().getBlockPos())) >
+                ClientConfig.distanceSquaredToRemoveImmersive) {
+            info.remove();
         }
 
     }

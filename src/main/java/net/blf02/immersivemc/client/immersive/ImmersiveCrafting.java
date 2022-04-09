@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
 
@@ -22,6 +23,14 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     @Override
     public void tick(CraftingInfo info, boolean isInVR) {
         super.tick(info, isInVR);
+        Objects.requireNonNull(Minecraft.getInstance().player);
+
+        if (info.tablePos != null &&
+                Minecraft.getInstance().player.distanceToSqr(Vector3d.atCenterOf(info.tablePos)) >
+                        ClientConfig.distanceSquaredToRemoveImmersive) {
+            info.remove();
+        }
+
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         Vector3d pos = getTopCenterOfBlock(info.tablePos);
         Direction left = getLeftOfDirection(forward);
