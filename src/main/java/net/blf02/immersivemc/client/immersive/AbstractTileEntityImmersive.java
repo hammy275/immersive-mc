@@ -33,7 +33,7 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
     public void tick(I info, boolean isInVR) {
         super.tick(info, isInVR);
         if (info.getTileEntity() instanceof IInventory) {
-            if (this.ticksActive % ClientConfig.inventorySyncTime == 0) {
+            if (info.ticksActive % ClientConfig.inventorySyncTime == 0) {
                 Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
             }
         }

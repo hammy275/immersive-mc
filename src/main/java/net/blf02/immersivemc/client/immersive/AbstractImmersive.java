@@ -29,7 +29,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected final List<I> infos;
     public final int maxImmersives;
-    public int ticksActive = 0;
 
     public AbstractImmersive(int maxImmersives) {
         Immersives.IMMERSIVES.add(this);
@@ -52,7 +51,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         if (info.getTicksLeft() > 0) {
             info.changeTicksLeft(-1);
         }
-        ticksActive++;
+        info.ticksActive++;
     }
 
     // Below this line are utility functions. Everything above MUST be overwritten, and have super() called!

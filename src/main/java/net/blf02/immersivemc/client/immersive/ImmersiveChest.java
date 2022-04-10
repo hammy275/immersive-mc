@@ -32,7 +32,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
         // Chest can become null even if the above doesn't return us
         try {
             // super.tick() does this for the main tileEntity. This does it for the other chest
-            if (this.ticksActive % ClientConfig.inventorySyncTime == 0) {
+            if (info.ticksActive % ClientConfig.inventorySyncTime == 0) {
                 Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.other.getBlockPos()));
             }
         } catch (NullPointerException e) {
