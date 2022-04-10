@@ -21,6 +21,10 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     public static final ImmersiveCrafting singleton = new ImmersiveCrafting();
     private final double spacing = 3d/16d;
 
+    public ImmersiveCrafting() {
+        super(-1);
+    }
+
     @Override
     public void tick(CraftingInfo info, boolean isInVR) {
         super.tick(info, isInVR);

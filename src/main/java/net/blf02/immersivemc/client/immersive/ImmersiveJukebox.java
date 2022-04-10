@@ -12,6 +12,10 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
     
     protected static ImmersiveJukebox singleton = new ImmersiveJukebox();
 
+    public ImmersiveJukebox() {
+        super(1);
+    }
+
     public static ImmersiveJukebox getSingleton() {
         return singleton;
     }

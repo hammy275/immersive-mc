@@ -1,7 +1,6 @@
 package net.blf02.immersivemc.server.swap;
 
 import net.blf02.immersivemc.client.storage.NullContainer;
-import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.JukeboxBlock;
@@ -54,7 +53,6 @@ public class Swap {
                 furnace.setItem(slot, result.mergedFrom);
             }
         }
-        FetchInventoryPacket.handleServerToClient((ServerPlayerEntity) player, furnace.getBlockPos());
     }
 
     public static void handleBrewingSwap(BrewingStandTileEntity stand, PlayerEntity player,
@@ -77,7 +75,6 @@ public class Swap {
                 stand.setItem(slot, result.mergedInto);
             }
         }
-        FetchInventoryPacket.handleServerToClient((ServerPlayerEntity) player, stand.getBlockPos());
     }
 
     public static void handleJukebox(JukeboxTileEntity jukebox,
@@ -110,7 +107,6 @@ public class Swap {
                 player.setItemInHand(hand, result.mergedFrom);
                 chest.setItem(slot, result.mergedInto);
             }
-            FetchInventoryPacket.handleServerToClient((ServerPlayerEntity) player, chest.getBlockPos());
         }
     }
 

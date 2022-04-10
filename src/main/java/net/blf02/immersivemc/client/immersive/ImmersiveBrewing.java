@@ -12,6 +12,10 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
 
     protected static final ImmersiveBrewing singleton = new ImmersiveBrewing();
 
+    public ImmersiveBrewing() {
+        super(2);
+    }
+
     public static ImmersiveBrewing getSingleton() {
         return singleton;
     }

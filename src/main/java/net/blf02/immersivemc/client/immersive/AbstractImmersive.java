@@ -18,7 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,10 +27,14 @@ import java.util.List;
  */
 public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
-    protected List<I> infos = new LinkedList<>();
+    protected final List<I> infos;
+    public final int maxImmersives;
+    public int ticksActive = 0;
 
-    public AbstractImmersive() {
+    public AbstractImmersive(int maxImmersives) {
         Immersives.IMMERSIVES.add(this);
+        this.maxImmersives = maxImmersives;
+        this.infos = new ArrayList<>(maxImmersives > 0 ? maxImmersives + 1 : 16);
     }
 
     public abstract boolean shouldRender(I info, boolean isInVR);
@@ -48,6 +52,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         if (info.getTicksLeft() > 0) {
             info.changeTicksLeft(-1);
         }
+        ticksActive++;
     }
 
     // Below this line are utility functions. Everything above MUST be overwritten, and have super() called!

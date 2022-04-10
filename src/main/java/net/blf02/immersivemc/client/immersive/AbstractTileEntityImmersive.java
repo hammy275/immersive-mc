@@ -10,10 +10,12 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.vector.Vector3d;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extends AbstractTileEntityImmersiveInfo<T>>
     extends AbstractImmersive<I> {
+
+    public AbstractTileEntityImmersive(int maxImmersives) {
+        super(maxImmersives);
+    }
 
     /**
      * Get a new instance of info to track.
@@ -31,7 +33,7 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
     public void tick(I info, boolean isInVR) {
         super.tick(info, isInVR);
         if (info.getTileEntity() instanceof IInventory) {
-            if (ThreadLocalRandom.current().nextInt(ClientConfig.inventorySyncTime) == 0) {
+            if (this.ticksActive % ClientConfig.inventorySyncTime == 0) {
                 Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
             }
         }

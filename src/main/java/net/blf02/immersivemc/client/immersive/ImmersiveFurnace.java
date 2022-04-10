@@ -15,6 +15,10 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
 
     protected static final ImmersiveFurnace immersiveFurnace = new ImmersiveFurnace();
 
+    public ImmersiveFurnace() {
+        super(4);
+    }
+
     public static ImmersiveFurnace getSingleton() {
         return immersiveFurnace;
     }

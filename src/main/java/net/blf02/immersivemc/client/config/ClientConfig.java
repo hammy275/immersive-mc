@@ -18,8 +18,8 @@ public class ClientConfig {
     // Time to transition in ticks
     public static final int transitionTime = 20;
 
-    // Average time between inventory syncs
-    public static final int inventorySyncTime = 10;
+    // Amount of ticks between syncs (sync every `inventorySyncTime` ticks)
+    public static final int inventorySyncTime = 2;
 
     // For Debugging Only!!!!one!
     public static final boolean vrInteractionsOutsideVR = false; // Doesn't apply for all VR-only interactions!

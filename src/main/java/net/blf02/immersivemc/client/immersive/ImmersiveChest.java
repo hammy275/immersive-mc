@@ -3,10 +3,10 @@ package net.blf02.immersivemc.client.immersive;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConfig;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
+import net.blf02.immersivemc.client.vr.VRPluginVerify;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.blf02.immersivemc.common.util.Util;
-import net.blf02.immersivemc.client.vr.VRPluginVerify;
 import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.tileentity.ChestTileEntity;
@@ -14,12 +14,15 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity, ChestInfo> {
 
     public static ImmersiveChest singleton = new ImmersiveChest();
     private final double spacing = 3d/16d;
+
+    public ImmersiveChest() {
+        super(4);
+    }
 
     @Override
     public void tick(ChestInfo info, boolean isInVR) {
@@ -29,7 +32,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
         // Chest can become null even if the above doesn't return us
         try {
             // super.tick() does this for the main tileEntity. This does it for the other chest
-            if (ThreadLocalRandom.current().nextInt(ClientConfig.inventorySyncTime) == 0) {
+            if (this.ticksActive % ClientConfig.inventorySyncTime == 0) {
                 Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.other.getBlockPos()));
             }
         } catch (NullPointerException e) {
