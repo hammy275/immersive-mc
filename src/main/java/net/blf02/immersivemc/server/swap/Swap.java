@@ -44,10 +44,10 @@ public class Swap {
                 furnace.setItem(slot, result.mergedInto);
             }
         } else {
-            if (playerItem.isEmpty() || furnaceItem.isEmpty() || !Util.stacksEqualBesidesCount(furnaceItem, playerItem)) {
+            if (playerItem.isEmpty()) {
                 player.setItemInHand(hand, furnaceItem);
                 furnace.setItem(2, playerItem);
-            } else {
+            } else if (Util.stacksEqualBesidesCount(furnaceItem, playerItem)) {
                 Util.ItemStackMergeResult result = Util.mergeStacks(playerItem, furnaceItem, false);
                 player.setItemInHand(hand, result.mergedInto);
                 furnace.setItem(slot, result.mergedFrom);
