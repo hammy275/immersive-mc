@@ -77,6 +77,11 @@ public class ClientLogicSubscriber {
         BlockState state = player.level.getBlockState(pos);
         TileEntity tileEntity = player.level.getBlockEntity(pos);
 
+        possiblyTrack(pos, state, tileEntity);
+
+    }
+
+    public static void possiblyTrack(BlockPos pos, BlockState state, TileEntity tileEntity) {
         if (tileEntity instanceof AbstractFurnaceTileEntity) {
             AbstractFurnaceTileEntity furnace = (AbstractFurnaceTileEntity) tileEntity;
             ImmersiveFurnace.getSingleton().trackObject(furnace);

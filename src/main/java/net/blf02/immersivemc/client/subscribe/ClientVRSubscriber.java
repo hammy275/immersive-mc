@@ -13,7 +13,10 @@ import net.blf02.immersivemc.client.vr.VRPluginVerify;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.blf02.vrapi.event.VRPlayerTickEvent;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -33,7 +36,19 @@ public class ClientVRSubscriber {
     public void immersiveTickVR(VRPlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         if (event.side != LogicalSide.CLIENT) return;
+        if (Minecraft.getInstance().gameMode == null) return;
         VRPluginVerify.isInVR = true;
+
+        // Track things the HMD is looking at (cursor is already covered in ClientLogicSubscriber)
+        double dist = Minecraft.getInstance().gameMode.getPickRange();
+        Vector3d start = event.vrPlayer.getHMD().position();
+        Vector3d look = event.vrPlayer.getHMD().getLookAngle();
+        Vector3d end = event.vrPlayer.getHMD().position().add(look.x * dist, look.y * dist, look.z * dist);
+        BlockRayTraceResult res = event.player.level.clip(new RayTraceContext(start, end, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE,
+                null));
+        ClientLogicSubscriber.possiblyTrack(res.getBlockPos(), event.player.level.getBlockState(res.getBlockPos()),
+                event.player.level.getBlockEntity(res.getBlockPos()));
+
         if (cooldown > 0) {
             cooldown--;
         } else {
@@ -62,7 +77,7 @@ public class ClientVRSubscriber {
                         ClientSwap.craftingSwap(hit.get(), c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND);
                     }
 
-                    cooldown = 25;
+                    cooldown = 20;
                     return true;
                 }
             }
