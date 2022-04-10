@@ -60,11 +60,19 @@ public class Util {
     }
 
     public static ChestTileEntity getOtherChest(ChestTileEntity chest) {
+        return getOtherChest(chest, true);
+    }
+
+    protected static ChestTileEntity getOtherChest(ChestTileEntity chest, boolean checkOther) {
         // Gets the chest this one is connected to. Can be null.
         Direction otherDir = ChestBlock.getConnectedDirection(chest.getBlockState());
         BlockPos otherPos = chest.getBlockPos().relative(otherDir);
         if (chest.getLevel() != null && chest.getLevel().getBlockEntity(otherPos) instanceof ChestTileEntity) {
-            return (ChestTileEntity) chest.getLevel().getBlockEntity(otherPos);
+            ChestTileEntity other = (ChestTileEntity) chest.getLevel().getBlockEntity(otherPos);
+            if (checkOther && other != null) { // Make sure the chest we think we're connected to is connected back to us
+                return getOtherChest(other, false) == chest ? other : null;
+            }
+            return other;
         }
         return null;
     }
