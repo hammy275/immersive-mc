@@ -3,6 +3,7 @@ package net.blf02.immersivemc.client.immersive;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.util.Direction;
@@ -42,8 +43,8 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
     }
 
     @Override
-    public void tick(BrewingInfo info, boolean isInVR) {
-        super.tick(info, isInVR);
+    protected void doTick(BrewingInfo info, boolean isInVR) {
+        super.doTick(info, isInVR);
         BrewingStandTileEntity stand = info.getTileEntity();
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         Vector3d pos = getDirectlyInFront(forward, stand.getBlockPos());
@@ -87,5 +88,10 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
         renderItem(info.items[2], stack, info.getPosition(2), size, forward, info.getHibtox(2));
         renderItem(info.items[3], stack, info.getPosition(3), size, forward, info.getHibtox(3));
         renderItem(info.items[4], stack, info.getPosition(4), size, forward, info.getHibtox(4));
+    }
+
+    @Override
+    protected boolean enabledInConfig() {
+        return ActiveConfig.useBrewingImmersion;
     }
 }

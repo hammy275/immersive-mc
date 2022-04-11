@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.common.network.packet;
 
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -43,15 +44,15 @@ public class SwapPacket {
             ServerPlayerEntity player = ctx.get().getSender();
             if (player != null && NetworkUtil.safeToRun(message.block, player)) {
                 TileEntity tileEnt = player.level.getBlockEntity(message.block);
-                if (tileEnt instanceof AbstractFurnaceTileEntity) {
+                if (tileEnt instanceof AbstractFurnaceTileEntity && ActiveConfig.useFurnaceImmersion) {
                     AbstractFurnaceTileEntity furnace = (AbstractFurnaceTileEntity) tileEnt;
                     Swap.handleFurnaceSwap(furnace, player, message.hand, message.slot);
-                } else if (tileEnt instanceof BrewingStandTileEntity) {
+                } else if (tileEnt instanceof BrewingStandTileEntity && ActiveConfig.useBrewingImmersion) {
                     BrewingStandTileEntity stand = (BrewingStandTileEntity) tileEnt;
                     Swap.handleBrewingSwap(stand, player, message.hand, message.slot);
-                } else if (tileEnt instanceof JukeboxTileEntity) {
+                } else if (tileEnt instanceof JukeboxTileEntity && ActiveConfig.useJukeboxImmersion) {
                     Swap.handleJukebox((JukeboxTileEntity) tileEnt, player, message.hand);
-                } else if (tileEnt instanceof ChestTileEntity) {
+                } else if (tileEnt instanceof ChestTileEntity && ActiveConfig.useChestImmersion) {
                     Swap.handleChest((ChestTileEntity) tileEnt, player, message.hand, message.slot);
                 }
             }

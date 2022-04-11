@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.common.network.packet;
 
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -30,6 +31,7 @@ public class ChestOpenPacket {
 
     public static void handle(final ChestOpenPacket message, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
+            if (!ActiveConfig.useChestImmersion) return;
             ServerPlayerEntity player = ctx.get().getSender();
             if (player != null) {
                 if (NetworkUtil.safeToRun(message.pos, player)) {

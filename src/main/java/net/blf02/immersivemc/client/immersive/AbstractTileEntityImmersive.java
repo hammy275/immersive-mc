@@ -30,8 +30,8 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
     public abstract boolean shouldRender(I info, boolean isInVR);
 
     @Override
-    public void tick(I info, boolean isInVR) {
-        super.tick(info, isInVR);
+    protected void doTick(I info, boolean isInVR) {
+        super.doTick(info, isInVR);
         if (info.getTileEntity() instanceof IInventory) {
             if (info.ticksActive % ClientConstants.inventorySyncTime == 0) {
                 Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));

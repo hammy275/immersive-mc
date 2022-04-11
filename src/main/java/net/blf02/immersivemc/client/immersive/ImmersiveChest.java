@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.blf02.immersivemc.client.vr.VRPluginVerify;
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.blf02.immersivemc.common.util.Util;
@@ -25,8 +26,8 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
     }
 
     @Override
-    public void tick(ChestInfo info, boolean isInVR) {
-        super.tick(info, isInVR);
+    protected void doTick(ChestInfo info, boolean isInVR) {
+        super.doTick(info, isInVR);
         if (!chestsValid(info)) return; // Return if we're waiting to remove this immersive
 
         // Chest can become null even if the above doesn't return us
@@ -149,7 +150,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
                     if (info.other == null) { // If our neighboring chest's info isn't tracking us
                         info.failRender = true;
                         info.other = tileEnt; // Track us
-                        this.tick(info, VRPluginVerify.isInVR); // Tick so we can handle the items in our other chest
+                        this.doTick(info, VRPluginVerify.isInVR); // Tick so we can handle the items in our other chest
                         info.failRender = false;
                     }
                     return false; // Return false so this one isn't tracked
@@ -157,6 +158,11 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
             }
         }
         return super.shouldTrack(tileEnt);
+    }
+
+    @Override
+    protected boolean enabledInConfig() {
+        return ActiveConfig.useChestImmersion;
     }
 
     public static ChestInfo findImmersive(ChestTileEntity chest) {

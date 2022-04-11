@@ -3,6 +3,7 @@ package net.blf02.immersivemc.client.immersive;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.util.Direction;
@@ -42,8 +43,8 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
     }
 
     @Override
-    public void tick(ImmersiveFurnaceInfo info, boolean isInVR) {
-        super.tick(info, isInVR);
+    protected void doTick(ImmersiveFurnaceInfo info, boolean isInVR) {
+        super.doTick(info, isInVR);
 
         AbstractFurnaceTileEntity furnace = info.getTileEntity();
         Direction forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
@@ -99,6 +100,11 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
         renderItem(info.items[2], stack, info.getPosition(2), size, info.forward, info.getHibtox(2));
 
 
+    }
+
+    @Override
+    protected boolean enabledInConfig() {
+        return ActiveConfig.useFurnaceImmersion;
     }
 
 }

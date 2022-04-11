@@ -3,6 +3,7 @@ package net.blf02.immersivemc.client.immersive;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.JukeboxInfo;
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -21,8 +22,8 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
     }
 
     @Override
-    public void tick(JukeboxInfo info, boolean isInVR) {
-        super.tick(info, isInVR);
+    protected void doTick(JukeboxInfo info, boolean isInVR) {
+        super.doTick(info, isInVR);
 
         Vector3d topCenter = getTopCenterOfBlock(info.getTileEntity().getBlockPos());
         info.setPosition(0, topCenter);
@@ -36,6 +37,11 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
     @Override
     protected void render(JukeboxInfo info, MatrixStack stack, boolean isInVR) {
         renderHitbox(stack, info.getHibtox(0), info.getPosition(0));
+    }
+
+    @Override
+    protected boolean enabledInConfig() {
+        return ActiveConfig.useJukeboxImmersion;
     }
 
     @Override
