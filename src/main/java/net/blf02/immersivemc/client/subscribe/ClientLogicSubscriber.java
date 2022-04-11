@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.client.subscribe;
 
 import net.blf02.immersivemc.client.ClientUtil;
-import net.blf02.immersivemc.client.config.ClientConfig;
+import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.AbstractImmersive;
 import net.blf02.immersivemc.client.immersive.ImmersiveBrewing;
 import net.blf02.immersivemc.client.immersive.ImmersiveChest;
@@ -253,7 +253,7 @@ public class ClientLogicSubscriber {
         RayTraceResult looking = Minecraft.getInstance().hitResult;
         if (looking == null || looking.getType() != RayTraceResult.Type.BLOCK) return false;
 
-        if (VRPluginVerify.isInVR || ClientConfig.vrInteractionsOutsideVR) {
+        if (VRPluginVerify.isInVR || ClientConstants.vrInteractionsOutsideVR) {
             BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
             BlockState state = player.level.getBlockState(pos);
             if (state.getBlock() instanceof AbstractChestBlock && player.level.getBlockEntity(pos) instanceof ChestTileEntity

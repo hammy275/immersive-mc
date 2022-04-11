@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.blf02.immersivemc.client.config.ClientConfig;
+import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.JukeboxInfo;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.util.Direction;
@@ -40,12 +40,12 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
 
     @Override
     public JukeboxInfo getNewInfo(JukeboxTileEntity tileEnt) {
-        return new JukeboxInfo(tileEnt, ClientConfig.ticksToHandleJukebox);
+        return new JukeboxInfo(tileEnt, ClientConstants.ticksToHandleJukebox);
     }
 
     @Override
     public int getTickTime() {
-        return ClientConfig.ticksToHandleJukebox;
+        return ClientConstants.ticksToHandleJukebox;
     }
 
     @Override

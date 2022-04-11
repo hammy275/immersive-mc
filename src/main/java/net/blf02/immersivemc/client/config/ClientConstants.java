@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.client.config;
 
-public class ClientConfig {
+public class ClientConstants {
 
     // How long the overlay should be displayed
     public static final int ticksToRenderFurnace = 80;

@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.blf02.immersivemc.client.config.ClientConfig;
+import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.BrewingStandTileEntity;
@@ -22,12 +22,12 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
 
     @Override
     public BrewingInfo getNewInfo(BrewingStandTileEntity tileEnt) {
-        return new BrewingInfo(tileEnt, ClientConfig.ticksToRenderBrewing);
+        return new BrewingInfo(tileEnt, ClientConstants.ticksToRenderBrewing);
     }
 
     @Override
     public int getTickTime() {
-        return ClientConfig.ticksToRenderBrewing;
+        return ClientConstants.ticksToRenderBrewing;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
         Vector3d posFuel = pos.add(leftOffset).add(0, 0.75, 0);
         info.setPosition(4, posFuel);
 
-        float hitboxSize = ClientConfig.itemScaleSizeBrewing / 3f;
+        float hitboxSize = ClientConstants.itemScaleSizeBrewing / 3f;
         info.setHitbox(0, createHitbox(posLeftBottle, hitboxSize));
         info.setHitbox(1, createHitbox(posMidBottle, hitboxSize));
         info.setHitbox(2, createHitbox(posRightBottle, hitboxSize));
@@ -80,7 +80,7 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
     protected void render(BrewingInfo info, MatrixStack stack, boolean isInVR) {
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
 
-        float size = ClientConfig.itemScaleSizeBrewing / info.getCountdown();
+        float size = ClientConstants.itemScaleSizeBrewing / info.getCountdown();
 
         renderItem(info.items[0], stack, info.getPosition(0), size, forward, info.getHibtox(0));
         renderItem(info.items[1], stack, info.getPosition(1), size, forward, info.getHibtox(1));

@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.blf02.immersivemc.client.config.ClientConfig;
+import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
@@ -44,7 +44,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         // Set the cooldown (transition time) based on how long we've existed or until we stop existing
         if (info.getCountdown() > 1 && info.getTicksLeft() > 20) {
             info.changeCountdown(-1);
-        } else if (info.getCountdown() < ClientConfig.transitionTime && info.getTicksLeft() <= 20) {
+        } else if (info.getCountdown() < ClientConstants.transitionTime && info.getTicksLeft() <= 20) {
             info.changeCountdown(1);
         }
 

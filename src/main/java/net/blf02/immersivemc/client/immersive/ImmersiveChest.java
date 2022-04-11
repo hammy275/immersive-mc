@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.blf02.immersivemc.client.config.ClientConfig;
+import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.blf02.immersivemc.client.vr.VRPluginVerify;
 import net.blf02.immersivemc.common.network.Network;
@@ -32,7 +32,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
         // Chest can become null even if the above doesn't return us
         try {
             // super.tick() does this for the main tileEntity. This does it for the other chest
-            if (info.ticksActive % ClientConfig.inventorySyncTime == 0) {
+            if (info.ticksActive % ClientConstants.inventorySyncTime == 0) {
                 Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.other.getBlockPos()));
             }
         } catch (NullPointerException e) {
@@ -64,7 +64,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
                     pos.add(leftOffset), pos, pos.add(rightOffset),
                     pos.add(leftOffset).add(botOffset), pos.add(botOffset), pos.add(rightOffset).add(botOffset)
             };
-            float hitboxSize = ClientConfig.itemScaleSizeChest / 3f * 1.1f;
+            float hitboxSize = ClientConstants.itemScaleSizeChest / 3f * 1.1f;
             int startTop = 9 * info.getRowNum() + 27*i;
             int endTop = startTop + 9;
             for (int z = startTop; z < endTop; z++) {
@@ -94,7 +94,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
 
     @Override
     protected void render(ChestInfo info, MatrixStack stack, boolean isInVR) {
-        float itemSize = ClientConfig.itemScaleSizeChest / info.getCountdown();
+        float itemSize = ClientConstants.itemScaleSizeChest / info.getCountdown();
         Direction forward = info.forward;
 
         for (int i = 0; i < 27; i++) {
@@ -112,12 +112,12 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
 
     @Override
     public ChestInfo getNewInfo(ChestTileEntity tileEnt) {
-        return new ChestInfo(tileEnt, ClientConfig.ticksToRenderChest, Util.getOtherChest(tileEnt));
+        return new ChestInfo(tileEnt, ClientConstants.ticksToRenderChest, Util.getOtherChest(tileEnt));
     }
 
     @Override
     public int getTickTime() {
-        return ClientConfig.ticksToRenderChest;
+        return ClientConstants.ticksToRenderChest;
     }
 
     @Override

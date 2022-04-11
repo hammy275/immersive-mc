@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.blf02.immersivemc.client.config.ClientConfig;
+import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
@@ -25,12 +25,12 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
 
     @Override
     public ImmersiveFurnaceInfo getNewInfo(AbstractFurnaceTileEntity tileEnt) {
-        return new ImmersiveFurnaceInfo(tileEnt, ClientConfig.ticksToRenderFurnace);
+        return new ImmersiveFurnaceInfo(tileEnt, ClientConstants.ticksToRenderFurnace);
     }
 
     @Override
     public int getTickTime() {
-        return ClientConfig.ticksToRenderFurnace;
+        return ClientConstants.ticksToRenderFurnace;
     }
 
     @Override
@@ -65,32 +65,32 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
 
         // Set hitboxes for logic to use
         info.setHitbox(0, new AxisAlignedBB(
-                posToSmelt.x - ClientConfig.itemScaleSizeFurnace / 3.0,
-                posToSmelt.y - ClientConfig.itemScaleSizeFurnace / 3.0,
-                posToSmelt.z - ClientConfig.itemScaleSizeFurnace / 3.0,
-                posToSmelt.x + ClientConfig.itemScaleSizeFurnace / 3.0,
-                posToSmelt.y + ClientConfig.itemScaleSizeFurnace / 3.0,
-                posToSmelt.z + ClientConfig.itemScaleSizeFurnace / 3.0));
+                posToSmelt.x - ClientConstants.itemScaleSizeFurnace / 3.0,
+                posToSmelt.y - ClientConstants.itemScaleSizeFurnace / 3.0,
+                posToSmelt.z - ClientConstants.itemScaleSizeFurnace / 3.0,
+                posToSmelt.x + ClientConstants.itemScaleSizeFurnace / 3.0,
+                posToSmelt.y + ClientConstants.itemScaleSizeFurnace / 3.0,
+                posToSmelt.z + ClientConstants.itemScaleSizeFurnace / 3.0));
 
         info.setHitbox(1, new AxisAlignedBB(
-                posFuel.x - ClientConfig.itemScaleSizeFurnace / 3.0,
-                posFuel.y - ClientConfig.itemScaleSizeFurnace / 3.0,
-                posFuel.z - ClientConfig.itemScaleSizeFurnace / 3.0,
-                posFuel.x + ClientConfig.itemScaleSizeFurnace / 3.0,
-                posFuel.y + ClientConfig.itemScaleSizeFurnace / 3.0,
-                posFuel.z + ClientConfig.itemScaleSizeFurnace / 3.0));
+                posFuel.x - ClientConstants.itemScaleSizeFurnace / 3.0,
+                posFuel.y - ClientConstants.itemScaleSizeFurnace / 3.0,
+                posFuel.z - ClientConstants.itemScaleSizeFurnace / 3.0,
+                posFuel.x + ClientConstants.itemScaleSizeFurnace / 3.0,
+                posFuel.y + ClientConstants.itemScaleSizeFurnace / 3.0,
+                posFuel.z + ClientConstants.itemScaleSizeFurnace / 3.0));
 
         info.setHitbox(2, new AxisAlignedBB(
-                posOutput.x - ClientConfig.itemScaleSizeFurnace / 3.0,
-                posOutput.y - ClientConfig.itemScaleSizeFurnace / 3.0,
-                posOutput.z - ClientConfig.itemScaleSizeFurnace / 3.0,
-                posOutput.x + ClientConfig.itemScaleSizeFurnace / 3.0,
-                posOutput.y + ClientConfig.itemScaleSizeFurnace / 3.0,
-                posOutput.z + ClientConfig.itemScaleSizeFurnace / 3.0));
+                posOutput.x - ClientConstants.itemScaleSizeFurnace / 3.0,
+                posOutput.y - ClientConstants.itemScaleSizeFurnace / 3.0,
+                posOutput.z - ClientConstants.itemScaleSizeFurnace / 3.0,
+                posOutput.x + ClientConstants.itemScaleSizeFurnace / 3.0,
+                posOutput.y + ClientConstants.itemScaleSizeFurnace / 3.0,
+                posOutput.z + ClientConstants.itemScaleSizeFurnace / 3.0));
     }
 
     protected void render(ImmersiveFurnaceInfo info, MatrixStack stack, boolean isInVR) {
-        float size = ClientConfig.itemScaleSizeFurnace / info.getCountdown();
+        float size = ClientConstants.itemScaleSizeFurnace / info.getCountdown();
 
         // Render all of the items
 

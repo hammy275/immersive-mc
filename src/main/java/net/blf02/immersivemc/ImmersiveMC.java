@@ -2,8 +2,10 @@ package net.blf02.immersivemc;
 
 import net.blf02.immersivemc.client.subscribe.ClientLogicSubscriber;
 import net.blf02.immersivemc.client.subscribe.ClientRenderSubscriber;
+import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
+import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
 import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.blf02.immersivemc.common.network.packet.GrabItemPacket;
@@ -11,19 +13,26 @@ import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.server.ServerSubscriber;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Mod(ImmersiveMC.MOD_ID)
 public class ImmersiveMC {
 
     public static final String MOD_ID = "immersivemc";
+    public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
     public ImmersiveMC() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ImmersiveMCConfig.GENERAL_SPEC,
+                "immersive_mc.toml");
     }
 
     protected void clientSetup(FMLClientSetupEvent event) {
@@ -50,6 +59,8 @@ public class ImmersiveMC {
                     ChestOpenPacket::decode, ChestOpenPacket::handle);
             Network.INSTANCE.registerMessage(index++, GrabItemPacket.class, GrabItemPacket::encode,
                     GrabItemPacket::decode, GrabItemPacket::handle);
+            Network.INSTANCE.registerMessage(index++, ConfigSyncPacket.class, ConfigSyncPacket::encode,
+                    ConfigSyncPacket::decode, ConfigSyncPacket::handle);
         });
 
     }

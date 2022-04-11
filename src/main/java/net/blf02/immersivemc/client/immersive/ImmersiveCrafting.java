@@ -1,10 +1,10 @@
 package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.blf02.immersivemc.client.config.ClientConfig;
+import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
 import net.blf02.immersivemc.client.storage.ClientStorage;
-import net.blf02.immersivemc.common.config.CommonConfig;
+import net.blf02.immersivemc.common.config.CommonConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
@@ -32,7 +32,7 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
 
         if (info.tablePos != null &&
                 Minecraft.getInstance().player.distanceToSqr(Vector3d.atCenterOf(info.tablePos)) >
-                        CommonConfig.distanceSquaredToRemoveImmersive) {
+                        CommonConstants.distanceSquaredToRemoveImmersive) {
             info.remove();
         }
 
@@ -61,7 +61,7 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
                 pos.add(leftOffset), pos, pos.add(rightOffset),
                 pos.add(leftOffset).add(botOffset), pos.add(botOffset), pos.add(rightOffset).add(botOffset)
         };
-        float hitboxSize = ClientConfig.itemScaleSizeCrafting / 3f;
+        float hitboxSize = ClientConstants.itemScaleSizeCrafting / 3f;
         for (int i = 0; i < 9; i++) {
             info.setPosition(i, positions[i]);
             info.setHitbox(i, createHitbox(positions[i], hitboxSize));
@@ -71,7 +71,7 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
 
     @Override
     protected void render(CraftingInfo info, MatrixStack stack, boolean isInVR) {
-        float itemSize = ClientConfig.itemScaleSizeCrafting / info.getCountdown();
+        float itemSize = ClientConstants.itemScaleSizeCrafting / info.getCountdown();
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
 
         for (int i = 0; i < 9; i++) {
@@ -93,10 +93,10 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     public void trackObject(BlockPos tablePos) {
         for (CraftingInfo info : getTrackedObjects()) {
             if (info.tablePos.equals(tablePos)) {
-                info.setTicksLeft(ClientConfig.ticksToRenderCrafting);
+                info.setTicksLeft(ClientConstants.ticksToRenderCrafting);
                 return;
             }
         }
-        infos.add(new CraftingInfo(tablePos, ClientConfig.ticksToRenderCrafting));
+        infos.add(new CraftingInfo(tablePos, ClientConstants.ticksToRenderCrafting));
     }
 }
