@@ -42,6 +42,16 @@ public class ActiveConfig {
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
+    public static void loadOffConfig() {
+        useBrewingImmersion = false;
+        useChestImmersion = false;
+        useCraftingImmersion = false;
+        useFurnaceImmersion = false;
+        useJukeboxImmersion = false;
+        useRangedGrab = false;
+        ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
+    }
+
     public static String asString() {
         String stringOut = "Use brewing immersion: " + useBrewingImmersion + "\n" +
                 "Use chest immersion: " + useChestImmersion + "\n" +

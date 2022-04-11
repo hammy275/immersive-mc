@@ -16,14 +16,15 @@ import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
 import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.client.storage.ClientStorage;
 import net.blf02.immersivemc.client.swap.ClientSwap;
-import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
+import net.blf02.immersivemc.client.vr.VRPluginVerify;
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
 import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
+import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.util.Util;
-import net.blf02.immersivemc.client.vr.VRPluginVerify;
 import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -52,6 +53,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class ClientLogicSubscriber {
+
+    @SubscribeEvent
+    public void onClientLogin(ClientPlayerNetworkEvent.LoggedInEvent event) {
+        ActiveConfig.loadOffConfig(); // Load "disabled" config, so stuff is disabled if the server isn't running ImmersiveMC
+    }
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
