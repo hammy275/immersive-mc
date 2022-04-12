@@ -48,7 +48,7 @@ public class ConfigSyncPacket {
                 ActiveConfig.loadConfigFromPacket(message.buffer);
             } else if (message.kickMe && ctx.get().getSender() != null) { // If asking to be kicked, kick
                 ctx.get().getSender().connection.disconnect(
-                        new StringTextComponent("The server is using a different vesrion of ImmersiveMC than you!"));
+                        new StringTextComponent("The server is using a different version of ImmersiveMC than you!"));
             }
         });
         ctx.get().setPacketHandled(true);

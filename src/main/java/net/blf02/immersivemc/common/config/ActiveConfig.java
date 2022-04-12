@@ -15,6 +15,10 @@ public class ActiveConfig {
     public static boolean useRangedGrab = false;
 
     public static void loadConfigFromPacket(PacketBuffer buffer) {
+        int serverNetworkVersion = buffer.readInt();
+        if (serverNetworkVersion != Network.PROTOCOL_VERSION) {
+            Network.INSTANCE.sendToServer(ConfigSyncPacket.getKickMePacket());
+        }
         int serverConfigVersion = buffer.readInt();
         if (serverConfigVersion != ImmersiveMCConfig.CONFIG_VERSION) { // Kick if we have a different config version
             Network.INSTANCE.sendToServer(ConfigSyncPacket.getKickMePacket());
