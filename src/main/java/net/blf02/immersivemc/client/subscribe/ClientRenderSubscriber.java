@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.immersive.AbstractImmersive;
 import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import net.blf02.immersivemc.client.vr.VRPluginVerify;
+import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -30,7 +30,7 @@ public class ClientRenderSubscriber {
                                                                  MatrixStack stack) {
         try {
             for (I info : singleton.getTrackedObjects()) {
-                singleton.doRender(info, stack, VRPluginVerify.isInVR);
+                singleton.doRender(info, stack, VRPluginVerify.clientInVR);
             }
         } catch (ConcurrentModificationException ignored) {
             // Skip rendering if the list is modified mid-render

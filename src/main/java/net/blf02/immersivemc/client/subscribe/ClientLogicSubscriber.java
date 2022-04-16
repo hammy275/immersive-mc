@@ -17,7 +17,7 @@ import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.client.storage.ClientStorage;
 import net.blf02.immersivemc.client.swap.ClientSwap;
 import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
-import net.blf02.immersivemc.client.vr.VRPluginVerify;
+import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
@@ -139,7 +139,7 @@ public class ClientLogicSubscriber {
         int minTicksLeft = Integer.MAX_VALUE;
         int i = 0;
         for (I info : infos) {
-            singleton.tick(info, VRPluginVerify.isInVR);
+            singleton.tick(info, VRPluginVerify.clientInVR);
             if (info.getTicksLeft() <= 0) {
                 toRemove.add(info);
             }
@@ -259,7 +259,7 @@ public class ClientLogicSubscriber {
         RayTraceResult looking = Minecraft.getInstance().hitResult;
         if (looking == null || looking.getType() != RayTraceResult.Type.BLOCK) return false;
 
-        if (VRPluginVerify.isInVR || ClientConstants.vrInteractionsOutsideVR) {
+        if (VRPluginVerify.clientInVR || ClientConstants.vrInteractionsOutsideVR) {
             BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
             BlockState state = player.level.getBlockState(pos);
             if (state.getBlock() instanceof AbstractChestBlock && player.level.getBlockEntity(pos) instanceof ChestTileEntity

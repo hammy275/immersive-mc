@@ -1,4 +1,4 @@
-package net.blf02.immersivemc.client.vr;
+package net.blf02.immersivemc.common.vr;
 
 public class VRPluginVerify {
 
@@ -6,5 +6,5 @@ public class VRPluginVerify {
 
     // Should only be accessed client-side!
     // Set by ClientVRSubscriber
-    public static boolean isInVR = false;
+    public static boolean clientInVR = false;
 }

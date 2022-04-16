@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.client.tracker;
 
-import net.blf02.immersivemc.client.vr.VRPlugin;
-import net.blf02.immersivemc.client.vr.VRPluginVerify;
+import net.blf02.immersivemc.common.vr.VRPlugin;
+import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.GrabItemPacket;
@@ -79,7 +79,7 @@ public class RangedGrabTrackerClient extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(PlayerEntity player) {
-        return VRPluginVerify.isInVR && Minecraft.getInstance().gameMode != null
+        return VRPluginVerify.clientInVR && Minecraft.getInstance().gameMode != null
                 && ActiveConfig.useRangedGrab;
     }
 }

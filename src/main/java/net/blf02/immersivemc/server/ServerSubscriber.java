@@ -49,8 +49,16 @@ public class ServerSubscriber {
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
-        for (AbstractTracker tracker : ServerTrackerInit.trackers) {
+        for (AbstractTracker tracker : ServerTrackerInit.globalTrackers) {
             tracker.doTick(null);
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END || event.player.level.isClientSide) return;
+        for (AbstractTracker tracker : ServerTrackerInit.playerTrackers) {
+            tracker.doTick(event.player);
         }
     }
 

@@ -9,7 +9,7 @@ import net.blf02.immersivemc.client.swap.ClientSwap;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;
-import net.blf02.immersivemc.client.vr.VRPluginVerify;
+import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.blf02.vrapi.event.VRPlayerTickEvent;
@@ -37,7 +37,7 @@ public class ClientVRSubscriber {
         if (event.phase != TickEvent.Phase.END) return;
         if (event.side != LogicalSide.CLIENT) return;
         if (Minecraft.getInstance().gameMode == null) return;
-        VRPluginVerify.isInVR = true;
+        VRPluginVerify.clientInVR = true;
 
         // Track things the HMD is looking at (cursor is already covered in ClientLogicSubscriber)
         double dist = Minecraft.getInstance().gameMode.getPickRange();

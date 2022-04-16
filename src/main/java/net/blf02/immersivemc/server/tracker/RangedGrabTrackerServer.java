@@ -20,7 +20,7 @@ public class RangedGrabTrackerServer extends AbstractTracker {
     protected final List<RangedGrabInfo> toRemove = new LinkedList<>();
 
     public RangedGrabTrackerServer() {
-        ServerTrackerInit.trackers.add(this);
+        ServerTrackerInit.globalTrackers.add(this);
     }
 
     @Override

@@ -3,7 +3,7 @@ package net.blf02.immersivemc.client.immersive;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
-import net.blf02.immersivemc.client.vr.VRPluginVerify;
+import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
@@ -150,7 +150,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
                     if (info.other == null) { // If our neighboring chest's info isn't tracking us
                         info.failRender = true;
                         info.other = tileEnt; // Track us
-                        this.doTick(info, VRPluginVerify.isInVR); // Tick so we can handle the items in our other chest
+                        this.doTick(info, VRPluginVerify.clientInVR); // Tick so we can handle the items in our other chest
                         info.failRender = false;
                     }
                     return false; // Return false so this one isn't tracked
