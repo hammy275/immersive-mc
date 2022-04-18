@@ -10,6 +10,7 @@ public class ImmersiveMCConfig {
 
     public static final ForgeConfigSpec GENERAL_SPEC;
 
+    public static ForgeConfigSpec.BooleanValue useAnvilImmersion;
     public static ForgeConfigSpec.BooleanValue useBrewingImmersion;
     public static ForgeConfigSpec.BooleanValue useChestImmersion;
     public static ForgeConfigSpec.BooleanValue useCraftingImmersion;
@@ -24,6 +25,9 @@ public class ImmersiveMCConfig {
     }
 
     protected static void setupConfig(ForgeConfigSpec.Builder builder) {
+        useAnvilImmersion = builder
+                .comment("Whether immersives on anvils should be allowed")
+                .define("anvil_immersion", true);
         useBrewingImmersion = builder
                 .comment("Whether immersives on brewing stands should be allowed")
                 .define("brewing_immersion", true);
@@ -45,8 +49,9 @@ public class ImmersiveMCConfig {
     }
 
     public static void encode(PacketBuffer buffer) {
-        buffer.writeInt(Network.PROTOCOL_VERSION).writeInt(CONFIG_VERSION).
-                writeBoolean(useBrewingImmersion.get())
+        buffer.writeInt(Network.PROTOCOL_VERSION).writeInt(CONFIG_VERSION)
+                .writeBoolean(useAnvilImmersion.get())
+                .writeBoolean(useBrewingImmersion.get())
                 .writeBoolean(useChestImmersion.get()).writeBoolean(useCraftingImmersion.get())
                 .writeBoolean(useFurnaceImmersion.get()).writeBoolean(useJukeboxImmersion.get())
                 .writeBoolean(useRangedGrab.get());

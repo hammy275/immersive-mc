@@ -7,6 +7,7 @@ import net.minecraft.network.PacketBuffer;
 
 public class ActiveConfig {
 
+    public static boolean useAnvilImmersion = false;
     public static boolean useBrewingImmersion = false;
     public static boolean useChestImmersion = false;
     public static boolean useCraftingImmersion = false;
@@ -26,6 +27,7 @@ public class ActiveConfig {
         // We combine client config with server, so if a user doesn't want to use an immersion, they don't
         // even if a server is OK with it.
         loadConfigFromFile();
+        useAnvilImmersion = buffer.readBoolean() && useAnvilImmersion;
         useBrewingImmersion = buffer.readBoolean() && useBrewingImmersion;
         useChestImmersion = buffer.readBoolean() && useChestImmersion;
         useCraftingImmersion = buffer.readBoolean() && useCraftingImmersion;
@@ -37,6 +39,7 @@ public class ActiveConfig {
     }
 
     public static void loadConfigFromFile() {
+        useAnvilImmersion = ImmersiveMCConfig.useAnvilImmersion.get();
         useBrewingImmersion = ImmersiveMCConfig.useBrewingImmersion.get();
         useChestImmersion = ImmersiveMCConfig.useChestImmersion.get();
         useCraftingImmersion = ImmersiveMCConfig.useCraftingImmersion.get();
@@ -47,6 +50,7 @@ public class ActiveConfig {
     }
 
     public static void loadOffConfig() {
+        useAnvilImmersion = false;
         useBrewingImmersion = false;
         useChestImmersion = false;
         useCraftingImmersion = false;
@@ -57,7 +61,8 @@ public class ActiveConfig {
     }
 
     public static String asString() {
-        String stringOut = "Use brewing immersion: " + useBrewingImmersion + "\n" +
+        String stringOut = "Use anvil immersion: " + useAnvilImmersion + "\n" +
+                "Use brewing immersion: " + useBrewingImmersion + "\n" +
                 "Use chest immersion: " + useChestImmersion + "\n" +
                 "Use crafting immersion: " + useCraftingImmersion + "\n" +
                 "Use furnace immersion: " + useFurnaceImmersion + "\n" +

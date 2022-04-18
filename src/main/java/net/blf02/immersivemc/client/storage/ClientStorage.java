@@ -17,6 +17,10 @@ public class ClientStorage {
             ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY
     };
 
+    // Left, right, output
+    public static ItemStack[] anvilStorage = new ItemStack[]{ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
+    public static final ItemStack[] smithingStorage = new ItemStack[]{ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
+
     public static void removeLackingIngredientsFromTable(PlayerEntity player) {
         List<ItemStack> stacks = new ArrayList<>();
         List<Integer> amounts = new ArrayList<>();

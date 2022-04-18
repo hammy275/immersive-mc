@@ -90,9 +90,8 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     @Override
     public boolean shouldRender(CraftingInfo info, boolean isInVR) {
         if (Minecraft.getInstance().player == null) return false;
-        Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         World level = Minecraft.getInstance().level;
-        return level != null && level.getBlockState(info.tablePos.relative(forward)).isAir()
+        return level != null && level.getBlockState(info.tablePos.above()).isAir()
                 && info.readyToRender();
     }
 

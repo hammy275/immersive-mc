@@ -4,6 +4,7 @@ import net.blf02.immersivemc.client.immersive.AbstractImmersive;
 import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.AbstractTileEntityImmersiveInfo;
+import net.blf02.immersivemc.client.immersive.info.AnvilInfo;
 import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
 import net.blf02.immersivemc.client.swap.ClientSwap;
 import net.blf02.immersivemc.common.network.Network;
@@ -75,6 +76,8 @@ public class ClientVRSubscriber {
                                 hit.get(), c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND));
                     } else if (info instanceof CraftingInfo) {
                         ClientSwap.craftingSwap(hit.get(), c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND);
+                    } else if (info instanceof AnvilInfo) {
+                        ClientSwap.anvilSwap(hit.get(), c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND, ((AnvilInfo) info).anvilPos);
                     }
 
                     cooldown = 20;

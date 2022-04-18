@@ -3,6 +3,7 @@ package net.blf02.immersivemc.client.subscribe;
 import net.blf02.immersivemc.client.ClientUtil;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.AbstractImmersive;
+import net.blf02.immersivemc.client.immersive.ImmersiveAnvil;
 import net.blf02.immersivemc.client.immersive.ImmersiveBrewing;
 import net.blf02.immersivemc.client.immersive.ImmersiveChest;
 import net.blf02.immersivemc.client.immersive.ImmersiveCrafting;
@@ -10,6 +11,7 @@ import net.blf02.immersivemc.client.immersive.ImmersiveFurnace;
 import net.blf02.immersivemc.client.immersive.ImmersiveJukebox;
 import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import net.blf02.immersivemc.client.immersive.info.AnvilInfo;
 import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
@@ -17,7 +19,6 @@ import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.client.storage.ClientStorage;
 import net.blf02.immersivemc.client.swap.ClientSwap;
 import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
-import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
@@ -25,9 +26,12 @@ import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.block.AbstractChestBlock;
+import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.SmithingTableBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
@@ -100,6 +104,8 @@ public class ClientLogicSubscriber {
             ImmersiveJukebox.getSingleton().trackObject((JukeboxTileEntity) tileEntity);
         } else if (tileEntity instanceof ChestTileEntity) {
             ImmersiveChest.singleton.trackObject((ChestTileEntity) tileEntity);
+        } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
+            ImmersiveAnvil.singleton.trackObject(pos);
         }
     }
 
@@ -242,6 +248,16 @@ public class ClientLogicSubscriber {
                     Network.INSTANCE.sendToServer(new SwapPacket(
                             info.getBlockPosition(), closest.get(), Hand.MAIN_HAND
                     ));
+                    return true;
+                }
+            }
+        }
+
+        for (AnvilInfo info : ImmersiveAnvil.singleton.getTrackedObjects()) {
+            if (info.hasHitboxes()) {
+                Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
+                if (closest.isPresent()) {
+                    ClientSwap.anvilSwap(closest.get(), Hand.MAIN_HAND, info.anvilPos);
                     return true;
                 }
             }
