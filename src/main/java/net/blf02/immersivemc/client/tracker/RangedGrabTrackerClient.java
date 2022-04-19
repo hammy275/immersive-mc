@@ -80,6 +80,6 @@ public class RangedGrabTrackerClient extends AbstractTracker {
     @Override
     protected boolean shouldTick(PlayerEntity player) {
         return VRPluginVerify.clientInVR && Minecraft.getInstance().gameMode != null
-                && ActiveConfig.useRangedGrab;
+                && ActiveConfig.useRangedGrab && VRPlugin.API.apiActive(player);
     }
 }

@@ -44,6 +44,6 @@ public class ButtonPushTracker extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(PlayerEntity player) {
-        return VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player);
+        return VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player) && VRPlugin.API.apiActive(player);
     }
 }
