@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.server.swap;
 
-import net.blf02.immersivemc.client.storage.NullContainer;
+import com.mojang.datafixers.util.Pair;
+import net.blf02.immersivemc.common.storage.NullContainer;
 import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.JukeboxBlock;
@@ -8,6 +9,9 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.container.AbstractRepairContainer;
+import net.minecraft.inventory.container.RepairContainer;
+import net.minecraft.inventory.container.SmithingTableContainer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.MusicDiscItem;
@@ -196,5 +200,23 @@ public class Swap {
             }
         }
         return true;
+    }
+
+    public static Pair<ItemStack, Integer> getAnvilOutput(ItemStack left, ItemStack mid, boolean isReallyAnvil, ServerPlayerEntity player) {
+        AbstractRepairContainer container;
+        if (isReallyAnvil) {
+            container = new RepairContainer(-1, player.inventory);
+        } else {
+            container = new SmithingTableContainer(-1, player.inventory);
+        }
+        container.setItem(0, left);
+        container.setItem(1, mid);
+        container.createResult();
+        ItemStack res = container.getSlot(2).getItem();
+        int level = -1;
+        if (isReallyAnvil) {
+            level = ((RepairContainer) container).getCost();
+        }
+        return new Pair<>(res, level);
     }
 }

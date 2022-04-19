@@ -1,4 +1,4 @@
-package net.blf02.immersivemc.client.storage;
+package net.blf02.immersivemc.common.storage;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;

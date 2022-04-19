@@ -46,7 +46,7 @@ public class ImmersiveAnvil extends AbstractImmersive<AnvilInfo> {
         if (info.isReallyAnvil) {
             facing = anvil.getValue(AnvilBlock.FACING); // "faces" long way towards the right
         } else {
-            facing = getForwardFromPlayer(Minecraft.getInstance().player).getClockWise();
+            facing = getForwardFromPlayer(Minecraft.getInstance().player).getCounterClockWise();
         }
         info.renderDirection = facing.getClockWise();
 

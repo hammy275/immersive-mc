@@ -18,7 +18,8 @@ public class ClientStorage {
     };
 
     // Left, right, output
-    public static ItemStack[] anvilStorage = new ItemStack[]{ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
+    public static final ItemStack[] anvilStorage = new ItemStack[]{ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
+    public static int anvilCost = -1;
     public static final ItemStack[] smithingStorage = new ItemStack[]{ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
 
     public static void removeLackingIngredientsFromTable(PlayerEntity player) {
