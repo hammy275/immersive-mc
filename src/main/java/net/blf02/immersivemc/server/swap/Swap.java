@@ -3,8 +3,10 @@ package net.blf02.immersivemc.server.swap;
 import com.mojang.datafixers.util.Pair;
 import net.blf02.immersivemc.common.storage.NullContainer;
 import net.blf02.immersivemc.common.util.Util;
+import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.JukeboxBlock;
+import net.minecraft.block.SmithingTableBlock;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -24,6 +26,7 @@ import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
@@ -135,6 +138,42 @@ public class Swap {
             }
         }
     }
+    
+    public static void handleAnvil(int leftSlot, int midSlot, BlockPos pos, ServerPlayerEntity sender) {
+        ItemStack left = sender.inventory.getItem(leftSlot);
+        ItemStack mid = sender.inventory.getItem(midSlot);
+        boolean isReallyAnvil = sender.level.getBlockState(pos).getBlock() instanceof AnvilBlock;
+        boolean isSmithingTable = sender.level.getBlockState(pos).getBlock() instanceof SmithingTableBlock;
+        if (!isReallyAnvil && !isSmithingTable) return; // Bail if we aren't an anvil or a smithing table!
+        Pair<ItemStack, Integer> resAndCost = Swap.getAnvilOutput(left, mid, isReallyAnvil, sender);
+        if ((sender.experienceLevel >= resAndCost.getSecond() || sender.abilities.instabuild)
+                && !resAndCost.getFirst().isEmpty()) {
+            AbstractRepairContainer container;
+            if (isReallyAnvil) {
+                container = new RepairContainer(-1, sender.inventory,
+                        IWorldPosCallable.create(sender.level, pos));
+
+            } else {
+                container = new SmithingTableContainer(-1, sender.inventory,
+                        IWorldPosCallable.create(sender.level, pos));
+            }
+                    /* Note: Since we create a fresh container here with only the output
+                     (used mainly for causing the anvil to make sounds and possibly break),
+                     we never subtract XP levels from it. Instead, we just subtract them
+                     ourselves here. */
+            container.getSlot(2).onTake(sender, resAndCost.getFirst());
+            if (!sender.abilities.instabuild) {
+                sender.giveExperienceLevels(-resAndCost.getSecond());
+            }
+            left.shrink(1);
+            mid.shrink(1);
+            Vector3d outPos = Vector3d.atCenterOf(pos);
+            ItemEntity entOut = new ItemEntity(sender.level, outPos.x, outPos.y, outPos.z);
+            entOut.setItem(resAndCost.getFirst());
+            entOut.setDeltaMovement(0, 0, 0);
+            sender.level.addFreshEntity(entOut);
+        }
+    }
 
     protected static boolean removeNeededIngredients(ServerPlayerEntity player, CraftingInventory inv) {
         if (player.isCreative()) return true; // Always succeed if in creative mode
@@ -213,7 +252,7 @@ public class Swap {
         container.setItem(1, mid);
         container.createResult();
         ItemStack res = container.getSlot(2).getItem();
-        int level = -1;
+        int level = 0;
         if (isReallyAnvil) {
             level = ((RepairContainer) container).getCost();
         }

@@ -63,7 +63,7 @@ public class ImmersiveAnvil extends AbstractImmersive<AnvilInfo> {
         info.setPosition(1, middle);
         info.setPosition(2, right);
 
-        float hitboxSize = ClientConstants.itemScaleSizeAnvil / 3f;
+        float hitboxSize = ClientConstants.itemScaleSizeAnvil / 2f;
 
         info.setHitbox(0, createHitbox(left, hitboxSize));
         info.setHitbox(1, createHitbox(middle, hitboxSize));

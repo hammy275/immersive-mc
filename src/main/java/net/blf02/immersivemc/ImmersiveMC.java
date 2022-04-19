@@ -6,6 +6,7 @@ import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
 import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
+import net.blf02.immersivemc.common.network.packet.DoAnvilPacket;
 import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.blf02.immersivemc.common.network.packet.GetAnvilOutputPacket;
@@ -70,6 +71,8 @@ public class ImmersiveMC {
                     ConfigSyncPacket::decode, ConfigSyncPacket::handle);
             Network.INSTANCE.registerMessage(index++, GetAnvilOutputPacket.class, GetAnvilOutputPacket::encode,
                     GetAnvilOutputPacket::decode, GetAnvilOutputPacket::handle);
+            Network.INSTANCE.registerMessage(index++, DoAnvilPacket.class, DoAnvilPacket::encode,
+                    DoAnvilPacket::decode, DoAnvilPacket::handle);
         });
 
     }
