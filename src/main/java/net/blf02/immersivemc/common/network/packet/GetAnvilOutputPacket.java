@@ -2,6 +2,7 @@ package net.blf02.immersivemc.common.network.packet;
 
 import com.mojang.datafixers.util.Pair;
 import net.blf02.immersivemc.client.storage.ClientStorage;
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -61,6 +62,7 @@ public class GetAnvilOutputPacket {
 
     public static void handle(final GetAnvilOutputPacket message, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
+            if (!ActiveConfig.useAnvilImmersion) return;
             ServerPlayerEntity sender = ctx.get().getSender();
             if (sender == null) { // Write to ClientStorage
                 addAnvilOutput(message.right, message.levels, message.isReallyAnvil);

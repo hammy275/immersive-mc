@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.common.network.packet;
 
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -37,6 +38,7 @@ public class DoAnvilPacket {
 
     public static void handle(DoAnvilPacket message, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
+            if (!ActiveConfig.useAnvilImmersion) return;
             ServerPlayerEntity sender = ctx.get().getSender();
             if (sender != null) { // Client asking us to craft something
                 if (!NetworkUtil.safeToRun(message.pos, sender)) { // Make sure we're in a reasonable distance
