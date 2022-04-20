@@ -7,8 +7,10 @@ import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
 import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.server.tracker.ServerTrackerInit;
+import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.SmithingTableBlock;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.BrewingStandTileEntity;
@@ -36,7 +38,8 @@ public class ServerSubscriber {
                     tileEntity instanceof BrewingStandTileEntity ||
                     tileEntity instanceof ChestTileEntity;
         } else {
-            sendBreakPacket = state.getBlock() == Blocks.CRAFTING_TABLE;
+            sendBreakPacket = state.getBlock() == Blocks.CRAFTING_TABLE ||
+            state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock;
         }
 
         if (sendBreakPacket) {
