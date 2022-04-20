@@ -14,6 +14,8 @@ public class AnvilInfo extends AbstractImmersiveInfo {
     protected AxisAlignedBB[] hitboxes = new AxisAlignedBB[3];
     protected Vector3d[] positions = new Vector3d[3];
 
+    public Vector3d textPos = null;
+
     public AnvilInfo(BlockPos pos, int ticksToExist) {
         super(ticksToExist);
         this.anvilPos = pos;
@@ -56,7 +58,7 @@ public class AnvilInfo extends AbstractImmersiveInfo {
 
     @Override
     public boolean hasPositions() {
-        return positions[2] != null;
+        return positions[2] != null && textPos != null;
     }
 
     @Override

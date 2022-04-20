@@ -139,7 +139,8 @@ public class Swap {
         }
     }
     
-    public static void handleAnvil(int leftSlot, int midSlot, BlockPos pos, ServerPlayerEntity sender) {
+    public static void handleAnvil(int leftSlot, int midSlot, BlockPos pos, ServerPlayerEntity sender, Hand hand) {
+        if (!sender.getItemInHand(hand).isEmpty()) return;
         ItemStack left = sender.inventory.getItem(leftSlot);
         ItemStack mid = sender.inventory.getItem(midSlot);
         boolean isReallyAnvil = sender.level.getBlockState(pos).getBlock() instanceof AnvilBlock;
@@ -167,11 +168,7 @@ public class Swap {
             }
             left.shrink(1);
             mid.shrink(1);
-            Vector3d outPos = Vector3d.atCenterOf(pos);
-            ItemEntity entOut = new ItemEntity(sender.level, outPos.x, outPos.y, outPos.z);
-            entOut.setItem(resAndCost.getFirst());
-            entOut.setDeltaMovement(0, 0, 0);
-            sender.level.addFreshEntity(entOut);
+            sender.setItemInHand(hand, resAndCost.getFirst());
         }
     }
 

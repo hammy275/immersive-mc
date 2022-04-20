@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.OutlineLayerBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -17,6 +18,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.ITextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -159,6 +161,22 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             buffer.endOutlineBatch();
             stack.popPose();
         }
+    }
+
+    public void renderText(ITextComponent text, MatrixStack stack, Vector3d pos) {
+        ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+        stack.pushPose();
+        stack.translate(-renderInfo.getPosition().x + pos.x,
+                -renderInfo.getPosition().y + pos.y,
+                -renderInfo.getPosition().z + pos.z);
+        stack.mulPose(renderInfo.rotation());
+        stack.scale(-0.02f, -0.02f, -0.02f);
+        FontRenderer font = Minecraft.getInstance().font;
+        float size = -font.width(text) / 2f;
+        font.drawInBatch(text, size, 0, 0xFFFFFFFF, false,
+                stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), false,
+                0, 15728880);
+        stack.popPose();
     }
 
     /**

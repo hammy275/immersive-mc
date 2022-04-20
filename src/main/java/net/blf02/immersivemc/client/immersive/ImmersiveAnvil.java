@@ -14,6 +14,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
 import java.util.Objects;
@@ -63,6 +64,8 @@ public class ImmersiveAnvil extends AbstractImmersive<AnvilInfo> {
         info.setPosition(1, middle);
         info.setPosition(2, right);
 
+        info.textPos = info.getPosition(1).add(0, 0.5, 0);
+
         float hitboxSize = ClientConstants.itemScaleSizeAnvil / 2f;
 
         info.setHitbox(0, createHitbox(left, hitboxSize));
@@ -83,6 +86,14 @@ public class ImmersiveAnvil extends AbstractImmersive<AnvilInfo> {
     @Override
     protected void render(AnvilInfo info, MatrixStack stack, boolean isInVR) {
         float itemSize = ClientConstants.itemScaleSizeAnvil / info.getCountdown();
+
+        // Render experience levels needed if we have an experience cost to show
+        if (info.isReallyAnvil && ClientStorage.anvilCost > 0) {
+            renderText(new StringTextComponent("Levels Needed: " + ClientStorage.anvilCost), stack,
+                    info.textPos);
+        }
+
+        // Render the actual items
         for (int i = 0; i <= 2; i++) {
             ItemStack item = info.isReallyAnvil ? ClientStorage.anvilStorage[i] : ClientStorage.smithingStorage[i];
             renderItem(item, stack, info.getPosition(i),
