@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.server.tracker;
 
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
@@ -44,6 +45,7 @@ public class ButtonPushTracker extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(PlayerEntity player) {
-        return VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player) && VRPlugin.API.apiActive(player);
+        return ActiveConfig.useButton &&
+                VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player) && VRPlugin.API.apiActive(player);
     }
 }

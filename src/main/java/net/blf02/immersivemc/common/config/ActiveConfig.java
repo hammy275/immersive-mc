@@ -15,6 +15,8 @@ public class ActiveConfig {
     public static boolean useJukeboxImmersion = false;
     public static boolean useRangedGrab = false;
 
+    public static boolean useButton = false;
+
     public static void loadConfigFromPacket(PacketBuffer buffer) {
         int serverNetworkVersion = buffer.readInt();
         if (serverNetworkVersion != Network.PROTOCOL_VERSION) {
@@ -34,6 +36,7 @@ public class ActiveConfig {
         useFurnaceImmersion = buffer.readBoolean() && useFurnaceImmersion;
         useJukeboxImmersion = buffer.readBoolean() && useJukeboxImmersion;
         useRangedGrab = buffer.readBoolean() && useRangedGrab;
+        useButton = buffer.readBoolean() && useButton;
         ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
 
     }
@@ -46,6 +49,7 @@ public class ActiveConfig {
         useFurnaceImmersion = ImmersiveMCConfig.useFurnaceImmersion.get();
         useJukeboxImmersion = ImmersiveMCConfig.useJukeboxImmersion.get();
         useRangedGrab = ImmersiveMCConfig.useRangedGrab.get();
+        useButton = ImmersiveMCConfig.useButton.get();
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
@@ -57,6 +61,7 @@ public class ActiveConfig {
         useFurnaceImmersion = false;
         useJukeboxImmersion = false;
         useRangedGrab = false;
+        useButton = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -67,7 +72,8 @@ public class ActiveConfig {
                 "Use crafting immersion: " + useCraftingImmersion + "\n" +
                 "Use furnace immersion: " + useFurnaceImmersion + "\n" +
                 "Use jukebox immersion: " + useJukeboxImmersion + "\n" +
-                "Use ranged grab: " + useRangedGrab;
+                "Use ranged grab: " + useRangedGrab + "\n" +
+                "Use button: " + useButton;
         return stringOut;
     }
 }

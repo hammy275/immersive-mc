@@ -17,6 +17,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useFurnaceImmersion;
     public static ForgeConfigSpec.BooleanValue useJukeboxImmersion;
     public static ForgeConfigSpec.BooleanValue useRangedGrab;
+    public static ForgeConfigSpec.BooleanValue useButton;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -26,7 +27,7 @@ public class ImmersiveMCConfig {
 
     protected static void setupConfig(ForgeConfigSpec.Builder builder) {
         useAnvilImmersion = builder
-                .comment("Whether immersives on anvils should be allowed")
+                .comment("Whether immersives on anvils and smithing tables should be allowed")
                 .define("anvil_immersion", true);
         useBrewingImmersion = builder
                 .comment("Whether immersives on brewing stands should be allowed")
@@ -46,6 +47,9 @@ public class ImmersiveMCConfig {
         useRangedGrab = builder
                 .comment("Allow VR users to grab items at a distance.")
                 .define("ranged_grab", true);
+        useButton = builder
+                .comment("Whether VR users can physically push buttons")
+                .define("button_immersion", true);
     }
 
     public static void encode(PacketBuffer buffer) {
@@ -54,7 +58,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useBrewingImmersion.get())
                 .writeBoolean(useChestImmersion.get()).writeBoolean(useCraftingImmersion.get())
                 .writeBoolean(useFurnaceImmersion.get()).writeBoolean(useJukeboxImmersion.get())
-                .writeBoolean(useRangedGrab.get());
+                .writeBoolean(useRangedGrab.get())
+                .writeBoolean(useButton.get());
     }
 
 
