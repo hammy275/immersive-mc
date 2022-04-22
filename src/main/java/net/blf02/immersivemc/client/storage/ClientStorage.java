@@ -3,6 +3,8 @@ package net.blf02.immersivemc.client.storage;
 import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -21,6 +23,13 @@ public class ClientStorage {
     public static final ItemStack[] anvilStorage = new ItemStack[]{ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
     public static int anvilCost = -1;
     public static final ItemStack[] smithingStorage = new ItemStack[]{ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
+
+    // ETable
+    public static final ETableInfo weakInfo = new ETableInfo();
+    public static final ETableInfo midInfo = new ETableInfo();
+    public static final ETableInfo strongInfo = new ETableInfo();
+    public static ItemStack eTableItem = ItemStack.EMPTY;
+    public static ItemStack eTableEnchCopy = ItemStack.EMPTY;
 
     public static void removeLackingIngredientsFromTable(PlayerEntity player) {
         List<ItemStack> stacks = new ArrayList<>();
@@ -73,6 +82,21 @@ public class ClientStorage {
             }
         }
 
+    }
+
+    public static class ETableInfo {
+        public int levelsNeeded;
+        public int levelsTaken;
+        public ITextComponent textPreview = new StringTextComponent("If you see this, tell hammy3502!!!");
+
+        public boolean isActive() { // Whether we even should display the three enchantments
+            //return levelsTaken > 0 || levelsTaken == -1;
+            return true;
+        }
+
+        public boolean hasSomething() { // Some items may not be enchantable if too much XP is supplied (or not enough)
+            return levelsTaken != -1;
+        }
     }
 
 }

@@ -18,6 +18,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useJukeboxImmersion;
     public static ForgeConfigSpec.BooleanValue useRangedGrab;
     public static ForgeConfigSpec.BooleanValue useButton;
+    public static ForgeConfigSpec.BooleanValue useETableImmersion;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -50,6 +51,9 @@ public class ImmersiveMCConfig {
         useButton = builder
                 .comment("Whether VR users can physically push buttons")
                 .define("button_immersion", true);
+        useETableImmersion = builder
+                .comment("Whether immersives on Enchanting Tables should be allowed")
+                .define("enchant_table_immersion", true);
     }
 
     public static void encode(PacketBuffer buffer) {
@@ -59,7 +63,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useChestImmersion.get()).writeBoolean(useCraftingImmersion.get())
                 .writeBoolean(useFurnaceImmersion.get()).writeBoolean(useJukeboxImmersion.get())
                 .writeBoolean(useRangedGrab.get())
-                .writeBoolean(useButton.get());
+                .writeBoolean(useButton.get())
+                .writeBoolean(useETableImmersion.get());
     }
 
 

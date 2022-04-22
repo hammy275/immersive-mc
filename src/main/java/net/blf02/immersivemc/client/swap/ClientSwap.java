@@ -6,9 +6,15 @@ import net.blf02.immersivemc.common.network.packet.DoAnvilPacket;
 import net.blf02.immersivemc.common.network.packet.GetAnvilOutputPacket;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.client.Minecraft;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClientSwap {
 
@@ -18,6 +24,21 @@ public class ClientSwap {
         playerItemCopy.setCount(1);
         ClientStorage.craftingStorage[slot] = playerItemCopy;
 
+    }
+
+    public static void eTableSwap(int slot, Hand hand) {
+        if (Minecraft.getInstance().player == null) return;
+        if (slot == 0) {
+            ItemStack item = Minecraft.getInstance().player.getItemInHand(hand).copy();
+            if (item.isEmpty() || !item.isEnchantable()) return;
+            Map<Enchantment, Integer> fakeEnchs = new HashMap<>();
+            fakeEnchs.put(Enchantments.MENDING, 1);
+            ClientStorage.eTableItem = item;
+            ClientStorage.eTableEnchCopy = ClientStorage.eTableItem.copy();
+            EnchantmentHelper.setEnchantments(fakeEnchs, ClientStorage.eTableEnchCopy);
+        } else {
+
+        }
     }
 
     public static void anvilSwap(int slot, Hand hand, BlockPos pos) {

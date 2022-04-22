@@ -7,6 +7,7 @@ import net.blf02.immersivemc.client.immersive.ImmersiveAnvil;
 import net.blf02.immersivemc.client.immersive.ImmersiveBrewing;
 import net.blf02.immersivemc.client.immersive.ImmersiveChest;
 import net.blf02.immersivemc.client.immersive.ImmersiveCrafting;
+import net.blf02.immersivemc.client.immersive.ImmersiveETable;
 import net.blf02.immersivemc.client.immersive.ImmersiveFurnace;
 import net.blf02.immersivemc.client.immersive.ImmersiveJukebox;
 import net.blf02.immersivemc.client.immersive.Immersives;
@@ -15,6 +16,7 @@ import net.blf02.immersivemc.client.immersive.info.AnvilInfo;
 import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
+import net.blf02.immersivemc.client.immersive.info.EnchantingInfo;
 import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.client.storage.ClientStorage;
 import net.blf02.immersivemc.client.swap.ClientSwap;
@@ -31,6 +33,7 @@ import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.block.SmithingTableBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -106,6 +109,8 @@ public class ClientLogicSubscriber {
             ImmersiveChest.singleton.trackObject((ChestTileEntity) tileEntity);
         } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
             ImmersiveAnvil.singleton.trackObject(pos);
+        } else if (state.getBlock() instanceof EnchantingTableBlock) {
+            ImmersiveETable.singleton.trackObject(pos);
         }
     }
 
@@ -258,6 +263,16 @@ public class ClientLogicSubscriber {
                 Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
                 if (closest.isPresent()) {
                     ClientSwap.anvilSwap(closest.get(), Hand.MAIN_HAND, info.anvilPos);
+                    return true;
+                }
+            }
+        }
+
+        for (EnchantingInfo info : ImmersiveETable.singleton.getTrackedObjects()) {
+            if (info.hasHitboxes()) {
+                Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
+                if (closest.isPresent()) {
+                    ClientSwap.eTableSwap(closest.get(), Hand.MAIN_HAND);
                     return true;
                 }
             }
