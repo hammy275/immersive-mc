@@ -4,15 +4,7 @@ import net.blf02.immersivemc.client.subscribe.ClientLogicSubscriber;
 import net.blf02.immersivemc.client.subscribe.ClientRenderSubscriber;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.blf02.immersivemc.common.network.Network;
-import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
-import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
-import net.blf02.immersivemc.common.network.packet.DoAnvilPacket;
-import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
-import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
-import net.blf02.immersivemc.common.network.packet.GetAnvilOutputPacket;
-import net.blf02.immersivemc.common.network.packet.GrabItemPacket;
-import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
-import net.blf02.immersivemc.common.network.packet.SwapPacket;
+import net.blf02.immersivemc.common.network.packet.*;
 import net.blf02.immersivemc.server.ServerSubscriber;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -73,6 +65,8 @@ public class ImmersiveMC {
                     GetAnvilOutputPacket::decode, GetAnvilOutputPacket::handle);
             Network.INSTANCE.registerMessage(index++, DoAnvilPacket.class, DoAnvilPacket::encode,
                     DoAnvilPacket::decode, DoAnvilPacket::handle);
+            Network.INSTANCE.registerMessage(index++, GetEnchantmentsPacket.class, GetEnchantmentsPacket::encode,
+                    GetEnchantmentsPacket::decode, GetEnchantmentsPacket::handle);
         });
 
     }

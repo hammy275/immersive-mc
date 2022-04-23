@@ -80,7 +80,7 @@ public class ClientVRSubscriber {
                     } else if (info instanceof AnvilInfo) {
                         ClientSwap.anvilSwap(hit.get(), c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND, ((AnvilInfo) info).anvilPos);
                     } else if (info instanceof EnchantingInfo) {
-                        ClientSwap.eTableSwap(hit.get(), c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND);
+                        ClientSwap.eTableSwap(hit.get(), c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND, info.getBlockPosition());
                     }
 
                     cooldown = 20;

@@ -104,13 +104,15 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
     protected void render(EnchantingInfo info, MatrixStack stack, boolean isInVR) {
         float itemSize = ClientConstants.itemScaleSizeETable / info.getCountdown();
 
-        if (ClientStorage.strongInfo.isActive() &&
-            !ClientStorage.eTableEnchCopy.isEmpty()) { // If one is active, all are
+        if (!ClientStorage.eTableEnchCopy.isEmpty()) { // If one is active, all are
             for (int i = 0; i <= 2; i++) {
                 ClientStorage.ETableInfo enchInfo =
                         i == 0 ? ClientStorage.weakInfo : i == 1 ? ClientStorage.midInfo : ClientStorage.strongInfo;
                 renderItem(ClientStorage.eTableEnchCopy, stack, info.getPosition(i + 1), itemSize,
                         getForwardFromPlayer(Minecraft.getInstance().player), info.getHibtox(i + 1));
+                if (enchInfo.textPreview != null && indexToRender(info) == i) {
+                    renderText(enchInfo.textPreview, stack, info.getPosition(i + 1).add(0, -0.2, 0));
+                }
             }
         }
         if (!ClientStorage.eTableItem.isEmpty()) {
@@ -136,5 +138,16 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
 
     protected Vector3d getYDiffFromOffset(EnchantingInfo info, int slot) {
         return new Vector3d(0, this.yOffsets[info.yOffsetPositions[slot]], 0);
+    }
+
+    protected int indexToRender(EnchantingInfo info) {
+        int res = info.ticksActive % 180;
+        if (res < 60) {
+            return 0;
+        } else if (res < 120) {
+            return 1;
+        } else {
+            return 2;
+        }
     }
 }

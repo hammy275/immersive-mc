@@ -272,7 +272,7 @@ public class ClientLogicSubscriber {
             if (info.hasHitboxes()) {
                 Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
                 if (closest.isPresent()) {
-                    ClientSwap.eTableSwap(closest.get(), Hand.MAIN_HAND);
+                    ClientSwap.eTableSwap(closest.get(), Hand.MAIN_HAND, info.getBlockPosition());
                     return true;
                 }
             }

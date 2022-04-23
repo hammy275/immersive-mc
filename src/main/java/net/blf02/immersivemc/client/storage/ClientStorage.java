@@ -4,7 +4,6 @@ import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -86,17 +85,7 @@ public class ClientStorage {
 
     public static class ETableInfo {
         public int levelsNeeded;
-        public int levelsTaken;
-        public ITextComponent textPreview = new StringTextComponent("If you see this, tell hammy3502!!!");
-
-        public boolean isActive() { // Whether we even should display the three enchantments
-            //return levelsTaken > 0 || levelsTaken == -1;
-            return true;
-        }
-
-        public boolean hasSomething() { // Some items may not be enchantable if too much XP is supplied (or not enough)
-            return levelsTaken != -1;
-        }
+        public ITextComponent textPreview = null;
     }
 
 }

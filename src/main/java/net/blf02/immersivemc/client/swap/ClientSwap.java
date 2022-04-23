@@ -4,6 +4,7 @@ import net.blf02.immersivemc.client.storage.ClientStorage;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.DoAnvilPacket;
 import net.blf02.immersivemc.common.network.packet.GetAnvilOutputPacket;
+import net.blf02.immersivemc.common.network.packet.GetEnchantmentsPacket;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.Enchantment;
@@ -26,19 +27,29 @@ public class ClientSwap {
 
     }
 
-    public static void eTableSwap(int slot, Hand hand) {
+    public static void eTableSwap(int slot, Hand hand, BlockPos pos) {
         if (Minecraft.getInstance().player == null) return;
+        resetEnchs();
         if (slot == 0) {
             ItemStack item = Minecraft.getInstance().player.getItemInHand(hand).copy();
-            if (item.isEmpty() || !item.isEnchantable()) return;
-            Map<Enchantment, Integer> fakeEnchs = new HashMap<>();
-            fakeEnchs.put(Enchantments.MENDING, 1);
+            if (!item.isEmpty() && !item.isEnchantable()) return;
             ClientStorage.eTableItem = item;
-            ClientStorage.eTableEnchCopy = ClientStorage.eTableItem.copy();
-            EnchantmentHelper.setEnchantments(fakeEnchs, ClientStorage.eTableEnchCopy);
+            if (!item.isEmpty()) {
+                Map<Enchantment, Integer> fakeEnchs = new HashMap<>();
+                fakeEnchs.put(Enchantments.MENDING, 1);
+                ClientStorage.eTableEnchCopy = ClientStorage.eTableItem.copy();
+                EnchantmentHelper.setEnchantments(fakeEnchs, ClientStorage.eTableEnchCopy);
+            }
+            Network.INSTANCE.sendToServer(new GetEnchantmentsPacket(item, pos));
         } else {
 
         }
+    }
+
+    protected static void resetEnchs() {
+        ClientStorage.weakInfo.textPreview = null;
+        ClientStorage.midInfo.textPreview = null;
+        ClientStorage.strongInfo.textPreview = null;
     }
 
     public static void anvilSwap(int slot, Hand hand, BlockPos pos) {
