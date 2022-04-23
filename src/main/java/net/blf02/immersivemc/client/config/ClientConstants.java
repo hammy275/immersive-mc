@@ -9,7 +9,7 @@ public class ClientConstants {
     public static final int ticksToHandleJukebox = 100;
     public static final int ticksToRenderChest = Integer.MAX_VALUE; // You manually close a chest
     public static final int ticksToRenderAnvil = 120;
-    public static final int ticksToRenderETable = 30*20; // 30 seconds
+    public static final int ticksToRenderETable = 60*20; // 1 min
 
     // Size of items when rendered in front of something immersive
     public static final float itemScaleSizeFurnace = 0.5f;

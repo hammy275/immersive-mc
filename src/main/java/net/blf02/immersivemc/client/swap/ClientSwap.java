@@ -30,10 +30,10 @@ public class ClientSwap {
 
     public static void eTableSwap(int immersiveSlot, Hand hand, BlockPos pos) {
         if (Minecraft.getInstance().player == null) return;
-        resetEnchs();
         if (immersiveSlot == 0) {
             ItemStack item = Minecraft.getInstance().player.getItemInHand(hand).copy();
             if (!item.isEmpty() && !item.isEnchantable()) return;
+            resetEnchs();
             ClientStorage.eTableItem = item;
             if (!item.isEmpty()) {
                 Map<Enchantment, Integer> fakeEnchs = new HashMap<>();
@@ -47,8 +47,6 @@ public class ClientSwap {
             if (itemSlot > -1) {
                 Network.INSTANCE.sendToServer(new DoETablePacket(itemSlot, hand, pos, immersiveSlot));
             }
-            ClientStorage.eTableEnchCopy = ItemStack.EMPTY;
-            ClientStorage.eTableItem = ItemStack.EMPTY;
             resetEnchs();
         }
     }
@@ -57,6 +55,8 @@ public class ClientSwap {
         ClientStorage.weakInfo.textPreview = null;
         ClientStorage.midInfo.textPreview = null;
         ClientStorage.strongInfo.textPreview = null;
+        ClientStorage.eTableItem = ItemStack.EMPTY;
+        ClientStorage.eTableEnchCopy = ItemStack.EMPTY;
     }
 
     public static void anvilSwap(int slot, Hand hand, BlockPos pos) {

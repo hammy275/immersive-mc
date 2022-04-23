@@ -49,7 +49,7 @@ public class ClientVRSubscriber {
         BlockRayTraceResult res = event.player.level.clip(new RayTraceContext(start, end, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE,
                 null));
         ClientLogicSubscriber.possiblyTrack(res.getBlockPos(), event.player.level.getBlockState(res.getBlockPos()),
-                event.player.level.getBlockEntity(res.getBlockPos()));
+                event.player.level.getBlockEntity(res.getBlockPos()), Minecraft.getInstance().level);
 
         if (cooldown > 0) {
             cooldown--;

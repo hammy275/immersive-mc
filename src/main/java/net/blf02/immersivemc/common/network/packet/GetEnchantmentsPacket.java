@@ -130,7 +130,7 @@ public class GetEnchantmentsPacket {
         Enchantment ench = getEnch(message.weakEnchHint);
         if (ench != null) {
             ClientStorage.weakInfo.levelsNeeded = message.weakXPLevels;
-            ClientStorage.weakInfo.textPreview = getDesc(ench, message.weakLevelHint, message.weakXPLevels);
+            ClientStorage.weakInfo.textPreview = getDesc(ench, message.weakLevelHint);
         } else {
             ClientStorage.weakInfo.textPreview = null;
         }
@@ -138,7 +138,7 @@ public class GetEnchantmentsPacket {
         ench = getEnch(message.midEnchHint);
         if (ench != null) {
             ClientStorage.midInfo.levelsNeeded = message.midXPLevels;
-            ClientStorage.midInfo.textPreview = getDesc(ench, message.midLevelHint, message.midXPLevels);
+            ClientStorage.midInfo.textPreview = getDesc(ench, message.midLevelHint);
         } else {
             ClientStorage.midInfo.textPreview = null;
         }
@@ -146,7 +146,7 @@ public class GetEnchantmentsPacket {
         ench = getEnch(message.strongEnchHint);
         if (ench != null) {
             ClientStorage.strongInfo.levelsNeeded = message.strongXPLevels;
-            ClientStorage.strongInfo.textPreview = getDesc(ench, message.strongLevelHint, message.strongXPLevels);
+            ClientStorage.strongInfo.textPreview = getDesc(ench, message.strongLevelHint);
         } else {
             ClientStorage.strongInfo.textPreview = null;
         }
@@ -158,8 +158,7 @@ public class GetEnchantmentsPacket {
         return Enchantment.byId(id);
     }
 
-    protected static StringTextComponent getDesc(Enchantment ench, int enchLevel, int xpLevels) {
-        String levelStr = enchLevel == 1 ? " level required for " : " levels required for ";
-        return new StringTextComponent(xpLevels + levelStr + ench.getFullname(enchLevel).getString() + "...?");
+    protected static StringTextComponent getDesc(Enchantment ench, int enchLevel) {
+        return new StringTextComponent(ench.getFullname(enchLevel).getString() + "...?");
     }
 }

@@ -11,7 +11,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,14 +113,14 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
                         getForwardFromPlayer(Minecraft.getInstance().player), info.getHibtox(i + 1));
                 if (indexToRender(info) == i) {
                     if (enchInfo.isPresent()) {
-                        renderText(new StringTextComponent("Consumes " + (i + 1) + " levels and lapis lazuli"),
+                        renderText(new StringTextComponent(enchInfo.levelsNeeded + " (" + (i + 1) + ")"),
                                 stack,
-                                info.getPosition(i + 1).add(0, 0.2, 0));
+                                info.getPosition(i + 1).add(0, 0.33, 0));
                         renderText(enchInfo.textPreview,
                                 stack,
-                                info.getPosition(i + 1).add(0, -0.2, 0));
+                                info.getPosition(i + 1).add(0, -0.33, 0));
                     } else {
-                        renderText(new TranslationTextComponent("forge.container.enchant.limitedEnchantability"),
+                        renderText(new StringTextComponent("No Enchantment!"),
                                 stack, info.getPosition(i + 1).add(0, -0.2, 0));
                     }
                 }

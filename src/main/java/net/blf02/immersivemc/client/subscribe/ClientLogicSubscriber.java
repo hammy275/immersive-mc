@@ -47,6 +47,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -78,7 +79,7 @@ public class ClientLogicSubscriber {
         for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
             tickInfos(singleton);
         }
-        if (Minecraft.getInstance().gameMode == null) return;
+        if (Minecraft.getInstance().gameMode == null || Minecraft.getInstance().level == null) return;
 
         PlayerEntity player = event.player;
 
@@ -90,11 +91,11 @@ public class ClientLogicSubscriber {
         BlockState state = player.level.getBlockState(pos);
         TileEntity tileEntity = player.level.getBlockEntity(pos);
 
-        possiblyTrack(pos, state, tileEntity);
+        possiblyTrack(pos, state, tileEntity, Minecraft.getInstance().level);
 
     }
 
-    public static void possiblyTrack(BlockPos pos, BlockState state, TileEntity tileEntity) {
+    public static void possiblyTrack(BlockPos pos, BlockState state, TileEntity tileEntity, World level) {
         if (tileEntity instanceof AbstractFurnaceTileEntity) {
             AbstractFurnaceTileEntity furnace = (AbstractFurnaceTileEntity) tileEntity;
             ImmersiveFurnace.getSingleton().trackObject(furnace);
@@ -110,6 +111,14 @@ public class ClientLogicSubscriber {
         } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
             ImmersiveAnvil.singleton.trackObject(pos);
         } else if (state.getBlock() instanceof EnchantingTableBlock) {
+            ImmersiveETable.singleton.trackObject(pos);
+            return;
+        }
+
+        // Extra special tracker additions
+        BlockPos belowPos = pos.below();
+        BlockState belowState = level.getBlockState(belowPos);
+        if (belowState.getBlock() instanceof EnchantingTableBlock) {
             ImmersiveETable.singleton.trackObject(pos);
         }
     }
