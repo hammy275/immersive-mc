@@ -10,6 +10,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,9 +112,20 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
                         i == 0 ? ClientStorage.weakInfo : i == 1 ? ClientStorage.midInfo : ClientStorage.strongInfo;
                 renderItem(ClientStorage.eTableEnchCopy, stack, info.getPosition(i + 1), itemSize,
                         getForwardFromPlayer(Minecraft.getInstance().player), info.getHibtox(i + 1));
-                if (enchInfo.textPreview != null && indexToRender(info) == i) {
-                    renderText(enchInfo.textPreview, stack, info.getPosition(i + 1).add(0, -0.2, 0));
+                if (indexToRender(info) == i) {
+                    if (enchInfo.isPresent()) {
+                        renderText(new StringTextComponent("Consumes " + (i + 1) + " levels and lapis lazuli"),
+                                stack,
+                                info.getPosition(i + 1).add(0, 0.2, 0));
+                        renderText(enchInfo.textPreview,
+                                stack,
+                                info.getPosition(i + 1).add(0, -0.2, 0));
+                    } else {
+                        renderText(new TranslationTextComponent("forge.container.enchant.limitedEnchantability"),
+                                stack, info.getPosition(i + 1).add(0, -0.2, 0));
+                    }
                 }
+
             }
         }
         if (!ClientStorage.eTableItem.isEmpty()) {

@@ -86,6 +86,10 @@ public class ClientStorage {
     public static class ETableInfo {
         public int levelsNeeded;
         public ITextComponent textPreview = null;
+
+        public boolean isPresent() {
+            return this.textPreview != null;
+        }
     }
 
 }

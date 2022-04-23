@@ -12,10 +12,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.container.AbstractRepairContainer;
+import net.minecraft.inventory.container.EnchantmentContainer;
 import net.minecraft.inventory.container.RepairContainer;
 import net.minecraft.inventory.container.SmithingTableContainer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.MusicDiscItem;
 import net.minecraft.item.PotionItem;
 import net.minecraft.item.crafting.ICraftingRecipe;
@@ -30,6 +32,7 @@ import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.common.Tags;
 
 import java.util.AbstractList;
 import java.util.Optional;
@@ -136,6 +139,41 @@ public class Swap {
                 entOut.setDeltaMovement(0, 0, 0);
                 player.level.addFreshEntity(entOut);
             }
+        }
+    }
+
+    public static void handleETable(int slot, BlockPos pos, ServerPlayerEntity player, Hand hand, int power) {
+        if (!player.getItemInHand(hand).isEmpty()) return;
+        if (power < 1 || power > 3) return;
+        int lapisInInventory = 0;
+        for (int i = 0; i < player.inventory.items.size(); i++) {
+            if (Tags.Items.GEMS_LAPIS.contains(player.inventory.getItem(i).getItem())) {
+                lapisInInventory += player.inventory.getItem(i).getCount();
+            }
+        }
+        if (lapisInInventory < power && !player.abilities.instabuild) return;
+        ItemStack enchantedItem = player.inventory.getItem(slot).copy();
+
+        EnchantmentContainer container = new EnchantmentContainer(-1,
+                player.inventory, IWorldPosCallable.create(player.level, pos));
+        container.setItem(1, new ItemStack(Items.LAPIS_LAZULI, 64));
+        container.setItem(0, enchantedItem);
+        if (container.clickMenuButton(player, power - 1)) {
+            player.inventory.getItem(slot).shrink(1);
+            int lapisToTake = power;
+            for (int i = 0; i < player.inventory.items.size(); i++) {
+                if (Tags.Items.GEMS_LAPIS.contains(player.inventory.getItem(i).getItem())) {
+                    ItemStack stack = player.inventory.getItem(i);
+                    while (!stack.isEmpty() && lapisToTake > 0) {
+                        stack.shrink(1);
+                        lapisToTake--;
+                    }
+                }
+                if (lapisToTake == 0) {
+                    break;
+                }
+            }
+            player.setItemInHand(hand, enchantedItem);
         }
     }
     

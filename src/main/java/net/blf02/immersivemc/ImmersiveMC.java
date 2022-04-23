@@ -67,6 +67,8 @@ public class ImmersiveMC {
                     DoAnvilPacket::decode, DoAnvilPacket::handle);
             Network.INSTANCE.registerMessage(index++, GetEnchantmentsPacket.class, GetEnchantmentsPacket::encode,
                     GetEnchantmentsPacket::decode, GetEnchantmentsPacket::handle);
+            Network.INSTANCE.registerMessage(index++, DoETablePacket.class, DoETablePacket::encode,
+                    DoETablePacket::decode, DoETablePacket::handle);
         });
 
     }

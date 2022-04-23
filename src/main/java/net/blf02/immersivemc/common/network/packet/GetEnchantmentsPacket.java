@@ -159,7 +159,7 @@ public class GetEnchantmentsPacket {
     }
 
     protected static StringTextComponent getDesc(Enchantment ench, int enchLevel, int xpLevels) {
-        String levelStr = enchLevel == 1 ? " level for " : " levels for ";
+        String levelStr = enchLevel == 1 ? " level required for " : " levels required for ";
         return new StringTextComponent(xpLevels + levelStr + ench.getFullname(enchLevel).getString() + "...?");
     }
 }

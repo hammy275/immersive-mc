@@ -3,6 +3,7 @@ package net.blf02.immersivemc.client.swap;
 import net.blf02.immersivemc.client.storage.ClientStorage;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.DoAnvilPacket;
+import net.blf02.immersivemc.common.network.packet.DoETablePacket;
 import net.blf02.immersivemc.common.network.packet.GetAnvilOutputPacket;
 import net.blf02.immersivemc.common.network.packet.GetEnchantmentsPacket;
 import net.minecraft.block.AnvilBlock;
@@ -27,10 +28,10 @@ public class ClientSwap {
 
     }
 
-    public static void eTableSwap(int slot, Hand hand, BlockPos pos) {
+    public static void eTableSwap(int immersiveSlot, Hand hand, BlockPos pos) {
         if (Minecraft.getInstance().player == null) return;
         resetEnchs();
-        if (slot == 0) {
+        if (immersiveSlot == 0) {
             ItemStack item = Minecraft.getInstance().player.getItemInHand(hand).copy();
             if (!item.isEmpty() && !item.isEnchantable()) return;
             ClientStorage.eTableItem = item;
@@ -42,7 +43,13 @@ public class ClientSwap {
             }
             Network.INSTANCE.sendToServer(new GetEnchantmentsPacket(item, pos));
         } else {
-
+            int itemSlot = Minecraft.getInstance().player.inventory.findSlotMatchingItem(ClientStorage.eTableItem);
+            if (itemSlot > -1) {
+                Network.INSTANCE.sendToServer(new DoETablePacket(itemSlot, hand, pos, immersiveSlot));
+            }
+            ClientStorage.eTableEnchCopy = ItemStack.EMPTY;
+            ClientStorage.eTableItem = ItemStack.EMPTY;
+            resetEnchs();
         }
     }
 

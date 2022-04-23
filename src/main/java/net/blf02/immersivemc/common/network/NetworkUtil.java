@@ -7,7 +7,7 @@ import net.minecraft.util.math.vector.Vector3d;
 public class NetworkUtil {
 
     public static boolean safeToRun(BlockPos pos, ServerPlayerEntity runner) {
-        return runner.level.isLoaded(pos) &&
+        return runner != null && runner.level.isLoaded(pos) &&
                 runner.distanceToSqr(Vector3d.atCenterOf(pos)) <= 256;
         // Within 16 blocks (no square root)
     }
