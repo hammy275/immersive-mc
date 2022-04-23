@@ -6,7 +6,9 @@ import net.blf02.immersivemc.client.immersive.info.EnchantingInfo;
 import net.blf02.immersivemc.client.storage.ClientStorage;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.CommonConstants;
+import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
@@ -14,6 +16,7 @@ import net.minecraft.util.text.StringTextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
 
@@ -92,6 +95,20 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
         info.setHitbox(1, createHitbox(weakItem, hitboxSize));
         info.setHitbox(2, createHitbox(midItem, hitboxSize));
         info.setHitbox(3, createHitbox(strongItem, hitboxSize));
+
+        // Determine which floating item is being looked at
+        if (Minecraft.getInstance().gameMode == null) return;
+        double dist = Minecraft.getInstance().gameMode.getPickRange();
+        info.lookingAtIndex = -1;
+
+        PlayerEntity player = Minecraft.getInstance().player;
+        Vector3d start = player.getEyePosition(1);
+        Vector3d viewVec = player.getViewVector(1);
+        Vector3d end = player.getEyePosition(1).add(viewVec.x * dist, viewVec.y * dist,
+                viewVec.z * dist);
+        Optional<Integer> closest = Util.rayTraceClosest(start, end,
+                info.getHibtox(1), info.getHibtox(2), info.getHibtox(3));
+        closest.ifPresent(targetSlot -> info.lookingAtIndex = targetSlot);
     }
 
     @Override
@@ -111,7 +128,7 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
                         i == 0 ? ClientStorage.weakInfo : i == 1 ? ClientStorage.midInfo : ClientStorage.strongInfo;
                 renderItem(ClientStorage.eTableEnchCopy, stack, info.getPosition(i + 1), itemSize,
                         getForwardFromPlayer(Minecraft.getInstance().player), info.getHibtox(i + 1));
-                if (indexToRender(info) == i) {
+                if (info.lookingAtIndex == i) {
                     if (enchInfo.isPresent()) {
                         renderText(new StringTextComponent(enchInfo.levelsNeeded + " (" + (i + 1) + ")"),
                                 stack,
@@ -150,16 +167,5 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
 
     protected Vector3d getYDiffFromOffset(EnchantingInfo info, int slot) {
         return new Vector3d(0, this.yOffsets[info.yOffsetPositions[slot]], 0);
-    }
-
-    protected int indexToRender(EnchantingInfo info) {
-        int res = info.ticksActive % 180;
-        if (res < 60) {
-            return 0;
-        } else if (res < 120) {
-            return 1;
-        } else {
-            return 2;
-        }
     }
 }

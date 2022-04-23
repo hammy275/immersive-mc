@@ -17,6 +17,8 @@ public class EnchantingInfo extends AbstractImmersiveInfo {
             ThreadLocalRandom.current().nextInt(15),
             ThreadLocalRandom.current().nextInt(20)};
 
+    public int lookingAtIndex = -1;
+
     public EnchantingInfo(BlockPos pos, int ticksToExist) {
         super(ticksToExist);
         this.tablePos = pos;
