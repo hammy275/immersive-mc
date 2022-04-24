@@ -16,6 +16,7 @@ public class ActiveConfig {
     public static boolean useRangedGrab = false;
     public static boolean useButton = false;
     public static boolean useETableImmersion = false;
+    public static boolean useCampfireImmersion = false;
 
     public static void loadConfigFromPacket(PacketBuffer buffer) {
         int serverNetworkVersion = buffer.readInt();
@@ -38,6 +39,7 @@ public class ActiveConfig {
         useRangedGrab = buffer.readBoolean() && useRangedGrab;
         useButton = buffer.readBoolean() && useButton;
         useETableImmersion = buffer.readBoolean() && useETableImmersion;
+        useCampfireImmersion = buffer.readBoolean() && useCampfireImmersion;
         ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
 
     }
@@ -52,6 +54,7 @@ public class ActiveConfig {
         useRangedGrab = ImmersiveMCConfig.useRangedGrab.get();
         useButton = ImmersiveMCConfig.useButton.get();
         useETableImmersion = ImmersiveMCConfig.useETableImmersion.get();
+        useCampfireImmersion = ImmersiveMCConfig.useCampfireImmersion.get();
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
@@ -65,6 +68,7 @@ public class ActiveConfig {
         useRangedGrab = false;
         useButton = false;
         useETableImmersion = false;
+        useCampfireImmersion = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -77,7 +81,8 @@ public class ActiveConfig {
                 "Use jukebox immersion: " + useJukeboxImmersion + "\n" +
                 "Use ranged grab: " + useRangedGrab + "\n" +
                 "Use button: " + useButton + "\n" +
-                "Use enchanting table: " + useETableImmersion;
+                "Use enchanting table: " + useETableImmersion + "\n" +
+                "Use campfire immersion: " + useCampfireImmersion;
         return stringOut;
     }
 }

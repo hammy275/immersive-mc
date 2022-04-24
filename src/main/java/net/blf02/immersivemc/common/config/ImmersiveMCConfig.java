@@ -19,6 +19,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useRangedGrab;
     public static ForgeConfigSpec.BooleanValue useButton;
     public static ForgeConfigSpec.BooleanValue useETableImmersion;
+    public static ForgeConfigSpec.BooleanValue useCampfireImmersion;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -54,6 +55,9 @@ public class ImmersiveMCConfig {
         useETableImmersion = builder
                 .comment("Whether immersives on Enchanting Tables should be allowed")
                 .define("enchant_table_immersion", true);
+        useCampfireImmersion = builder
+                .comment("Whether VR users can hold items above a campfire to cook them")
+                .define("campfire_immersion", true);
     }
 
     public static void encode(PacketBuffer buffer) {
@@ -64,7 +68,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useFurnaceImmersion.get()).writeBoolean(useJukeboxImmersion.get())
                 .writeBoolean(useRangedGrab.get())
                 .writeBoolean(useButton.get())
-                .writeBoolean(useETableImmersion.get());
+                .writeBoolean(useETableImmersion.get())
+                .writeBoolean(useCampfireImmersion.get());
     }
 
 

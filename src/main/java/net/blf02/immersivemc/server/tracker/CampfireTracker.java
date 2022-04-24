@@ -1,10 +1,11 @@
 package net.blf02.immersivemc.server.tracker;
 
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
+import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
-import net.blf02.vrapi.common.VRAPI;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CampfireBlock;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,12 +13,16 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CampfireCookingRecipe;
 import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.server.ServerWorld;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class CampfireTracker extends AbstractTracker {
 
@@ -41,15 +46,24 @@ public class CampfireTracker extends AbstractTracker {
                     toSmelt.shrink(1);
                 }
                 cookTime.remove(player.getGameProfile().getName());
+            } else if (recipe.isPresent() &&
+                    ThreadLocalRandom.current().nextInt(4) == 0) { // Not ready to smelt yet, show particle
+                Vector3d pos = VRPlugin.API.getVRPlayer(player).getController(c).position();
+                if (player.level instanceof ServerWorld) {
+                    ServerWorld serverLevel = (ServerWorld) player.level;
+                    serverLevel.sendParticles(ParticleTypes.SMOKE, pos.x, pos.y, pos.z,
+                            1, 0.01, 0.01, 0.01, 0);
+                }
             }
         }
     }
 
     @Override
     protected boolean shouldTick(PlayerEntity player) {
+        if (!ActiveConfig.useCampfireImmersion) return false;
         if (!VRPluginVerify.hasAPI) return false;
-        if (!VRAPI.VRAPIInstance.playerInVR(player)) return false;
-        IVRPlayer vrPlayer = VRAPI.VRAPIInstance.getVRPlayer(player);
+        if (!VRPlugin.API.playerInVR(player)) return false;
+        IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
         boolean mainRes = false;
         boolean offRes = false;
         for (int c = 0; c <= 1; c++) {
