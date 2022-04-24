@@ -13,4 +13,5 @@ public class ServerTrackerInit {
     public static final RangedGrabTrackerServer rangedGrabTracker = new RangedGrabTrackerServer();
     public static final ButtonPushTracker buttonPushTracker = new ButtonPushTracker();
     public static final CampfireTracker campfireTracker = new CampfireTracker();
+    public static final LeverTracker leverTracker = new LeverTracker();
 }

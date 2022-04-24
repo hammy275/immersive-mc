@@ -20,6 +20,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useButton;
     public static ForgeConfigSpec.BooleanValue useETableImmersion;
     public static ForgeConfigSpec.BooleanValue useCampfireImmersion;
+    public static ForgeConfigSpec.BooleanValue useLever;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -58,6 +59,9 @@ public class ImmersiveMCConfig {
         useCampfireImmersion = builder
                 .comment("Whether VR users can hold items above a campfire to cook them")
                 .define("campfire_immersion", true);
+        useLever = builder
+                .comment("Whether VR users can physically toggle levers")
+                .define("lever_immersion", true);
     }
 
     public static void encode(PacketBuffer buffer) {
@@ -69,7 +73,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useRangedGrab.get())
                 .writeBoolean(useButton.get())
                 .writeBoolean(useETableImmersion.get())
-                .writeBoolean(useCampfireImmersion.get());
+                .writeBoolean(useCampfireImmersion.get())
+                .writeBoolean(useLever.get());
     }
 
 
