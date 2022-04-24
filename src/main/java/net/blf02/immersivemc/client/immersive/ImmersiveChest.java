@@ -99,14 +99,20 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
         Direction forward = info.forward;
 
         for (int i = 0; i < 27; i++) {
+            int startTop = 9 * info.getRowNum();
+            int endTop = startTop + 9;
+            boolean showCount = i >= startTop && i <= endTop;
             renderItem(info.items[i], stack, info.getPosition(i),
-                    itemSize, forward, Direction.UP, info.getHibtox(i));
+                    itemSize, forward, Direction.UP, info.getHibtox(i), showCount);
         }
 
         if (info.other != null) {
             for (int i = 27; i < 27 * 2; i++) {
+                int startTop = 9 * info.getRowNum() + 27;
+                int endTop = startTop + 9 + 27;
+                boolean showCount = i >= startTop && i <= endTop;
                 renderItem(info.items[i], stack, info.getPosition(i),
-                        itemSize, forward, Direction.UP, info.getHibtox(i));
+                        itemSize, forward, Direction.UP, info.getHibtox(i), showCount);
             }
         }
     }

@@ -77,7 +77,7 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
 
         for (int i = 0; i < 9; i++) {
             renderItem(ClientStorage.craftingStorage[i], stack, info.getPosition(i),
-                    itemSize, forward, Direction.UP, info.getHibtox(i));
+                    itemSize, forward, Direction.UP, info.getHibtox(i), false);
         }
 
     }

@@ -95,9 +95,9 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
 
         // Render all of the items
 
-        renderItem(info.items[0], stack, info.getPosition(0), size, info.forward, info.getHibtox(0));
-        renderItem(info.items[1], stack, info.getPosition(1), size, info.forward, info.getHibtox(1));
-        renderItem(info.items[2], stack, info.getPosition(2), size, info.forward, info.getHibtox(2));
+        renderItem(info.items[0], stack, info.getPosition(0), size, info.forward, info.getHibtox(0), true);
+        renderItem(info.items[1], stack, info.getPosition(1), size, info.forward, info.getHibtox(1), true);
+        renderItem(info.items[2], stack, info.getPosition(2), size, info.forward, info.getHibtox(2), true);
 
 
     }

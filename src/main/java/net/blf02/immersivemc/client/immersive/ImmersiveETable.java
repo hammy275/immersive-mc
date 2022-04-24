@@ -127,7 +127,7 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
                 ClientStorage.ETableInfo enchInfo =
                         i == 0 ? ClientStorage.weakInfo : i == 1 ? ClientStorage.midInfo : ClientStorage.strongInfo;
                 renderItem(ClientStorage.eTableEnchCopy, stack, info.getPosition(i + 1), itemSize,
-                        getForwardFromPlayer(Minecraft.getInstance().player), info.getHibtox(i + 1));
+                        getForwardFromPlayer(Minecraft.getInstance().player), info.getHibtox(i + 1), false);
                 if (info.lookingAtIndex == i) {
                     if (enchInfo.isPresent()) {
                         renderText(new StringTextComponent(enchInfo.levelsNeeded + " (" + (i + 1) + ")"),
@@ -146,7 +146,7 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
         }
         if (!ClientStorage.eTableItem.isEmpty()) {
             renderItem(ClientStorage.eTableItem, stack, info.getPosition(0), itemSize,
-                    getForwardFromPlayer(Minecraft.getInstance().player), info.getHibtox(0));
+                    getForwardFromPlayer(Minecraft.getInstance().player), info.getHibtox(0), false);
         }
     }
 

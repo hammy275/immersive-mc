@@ -19,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,8 +83,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     public void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size, Direction facing,
-                           AxisAlignedBB hitbox) {
-        renderItem(item, stack, pos, size, facing, null, hitbox);
+                           AxisAlignedBB hitbox, boolean renderItemCounts) {
+        renderItem(item, stack, pos, size, facing, null, hitbox, renderItemCounts);
     }
 
     /**
@@ -97,7 +98,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param hitbox Hitbox for debug rendering
      */
     public void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size, Direction facing, Direction upDown,
-                           AxisAlignedBB hitbox) {
+                           AxisAlignedBB hitbox, boolean renderItemCounts) {
         ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         if (item != ItemStack.EMPTY) {
             stack.pushPose();
@@ -109,6 +110,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
             // Scale the item to be a good size
             stack.scale(size, size, size);
+
+            Vector3d textPos = pos;
 
             // Rotate the item to face the player properly
             int degreesRotation = 0; // If North, we're already good
@@ -123,8 +126,18 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             int upDownRot = 0; // If null, we're good
             if (upDown == Direction.UP) {
                 upDownRot = 90;
+                textPos = textPos.add(0, 0.15, 0);
             } else if (upDown == Direction.DOWN) {
                 upDownRot = 270;
+                textPos = textPos.add(0, -0.15, 0);
+            } else if (facing == Direction.WEST) {
+                textPos = textPos.add(-0.15, 0, 0);
+            } else if (facing == Direction.SOUTH) {
+                textPos = textPos.add(0, 0, 0.15);
+            } else if (facing == Direction.EAST) {
+                textPos = textPos.add(0.15, 0, 0);
+            } else if (facing == Direction.NORTH) {
+                textPos = textPos.add(0, 0, -0.15);
             }
 
 
@@ -140,6 +153,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
 
             stack.popPose();
+
+            if (renderItemCounts && item.getCount() > 1) {
+                this.renderText(new StringTextComponent(String.valueOf(item.getCount())),
+                        stack, textPos, 0.01f);
+            }
         }
         renderHitbox(stack, hitbox, pos);
     }
@@ -164,13 +182,17 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     public void renderText(ITextComponent text, MatrixStack stack, Vector3d pos) {
+        renderText(text, stack, pos, 0.02f);
+    }
+
+    public void renderText(ITextComponent text, MatrixStack stack, Vector3d pos, float textSize) {
         ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.pushPose();
         stack.translate(-renderInfo.getPosition().x + pos.x,
                 -renderInfo.getPosition().y + pos.y,
                 -renderInfo.getPosition().z + pos.z);
         stack.mulPose(renderInfo.rotation());
-        stack.scale(-0.02f, -0.02f, -0.02f);
+        stack.scale(-textSize, -textSize, -textSize);
         FontRenderer font = Minecraft.getInstance().font;
         float size = -font.width(text) / 2f;
         font.drawInBatch(text, size, 0, 0xFFFFFFFF, false,
