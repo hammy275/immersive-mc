@@ -23,6 +23,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useCampfireImmersion;
     public static ForgeConfigSpec.BooleanValue useLever;
     public static ForgeConfigSpec.BooleanValue useBackpack;
+    public static ForgeConfigSpec.IntValue backpackColor;
 
     //Non-synced values
 
@@ -72,6 +73,9 @@ public class ImmersiveMCConfig {
                 .define("backpack_inventory", true);
 
         // Non-synced Values
+        backpackColor = builder
+                .comment("Color for backpack as a base-10 RGB number.")
+                .defineInRange("backpack_color", 11901820, 0, 0xFFFFFF);
     }
 
     public static void encode(PacketBuffer buffer) {

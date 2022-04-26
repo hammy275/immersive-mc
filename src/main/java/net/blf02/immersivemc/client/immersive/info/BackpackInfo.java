@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 
 public class BackpackInfo extends AbstractImmersiveInfo {
 
@@ -18,6 +19,7 @@ public class BackpackInfo extends AbstractImmersiveInfo {
     public float handYaw = 0;
     public float handRoll = 0;
     public Vector3d backVec = Vector3d.ZERO;
+    public Vector3f rgb = new Vector3f(0, 0, 0);
 
     public BackpackInfo() {
         super(ClientConstants.ticksToRenderBackpack);

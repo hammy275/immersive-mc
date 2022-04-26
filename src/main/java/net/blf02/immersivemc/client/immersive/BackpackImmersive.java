@@ -39,6 +39,10 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         info.backVec = info.lookVec.normalize().multiply(-1, -1, -1);
         info.renderPos = info.handPos.add(0, -0.675, 0);
         info.renderPos = info.renderPos.add(info.backVec.multiply(1d/6d, 1d/6d, 1d/6d));
+
+        info.rgb = new Vector3f(ActiveConfig.backpackColor >> 16, ActiveConfig.backpackColor >> 8 & 255,
+                ActiveConfig.backpackColor & 255);
+        info.rgb.mul(1f/255f);
     }
 
     @Override
@@ -75,7 +79,8 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         model.renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderType.entityCutout(BackpackModel.textureLocation)),
-                15728880, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+                15728880, OverlayTexture.NO_OVERLAY,
+                info.rgb.x(), info.rgb.y(), info.rgb.z(), 1);
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
         stack.popPose();
     }

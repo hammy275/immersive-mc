@@ -12,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
 public class BackpackModel extends EntityModel<Entity> {
 
     public static final ResourceLocation textureLocation = new ResourceLocation(ImmersiveMC.MOD_ID,
-            "backpack");
+            "backpack.png");
 
     private final ModelRenderer wall;
     private final ModelRenderer lower;

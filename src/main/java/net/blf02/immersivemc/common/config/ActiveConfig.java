@@ -22,6 +22,7 @@ public class ActiveConfig {
     public static boolean useBackpack = false;
 
     // Non-synced values
+    public static int backpackColor = 11901820;
 
     public static void loadConfigFromPacket(PacketBuffer buffer) {
         int serverNetworkVersion = buffer.readInt();
@@ -52,6 +53,7 @@ public class ActiveConfig {
     }
 
     public static void loadConfigFromFile() {
+        // Synced values
         useAnvilImmersion = ImmersiveMCConfig.useAnvilImmersion.get();
         useBrewingImmersion = ImmersiveMCConfig.useBrewingImmersion.get();
         useChestImmersion = ImmersiveMCConfig.useChestImmersion.get();
@@ -64,6 +66,9 @@ public class ActiveConfig {
         useCampfireImmersion = ImmersiveMCConfig.useCampfireImmersion.get();
         useLever = ImmersiveMCConfig.useLever.get();
         useBackpack = ImmersiveMCConfig.useBackpack.get();
+
+        // Non-synced values
+        backpackColor = ImmersiveMCConfig.backpackColor.get();
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
@@ -95,7 +100,8 @@ public class ActiveConfig {
                 "Use enchanting table: " + useETableImmersion + "\n" +
                 "Use campfire immersion: " + useCampfireImmersion + "\n" +
                 "Use lever: " + useLever + "\n" +
-                "Use backpack: " + useBackpack;
+                "Use backpack: " + useBackpack + "\n" +
+                "Backpack color: " + backpackColor;
         return stringOut;
     }
 }
