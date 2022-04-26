@@ -17,7 +17,7 @@ public class BackpackInfo extends AbstractImmersiveInfo {
     public float handPitch = 0;
     public float handYaw = 0;
     public float handRoll = 0;
-    public Vector3d sideVec = Vector3d.ZERO;
+    public Vector3d backVec = Vector3d.ZERO;
 
     public BackpackInfo() {
         super(ClientConstants.ticksToRenderBackpack);

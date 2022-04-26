@@ -36,11 +36,9 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         info.lookVec = controller.getLookAngle();
 
         // Render backpack closer to the player, and attached to the inner-side of the arm
-        Vector3d lookVec = controller.getLookAngle();
-        // TODO: Counterclockwise rotation when attached to other controller
-        info.sideVec = new Vector3d(-lookVec.z, 0, lookVec.x);
+        info.backVec = info.lookVec.normalize().multiply(-1, -1, -1);
         info.renderPos = info.handPos.add(0, -0.675, 0);
-        info.renderPos = info.renderPos.add(info.sideVec.multiply(0.25, 0, 0.25));
+        info.renderPos = info.renderPos.add(info.backVec.multiply(1d/6d, 1d/6d, 1d/6d));
     }
 
     @Override
@@ -60,15 +58,20 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
                 -renderInfo.getPosition().z + pos.z);
         stack.scale(0.5f, 0.5f, 0.5f);
 
-        stack.translate(0, 1.5, 0.5); // Translate to origin
+        stack.translate(0, 1.5, 0); // Translate origin to our hand
 
         stack.mulPose(Vector3f.YN.rotation(info.handYaw));
         stack.mulPose(Vector3f.XN.rotation(info.handPitch));
         stack.mulPose(Vector3f.ZP.rotation((float) Math.PI));
         stack.mulPose(Vector3f.ZP.rotation(info.handRoll)); // Rotate
 
-        stack.translate(0, -1.5, -0.5); // Move back
+        stack.translate(0, -1.5, 0); // Move back to where we started
 
+        // Basically move the model to the side of the origin
+        // TODO: Move the other way when attached to the other controller
+        stack.translate(0.5, 0, 0);
+
+        // Render the model (finally!)
         model.renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderType.entityCutout(BackpackModel.textureLocation)),
