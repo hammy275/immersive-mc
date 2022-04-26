@@ -1,16 +1,9 @@
 package net.blf02.immersivemc.client.subscribe;
 
+import net.blf02.immersivemc.ImmersiveMC;
 import net.blf02.immersivemc.client.ClientUtil;
 import net.blf02.immersivemc.client.config.ClientConstants;
-import net.blf02.immersivemc.client.immersive.AbstractImmersive;
-import net.blf02.immersivemc.client.immersive.ImmersiveAnvil;
-import net.blf02.immersivemc.client.immersive.ImmersiveBrewing;
-import net.blf02.immersivemc.client.immersive.ImmersiveChest;
-import net.blf02.immersivemc.client.immersive.ImmersiveCrafting;
-import net.blf02.immersivemc.client.immersive.ImmersiveETable;
-import net.blf02.immersivemc.client.immersive.ImmersiveFurnace;
-import net.blf02.immersivemc.client.immersive.ImmersiveJukebox;
-import net.blf02.immersivemc.client.immersive.Immersives;
+import net.blf02.immersivemc.client.immersive.*;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.AnvilInfo;
 import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
@@ -62,6 +55,8 @@ import java.util.Optional;
 
 public class ClientLogicSubscriber {
 
+    public boolean backpackPressed = false;
+
     @SubscribeEvent
     public void onClientLogin(ClientPlayerNetworkEvent.LoggedInEvent event) {
         ActiveConfig.loadOffConfig(); // Load "disabled" config, so stuff is disabled if the server isn't running ImmersiveMC
@@ -73,6 +68,16 @@ public class ClientLogicSubscriber {
         if (ClientUtil.immersiveLeftClickCooldown > 0) {
             ClientUtil.immersiveLeftClickCooldown--;
         }
+
+        if (ImmersiveMC.SUMMON_BACKPACK.isDown()) {
+            if (!backpackPressed) {
+                backpackPressed = true;
+                BackpackImmersive.singleton.doTrack();
+            }
+        } else {
+            backpackPressed = false;
+        }
+
         for (AbstractTracker tracker : ClientTrackerInit.trackers) {
             tracker.doTick(event.player);
         }

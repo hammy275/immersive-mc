@@ -10,6 +10,7 @@ public class ClientConstants {
     public static final int ticksToRenderChest = Integer.MAX_VALUE; // You manually close a chest
     public static final int ticksToRenderAnvil = 120;
     public static final int ticksToRenderETable = 60*20; // 1 min
+    public static final int ticksToRenderBackpack = Integer.MAX_VALUE; // You dismiss the backpack manually
 
     // Size of items when rendered in front of something immersive
     public static final float itemScaleSizeFurnace = 0.5f;

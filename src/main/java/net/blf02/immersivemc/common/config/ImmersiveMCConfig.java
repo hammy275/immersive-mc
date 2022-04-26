@@ -10,6 +10,7 @@ public class ImmersiveMCConfig {
 
     public static final ForgeConfigSpec GENERAL_SPEC;
 
+    // Synced values
     public static ForgeConfigSpec.BooleanValue useAnvilImmersion;
     public static ForgeConfigSpec.BooleanValue useBrewingImmersion;
     public static ForgeConfigSpec.BooleanValue useChestImmersion;
@@ -21,6 +22,9 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useETableImmersion;
     public static ForgeConfigSpec.BooleanValue useCampfireImmersion;
     public static ForgeConfigSpec.BooleanValue useLever;
+    public static ForgeConfigSpec.BooleanValue useBackpack;
+
+    //Non-synced values
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -29,6 +33,7 @@ public class ImmersiveMCConfig {
     }
 
     protected static void setupConfig(ForgeConfigSpec.Builder builder) {
+        // Synced Values
         useAnvilImmersion = builder
                 .comment("Whether immersives on anvils and smithing tables should be allowed")
                 .define("anvil_immersion", true);
@@ -62,6 +67,11 @@ public class ImmersiveMCConfig {
         useLever = builder
                 .comment("Whether VR users can physically toggle levers")
                 .define("lever_immersion", true);
+        useBackpack = builder
+                .comment("Allow VR players to use a backpack to manage their inventory")
+                .define("backpack_inventory", true);
+
+        // Non-synced Values
     }
 
     public static void encode(PacketBuffer buffer) {
@@ -74,7 +84,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useButton.get())
                 .writeBoolean(useETableImmersion.get())
                 .writeBoolean(useCampfireImmersion.get())
-                .writeBoolean(useLever.get());
+                .writeBoolean(useLever.get())
+                .writeBoolean(useBackpack.get());
     }
 
 

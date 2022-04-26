@@ -7,6 +7,7 @@ import net.minecraft.network.PacketBuffer;
 
 public class ActiveConfig {
 
+    // Synced values
     public static boolean useAnvilImmersion = false;
     public static boolean useBrewingImmersion = false;
     public static boolean useChestImmersion = false;
@@ -18,6 +19,9 @@ public class ActiveConfig {
     public static boolean useETableImmersion = false;
     public static boolean useCampfireImmersion = false;
     public static boolean useLever = false;
+    public static boolean useBackpack = false;
+
+    // Non-synced values
 
     public static void loadConfigFromPacket(PacketBuffer buffer) {
         int serverNetworkVersion = buffer.readInt();
@@ -42,6 +46,7 @@ public class ActiveConfig {
         useETableImmersion = buffer.readBoolean() && useETableImmersion;
         useCampfireImmersion = buffer.readBoolean() && useCampfireImmersion;
         useLever = buffer.readBoolean() && useLever;
+        useBackpack = buffer.readBoolean() && useBackpack;
         ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
 
     }
@@ -58,6 +63,7 @@ public class ActiveConfig {
         useETableImmersion = ImmersiveMCConfig.useETableImmersion.get();
         useCampfireImmersion = ImmersiveMCConfig.useCampfireImmersion.get();
         useLever = ImmersiveMCConfig.useLever.get();
+        useBackpack = ImmersiveMCConfig.useBackpack.get();
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
@@ -73,6 +79,7 @@ public class ActiveConfig {
         useETableImmersion = false;
         useCampfireImmersion = false;
         useLever = false;
+        useBackpack = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -87,7 +94,8 @@ public class ActiveConfig {
                 "Use button: " + useButton + "\n" +
                 "Use enchanting table: " + useETableImmersion + "\n" +
                 "Use campfire immersion: " + useCampfireImmersion + "\n" +
-                "Use lever: " + useLever;
+                "Use lever: " + useLever + "\n" +
+                "Use backpack: " + useBackpack;
         return stringOut;
     }
 }
