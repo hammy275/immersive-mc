@@ -163,7 +163,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     protected void renderHitbox(MatrixStack stack, AxisAlignedBB hitbox, Vector3d pos) {
-        if (Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() &&
+        renderHitbox(stack, hitbox, pos, false);
+    }
+
+    protected void renderHitbox(MatrixStack stack, AxisAlignedBB hitbox, Vector3d pos, boolean alwaysRender) {
+        if ((Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() || alwaysRender) &&
                 hitbox != null) {
             ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
             // Use a new stack here, so we don't conflict with the stack.scale() for the item itself

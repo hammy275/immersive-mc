@@ -15,11 +15,13 @@ public class BackpackInfo extends AbstractImmersiveInfo {
     public Vector3d handPos = Vector3d.ZERO;
     public Vector3d lookVec = Vector3d.ZERO;
     public Vector3d renderPos = Vector3d.ZERO;
+    public Vector3d centerTopPos = Vector3d.ZERO;
     public float handPitch = 0;
     public float handYaw = 0;
     public float handRoll = 0;
     public Vector3d backVec = Vector3d.ZERO;
     public Vector3f rgb = new Vector3f(0, 0, 0);
+    public int topRow = 0;
 
     public BackpackInfo() {
         super(ClientConstants.ticksToRenderBackpack);
@@ -73,5 +75,27 @@ public class BackpackInfo extends AbstractImmersiveInfo {
     @Override
     public BlockPos getBlockPosition() {
         return Minecraft.getInstance().player.blockPosition();
+    }
+
+    public void gotoNextRow() {
+        if (++this.topRow > 2) {
+            this.topRow = 0;
+        }
+    }
+
+    public int getMidRow() {
+        int midRow = this.topRow + 1;
+        if (midRow > 2) {
+            return 0;
+        }
+        return midRow;
+    }
+
+    public int getBotRow() {
+        int botRow = getMidRow() + 1;
+        if (botRow > 2) {
+            return 0;
+        }
+        return botRow;
     }
 }
