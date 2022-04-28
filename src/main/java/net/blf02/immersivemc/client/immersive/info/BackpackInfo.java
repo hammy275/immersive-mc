@@ -22,6 +22,7 @@ public class BackpackInfo extends AbstractImmersiveInfo {
     public Vector3d backVec = Vector3d.ZERO;
     public Vector3f rgb = new Vector3f(0, 0, 0);
     public int topRow = 0;
+    public int slotHovered = -1;
 
     public BackpackInfo() {
         super(ClientConstants.ticksToRenderBackpack);

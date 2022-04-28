@@ -81,6 +81,8 @@ public class ImmersiveMC {
                     GetEnchantmentsPacket::decode, GetEnchantmentsPacket::handle);
             Network.INSTANCE.registerMessage(index++, DoETablePacket.class, DoETablePacket::encode,
                     DoETablePacket::decode, DoETablePacket::handle);
+            Network.INSTANCE.registerMessage(index++, InventorySwapPacket.class, InventorySwapPacket::encode,
+                    InventorySwapPacket::decode, InventorySwapPacket::handle);
         });
 
     }

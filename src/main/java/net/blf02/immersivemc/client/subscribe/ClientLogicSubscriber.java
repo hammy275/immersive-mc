@@ -6,6 +6,7 @@ import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.*;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.AnvilInfo;
+import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
 import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
@@ -18,10 +19,12 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
 import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
+import net.blf02.immersivemc.common.network.packet.InventorySwapPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
+import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
@@ -190,6 +193,18 @@ public class ClientLogicSubscriber {
 
     public static boolean handleLeftClick(PlayerEntity player) {
         if (Minecraft.getInstance().player == null) return false;
+
+        // Move to next row on left click if backpack is out
+        if (BackpackImmersive.singleton.getTrackedObjects().size() > 0) {
+            BackpackInfo info = BackpackImmersive.singleton.getTrackedObjects().get(0);
+            if (info.slotHovered > -1) {
+                Network.INSTANCE.sendToServer(new InventorySwapPacket(info.slotHovered + 9));
+                Swap.handleInventorySwap(player, info.slotHovered + 9, Hand.MAIN_HAND); // Do swap on both sides
+            } else {
+                info.gotoNextRow();
+            }
+            return true;
+        }
 
         RayTraceResult looking = Minecraft.getInstance().hitResult;
         if (looking == null || looking.getType() != RayTraceResult.Type.BLOCK) return false;

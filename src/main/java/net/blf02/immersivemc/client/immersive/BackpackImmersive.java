@@ -5,6 +5,7 @@ import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
 import net.blf02.immersivemc.client.model.BackpackModel;
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.vrapi.api.data.IVRData;
@@ -17,6 +18,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
+
+import java.util.Optional;
 
 public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
 
@@ -33,12 +36,13 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
     public void tick(BackpackInfo info, boolean isInVR) {
         super.tick(info, isInVR);
         int controllerNum = 1; // TODO: Replace with config key lookup
-        IVRData controller = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(controllerNum);
-        info.handPos = controller.position();
-        info.handPitch = (float) Math.toRadians(controller.getPitch());
-        info.handYaw = (float) Math.toRadians(controller.getYaw());
-        info.handRoll = (float) Math.toRadians(controller.getRoll());
-        info.lookVec = controller.getLookAngle();
+        IVRData backpackController = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(controllerNum);
+        IVRData handController = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(controllerNum == 1 ? 0 : 1);
+        info.handPos = backpackController.position();
+        info.handPitch = (float) Math.toRadians(backpackController.getPitch());
+        info.handYaw = (float) Math.toRadians(backpackController.getYaw());
+        info.handRoll = (float) Math.toRadians(backpackController.getRoll());
+        info.lookVec = backpackController.getLookAngle();
 
         // Render backpack closer to the player, and attached to the inner-side of the arm
         info.backVec = info.lookVec.normalize().multiply(-1, -1, -1);
@@ -61,9 +65,9 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
 
         // Item hitboxes and positions
         Vector3d leftOffset = new Vector3d(
-                leftVec.x * spacing, 0, leftVec.z * spacing);
+                leftVec.x * spacing, leftVec.y * spacing, leftVec.z * spacing);
         Vector3d rightOffset = new Vector3d(
-                rightVec.x * spacing, 0, rightVec.z * spacing);
+                rightVec.x * spacing, rightVec.y * spacing, rightVec.z * spacing);
 
         double tbSpacing = spacing / 4d;
         Vector3d topOffset = info.lookVec.multiply(tbSpacing, tbSpacing, tbSpacing);
@@ -76,13 +80,34 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
                 pos.add(leftOffset).add(botOffset), pos.add(botOffset), pos.add(rightOffset).add(botOffset)};
 
         int start = 9 * info.topRow;
-        int end = start + 9;
+        int end = start + 8;
+        int midStart = 9 * info.getMidRow();
+        int midEnd = midStart + 8;
 
-        for (int i = start; i <= end; i++) {
+        for (int i = 0; i <= 26; i++) {
             Vector3d posRaw = positions[i % 9];
-            info.setPosition(i, posRaw);
-            info.setHitbox(i, createHitbox(posRaw, 0.05f));
+            Vector3d yDown = inRange(i, start, end) ? Vector3d.ZERO : // TODO: Replace the second and third ones here
+                    inRange(i, midStart, midEnd) ? null : null;
+            if (yDown == null) continue;
+            Vector3d slotPos = posRaw.add(yDown);
+            info.setPosition(i, slotPos);
+            if (yDown == Vector3d.ZERO) {
+                info.setHitbox(i, createHitbox(posRaw, 0.05f)); // Only create hitbox for the uppermost items
+            } else {
+                info.setHitbox(i, null);
+            }
         }
+        Optional<Integer> hitboxIntersect = Util.getFirstIntersect(handController.position(),
+                info.getAllHitboxes());
+        if (hitboxIntersect.isPresent()) {
+            info.slotHovered = hitboxIntersect.get();
+        } else {
+            info.slotHovered = -1;
+        }
+    }
+
+    protected boolean inRange(int num, int start, int end) {
+        return start <= num && num <= end;
     }
 
     @Override
@@ -106,10 +131,11 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
 
         for (int i = 0; i <= 26; i++) {
             ItemStack item = Minecraft.getInstance().player.inventory.getItem(i + 9);
-            if (!item.isEmpty()) {
+            if (!item.isEmpty() && info.getPosition(i) != null) {
                 stack.pushPose();
                 setupCamera(stack, info.getPosition(i));
-                final float size = ClientConstants.itemScaleSizeBackpack;
+                final float size =
+                        info.slotHovered == i ? ClientConstants.itemScaleSizeBackpackSelected : ClientConstants.itemScaleSizeBackpack;
                 stack.scale(size, size, size);
                 stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
                 Minecraft.getInstance().getItemRenderer().renderStatic(item, ItemCameraTransforms.TransformType.GROUND,

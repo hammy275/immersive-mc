@@ -39,6 +39,12 @@ import java.util.Optional;
 
 public class Swap {
 
+    public static void handleInventorySwap(PlayerEntity player, int slot, Hand hand) {
+        ItemStack handStack = player.getItemInHand(hand).copy();
+        ItemStack invStack = player.inventory.getItem(slot).copy();
+        player.setItemInHand(hand, invStack);
+        player.inventory.setItem(slot, handStack);
+    }
     public static void handleFurnaceSwap(AbstractFurnaceTileEntity furnace, PlayerEntity player,
                                          Hand hand, int slot) {
         ItemStack furnaceItem = furnace.getItem(slot).copy();
