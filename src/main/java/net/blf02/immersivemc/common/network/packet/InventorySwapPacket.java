@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.common.network.packet;
 
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -26,6 +27,7 @@ public class InventorySwapPacket {
 
     public static void handle(InventorySwapPacket message, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
+            if (!ActiveConfig.useBackpack) return;
             ServerPlayerEntity player = ctx.get().getSender();
             if (player != null) {
                 Swap.handleInventorySwap(player, message.slot, Hand.MAIN_HAND);
