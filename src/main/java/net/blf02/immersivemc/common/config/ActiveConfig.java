@@ -23,6 +23,7 @@ public class ActiveConfig {
 
     // Non-synced values
     public static int backpackColor = 11901820;
+    public static boolean leftHandedBackpack = false;
 
     public static void loadConfigFromPacket(PacketBuffer buffer) {
         int serverNetworkVersion = buffer.readInt();
@@ -69,6 +70,7 @@ public class ActiveConfig {
 
         // Non-synced values
         backpackColor = ImmersiveMCConfig.backpackColor.get();
+        leftHandedBackpack = ImmersiveMCConfig.leftHandedBackpack.get();
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
@@ -101,7 +103,8 @@ public class ActiveConfig {
                 "Use campfire immersion: " + useCampfireImmersion + "\n" +
                 "Use lever: " + useLever + "\n" +
                 "Use backpack: " + useBackpack + "\n" +
-                "Backpack color: " + backpackColor;
+                "Backpack color: " + backpackColor + "\n" +
+                "Left handed backpack: " + leftHandedBackpack;
         return stringOut;
     }
 }

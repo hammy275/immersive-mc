@@ -2,7 +2,6 @@ package net.blf02.immersivemc.client.model;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.blf02.immersivemc.ImmersiveMC;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.Entity;
@@ -11,8 +10,7 @@ import net.minecraft.util.ResourceLocation;
 // 99% exported from BlockBench
 public class BackpackModel extends EntityModel<Entity> {
 
-    public static final ResourceLocation textureLocation = new ResourceLocation(ImmersiveMC.MOD_ID,
-            "backpack.png");
+    public static final ResourceLocation textureLocation = new ResourceLocation("textures/block/white_wool.png");
 
     private final ModelRenderer wall;
     private final ModelRenderer lower;

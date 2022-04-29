@@ -34,7 +34,7 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
     @Override
     public void tick(BackpackInfo info, boolean isInVR) {
         super.tick(info, isInVR);
-        int controllerNum = 1; // TODO: Replace with config key lookup
+        int controllerNum = 1;
         IVRData backpackController = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(controllerNum);
         IVRData handController = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(controllerNum == 1 ? 0 : 1);
         info.handPos = backpackController.position();
@@ -44,7 +44,7 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
 
         // Render backpack closer to the player, and attached to the inner-side of the arm
         info.backVec = info.lookVec.normalize().multiply(-1, -1, -1);
-        info.renderPos = info.handPos.add(0, -0.675, 0);
+        info.renderPos = info.handPos.add(0, -0.75, 0);
         info.renderPos = info.renderPos.add(info.backVec.multiply(1d/6d, 1d/6d, 1d/6d));
 
         info.rgb = new Vector3f(ActiveConfig.backpackColor >> 16, ActiveConfig.backpackColor >> 8 & 255,
@@ -52,14 +52,21 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         info.rgb.mul(1f/255f);
 
 
-        info.centerTopPos = info.handPos;
+        info.centerTopPos = info.handPos.add(0, -0.15, 0);
         info.centerTopPos = info.centerTopPos.add(info.backVec.multiply(1d/6d, 1d/6d, 1d/6d)); // Back on arm
         Vector3d rightVec = info.lookVec.multiply(1E8D, 0, 1E8D).normalize();
-        rightVec = new Vector3d(-rightVec.z, 0, rightVec.x).multiply(0.25, 0, 0.25);
+        if (ActiveConfig.leftHandedBackpack) {
+            rightVec = new Vector3d(rightVec.z, 0, -rightVec.x).multiply(0.25, 0, 0.25);
+        } else {
+            rightVec = new Vector3d(-rightVec.z, 0, rightVec.x).multiply(0.25, 0, 0.25);
+        }
         info.centerTopPos = info.centerTopPos.add(rightVec);
 
 
         Vector3d leftVec = rightVec.multiply(-1, 0, -1);
+
+        // Note: rightVec and leftVec refer to the vectors for right-handed people. Swap the names if referring to
+        // left-handed guys, gals, and non-binary pals.
 
         // Item hitboxes and positions
         Vector3d leftOffset = new Vector3d(
@@ -158,8 +165,7 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         stack.translate(0, -1.5, 0); // Move back to where we started
 
         // Basically move the model to the side of the origin
-        // TODO: Move the other way when attached to the other controller
-        stack.translate(0.5, 0, 0);
+        stack.translate(ActiveConfig.leftHandedBackpack ? -0.5 : 0.5, 0, 0);
 
         // Render the model (finally!)
         model.renderToBuffer(stack,

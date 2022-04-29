@@ -23,9 +23,10 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useCampfireImmersion;
     public static ForgeConfigSpec.BooleanValue useLever;
     public static ForgeConfigSpec.BooleanValue useBackpack;
-    public static ForgeConfigSpec.IntValue backpackColor;
 
     //Non-synced values
+    public static ForgeConfigSpec.IntValue backpackColor;
+    public static ForgeConfigSpec.BooleanValue leftHandedBackpack;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -69,13 +70,16 @@ public class ImmersiveMCConfig {
                 .comment("Whether VR users can physically toggle levers")
                 .define("lever_immersion", true);
         useBackpack = builder
-                .comment("Allow VR players to use a backpack to manage their inventory")
-                .define("backpack_inventory", true);
+                .comment("Allow VR players to use a bag to manage their inventory")
+                .define("bag_inventory", true);
 
         // Non-synced Values
         backpackColor = builder
-                .comment("Color for backpack as a base-10 RGB number.")
-                .defineInRange("backpack_color", 11901820, 0, 0xFFFFFF);
+                .comment("Color for the bag as a base-10 RGB number.")
+                .defineInRange("bag_color", 11901820, 0, 0xFFFFFF);
+        leftHandedBackpack = builder
+                .comment("Puts the bag on the other side of your arm. Set to true if you're left-handed.")
+                .define("left_handed_bag", false);
     }
 
     public static void encode(PacketBuffer buffer) {

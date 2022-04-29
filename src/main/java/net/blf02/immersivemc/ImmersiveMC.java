@@ -30,7 +30,7 @@ public class ImmersiveMC {
     public static final String MOD_ID = "immersivemc";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
-    public static final String keyCategory = "key.categories." + MOD_ID;
+    public static final String vrKeyCategory = "key.categories." + MOD_ID + ".vr";
     public static KeyBinding SUMMON_BACKPACK = null;
 
     public ImmersiveMC() {
@@ -46,7 +46,7 @@ public class ImmersiveMC {
     protected void clientSetup(FMLClientSetupEvent event) {
         // Map to a very obscure key, so it has no conflicts for VR users
         SUMMON_BACKPACK = new KeyBinding("key." + MOD_ID + ".backpack", KeyConflictContext.IN_GAME,
-                InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_F23, keyCategory);
+                InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_F23, vrKeyCategory);
         event.enqueueWork(() -> {
             MinecraftForge.EVENT_BUS.register(new ClientLogicSubscriber());
             MinecraftForge.EVENT_BUS.register(new ClientRenderSubscriber());
