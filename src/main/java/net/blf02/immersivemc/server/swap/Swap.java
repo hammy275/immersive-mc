@@ -42,8 +42,15 @@ public class Swap {
     public static void handleInventorySwap(PlayerEntity player, int slot, Hand hand) {
         ItemStack handStack = player.getItemInHand(hand).copy();
         ItemStack invStack = player.inventory.getItem(slot).copy();
-        player.setItemInHand(hand, invStack);
-        player.inventory.setItem(slot, handStack);
+        if (handStack.isEmpty() || invStack.isEmpty() || !Util.stacksEqualBesidesCount(handStack, invStack)) {
+            player.setItemInHand(hand, invStack);
+            player.inventory.setItem(slot, handStack);
+        } else {
+            Util.ItemStackMergeResult res = Util.mergeStacks(invStack, handStack, false);
+            player.setItemInHand(hand, res.mergedFrom);
+            player.inventory.setItem(slot, res.mergedInto);
+        }
+
     }
     public static void handleFurnaceSwap(AbstractFurnaceTileEntity furnace, PlayerEntity player,
                                          Hand hand, int slot) {

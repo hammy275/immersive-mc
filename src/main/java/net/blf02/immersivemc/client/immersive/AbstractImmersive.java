@@ -3,6 +3,8 @@ package net.blf02.immersivemc.client.immersive;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import net.blf02.immersivemc.common.vr.VRPlugin;
+import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.ActiveRenderInfo;
@@ -93,7 +95,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param stack MatrixStack in
      * @param pos Position to render at
      * @param size Size to render at
-     * @param facing Direction to face (should be the direction of the block)
+     * @param facing Direction to face (should be the direction of the block). Can be null to look at camera.
      * @param upDown Direction upwards or downwards. Can be null if not facing up or down.
      * @param hitbox Hitbox for debug rendering
      */
@@ -138,13 +140,25 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 textPos = textPos.add(0.15, 0, 0);
             } else if (facing == Direction.NORTH) {
                 textPos = textPos.add(0, 0, -0.15);
+            } else if (facing == null) {
+                stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+                stack.mulPose(Vector3f.YP.rotationDegrees(180));
+                Vector3d textMove = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR ?
+                        VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD().getLookAngle() :
+                        Minecraft.getInstance().player.getLookAngle();
+                textMove = textMove.multiply(-0.05, -0.05, -0.05);
+                textPos = textPos.add(textMove);
             }
 
+            if (facing != null) {
+                stack.mulPose(Vector3f.YP.rotationDegrees(degreesRotation));
+                stack.mulPose(Vector3f.XP.rotationDegrees(upDownRot));
+            }
 
-            stack.mulPose(Vector3f.YP.rotationDegrees(degreesRotation));
-            stack.mulPose(Vector3f.XP.rotationDegrees(upDownRot));
+            ItemCameraTransforms.TransformType type = facing == null ? ItemCameraTransforms.TransformType.GROUND :
+                    ItemCameraTransforms.TransformType.FIXED;
 
-            Minecraft.getInstance().getItemRenderer().renderStatic(item, ItemCameraTransforms.TransformType.FIXED,
+            Minecraft.getInstance().getItemRenderer().renderStatic(item, type,
                     15728880,
                     OverlayTexture.NO_OVERLAY,
                     stack, Minecraft.getInstance().renderBuffers().bufferSource());
@@ -156,7 +170,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
             if (renderItemCounts && item.getCount() > 1) {
                 this.renderText(new StringTextComponent(String.valueOf(item.getCount())),
-                        stack, textPos, 0.01f);
+                        stack, textPos, facing == null ? 0.0025f : 0.01f);
             }
         }
         renderHitbox(stack, hitbox, pos);
@@ -202,6 +216,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         font.drawInBatch(text, size, 0, 0xFFFFFFFF, false,
                 stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), false,
                 0, 15728880);
+        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
         stack.popPose();
     }
 

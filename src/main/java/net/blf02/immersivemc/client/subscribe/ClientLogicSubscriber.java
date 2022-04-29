@@ -140,11 +140,14 @@ public class ClientLogicSubscriber {
                 event.setCanceled(true);
                 ClientUtil.setRightClickCooldown();
             }
-        } else if (event.getHand() == Hand.MAIN_HAND && event.isAttack()
-            && ClientUtil.immersiveLeftClickCooldown <= 0) {
+        } else if (event.getHand() == Hand.MAIN_HAND && event.isAttack()) {
+            if (ClientUtil.immersiveLeftClickCooldown > 0) {
+                event.setCanceled(true);
+                return; // Cancel left click if we're on cooldown
+            }
             if (handleLeftClick(Minecraft.getInstance().player)) {
                 event.setCanceled(true);
-                ClientUtil.immersiveLeftClickCooldown = 8;
+                ClientUtil.immersiveLeftClickCooldown += 8;
             }
         }
     }
@@ -194,38 +197,38 @@ public class ClientLogicSubscriber {
     public static boolean handleLeftClick(PlayerEntity player) {
         if (Minecraft.getInstance().player == null) return false;
 
+        BackpackInfo backpackInfo = BackpackImmersive.singleton.getTrackedObjects().size() > 0 ?
+                BackpackImmersive.singleton.getTrackedObjects().get(0) : null;
         // Move to next row on left click if backpack is out
-        if (BackpackImmersive.singleton.getTrackedObjects().size() > 0) {
-            BackpackInfo info = BackpackImmersive.singleton.getTrackedObjects().get(0);
-            if (info.slotHovered > -1) {
-                Network.INSTANCE.sendToServer(new InventorySwapPacket(info.slotHovered + 9));
-                Swap.handleInventorySwap(player, info.slotHovered + 9, Hand.MAIN_HAND); // Do swap on both sides
-            } else {
-                info.gotoNextRow();
-            }
+        if (backpackInfo != null && backpackInfo.slotHovered > -1) {
+            Network.INSTANCE.sendToServer(new InventorySwapPacket(backpackInfo.slotHovered + 9));
+            Swap.handleInventorySwap(player, backpackInfo.slotHovered + 9, Hand.MAIN_HAND); // Do swap on both sides
             return true;
         }
 
         RayTraceResult looking = Minecraft.getInstance().hitResult;
-        if (looking == null || looking.getType() != RayTraceResult.Type.BLOCK) return false;
-
-        BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
-        BlockState state = player.level.getBlockState(pos);
-        if (state.getBlock() == Blocks.CRAFTING_TABLE) {
-            Network.INSTANCE.sendToServer(new DoCraftPacket(
-                    ClientStorage.craftingStorage, pos
-            ));
-            ClientStorage.removeLackingIngredientsFromTable(player);
-            return true;
-        }
-
-        TileEntity tileEnt = player.level.getBlockEntity(pos);
-        if (tileEnt instanceof ChestTileEntity) {
-            ChestTileEntity chest = (ChestTileEntity) tileEnt;
-            ChestInfo info = ImmersiveChest.findImmersive(chest);
-            if (info != null) {
-                info.nextRow();
+        if (looking != null && looking.getType() == RayTraceResult.Type.BLOCK) {
+            BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
+            BlockState state = player.level.getBlockState(pos);
+            if (state.getBlock() == Blocks.CRAFTING_TABLE) {
+                Network.INSTANCE.sendToServer(new DoCraftPacket(
+                        ClientStorage.craftingStorage, pos
+                ));
+                ClientStorage.removeLackingIngredientsFromTable(player);
+                return true;
             }
+
+            TileEntity tileEnt = player.level.getBlockEntity(pos);
+            if (tileEnt instanceof ChestTileEntity) {
+                ChestTileEntity chest = (ChestTileEntity) tileEnt;
+                ChestInfo chestInfo = ImmersiveChest.findImmersive(chest);
+                if (chestInfo != null) {
+                    chestInfo.nextRow();
+                }
+                return true;
+            }
+        } else if (backpackInfo != null) {
+            backpackInfo.gotoNextRow();
             return true;
         }
 

@@ -12,7 +12,6 @@ import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -41,7 +40,6 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         info.handPos = backpackController.position();
         info.handPitch = (float) Math.toRadians(backpackController.getPitch());
         info.handYaw = (float) Math.toRadians(backpackController.getYaw());
-        info.handRoll = (float) Math.toRadians(backpackController.getRoll());
         info.lookVec = backpackController.getLookAngle();
 
         // Render backpack closer to the player, and attached to the inner-side of the arm
@@ -56,7 +54,7 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
 
         info.centerTopPos = info.handPos;
         info.centerTopPos = info.centerTopPos.add(info.backVec.multiply(1d/6d, 1d/6d, 1d/6d)); // Back on arm
-        Vector3d rightVec = info.lookVec.multiply(1, 0, 1).normalize();
+        Vector3d rightVec = info.lookVec.multiply(1E8D, 0, 1E8D).normalize();
         rightVec = new Vector3d(-rightVec.z, 0, rightVec.x).multiply(0.25, 0, 0.25);
         info.centerTopPos = info.centerTopPos.add(rightVec);
 
@@ -86,11 +84,15 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
 
         for (int i = 0; i <= 26; i++) {
             Vector3d posRaw = positions[i % 9];
-            Vector3d yDown = inRange(i, start, end) ? Vector3d.ZERO : // TODO: Replace the second and third ones here
+            Vector3d yDown = inRange(i, start, end) ? Vector3d.ZERO :
                     inRange(i, midStart, midEnd) ? null : null;
-            if (yDown == null) continue;
-            Vector3d slotPos = posRaw.add(yDown);
-            info.setPosition(i, slotPos);
+            Vector3d slotPos = posRaw;
+            if (yDown != null) {
+                slotPos = slotPos.add(yDown);
+                info.setPosition(i, slotPos);
+            } else {
+                info.setPosition(i, null);
+            }
             if (yDown == Vector3d.ZERO) {
                 info.setHitbox(i, createHitbox(posRaw, 0.05f)); // Only create hitbox for the uppermost items
             } else {
@@ -123,8 +125,7 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         for (int i = 0; i <= 26; i++) {
             AxisAlignedBB hitbox = info.getHibtox(i);
             if (hitbox != null) {
-                // TODO: Remove true so we don't force-render hitbox
-                renderHitbox(stack, hitbox, info.getPosition(i), true);
+                renderHitbox(stack, hitbox, info.getPosition(i));
             }
         }
         stack.popPose();
@@ -132,16 +133,10 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         for (int i = 0; i <= 26; i++) {
             ItemStack item = Minecraft.getInstance().player.inventory.getItem(i + 9);
             if (!item.isEmpty() && info.getPosition(i) != null) {
-                stack.pushPose();
-                setupCamera(stack, info.getPosition(i));
                 final float size =
                         info.slotHovered == i ? ClientConstants.itemScaleSizeBackpackSelected : ClientConstants.itemScaleSizeBackpack;
-                stack.scale(size, size, size);
-                stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-                Minecraft.getInstance().getItemRenderer().renderStatic(item, ItemCameraTransforms.TransformType.GROUND,
-                        15728880, OverlayTexture.NO_OVERLAY,
-                        stack, Minecraft.getInstance().renderBuffers().bufferSource());
-                stack.popPose();
+                renderItem(item, stack, info.getPosition(i), size, null, info.getHibtox(i),
+                        info.getHibtox(i) != null);
             }
         }
 
@@ -158,8 +153,7 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
 
         stack.mulPose(Vector3f.YN.rotation(info.handYaw));
         stack.mulPose(Vector3f.XN.rotation(info.handPitch));
-        stack.mulPose(Vector3f.ZP.rotation((float) Math.PI));
-        stack.mulPose(Vector3f.ZP.rotation(info.handRoll)); // Rotate
+        stack.mulPose(Vector3f.ZP.rotation((float) Math.PI)); // Rotate
 
         stack.translate(0, -1.5, 0); // Move back to where we started
 
@@ -176,14 +170,6 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
 
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
         stack.popPose();
-    }
-
-    protected void setupCamera(MatrixStack stack, Vector3d pos) {
-        ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
-        stack.translate(-renderInfo.getPosition().x + pos.x,
-                -renderInfo.getPosition().y + pos.y,
-                -renderInfo.getPosition().z + pos.z);
-
     }
 
     @Override

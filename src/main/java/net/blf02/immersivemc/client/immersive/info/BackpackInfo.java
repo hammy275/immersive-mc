@@ -18,7 +18,6 @@ public class BackpackInfo extends AbstractImmersiveInfo {
     public Vector3d centerTopPos = Vector3d.ZERO;
     public float handPitch = 0;
     public float handYaw = 0;
-    public float handRoll = 0;
     public Vector3d backVec = Vector3d.ZERO;
     public Vector3f rgb = new Vector3f(0, 0, 0);
     public int topRow = 0;
