@@ -52,9 +52,10 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         info.rgb.mul(1f/255f);
 
 
-        info.centerTopPos = info.handPos.add(0, -0.15, 0);
+        info.centerTopPos = info.handPos.add(0, -0.05, 0);
         info.centerTopPos = info.centerTopPos.add(info.backVec.multiply(1d/6d, 1d/6d, 1d/6d)); // Back on arm
-        Vector3d rightVec = info.lookVec.multiply(1E8D, 0, 1E8D).normalize();
+        // Multiply massively so the < 1E-4D check from .normalize() rarely kicks in
+        Vector3d rightVec = info.lookVec.multiply(1E16D, 0, 1E16D).normalize();
         if (ActiveConfig.leftHandedBackpack) {
             rightVec = new Vector3d(rightVec.z, 0, -rightVec.x).multiply(0.25, 0, 0.25);
         } else {
@@ -67,6 +68,11 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
 
         // Note: rightVec and leftVec refer to the vectors for right-handed people. Swap the names if referring to
         // left-handed guys, gals, and non-binary pals.
+
+        Vector3f downVecF = new Vector3f(0, -1, 0);
+        downVecF.transform(Vector3f.XN.rotation(info.handPitch));
+        downVecF.transform(Vector3f.YN.rotation(info.handYaw));
+        info.downVec = new Vector3d(downVecF.x(), downVecF.y(), downVecF.z()).normalize();
 
         // Item hitboxes and positions
         Vector3d leftOffset = new Vector3d(
@@ -89,22 +95,17 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         int midStart = 9 * info.getMidRow();
         int midEnd = midStart + 8;
 
+        Vector3d downOne = info.downVec.multiply(0.125, 0.125, 0.125);
+        Vector3d downTwo = downOne.multiply(2, 2, 2);
+
         for (int i = 0; i <= 26; i++) {
             Vector3d posRaw = positions[i % 9];
             Vector3d yDown = inRange(i, start, end) ? Vector3d.ZERO :
-                    inRange(i, midStart, midEnd) ? null : null;
+                    inRange(i, midStart, midEnd) ? downOne : downTwo;
             Vector3d slotPos = posRaw;
-            if (yDown != null) {
-                slotPos = slotPos.add(yDown);
-                info.setPosition(i, slotPos);
-            } else {
-                info.setPosition(i, null);
-            }
-            if (yDown == Vector3d.ZERO) {
-                info.setHitbox(i, createHitbox(posRaw, 0.05f)); // Only create hitbox for the uppermost items
-            } else {
-                info.setHitbox(i, null);
-            }
+            slotPos = slotPos.add(yDown);
+            info.setPosition(i, slotPos);
+            info.setHitbox(i, createHitbox(info.getPosition(i), 0.05f));
         }
         Optional<Integer> hitboxIntersect = Util.getFirstIntersect(handController.position(),
                 info.getAllHitboxes());
@@ -123,27 +124,23 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
     public boolean shouldRender(BackpackInfo info, boolean isInVR) {
         return Minecraft.getInstance().player != null &&
                 VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(Minecraft.getInstance().player) &&
-                VRPlugin.API.apiActive(Minecraft.getInstance().player);
+                VRPlugin.API.apiActive(Minecraft.getInstance().player) &&
+                info.readyToRender();
     }
 
     @Override
     protected void render(BackpackInfo info, MatrixStack stack, boolean isInVR) {
-        stack.pushPose();
         for (int i = 0; i <= 26; i++) {
             AxisAlignedBB hitbox = info.getHibtox(i);
-            if (hitbox != null) {
-                renderHitbox(stack, hitbox, info.getPosition(i));
-            }
+            renderHitbox(stack, hitbox, info.getPosition(i));
         }
-        stack.popPose();
 
         for (int i = 0; i <= 26; i++) {
             ItemStack item = Minecraft.getInstance().player.inventory.getItem(i + 9);
             if (!item.isEmpty() && info.getPosition(i) != null) {
                 final float size =
                         info.slotHovered == i ? ClientConstants.itemScaleSizeBackpackSelected : ClientConstants.itemScaleSizeBackpack;
-                renderItem(item, stack, info.getPosition(i), size, null, info.getHibtox(i),
-                        info.getHibtox(i) != null);
+                renderItem(item, stack, info.getPosition(i), size, null, info.getHibtox(i), true);
             }
         }
 

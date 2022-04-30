@@ -16,6 +16,7 @@ public class BackpackInfo extends AbstractImmersiveInfo {
     public Vector3d lookVec = Vector3d.ZERO;
     public Vector3d renderPos = Vector3d.ZERO;
     public Vector3d centerTopPos = Vector3d.ZERO;
+    public Vector3d downVec = Vector3d.ZERO;
     public float handPitch = 0;
     public float handYaw = 0;
     public Vector3d backVec = Vector3d.ZERO;
@@ -69,7 +70,7 @@ public class BackpackInfo extends AbstractImmersiveInfo {
 
     @Override
     public boolean readyToRender() {
-        return true;
+        return hasPositions() && hasHitboxes();
     }
 
     @Override

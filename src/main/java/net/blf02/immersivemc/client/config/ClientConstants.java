@@ -20,7 +20,7 @@ public class ClientConstants {
     public static final float itemScaleSizeAnvil = itemScaleSizeBrewing;
     public static final float itemScaleSizeETable = 0.42f;
     public static final float itemScaleSizeBackpack = 0.2f;
-    public static final float itemScaleSizeBackpackSelected = 0.25f;
+    public static final float itemScaleSizeBackpackSelected = 0.3f;
 
     // Time to transition in ticks
     public static final int transitionTime = 20;
