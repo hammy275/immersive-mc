@@ -1,5 +1,6 @@
 package net.blf02.immersivemc;
 
+import net.blf02.immersivemc.client.config.screen.ConfigScreen;
 import net.blf02.immersivemc.client.subscribe.ClientLogicSubscriber;
 import net.blf02.immersivemc.client.subscribe.ClientRenderSubscriber;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
@@ -40,6 +41,8 @@ public class ImmersiveMC {
                 "immersive_mc.toml");
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST,
                 () -> new ImmutablePair<>(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY,
+                () -> (mc, screen) -> new ConfigScreen(screen));
 
     }
 
