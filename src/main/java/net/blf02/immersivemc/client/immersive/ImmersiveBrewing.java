@@ -2,11 +2,16 @@ package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
+import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.vector.Vector3d;
 
 public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTileEntity, BrewingInfo> {
@@ -93,5 +98,13 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
     @Override
     protected boolean enabledInConfig() {
         return ActiveConfig.useBrewingImmersion;
+    }
+
+    @Override
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest) {
+        BrewingInfo infoB = (BrewingInfo) info;
+        Network.INSTANCE.sendToServer(new SwapPacket(
+                infoB.getTileEntity().getBlockPos(), closest, Hand.MAIN_HAND
+        ));
     }
 }

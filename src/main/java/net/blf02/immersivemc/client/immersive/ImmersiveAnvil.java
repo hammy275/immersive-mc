@@ -2,15 +2,19 @@ package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
+import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.AnvilInfo;
 import net.blf02.immersivemc.client.storage.ClientStorage;
+import net.blf02.immersivemc.client.swap.ClientSwap;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.CommonConstants;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3i;
@@ -104,6 +108,12 @@ public class ImmersiveAnvil extends AbstractImmersive<AnvilInfo> {
     @Override
     protected boolean enabledInConfig() {
         return ActiveConfig.useAnvilImmersion;
+    }
+
+    @Override
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest) {
+        AnvilInfo infoA = (AnvilInfo) info;
+        ClientSwap.anvilSwap(closest, Hand.MAIN_HAND, infoA.anvilPos);
     }
 
     public void trackObject(BlockPos pos) {

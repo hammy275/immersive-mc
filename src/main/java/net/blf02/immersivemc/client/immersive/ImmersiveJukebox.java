@@ -2,8 +2,10 @@ package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
+import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.JukeboxInfo;
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -43,6 +45,9 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
     protected boolean enabledInConfig() {
         return ActiveConfig.useJukeboxImmersion;
     }
+
+    @Override
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest) {}
 
     @Override
     public JukeboxInfo getNewInfo(JukeboxTileEntity tileEnt) {

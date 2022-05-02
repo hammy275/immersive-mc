@@ -47,6 +47,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected abstract boolean enabledInConfig();
 
+    public abstract void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest);
+
     public void tick(I info, boolean isInVR) {
         if (enabledInConfig()) {
             doTick(info, isInVR);

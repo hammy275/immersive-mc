@@ -2,6 +2,7 @@ package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
+import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
 import net.blf02.immersivemc.client.model.BackpackModel;
 import net.blf02.immersivemc.common.config.ActiveConfig;
@@ -13,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3d;
@@ -179,6 +181,9 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
     protected boolean enabledInConfig() {
         return ActiveConfig.useBackpack;
     }
+
+    @Override
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest) {}
 
     public void doTrack() {
         if (this.infos.isEmpty()) {

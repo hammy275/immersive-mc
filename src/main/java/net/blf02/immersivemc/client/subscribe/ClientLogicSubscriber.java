@@ -5,24 +5,18 @@ import net.blf02.immersivemc.client.ClientUtil;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.*;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import net.blf02.immersivemc.client.immersive.info.AnvilInfo;
 import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
-import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
-import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
-import net.blf02.immersivemc.client.immersive.info.EnchantingInfo;
-import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.client.storage.ClientStorage;
-import net.blf02.immersivemc.client.swap.ClientSwap;
 import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
 import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
 import net.blf02.immersivemc.common.network.packet.InventorySwapPacket;
-import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.block.AbstractChestBlock;
@@ -237,75 +231,23 @@ public class ClientLogicSubscriber {
 
     public static boolean handleRightClick(PlayerEntity player) {
         if (Minecraft.getInstance().gameMode == null) return false;
+        boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR && VRPlugin.API.apiActive(player);
         double dist = Minecraft.getInstance().gameMode.getPickRange();
         Vector3d start = player.getEyePosition(1);
         Vector3d viewVec = player.getViewVector(1);
         Vector3d end = player.getEyePosition(1).add(viewVec.x * dist, viewVec.y * dist,
                 viewVec.z * dist);
 
-
-        for (ImmersiveFurnaceInfo info : ImmersiveFurnace.getSingleton().getTrackedObjects()) {
-            if (info.hasHitboxes()) {
-                Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
-                if (closest.isPresent()) {
-                    Network.INSTANCE.sendToServer(new SwapPacket(
-                            info.getTileEntity().getBlockPos(), closest.get(), Hand.MAIN_HAND
-                    ));
-                    return true;
-                }
-            }
-        }
-
-        for (BrewingInfo info : ImmersiveBrewing.getSingleton().getTrackedObjects()) {
-            if (info.hasHitboxes()) {
-                Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
-                if (closest.isPresent()) {
-                    Network.INSTANCE.sendToServer(new SwapPacket(
-                            info.getTileEntity().getBlockPos(), closest.get(), Hand.MAIN_HAND
-                    ));
-                    return true;
-                }
-            }
-        }
-
-        for (CraftingInfo info : ImmersiveCrafting.singleton.getTrackedObjects()) {
-            if (info.hasHitboxes()) {
-                Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
-                if (closest.isPresent()) {
-                    ClientSwap.craftingSwap(closest.get(), Hand.MAIN_HAND);
-                    return true;
-                }
-            }
-        }
-
-        for (ChestInfo info : ImmersiveChest.singleton.getTrackedObjects()) {
-            if (info.hasHitboxes()) {
-                Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
-                if (closest.isPresent()) {
-                    Network.INSTANCE.sendToServer(new SwapPacket(
-                            info.getBlockPosition(), closest.get(), Hand.MAIN_HAND
-                    ));
-                    return true;
-                }
-            }
-        }
-
-        for (AnvilInfo info : ImmersiveAnvil.singleton.getTrackedObjects()) {
-            if (info.hasHitboxes()) {
-                Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
-                if (closest.isPresent()) {
-                    ClientSwap.anvilSwap(closest.get(), Hand.MAIN_HAND, info.anvilPos);
-                    return true;
-                }
-            }
-        }
-
-        for (EnchantingInfo info : ImmersiveETable.singleton.getTrackedObjects()) {
-            if (info.hasHitboxes()) {
-                Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
-                if (closest.isPresent()) {
-                    ClientSwap.eTableSwap(closest.get(), Hand.MAIN_HAND, info.getBlockPosition());
-                    return true;
+        if (!inVR) { // Don't handle right clicks for VR players, they have hands!
+            for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
+                for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
+                    if (info.hasHitboxes()) {
+                        Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
+                        if (closest.isPresent()) {
+                            singleton.handleRightClick(info, player, closest.get());
+                            return true;
+                        }
+                    }
                 }
             }
         }

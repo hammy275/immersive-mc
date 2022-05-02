@@ -1,6 +1,6 @@
 package net.blf02.immersivemc;
 
-import net.blf02.immersivemc.client.config.screen.ConfigScreen;
+import net.blf02.immersivemc.client.config.ClientInit;
 import net.blf02.immersivemc.client.subscribe.ClientLogicSubscriber;
 import net.blf02.immersivemc.client.subscribe.ClientRenderSubscriber;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
@@ -9,6 +9,7 @@ import net.blf02.immersivemc.common.network.packet.*;
 import net.blf02.immersivemc.server.ServerSubscriber;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -19,6 +20,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.logging.log4j.LogManager;
@@ -41,8 +43,9 @@ public class ImmersiveMC {
                 "immersive_mc.toml");
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST,
                 () -> new ImmutablePair<>(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
-        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY,
-                () -> (mc, screen) -> new ConfigScreen(screen));
+        if (FMLLoader.getDist() == Dist.CLIENT) {
+            ClientInit.init(); // Load in a separate function so the server-side doesn't yell at us
+        }
 
     }
 

@@ -2,11 +2,16 @@ package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
+import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.minecraft.block.AbstractFurnaceBlock;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3d;
 
@@ -105,6 +110,14 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
     @Override
     protected boolean enabledInConfig() {
         return ActiveConfig.useFurnaceImmersion;
+    }
+
+    @Override
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest) {
+        ImmersiveFurnaceInfo infoF = (ImmersiveFurnaceInfo) info;
+        Network.INSTANCE.sendToServer(new SwapPacket(
+                infoF.getTileEntity().getBlockPos(), closest, Hand.MAIN_HAND
+        ));
     }
 
 }

@@ -2,7 +2,9 @@ package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
+import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
+import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
@@ -10,8 +12,10 @@ import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.HorizontalBlock;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Objects;
@@ -169,6 +173,13 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
     @Override
     protected boolean enabledInConfig() {
         return ActiveConfig.useChestImmersion;
+    }
+
+    @Override
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest) {
+        Network.INSTANCE.sendToServer(new SwapPacket(
+                info.getBlockPosition(), closest, Hand.MAIN_HAND
+        ));
     }
 
     public static ChestInfo findImmersive(ChestTileEntity chest) {

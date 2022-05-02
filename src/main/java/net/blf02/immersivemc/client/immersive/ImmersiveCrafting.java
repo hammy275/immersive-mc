@@ -2,13 +2,17 @@ package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
+import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
 import net.blf02.immersivemc.client.storage.ClientStorage;
+import net.blf02.immersivemc.client.swap.ClientSwap;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.CommonConstants;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
@@ -85,6 +89,11 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     @Override
     protected boolean enabledInConfig() {
         return ActiveConfig.useCraftingImmersion;
+    }
+
+    @Override
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest) {
+        ClientSwap.craftingSwap(closest, Hand.MAIN_HAND);
     }
 
     @Override

@@ -2,6 +2,7 @@ package net.blf02.immersivemc.common.network.packet;
 
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.NetworkUtil;
+import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ChestTileEntity;
@@ -38,10 +39,17 @@ public class ChestOpenPacket {
                     TileEntity tileEnt = player.level.getBlockEntity(message.pos);
                     if (tileEnt instanceof ChestTileEntity) {
                         ChestTileEntity chest = (ChestTileEntity) tileEnt;
+                        ChestTileEntity other = Util.getOtherChest(chest);
                         if (message.isOpen) {
                             chest.startOpen(player);
+                            if (other != null) {
+                                other.startOpen(player);
+                            }
                         } else {
                             chest.stopOpen(player);
+                            if (other != null) {
+                                other.stopOpen(player);
+                            }
                         }
                     }
                 }
