@@ -4,7 +4,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 
-public class CraftingInfo extends AbstractImmersiveInfo {
+public class CraftingInfo extends AbstractImmersiveInfo implements InfoTriggerHitboxes {
 
     // Output is from left clicking the crafting table with a valid recipe, so no need
     // for an actual slot
@@ -18,6 +18,8 @@ public class CraftingInfo extends AbstractImmersiveInfo {
     };
 
     protected Vector3d[] positions = new Vector3d[9];
+    public Vector3d resultPosition = null;
+    public AxisAlignedBB resultHitbox = null;
 
     public CraftingInfo(BlockPos pos, int ticksToExist) {
         super(ticksToExist);
@@ -41,7 +43,7 @@ public class CraftingInfo extends AbstractImmersiveInfo {
 
     @Override
     public boolean hasHitboxes() {
-        return inputs[0] != null;
+        return inputs[0] != null && resultHitbox != null;
     }
 
     @Override
@@ -61,7 +63,7 @@ public class CraftingInfo extends AbstractImmersiveInfo {
 
     @Override
     public boolean hasPositions() {
-        return positions[0] != null;
+        return positions[0] != null && resultPosition != null;
     }
 
     @Override
@@ -72,5 +74,15 @@ public class CraftingInfo extends AbstractImmersiveInfo {
     @Override
     public BlockPos getBlockPosition() {
         return this.tablePos;
+    }
+
+    @Override
+    public AxisAlignedBB getTriggerHitbox(int hitboxNum) {
+        return resultHitbox;
+    }
+
+    @Override
+    public AxisAlignedBB[] getTriggerHitboxes() {
+        return new AxisAlignedBB[]{resultHitbox};
     }
 }

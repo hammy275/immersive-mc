@@ -4,10 +4,13 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
+import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import net.blf02.immersivemc.client.storage.ClientStorage;
 import net.blf02.immersivemc.client.swap.ClientSwap;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.CommonConstants;
+import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.packet.CraftPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -72,6 +75,17 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
             info.setHitbox(i, createHitbox(positions[i], hitboxSize));
         }
 
+        info.resultPosition = info.getPosition(4).add(0, 0.5, 0);
+        info.resultHitbox = createHitbox(info.resultPosition, hitboxSize * 3);
+
+    }
+
+    @Override
+    public void handleTriggerHitboxRightClick(InfoTriggerHitboxes info, PlayerEntity player, int hitboxNum) {
+        Network.INSTANCE.sendToServer(new CraftPacket(
+                ClientStorage.craftingStorage, ((CraftingInfo) info).tablePos, false
+        ));
+        ClientStorage.removeLackingIngredientsFromTable(player);
     }
 
     @Override
@@ -83,7 +97,8 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
             renderItem(ClientStorage.craftingStorage[i], stack, info.getPosition(i),
                     itemSize, forward, Direction.UP, info.getHibtox(i), false);
         }
-
+        renderItem(ClientStorage.craftingOutput, stack, info.resultPosition,
+                itemSize * 3, forward, info.resultHitbox, true);
     }
 
     @Override
@@ -92,8 +107,8 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest) {
-        ClientSwap.craftingSwap(closest, Hand.MAIN_HAND);
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
+        ClientSwap.craftingSwap(closest, hand, info.getBlockPosition());
     }
 
     @Override

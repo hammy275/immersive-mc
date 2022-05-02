@@ -176,9 +176,9 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest) {
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
         Network.INSTANCE.sendToServer(new SwapPacket(
-                info.getBlockPosition(), closest, Hand.MAIN_HAND
+                info.getBlockPosition(), closest, hand
         ));
     }
 

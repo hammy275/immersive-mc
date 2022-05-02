@@ -8,6 +8,7 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3d;
 
@@ -47,7 +48,7 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest) {}
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {}
 
     @Override
     public JukeboxInfo getNewInfo(JukeboxTileEntity tileEnt) {

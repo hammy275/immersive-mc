@@ -101,10 +101,10 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest) {
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
         BrewingInfo infoB = (BrewingInfo) info;
         Network.INSTANCE.sendToServer(new SwapPacket(
-                infoB.getTileEntity().getBlockPos(), closest, Hand.MAIN_HAND
+                infoB.getTileEntity().getBlockPos(), closest, hand
         ));
     }
 }

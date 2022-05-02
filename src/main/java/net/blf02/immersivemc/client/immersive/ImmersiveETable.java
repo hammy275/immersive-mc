@@ -44,8 +44,8 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
     }
 
     @Override
-    public void tick(EnchantingInfo info, boolean isInVR) {
-        super.tick(info, isInVR);
+    protected void doTick(EnchantingInfo info, boolean isInVR) {
+        super.doTick(info, isInVR);
         if (Minecraft.getInstance().player == null || Minecraft.getInstance().level == null) return;
 
         if (info.getBlockPosition() != null &&
@@ -159,8 +159,8 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest) {
-        ClientSwap.eTableSwap(closest, Hand.MAIN_HAND, info.getBlockPosition());
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
+        ClientSwap.eTableSwap(closest, hand, info.getBlockPosition());
     }
 
     public void trackObject(BlockPos pos) {

@@ -139,12 +139,11 @@ public class Swap {
         for (int i = 0; i < 9; i++) {
             inv.setItem(i, stacksIn[i]);
         }
-        Optional<ICraftingRecipe> res = player.getServer().getRecipeManager().getRecipeFor(IRecipeType.CRAFTING,
-                inv, player.level);
-        if (res.isPresent()) {
+        ICraftingRecipe res = getReecipe(player, stacksIn);
+        if (res != null) {
             if (removeNeededIngredients(player, inv)) {
                 // Give our item to us
-                ItemStack stackOut = res.get().assemble(inv);
+                ItemStack stackOut = res.assemble(inv);
                 BlockPos posBlock = tablePos.above();
                 Vector3d pos = Vector3d.atCenterOf(posBlock);
                 ItemEntity entOut = new ItemEntity(player.level, pos.x, pos.y, pos.z);
@@ -153,6 +152,16 @@ public class Swap {
                 player.level.addFreshEntity(entOut);
             }
         }
+    }
+
+    public static ICraftingRecipe getReecipe(ServerPlayerEntity player, ItemStack[] stacksIn) {
+        CraftingInventory inv = new CraftingInventory(new NullContainer(), 3, 3);
+        for (int i = 0; i < 9; i++) {
+            inv.setItem(i, stacksIn[i]);
+        }
+        Optional<ICraftingRecipe> res = player.getServer().getRecipeManager().getRecipeFor(IRecipeType.CRAFTING,
+                inv, player.level);
+        return res.orElse(null);
     }
 
     public static void handleETable(int slot, BlockPos pos, ServerPlayerEntity player, Hand hand, int power) {

@@ -111,9 +111,9 @@ public class ImmersiveAnvil extends AbstractImmersive<AnvilInfo> {
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest) {
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
         AnvilInfo infoA = (AnvilInfo) info;
-        ClientSwap.anvilSwap(closest, Hand.MAIN_HAND, infoA.anvilPos);
+        ClientSwap.anvilSwap(closest, hand, infoA.anvilPos);
     }
 
     public void trackObject(BlockPos pos) {

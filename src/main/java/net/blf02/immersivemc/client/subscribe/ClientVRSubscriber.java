@@ -3,13 +3,6 @@ package net.blf02.immersivemc.client.subscribe;
 import net.blf02.immersivemc.client.immersive.AbstractImmersive;
 import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import net.blf02.immersivemc.client.immersive.info.AbstractTileEntityImmersiveInfo;
-import net.blf02.immersivemc.client.immersive.info.AnvilInfo;
-import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
-import net.blf02.immersivemc.client.immersive.info.EnchantingInfo;
-import net.blf02.immersivemc.client.swap.ClientSwap;
-import net.blf02.immersivemc.common.network.Network;
-import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.vrapi.api.data.IVRData;
@@ -56,7 +49,7 @@ public class ClientVRSubscriber {
         } else {
             for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
                 for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
-                    if (handleInfo(info, event.vrPlayer)) {
+                    if (handleInfo(singleton, info, event.vrPlayer)) {
                         return;
                     }
                 }
@@ -64,25 +57,15 @@ public class ClientVRSubscriber {
         }
     }
 
-    protected boolean handleInfo(AbstractImmersiveInfo info, IVRPlayer vrPlayer) {
+    protected boolean handleInfo(AbstractImmersive singleton, AbstractImmersiveInfo info, IVRPlayer vrPlayer) {
         if (info.hasHitboxes()) {
             for (int c = 0; c <= 1; c++) {
                 IVRData controller = vrPlayer.getController(c);
                 Vector3d pos = controller.position();
                 Optional<Integer> hit = Util.getFirstIntersect(pos, info.getAllHitboxes());
                 if (hit.isPresent()) {
-                    if (info instanceof AbstractTileEntityImmersiveInfo<?>) {
-                        AbstractTileEntityImmersiveInfo<?> tInfo = (AbstractTileEntityImmersiveInfo<?>) info;
-                        Network.INSTANCE.sendToServer(new SwapPacket(tInfo.getTileEntity().getBlockPos(),
-                                hit.get(), c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND));
-                    } else if (info instanceof CraftingInfo) {
-                        ClientSwap.craftingSwap(hit.get(), c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND);
-                    } else if (info instanceof AnvilInfo) {
-                        ClientSwap.anvilSwap(hit.get(), c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND, ((AnvilInfo) info).anvilPos);
-                    } else if (info instanceof EnchantingInfo) {
-                        ClientSwap.eTableSwap(hit.get(), c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND, info.getBlockPosition());
-                    }
-
+                    singleton.handleRightClick(info, Minecraft.getInstance().player, hit.get(),
+                            c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND);
                     cooldown = 20;
                     return true;
                 }

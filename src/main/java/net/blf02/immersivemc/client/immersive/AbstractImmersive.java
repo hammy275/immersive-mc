@@ -3,6 +3,7 @@ package net.blf02.immersivemc.client.immersive;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.client.Minecraft;
@@ -16,6 +17,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
@@ -47,7 +49,12 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected abstract boolean enabledInConfig();
 
-    public abstract void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest);
+    public abstract void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest,
+                                          Hand hand);
+
+    public void handleTriggerHitboxRightClick(InfoTriggerHitboxes info, PlayerEntity player, int hitboxNum) {
+        // No-op by default. Only needed realistically if the `info` implements InfoTriggerHitboxes
+    }
 
     public void tick(I info, boolean isInVR) {
         if (enabledInConfig()) {

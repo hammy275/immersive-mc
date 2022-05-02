@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
@@ -34,8 +35,8 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
-    public void tick(BackpackInfo info, boolean isInVR) {
-        super.tick(info, isInVR);
+    protected void doTick(BackpackInfo info, boolean isInVR) {
+        super.doTick(info, isInVR);
         int controllerNum = 1;
         IVRData backpackController = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(controllerNum);
         IVRData handController = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(controllerNum == 1 ? 0 : 1);
@@ -183,7 +184,7 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest) {}
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {}
 
     public void doTrack() {
         if (this.infos.isEmpty()) {

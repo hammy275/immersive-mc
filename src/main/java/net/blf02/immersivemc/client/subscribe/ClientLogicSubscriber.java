@@ -7,18 +7,18 @@ import net.blf02.immersivemc.client.immersive.*;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
-import net.blf02.immersivemc.client.storage.ClientStorage;
+import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
-import net.blf02.immersivemc.common.network.packet.DoCraftPacket;
 import net.blf02.immersivemc.common.network.packet.InventorySwapPacket;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.server.swap.Swap;
+import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
@@ -141,7 +141,7 @@ public class ClientLogicSubscriber {
             }
             if (handleLeftClick(Minecraft.getInstance().player)) {
                 event.setCanceled(true);
-                ClientUtil.immersiveLeftClickCooldown += 8;
+                ClientUtil.immersiveLeftClickCooldown += 6;
             }
         }
     }
@@ -200,19 +200,28 @@ public class ClientLogicSubscriber {
             return true;
         }
 
+        boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR && VRPlugin.API.apiActive(player);
+        if (inVR) {
+            for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
+                for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
+                    if (!(info instanceof InfoTriggerHitboxes)) break;
+                    IVRData data = VRPlugin.API.getVRPlayer(player).getController0();
+                    InfoTriggerHitboxes triggerInfo = (InfoTriggerHitboxes) info;
+                    Optional<Integer> triggerHit = Util.getFirstIntersect(data.position(), triggerInfo.getTriggerHitboxes());
+                    if (triggerHit.isPresent()) {
+                        singleton.handleTriggerHitboxRightClick(triggerInfo, player, triggerHit.get());
+                        return true;
+                    }
+                }
+            }
+        }
+
         RayTraceResult looking = Minecraft.getInstance().hitResult;
         if (looking != null && looking.getType() == RayTraceResult.Type.BLOCK) {
             BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
             BlockState state = player.level.getBlockState(pos);
-            if (state.getBlock() == Blocks.CRAFTING_TABLE) {
-                Network.INSTANCE.sendToServer(new DoCraftPacket(
-                        ClientStorage.craftingStorage, pos
-                ));
-                ClientStorage.removeLackingIngredientsFromTable(player);
-                return true;
-            }
-
             TileEntity tileEnt = player.level.getBlockEntity(pos);
+
             if (tileEnt instanceof ChestTileEntity) {
                 ChestTileEntity chest = (ChestTileEntity) tileEnt;
                 ChestInfo chestInfo = ImmersiveChest.findImmersive(chest);
@@ -244,8 +253,15 @@ public class ClientLogicSubscriber {
                     if (info.hasHitboxes()) {
                         Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
                         if (closest.isPresent()) {
-                            singleton.handleRightClick(info, player, closest.get());
+                            singleton.handleRightClick(info, player, closest.get(), Hand.MAIN_HAND);
                             return true;
+                        } else if (info instanceof InfoTriggerHitboxes) {
+                            InfoTriggerHitboxes triggerInfo = (InfoTriggerHitboxes) info;
+                            Optional<Integer> closestTrigger = Util.rayTraceClosest(start, end, triggerInfo.getTriggerHitboxes());
+                            if (closestTrigger.isPresent()) {
+                                singleton.handleTriggerHitboxRightClick(triggerInfo, player, closestTrigger.get());
+                                return true;
+                            }
                         }
                     }
                 }

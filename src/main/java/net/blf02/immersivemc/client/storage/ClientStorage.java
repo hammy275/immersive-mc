@@ -17,6 +17,7 @@ public class ClientStorage {
             ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY,
             ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY
     };
+    public static ItemStack craftingOutput = ItemStack.EMPTY;
 
     // Left, right, output
     public static final ItemStack[] anvilStorage = new ItemStack[]{ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};

@@ -113,10 +113,10 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest) {
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
         ImmersiveFurnaceInfo infoF = (ImmersiveFurnaceInfo) info;
         Network.INSTANCE.sendToServer(new SwapPacket(
-                infoF.getTileEntity().getBlockPos(), closest, Hand.MAIN_HAND
+                infoF.getTileEntity().getBlockPos(), closest, hand
         ));
     }
 
