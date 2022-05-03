@@ -96,5 +96,26 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useBackpack.get());
     }
 
+    public static void resetToDefault() {
+        // Synced defaults
+        useAnvilImmersion.set(true);
+        useBrewingImmersion.set(true);
+        useChestImmersion.set(true);
+        useCraftingImmersion.set(true);
+        useFurnaceImmersion.set(true);
+        useJukeboxImmersion.set(true);
+        useRangedGrab.set(true);
+        useButton.set(true);
+        useETableImmersion.set(true);
+        useCampfireImmersion.set(true);
+        useLever.set(true);
+        useBackpack.set(true);
+
+        // Non-synced defaults
+        backpackColor.set(11901820);
+        leftHandedBackpack.set(false);
+
+    }
+
 
 }

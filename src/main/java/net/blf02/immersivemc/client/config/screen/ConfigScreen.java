@@ -2,6 +2,7 @@ package net.blf02.immersivemc.client.config.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -37,9 +38,17 @@ public class ConfigScreen extends Screen {
         ));
 
         this.addButton(new Button(
-                (this.width - BUTTON_WIDTH) / 2, this.height - 26,
+                (this.width - BUTTON_WIDTH) / 2 - BUTTON_WIDTH, this.height - 26,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("gui.done"),
                 (button) -> this.onClose()));
+        this.addButton(new Button(
+                (this.width - BUTTON_WIDTH) / 2 + BUTTON_WIDTH, this.height - 26,
+                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("config.immersivemc.reset"),
+                (button) -> {
+                    ImmersiveMCConfig.resetToDefault();
+                    ActiveConfig.loadConfigFromFile();
+                }
+        ));
     }
 
     @Override
@@ -54,6 +63,7 @@ public class ConfigScreen extends Screen {
 
     @Override
     public void onClose() {
+        ActiveConfig.loadConfigFromFile();
         Minecraft.getInstance().setScreen(lastScreen);
     }
 }

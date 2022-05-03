@@ -5,6 +5,7 @@
   "screen.immersivemc.config.title": "ImmersiveMC Config",
   "config.immersivemc.backpack": "Customize Bag",
   "config.immersivemc.immersives": "Customize Immersives",
+  "config.immersivemc.reset": "Reset to Defaults",
 
   "screen.immersivemc.backpack_config.title": "Bag Customization",
   "config.immersivemc.left_handed_backpack": "Use Left Handed Bag",
