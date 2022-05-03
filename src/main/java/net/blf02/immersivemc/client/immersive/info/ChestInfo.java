@@ -1,19 +1,19 @@
 package net.blf02.immersivemc.client.immersive.info;
 
-import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 
-public class ChestInfo extends AbstractTileEntityImmersiveInfo<ChestTileEntity> {
+public class ChestInfo extends AbstractTileEntityImmersiveInfo<TileEntity> {
 
     protected AxisAlignedBB[] hitboxes = new AxisAlignedBB[54];
-    public ChestTileEntity other = null;
+    public TileEntity other = null;
     public Direction forward = null;
     public boolean failRender = false; // Used for thread safety when changing `other`
     protected int rowNum = 0;
     public boolean isOpen = false;
 
-    public ChestInfo(ChestTileEntity tileEntity, int ticksToExist, ChestTileEntity other) {
+    public ChestInfo(TileEntity tileEntity, int ticksToExist, TileEntity other) {
         super(tileEntity, ticksToExist, 53); // Accounts for double chest
         this.other = other;
     }

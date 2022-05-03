@@ -16,6 +16,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.EnderChestTileEntity;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.event.TickEvent;
@@ -37,7 +38,7 @@ public class ServerSubscriber {
             sendBreakPacket = tileEntity instanceof AbstractFurnaceTileEntity ||
                     tileEntity instanceof JukeboxTileEntity ||
                     tileEntity instanceof BrewingStandTileEntity ||
-                    tileEntity instanceof ChestTileEntity;
+                    tileEntity instanceof ChestTileEntity || tileEntity instanceof EnderChestTileEntity;
         } else {
             sendBreakPacket = state.getBlock() == Blocks.CRAFTING_TABLE ||
             state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock

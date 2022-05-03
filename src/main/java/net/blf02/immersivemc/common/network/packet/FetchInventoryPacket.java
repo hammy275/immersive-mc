@@ -6,6 +6,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.EnderChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
@@ -73,15 +74,20 @@ public class FetchInventoryPacket {
                 player.distanceToSqr(Vector3d.atCenterOf(pos)) < 81) { // Within 9 blocks of target
             TileEntity tileEnt = player.level.getBlockEntity(pos);
             if (tileEnt != null) {
+                IInventory inv;
                 if (tileEnt instanceof IInventory) {
-                    IInventory inv = (IInventory) tileEnt;
-                    ItemStack[] stacks = new ItemStack[inv.getContainerSize()];
-                    for (int i = 0; i < inv.getContainerSize(); i++) {
-                        stacks[i] = inv.getItem(i);
-                    }
-                    Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
-                            new FetchInventoryPacket(stacks, pos));
+                    inv = (IInventory) tileEnt;
+                } else if (tileEnt instanceof EnderChestTileEntity) {
+                    inv = player.getEnderChestInventory();
+                } else {
+                    return;
                 }
+                ItemStack[] stacks = new ItemStack[inv.getContainerSize()];
+                for (int i = 0; i < inv.getContainerSize(); i++) {
+                    stacks[i] = inv.getItem(i);
+                }
+                Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
+                        new FetchInventoryPacket(stacks, pos));
             }
         }
     }

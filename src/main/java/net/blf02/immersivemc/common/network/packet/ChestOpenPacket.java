@@ -3,9 +3,11 @@ package net.blf02.immersivemc.common.network.packet;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.common.util.Util;
+import net.minecraft.entity.monster.piglin.PiglinTasks;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.EnderChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -32,12 +34,12 @@ public class ChestOpenPacket {
 
     public static void handle(final ChestOpenPacket message, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            if (!ActiveConfig.useChestImmersion) return;
             ServerPlayerEntity player = ctx.get().getSender();
             if (player != null) {
                 if (NetworkUtil.safeToRun(message.pos, player)) {
                     TileEntity tileEnt = player.level.getBlockEntity(message.pos);
                     if (tileEnt instanceof ChestTileEntity) {
+                        if (!ActiveConfig.useChestImmersion) return;
                         ChestTileEntity chest = (ChestTileEntity) tileEnt;
                         ChestTileEntity other = Util.getOtherChest(chest);
                         if (message.isOpen) {
@@ -45,11 +47,21 @@ public class ChestOpenPacket {
                             if (other != null) {
                                 other.startOpen(player);
                             }
+                            PiglinTasks.angerNearbyPiglins(player, true);
                         } else {
                             chest.stopOpen(player);
                             if (other != null) {
                                 other.stopOpen(player);
                             }
+                        }
+                    } else if (tileEnt instanceof EnderChestTileEntity) {
+                        if (!ActiveConfig.useEnderChestImmersion) return;
+                        EnderChestTileEntity chest = (EnderChestTileEntity) tileEnt;
+                        if (message.isOpen) {
+                            chest.startOpen();
+                            PiglinTasks.angerNearbyPiglins(player, true);
+                        } else {
+                            chest.stopOpen();
                         }
                     }
                 }

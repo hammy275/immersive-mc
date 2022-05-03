@@ -24,12 +24,14 @@ import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EnchantingTableBlock;
+import net.minecraft.block.EnderChestBlock;
 import net.minecraft.block.SmithingTableBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.EnderChestTileEntity;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
@@ -108,8 +110,8 @@ public class ClientLogicSubscriber {
             ImmersiveCrafting.singleton.trackObject(pos);
         } else if (tileEntity instanceof JukeboxTileEntity) {
             ImmersiveJukebox.getSingleton().trackObject((JukeboxTileEntity) tileEntity);
-        } else if (tileEntity instanceof ChestTileEntity) {
-            ImmersiveChest.singleton.trackObject((ChestTileEntity) tileEntity);
+        } else if (tileEntity instanceof ChestTileEntity || tileEntity instanceof EnderChestTileEntity) {
+            ImmersiveChest.singleton.trackObject(tileEntity);
         } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
             ImmersiveAnvil.singleton.trackObject(pos);
         } else if (state.getBlock() instanceof EnchantingTableBlock) {
@@ -222,9 +224,8 @@ public class ClientLogicSubscriber {
             BlockState state = player.level.getBlockState(pos);
             TileEntity tileEnt = player.level.getBlockEntity(pos);
 
-            if (tileEnt instanceof ChestTileEntity) {
-                ChestTileEntity chest = (ChestTileEntity) tileEnt;
-                ChestInfo chestInfo = ImmersiveChest.findImmersive(chest);
+            if (tileEnt instanceof ChestTileEntity || tileEnt instanceof EnderChestTileEntity) {
+                ChestInfo chestInfo = ImmersiveChest.findImmersive(tileEnt);
                 if (chestInfo != null) {
                     chestInfo.nextRow();
                 }
@@ -283,9 +284,10 @@ public class ClientLogicSubscriber {
         if (VRPluginVerify.clientInVR || ClientConstants.vrInteractionsOutsideVR) {
             BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
             BlockState state = player.level.getBlockState(pos);
-            if (state.getBlock() instanceof AbstractChestBlock && player.level.getBlockEntity(pos) instanceof ChestTileEntity
-                    && !player.isCrouching()) { // Crouch to still open chest
-                ChestInfo info = ImmersiveChest.findImmersive((ChestTileEntity) player.level.getBlockEntity(pos));
+            boolean isChest = state.getBlock() instanceof AbstractChestBlock && player.level.getBlockEntity(pos) instanceof ChestTileEntity;
+            boolean isEnderChest = state.getBlock() instanceof EnderChestBlock && player.level.getBlockEntity(pos) instanceof EnderChestTileEntity;
+            if ((isChest || isEnderChest) && !player.isCrouching()) { // Crouch to still open chest
+                ChestInfo info = ImmersiveChest.findImmersive(player.level.getBlockEntity(pos));
                 if (info != null) {
                     info.isOpen = !info.isOpen;
                     Network.INSTANCE.sendToServer(new ChestOpenPacket(info.getBlockPosition(), info.isOpen));

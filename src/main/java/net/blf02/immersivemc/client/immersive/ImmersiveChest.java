@@ -4,23 +4,27 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
-import net.blf02.immersivemc.common.network.packet.SwapPacket;
-import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
+import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.block.AbstractChestBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.EnderChestBlock;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.EnderChestTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Objects;
 
-public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity, ChestInfo> {
+public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, ChestInfo> {
 
     public static ImmersiveChest singleton = new ImmersiveChest();
     private final double spacing = 3d/16d;
@@ -34,19 +38,19 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
         super.doTick(info, isInVR);
         if (!chestsValid(info)) return; // Return if we're waiting to remove this immersive
 
-        // Chest can become null even if the above doesn't return us
-        try {
-            // super.tick() does this for the main tileEntity. This does it for the other chest
-            if (info.ticksActive % ClientConstants.inventorySyncTime == 0) {
+        // super.tick() does this for the main regular chest. This does it for the other chest, and for ender chests
+        // (which don't implement IInventory)
+        if (info.ticksActive % ClientConstants.inventorySyncTime == 0) {
+            if (info.other != null) {
                 Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.other.getBlockPos()));
+            } else if (info.getTileEntity() instanceof EnderChestTileEntity) {
+                Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
             }
-        } catch (NullPointerException e) {
-            return;
         }
 
-        ChestTileEntity[] chests = new ChestTileEntity[]{info.getTileEntity(), info.other};
+        TileEntity[] chests = new TileEntity[]{info.getTileEntity(), info.other};
         for (int i = 0; i <= 1; i++) {
-            ChestTileEntity chest = chests[i];
+            TileEntity chest = chests[i];
             if (chest == null) continue;
             Direction forward = chest.getBlockState().getValue(HorizontalBlock.FACING);
             info.forward = forward;
@@ -122,8 +126,13 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
     }
 
     @Override
-    public ChestInfo getNewInfo(ChestTileEntity tileEnt) {
-        return new ChestInfo(tileEnt, ClientConstants.ticksToRenderChest, Util.getOtherChest(tileEnt));
+    public ChestInfo getNewInfo(TileEntity tileEnt) {
+        if (tileEnt instanceof ChestTileEntity) {
+            return new ChestInfo(tileEnt, ClientConstants.ticksToRenderChest, Util.getOtherChest((ChestTileEntity) tileEnt));
+        } else if (tileEnt instanceof EnderChestTileEntity) {
+            return new ChestInfo(tileEnt, ClientConstants.ticksToRenderChest, null);
+        }
+        throw new IllegalArgumentException("ImmersiveChest can only track chests and ender chests!");
     }
 
     @Override
@@ -139,8 +148,8 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
 
     public boolean chestsValid(ChestInfo info) {
         try {
-            boolean mainChestExists = info.getTileEntity().getLevel() != null &&
-                    info.getTileEntity().getLevel().getBlockState(info.getBlockPosition()).getBlock() instanceof AbstractChestBlock;
+            Block mainChestBlock = info.getTileEntity().getLevel().getBlockState(info.getBlockPosition()).getBlock();
+            boolean mainChestExists = mainChestBlock instanceof AbstractChestBlock || mainChestBlock instanceof EnderChestBlock;
             boolean otherChestExists = info.other == null ? true : (info.getTileEntity().getLevel() != null &&
                     info.getTileEntity().getLevel().getBlockState(info.other.getBlockPos()).getBlock() instanceof AbstractChestBlock);
             return mainChestExists && otherChestExists;
@@ -151,19 +160,21 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
     }
 
     @Override
-    public boolean shouldTrack(ChestTileEntity tileEnt) {
+    public boolean shouldTrack(TileEntity tileEnt) {
         // Make sure this isn't an "other" chest.
-        ChestTileEntity other = Util.getOtherChest(tileEnt);
-        if (other != null) { // If we have an other chest, make sure that one isn't already being tracked
-            for (ChestInfo info : ImmersiveChest.singleton.getTrackedObjects()) {
-                if (info.getTileEntity() == other) { // If the info we're looking at is our neighboring chest
-                    if (info.other == null) { // If our neighboring chest's info isn't tracking us
-                        info.failRender = true;
-                        info.other = tileEnt; // Track us
-                        this.doTick(info, VRPluginVerify.clientInVR); // Tick so we can handle the items in our other chest
-                        info.failRender = false;
+        if (tileEnt instanceof ChestTileEntity) {
+            ChestTileEntity other = Util.getOtherChest((ChestTileEntity) tileEnt);
+            if (other != null) { // If we have an other chest, make sure that one isn't already being tracked
+                for (ChestInfo info : ImmersiveChest.singleton.getTrackedObjects()) {
+                    if (info.getTileEntity() == other) { // If the info we're looking at is our neighboring chest
+                        if (info.other == null) { // If our neighboring chest's info isn't tracking us
+                            info.failRender = true;
+                            info.other = tileEnt; // Track us
+                            this.doTick(info, VRPluginVerify.clientInVR); // Tick so we can handle the items in our other chest
+                            info.failRender = false;
+                        }
+                        return false; // Return false so this one isn't tracked
                     }
-                    return false; // Return false so this one isn't tracked
                 }
             }
         }
@@ -182,7 +193,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<ChestTileEntity,
         ));
     }
 
-    public static ChestInfo findImmersive(ChestTileEntity chest) {
+    public static ChestInfo findImmersive(TileEntity chest) {
         Objects.requireNonNull(chest);
         for (ChestInfo info : singleton.getTrackedObjects()) {
             if (info.getTileEntity() == chest || info.other == chest) {

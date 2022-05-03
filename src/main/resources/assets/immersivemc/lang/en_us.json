@@ -24,6 +24,7 @@
   "config.immersivemc.chest": "Use Chest Immersion [VR Only]",
   "config.immersivemc.crafting": "Use Crafting Immersion",
   "config.immersivemc.enchanting_table": "Use Enchanting Table Immersion",
+  "config.immersivemc.ender_chest": "Use Ender Chest Immersion",
   "config.immersivemc.furnace": "Use Furnace Immersion",
   "config.immersivemc.jukebox": "Use Jukebox Immersion",
   "config.immersivemc.lever": "Use Lever Immersion",

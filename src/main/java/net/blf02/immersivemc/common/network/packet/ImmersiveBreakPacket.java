@@ -41,7 +41,7 @@ public class ImmersiveBreakPacket {
                         if (
                                 info.getBlockPosition().equals(message.pos) || // if the position matches our thing
                                 (info instanceof ChestInfo && ((ChestInfo) info).other != null &&
-                                        ((ChestInfo) info).other.getBlockPos().equals(message.pos)) // If the position is
+                                        ((ChestInfo) info).other.getBlockPos().equals(message.pos)) // If the position is the other chest
                         ) {
                             singleton.getTrackedObjects().remove(info);
                             breakOut = true;

@@ -8,6 +8,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.EnderChestTileEntity;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
@@ -54,6 +55,8 @@ public class SwapPacket {
                     Swap.handleJukebox((JukeboxTileEntity) tileEnt, player, message.hand);
                 } else if (tileEnt instanceof ChestTileEntity && ActiveConfig.useChestImmersion) {
                     Swap.handleChest((ChestTileEntity) tileEnt, player, message.hand, message.slot);
+                } else if (tileEnt instanceof EnderChestTileEntity && ActiveConfig.useEnderChestImmersion) {
+                    Swap.handleEnderChest(player, message.hand, message.slot);
                 }
             }
         });

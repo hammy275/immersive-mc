@@ -133,6 +133,19 @@ public class Swap {
         }
     }
 
+    public static void handleEnderChest(PlayerEntity player, Hand hand, int slot) {
+        ItemStack chestItem = player.getEnderChestInventory().getItem(slot).copy();
+        ItemStack playerItem = player.getItemInHand(hand);
+        if (playerItem.isEmpty() || chestItem.isEmpty() || !Util.stacksEqualBesidesCount(chestItem, playerItem)) {
+            player.setItemInHand(hand, chestItem);
+            player.getEnderChestInventory().setItem(slot, playerItem);
+        } else {
+            Util.ItemStackMergeResult result = Util.mergeStacks(chestItem, playerItem, false);
+            player.setItemInHand(hand, result.mergedFrom);
+            player.getEnderChestInventory().setItem(slot, result.mergedInto);
+        }
+    }
+
     public static void handleCrafting(ServerPlayerEntity player, ItemStack[] stacksIn,
                                       BlockPos tablePos) {
         CraftingInventory inv = new CraftingInventory(new NullContainer(), 3, 3);

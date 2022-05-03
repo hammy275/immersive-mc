@@ -20,6 +20,7 @@ public class ActiveConfig {
     public static boolean useCampfireImmersion = false;
     public static boolean useLever = false;
     public static boolean useBackpack = false;
+    public static boolean useEnderChestImmersion = false;
 
     // Non-synced values
     public static int backpackColor = 11901820;
@@ -49,6 +50,7 @@ public class ActiveConfig {
         useCampfireImmersion = buffer.readBoolean() && useCampfireImmersion;
         useLever = buffer.readBoolean() && useLever;
         useBackpack = buffer.readBoolean() && useBackpack;
+        useEnderChestImmersion = buffer.readBoolean() && useEnderChestImmersion;
         ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
 
     }
@@ -67,6 +69,7 @@ public class ActiveConfig {
         useCampfireImmersion = ImmersiveMCConfig.useCampfireImmersion.get();
         useLever = ImmersiveMCConfig.useLever.get();
         useBackpack = ImmersiveMCConfig.useBackpack.get();
+        useEnderChestImmersion = ImmersiveMCConfig.useEnderChestImmersion.get();
 
         // Non-synced values
         backpackColor = ImmersiveMCConfig.backpackColor.get();
@@ -87,6 +90,7 @@ public class ActiveConfig {
         useCampfireImmersion = false;
         useLever = false;
         useBackpack = false;
+        useEnderChestImmersion = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -104,7 +108,8 @@ public class ActiveConfig {
                 "Use lever: " + useLever + "\n" +
                 "Use backpack: " + useBackpack + "\n" +
                 "Backpack color: " + backpackColor + "\n" +
-                "Left handed backpack: " + leftHandedBackpack;
+                "Left handed backpack: " + leftHandedBackpack + "\n" +
+                "Use ender chest immersion: " + useEnderChestImmersion;
         return stringOut;
     }
 }
