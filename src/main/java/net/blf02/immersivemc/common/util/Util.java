@@ -122,5 +122,10 @@ public class Util {
             this.mergedInto = mergedInto;
             this.mergedFrom = mergedFrom;
         }
+
+        @Override
+        public String toString() {
+            return "Merged Into: " + this.mergedInto + "\n" + "Merged From: " + this.mergedFrom;
+        }
     }
 }

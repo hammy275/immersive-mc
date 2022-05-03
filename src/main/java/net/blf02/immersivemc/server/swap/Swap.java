@@ -144,12 +144,23 @@ public class Swap {
             if (removeNeededIngredients(player, inv)) {
                 // Give our item to us
                 ItemStack stackOut = res.assemble(inv);
-                BlockPos posBlock = tablePos.above();
-                Vector3d pos = Vector3d.atCenterOf(posBlock);
-                ItemEntity entOut = new ItemEntity(player.level, pos.x, pos.y, pos.z);
-                entOut.setItem(stackOut);
-                entOut.setDeltaMovement(0, 0, 0);
-                player.level.addFreshEntity(entOut);
+                ItemStack handStack = player.getItemInHand(Hand.MAIN_HAND);
+                ItemStack toGive = ItemStack.EMPTY;
+                if (!handStack.isEmpty() && Util.stacksEqualBesidesCount(stackOut, handStack)) {
+                    Util.ItemStackMergeResult itemRes = Util.mergeStacks(handStack, stackOut, true);
+                    player.setItemInHand(Hand.MAIN_HAND, itemRes.mergedInto);
+                    toGive = itemRes.mergedFrom;
+                } else {
+                    toGive = stackOut;
+                }
+                if (!toGive.isEmpty()) {
+                    BlockPos posBlock = tablePos.above();
+                    Vector3d pos = Vector3d.atCenterOf(posBlock);
+                    ItemEntity entOut = new ItemEntity(player.level, pos.x, pos.y, pos.z);
+                    entOut.setItem(toGive);
+                    entOut.setDeltaMovement(0, 0, 0);
+                    player.level.addFreshEntity(entOut);
+                }
             }
         }
     }

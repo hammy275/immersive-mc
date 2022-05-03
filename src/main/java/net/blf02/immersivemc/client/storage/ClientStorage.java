@@ -32,6 +32,7 @@ public class ClientStorage {
     public static ItemStack eTableEnchCopy = ItemStack.EMPTY;
 
     public static void removeLackingIngredientsFromTable(PlayerEntity player) {
+        if (player.abilities.instabuild) return;
         List<ItemStack> stacks = new ArrayList<>();
         List<Integer> amounts = new ArrayList<>();
 

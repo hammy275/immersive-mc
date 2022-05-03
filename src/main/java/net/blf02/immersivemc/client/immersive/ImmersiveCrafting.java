@@ -86,6 +86,7 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
                 ClientStorage.craftingStorage, ((CraftingInfo) info).tablePos, false
         ));
         ClientStorage.removeLackingIngredientsFromTable(player);
+        ((CraftingInfo) info).setTicksLeft(ClientConstants.ticksToRenderCrafting); // Reset count if we right click
     }
 
     @Override
