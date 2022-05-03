@@ -29,5 +29,5 @@ public class ClientConstants {
     public static final int inventorySyncTime = 2;
 
     // For Debugging Only!!!!one!
-    public static final boolean vrInteractionsOutsideVR = true; // Doesn't apply for all VR-only interactions!
+    public static final boolean vrInteractionsOutsideVR = false; // Doesn't apply for all VR-only interactions!
 }
