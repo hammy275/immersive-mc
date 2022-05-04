@@ -94,6 +94,12 @@ public class ActiveConfig {
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
+    public static PacketBuffer encodeServerOnlyConfig(PacketBuffer buffer) {
+        buffer.writeBoolean(ActiveConfig.useButton).writeBoolean(ActiveConfig.useCampfireImmersion)
+                .writeBoolean(ActiveConfig.useLever).writeBoolean(ActiveConfig.useRangedGrab);
+        return buffer;
+    }
+
     public static String asString() {
         String stringOut = "Use anvil immersion: " + useAnvilImmersion + "\n" +
                 "Use brewing immersion: " + useBrewingImmersion + "\n" +

@@ -4,6 +4,7 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
+import net.blf02.immersivemc.server.PlayerConfigs;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalFaceBlock;
@@ -96,7 +97,8 @@ public class LeverTracker extends AbstractTracker {
     @Override
     protected boolean shouldTick(PlayerEntity player) {
         return ActiveConfig.useLever &&
-                VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player);
+                VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player)
+                && PlayerConfigs.getConfig(player).useLevers;
     }
 
     public static class LeverInfo {

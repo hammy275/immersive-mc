@@ -1,6 +1,8 @@
 package net.blf02.immersivemc.server.tracker;
 
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
+import net.blf02.immersivemc.server.PlayerConfigs;
 import net.minecraft.command.arguments.EntityAnchorArgument;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,6 +31,7 @@ public class RangedGrabTrackerServer extends AbstractTracker {
             if (info.item == null || !info.item.isAlive() || info.tickTime <= 0) {
                 toRemove.add(info);
             } else {
+                if (!PlayerConfigs.getConfig(info.player).useRangedGrab) return;
                 info.tickTime--;
                 info.item.setPickUpDelay(0);
                 Vector3d baseVelocity = new Vector3d(0, 0, 0);
@@ -49,7 +52,7 @@ public class RangedGrabTrackerServer extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(PlayerEntity player) {
-        return infos.size() > 0;
+        return ActiveConfig.useRangedGrab && infos.size() > 0;
     }
 
     public static class RangedGrabInfo {

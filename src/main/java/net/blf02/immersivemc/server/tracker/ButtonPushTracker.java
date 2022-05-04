@@ -4,6 +4,7 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
+import net.blf02.immersivemc.server.PlayerConfigs;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.block.AbstractButtonBlock;
@@ -46,6 +47,7 @@ public class ButtonPushTracker extends AbstractTracker {
     @Override
     protected boolean shouldTick(PlayerEntity player) {
         return ActiveConfig.useButton &&
-                VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player) && VRPlugin.API.apiActive(player);
+                VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player) && VRPlugin.API.apiActive(player)
+                && PlayerConfigs.getConfig(player).useButtons;
     }
 }

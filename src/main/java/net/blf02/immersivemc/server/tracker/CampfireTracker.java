@@ -4,6 +4,7 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
+import net.blf02.immersivemc.server.PlayerConfigs;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.block.BlockState;
@@ -63,6 +64,7 @@ public class CampfireTracker extends AbstractTracker {
         if (!ActiveConfig.useCampfireImmersion) return false;
         if (!VRPluginVerify.hasAPI) return false;
         if (!VRPlugin.API.playerInVR(player)) return false;
+        if (!PlayerConfigs.getConfig(player).useCampfire) return false;
         IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
         boolean mainRes = false;
         boolean offRes = false;
