@@ -226,10 +226,10 @@ public class ClientLogicSubscriber {
 
             if (tileEnt instanceof ChestTileEntity || tileEnt instanceof EnderChestTileEntity) {
                 ChestInfo chestInfo = ImmersiveChest.findImmersive(tileEnt);
-                if (chestInfo != null) {
+                if (chestInfo != null && chestInfo.isOpen) {
                     chestInfo.nextRow();
+                    return true;
                 }
-                return true;
             }
         } else if (backpackInfo != null) {
             backpackInfo.gotoNextRow();
