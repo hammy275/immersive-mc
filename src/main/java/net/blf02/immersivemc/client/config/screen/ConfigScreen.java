@@ -12,7 +12,7 @@ public class ConfigScreen extends Screen {
 
     protected final Screen lastScreen;
 
-    protected static int BUTTON_WIDTH = 256;
+    protected static int BUTTON_WIDTH = 128;
     protected static int BUTTON_HEIGHT = 20;
 
     public ConfigScreen(Screen screen) {
@@ -26,23 +26,29 @@ public class ConfigScreen extends Screen {
         super.init();
 
         this.addButton(new Button(
-                (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT,
+                (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 16,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("config.immersivemc.backpack"),
                 (button) -> Minecraft.getInstance().setScreen(new BackpackConfigScreen(this))
         ));
 
         this.addButton(new Button(
-                (this.width - BUTTON_WIDTH) / 2, this.height / 2 + BUTTON_HEIGHT,
+                (this.width - BUTTON_WIDTH) / 2, this.height / 2,
+                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("config.immersivemc.immersives_customize"),
+                (button) -> Minecraft.getInstance().setScreen(new ImmersivesCustomizeScreen(this))
+        ));
+
+        this.addButton(new Button(
+                (this.width - BUTTON_WIDTH) / 2, this.height / 2 + BUTTON_HEIGHT + 16,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("config.immersivemc.immersives"),
                 (button) -> Minecraft.getInstance().setScreen(new ImmersivesConfigScreen(this))
         ));
 
         this.addButton(new Button(
-                (this.width - BUTTON_WIDTH) / 2 - BUTTON_WIDTH, this.height - 26,
+                (this.width - BUTTON_WIDTH) / 2 - (BUTTON_WIDTH / 2) - 8, this.height - 26,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("gui.done"),
                 (button) -> this.onClose()));
         this.addButton(new Button(
-                (this.width - BUTTON_WIDTH) / 2 + BUTTON_WIDTH, this.height - 26,
+                (this.width - BUTTON_WIDTH) / 2 + (BUTTON_WIDTH / 2) + 8, this.height - 26,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("config.immersivemc.reset"),
                 (button) -> {
                     ImmersiveMCConfig.resetToDefault();

@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8.4",
+  "package": "net.blf02.immersivemc.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "mixins.survival_extras_2.refmap.json",
+  "mixins": [
+    "ChestTileEntityMixin"
+  ],
+  "client": [
+  ]
+}

@@ -25,6 +25,7 @@ public class ActiveConfig {
     // Non-synced values
     public static int backpackColor = 11901820;
     public static boolean leftHandedBackpack = false;
+    public static boolean rightClickChest = false;
 
     public static void loadConfigFromPacket(PacketBuffer buffer) {
         int serverNetworkVersion = buffer.readInt();
@@ -74,6 +75,7 @@ public class ActiveConfig {
         // Non-synced values
         backpackColor = ImmersiveMCConfig.backpackColor.get();
         leftHandedBackpack = ImmersiveMCConfig.leftHandedBackpack.get();
+        rightClickChest = ImmersiveMCConfig.rightClickChest.get();
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
@@ -115,7 +117,8 @@ public class ActiveConfig {
                 "Use backpack: " + useBackpack + "\n" +
                 "Backpack color: " + backpackColor + "\n" +
                 "Left handed backpack: " + leftHandedBackpack + "\n" +
-                "Use ender chest immersion: " + useEnderChestImmersion;
+                "Use ender chest immersion: " + useEnderChestImmersion + "\n" +
+                "Use right click chest: " + rightClickChest;
         return stringOut;
     }
 }

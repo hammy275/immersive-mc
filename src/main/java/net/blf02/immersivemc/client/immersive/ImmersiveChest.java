@@ -132,7 +132,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
             }
         }
 
-        if (info.openCloseCooldown <= 0) {
+        if (info.openCloseCooldown <= 0 && !ActiveConfig.rightClickChest) {
             if (VRPluginVerify.clientInVR && VRPlugin.API.apiActive(Minecraft.getInstance().player)
                     && info.openCloseHitboxes != null) {
                 Vector3d current0 = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController0().position();
@@ -155,18 +155,14 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
                 }
 
                 if (cond) {
-                    info.isOpen = !info.isOpen;
-                    Network.INSTANCE.sendToServer(new ChestOpenPacket(info.getBlockPosition(), info.isOpen));
-                    if (!info.isOpen) {
-                        info.remove(); // Remove immersive if we're closing the chest
-                    }
+                    openChest(info);
                     info.openCloseCooldown = 40;
                 }
 
                 info.lastY0 = current0.y;
                 info.lastY1 = current1.y;
             }
-        } else {
+        } else if (!ActiveConfig.rightClickChest) {
             info.openCloseCooldown--;
         }
     }
@@ -266,7 +262,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
 
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
-        if (!VRPluginVerify.clientInVR) return;
+        if (!VRPluginVerify.clientInVR && !ActiveConfig.rightClickChest) return;
         if (!((ChestInfo) info).isOpen) return;
         Network.INSTANCE.sendToServer(new SwapPacket(
                 info.getBlockPosition(), closest, hand
@@ -282,6 +278,15 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
         }
         return null;
     }
+
+    public static void openChest(ChestInfo info) {
+        info.isOpen = !info.isOpen;
+        Network.INSTANCE.sendToServer(new ChestOpenPacket(info.getBlockPosition(), info.isOpen));
+        if (!info.isOpen) {
+            info.remove(); // Remove immersive if we're closing the chest
+        }
+    }
+
 
 
 }

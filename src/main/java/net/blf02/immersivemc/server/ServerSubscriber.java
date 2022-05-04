@@ -49,6 +49,7 @@ public class ServerSubscriber {
             Network.INSTANCE.send(
                     Distributors.NEARBY_POSITION.with(() -> new Distributors.NearbyDistributorData(event.getPos(), 20)),
                     new ImmersiveBreakPacket(event.getPos()));
+            ChestToOpenCount.chestImmersiveOpenCount.remove(event.getPos());
         }
     }
 

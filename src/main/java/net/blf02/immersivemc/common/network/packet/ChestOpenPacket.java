@@ -3,6 +3,7 @@ package net.blf02.immersivemc.common.network.packet;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.server.ChestToOpenCount;
 import net.minecraft.entity.monster.piglin.PiglinTasks;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -44,14 +45,18 @@ public class ChestOpenPacket {
                         ChestTileEntity other = Util.getOtherChest(chest);
                         if (message.isOpen) {
                             chest.startOpen(player);
+                            changeChestCount(chest.getBlockPos(), 1);
                             if (other != null) {
                                 other.startOpen(player);
+                                changeChestCount(other.getBlockPos(), 1);
                             }
                             PiglinTasks.angerNearbyPiglins(player, true);
                         } else {
                             chest.stopOpen(player);
+                            changeChestCount(chest.getBlockPos(), -1);
                             if (other != null) {
                                 other.stopOpen(player);
+                                changeChestCount(other.getBlockPos(), -1);
                             }
                         }
                     } else if (tileEnt instanceof EnderChestTileEntity) {
@@ -59,15 +64,32 @@ public class ChestOpenPacket {
                         EnderChestTileEntity chest = (EnderChestTileEntity) tileEnt;
                         if (message.isOpen) {
                             chest.startOpen();
+                            changeChestCount(chest.getBlockPos(), 1);
                             PiglinTasks.angerNearbyPiglins(player, true);
                         } else {
                             chest.stopOpen();
+                            changeChestCount(chest.getBlockPos(), -1);
                         }
                     }
                 }
             }
         });
         ctx.get().setPacketHandled(true);
+    }
+
+    protected static void changeChestCount(BlockPos pos, int amount) {
+        Integer currentVal = ChestToOpenCount.chestImmersiveOpenCount.get(pos);
+        int newVal;
+        if (currentVal == null || currentVal == 0) {
+            newVal = amount;
+        } else {
+            newVal = amount + currentVal;
+        }
+        if (newVal <= 0) {
+            ChestToOpenCount.chestImmersiveOpenCount.remove(pos);
+        } else {
+            ChestToOpenCount.chestImmersiveOpenCount.put(pos, newVal);
+        }
     }
 
 
