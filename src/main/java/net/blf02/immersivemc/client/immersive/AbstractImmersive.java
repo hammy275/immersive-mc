@@ -9,7 +9,7 @@ import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.OutlineLayerBuffer;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
@@ -198,12 +198,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             stack.translate(-renderInfo.getPosition().x + pos.x,
                     -renderInfo.getPosition().y + pos.y,
                     -renderInfo.getPosition().z + pos.z);
-            OutlineLayerBuffer buffer = Minecraft.getInstance().renderBuffers().outlineBufferSource();
-            buffer.setColor(255, 255, 255, 255);
+            IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().renderBuffers().bufferSource();
             WorldRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
                     hitbox.move(-pos.x, -pos.y, -pos.z),
                     1, 1, 1, 1);
-            buffer.endOutlineBatch();
+            buffer.endBatch();
             stack.popPose();
         }
     }

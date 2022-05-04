@@ -2,7 +2,6 @@ package net.blf02.immersivemc.client.subscribe;
 
 import net.blf02.immersivemc.ImmersiveMC;
 import net.blf02.immersivemc.client.ClientUtil;
-import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.*;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
@@ -11,7 +10,6 @@ import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
-import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
 import net.blf02.immersivemc.common.network.packet.InventorySwapPacket;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.util.Util;
@@ -19,12 +17,10 @@ import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.blf02.vrapi.api.data.IVRData;
-import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EnchantingTableBlock;
-import net.minecraft.block.EnderChestBlock;
 import net.minecraft.block.SmithingTableBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -280,25 +276,7 @@ public class ClientLogicSubscriber {
     protected static boolean handleRightClickBlockRayTrace(PlayerEntity player) {
         RayTraceResult looking = Minecraft.getInstance().hitResult;
         if (looking == null || looking.getType() != RayTraceResult.Type.BLOCK) return false;
-
-        if (VRPluginVerify.clientInVR || ClientConstants.vrInteractionsOutsideVR) {
-            BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
-            BlockState state = player.level.getBlockState(pos);
-            boolean isChest = state.getBlock() instanceof AbstractChestBlock && player.level.getBlockEntity(pos) instanceof ChestTileEntity;
-            boolean isEnderChest = state.getBlock() instanceof EnderChestBlock && player.level.getBlockEntity(pos) instanceof EnderChestTileEntity;
-            if ((isChest || isEnderChest) && !player.isCrouching()) { // Crouch to still open chest
-                ChestInfo info = ImmersiveChest.findImmersive(player.level.getBlockEntity(pos));
-                if (info != null) {
-                    info.isOpen = !info.isOpen;
-                    Network.INSTANCE.sendToServer(new ChestOpenPacket(info.getBlockPosition(), info.isOpen));
-                    if (!info.isOpen) {
-                        info.remove(); // Remove immersive if we're closing the chest
-                    }
-                    return true;
-                }
-            }
-        }
-        return false;
+        return false; // Still here in case if we need it later
     }
 
 
