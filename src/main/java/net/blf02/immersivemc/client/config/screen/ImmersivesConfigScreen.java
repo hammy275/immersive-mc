@@ -59,8 +59,8 @@ public class ImmersivesConfigScreen extends Screen {
         ScreenUtils.addOption("furnace", ImmersiveMCConfig.useFurnaceImmersion, this.list);
         ScreenUtils.addOption("jukebox", ImmersiveMCConfig.useJukeboxImmersion, this.list);
         ScreenUtils.addOption("lever", ImmersiveMCConfig.useLever, this.list);
-
         ScreenUtils.addOption("ranged_grab", ImmersiveMCConfig.useRangedGrab, this.list);
+        ScreenUtils.addOption("repeater", ImmersiveMCConfig.useRepeaterImmersion, this.list);
     }
 
     @Override

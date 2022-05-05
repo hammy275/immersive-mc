@@ -89,6 +89,8 @@ public class ImmersiveMC {
                     DoETablePacket::decode, DoETablePacket::handle);
             Network.INSTANCE.registerMessage(index++, InventorySwapPacket.class, InventorySwapPacket::encode,
                     InventorySwapPacket::decode, InventorySwapPacket::handle);
+            Network.INSTANCE.registerMessage(index++, SetRepeaterPacket.class, SetRepeaterPacket::encode,
+                    SetRepeaterPacket::decode, SetRepeaterPacket::handle);
         });
 
     }

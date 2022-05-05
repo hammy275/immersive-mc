@@ -11,6 +11,7 @@ import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EnchantingTableBlock;
+import net.minecraft.block.RepeaterBlock;
 import net.minecraft.block.SmithingTableBlock;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
@@ -42,7 +43,7 @@ public class ServerSubscriber {
         } else {
             sendBreakPacket = state.getBlock() == Blocks.CRAFTING_TABLE ||
             state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock
-            || state.getBlock() instanceof EnchantingTableBlock;
+            || state.getBlock() instanceof EnchantingTableBlock || state.getBlock() instanceof RepeaterBlock;
         }
 
         if (sendBreakPacket) {

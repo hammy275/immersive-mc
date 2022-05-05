@@ -24,6 +24,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useLever;
     public static ForgeConfigSpec.BooleanValue useBackpack;
     public static ForgeConfigSpec.BooleanValue useEnderChestImmersion;
+    public static ForgeConfigSpec.BooleanValue useRepeaterImmersion;
 
     //Non-synced values
     public static ForgeConfigSpec.IntValue backpackColor;
@@ -77,6 +78,9 @@ public class ImmersiveMCConfig {
         useEnderChestImmersion = builder
                 .comment("Whether immersives on chests should be allowed (VR only)")
                 .define("ender_chest_immersion", true);
+        useRepeaterImmersion = builder
+                .comment("Whether VR users can adjust the delay of repeaters using their hands")
+                .define("repeater_immersion", true);
 
         // Non-synced Values
         backpackColor = builder
@@ -102,7 +106,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useCampfireImmersion.get())
                 .writeBoolean(useLever.get())
                 .writeBoolean(useBackpack.get())
-                .writeBoolean(useEnderChestImmersion.get());
+                .writeBoolean(useEnderChestImmersion.get())
+                .writeBoolean(useRepeaterImmersion.get());
     }
 
     public static void resetToDefault() {
@@ -120,6 +125,7 @@ public class ImmersiveMCConfig {
         useLever.set(true);
         useBackpack.set(true);
         useEnderChestImmersion.set(true);
+        useRepeaterImmersion.set(true);
 
         // Non-synced defaults
         backpackColor.set(11901820);

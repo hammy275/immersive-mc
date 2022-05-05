@@ -11,6 +11,7 @@ public class ClientConstants {
     public static final int ticksToRenderAnvil = 120;
     public static final int ticksToRenderETable = 60*20; // 1 min
     public static final int ticksToRenderBackpack = Integer.MAX_VALUE; // You dismiss the backpack manually
+    public static final int ticksToRenderRepeater = 80; // We're always pointing at one, so we don't need it much longer after that
 
     // Size of items when rendered in front of something immersive
     public static final float itemScaleSizeFurnace = 0.5f;

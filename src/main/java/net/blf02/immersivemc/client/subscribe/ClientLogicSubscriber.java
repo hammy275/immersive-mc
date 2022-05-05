@@ -23,6 +23,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.block.EnderChestBlock;
+import net.minecraft.block.RepeaterBlock;
 import net.minecraft.block.SmithingTableBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -115,6 +116,8 @@ public class ClientLogicSubscriber {
         } else if (state.getBlock() instanceof EnchantingTableBlock) {
             ImmersiveETable.singleton.trackObject(pos);
             return;
+        } else if (state.getBlock() instanceof RepeaterBlock) {
+            ImmersiveRepeater.singelton.trackObject(pos);
         }
 
         // Extra special tracker additions
@@ -122,6 +125,8 @@ public class ClientLogicSubscriber {
         BlockState belowState = level.getBlockState(belowPos);
         if (belowState.getBlock() instanceof EnchantingTableBlock) {
             ImmersiveETable.singleton.trackObject(pos);
+        } else if (belowState.getBlock() == Blocks.CRAFTING_TABLE) {
+            ImmersiveCrafting.singleton.trackObject(pos);
         }
     }
 
@@ -184,6 +189,7 @@ public class ClientLogicSubscriber {
         }
 
         for (I info : toRemove) {
+            singleton.onRemove(info);
             infos.remove(info);
         }
     }

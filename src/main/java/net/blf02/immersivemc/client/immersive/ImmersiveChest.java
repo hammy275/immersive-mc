@@ -279,6 +279,14 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
         return null;
     }
 
+    @Override
+    public void onRemove(ChestInfo info) {
+        super.onRemove(info);
+        if (info.isOpen) {
+            openChest(info);
+        }
+    }
+
     public static void openChest(ChestInfo info) {
         info.isOpen = !info.isOpen;
         Network.INSTANCE.sendToServer(new ChestOpenPacket(info.getBlockPosition(), info.isOpen));

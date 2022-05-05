@@ -56,6 +56,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         // No-op by default. Only needed realistically if the `info` implements InfoTriggerHitboxes
     }
 
+    public void onRemove(I info) {}
+
     public void tick(I info, boolean isInVR) {
         if (enabledInConfig()) {
             doTick(info, isInVR);

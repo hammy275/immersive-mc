@@ -30,6 +30,7 @@
   "config.immersivemc.jukebox": "Use Jukebox Immersion",
   "config.immersivemc.lever": "Use Lever Immersion",
   "config.immersivemc.ranged_grab": "Use Ranged Grab [VR Only]",
+  "config.immersivemc.repeater": "Use Repeater Immersion [VR Only]",
 
   "screen.immersivemc.immersives_customize.title": "Customize Immersives",
   "config.immersivemc.right_click_chest": "Right Click Chests and Disable VR-Only Chest"

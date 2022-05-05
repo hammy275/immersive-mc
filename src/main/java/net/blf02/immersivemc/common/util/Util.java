@@ -1,12 +1,15 @@
 package net.blf02.immersivemc.common.util;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
+import net.minecraft.block.RepeaterBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 
 import java.util.Optional;
 
@@ -57,6 +60,22 @@ public class Util {
             i++;
         }
         return Optional.empty();
+    }
+
+    public static Optional<Integer> getClosestIntersect(Vector3d pos, AxisAlignedBB[] targets, Vector3d[] positions) {
+        if (targets.length != positions.length) throw new IllegalArgumentException("Targets and positions must be same length!");
+        int res = -1;
+        double distanceToBeat = Double.MAX_VALUE;
+        for (int i = 0; i < targets.length; i++) {
+            if (targets[i] != null && targets[i].contains(pos)) {
+                double newDist = pos.distanceToSqr(positions[i]);
+                if (newDist < distanceToBeat) {
+                    distanceToBeat = newDist;
+                    res = i;
+                }
+            }
+        }
+        return res == -1 ? Optional.empty() : Optional.of(res);
     }
 
     public static ChestTileEntity getOtherChest(ChestTileEntity chest) {
@@ -111,6 +130,14 @@ public class Util {
         into.setCount(totalCount);
         from.setCount(fromAmount);
         return new ItemStackMergeResult(into, fromAmount == 0 ? ItemStack.EMPTY : from);
+    }
+
+    public static void setRepeater(World level, BlockPos pos, int newDelay) {
+        BlockState state = level.getBlockState(pos);
+        if (state.getBlock() instanceof RepeaterBlock) {
+            state = state.setValue(RepeaterBlock.DELAY, newDelay);
+            level.setBlock(pos, state, 3);
+        }
     }
 
     public static class ItemStackMergeResult {
