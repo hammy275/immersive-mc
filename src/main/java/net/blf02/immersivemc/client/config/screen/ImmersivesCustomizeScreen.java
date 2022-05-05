@@ -30,6 +30,8 @@ public class ImmersivesCustomizeScreen extends Screen {
         this.list = new OptionsRowList(Minecraft.getInstance(), this.width, this.height,
                 32, this.height - 32, 24);
 
+        ScreenUtils.addOption("center_brewing", ImmersiveMCConfig.autoCenterBrewing, this.list);
+        ScreenUtils.addOption("center_furnace", ImmersiveMCConfig.autoCenterFurnace, this.list);
         ScreenUtils.addOption("right_click_chest", ImmersiveMCConfig.rightClickChest, this.list);
 
         this.children.add(this.list);

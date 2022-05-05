@@ -32,7 +32,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
 
     public static ImmersiveChest singleton = new ImmersiveChest();
     private final double spacing = 3d/16d;
-    private final double threshold = 0.035;
+    private final double threshold = 0.03;
 
     public ImmersiveChest() {
         super(4);

@@ -65,13 +65,21 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
 
         Vector3d posLeftBottle = pos.add(leftOffset).add(0, 1d/3d, 0);
         info.setPosition(0, posLeftBottle);
-        Vector3d posMidBottle = pos.add(midOffset).add(0, 0.25, 0);
+        double midY = ActiveConfig.autoCenterBrewing ? 1d/3d : 0.25;
+        Vector3d posMidBottle = pos.add(midOffset).add(0, midY, 0);
         info.setPosition(1, posMidBottle);
         Vector3d posRightBottle = pos.add(rightOffset).add(0, 1d/3d, 0);
         info.setPosition(2, posRightBottle);
-        Vector3d posIngredient = pos.add(midOffset).add(0, 0.75, 0);
+        Vector3d posIngredient;
+        Vector3d posFuel;
+        if (ActiveConfig.autoCenterBrewing) {
+            posIngredient = pos.add(midOffset).add(0, 0.6, 0);
+            posFuel = pos.add(midOffset).add(0, 0.85, 0);
+        } else {
+            posIngredient = pos.add(midOffset).add(0, 0.75, 0);
+            posFuel = pos.add(leftOffset).add(0, 0.75, 0);
+        }
         info.setPosition(3, posIngredient);
-        Vector3d posFuel = pos.add(leftOffset).add(0, 0.75, 0);
         info.setPosition(4, posFuel);
 
         float hitboxSize = ClientConstants.itemScaleSizeBrewing / 3f;

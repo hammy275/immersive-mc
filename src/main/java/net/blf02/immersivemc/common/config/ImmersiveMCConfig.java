@@ -30,6 +30,8 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.IntValue backpackColor;
     public static ForgeConfigSpec.BooleanValue leftHandedBackpack;
     public static ForgeConfigSpec.BooleanValue rightClickChest;
+    public static ForgeConfigSpec.BooleanValue autoCenterFurnace;
+    public static ForgeConfigSpec.BooleanValue autoCenterBrewing;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -92,6 +94,12 @@ public class ImmersiveMCConfig {
         rightClickChest = builder
                 .comment("Allows for right-clicking chests to use their immersive. Works outside of VR!")
                 .define("right_click_chest", false);
+        autoCenterFurnace = builder
+                .comment("Makes the furnace immersive more centered instead of similar to the vanilla GUI")
+                .define("center_furnace", false);
+        autoCenterBrewing = builder
+                .comment("Makes the brewing stand more centered instead of similar to the vanilla GUI")
+                .define("center_brewing", false);
     }
 
     public static void encode(PacketBuffer buffer) {
@@ -131,6 +139,8 @@ public class ImmersiveMCConfig {
         backpackColor.set(11901820);
         leftHandedBackpack.set(false);
         rightClickChest.set(false);
+        autoCenterFurnace.set(false);
+        autoCenterBrewing.set(false);
 
     }
 

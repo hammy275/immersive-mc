@@ -27,6 +27,8 @@ public class ActiveConfig {
     public static int backpackColor = 11901820;
     public static boolean leftHandedBackpack = false;
     public static boolean rightClickChest = false;
+    public static boolean autoCenterFurnace = false;
+    public static boolean autoCenterBrewing = false;
 
     public static void loadConfigFromPacket(PacketBuffer buffer) {
         int serverNetworkVersion = buffer.readInt();
@@ -79,6 +81,8 @@ public class ActiveConfig {
         backpackColor = ImmersiveMCConfig.backpackColor.get();
         leftHandedBackpack = ImmersiveMCConfig.leftHandedBackpack.get();
         rightClickChest = ImmersiveMCConfig.rightClickChest.get();
+        autoCenterFurnace = ImmersiveMCConfig.autoCenterFurnace.get();
+        autoCenterBrewing = ImmersiveMCConfig.autoCenterBrewing.get();
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
@@ -123,7 +127,9 @@ public class ActiveConfig {
                 "Left handed backpack: " + leftHandedBackpack + "\n" +
                 "Use ender chest immersion: " + useEnderChestImmersion + "\n" +
                 "Use right click chest: " + rightClickChest + "\n" +
-                "Use repeater immersion: " + useRepeaterImmersion;
+                "Use repeater immersion: " + useRepeaterImmersion + "\n" +
+                "Auto-center furnace: " + autoCenterFurnace + "\n" +
+                "Auto-center brewing: " + autoCenterBrewing;
         return stringOut;
     }
 }
