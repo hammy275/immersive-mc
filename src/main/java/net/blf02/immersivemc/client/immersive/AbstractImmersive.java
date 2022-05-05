@@ -49,6 +49,14 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected abstract boolean enabledInConfig();
 
+    /**
+     * Initializes an `info` instance after it's constructed.
+     * Useful for immersives that have non-changing hitboxes/positions.
+     *
+     * @param info Info instance that should be initialized
+     */
+    protected abstract void initInfo(I info);
+
     public abstract void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest,
                                           Hand hand);
 
@@ -60,6 +68,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     public void tick(I info, boolean isInVR) {
         if (enabledInConfig()) {
+            if (!info.initCompleted) {
+                initInfo(info);
+                info.initCompleted = true;
+            }
             doTick(info, isInVR);
         }
     }

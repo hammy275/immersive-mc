@@ -20,6 +20,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
@@ -31,15 +32,9 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
-    protected void doTick(RepeaterInfo info, boolean isInVR) {
-        super.doTick(info, isInVR);
-
-        if (!(Minecraft.getInstance().level.getBlockState(info.getBlockPosition()).getBlock() instanceof RepeaterBlock)) {
-            info.remove();
-            return;
-        }
-
-        BlockState state = Minecraft.getInstance().player.level.getBlockState(info.getBlockPosition());
+    protected void initInfo(RepeaterInfo info) {
+        Objects.requireNonNull(Minecraft.getInstance().level);
+        BlockState state = Minecraft.getInstance().level.getBlockState(info.getBlockPosition());
 
         Direction facing = state.getValue(HorizontalBlock.FACING);
         Direction forwardDir = facing.getOpposite();
@@ -54,8 +49,19 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
         for (int i = 0; i <= 3; i++) {
             info.setHitbox(i, createHitbox(info.getPosition(i), 1f/14f).inflate(0, 1d/16d, 0));
         }
+    }
+
+    @Override
+    protected void doTick(RepeaterInfo info, boolean isInVR) {
+        super.doTick(info, isInVR);
+
+        if (!(Minecraft.getInstance().level.getBlockState(info.getBlockPosition()).getBlock() instanceof RepeaterBlock)) {
+            info.remove();
+            return;
+        }
 
         if (isInVR) {
+            BlockState state = Minecraft.getInstance().level.getBlockState(info.getBlockPosition());
             for (int c = 0; c <= 1; c++) {
                 Vector3d pos = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(c).position();
                 Optional<Integer> hit = Util.getClosestIntersect(pos, info.getAllHitboxes(), info.getAllPositions());

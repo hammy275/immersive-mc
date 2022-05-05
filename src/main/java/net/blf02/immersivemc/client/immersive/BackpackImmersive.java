@@ -184,6 +184,11 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
+    protected void initInfo(BackpackInfo info) {
+        // NOOP. Backpack moves constantly, so we need to update things for it every tick.
+    }
+
+    @Override
     public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {}
 
     public void doTrack() {

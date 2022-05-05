@@ -107,8 +107,6 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
             renderItem(info.items[2], stack, info.getPosition(2), size, info.forward, info.getHibtox(2), true);
         }
 
-
-
     }
 
     @Override
@@ -124,4 +122,8 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
         ));
     }
 
+    @Override
+    protected void initInfo(ImmersiveFurnaceInfo info) {
+        // NOOP: Some hitboxes and positions can change if autoCenterFurnace is on
+    }
 }

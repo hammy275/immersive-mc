@@ -14,6 +14,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.util.Objects;
+
 public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTileEntity, BrewingInfo> {
 
     protected static final ImmersiveBrewing singleton = new ImmersiveBrewing();
@@ -48,8 +50,13 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
     }
 
     @Override
-    protected void doTick(BrewingInfo info, boolean isInVR) {
-        super.doTick(info, isInVR);
+    protected void initInfo(BrewingInfo info) {
+        setHitboxes(info);
+    }
+
+    protected void setHitboxes(BrewingInfo info) {
+        Objects.requireNonNull(Minecraft.getInstance().player);
+
         BrewingStandTileEntity stand = info.getTileEntity();
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         Vector3d pos = getDirectlyInFront(forward, stand.getBlockPos());
@@ -88,6 +95,18 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
         info.setHitbox(2, createHitbox(posRightBottle, hitboxSize));
         info.setHitbox(3, createHitbox(posIngredient, hitboxSize));
         info.setHitbox(4, createHitbox(posFuel, hitboxSize));
+
+        info.lastDir = forward;
+    }
+
+    @Override
+    protected void doTick(BrewingInfo info, boolean isInVR) {
+        super.doTick(info, isInVR);
+
+        Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
+        if (forward != info.lastDir) {
+            setHitboxes(info);
+        }
     }
 
     @Override

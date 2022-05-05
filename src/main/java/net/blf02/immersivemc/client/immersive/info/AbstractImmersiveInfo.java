@@ -9,6 +9,7 @@ public abstract class AbstractImmersiveInfo {
     protected int ticksLeft;
     protected int countdown = 10; // Used for transitions for the items
     public int ticksActive = 0;
+    public boolean initCompleted = false;
 
     public AbstractImmersiveInfo(int ticksToExist) {
         this.ticksLeft = ticksToExist;

@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.client.immersive.info;
 
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
@@ -18,6 +19,7 @@ public class EnchantingInfo extends AbstractImmersiveInfo {
             ThreadLocalRandom.current().nextInt(20)};
 
     public int lookingAtIndex = -1;
+    public Direction lastDir = null;
 
     public EnchantingInfo(BlockPos pos, int ticksToExist) {
         super(ticksToExist);

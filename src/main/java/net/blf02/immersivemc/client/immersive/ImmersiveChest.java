@@ -287,6 +287,11 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
         }
     }
 
+    @Override
+    protected void initInfo(ChestInfo info) {
+        // NOOP since a chest in a double chest can be broken at any time
+    }
+
     public static void openChest(ChestInfo info) {
         info.isOpen = !info.isOpen;
         Network.INSTANCE.sendToServer(new ChestOpenPacket(info.getBlockPosition(), info.isOpen));

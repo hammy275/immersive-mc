@@ -25,16 +25,13 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
     }
 
     @Override
-    protected void doTick(JukeboxInfo info, boolean isInVR) {
-        super.doTick(info, isInVR);
-
+    protected void initInfo(JukeboxInfo info) {
         Vector3d topCenter = getTopCenterOfBlock(info.getTileEntity().getBlockPos());
         info.setPosition(0, topCenter);
         // North and south
         AxisAlignedBB hitbox = createHitbox(topCenter, 1f/16f);
         hitbox = hitbox.inflate(0, 0, 0.25); // Rectangular hitbox that covers disc slot
         info.setHitbox(0, hitbox);
-
     }
 
     @Override
@@ -64,7 +61,6 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
     public boolean shouldRender(JukeboxInfo info, boolean isInVR) {
         return info.getTileEntity().getLevel() != null &&
                 info.getTileEntity().getLevel().getBlockState(info.getTileEntity().getBlockPos().relative(Direction.UP)).isAir() &&
-                info.readyToRender() &&
-                isInVR;
+                info.readyToRender();
     }
 }

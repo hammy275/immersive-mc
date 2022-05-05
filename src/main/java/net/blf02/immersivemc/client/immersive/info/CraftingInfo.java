@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.client.immersive.info;
 
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
@@ -20,6 +21,7 @@ public class CraftingInfo extends AbstractImmersiveInfo implements InfoTriggerHi
     protected Vector3d[] positions = new Vector3d[9];
     public Vector3d resultPosition = null;
     public AxisAlignedBB resultHitbox = null;
+    public Direction lastDir = null;
 
     public CraftingInfo(BlockPos pos, int ticksToExist) {
         super(ticksToExist);

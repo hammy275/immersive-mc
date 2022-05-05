@@ -15,6 +15,7 @@ public class AnvilInfo extends AbstractImmersiveInfo {
     protected Vector3d[] positions = new Vector3d[3];
 
     public Vector3d textPos = null;
+    public Direction lastDir = null;
 
     public AnvilInfo(BlockPos pos, int ticksToExist) {
         super(ticksToExist);

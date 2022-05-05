@@ -34,16 +34,13 @@ public class ImmersiveAnvil extends AbstractImmersive<AnvilInfo> {
     }
 
     @Override
-    protected void doTick(AnvilInfo info, boolean isInVR) {
-        super.doTick(info, isInVR);
+    protected void initInfo(AnvilInfo info) {
+        setHitboxes(info);
+    }
+
+    protected void setHitboxes(AnvilInfo info) {
         Objects.requireNonNull(Minecraft.getInstance().player);
         Objects.requireNonNull(Minecraft.getInstance().level);
-
-        if (info.anvilPos != null &&
-                Minecraft.getInstance().player.distanceToSqr(Vector3d.atCenterOf(info.anvilPos)) >
-                        CommonConstants.distanceSquaredToRemoveImmersive) {
-            info.remove();
-        }
 
         BlockState anvil = Minecraft.getInstance().level.getBlockState(info.anvilPos);
         info.isReallyAnvil = isAnvil(anvil);
@@ -75,6 +72,33 @@ public class ImmersiveAnvil extends AbstractImmersive<AnvilInfo> {
         info.setHitbox(0, createHitbox(left, hitboxSize));
         info.setHitbox(1, createHitbox(middle, hitboxSize));
         info.setHitbox(2, createHitbox(right, hitboxSize));
+
+        info.lastDir = facing;
+    }
+
+    @Override
+    protected void doTick(AnvilInfo info, boolean isInVR) {
+        super.doTick(info, isInVR);
+
+        Objects.requireNonNull(Minecraft.getInstance().player);
+        if (info.anvilPos != null &&
+                Minecraft.getInstance().player.distanceToSqr(Vector3d.atCenterOf(info.anvilPos)) >
+                        CommonConstants.distanceSquaredToRemoveImmersive) {
+            info.remove();
+        }
+
+        Objects.requireNonNull(Minecraft.getInstance().level);
+        Direction facing;
+        if (info.isReallyAnvil) {
+            BlockState anvil = Minecraft.getInstance().level.getBlockState(info.anvilPos);
+            facing = anvil.getValue(AnvilBlock.FACING); // "faces" long way towards the right
+        } else {
+            facing = getForwardFromPlayer(Minecraft.getInstance().player).getCounterClockWise();
+        }
+
+        if (facing != info.lastDir) {
+            setHitboxes(info);
+        }
 
     }
 

@@ -31,4 +31,9 @@ public class JukeboxInfo extends AbstractTileEntityImmersiveInfo<JukeboxTileEnti
     public boolean hasHitboxes() {
         return discHitbox != null;
     }
+
+    @Override
+    public boolean hasItems() {
+        return true; // Return true, jukeboxes don't have items
+    }
 }

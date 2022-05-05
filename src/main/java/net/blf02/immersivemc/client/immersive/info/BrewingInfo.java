@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.client.immersive.info;
 
 import net.minecraft.tileentity.BrewingStandTileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 
 public class BrewingInfo extends AbstractTileEntityImmersiveInfo<BrewingStandTileEntity> {
@@ -8,6 +9,8 @@ public class BrewingInfo extends AbstractTileEntityImmersiveInfo<BrewingStandTil
     protected AxisAlignedBB fuelHitbox = null;
     protected AxisAlignedBB ingredientHitbox = null;
     protected AxisAlignedBB[] bottleHitboxes = new AxisAlignedBB[]{null, null, null};
+
+    public Direction lastDir = null;
 
     public BrewingInfo(BrewingStandTileEntity tileEntity, int ticksToExist) {
         super(tileEntity, ticksToExist, 4);

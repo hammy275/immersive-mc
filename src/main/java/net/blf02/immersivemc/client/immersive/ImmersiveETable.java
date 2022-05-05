@@ -176,4 +176,9 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
     protected Vector3d getYDiffFromOffset(EnchantingInfo info, int slot) {
         return new Vector3d(0, this.yOffsets[info.yOffsetPositions[slot]], 0);
     }
+
+    @Override
+    protected void initInfo(EnchantingInfo info) {
+        // NOOP: Changes based on the items moving up and down to look cool
+    }
 }

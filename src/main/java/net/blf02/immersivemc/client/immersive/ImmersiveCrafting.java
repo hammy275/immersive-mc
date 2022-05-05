@@ -34,15 +34,12 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     }
 
     @Override
-    protected void doTick(CraftingInfo info, boolean isInVR) {
-        super.doTick(info, isInVR);
-        Objects.requireNonNull(Minecraft.getInstance().player);
+    protected void initInfo(CraftingInfo info) {
+        setHitboxes(info);
+    }
 
-        if (info.tablePos != null &&
-                Minecraft.getInstance().player.distanceToSqr(Vector3d.atCenterOf(info.tablePos)) >
-                        CommonConstants.distanceSquaredToRemoveImmersive) {
-            info.remove();
-        }
+    protected void setHitboxes(CraftingInfo info) {
+        Objects.requireNonNull(Minecraft.getInstance().player);
 
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         Vector3d pos = getTopCenterOfBlock(info.tablePos);
@@ -77,6 +74,25 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
 
         info.resultPosition = info.getPosition(4).add(0, 0.5, 0);
         info.resultHitbox = createHitbox(info.resultPosition, hitboxSize * 3);
+
+        info.lastDir = forward;
+    }
+
+    @Override
+    protected void doTick(CraftingInfo info, boolean isInVR) {
+        super.doTick(info, isInVR);
+        Objects.requireNonNull(Minecraft.getInstance().player);
+
+        if (info.tablePos != null &&
+                Minecraft.getInstance().player.distanceToSqr(Vector3d.atCenterOf(info.tablePos)) >
+                        CommonConstants.distanceSquaredToRemoveImmersive) {
+            info.remove();
+        }
+
+        Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
+        if (info.lastDir != forward) {
+            setHitboxes(info);
+        }
 
     }
 
