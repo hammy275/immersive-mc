@@ -5,6 +5,9 @@ import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.JukeboxInfo;
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.packet.SwapPacket;
+import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.util.Direction;
@@ -45,7 +48,10 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {}
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
+        if (!VRPluginVerify.clientInVR) return;
+        Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), 0, hand));
+    }
 
     @Override
     public JukeboxInfo getNewInfo(JukeboxTileEntity tileEnt) {
