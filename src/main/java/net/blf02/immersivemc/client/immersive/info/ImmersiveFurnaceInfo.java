@@ -50,7 +50,12 @@ public class ImmersiveFurnaceInfo extends AbstractTileEntityImmersiveInfo<Abstra
     }
 
     public boolean hasHitboxes() {
-        // If we have one hitbox, we have all 3
-        return toSmeltHitbox != null;
+        // Fuel hitbox is always set, let's check that one
+        return fuelHitbox != null;
+    }
+
+    @Override
+    public boolean hasPositions() {
+        return positions[1] != null;
     }
 }

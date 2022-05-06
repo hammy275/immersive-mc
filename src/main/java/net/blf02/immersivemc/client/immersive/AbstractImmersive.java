@@ -125,7 +125,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     public void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size, Direction facing, Direction upDown,
                            AxisAlignedBB hitbox, boolean renderItemCounts) {
         ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
-        if (item != ItemStack.EMPTY) {
+        if (item != null && item != ItemStack.EMPTY && pos != null) {
             stack.pushPose();
 
             // Move the stack to be relative to the camera
@@ -205,7 +205,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected void renderHitbox(MatrixStack stack, AxisAlignedBB hitbox, Vector3d pos, boolean alwaysRender) {
         if ((Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() || alwaysRender) &&
-                hitbox != null) {
+                hitbox != null && pos != null) {
             ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
             // Use a new stack here, so we don't conflict with the stack.scale() for the item itself
             stack.pushPose();

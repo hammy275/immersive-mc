@@ -7,8 +7,10 @@ import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
+import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -50,8 +52,6 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
     protected void doTick(ImmersiveFurnaceInfo info, boolean isInVR) {
         super.doTick(info, isInVR);
 
-        if (!info.hasItems()) return;
-
         AbstractFurnaceTileEntity furnace = info.getTileEntity();
         Direction forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
         Vector3d pos = getDirectlyInFront(forward, furnace.getBlockPos());
@@ -67,10 +67,13 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
         Vector3d posFuel;
         Vector3d posOutput;
         if (ActiveConfig.autoCenterFurnace) {
-            posFuel = pos.add(left.getNormal().getX() * 0.5, 0.25, left.getNormal().getZ() * 0.25);
-            if (info.items[2].isEmpty()) {
+            posFuel = pos.add(left.getNormal().getX() * 0.5, 0.25, left.getNormal().getZ() * 0.5);
+            if (info.items[2] == null || info.items[2].isEmpty()) {
                 posToSmelt = posFuel.add(0, 0.5, 0);
                 posOutput = null;
+            } else if (info.items[0] == null || info.items[0].isEmpty()) {
+                posOutput = posFuel.add(0, 0.5, 0);
+                posToSmelt = null; // If this is null, we need to handle right clicks "smartly"
             } else {
                 posToSmelt = pos.add(toSmeltAndFuelOffset).add(0, 0.75, 0);
                 posOutput = pos.add(outputOffset).add(0, 0.75, 0);
@@ -85,7 +88,11 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
         info.setPosition(2, posOutput);
 
         // Set hitboxes for logic to use
-        info.setHitbox(0, createHitbox(posToSmelt, ClientConstants.itemScaleSizeFurnace / 3.0f));
+        if (posToSmelt != null) {
+            info.setHitbox(0, createHitbox(posToSmelt, ClientConstants.itemScaleSizeFurnace / 3.0f));
+        } else {
+            info.setHitbox(0, null);
+        }
         info.setHitbox(1, createHitbox(posFuel, ClientConstants.itemScaleSizeFurnace / 3.0f));
         if (posOutput != null) {
             info.setHitbox(2, createHitbox(posOutput, ClientConstants.itemScaleSizeFurnace / 3.0f));
@@ -117,6 +124,16 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int slot, Hand hand) {
         ImmersiveFurnaceInfo infoF = (ImmersiveFurnaceInfo) info;
+        if (info.getPosition(0) == null && slot == 2) { // We're right clicking on the output slot, but there's no input slot
+            ItemStack handItem = player.getItemInHand(hand);
+            if (!handItem.isEmpty() &&
+                    (!Util.stacksEqualBesidesCount(handItem, infoF.items[2]) || handItem.getCount() == handItem.getMaxStackSize())) {
+                // If we don't have an input slot, set to the input slot instead of output if:
+                // Our hand is NOT empty (we have something to put in) AND
+                // We're holding a different item than what's in the output OR what we have in our hand can't be added to
+                slot = 0;
+            }
+        }
         Network.INSTANCE.sendToServer(new SwapPacket(
                 infoF.getTileEntity().getBlockPos(), slot, hand
         ));
