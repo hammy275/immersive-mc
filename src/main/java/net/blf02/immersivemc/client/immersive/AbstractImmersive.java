@@ -99,7 +99,12 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      */
     public void doRender(I info, MatrixStack stack, boolean isInVR) {
         if (shouldRender(info, isInVR)) {
-            render(info, stack, isInVR);
+            try {
+                render(info, stack, isInVR);
+            } catch (NullPointerException ignored) {}
+            // Until we have some sort of lock (if we ever do), we need to try-catch NPEs during rendering
+            // in case if the other thread modifies things while we render
+
         }
     }
 
