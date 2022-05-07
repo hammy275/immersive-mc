@@ -148,8 +148,9 @@ public class Swap {
 
     public static void handleCrafting(ServerPlayerEntity player, ItemStack[] stacksIn,
                                       BlockPos tablePos) {
-        CraftingInventory inv = new CraftingInventory(new NullContainer(), 3, 3);
-        for (int i = 0; i < 9; i++) {
+        int invDim = stacksIn.length == 9 ? 3 : 2;
+        CraftingInventory inv = new CraftingInventory(new NullContainer(), invDim, invDim);
+        for (int i = 0; i < stacksIn.length; i++) {
             inv.setItem(i, stacksIn[i]);
         }
         ICraftingRecipe res = getReecipe(player, stacksIn);
@@ -179,8 +180,9 @@ public class Swap {
     }
 
     public static ICraftingRecipe getReecipe(ServerPlayerEntity player, ItemStack[] stacksIn) {
-        CraftingInventory inv = new CraftingInventory(new NullContainer(), 3, 3);
-        for (int i = 0; i < 9; i++) {
+        int invDim = stacksIn.length == 9 ? 3 : 2;
+        CraftingInventory inv = new CraftingInventory(new NullContainer(), invDim, invDim);
+        for (int i = 0; i < stacksIn.length; i++) {
             inv.setItem(i, stacksIn[i]);
         }
         Optional<ICraftingRecipe> res = player.getServer().getRecipeManager().getRecipeFor(IRecipeType.CRAFTING,

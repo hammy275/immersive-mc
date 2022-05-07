@@ -2,9 +2,11 @@ package net.blf02.immersivemc.common.network;
 
 import net.blf02.immersivemc.client.immersive.AbstractImmersive;
 import net.blf02.immersivemc.client.immersive.AbstractTileEntityImmersive;
+import net.blf02.immersivemc.client.immersive.BackpackImmersive;
 import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.AbstractTileEntityImmersiveInfo;
+import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -12,6 +14,13 @@ import net.minecraft.util.math.BlockPos;
 import java.util.Objects;
 
 public class NetworkClientHandlers {
+
+    public static void setBackpackOutput(ItemStack output) {
+        if (BackpackImmersive.singleton.getTrackedObjects().size() > 0) {
+            BackpackInfo info = BackpackImmersive.singleton.getTrackedObjects().get(0);
+            info.craftingOutput = output;
+        }
+    }
 
     public static void handleReceiveInvData(ItemStack[] stacks, BlockPos pos) {
         Objects.requireNonNull(stacks);

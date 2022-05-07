@@ -4,11 +4,16 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
+import net.blf02.immersivemc.client.model.BackpackCraftingModel;
 import net.blf02.immersivemc.client.model.BackpackModel;
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.packet.CraftPacket;
+import net.blf02.immersivemc.common.network.packet.InventorySwapPacket;
 import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
+import net.blf02.immersivemc.server.swap.Swap;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
@@ -28,6 +33,8 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
     public static final BackpackImmersive singleton = new BackpackImmersive();
 
     public static final BackpackModel model = new BackpackModel();
+    public static final BackpackCraftingModel craftingModel = new BackpackCraftingModel();
+
     private final double spacing = 3d/8d;
 
     public BackpackImmersive() {
@@ -110,12 +117,56 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
             info.setPosition(i, slotPos);
             info.setHitbox(i, createHitbox(info.getPosition(i), 0.05f));
         }
+
+        Vector3d upVec = info.downVec.multiply(-1, -1, -1);
+
+        double upMult = 0.05;
+
+        // Multiply these by 4 since rightVec is multiplied by 0.25 above
+        Vector3d leftCraftingPos = info.centerTopPos.add(rightVec.multiply(0.3125*4, 0.3125*4, 0.3125*4))
+                .add(upVec.multiply(upMult, upMult, upMult));
+        Vector3d rightCraftingPos = info.centerTopPos.add(rightVec.multiply(0.4375*4, 0.4375*4, 0.4375*4))
+                .add(upVec.multiply(upMult, upMult, upMult));
+        Vector3d centerCraftingPos = info.centerTopPos.add(rightVec.multiply(0.375*4, 0.375*4, 0.375*4))
+                .add(upVec.multiply(upMult, upMult, upMult));
+
+        double craftingOffset = 0.625;
+        Vector3d[] craftingPositions = new Vector3d[]{
+                leftCraftingPos.add(topOffset.multiply(craftingOffset, craftingOffset, craftingOffset)),
+                rightCraftingPos.add(topOffset.multiply(craftingOffset, craftingOffset, craftingOffset)),
+                leftCraftingPos.add(botOffset.multiply(craftingOffset, craftingOffset, craftingOffset)),
+                rightCraftingPos.add(botOffset.multiply(craftingOffset, craftingOffset, craftingOffset))
+        };
+
+        for (int i = 27; i <= 30; i++) {
+            info.setPosition(i, craftingPositions[i - 27]);
+            info.setHitbox(i, createHitbox(info.getPosition(i), 0.05f));
+        }
+
+        info.setPosition(31, centerCraftingPos.add(upVec.multiply(0.125, 0.125, 0.125)));
+        info.setHitbox(31, createHitbox(info.getPosition(31), 0.05f));
+
+
         Optional<Integer> hitboxIntersect = Util.getFirstIntersect(handController.position(),
                 info.getAllHitboxes());
         if (hitboxIntersect.isPresent()) {
             info.slotHovered = hitboxIntersect.get();
         } else {
             info.slotHovered = -1;
+        }
+    }
+
+    public static void onHitboxInteract(PlayerEntity player, BackpackInfo info, int slot) {
+        if (slot <= 26) { // Inventory handle
+            Network.INSTANCE.sendToServer(new InventorySwapPacket(slot + 9));
+            Swap.handleInventorySwap(player, slot + 9, Hand.MAIN_HAND); // Do swap on both sides
+        } else if (slot <= 30) {
+            info.craftingInput[slot - 27] = player.getItemInHand(Hand.MAIN_HAND);
+            Network.INSTANCE.sendToServer(new CraftPacket(info.craftingInput, player.blockPosition(),
+                    true));
+        } else if (slot == 31) {
+            Network.INSTANCE.sendToServer(new CraftPacket(info.craftingInput, player.blockPosition(),
+                    false));
         }
     }
 
@@ -133,7 +184,7 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
 
     @Override
     protected void render(BackpackInfo info, MatrixStack stack, boolean isInVR) {
-        for (int i = 0; i <= 26; i++) {
+        for (int i = 0; i <= 31; i++) {
             AxisAlignedBB hitbox = info.getHibtox(i);
             renderHitbox(stack, hitbox, info.getPosition(i));
         }
@@ -144,6 +195,13 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
                 final float size =
                         info.slotHovered == i ? ClientConstants.itemScaleSizeBackpackSelected : ClientConstants.itemScaleSizeBackpack;
                 renderItem(item, stack, info.getPosition(i), size, null, info.getHibtox(i), true);
+            }
+        }
+
+        for (int i = 27; i <= 31; i++) {
+            ItemStack item = i == 31 ? info.craftingOutput : info.craftingInput[i - 27];
+            if (!item.isEmpty() && info.getPosition(i) != null) {
+                renderItem(item, stack, info.getPosition(i), ClientConstants.itemScaleSizeBackpack, null, info.getHibtox(i), i == 31);
             }
         }
 
@@ -173,6 +231,15 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
                         .getBuffer(RenderType.entityCutout(BackpackModel.textureLocation)),
                 15728880, OverlayTexture.NO_OVERLAY,
                 info.rgb.x(), info.rgb.y(), info.rgb.z(), 1);
+
+        // Translate and render the crafting on the side of the backpack and down a bit
+        // (yes, positive y in this context moves it down lol)
+        stack.translate(ActiveConfig.leftHandedBackpack ? -0.75 : 0.75, 0.25, 0);
+        craftingModel.renderToBuffer(stack,
+                Minecraft.getInstance().renderBuffers().bufferSource()
+                        .getBuffer(RenderType.entityCutout(BackpackCraftingModel.textureLocation)),
+                15728880, OverlayTexture.NO_OVERLAY,
+                1, 1, 1, 1);
 
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
         stack.popPose();

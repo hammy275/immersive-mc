@@ -15,7 +15,7 @@ public class ImmersivesConfigScreen extends Screen {
     protected OptionsRowList list;
     protected boolean notInWorld;
 
-    protected static int BUTTON_WIDTH = 256;
+    protected static int BUTTON_WIDTH = 128;
     protected static int BUTTON_HEIGHT = 20;
 
     public ImmersivesConfigScreen(Screen screen) {

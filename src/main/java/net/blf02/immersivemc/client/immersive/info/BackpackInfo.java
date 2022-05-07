@@ -2,6 +2,7 @@ package net.blf02.immersivemc.client.immersive.info;
 
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
@@ -9,8 +10,11 @@ import net.minecraft.util.math.vector.Vector3f;
 
 public class BackpackInfo extends AbstractImmersiveInfo {
 
-    protected final Vector3d[] itemPositions = new Vector3d[27];
-    protected final AxisAlignedBB[] itemHitboxes = new AxisAlignedBB[27];
+    protected final Vector3d[] positions = new Vector3d[32];
+    protected final AxisAlignedBB[] hitboxes = new AxisAlignedBB[32];
+    // 0-26: Inventory
+    // 27-31: Input crafting
+    // 32: Output crafting
 
     public Vector3d handPos = Vector3d.ZERO;
     public Vector3d lookVec = Vector3d.ZERO;
@@ -23,6 +27,8 @@ public class BackpackInfo extends AbstractImmersiveInfo {
     public Vector3f rgb = new Vector3f(0, 0, 0);
     public int topRow = 0;
     public int slotHovered = -1;
+    public ItemStack[] craftingInput = new ItemStack[]{ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
+    public ItemStack craftingOutput = ItemStack.EMPTY;
 
     public BackpackInfo() {
         super(ClientConstants.ticksToRenderBackpack);
@@ -30,42 +36,42 @@ public class BackpackInfo extends AbstractImmersiveInfo {
 
     @Override
     public AxisAlignedBB getHibtox(int slot) {
-        return itemHitboxes[slot];
+        return hitboxes[slot];
     }
 
     @Override
     public AxisAlignedBB[] getAllHitboxes() {
-        return itemHitboxes;
+        return hitboxes;
     }
 
     @Override
     public void setHitbox(int slot, AxisAlignedBB hitbox) {
-        itemHitboxes[slot] = hitbox;
+        hitboxes[slot] = hitbox;
     }
 
     @Override
     public boolean hasHitboxes() {
-        return itemHitboxes[26] != null;
+        return hitboxes[26] != null;
     }
 
     @Override
     public Vector3d getPosition(int slot) {
-        return itemPositions[slot];
+        return positions[slot];
     }
 
     @Override
     public Vector3d[] getAllPositions() {
-        return itemPositions;
+        return positions;
     }
 
     @Override
     public void setPosition(int slot, Vector3d position) {
-        itemPositions[slot] = position;
+        positions[slot] = position;
     }
 
     @Override
     public boolean hasPositions() {
-        return itemPositions[26] != null;
+        return positions[26] != null;
     }
 
     @Override

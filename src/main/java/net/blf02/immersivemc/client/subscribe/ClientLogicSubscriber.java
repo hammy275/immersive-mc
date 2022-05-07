@@ -9,13 +9,10 @@ import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
 import net.blf02.immersivemc.common.config.ActiveConfig;
-import net.blf02.immersivemc.common.network.Network;
-import net.blf02.immersivemc.common.network.packet.InventorySwapPacket;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
-import net.blf02.immersivemc.server.swap.Swap;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.AnvilBlock;
@@ -201,8 +198,7 @@ public class ClientLogicSubscriber {
                 BackpackImmersive.singleton.getTrackedObjects().get(0) : null;
         // Move to next row on left click if backpack is out
         if (backpackInfo != null && backpackInfo.slotHovered > -1) {
-            Network.INSTANCE.sendToServer(new InventorySwapPacket(backpackInfo.slotHovered + 9));
-            Swap.handleInventorySwap(player, backpackInfo.slotHovered + 9, Hand.MAIN_HAND); // Do swap on both sides
+            BackpackImmersive.onHitboxInteract(player, backpackInfo, backpackInfo.slotHovered);
             return true;
         }
 

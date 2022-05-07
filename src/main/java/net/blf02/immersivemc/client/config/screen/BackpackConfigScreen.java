@@ -31,7 +31,7 @@ public class BackpackConfigScreen extends Screen {
     protected final Screen parentScreen;
     protected OptionsRowList list;
 
-    protected static int BUTTON_WIDTH = 256;
+    protected static int BUTTON_WIDTH = 128;
     protected static int BUTTON_HEIGHT = 20;
 
     public BackpackConfigScreen(Screen lastScreen) {
