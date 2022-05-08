@@ -77,8 +77,9 @@ public class ClientStorage {
         // Do the aforementioned removing
         for (ItemStack s : toRemove) {
             for (int i = 0; i < 9; i++) {
-                if (Util.stacksEqualBesidesCount(s, craftingStorage[i])) {
+                if (!s.isEmpty() && Util.stacksEqualBesidesCount(s, craftingStorage[i])) {
                     craftingStorage[i] = ItemStack.EMPTY;
+                    craftingOutput = ItemStack.EMPTY; // Clear output if we remove something from input
                 }
             }
         }
