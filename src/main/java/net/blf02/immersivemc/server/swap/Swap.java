@@ -262,7 +262,7 @@ public class Swap {
         if (player.isCreative()) return true; // Always succeed if in creative mode
 
         NonNullList<ItemStack> toRemoves = NonNullList.create();
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < inv.getHeight() * inv.getWidth(); i++) {
             toRemoves.add(inv.getItem(i));
         }
 

@@ -161,7 +161,8 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
             Network.INSTANCE.sendToServer(new InventorySwapPacket(slot + 9));
             Swap.handleInventorySwap(player, slot + 9, Hand.MAIN_HAND); // Do swap on both sides
         } else if (slot <= 30) {
-            info.craftingInput[slot - 27] = player.getItemInHand(Hand.MAIN_HAND);
+            info.craftingInput[slot - 27] = player.getItemInHand(Hand.MAIN_HAND).copy();
+            if (!info.craftingInput[slot - 27].isEmpty()) info.craftingInput[slot - 27].setCount(1);
             Network.INSTANCE.sendToServer(new CraftPacket(info.craftingInput, player.blockPosition(),
                     true));
         } else if (slot == 31) {
