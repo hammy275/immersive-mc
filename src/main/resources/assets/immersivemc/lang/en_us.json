@@ -10,6 +10,7 @@
 
   "screen.immersivemc.backpack_config.title": "Bag Customization",
   "config.immersivemc.left_handed_backpack": "Use Left Handed Bag",
+  "config.immersivemc.low_detail_backpack": "Use Low Detail Bag",
   "config.immersivemc.backpack_r": "Bag Red Value",
   "config.immersivemc.backpack_g": "Bag Green Value",
   "config.immersivemc.backpack_b": "Bag Blue Value",

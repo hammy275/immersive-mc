@@ -32,6 +32,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue rightClickChest;
     public static ForgeConfigSpec.BooleanValue autoCenterFurnace;
     public static ForgeConfigSpec.BooleanValue autoCenterBrewing;
+    public static ForgeConfigSpec.BooleanValue useLowDetailBackpack;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -100,6 +101,9 @@ public class ImmersiveMCConfig {
         autoCenterBrewing = builder
                 .comment("Makes the brewing stand more centered instead of similar to the vanilla GUI")
                 .define("center_brewing", false);
+        useLowDetailBackpack = builder
+                .comment("Use lower-detailed bag")
+                .define("low_detail_bag", false);
     }
 
     public static void encode(PacketBuffer buffer) {
@@ -141,6 +145,7 @@ public class ImmersiveMCConfig {
         rightClickChest.set(false);
         autoCenterFurnace.set(false);
         autoCenterBrewing.set(false);
+        useLowDetailBackpack.set(false);
 
     }
 

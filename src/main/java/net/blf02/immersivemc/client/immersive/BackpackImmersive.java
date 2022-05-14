@@ -5,6 +5,7 @@ import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
 import net.blf02.immersivemc.client.model.BackpackCraftingModel;
+import net.blf02.immersivemc.client.model.BackpackLowDetailModel;
 import net.blf02.immersivemc.client.model.BackpackModel;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
@@ -18,7 +19,9 @@ import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -33,6 +36,7 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
     public static final BackpackImmersive singleton = new BackpackImmersive();
 
     public static final BackpackModel model = new BackpackModel();
+    public static final BackpackLowDetailModel modelLowDetail = new BackpackLowDetailModel();
     public static final BackpackCraftingModel craftingModel = new BackpackCraftingModel();
 
     private final double spacing = 3d/8d;
@@ -227,7 +231,7 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         stack.translate(ActiveConfig.leftHandedBackpack ? -0.5 : 0.5, 0, 0);
 
         // Render the model (finally!)
-        model.renderToBuffer(stack,
+        getBackpackModel().renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderType.entityCutout(BackpackModel.textureLocation)),
                 15728880, OverlayTexture.NO_OVERLAY,
@@ -265,5 +269,12 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         } else {
             this.infos.clear();
         }
+    }
+
+    public static EntityModel<Entity> getBackpackModel() {
+        if (ActiveConfig.useLowDetailBackpack) {
+            return modelLowDetail;
+        }
+        return model;
     }
 }

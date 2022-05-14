@@ -29,6 +29,7 @@ public class ActiveConfig {
     public static boolean rightClickChest = false;
     public static boolean autoCenterFurnace = false;
     public static boolean autoCenterBrewing = false;
+    public static boolean useLowDetailBackpack = false;
 
     public static void loadConfigFromPacket(PacketBuffer buffer) {
         int serverNetworkVersion = buffer.readInt();
@@ -83,6 +84,7 @@ public class ActiveConfig {
         rightClickChest = ImmersiveMCConfig.rightClickChest.get();
         autoCenterFurnace = ImmersiveMCConfig.autoCenterFurnace.get();
         autoCenterBrewing = ImmersiveMCConfig.autoCenterBrewing.get();
+        useLowDetailBackpack = ImmersiveMCConfig.useLowDetailBackpack.get();
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
@@ -129,7 +131,8 @@ public class ActiveConfig {
                 "Use right click chest: " + rightClickChest + "\n" +
                 "Use repeater immersion: " + useRepeaterImmersion + "\n" +
                 "Auto-center furnace: " + autoCenterFurnace + "\n" +
-                "Auto-center brewing: " + autoCenterBrewing;
+                "Auto-center brewing: " + autoCenterBrewing + "\n" +
+                "Use low detailed bag: " + useLowDetailBackpack;
         return stringOut;
     }
 }

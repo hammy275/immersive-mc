@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.client.config.screen;
 
 import net.blf02.immersivemc.ImmersiveMC;
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
 import net.minecraft.client.settings.BooleanOption;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -12,6 +13,7 @@ public class ScreenUtils {
             (unused, newVal) -> {
             configEntry.set(newVal);
             configEntry.save();
+                ActiveConfig.loadConfigFromFile();
             });
     }
 

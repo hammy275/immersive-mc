@@ -2,6 +2,7 @@ package net.blf02.immersivemc.client.config.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.ImmersiveMC;
+import net.blf02.immersivemc.client.immersive.BackpackImmersive;
 import net.blf02.immersivemc.client.model.BackpackModel;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
@@ -25,8 +26,6 @@ Thanks to https://leo3418.github.io/2021/03/31/forge-mod-config-screen-1-16.html
 helpful in writing this.
 */
 public class BackpackConfigScreen extends Screen {
-
-    protected static final BackpackModel backpackModel = new BackpackModel();
 
     protected final Screen parentScreen;
     protected OptionsRowList list;
@@ -56,6 +55,7 @@ public class BackpackConfigScreen extends Screen {
 
     protected void initOptionsList() {
         this.list.addBig(ScreenUtils.createOption("left_handed_backpack", ImmersiveMCConfig.leftHandedBackpack));
+        this.list.addBig(ScreenUtils.createOption("low_detail_backpack", ImmersiveMCConfig.useLowDetailBackpack));
         this.list.addBig(new SliderPercentageOption(
                 "config.immersivemc.backpack_r", 0, 255, 1,
                 (ignored) -> (double) getRGB('r'), (ignored, newVal) -> setRGB(newVal, 'r'),
@@ -110,7 +110,7 @@ public class BackpackConfigScreen extends Screen {
                 (2f * (float) Math.PI);
         stack.mulPose(Vector3f.YN.rotation(rot));
 
-        backpackModel.renderToBuffer(stack,
+        BackpackImmersive.getBackpackModel().renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderType.entityCutout(BackpackModel.textureLocation)),
                 15728880, OverlayTexture.NO_OVERLAY,
