@@ -55,7 +55,7 @@ public class SwapPacket {
                     Swap.handleJukebox((JukeboxTileEntity) tileEnt, player, message.hand);
                 } else if (tileEnt instanceof ChestTileEntity && ActiveConfig.useChestImmersion) {
                     Swap.handleChest((ChestTileEntity) tileEnt, player, message.hand, message.slot);
-                } else if (tileEnt instanceof EnderChestTileEntity && ActiveConfig.useEnderChestImmersion) {
+                } else if (tileEnt instanceof EnderChestTileEntity && ActiveConfig.useChestImmersion) {
                     Swap.handleEnderChest(player, message.hand, message.slot);
                 }
             }

@@ -20,7 +20,6 @@ public class ActiveConfig {
     public static boolean useCampfireImmersion = false;
     public static boolean useLever = false;
     public static boolean useBackpack = false;
-    public static boolean useEnderChestImmersion = false;
     public static boolean useRepeaterImmersion = false;
 
     // Non-synced values
@@ -55,7 +54,6 @@ public class ActiveConfig {
         useCampfireImmersion = buffer.readBoolean() && useCampfireImmersion;
         useLever = buffer.readBoolean() && useLever;
         useBackpack = buffer.readBoolean() && useBackpack;
-        useEnderChestImmersion = buffer.readBoolean() && useEnderChestImmersion;
         useRepeaterImmersion = buffer.readBoolean() && useRepeaterImmersion;
         ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
 
@@ -75,7 +73,6 @@ public class ActiveConfig {
         useCampfireImmersion = ImmersiveMCConfig.useCampfireImmersion.get();
         useLever = ImmersiveMCConfig.useLever.get();
         useBackpack = ImmersiveMCConfig.useBackpack.get();
-        useEnderChestImmersion = ImmersiveMCConfig.useEnderChestImmersion.get();
         useRepeaterImmersion = ImmersiveMCConfig.useRepeaterImmersion.get();
 
         // Non-synced values
@@ -101,7 +98,6 @@ public class ActiveConfig {
         useCampfireImmersion = false;
         useLever = false;
         useBackpack = false;
-        useEnderChestImmersion = false;
         useRepeaterImmersion = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
@@ -127,7 +123,6 @@ public class ActiveConfig {
                 "Use backpack: " + useBackpack + "\n" +
                 "Backpack color: " + backpackColor + "\n" +
                 "Left handed backpack: " + leftHandedBackpack + "\n" +
-                "Use ender chest immersion: " + useEnderChestImmersion + "\n" +
                 "Use right click chest: " + rightClickChest + "\n" +
                 "Use repeater immersion: " + useRepeaterImmersion + "\n" +
                 "Auto-center furnace: " + autoCenterFurnace + "\n" +

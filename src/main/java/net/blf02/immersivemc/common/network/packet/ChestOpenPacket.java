@@ -60,7 +60,7 @@ public class ChestOpenPacket {
                             }
                         }
                     } else if (tileEnt instanceof EnderChestTileEntity) {
-                        if (!ActiveConfig.useEnderChestImmersion) return;
+                        if (!ActiveConfig.useChestImmersion) return;
                         EnderChestTileEntity chest = (EnderChestTileEntity) tileEnt;
                         if (message.isOpen) {
                             chest.startOpen();

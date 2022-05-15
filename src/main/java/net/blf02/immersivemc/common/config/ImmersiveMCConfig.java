@@ -23,7 +23,6 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useCampfireImmersion;
     public static ForgeConfigSpec.BooleanValue useLever;
     public static ForgeConfigSpec.BooleanValue useBackpack;
-    public static ForgeConfigSpec.BooleanValue useEnderChestImmersion;
     public static ForgeConfigSpec.BooleanValue useRepeaterImmersion;
 
     //Non-synced values
@@ -49,7 +48,7 @@ public class ImmersiveMCConfig {
                 .comment("Whether immersives on brewing stands should be allowed")
                 .define("brewing_immersion", true);
         useChestImmersion = builder
-                .comment("Whether immersives on chests should be allowed. Unless users enable right_click_chest, this is VR only.")
+                .comment("Whether immersives on all types of chests should be allowed. Unless users enable right_click_chest, this is VR only.")
                 .define("chest_immersion", true);
         useCraftingImmersion = builder
                 .comment("Whether immersives on crafting tables should be allowed")
@@ -78,9 +77,6 @@ public class ImmersiveMCConfig {
         useBackpack = builder
                 .comment("Allow VR players to use a bag to manage their inventory")
                 .define("bag_inventory", true);
-        useEnderChestImmersion = builder
-                .comment("Whether immersives on chests should be allowed (VR only)")
-                .define("ender_chest_immersion", true);
         useRepeaterImmersion = builder
                 .comment("Whether VR users can adjust the delay of repeaters using their hands")
                 .define("repeater_immersion", true);
@@ -118,7 +114,6 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useCampfireImmersion.get())
                 .writeBoolean(useLever.get())
                 .writeBoolean(useBackpack.get())
-                .writeBoolean(useEnderChestImmersion.get())
                 .writeBoolean(useRepeaterImmersion.get());
     }
 
@@ -136,7 +131,6 @@ public class ImmersiveMCConfig {
         useCampfireImmersion.set(true);
         useLever.set(true);
         useBackpack.set(true);
-        useEnderChestImmersion.set(true);
         useRepeaterImmersion.set(true);
 
         // Non-synced defaults
