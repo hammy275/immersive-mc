@@ -39,7 +39,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
         Direction facing = state.getValue(HorizontalBlock.FACING);
         Direction forwardDir = facing.getOpposite();
         Vector3d forward = Vector3d.atLowerCornerOf(forwardDir.getNormal());
-        Vector3d centerPos = getTopCenterOfBlock(info.getBlockPosition()).add(0, -9d/16d, 0);
+        Vector3d centerPos = getTopCenterOfBlock(info.getBlockPosition()).add(0, -0.675, 0);
 
         info.setPosition(0, centerPos.add(forward.multiply(1d/16d, 0, 1d/16d)));
         info.setPosition(1, centerPos.add(forward.multiply(-1d/16d, 0, -1d/16d)));
@@ -47,7 +47,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
         info.setPosition(3, centerPos.add(forward.multiply(-5d/16d, 0, -5d/16d)));
 
         for (int i = 0; i <= 3; i++) {
-            info.setHitbox(i, createHitbox(info.getPosition(i), 1f/14f).inflate(0, 1d/16d, 0));
+            info.setHitbox(i, createHitbox(info.getPosition(i), 1f/14f).inflate(0, 0.2, 0));
         }
     }
 
