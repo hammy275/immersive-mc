@@ -15,11 +15,7 @@ import net.minecraft.inventory.container.AbstractRepairContainer;
 import net.minecraft.inventory.container.EnchantmentContainer;
 import net.minecraft.inventory.container.RepairContainer;
 import net.minecraft.inventory.container.SmithingTableContainer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.MusicDiscItem;
-import net.minecraft.item.PotionItem;
+import net.minecraft.item.*;
 import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.stats.Stats;
@@ -27,15 +23,14 @@ import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.JukeboxTileEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.IWorldPosCallable;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.Tags;
 
 import java.util.AbstractList;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Swap {
 
@@ -148,7 +143,8 @@ public class Swap {
 
     public static void handleCrafting(ServerPlayerEntity player, ItemStack[] stacksIn,
                                       BlockPos tablePos) {
-        int invDim = stacksIn.length == 9 ? 3 : 2;
+        boolean isBackpack = stacksIn.length == 4;
+        int invDim = isBackpack ? 2 : 3;
         CraftingInventory inv = new CraftingInventory(new NullContainer(), invDim, invDim);
         for (int i = 0; i < stacksIn.length; i++) {
             inv.setItem(i, stacksIn[i]);
@@ -164,6 +160,8 @@ public class Swap {
                     Util.ItemStackMergeResult itemRes = Util.mergeStacks(handStack, stackOut, true);
                     player.setItemInHand(Hand.MAIN_HAND, itemRes.mergedInto);
                     toGive = itemRes.mergedFrom;
+                } else if (handStack.isEmpty()) {
+                    player.setItemInHand(Hand.MAIN_HAND, stackOut);
                 } else {
                     toGive = stackOut;
                 }
@@ -174,6 +172,12 @@ public class Swap {
                     entOut.setItem(toGive);
                     entOut.setDeltaMovement(0, 0, 0);
                     player.level.addFreshEntity(entOut);
+                } else {
+                    player.level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                            SoundEvents.ITEM_PICKUP, isBackpack ? SoundCategory.PLAYERS : SoundCategory.BLOCKS,
+                            0.2f,
+                            ThreadLocalRandom.current().nextFloat() -
+                                    ThreadLocalRandom.current().nextFloat() * 1.4f + 2f);
                 }
             }
         }
