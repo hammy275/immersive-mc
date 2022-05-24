@@ -76,6 +76,14 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         }
     }
 
+    public int getCooldownVR() {
+        return 20;
+    }
+
+    public int getCooldownDesktop() {
+        return 8;
+    }
+
     protected void doTick(I info, boolean isInVR) {
         // Set the cooldown (transition time) based on how long we've existed or until we stop existing
         if (info.getCountdown() > 1 && info.getTicksLeft() > 20) {

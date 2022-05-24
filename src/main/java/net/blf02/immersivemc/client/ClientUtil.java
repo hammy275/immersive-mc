@@ -10,7 +10,7 @@ public class ClientUtil {
     public static int immersiveLeftClickCooldown = 0;
 
     @OnlyIn(Dist.CLIENT)
-    public static void setRightClickCooldown() {
-        Minecraft.getInstance().rightClickDelay = 4;
+    public static void setRightClickCooldown(int amount) {
+        Minecraft.getInstance().rightClickDelay = amount;
     }
 }

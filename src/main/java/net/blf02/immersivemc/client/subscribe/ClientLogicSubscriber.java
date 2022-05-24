@@ -132,9 +132,10 @@ public class ClientLogicSubscriber {
         // Don't run code if we're on spectator mode
         if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSpectator()) return;
         if (event.getHand() == Hand.MAIN_HAND && event.isUseItem()) {
-            if (handleRightClick(Minecraft.getInstance().player)) {
+            int cooldown = handleRightClick(Minecraft.getInstance().player);
+            if (cooldown > 0) {
                 event.setCanceled(true);
-                ClientUtil.setRightClickCooldown();
+                ClientUtil.setRightClickCooldown(cooldown);
             }
         } else if (event.getHand() == Hand.MAIN_HAND && event.isAttack()) {
             if (ClientUtil.immersiveLeftClickCooldown > 0) {
@@ -239,8 +240,8 @@ public class ClientLogicSubscriber {
         return false;
     }
 
-    public static boolean handleRightClick(PlayerEntity player) {
-        if (Minecraft.getInstance().gameMode == null) return false;
+    public static int handleRightClick(PlayerEntity player) {
+        if (Minecraft.getInstance().gameMode == null) return 0;
         boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR && VRPlugin.API.apiActive(player);
         double dist = Minecraft.getInstance().gameMode.getPickRange();
         Vector3d start = player.getEyePosition(1);
@@ -255,13 +256,13 @@ public class ClientLogicSubscriber {
                         Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
                         if (closest.isPresent()) {
                             singleton.handleRightClick(info, player, closest.get(), Hand.MAIN_HAND);
-                            return true;
+                            return singleton.getCooldownDesktop();
                         } else if (info instanceof InfoTriggerHitboxes) {
                             InfoTriggerHitboxes triggerInfo = (InfoTriggerHitboxes) info;
                             Optional<Integer> closestTrigger = Util.rayTraceClosest(start, end, triggerInfo.getTriggerHitboxes());
                             if (closestTrigger.isPresent()) {
                                 singleton.handleTriggerHitboxRightClick(triggerInfo, player, closestTrigger.get());
-                                return true;
+                                return singleton.getCooldownDesktop();
                             }
                         }
                     }
@@ -270,16 +271,16 @@ public class ClientLogicSubscriber {
         }
 
         // If we handle things in the block ray tracing part of right click, we return true
-        if (handleRightClickBlockRayTrace(player)) {
-            return true;
+        int rayTraceCooldown = handleRightClickBlockRayTrace(player);
+        if (rayTraceCooldown > 0) {
+            return rayTraceCooldown;
         }
-        // Don't handle jukeboxes since those are VR only
-        return false;
+        return 0;
     }
 
-    protected static boolean handleRightClickBlockRayTrace(PlayerEntity player) {
+    protected static int handleRightClickBlockRayTrace(PlayerEntity player) {
         RayTraceResult looking = Minecraft.getInstance().hitResult;
-        if (looking == null || looking.getType() != RayTraceResult.Type.BLOCK) return false;
+        if (looking == null || looking.getType() != RayTraceResult.Type.BLOCK) return 0;
 
         if (ActiveConfig.rightClickChest) {
             BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
@@ -290,12 +291,12 @@ public class ClientLogicSubscriber {
                 ChestInfo info = ImmersiveChest.findImmersive(player.level.getBlockEntity(pos));
                 if (info != null) {
                     ImmersiveChest.openChest(info);
-                    return true;
+                    return ImmersiveChest.singleton.getCooldownDesktop();
                 }
             }
         }
 
-        return false; // Still here in case if we need it later
+        return 0; // Still here in case if we need it later
     }
 
 

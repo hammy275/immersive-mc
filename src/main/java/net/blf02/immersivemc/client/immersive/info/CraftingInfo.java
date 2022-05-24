@@ -7,9 +7,6 @@ import net.minecraft.util.math.vector.Vector3d;
 
 public class CraftingInfo extends AbstractImmersiveInfo implements InfoTriggerHitboxes {
 
-    // Output is from left clicking the crafting table with a valid recipe, so no need
-    // for an actual slot
-
     public final BlockPos tablePos;
 
     protected AxisAlignedBB[] inputs = new AxisAlignedBB[]{

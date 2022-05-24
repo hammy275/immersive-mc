@@ -145,4 +145,9 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
         }
         infos.add(new CraftingInfo(tablePos, ClientConstants.ticksToRenderCrafting));
     }
+
+    @Override
+    public int getCooldownVR() {
+        return 5;
+    }
 }

@@ -66,7 +66,7 @@ public class ClientVRSubscriber {
                 if (hit.isPresent()) {
                     singleton.handleRightClick(info, Minecraft.getInstance().player, hit.get(),
                             c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND);
-                    cooldown = 20;
+                    cooldown = singleton.getCooldownVR();
                     return true;
                 }
             }
