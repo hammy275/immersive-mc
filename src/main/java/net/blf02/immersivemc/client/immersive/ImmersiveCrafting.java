@@ -101,8 +101,14 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
         Network.INSTANCE.sendToServer(new CraftPacket(
                 ClientStorage.craftingStorage, ((CraftingInfo) info).tablePos, false
         ));
+
+        // Clear items that we don't have anymore and retrieve recipe to match
         ClientStorage.removeLackingIngredientsFromTable(player);
-        ((CraftingInfo) info).setTicksLeft(ClientConstants.ticksToRenderCrafting); // Reset count if we right click
+        Network.INSTANCE.sendToServer(new CraftPacket(
+                ClientStorage.craftingStorage, ((CraftingInfo) info).tablePos, true
+        ));
+
+        ((CraftingInfo) info).setTicksLeft(ClientConstants.ticksToRenderCrafting); // Reset count if we craft
     }
 
     @Override
