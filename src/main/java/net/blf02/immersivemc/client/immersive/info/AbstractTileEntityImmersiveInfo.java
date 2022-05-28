@@ -11,6 +11,7 @@ public abstract class AbstractTileEntityImmersiveInfo<T extends TileEntity> exte
     protected Vector3d[] positions;
     public ItemStack[] items;
     public final int maxSlotIndex;
+    protected final BlockPos pos;
 
     /**
      * Constructor
@@ -25,6 +26,7 @@ public abstract class AbstractTileEntityImmersiveInfo<T extends TileEntity> exte
         this.positions = new Vector3d[maxSlotIndex+1];
         this.maxSlotIndex = maxSlotIndex;
         this.items = new ItemStack[maxSlotIndex+1];
+        this.pos = this.tileEntity.getBlockPos();
     }
 
     public T getTileEntity() {
@@ -58,7 +60,7 @@ public abstract class AbstractTileEntityImmersiveInfo<T extends TileEntity> exte
 
     @Override
     public BlockPos getBlockPosition() {
-        return this.getTileEntity().getBlockPos();
+        return this.pos;
     }
 
     public boolean hasItems() {

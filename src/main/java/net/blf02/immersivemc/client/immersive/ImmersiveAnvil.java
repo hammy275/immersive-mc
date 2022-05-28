@@ -10,6 +10,7 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.CommonConstants;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.SmithingTableBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -100,6 +101,12 @@ public class ImmersiveAnvil extends AbstractImmersive<AnvilInfo> {
             setHitboxes(info);
         }
 
+    }
+
+    @Override
+    public boolean hasValidBlock(AnvilInfo info, World level) {
+        BlockState anvil = level.getBlockState(info.anvilPos);
+        return isAnvil(anvil) || anvil.getBlock() instanceof SmithingTableBlock;
     }
 
     @Override

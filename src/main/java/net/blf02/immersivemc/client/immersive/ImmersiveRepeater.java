@@ -83,6 +83,11 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
+    public boolean hasValidBlock(RepeaterInfo info, World level) {
+        return level.getBlockState(info.getBlockPosition()).getBlock() instanceof RepeaterBlock;
+    }
+
+    @Override
     public boolean shouldRender(RepeaterInfo info, boolean isInVR) {
         if (Minecraft.getInstance().player == null) return false;
         World level = Minecraft.getInstance().level;

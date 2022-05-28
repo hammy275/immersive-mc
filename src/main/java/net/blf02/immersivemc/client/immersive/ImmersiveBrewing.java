@@ -13,6 +13,7 @@ import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 
 import java.util.Objects;
 
@@ -36,6 +37,11 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
     @Override
     public int getTickTime() {
         return ClientConstants.ticksToRenderBrewing;
+    }
+
+    @Override
+    public boolean hasValidBlock(BrewingInfo info, World level) {
+        return level.getBlockEntity(info.getBlockPosition()) instanceof BrewingStandTileEntity;
     }
 
     @Override

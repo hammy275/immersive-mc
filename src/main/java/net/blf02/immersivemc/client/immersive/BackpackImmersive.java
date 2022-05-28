@@ -28,6 +28,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.world.World;
 
 import java.util.Optional;
 
@@ -177,6 +178,11 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
 
     protected boolean inRange(int num, int start, int end) {
         return start <= num && num <= end;
+    }
+
+    @Override
+    public boolean hasValidBlock(BackpackInfo info, World level) {
+        return true;
     }
 
     @Override

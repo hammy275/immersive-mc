@@ -11,6 +11,7 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.CommonConstants;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.CraftPacket;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -132,6 +133,11 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
         ClientSwap.craftingSwap(closest, hand, info.getBlockPosition());
+    }
+
+    @Override
+    public boolean hasValidBlock(CraftingInfo info, World level) {
+        return level.getBlockState(info.getBlockPosition()) .getBlock() == Blocks.CRAFTING_TABLE;
     }
 
     @Override

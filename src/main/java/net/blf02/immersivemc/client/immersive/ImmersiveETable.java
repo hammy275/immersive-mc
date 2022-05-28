@@ -9,6 +9,7 @@ import net.blf02.immersivemc.client.swap.ClientSwap;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.CommonConstants;
 import net.blf02.immersivemc.common.util.Util;
+import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
@@ -16,6 +17,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,6 +114,11 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
         Optional<Integer> closest = Util.rayTraceClosest(start, end,
                 info.getHibtox(1), info.getHibtox(2), info.getHibtox(3));
         closest.ifPresent(targetSlot -> info.lookingAtIndex = targetSlot);
+    }
+
+    @Override
+    public boolean hasValidBlock(EnchantingInfo info, World level) {
+        return level.getBlockState(info.getBlockPosition()).getBlock() instanceof EnchantingTableBlock;
     }
 
     @Override

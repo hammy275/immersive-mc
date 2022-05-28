@@ -25,6 +25,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 
 import java.util.Objects;
 
@@ -41,7 +42,6 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
     @Override
     protected void doTick(ChestInfo info, boolean isInVR) {
         super.doTick(info, isInVR);
-        if (!chestsValid(info)) return; // Return if we're waiting to remove this immersive
 
         // super.tick() does this for the main regular chest. This does it for the other chest, and for ender chests
         // (which don't implement IInventory)
@@ -212,6 +212,11 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
     @Override
     public int getTickTime() {
         return ClientConstants.ticksToRenderChest;
+    }
+
+    @Override
+    public boolean hasValidBlock(ChestInfo info, World level) {
+        return chestsValid(info);
     }
 
     @Override

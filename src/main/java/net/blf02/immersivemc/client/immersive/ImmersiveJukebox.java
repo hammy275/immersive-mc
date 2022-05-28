@@ -14,6 +14,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 
 public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEntity, JukeboxInfo> {
     
@@ -61,6 +62,11 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
     @Override
     public int getTickTime() {
         return ClientConstants.ticksToHandleJukebox;
+    }
+
+    @Override
+    public boolean hasValidBlock(JukeboxInfo info, World level) {
+        return level.getBlockEntity(info.getBlockPosition()) instanceof JukeboxTileEntity;
     }
 
     @Override

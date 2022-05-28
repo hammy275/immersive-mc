@@ -15,6 +15,7 @@ import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 
 public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnaceTileEntity, ImmersiveFurnaceInfo> {
 
@@ -38,6 +39,11 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
     @Override
     public int getTickTime() {
         return ClientConstants.ticksToRenderFurnace;
+    }
+
+    @Override
+    public boolean hasValidBlock(ImmersiveFurnaceInfo info, World level) {
+        return level.getBlockEntity(info.getBlockPosition()) instanceof AbstractFurnaceTileEntity;
     }
 
     @Override

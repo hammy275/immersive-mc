@@ -24,6 +24,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,16 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         this.maxImmersives = maxImmersives;
         this.infos = new ArrayList<>(maxImmersives > 0 ? maxImmersives + 1 : 16);
     }
+
+    /**
+     * Used to check whether a valid block exists before ticking an immersive.
+     *
+     * Will remove the immersive if this returns false, and will tick if returns true.
+     * @param info The info to check
+     * @param level The level to check
+     * @return true if the block exists, false if it does not
+     */
+    public abstract boolean hasValidBlock(I info, World level);
 
     public abstract boolean shouldRender(I info, boolean isInVR);
 
@@ -72,7 +83,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 initInfo(info);
                 info.initCompleted = true;
             }
-            doTick(info, isInVR);
+            if (Minecraft.getInstance().level != null && hasValidBlock(info, Minecraft.getInstance().level)) {
+                doTick(info, isInVR);
+            } else {
+                info.remove();
+            }
         }
     }
 
