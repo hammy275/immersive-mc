@@ -135,6 +135,13 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         return infos;
     }
 
+    /**
+     * Run when there are no infos
+     */
+    public void noInfosTick() {
+
+    }
+
     public void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size, Direction facing,
                            AxisAlignedBB hitbox, boolean renderItemCounts) {
         renderItem(item, stack, pos, size, facing, null, hitbox, renderItemCounts);

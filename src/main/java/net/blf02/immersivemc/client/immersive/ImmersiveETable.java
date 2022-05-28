@@ -29,6 +29,8 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
 
     public static final ImmersiveETable singleton = new ImmersiveETable();
 
+    protected int noInfosCooldown = 0;
+
     public ImmersiveETable() {
         super(1); // Enchanting tables are special, let's only have one active
         List<Float> yOffsets = new ArrayList<>();
@@ -42,6 +44,16 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
         this.yOffsets = new float[yOffsets.size()];
         for (int i = 0; i < yOffsets.size(); i++) {
             this.yOffsets[i] = yOffsets.get(i);
+        }
+    }
+
+    @Override
+    public void noInfosTick() {
+        super.noInfosTick();
+        if (noInfosCooldown >= 200) {
+            ClientStorage.resetEnchs();
+        } else {
+            noInfosCooldown++;
         }
     }
 
@@ -177,6 +189,7 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
                 return;
             }
         }
+        this.noInfosCooldown = 0;
         infos.add(new EnchantingInfo(pos, ClientConstants.ticksToRenderETable));
     }
 

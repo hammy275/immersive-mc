@@ -22,6 +22,7 @@ import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class ImmersiveAnvil extends AbstractImmersive<AnvilInfo> {
@@ -29,9 +30,22 @@ public class ImmersiveAnvil extends AbstractImmersive<AnvilInfo> {
     public static final ImmersiveAnvil singleton = new ImmersiveAnvil();
 
     protected final double dist = 1d/3d;
+    protected int noInfosCooldown = 0;
 
     public ImmersiveAnvil() {
         super(-1); // All client side, no need to have a maximum immersive count
+    }
+
+    @Override
+    public void noInfosTick() {
+        super.noInfosTick();
+        if (noInfosCooldown >= 200) {
+            Arrays.fill(ClientStorage.anvilStorage, ItemStack.EMPTY);
+            Arrays.fill(ClientStorage.smithingStorage, ItemStack.EMPTY);
+            ClientStorage.anvilCost = 0;
+        } else {
+            noInfosCooldown++;
+        }
     }
 
     @Override
@@ -154,6 +168,7 @@ public class ImmersiveAnvil extends AbstractImmersive<AnvilInfo> {
                 return;
             }
         }
+        this.noInfosCooldown = 0;
         infos.add(new AnvilInfo(pos, ClientConstants.ticksToRenderAnvil));
     }
 

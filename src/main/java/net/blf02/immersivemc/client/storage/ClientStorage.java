@@ -86,6 +86,14 @@ public class ClientStorage {
 
     }
 
+    public static void resetEnchs() {
+        weakInfo.textPreview = null;
+        midInfo.textPreview = null;
+        strongInfo.textPreview = null;
+        eTableItem = ItemStack.EMPTY;
+        eTableEnchCopy = ItemStack.EMPTY;
+    }
+
     public static class ETableInfo {
         public int levelsNeeded;
         public ITextComponent textPreview = null;

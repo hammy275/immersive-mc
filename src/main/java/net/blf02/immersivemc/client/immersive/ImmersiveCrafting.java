@@ -22,6 +22,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,8 +31,21 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     public static final ImmersiveCrafting singleton = new ImmersiveCrafting();
     private final double spacing = 3d/16d;
 
+    protected int noInfosCooldown = 0;
+
     public ImmersiveCrafting() {
         super(-1);
+    }
+
+    @Override
+    public void noInfosTick() {
+        super.noInfosTick();
+        if (noInfosCooldown >= 200) {
+            Arrays.fill(ClientStorage.craftingStorage, ItemStack.EMPTY);
+            ClientStorage.craftingOutput = ItemStack.EMPTY;
+        } else {
+            noInfosCooldown++;
+        }
     }
 
     @Override
@@ -155,6 +169,7 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
                 return;
             }
         }
+        this.noInfosCooldown = 0;
         infos.add(new CraftingInfo(tablePos, ClientConstants.ticksToRenderCrafting));
     }
 

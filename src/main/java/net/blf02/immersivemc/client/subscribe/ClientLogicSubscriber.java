@@ -159,36 +159,41 @@ public class ClientLogicSubscriber {
     }
 
     protected <I extends AbstractImmersiveInfo> void tickInfos(AbstractImmersive<I> singleton) {
-        List<I> infos = singleton.getTrackedObjects();
-        List<I> toRemove = new LinkedList<>();
-        boolean hasTooManyImmersives = infos.size() > singleton.maxImmersives &&
-                singleton.maxImmersives > -1; // Can't have too many immersives if we want a negative amount!
-        int minIndex = -1;
-        int minTicksLeft = Integer.MAX_VALUE;
-        int i = 0;
-        for (I info : infos) {
-            singleton.tick(info, VRPluginVerify.clientInVR);
-            if (info.getTicksLeft() <= 0) {
-                toRemove.add(info);
+        if (singleton.getTrackedObjects().size() == 0) {
+            singleton.noInfosTick(); // Run onNoInfos() function if we don't have any infos right now
+        } else {
+            List<I> infos = singleton.getTrackedObjects();
+            List<I> toRemove = new LinkedList<>();
+            boolean hasTooManyImmersives = infos.size() > singleton.maxImmersives &&
+                    singleton.maxImmersives > -1; // Can't have too many immersives if we want a negative amount!
+            int minIndex = -1;
+            int minTicksLeft = Integer.MAX_VALUE;
+            int i = 0;
+
+            for (I info : infos) {
+                singleton.tick(info, VRPluginVerify.clientInVR);
+                if (info.getTicksLeft() <= 0) {
+                    toRemove.add(info);
+                }
+                if (hasTooManyImmersives) {
+                    if (info.getTicksLeft() < minTicksLeft) {
+                        minTicksLeft = info.getTicksLeft();
+                        minIndex = i;
+                    }
+                }
+                i++;
             }
-            if (hasTooManyImmersives) {
-                if (info.getTicksLeft() < minTicksLeft) {
-                    minTicksLeft = info.getTicksLeft();
-                    minIndex = i;
+            if (minIndex > -1) {
+                I toRem = infos.get(minIndex);
+                if (!toRemove.contains(toRem)) {
+                    toRemove.add(toRem);
                 }
             }
-            i++;
-        }
-        if (minIndex > -1) {
-            I toRem = infos.get(minIndex);
-            if (!toRemove.contains(toRem)) {
-                toRemove.add(toRem);
-            }
-        }
 
-        for (I info : toRemove) {
-            singleton.onRemove(info);
-            infos.remove(info);
+            for (I info : toRemove) {
+                singleton.onRemove(info);
+                infos.remove(info);
+            }
         }
     }
 
