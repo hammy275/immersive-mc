@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.common.network.packet;
 
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.server.tracker.RangedGrabTrackerServer;
 import net.blf02.immersivemc.server.tracker.ServerTrackerInit;
 import net.minecraft.entity.Entity;
@@ -37,7 +38,8 @@ public class GrabItemPacket {
             ServerPlayerEntity player = ctx.get().getSender();
             if (player != null) {
                 Entity ent = player.level.getEntity(packet.entityId);
-                if (ent instanceof ItemEntity && player.distanceToSqr(ent) <= 144) {
+                if (ent instanceof ItemEntity && player.distanceToSqr(ent) <= 144 &&
+                        Util.canPickUpItem((ItemEntity) ent, player)) {
                     ItemEntity item = (ItemEntity) ent;
                     ServerTrackerInit.rangedGrabTracker.infos.add(new RangedGrabTrackerServer.RangedGrabInfo(item, player));
                 }

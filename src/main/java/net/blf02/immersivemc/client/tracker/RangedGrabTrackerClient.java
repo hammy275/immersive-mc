@@ -1,12 +1,12 @@
 package net.blf02.immersivemc.client.tracker;
 
-import net.blf02.immersivemc.common.vr.VRPlugin;
-import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.GrabItemPacket;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.common.vr.VRPlugin;
+import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Minecraft;
@@ -55,7 +55,7 @@ public class RangedGrabTrackerClient extends AbstractTracker {
                         viewVec.z * dist);
 
                 List<Entity> ents = player.level.getEntities(player, player.getBoundingBox().inflate(10),
-                        (entity -> entity instanceof ItemEntity));
+                        (entity -> entity instanceof ItemEntity && Util.canPickUpItem((ItemEntity) entity, player)));
                 List<AxisAlignedBB> hitboxes = new LinkedList<>();
                 for (Entity ent : ents) {
                     hitboxes.add(ent.getBoundingBox().inflate(1d/3d));

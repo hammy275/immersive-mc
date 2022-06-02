@@ -3,6 +3,8 @@ package net.blf02.immersivemc.common.util;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.RepeaterBlock;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
@@ -14,6 +16,14 @@ import net.minecraft.world.World;
 import java.util.Optional;
 
 public class Util {
+
+    public static boolean canPickUpItem(ItemEntity item, PlayerEntity player) {
+        /* It seems pickup delay isn't synced client side.
+           Although this doesn't cover a lot of use cases, odds are, if an item isn't moving, it can be picked up
+           Plus, it somewhat makes sense */
+        return (!item.hasPickUpDelay() || player.abilities.instabuild)
+                && Math.abs(item.getDeltaMovement().x) <= 0.01 && Math.abs(item.getDeltaMovement().z) <= 0.01;
+    }
 
     public static boolean rayTrace(AxisAlignedBB target, Vector3d rayStart, Vector3d rayEnd) {
         // If the start or end of the ray is in the target hitbox, we immediately return true
