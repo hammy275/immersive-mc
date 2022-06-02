@@ -35,6 +35,7 @@
   "screen.immersivemc.immersives_customize.title": "Customize Immersives",
   "config.immersivemc.center_brewing": "Center Items for Brewing Immersive",
   "config.immersivemc.center_furnace": "Center Items for Furnace Immersive",
-  "config.immersivemc.right_click_chest": "Right Click Chests and Disable VR-Only Chest"
+  "config.immersivemc.right_click_chest": "Right Click Chests and Disable VR-Only Chest",
+  "config.immersivemc.clear_table_on_unstackable": "Clear Crafting Tables On Tool Craft"
 
 }

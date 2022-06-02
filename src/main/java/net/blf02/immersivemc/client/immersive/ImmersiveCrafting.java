@@ -119,6 +119,10 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
 
         // Clear items that we don't have anymore and retrieve recipe to match
         ClientStorage.removeLackingIngredientsFromTable(player);
+        if (ActiveConfig.clearTableOnUnstackable) {
+            Arrays.fill(ClientStorage.craftingStorage, ItemStack.EMPTY);
+            ClientStorage.craftingOutput = ItemStack.EMPTY;
+        }
         Network.INSTANCE.sendToServer(new CraftPacket(
                 ClientStorage.craftingStorage, ((CraftingInfo) info).tablePos, true
         ));

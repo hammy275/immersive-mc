@@ -32,6 +32,10 @@ public class ClientStorage {
     public static ItemStack eTableEnchCopy = ItemStack.EMPTY;
 
     public static void removeLackingIngredientsFromTable(PlayerEntity player) {
+
+    }
+
+    public static void removeLackingIngredientsFromTable(PlayerEntity player, ItemStack[] craftingStorage) {
         if (player.abilities.instabuild) return;
         List<ItemStack> stacks = new ArrayList<>();
         List<Integer> amounts = new ArrayList<>();
@@ -76,10 +80,9 @@ public class ClientStorage {
         }
         // Do the aforementioned removing
         for (ItemStack s : toRemove) {
-            for (int i = 0; i < 9; i++) {
+            for (int i = 0; i < craftingStorage.length; i++) {
                 if (!s.isEmpty() && Util.stacksEqualBesidesCount(s, craftingStorage[i])) {
                     craftingStorage[i] = ItemStack.EMPTY;
-                    craftingOutput = ItemStack.EMPTY; // Clear output if we remove something from input
                 }
             }
         }

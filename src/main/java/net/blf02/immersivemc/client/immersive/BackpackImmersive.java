@@ -7,6 +7,7 @@ import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
 import net.blf02.immersivemc.client.model.BackpackCraftingModel;
 import net.blf02.immersivemc.client.model.BackpackLowDetailModel;
 import net.blf02.immersivemc.client.model.BackpackModel;
+import net.blf02.immersivemc.client.storage.ClientStorage;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.CraftPacket;
@@ -30,6 +31,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
@@ -173,6 +175,14 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         } else if (slot == 31) {
             Network.INSTANCE.sendToServer(new CraftPacket(info.craftingInput, player.blockPosition(),
                     false));
+            if (ActiveConfig.clearTableOnUnstackable) {
+                Arrays.fill(info.craftingInput, ItemStack.EMPTY);
+                info.craftingOutput = ItemStack.EMPTY;
+            } else {
+                ClientStorage.removeLackingIngredientsFromTable(player, info.craftingInput);
+                Network.INSTANCE.sendToServer(new CraftPacket(info.craftingInput, player.blockPosition(),
+                        true));
+            }
         }
     }
 
