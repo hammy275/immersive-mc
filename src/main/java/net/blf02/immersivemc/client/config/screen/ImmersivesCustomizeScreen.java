@@ -34,6 +34,7 @@ public class ImmersivesCustomizeScreen extends Screen {
         ScreenUtils.addOption("center_furnace", ImmersiveMCConfig.autoCenterFurnace, this.list);
         ScreenUtils.addOption("right_click_chest", ImmersiveMCConfig.rightClickChest, this.list);
         ScreenUtils.addOption("clear_table_on_unstackable", ImmersiveMCConfig.clearTableOnUnstackable, this.list);
+        ScreenUtils.addOption("show_placement_guide", ImmersiveMCConfig.showPlacementGuide, this.list);
 
         this.children.add(this.list);
 

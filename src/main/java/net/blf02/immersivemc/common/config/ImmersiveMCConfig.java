@@ -33,6 +33,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue autoCenterBrewing;
     public static ForgeConfigSpec.BooleanValue useLowDetailBackpack;
     public static ForgeConfigSpec.BooleanValue clearTableOnUnstackable;
+    public static ForgeConfigSpec.BooleanValue showPlacementGuide;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -104,6 +105,9 @@ public class ImmersiveMCConfig {
         clearTableOnUnstackable = builder
                 .comment("Clear the crafting table after crafting an unstackable item")
                 .define("clear_table_on_unstackable", false);
+        showPlacementGuide = builder
+                .comment("Whether to show a particle for where to place items")
+                .define("show_placement_guide", true);
     }
 
     public static void encode(PacketBuffer buffer) {
@@ -145,6 +149,7 @@ public class ImmersiveMCConfig {
         autoCenterBrewing.set(false);
         useLowDetailBackpack.set(false);
         clearTableOnUnstackable.set(false);
+        showPlacementGuide.set(true);
 
     }
 

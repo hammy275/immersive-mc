@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.client.Minecraft;
@@ -16,6 +17,7 @@ import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -37,6 +39,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected final List<I> infos;
     public final int maxImmersives;
+    public int currentSlotParticle = -1;
 
     public AbstractImmersive(int maxImmersives) {
         Immersives.IMMERSIVES.add(this);
@@ -85,6 +88,39 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             }
             if (Minecraft.getInstance().level != null && hasValidBlock(info, Minecraft.getInstance().level)) {
                 doTick(info, isInVR);
+                if (ActiveConfig.showPlacementGuide) {
+                    if (info.ticksActive % 200 == 0 && info.ticksActive != 0 && currentSlotParticle == -1) {
+                        currentSlotParticle = 0;
+                    } else if (currentSlotParticle > -1) {
+                        // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
+                        int maxIndex = -1 + info.getAllHitboxes().length;
+                        InfoTriggerHitboxes infoTH = null;
+                        if (info instanceof InfoTriggerHitboxes) {
+                            infoTH = (InfoTriggerHitboxes) info;
+                            maxIndex += infoTH.getTriggerHitboxes().length;
+                        }
+
+                        Vector3d pos;
+                        int positionIndex = currentSlotParticle;
+                        if (positionIndex >= info.getAllHitboxes().length && infoTH != null) {
+                            positionIndex = positionIndex - info.getAllHitboxes().length;
+                            pos = infoTH.getTriggerHitbox(positionIndex).getCenter();
+                        } else {
+                            pos = info.getPosition(positionIndex);
+                        }
+
+                        if (pos != null) {
+                            Minecraft.getInstance().level.addParticle(new RedstoneParticleData(0, 1, 1, 1),
+                                    pos.x, pos.y, pos.z, 0.01, 0.01, 0.01);
+                        }
+
+                        if (info.ticksActive % 10 == 0) {
+                            if (++currentSlotParticle > maxIndex) {
+                                currentSlotParticle = -1;
+                            }
+                        }
+                    }
+                }
             } else {
                 info.remove();
             }
