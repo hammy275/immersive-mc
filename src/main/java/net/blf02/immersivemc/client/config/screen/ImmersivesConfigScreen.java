@@ -5,9 +5,13 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.TranslationTextComponent;
+
+import java.util.List;
 
 public class ImmersivesConfigScreen extends Screen {
 
@@ -78,6 +82,11 @@ public class ImmersivesConfigScreen extends Screen {
             // you try to adjust this
             drawCenteredString(stack, this.font, new TranslationTextComponent("screen.immersivemc.immersives_config.inworld"),
                     this.width / 2, this.height / 2, 0xFFFFFF);
+        }
+
+        List<IReorderingProcessor> list = SettingsScreen.tooltipAt(this.list, mouseX, mouseY);
+        if (list != null) {
+            this.renderTooltip(stack, list, mouseX, mouseY);
         }
 
         super.render(stack, mouseX, mouseY, partialTicks);

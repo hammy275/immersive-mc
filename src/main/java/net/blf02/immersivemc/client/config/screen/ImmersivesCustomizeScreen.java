@@ -5,9 +5,13 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.TranslationTextComponent;
+
+import java.util.List;
 
 public class ImmersivesCustomizeScreen extends Screen {
 
@@ -54,6 +58,11 @@ public class ImmersivesCustomizeScreen extends Screen {
                 this.width / 2, 8, 0xFFFFFF);
 
         super.render(stack, mouseX, mouseY, partialTicks);
+
+        List<IReorderingProcessor> list = SettingsScreen.tooltipAt(this.list, mouseX, mouseY);
+        if (list != null) {
+            this.renderTooltip(stack, list, mouseX, mouseY);
+        }
     }
 
     @Override
