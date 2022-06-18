@@ -33,8 +33,10 @@ public class ImmersiveMC {
     public static final String MOD_ID = "immersivemc";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
+    public static final String globalKeyCategory = "key.categories." + MOD_ID;
     public static final String vrKeyCategory = "key.categories." + MOD_ID + ".vr";
     public static KeyBinding SUMMON_BACKPACK = null;
+    public static KeyBinding OPEN_SETTINGS = null;
 
     public ImmersiveMC() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
@@ -53,10 +55,13 @@ public class ImmersiveMC {
         // Map to a very obscure key, so it has no conflicts for VR users
         SUMMON_BACKPACK = new KeyBinding("key." + MOD_ID + ".backpack", KeyConflictContext.IN_GAME,
                 InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_F23, vrKeyCategory);
+        OPEN_SETTINGS = new KeyBinding("key." + MOD_ID + ".config", KeyConflictContext.IN_GAME,
+                InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_COMMA, globalKeyCategory);
         event.enqueueWork(() -> {
             MinecraftForge.EVENT_BUS.register(new ClientLogicSubscriber());
             MinecraftForge.EVENT_BUS.register(new ClientRenderSubscriber());
             ClientRegistry.registerKeyBinding(SUMMON_BACKPACK);
+            ClientRegistry.registerKeyBinding(OPEN_SETTINGS);
         });
     }
 

@@ -31,6 +31,10 @@ public class ImmersivesConfigScreen extends Screen {
     protected void init() {
         super.init();
         this.notInWorld = Minecraft.getInstance().level == null && Minecraft.getInstance().player == null;
+        this.addButton(new Button(
+                (this.width - BUTTON_WIDTH) / 2, this.height - 26,
+                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("gui.done"),
+                (button) -> this.onClose()));
         if (this.notInWorld) {
             initNotInWorld();
         }
@@ -43,11 +47,6 @@ public class ImmersivesConfigScreen extends Screen {
         initOptionsList();
 
         this.children.add(this.list);
-
-        this.addButton(new Button(
-                (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("gui.done"),
-                (button) -> this.onClose()));
     }
 
     protected void initOptionsList() {
@@ -84,9 +83,11 @@ public class ImmersivesConfigScreen extends Screen {
                     this.width / 2, this.height / 2, 0xFFFFFF);
         }
 
-        List<IReorderingProcessor> list = SettingsScreen.tooltipAt(this.list, mouseX, mouseY);
-        if (list != null) {
-            this.renderTooltip(stack, list, mouseX, mouseY);
+        if (this.list != null) {  // Could be null if we're in a world
+            List<IReorderingProcessor> list = SettingsScreen.tooltipAt(this.list, mouseX, mouseY);
+            if (list != null) {
+                this.renderTooltip(stack, list, mouseX, mouseY);
+            }
         }
 
         super.render(stack, mouseX, mouseY, partialTicks);

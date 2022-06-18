@@ -2,6 +2,9 @@
   "key.categories.immersivemc.vr": "ImmersiveMC VR Bindings",
   "key.immersivemc.backpack": "Open/Close Bag",
 
+  "key.categories.immersivemc": "ImmersiveMC Bindings",
+  "key.immersivemc.config": "ImmersiveMC Settings",
+
   "screen.immersivemc.config.title": "ImmersiveMC Config",
   "config.immersivemc.backpack": "Customize Bag",
   "config.immersivemc.immersives": "Enable/Disable Immersives",

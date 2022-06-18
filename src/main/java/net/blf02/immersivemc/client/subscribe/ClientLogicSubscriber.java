@@ -2,6 +2,7 @@ package net.blf02.immersivemc.client.subscribe;
 
 import net.blf02.immersivemc.ImmersiveMC;
 import net.blf02.immersivemc.client.ClientUtil;
+import net.blf02.immersivemc.client.config.screen.ConfigScreen;
 import net.blf02.immersivemc.client.immersive.*;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
@@ -60,6 +61,11 @@ public class ClientLogicSubscriber {
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || event.player.level instanceof ServerWorld) return;
+
+        if (ImmersiveMC.OPEN_SETTINGS.isDown() && Minecraft.getInstance().screen == null) {
+            Minecraft.getInstance().setScreen(new ConfigScreen(null));
+        }
+
         if (ClientUtil.immersiveLeftClickCooldown > 0) {
             ClientUtil.immersiveLeftClickCooldown--;
         }

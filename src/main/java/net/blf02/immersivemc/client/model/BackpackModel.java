@@ -2,13 +2,13 @@ package net.blf02.immersivemc.client.model;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 // 99% exported from BlockBench
-public class BackpackModel extends EntityModel<Entity> {
+public class BackpackModel extends Model {
 
     public static final ResourceLocation textureLocation = new ResourceLocation("textures/block/white_wool.png");
 
@@ -18,6 +18,7 @@ public class BackpackModel extends EntityModel<Entity> {
     private final ModelRenderer bb_main;
 
     public BackpackModel() {
+        super(RenderType::entityCutoutNoCull);
         texWidth = 32;
         texHeight = 32;
 
@@ -48,11 +49,6 @@ public class BackpackModel extends EntityModel<Entity> {
         bb_main = new ModelRenderer(this);
         bb_main.setPos(0.0F, 24.0F, 0.0F);
         bb_main.texOffs(0, 0).addBox(-6.0F, 11.0F, -6.0F, 12.0F, 1.0F, 12.0F, 0.0F, false);
-    }
-
-    @Override
-    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
-        //previously the render function, render code was moved to a method below
     }
 
     @Override

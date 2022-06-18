@@ -20,9 +20,8 @@ import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -287,7 +286,7 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         }
     }
 
-    public static EntityModel<Entity> getBackpackModel() {
+    public static Model getBackpackModel() {
         if (ActiveConfig.useLowDetailBackpack) {
             return modelLowDetail;
         }
