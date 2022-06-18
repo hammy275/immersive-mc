@@ -30,6 +30,15 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
     public abstract boolean shouldRender(I info, boolean isInVR);
 
     @Override
+    protected boolean inputSlotHasItem(I info, int slotNum) {
+        if (info.getTileEntity() instanceof IInventory) {
+            return info.items[slotNum] != null && !info.items[slotNum].isEmpty();
+        } else {
+            return true; // Jukebox always has an "item"
+        }
+    }
+
+    @Override
     protected void doTick(I info, boolean isInVR) {
         super.doTick(info, isInVR);
         if (info.getTileEntity() instanceof IInventory) {

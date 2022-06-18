@@ -149,6 +149,12 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     }
 
     @Override
+    protected boolean inputSlotHasItem(CraftingInfo info, int slotNum) {
+        return ClientStorage.craftingStorage[slotNum] != null &&
+                !ClientStorage.craftingStorage[slotNum].isEmpty();
+    }
+
+    @Override
     public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
         ClientSwap.craftingSwap(closest, hand, info.getBlockPosition());
     }

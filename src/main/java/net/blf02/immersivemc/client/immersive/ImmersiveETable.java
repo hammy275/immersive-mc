@@ -178,6 +178,11 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
     }
 
     @Override
+    protected boolean inputSlotHasItem(EnchantingInfo info, int slotNum) {
+        return ClientStorage.eTableItem != null && !ClientStorage.eTableItem.isEmpty();
+    }
+
+    @Override
     public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
         ClientSwap.eTableSwap(closest, hand, info.getBlockPosition());
     }

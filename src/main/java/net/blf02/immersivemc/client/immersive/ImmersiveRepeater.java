@@ -108,6 +108,11 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
+    protected boolean inputSlotHasItem(RepeaterInfo info, int slotNum) {
+        return false;
+    }
+
+    @Override
     public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
         // NOOP. Handled in doTick().
     }

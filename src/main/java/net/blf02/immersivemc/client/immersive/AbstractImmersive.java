@@ -62,6 +62,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected abstract boolean enabledInConfig();
 
+    protected abstract boolean inputSlotHasItem(I info, int slotNum);
+
     /**
      * Initializes an `info` instance after it's constructed.
      * Useful for immersives that have non-changing hitboxes/positions.
@@ -89,21 +91,13 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 doTick(info, isInVR);
                 info.setInputSlots();
                 if (ActiveConfig.showPlacementGuide) {
-                    if (info.ticksActive % 200 == 0 && info.ticksActive != 0 && info.currentSlotParticle == -1) {
-                        info.currentSlotParticle = 0;
-                    } else if (info.currentSlotParticle > -1) {
-                        // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
-                        int maxIndex = -1 + info.getInputSlots().length;
-                        if (maxIndex != -1) {
-                            Vector3d pos = info.getInputSlots()[info.currentSlotParticle].getCenter();
-                            Minecraft.getInstance().level.addParticle(new RedstoneParticleData(0, 1, 1, 1),
+                    // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
+                    for (int i = 0; i < info.getInputSlots().length; i++) {
+                        if (!this.inputSlotHasItem(info, i)) {
+                            AxisAlignedBB itemBox = info.getInputSlots()[i];
+                            Vector3d pos = itemBox.getCenter();
+                            Minecraft.getInstance().level.addParticle(new RedstoneParticleData(0, 1, 1, 0.2f),
                                     pos.x, pos.y, pos.z, 0.01, 0.01, 0.01);
-
-                            if (info.ticksActive % 10 == 0) {
-                                if (++info.currentSlotParticle > maxIndex) {
-                                    info.currentSlotParticle = -1;
-                                }
-                            }
                         }
                     }
                 }

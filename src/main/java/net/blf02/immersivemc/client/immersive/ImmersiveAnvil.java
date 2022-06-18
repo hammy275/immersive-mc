@@ -156,6 +156,12 @@ public class ImmersiveAnvil extends AbstractImmersive<AnvilInfo> {
     }
 
     @Override
+    protected boolean inputSlotHasItem(AnvilInfo info, int slotNum) {
+        ItemStack[] items = info.isReallyAnvil ? ClientStorage.anvilStorage : ClientStorage.smithingStorage;
+        return items[slotNum] != null && !items[slotNum].isEmpty();
+    }
+
+    @Override
     public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
         AnvilInfo infoA = (AnvilInfo) info;
         ClientSwap.anvilSwap(closest, hand, infoA.anvilPos);

@@ -271,6 +271,17 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
+    protected boolean inputSlotHasItem(BackpackInfo info, int slotNum) {
+        if (Minecraft.getInstance().player == null) return false;
+        if (slotNum <= 26) {
+            return !Minecraft.getInstance().player.inventory.getItem(slotNum + 9).isEmpty();
+        } else { // Crafting input
+            int tableIndex = slotNum - 27;
+            return info.craftingInput[tableIndex] != null && !info.craftingInput[tableIndex].isEmpty();
+        }
+    }
+
+    @Override
     protected void initInfo(BackpackInfo info) {
         // NOOP. Backpack moves constantly, so we need to update things for it every tick.
     }

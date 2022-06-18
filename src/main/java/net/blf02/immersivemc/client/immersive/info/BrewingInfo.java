@@ -18,11 +18,7 @@ public class BrewingInfo extends AbstractTileEntityImmersiveInfo<BrewingStandTil
 
     @Override
     public void setInputSlots() {
-        AxisAlignedBB[] inputs = new AxisAlignedBB[5];
-        System.arraycopy(bottleHitboxes, 0, inputs, 0, bottleHitboxes.length);
-        inputs[3] = ingredientHitbox;
-        inputs[4] = fuelHitbox;
-        this.inputHitboxes = inputs;
+        this.inputHitboxes = getAllHitboxes();
     }
 
     @Override
