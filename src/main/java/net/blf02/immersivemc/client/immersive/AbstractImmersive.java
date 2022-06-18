@@ -39,7 +39,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected final List<I> infos;
     public final int maxImmersives;
-    public int currentSlotParticle = -1;
 
     public AbstractImmersive(int maxImmersives) {
         Immersives.IMMERSIVES.add(this);
@@ -90,19 +89,20 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 doTick(info, isInVR);
                 info.setInputSlots();
                 if (ActiveConfig.showPlacementGuide) {
-                    if (info.ticksActive % 200 == 0 && info.ticksActive != 0 && currentSlotParticle == -1) {
-                        currentSlotParticle = 0;
-                    } else if (currentSlotParticle > -1) {
+                    if (info.ticksActive % 200 == 0 && info.ticksActive != 0 && info.currentSlotParticle == -1) {
+                        info.currentSlotParticle = 0;
+                    } else if (info.currentSlotParticle > -1) {
                         // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
                         int maxIndex = -1 + info.getInputSlots().length;
+                        if (maxIndex != -1) {
+                            Vector3d pos = info.getInputSlots()[info.currentSlotParticle].getCenter();
+                            Minecraft.getInstance().level.addParticle(new RedstoneParticleData(0, 1, 1, 1),
+                                    pos.x, pos.y, pos.z, 0.01, 0.01, 0.01);
 
-                        Vector3d pos = info.getInputSlots()[currentSlotParticle].getCenter();
-                        Minecraft.getInstance().level.addParticle(new RedstoneParticleData(0, 1, 1, 1),
-                                pos.x, pos.y, pos.z, 0.01, 0.01, 0.01);
-
-                        if (info.ticksActive % 10 == 0) {
-                            if (++currentSlotParticle > maxIndex) {
-                                currentSlotParticle = -1;
+                            if (info.ticksActive % 10 == 0) {
+                                if (++info.currentSlotParticle > maxIndex) {
+                                    info.currentSlotParticle = -1;
+                                }
                             }
                         }
                     }

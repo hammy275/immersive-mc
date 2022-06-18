@@ -11,6 +11,7 @@ public abstract class AbstractImmersiveInfo {
     public int ticksActive = 0;
     public boolean initCompleted = false;
     protected AxisAlignedBB[] inputHitboxes = null;
+    public int currentSlotParticle = -1;
 
     public AbstractImmersiveInfo(int ticksToExist) {
         this.ticksLeft = ticksToExist;
