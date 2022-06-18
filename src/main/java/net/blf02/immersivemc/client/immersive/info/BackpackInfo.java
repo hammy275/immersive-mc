@@ -8,6 +8,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 
+import java.util.Arrays;
+
 public class BackpackInfo extends AbstractImmersiveInfo {
 
     protected final Vector3d[] positions = new Vector3d[32];
@@ -32,6 +34,12 @@ public class BackpackInfo extends AbstractImmersiveInfo {
 
     public BackpackInfo() {
         super(ClientConstants.ticksToRenderBackpack);
+    }
+
+    @Override
+    public void setInputSlots() {
+        this.inputHitboxes =
+                Arrays.copyOfRange(hitboxes, 0, 31); // Disinclude last hitbox, since that's crafting output
     }
 
     @Override

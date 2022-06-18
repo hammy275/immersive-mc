@@ -5,6 +5,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EnchantingInfo extends AbstractImmersiveInfo {
@@ -24,6 +25,11 @@ public class EnchantingInfo extends AbstractImmersiveInfo {
     public EnchantingInfo(BlockPos pos, int ticksToExist) {
         super(ticksToExist);
         this.tablePos = pos;
+    }
+
+    @Override
+    public void setInputSlots() {
+        this.inputHitboxes = Arrays.copyOfRange(hitboxes, 0, 1);
     }
 
     @Override

@@ -10,9 +10,20 @@ public abstract class AbstractImmersiveInfo {
     protected int countdown = 10; // Used for transitions for the items
     public int ticksActive = 0;
     public boolean initCompleted = false;
+    protected AxisAlignedBB[] inputHitboxes = null;
 
     public AbstractImmersiveInfo(int ticksToExist) {
         this.ticksLeft = ticksToExist;
+    }
+
+    public abstract void setInputSlots();
+
+    /**
+     * Gets all the slot IDs that represent inputs. Used for guiding.
+     * @return An array of all hitboxes that represent inputs
+     */
+    public AxisAlignedBB[] getInputSlots() {
+        return this.inputHitboxes;
     }
 
     public int getTicksLeft() {

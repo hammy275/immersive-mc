@@ -12,6 +12,11 @@ public class JukeboxInfo extends AbstractTileEntityImmersiveInfo<JukeboxTileEnti
     }
 
     @Override
+    public void setInputSlots() {
+        this.inputHitboxes = new AxisAlignedBB[]{discHitbox};
+    }
+
+    @Override
     public AxisAlignedBB getHibtox(int slot) {
         return discHitbox;
     }

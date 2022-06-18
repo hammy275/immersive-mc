@@ -17,6 +17,11 @@ public class ImmersiveFurnaceInfo extends AbstractTileEntityImmersiveInfo<Abstra
         this.forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
     }
 
+    @Override
+    public void setInputSlots() {
+        this.inputHitboxes = new AxisAlignedBB[]{this.toSmeltHitbox, this.fuelHitbox};
+    }
+
     public AxisAlignedBB getHibtox(int slot) {
         switch (slot) {
             case 0:

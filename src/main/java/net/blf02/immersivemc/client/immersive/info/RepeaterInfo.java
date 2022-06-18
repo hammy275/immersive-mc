@@ -18,6 +18,11 @@ public class RepeaterInfo extends AbstractImmersiveInfo {
     }
 
     @Override
+    public void setInputSlots() {
+        this.inputHitboxes = hitboxes;
+    }
+
+    @Override
     public AxisAlignedBB getHibtox(int index) {
         return hitboxes[index];
     }

@@ -5,6 +5,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.util.Arrays;
+
 public class AnvilInfo extends AbstractImmersiveInfo {
 
     public final BlockPos anvilPos;
@@ -20,6 +22,11 @@ public class AnvilInfo extends AbstractImmersiveInfo {
     public AnvilInfo(BlockPos pos, int ticksToExist) {
         super(ticksToExist);
         this.anvilPos = pos;
+    }
+
+    @Override
+    public void setInputSlots() {
+        this.inputHitboxes = Arrays.copyOfRange(hitboxes, 0, 2);
     }
 
     @Override

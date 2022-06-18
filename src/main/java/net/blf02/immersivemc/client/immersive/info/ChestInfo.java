@@ -40,6 +40,19 @@ public class ChestInfo extends AbstractTileEntityImmersiveInfo<TileEntity> {
     }
 
     @Override
+    public void setInputSlots() {
+        int size = other == null ? 9 : 18;
+        AxisAlignedBB[] inputs = new AxisAlignedBB[size];
+        int i = 0;
+        for (AxisAlignedBB aabb : hitboxes) {
+            if (aabb != null) {
+                inputs[i++] = aabb;
+            }
+        }
+        this.inputHitboxes = inputs;
+    }
+
+    @Override
     public AxisAlignedBB getHibtox(int slot) {
         return hitboxes[slot];
     }
