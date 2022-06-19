@@ -178,8 +178,8 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
     }
 
     @Override
-    protected boolean inputSlotHasItem(EnchantingInfo info, int slotNum) {
-        return ClientStorage.eTableItem != null && !ClientStorage.eTableItem.isEmpty();
+    protected boolean slotShouldRenderHelpHitbox(EnchantingInfo info, int slotNum) {
+        return ClientStorage.eTableItem == null || ClientStorage.eTableItem.isEmpty();
     }
 
     @Override

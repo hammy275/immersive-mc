@@ -44,6 +44,11 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
     }
 
     @Override
+    protected boolean slotShouldRenderHelpHitbox(JukeboxInfo info, int slotNum) {
+        return VRPluginVerify.clientInVR;
+    }
+
+    @Override
     protected boolean enabledInConfig() {
         return ActiveConfig.useJukeboxImmersion;
     }

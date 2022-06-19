@@ -30,11 +30,12 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
     public abstract boolean shouldRender(I info, boolean isInVR);
 
     @Override
-    protected boolean inputSlotHasItem(I info, int slotNum) {
+    protected boolean slotShouldRenderHelpHitbox(I info, int slotNum) {
         if (info.getTileEntity() instanceof IInventory) {
-            return info.items[slotNum] != null && !info.items[slotNum].isEmpty();
+            return info.items[slotNum] == null || info.items[slotNum].isEmpty();
         } else {
-            return true; // Jukebox always has an "item"
+            // Should be implemented on sub-class
+            throw new IllegalArgumentException("Can't check input slot has item for non-IInventory's!");
         }
     }
 

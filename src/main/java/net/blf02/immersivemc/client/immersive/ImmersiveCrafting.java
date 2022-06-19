@@ -149,9 +149,9 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     }
 
     @Override
-    protected boolean inputSlotHasItem(CraftingInfo info, int slotNum) {
-        return ClientStorage.craftingStorage[slotNum] != null &&
-                !ClientStorage.craftingStorage[slotNum].isEmpty();
+    protected boolean slotShouldRenderHelpHitbox(CraftingInfo info, int slotNum) {
+        return ClientStorage.craftingStorage[slotNum] == null ||
+                ClientStorage.craftingStorage[slotNum].isEmpty();
     }
 
     @Override

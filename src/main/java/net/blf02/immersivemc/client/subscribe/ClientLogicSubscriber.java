@@ -223,6 +223,7 @@ public class ClientLogicSubscriber {
                     InfoTriggerHitboxes triggerInfo = (InfoTriggerHitboxes) info;
                     Optional<Integer> triggerHit = Util.getFirstIntersect(data.position(), triggerInfo.getTriggerHitboxes());
                     if (triggerHit.isPresent()) {
+                        singleton.onAnyRightClick(info);
                         singleton.handleTriggerHitboxRightClick(triggerInfo, player, triggerHit.get());
                         return true;
                     }
@@ -266,12 +267,14 @@ public class ClientLogicSubscriber {
                     if (info.hasHitboxes()) {
                         Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
                         if (closest.isPresent()) {
+                            singleton.onAnyRightClick(info);
                             singleton.handleRightClick(info, player, closest.get(), Hand.MAIN_HAND);
                             return singleton.getCooldownDesktop();
                         } else if (info instanceof InfoTriggerHitboxes) {
                             InfoTriggerHitboxes triggerInfo = (InfoTriggerHitboxes) info;
                             Optional<Integer> closestTrigger = Util.rayTraceClosest(start, end, triggerInfo.getTriggerHitboxes());
                             if (closestTrigger.isPresent()) {
+                                singleton.onAnyRightClick(info);
                                 singleton.handleTriggerHitboxRightClick(triggerInfo, player, closestTrigger.get());
                                 return singleton.getCooldownDesktop();
                             }

@@ -108,7 +108,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
-    protected boolean inputSlotHasItem(RepeaterInfo info, int slotNum) {
+    protected boolean slotShouldRenderHelpHitbox(RepeaterInfo info, int slotNum) {
         return false;
     }
 

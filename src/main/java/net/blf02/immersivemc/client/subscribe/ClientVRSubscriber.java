@@ -64,6 +64,7 @@ public class ClientVRSubscriber {
                 Vector3d pos = controller.position();
                 Optional<Integer> hit = Util.getFirstIntersect(pos, info.getAllHitboxes());
                 if (hit.isPresent()) {
+                    singleton.onAnyRightClick(info);
                     singleton.handleRightClick(info, Minecraft.getInstance().player, hit.get(),
                             c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND);
                     cooldown = singleton.getCooldownVR();

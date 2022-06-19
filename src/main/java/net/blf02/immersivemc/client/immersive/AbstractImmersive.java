@@ -17,7 +17,6 @@ import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -29,6 +28,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 /**
@@ -62,7 +62,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected abstract boolean enabledInConfig();
 
-    protected abstract boolean inputSlotHasItem(I info, int slotNum);
+    protected abstract boolean slotShouldRenderHelpHitbox(I info, int slotNum);
 
     /**
      * Initializes an `info` instance after it's constructed.
@@ -71,6 +71,14 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param info Info instance that should be initialized
      */
     protected abstract void initInfo(I info);
+
+    /**
+     * Called just before handleRightClick() and handleTriggerHitboxRightClick()
+     * @param info Info instance that had a hitbox click
+     */
+    public void onAnyRightClick(AbstractImmersiveInfo info) {
+        info.ticksSinceLastClick = 0;
+    }
 
     public abstract void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest,
                                           Hand hand);
@@ -90,17 +98,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             if (Minecraft.getInstance().level != null && hasValidBlock(info, Minecraft.getInstance().level)) {
                 doTick(info, isInVR);
                 info.setInputSlots();
-                if (ActiveConfig.showPlacementGuide) {
-                    // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
-                    for (int i = 0; i < info.getInputSlots().length; i++) {
-                        if (!this.inputSlotHasItem(info, i)) {
-                            AxisAlignedBB itemBox = info.getInputSlots()[i];
-                            Vector3d pos = itemBox.getCenter();
-                            Minecraft.getInstance().level.addParticle(new RedstoneParticleData(0, 1, 1, 0.2f),
-                                    pos.x, pos.y, pos.z, 0.01, 0.01, 0.01);
-                        }
-                    }
-                }
             } else {
                 info.remove();
             }
@@ -127,6 +124,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             info.changeTicksLeft(-1);
         }
         info.ticksActive++;
+        info.ticksSinceLastClick++;
     }
 
     // Below this line are utility functions. Everything above MUST be overwritten, and have super() called!
@@ -140,8 +138,18 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         if (shouldRender(info, isInVR)) {
             try {
                 render(info, stack, isInVR);
-            } catch (NullPointerException ignored) {}
-            // Until we have some sort of lock (if we ever do), we need to try-catch NPEs during rendering
+                if (ActiveConfig.showPlacementGuide && info.ticksSinceLastClick > 100) {
+                    // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
+                    for (int i = 0; i < info.getInputSlots().length; i++) {
+                        if (slotShouldRenderHelpHitbox(info, i)) {
+                            AxisAlignedBB itemBox = info.getInputSlots()[i];
+                            AxisAlignedBB toShow = itemBox.deflate(itemBox.getSize() / 4);
+                            renderItemGuide(stack, toShow);
+                        }
+                    }
+                }
+            } catch (NullPointerException | ConcurrentModificationException ignored) {}
+            // Until we have some sort of lock (if we ever do), we need to try-catch NPEs and CMEs during rendering
             // in case if the other thread modifies things while we render
 
         }
@@ -250,11 +258,20 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         renderHitbox(stack, hitbox, pos);
     }
 
+    protected void renderItemGuide(MatrixStack stack, AxisAlignedBB hitbox) {
+        renderHitbox(stack, hitbox, hitbox.getCenter(), true, 0, 1, 1);
+    }
+
     protected void renderHitbox(MatrixStack stack, AxisAlignedBB hitbox, Vector3d pos) {
         renderHitbox(stack, hitbox, pos, false);
     }
 
     protected void renderHitbox(MatrixStack stack, AxisAlignedBB hitbox, Vector3d pos, boolean alwaysRender) {
+        renderHitbox(stack, hitbox, pos, alwaysRender, 1, 1, 1);
+    }
+
+    protected void renderHitbox(MatrixStack stack, AxisAlignedBB hitbox, Vector3d pos, boolean alwaysRender,
+                                float red, float green, float blue) {
         if ((Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() || alwaysRender) &&
                 hitbox != null && pos != null) {
             ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
@@ -266,7 +283,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().renderBuffers().bufferSource();
             WorldRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
                     hitbox.move(-pos.x, -pos.y, -pos.z),
-                    1, 1, 1, 1);
+                    red, green, blue, 1);
             buffer.endBatch();
             stack.popPose();
         }
