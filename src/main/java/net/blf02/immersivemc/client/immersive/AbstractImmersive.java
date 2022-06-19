@@ -250,9 +250,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                     OverlayTexture.NO_OVERLAY,
                     stack, Minecraft.getInstance().renderBuffers().bufferSource());
 
-            // Actually draw what's in our buffer to the screen
-            Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
-
             stack.popPose();
 
             if (renderItemCounts && item.getCount() > 1) {
@@ -275,7 +272,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
                     0, 1, 1, alpha, (float) (hitbox.getSize() / 2f));
             stack.popPose();
-            buffer.endBatch();
         }
     }
 
@@ -301,7 +297,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             WorldRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
                     hitbox.move(-pos.x, -pos.y, -pos.z),
                     red, green, blue, 1);
-            buffer.endBatch();
             stack.popPose();
         }
     }
@@ -323,7 +318,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         font.drawInBatch(text, size, 0, 0xFFFFFFFF, false,
                 stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), false,
                 0, 15728880);
-        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
         stack.popPose();
     }
 

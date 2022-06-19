@@ -261,7 +261,6 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
                 15728880, OverlayTexture.NO_OVERLAY,
                 1, 1, 1, 1);
 
-        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
         stack.popPose();
     }
 

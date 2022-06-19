@@ -5,6 +5,7 @@ import net.blf02.immersivemc.client.immersive.AbstractImmersive;
 import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -36,6 +37,7 @@ public class ClientRenderSubscriber {
             // Skip rendering if the list is modified mid-render
             // It's fine, since we were only going to read it anyway!!
         }
+        Minecraft.getInstance().renderBuffers().bufferSource().endBatch(); // Write all our buffers!
 
     }
 
