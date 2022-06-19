@@ -205,7 +205,7 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
     @Override
     protected void render(BackpackInfo info, MatrixStack stack, boolean isInVR) {
         for (int i = 0; i <= 31; i++) {
-            AxisAlignedBB hitbox = info.getHibtox(i);
+            AxisAlignedBB hitbox = info.getHitbox(i);
             renderHitbox(stack, hitbox, info.getPosition(i));
         }
 
@@ -214,14 +214,14 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
             if (!item.isEmpty() && info.getPosition(i) != null) {
                 final float size =
                         info.slotHovered == i ? ClientConstants.itemScaleSizeBackpackSelected : ClientConstants.itemScaleSizeBackpack;
-                renderItem(item, stack, info.getPosition(i), size, null, info.getHibtox(i), true);
+                renderItem(item, stack, info.getPosition(i), size, null, info.getHitbox(i), true);
             }
         }
 
         for (int i = 27; i <= 31; i++) {
             ItemStack item = i == 31 ? info.craftingOutput : info.craftingInput[i - 27];
             if (!item.isEmpty() && info.getPosition(i) != null) {
-                renderItem(item, stack, info.getPosition(i), ClientConstants.itemScaleSizeBackpack, null, info.getHibtox(i), i == 31);
+                renderItem(item, stack, info.getPosition(i), ClientConstants.itemScaleSizeBackpack, null, info.getHitbox(i), i == 31);
             }
         }
 

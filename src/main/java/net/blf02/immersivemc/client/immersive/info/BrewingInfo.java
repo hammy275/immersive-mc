@@ -22,7 +22,7 @@ public class BrewingInfo extends AbstractTileEntityImmersiveInfo<BrewingStandTil
     }
 
     @Override
-    public AxisAlignedBB getHibtox(int slot) {
+    public AxisAlignedBB getHitbox(int slot) {
         if (slot < 0 || slot > 4) {
             throw new IllegalArgumentException("Only supports slots 0-4");
         } else if (slot < 3) {

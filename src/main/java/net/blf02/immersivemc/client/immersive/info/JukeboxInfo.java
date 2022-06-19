@@ -17,7 +17,7 @@ public class JukeboxInfo extends AbstractTileEntityImmersiveInfo<JukeboxTileEnti
     }
 
     @Override
-    public AxisAlignedBB getHibtox(int slot) {
+    public AxisAlignedBB getHitbox(int slot) {
         return discHitbox;
     }
 

@@ -132,12 +132,12 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
 
     @Override
     protected void render(CraftingInfo info, MatrixStack stack, boolean isInVR) {
-        float itemSize = ClientConstants.itemScaleSizeCrafting / info.getCountdown();
+        float itemSize = ClientConstants.itemScaleSizeCrafting / info.getItemTransitionCountdown();
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
 
         for (int i = 0; i < 9; i++) {
             renderItem(ClientStorage.craftingStorage[i], stack, info.getPosition(i),
-                    itemSize, forward, Direction.UP, info.getHibtox(i), false);
+                    itemSize, forward, Direction.UP, info.getHitbox(i), false);
         }
         renderItem(ClientStorage.craftingOutput, stack, info.resultPosition,
                 itemSize * 3, forward, info.resultHitbox, true);

@@ -58,7 +58,7 @@ public class ChestInfo extends AbstractTileEntityImmersiveInfo<TileEntity> {
     }
 
     @Override
-    public AxisAlignedBB getHibtox(int slot) {
+    public AxisAlignedBB getHitbox(int slot) {
         return hitboxes[slot];
     }
 

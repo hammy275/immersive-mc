@@ -124,7 +124,7 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
         Vector3d end = player.getEyePosition(1).add(viewVec.x * dist, viewVec.y * dist,
                 viewVec.z * dist);
         Optional<Integer> closest = Util.rayTraceClosest(start, end,
-                info.getHibtox(1), info.getHibtox(2), info.getHibtox(3));
+                info.getHitbox(1), info.getHitbox(2), info.getHitbox(3));
         closest.ifPresent(targetSlot -> info.lookingAtIndex = targetSlot);
     }
 
@@ -142,14 +142,14 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
 
     @Override
     protected void render(EnchantingInfo info, MatrixStack stack, boolean isInVR) {
-        float itemSize = ClientConstants.itemScaleSizeETable / info.getCountdown();
+        float itemSize = ClientConstants.itemScaleSizeETable / info.getItemTransitionCountdown();
 
         if (!ClientStorage.eTableEnchCopy.isEmpty()) { // If one is active, all are
             for (int i = 0; i <= 2; i++) {
                 ClientStorage.ETableInfo enchInfo =
                         i == 0 ? ClientStorage.weakInfo : i == 1 ? ClientStorage.midInfo : ClientStorage.strongInfo;
                 renderItem(ClientStorage.eTableEnchCopy, stack, info.getPosition(i + 1), itemSize,
-                        getForwardFromPlayer(Minecraft.getInstance().player), info.getHibtox(i + 1), false);
+                        getForwardFromPlayer(Minecraft.getInstance().player), info.getHitbox(i + 1), false);
                 if (info.lookingAtIndex == i) {
                     if (enchInfo.isPresent()) {
                         renderText(new StringTextComponent(enchInfo.levelsNeeded + " (" + (i + 1) + ")"),
@@ -168,7 +168,9 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
         }
         if (!ClientStorage.eTableItem.isEmpty()) {
             renderItem(ClientStorage.eTableItem, stack, info.getPosition(0), itemSize,
-                    getForwardFromPlayer(Minecraft.getInstance().player), info.getHibtox(0), false);
+                    getForwardFromPlayer(Minecraft.getInstance().player), info.getHitbox(0), false);
+        } else {
+            renderHitbox(stack, info.getHitbox(0), info.getPosition(0));
         }
     }
 

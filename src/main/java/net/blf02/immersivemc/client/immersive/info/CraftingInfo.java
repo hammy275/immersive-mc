@@ -31,7 +31,7 @@ public class CraftingInfo extends AbstractImmersiveInfo implements InfoTriggerHi
     }
 
     @Override
-    public AxisAlignedBB getHibtox(int slot) {
+    public AxisAlignedBB getHitbox(int slot) {
         return inputs[slot];
     }
 

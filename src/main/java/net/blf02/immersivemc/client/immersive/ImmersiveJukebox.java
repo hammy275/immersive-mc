@@ -40,12 +40,12 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
 
     @Override
     protected void render(JukeboxInfo info, MatrixStack stack, boolean isInVR) {
-        renderHitbox(stack, info.getHibtox(0), info.getPosition(0));
+        renderHitbox(stack, info.getHitbox(0), info.getPosition(0));
     }
 
     @Override
     protected boolean slotShouldRenderHelpHitbox(JukeboxInfo info, int slotNum) {
-        return VRPluginVerify.clientInVR;
+        return false;
     }
 
     @Override

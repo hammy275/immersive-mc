@@ -30,7 +30,7 @@ public class AnvilInfo extends AbstractImmersiveInfo {
     }
 
     @Override
-    public AxisAlignedBB getHibtox(int slot) {
+    public AxisAlignedBB getHitbox(int slot) {
         return hitboxes[slot];
     }
 

@@ -7,7 +7,7 @@ import net.minecraft.util.math.vector.Vector3d;
 public abstract class AbstractImmersiveInfo {
 
     protected int ticksLeft;
-    protected int countdown = 10; // Used for transitions for the items
+    protected int itemTransitionCountdown = 10; // Used for transitions for the items
     public int ticksActive = 0;
     public boolean initCompleted = false;
     protected AxisAlignedBB[] inputHitboxes = null;
@@ -39,7 +39,7 @@ public abstract class AbstractImmersiveInfo {
         this.ticksLeft = value;
     }
 
-    public abstract AxisAlignedBB getHibtox(int slot);
+    public abstract AxisAlignedBB getHitbox(int slot);
 
     public abstract AxisAlignedBB[] getAllHitboxes();
 
@@ -55,12 +55,12 @@ public abstract class AbstractImmersiveInfo {
 
     public abstract boolean hasPositions();
 
-    public int getCountdown() {
-        return this.countdown;
+    public int getItemTransitionCountdown() {
+        return this.itemTransitionCountdown;
     }
 
-    public void changeCountdown(int amount) {
-        this.countdown += amount;
+    public void changeItemTransitionCountdown(int amount) {
+        this.itemTransitionCountdown += amount;
     }
 
     public abstract boolean readyToRender();

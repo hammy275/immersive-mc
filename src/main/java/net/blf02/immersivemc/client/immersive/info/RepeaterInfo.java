@@ -23,7 +23,7 @@ public class RepeaterInfo extends AbstractImmersiveInfo {
     }
 
     @Override
-    public AxisAlignedBB getHibtox(int index) {
+    public AxisAlignedBB getHitbox(int index) {
         return hitboxes[index];
     }
 

@@ -134,7 +134,7 @@ public class ImmersiveAnvil extends AbstractImmersive<AnvilInfo> {
 
     @Override
     protected void render(AnvilInfo info, MatrixStack stack, boolean isInVR) {
-        float itemSize = ClientConstants.itemScaleSizeAnvil / info.getCountdown();
+        float itemSize = ClientConstants.itemScaleSizeAnvil / info.getItemTransitionCountdown();
 
         // Render experience levels needed if we have an experience cost to show
         if (info.isReallyAnvil && ClientStorage.anvilCost > 0) {
@@ -146,7 +146,7 @@ public class ImmersiveAnvil extends AbstractImmersive<AnvilInfo> {
         for (int i = 0; i <= 2; i++) {
             ItemStack item = info.isReallyAnvil ? ClientStorage.anvilStorage[i] : ClientStorage.smithingStorage[i];
             renderItem(item, stack, info.getPosition(i),
-                    itemSize, info.renderDirection, Direction.UP, info.getHibtox(i), false);
+                    itemSize, info.renderDirection, Direction.UP, info.getHitbox(i), false);
         }
     }
 

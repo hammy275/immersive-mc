@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
+import net.blf02.immersivemc.client.model.Cube1x1;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
@@ -39,6 +40,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected final List<I> infos;
     public final int maxImmersives;
+    protected static final Cube1x1 cubeModel = new Cube1x1();
 
     public AbstractImmersive(int maxImmersives) {
         Immersives.IMMERSIVES.add(this);
@@ -114,10 +116,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected void doTick(I info, boolean isInVR) {
         // Set the cooldown (transition time) based on how long we've existed or until we stop existing
-        if (info.getCountdown() > 1 && info.getTicksLeft() > 20) {
-            info.changeCountdown(-1);
-        } else if (info.getCountdown() < ClientConstants.transitionTime && info.getTicksLeft() <= 20) {
-            info.changeCountdown(1);
+        if (info.getItemTransitionCountdown() > 1 && info.getTicksLeft() > 20) {
+            info.changeItemTransitionCountdown(-1);
+        } else if (info.getItemTransitionCountdown() < ClientConstants.transitionTime && info.getTicksLeft() <= 20) {
+            info.changeItemTransitionCountdown(1);
         }
 
         if (info.getTicksLeft() > 0) {
@@ -143,8 +145,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                     for (int i = 0; i < info.getInputSlots().length; i++) {
                         if (slotShouldRenderHelpHitbox(info, i)) {
                             AxisAlignedBB itemBox = info.getInputSlots()[i];
-                            AxisAlignedBB toShow = itemBox.deflate(itemBox.getSize() / 4);
-                            renderItemGuide(stack, toShow);
+                            AxisAlignedBB toShow = itemBox
+                                    .move(0, itemBox.getYsize() / 2, 0);
+                            renderItemGuide(stack, toShow,
+                                    Math.min(0.2f, (info.ticksSinceLastClick - 100) * 0.05f));
+                            // Alpha value starts at 0.05f and climbs up to 0.2f
                         }
                     }
                 }
@@ -258,8 +263,20 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         renderHitbox(stack, hitbox, pos);
     }
 
-    protected void renderItemGuide(MatrixStack stack, AxisAlignedBB hitbox) {
-        renderHitbox(stack, hitbox, hitbox.getCenter(), true, 0, 1, 1);
+    protected void renderItemGuide(MatrixStack stack, AxisAlignedBB hitbox, float alpha) {
+        if (hitbox != null) {
+            ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+            Vector3d pos = hitbox.getCenter();
+            stack.pushPose();
+            stack.translate(-renderInfo.getPosition().x + pos.x,
+                    -renderInfo.getPosition().y + pos.y,
+                    -renderInfo.getPosition().z + pos.z);
+            IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+            cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
+                    0, 1, 1, alpha, (float) (hitbox.getSize() / 2f));
+            stack.popPose();
+            buffer.endBatch();
+        }
     }
 
     protected void renderHitbox(MatrixStack stack, AxisAlignedBB hitbox, Vector3d pos) {

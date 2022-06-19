@@ -22,7 +22,7 @@ public class ImmersiveFurnaceInfo extends AbstractTileEntityImmersiveInfo<Abstra
         this.inputHitboxes = new AxisAlignedBB[]{this.toSmeltHitbox, this.fuelHitbox};
     }
 
-    public AxisAlignedBB getHibtox(int slot) {
+    public AxisAlignedBB getHitbox(int slot) {
         switch (slot) {
             case 0:
                 return toSmeltHitbox;

@@ -33,7 +33,7 @@ public class EnchantingInfo extends AbstractImmersiveInfo {
     }
 
     @Override
-    public AxisAlignedBB getHibtox(int slot) {
+    public AxisAlignedBB getHitbox(int slot) {
         return this.hitboxes[slot];
     }
 

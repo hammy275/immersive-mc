@@ -109,15 +109,15 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
     }
 
     protected void render(ImmersiveFurnaceInfo info, MatrixStack stack, boolean isInVR) {
-        float size = ClientConstants.itemScaleSizeFurnace / info.getCountdown();
+        float size = ClientConstants.itemScaleSizeFurnace / info.getItemTransitionCountdown();
 
         // Render all of the items
 
-        renderItem(info.items[0], stack, info.getPosition(0), size, info.forward, info.getHibtox(0), true);
-        renderItem(info.items[1], stack, info.getPosition(1), size, info.forward, info.getHibtox(1), true);
+        renderItem(info.items[0], stack, info.getPosition(0), size, info.forward, info.getHitbox(0), true);
+        renderItem(info.items[1], stack, info.getPosition(1), size, info.forward, info.getHitbox(1), true);
         if (info.items[2] != null && !info.items[2].isEmpty()) {
             // If empty, we don't need to render, AND it might be null because of autoCenterFurnace
-            renderItem(info.items[2], stack, info.getPosition(2), size, info.forward, info.getHibtox(2), true);
+            renderItem(info.items[2], stack, info.getPosition(2), size, info.forward, info.getHitbox(2), true);
         }
 
     }
