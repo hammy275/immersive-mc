@@ -3,6 +3,7 @@ package net.blf02.immersivemc.common.config;
 import net.blf02.immersivemc.ImmersiveMC;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
 
 public class ActiveConfig {
@@ -43,7 +44,7 @@ public class ActiveConfig {
         }
         // We combine client config with server, so if a user doesn't want to use an immersion, they don't
         // even if a server is OK with it.
-        loadConfigFromFile();
+        loadConfigFromFile(true);
         useAnvilImmersion = buffer.readBoolean() && useAnvilImmersion;
         useBrewingImmersion = buffer.readBoolean() && useBrewingImmersion;
         useChestImmersion = buffer.readBoolean() && useChestImmersion;
@@ -62,20 +63,28 @@ public class ActiveConfig {
     }
 
     public static void loadConfigFromFile() {
-        // Synced values
-        useAnvilImmersion = ImmersiveMCConfig.useAnvilImmersion.get();
-        useBrewingImmersion = ImmersiveMCConfig.useBrewingImmersion.get();
-        useChestImmersion = ImmersiveMCConfig.useChestImmersion.get();
-        useCraftingImmersion = ImmersiveMCConfig.useCraftingImmersion.get();
-        useFurnaceImmersion = ImmersiveMCConfig.useFurnaceImmersion.get();
-        useJukeboxImmersion = ImmersiveMCConfig.useJukeboxImmersion.get();
-        useRangedGrab = ImmersiveMCConfig.useRangedGrab.get();
-        useButton = ImmersiveMCConfig.useButton.get();
-        useETableImmersion = ImmersiveMCConfig.useETableImmersion.get();
-        useCampfireImmersion = ImmersiveMCConfig.useCampfireImmersion.get();
-        useLever = ImmersiveMCConfig.useLever.get();
-        useBackpack = ImmersiveMCConfig.useBackpack.get();
-        useRepeaterImmersion = ImmersiveMCConfig.useRepeaterImmersion.get();
+        loadConfigFromFile(false);
+    }
+
+    public static void loadConfigFromFile(boolean forceLoadServerSettings) {
+        // Synced values (only loaded if we're not in a server)
+        if (Minecraft.getInstance().level == null || forceLoadServerSettings) {
+            useAnvilImmersion = ImmersiveMCConfig.useAnvilImmersion.get();
+            useBrewingImmersion = ImmersiveMCConfig.useBrewingImmersion.get();
+            useChestImmersion = ImmersiveMCConfig.useChestImmersion.get();
+            useCraftingImmersion = ImmersiveMCConfig.useCraftingImmersion.get();
+            useFurnaceImmersion = ImmersiveMCConfig.useFurnaceImmersion.get();
+            useJukeboxImmersion = ImmersiveMCConfig.useJukeboxImmersion.get();
+            useRangedGrab = ImmersiveMCConfig.useRangedGrab.get();
+            useButton = ImmersiveMCConfig.useButton.get();
+            useETableImmersion = ImmersiveMCConfig.useETableImmersion.get();
+            useCampfireImmersion = ImmersiveMCConfig.useCampfireImmersion.get();
+            useLever = ImmersiveMCConfig.useLever.get();
+            useBackpack = ImmersiveMCConfig.useBackpack.get();
+            useRepeaterImmersion = ImmersiveMCConfig.useRepeaterImmersion.get();
+        } else {
+            ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
+        }
 
         // Non-synced values
         backpackColor = ImmersiveMCConfig.backpackColor.get();

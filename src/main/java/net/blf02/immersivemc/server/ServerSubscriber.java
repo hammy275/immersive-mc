@@ -73,7 +73,7 @@ public class ServerSubscriber {
     @SubscribeEvent
     public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (!event.getPlayer().level.isClientSide && event.getPlayer() instanceof ServerPlayerEntity) {
-            ActiveConfig.loadConfigFromFile();
+            ActiveConfig.loadConfigFromFile(true);
             Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
                     new ConfigSyncPacket());
         }
