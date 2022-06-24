@@ -59,7 +59,7 @@
   "config.immersivemc.right_click_chest.desc": "When enabled, the immersive chest is opened/closed through a right click, rather than a hand motion.",
   "config.immersivemc.clear_table_on_unstackable": "Clear Crafting Tables On Tool Craft",
   "config.immersivemc.clear_table_on_unstackable.desc": "When enabled, crafting tables are cleared when an unstackable item is crafted.",
-  "config.immersivemc.show_placement_guide": "Show Particles to Guide in ImmersiveMC",
-  "config.immersivemc.show_placement_guide.desc": "When enabled, uses blue particles to show where immersives can be interacted with."
+  "config.immersivemc.show_placement_guide": "Show Aqua Boxes to Guide in ImmersiveMC",
+  "config.immersivemc.show_placement_guide.desc": "When enabled, uses aqua-colored boxes to show where immersives can be interacted with."
 
 }

@@ -79,7 +79,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param info Info instance that had a hitbox click
      */
     public void onAnyRightClick(AbstractImmersiveInfo info) {
-        info.ticksSinceLastClick = 0;
+
     }
 
     public abstract void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest,
@@ -126,7 +126,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             info.changeTicksLeft(-1);
         }
         info.ticksActive++;
-        info.ticksSinceLastClick++;
     }
 
     // Below this line are utility functions. Everything above MUST be overwritten, and have super() called!
@@ -140,16 +139,14 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         if (shouldRender(info, isInVR)) {
             try {
                 render(info, stack, isInVR);
-                if (ActiveConfig.showPlacementGuide && info.ticksSinceLastClick > 100) {
+                if (ActiveConfig.showPlacementGuide) {
                     // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
                     for (int i = 0; i < info.getInputSlots().length; i++) {
                         if (slotShouldRenderHelpHitbox(info, i)) {
                             AxisAlignedBB itemBox = info.getInputSlots()[i];
                             AxisAlignedBB toShow = itemBox
                                     .move(0, itemBox.getYsize() / 2, 0);
-                            renderItemGuide(stack, toShow,
-                                    Math.min(0.2f, (info.ticksSinceLastClick - 100) * 0.05f));
-                            // Alpha value starts at 0.05f and climbs up to 0.2f
+                            renderItemGuide(stack, toShow, 0.2f);
                         }
                     }
                 }
