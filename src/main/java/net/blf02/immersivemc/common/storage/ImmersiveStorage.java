@@ -1,4 +1,4 @@
-package net.blf02.immersivemc.server.storage.info;
+package net.blf02.immersivemc.common.storage;
 
 import net.blf02.immersivemc.server.storage.WorldStorage;
 import net.minecraft.item.ItemStack;
@@ -6,12 +6,25 @@ import net.minecraft.nbt.CompoundNBT;
 
 import java.util.Arrays;
 
+/**
+ * Holds all info for a given block's storage.
+ */
 public class ImmersiveStorage {
 
+    /**
+     * Instance of WorldStorage. Will always exist server-side and NEVER exist client-side.
+     * Do not use this in a constructor! Clients also use the constructor!
+     */
     public final WorldStorage wStorage;
 
+    /**
+     * A unique String representing the type of storage this is. Used in WorldStorage when saving/loading NBT.
+     */
     public static final String TYPE = "basic_item_store";
 
+    /**
+     * A list of items. Usually contains inputs and outputs.
+     */
     public ItemStack[] items;
 
     public ImmersiveStorage(WorldStorage storage) {

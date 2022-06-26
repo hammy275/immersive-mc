@@ -9,10 +9,10 @@ import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.InteractPacket;
+import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -114,12 +114,12 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
     }
 
     @Override
-    public void processItems(AbstractWorldStorageInfo info, ItemStack[] items) {
+    public void processStorageFromNetwork(AbstractWorldStorageInfo info, ImmersiveStorage storageIn) {
         for (int i = 0; i <= 8; i++) {
-            info.items[i] = items[i];
+            info.items[i] = storageIn.items[i];
         }
         CraftingInfo cInfo = (CraftingInfo) info;
-        cInfo.outputItem = items[9];
+        cInfo.outputItem = storageIn.items[9];
     }
 
     @Override

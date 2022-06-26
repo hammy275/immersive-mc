@@ -5,8 +5,8 @@ import net.blf02.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
 import net.blf02.immersivemc.common.config.CommonConstants;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
+import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 
@@ -16,7 +16,7 @@ public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStora
         Immersives.WS_IMMERSIVES.add(this);
     }
 
-    public abstract void processItems(AbstractWorldStorageInfo info, ItemStack[] items);
+    public abstract void processStorageFromNetwork(AbstractWorldStorageInfo info, ImmersiveStorage storage);
 
     public abstract I getNewInfo(BlockPos pos);
 

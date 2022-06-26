@@ -5,11 +5,6 @@ import net.minecraft.util.text.ITextComponent;
 
 public class ClientStorage {
 
-    // Left, right, output
-    public static final ItemStack[] anvilStorage = new ItemStack[]{ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
-    public static int anvilCost = -1;
-    public static final ItemStack[] smithingStorage = new ItemStack[]{ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
-
     // ETable
     public static final ETableInfo weakInfo = new ETableInfo();
     public static final ETableInfo midInfo = new ETableInfo();

@@ -8,7 +8,7 @@ import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.server.storage.GetStorage;
 import net.blf02.immersivemc.server.storage.WorldStorage;
-import net.blf02.immersivemc.server.storage.info.ImmersiveStorage;
+import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.server.tracker.ServerTrackerInit;
 import net.minecraft.block.*;
 import net.minecraft.entity.item.ItemEntity;

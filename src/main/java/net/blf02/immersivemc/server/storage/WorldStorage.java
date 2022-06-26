@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.server.storage;
 
-import net.blf02.immersivemc.server.storage.info.ImmersiveStorage;
+import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -12,6 +12,9 @@ import net.minecraft.world.storage.WorldSavedData;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Holds ALL OF the save data for ImmersiveMC for a given world/dimension.
+ */
 public class WorldStorage extends WorldSavedData {
 
     protected Map<BlockPos, ImmersiveStorage> itemInfo = new HashMap<>();
@@ -77,18 +80,9 @@ public class WorldStorage extends WorldSavedData {
                     storageInfo.getInt("posY"),
                     storageInfo.getInt("posZ"));
 
-            ImmersiveStorage storage = null;
             String storageType = storageInfo.getString("dataType");
-
-            // Check storage type, and load storage accordingly
-            if (storageType.equals(ImmersiveStorage.TYPE)) {
-                storage = new ImmersiveStorage(this);
-                storage.load(storageInfo.getCompound("data"));
-            }
-
-            if (storage == null) {
-                throw new IllegalArgumentException("Storage type " + storageType + " does not exist!");
-            }
+            ImmersiveStorage storage = GetStorage.assembleStorage(storageInfo.getCompound("data"),
+                    storageType, this);
 
             itemInfo.put(pos, storage);
 

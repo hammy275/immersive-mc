@@ -1,10 +1,11 @@
 package net.blf02.immersivemc.server.swap;
 
 import com.mojang.datafixers.util.Pair;
-import net.blf02.immersivemc.common.storage.NullContainer;
+import net.blf02.immersivemc.common.storage.AnvilStorage;
+import net.blf02.immersivemc.common.storage.ImmersiveStorage;
+import net.blf02.immersivemc.common.storage.workarounds.NullContainer;
 import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.server.storage.GetStorage;
-import net.blf02.immersivemc.server.storage.info.ImmersiveStorage;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.JukeboxBlock;
@@ -28,6 +29,7 @@ import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 import net.minecraftforge.common.Tags;
 
 import java.util.AbstractList;
@@ -35,6 +37,63 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Swap {
+
+    public static void anvilSwap(int slot, Hand hand, BlockPos pos, ServerPlayerEntity player) {
+        World level = player.level;
+        boolean isReallyAnvil = level.getBlockState(pos).getBlock() instanceof AnvilBlock;
+        AnvilStorage storage = GetStorage.getAnvilStorage(player, pos);
+        if (slot != 2) {
+            ItemStack playerItem = player.getItemInHand(hand).copy();
+            ItemStack anvilItem = storage.items[slot].copy();
+            storage.items[slot] = playerItem;
+            player.setItemInHand(hand, anvilItem);
+            storage.items[2] = ItemStack.EMPTY; // Clear output if we change something
+            if (isReallyAnvil) storage.xpLevels = 0;
+            if (!storage.items[0].isEmpty() && !storage.items[1].isEmpty()) {
+                Pair<ItemStack, Integer> output = Swap.getAnvilOutput(storage.items[0], storage.items[1], isReallyAnvil, player);
+                storage.items[2] = output.getFirst();
+                storage.xpLevels = output.getSecond();
+            }
+        } else if (!storage.items[2].isEmpty()) { // Craft our result!
+            if (!player.getItemInHand(hand).isEmpty()) return;
+            Swap.handleAnvilCraft(storage.items, pos, player, hand);
+        }
+        storage.wStorage.setDirty();
+    }
+
+    public static void handleAnvilCraft(ItemStack[] items, BlockPos pos, ServerPlayerEntity player, Hand hand) {
+        if (!player.getItemInHand(hand).isEmpty()) return;
+        ItemStack left = items[0];
+        ItemStack mid = items[1];
+        boolean isReallyAnvil = player.level.getBlockState(pos).getBlock() instanceof AnvilBlock;
+        boolean isSmithingTable = player.level.getBlockState(pos).getBlock() instanceof SmithingTableBlock;
+        if (!isReallyAnvil && !isSmithingTable) return; // Bail if we aren't an anvil or a smithing table!
+        Pair<ItemStack, Integer> resAndCost = Swap.getAnvilOutput(left, mid, isReallyAnvil, player);
+        if ((player.experienceLevel >= resAndCost.getSecond() || player.abilities.instabuild)
+                && !resAndCost.getFirst().isEmpty()) {
+            AbstractRepairContainer container;
+            if (isReallyAnvil) {
+                container = new RepairContainer(-1, player.inventory,
+                        IWorldPosCallable.create(player.level, pos));
+
+            } else {
+                container = new SmithingTableContainer(-1, player.inventory,
+                        IWorldPosCallable.create(player.level, pos));
+            }
+                    /* Note: Since we create a fresh container here with only the output
+                     (used mainly for causing the anvil to make sounds and possibly break),
+                     we never subtract XP levels from it. Instead, we just subtract them
+                     ourselves here. */
+            container.getSlot(2).onTake(player, resAndCost.getFirst());
+            if (!player.abilities.instabuild) {
+                player.giveExperienceLevels(-resAndCost.getSecond());
+            }
+            left.shrink(1);
+            mid.shrink(1);
+            items[2] = ItemStack.EMPTY;
+            player.setItemInHand(hand, resAndCost.getFirst());
+        }
+    }
 
     public static void handleCraftingSwap(ServerPlayerEntity player, int slot, Hand hand, BlockPos tablePos) {
         ImmersiveStorage storage = GetStorage.getCraftingStorage(player, tablePos);
@@ -248,39 +307,6 @@ public class Swap {
                 }
             }
             player.setItemInHand(hand, enchantedItem);
-        }
-    }
-    
-    public static void handleAnvil(int leftSlot, int midSlot, BlockPos pos, ServerPlayerEntity sender, Hand hand) {
-        if (!sender.getItemInHand(hand).isEmpty()) return;
-        ItemStack left = sender.inventory.getItem(leftSlot);
-        ItemStack mid = sender.inventory.getItem(midSlot);
-        boolean isReallyAnvil = sender.level.getBlockState(pos).getBlock() instanceof AnvilBlock;
-        boolean isSmithingTable = sender.level.getBlockState(pos).getBlock() instanceof SmithingTableBlock;
-        if (!isReallyAnvil && !isSmithingTable) return; // Bail if we aren't an anvil or a smithing table!
-        Pair<ItemStack, Integer> resAndCost = Swap.getAnvilOutput(left, mid, isReallyAnvil, sender);
-        if ((sender.experienceLevel >= resAndCost.getSecond() || sender.abilities.instabuild)
-                && !resAndCost.getFirst().isEmpty()) {
-            AbstractRepairContainer container;
-            if (isReallyAnvil) {
-                container = new RepairContainer(-1, sender.inventory,
-                        IWorldPosCallable.create(sender.level, pos));
-
-            } else {
-                container = new SmithingTableContainer(-1, sender.inventory,
-                        IWorldPosCallable.create(sender.level, pos));
-            }
-                    /* Note: Since we create a fresh container here with only the output
-                     (used mainly for causing the anvil to make sounds and possibly break),
-                     we never subtract XP levels from it. Instead, we just subtract them
-                     ourselves here. */
-            container.getSlot(2).onTake(sender, resAndCost.getFirst());
-            if (!sender.abilities.instabuild) {
-                sender.giveExperienceLevels(-resAndCost.getSecond());
-            }
-            left.shrink(1);
-            mid.shrink(1);
-            sender.setItemInHand(hand, resAndCost.getFirst());
         }
     }
 

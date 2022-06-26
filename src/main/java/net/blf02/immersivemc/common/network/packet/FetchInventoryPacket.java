@@ -5,7 +5,7 @@ import net.blf02.immersivemc.common.network.NetworkClientHandlers;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.server.storage.GetStorage;
 import net.blf02.immersivemc.server.storage.WorldStorage;
-import net.blf02.immersivemc.server.storage.info.ImmersiveStorage;
+import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -94,7 +94,7 @@ public class FetchInventoryPacket {
                 ImmersiveStorage storage = GetStorage.getStorage(player, pos);
                 if (storage != null) {
                     Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
-                            new UpdateStoragePacket(pos, storage.items));
+                            new UpdateStoragePacket(pos, storage, storage.getType()));
                 }
             }
         }
