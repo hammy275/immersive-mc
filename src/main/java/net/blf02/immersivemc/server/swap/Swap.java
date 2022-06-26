@@ -3,6 +3,8 @@ package net.blf02.immersivemc.server.swap;
 import com.mojang.datafixers.util.Pair;
 import net.blf02.immersivemc.common.storage.NullContainer;
 import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.server.storage.GetStorage;
+import net.blf02.immersivemc.server.storage.info.ImmersiveStorage;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.JukeboxBlock;
@@ -33,6 +35,79 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Swap {
+
+    public static void handleCraftingSwap(ServerPlayerEntity player, int slot, Hand hand, BlockPos tablePos) {
+        ImmersiveStorage storage = GetStorage.getCraftingStorage(player, tablePos);
+        if (slot < 9) {
+            ItemStack playerItem = player.getItemInHand(hand).copy();
+            ItemStack tableItem = storage.items[slot];
+            storage.items[slot] = playerItem;
+            player.setItemInHand(hand, tableItem);
+            ICraftingRecipe recipe = getRecipe(player, storage.items);
+            storage.items[9] = recipe != null ? recipe.getResultItem() : ItemStack.EMPTY;
+        } else {
+            handleDoCraft(player, storage.items, tablePos);
+        }
+        storage.wStorage.setDirty();
+    }
+
+    public static ICraftingRecipe getRecipe(ServerPlayerEntity player, ItemStack[] stacksIn) {
+        int invDim = stacksIn.length == 10 ? 3 : 2; // 10 since stacksIn includes the output slot
+        CraftingInventory inv = new CraftingInventory(new NullContainer(), invDim, invDim);
+        for (int i = 0; i < stacksIn.length - 1; i++) {
+            inv.setItem(i, stacksIn[i]);
+        }
+        Optional<ICraftingRecipe> res = player.getServer().getRecipeManager().getRecipeFor(IRecipeType.CRAFTING,
+                inv, player.level);
+        return res.orElse(null);
+    }
+
+    public static void handleDoCraft(ServerPlayerEntity player, ItemStack[] stacksIn,
+                                     BlockPos tablePos) {
+        boolean isBackpack = stacksIn.length == 4;
+        int invDim = isBackpack ? 2 : 3;
+        CraftingInventory inv = new CraftingInventory(new NullContainer(), invDim, invDim);
+        for (int i = 0; i < stacksIn.length - 1; i++) { // -1 from length since we skip the last index since it's the output
+            inv.setItem(i, stacksIn[i]);
+        }
+        ICraftingRecipe res = getRecipe(player, stacksIn);
+        if (res != null) {
+            if (removeNeededIngredients(player, inv)) {
+                // Give our item to us, remove items from crafting inventory, and show new recipe
+                for (int i = 0; i < stacksIn.length - 1; i++) {
+                    stacksIn[i].shrink(1);
+                }
+                ICraftingRecipe recipe = getRecipe(player, stacksIn);
+                stacksIn[9] = recipe != null ? recipe.getResultItem() : ItemStack.EMPTY;
+                ItemStack stackOut = res.assemble(inv);
+                ItemStack handStack = player.getItemInHand(Hand.MAIN_HAND);
+                ItemStack toGive = ItemStack.EMPTY;
+                if (!handStack.isEmpty() && Util.stacksEqualBesidesCount(stackOut, handStack)) {
+                    Util.ItemStackMergeResult itemRes = Util.mergeStacks(handStack, stackOut, true);
+                    player.setItemInHand(Hand.MAIN_HAND, itemRes.mergedInto);
+                    toGive = itemRes.mergedFrom;
+                } else if (handStack.isEmpty()) {
+                    player.setItemInHand(Hand.MAIN_HAND, stackOut);
+                } else {
+                    toGive = stackOut;
+                }
+                if (!toGive.isEmpty()) {
+                    BlockPos posBlock = tablePos.above();
+                    Vector3d pos = Vector3d.atCenterOf(posBlock);
+                    ItemEntity entOut = new ItemEntity(player.level, pos.x, pos.y, pos.z);
+                    entOut.setItem(toGive);
+                    entOut.setDeltaMovement(0, 0, 0);
+                    player.level.addFreshEntity(entOut);
+                } else {
+                    player.level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                            SoundEvents.ITEM_PICKUP, isBackpack ? SoundCategory.PLAYERS : SoundCategory.BLOCKS,
+                            0.2f,
+                            ThreadLocalRandom.current().nextFloat() -
+                                    ThreadLocalRandom.current().nextFloat() * 1.4f + 2f);
+                }
+            }
+        }
+    }
 
     public static void handleInventorySwap(PlayerEntity player, int slot, Hand hand) {
         ItemStack handStack = player.getItemInHand(hand).copy();
@@ -139,59 +214,6 @@ public class Swap {
             player.setItemInHand(hand, result.mergedFrom);
             player.getEnderChestInventory().setItem(slot, result.mergedInto);
         }
-    }
-
-    public static void handleCrafting(ServerPlayerEntity player, ItemStack[] stacksIn,
-                                      BlockPos tablePos) {
-        boolean isBackpack = stacksIn.length == 4;
-        int invDim = isBackpack ? 2 : 3;
-        CraftingInventory inv = new CraftingInventory(new NullContainer(), invDim, invDim);
-        for (int i = 0; i < stacksIn.length; i++) {
-            inv.setItem(i, stacksIn[i]);
-        }
-        ICraftingRecipe res = getReecipe(player, stacksIn);
-        if (res != null) {
-            if (removeNeededIngredients(player, inv)) {
-                // Give our item to us
-                ItemStack stackOut = res.assemble(inv);
-                ItemStack handStack = player.getItemInHand(Hand.MAIN_HAND);
-                ItemStack toGive = ItemStack.EMPTY;
-                if (!handStack.isEmpty() && Util.stacksEqualBesidesCount(stackOut, handStack)) {
-                    Util.ItemStackMergeResult itemRes = Util.mergeStacks(handStack, stackOut, true);
-                    player.setItemInHand(Hand.MAIN_HAND, itemRes.mergedInto);
-                    toGive = itemRes.mergedFrom;
-                } else if (handStack.isEmpty()) {
-                    player.setItemInHand(Hand.MAIN_HAND, stackOut);
-                } else {
-                    toGive = stackOut;
-                }
-                if (!toGive.isEmpty()) {
-                    BlockPos posBlock = tablePos.above();
-                    Vector3d pos = Vector3d.atCenterOf(posBlock);
-                    ItemEntity entOut = new ItemEntity(player.level, pos.x, pos.y, pos.z);
-                    entOut.setItem(toGive);
-                    entOut.setDeltaMovement(0, 0, 0);
-                    player.level.addFreshEntity(entOut);
-                } else {
-                    player.level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                            SoundEvents.ITEM_PICKUP, isBackpack ? SoundCategory.PLAYERS : SoundCategory.BLOCKS,
-                            0.2f,
-                            ThreadLocalRandom.current().nextFloat() -
-                                    ThreadLocalRandom.current().nextFloat() * 1.4f + 2f);
-                }
-            }
-        }
-    }
-
-    public static ICraftingRecipe getReecipe(ServerPlayerEntity player, ItemStack[] stacksIn) {
-        int invDim = stacksIn.length == 9 ? 3 : 2;
-        CraftingInventory inv = new CraftingInventory(new NullContainer(), invDim, invDim);
-        for (int i = 0; i < stacksIn.length; i++) {
-            inv.setItem(i, stacksIn[i]);
-        }
-        Optional<ICraftingRecipe> res = player.getServer().getRecipeManager().getRecipeFor(IRecipeType.CRAFTING,
-                inv, player.level);
-        return res.orElse(null);
     }
 
     public static void handleETable(int slot, BlockPos pos, ServerPlayerEntity player, Hand hand, int power) {

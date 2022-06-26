@@ -7,10 +7,9 @@ import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
 import net.blf02.immersivemc.client.model.BackpackCraftingModel;
 import net.blf02.immersivemc.client.model.BackpackLowDetailModel;
 import net.blf02.immersivemc.client.model.BackpackModel;
-import net.blf02.immersivemc.client.storage.ClientStorage;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
-import net.blf02.immersivemc.common.network.packet.CraftPacket;
+import net.blf02.immersivemc.common.network.packet.ClientCraftPacket;
 import net.blf02.immersivemc.common.network.packet.InventorySwapPacket;
 import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
@@ -169,17 +168,16 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         } else if (slot <= 30) {
             info.craftingInput[slot - 27] = player.getItemInHand(Hand.MAIN_HAND).copy();
             if (!info.craftingInput[slot - 27].isEmpty()) info.craftingInput[slot - 27].setCount(1);
-            Network.INSTANCE.sendToServer(new CraftPacket(info.craftingInput, player.blockPosition(),
+            Network.INSTANCE.sendToServer(new ClientCraftPacket(info.craftingInput, player.blockPosition(),
                     true));
         } else if (slot == 31) {
-            Network.INSTANCE.sendToServer(new CraftPacket(info.craftingInput, player.blockPosition(),
+            Network.INSTANCE.sendToServer(new ClientCraftPacket(info.craftingInput, player.blockPosition(),
                     false));
             if (ActiveConfig.clearTableOnUnstackable) {
                 Arrays.fill(info.craftingInput, ItemStack.EMPTY);
                 info.craftingOutput = ItemStack.EMPTY;
             } else {
-                ClientStorage.removeLackingIngredientsFromTable(player, info.craftingInput);
-                Network.INSTANCE.sendToServer(new CraftPacket(info.craftingInput, player.blockPosition(),
+                Network.INSTANCE.sendToServer(new ClientCraftPacket(info.craftingInput, player.blockPosition(),
                         true));
             }
         }

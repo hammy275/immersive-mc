@@ -2,6 +2,8 @@ package net.blf02.immersivemc.server.storage;
 
 import net.blf02.immersivemc.server.storage.info.ImmersiveStorage;
 import net.minecraft.block.*;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
@@ -24,13 +26,32 @@ public class WorldStorage extends WorldSavedData {
                 || state.getBlock() instanceof EnchantingTableBlock;
     }
 
-    public static WorldStorage getWorldStorage(ServerWorld world) {
+    public static WorldStorage getStorage(ServerWorld world) {
         return world.getDataStorage().computeIfAbsent(WorldStorage::new, "immersivemc_data");
     }
 
-    public void remove(BlockPos pos) {
-        itemInfo.remove(pos);
+    public static WorldStorage getStorage(PlayerEntity player) {
+        if (player instanceof ServerPlayerEntity) {
+            ServerPlayerEntity spe = (ServerPlayerEntity) player;
+            return getStorage((ServerWorld) player.level);
+        }
+        throw new IllegalArgumentException("Can only get storage server side!");
+    }
+
+    public ImmersiveStorage getOrCreate(BlockPos pos) {
+        ImmersiveStorage storage = get(pos);
+        if (storage == null) {
+            storage = new ImmersiveStorage(this);
+            add(pos, storage);
+        }
+        return storage;
+    }
+
+
+    public ImmersiveStorage remove(BlockPos pos) {
+        ImmersiveStorage storage = itemInfo.remove(pos);
         this.setDirty();
+        return storage;
     }
 
     public void add(BlockPos pos, ImmersiveStorage storage) {
@@ -61,7 +82,7 @@ public class WorldStorage extends WorldSavedData {
 
             // Check storage type, and load storage accordingly
             if (storageType.equals(ImmersiveStorage.TYPE)) {
-                storage = new ImmersiveStorage();
+                storage = new ImmersiveStorage(this);
                 storage.load(storageInfo.getCompound("data"));
             }
 

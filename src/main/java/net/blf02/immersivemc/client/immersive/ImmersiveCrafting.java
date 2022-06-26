@@ -3,14 +3,12 @@ package net.blf02.immersivemc.client.immersive;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import net.blf02.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
 import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
 import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
-import net.blf02.immersivemc.client.storage.ClientStorage;
-import net.blf02.immersivemc.client.swap.ClientSwap;
 import net.blf02.immersivemc.common.config.ActiveConfig;
-import net.blf02.immersivemc.common.config.CommonConstants;
 import net.blf02.immersivemc.common.network.Network;
-import net.blf02.immersivemc.common.network.packet.CraftPacket;
+import net.blf02.immersivemc.common.network.packet.InteractPacket;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,31 +19,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
-public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
+public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInfo> {
 
     public static final ImmersiveCrafting singleton = new ImmersiveCrafting();
     private final double spacing = 3d/16d;
 
-    protected int noInfosCooldown = 0;
 
     public ImmersiveCrafting() {
-        super(-1);
-    }
-
-    @Override
-    public void noInfosTick() {
-        super.noInfosTick();
-        if (noInfosCooldown >= 200) {
-            Arrays.fill(ClientStorage.craftingStorage, ItemStack.EMPTY);
-            ClientStorage.craftingOutput = ItemStack.EMPTY;
-        } else {
-            noInfosCooldown++;
-        }
+        super(2); // We don't expect to use many crafting tables at once
     }
 
     @Override
@@ -57,13 +40,8 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
         Objects.requireNonNull(Minecraft.getInstance().player);
 
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
-        Vector3d pos = getTopCenterOfBlock(info.tablePos);
+        Vector3d pos = getTopCenterOfBlock(info.getBlockPosition());
         Direction left = getLeftOfDirection(forward);
-
-        List<ItemStack> slots = new ArrayList<>();
-        for (int i = 0; i < 9; i++) {
-            slots.add(ClientStorage.craftingStorage[i]);
-        }
 
         Vector3d leftOffset = new Vector3d(
                 left.getNormal().getX() * spacing, 0, left.getNormal().getZ() * spacing);
@@ -87,8 +65,8 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
             info.setHitbox(i, createHitbox(positions[i], hitboxSize));
         }
 
-        info.resultPosition = info.getPosition(4).add(0, 0.5, 0);
-        info.resultHitbox = createHitbox(info.resultPosition, hitboxSize * 3);
+        info.outputPosition = info.getPosition(4).add(0, 0.5, 0);
+        info.outputHitbox = createHitbox(info.outputPosition, hitboxSize * 3);
 
         info.lastDir = forward;
     }
@@ -98,12 +76,6 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
         super.doTick(info, isInVR);
         Objects.requireNonNull(Minecraft.getInstance().player);
 
-        if (info.tablePos != null &&
-                Minecraft.getInstance().player.distanceToSqr(Vector3d.atCenterOf(info.tablePos)) >
-                        CommonConstants.distanceSquaredToRemoveImmersive) {
-            info.remove();
-        }
-
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         if (info.lastDir != forward) {
             setHitboxes(info);
@@ -112,21 +84,14 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     }
 
     @Override
+    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
+        Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), closest, hand));
+    }
+
+    @Override
     public void handleTriggerHitboxRightClick(InfoTriggerHitboxes info, PlayerEntity player, int hitboxNum) {
-        Network.INSTANCE.sendToServer(new CraftPacket(
-                ClientStorage.craftingStorage, ((CraftingInfo) info).tablePos, false
-        ));
-
-        // Clear items that we don't have anymore and retrieve recipe to match
-        ClientStorage.removeLackingIngredientsFromTable(player);
-        if (ActiveConfig.clearTableOnUnstackable) {
-            Arrays.fill(ClientStorage.craftingStorage, ItemStack.EMPTY);
-            ClientStorage.craftingOutput = ItemStack.EMPTY;
-        }
-        Network.INSTANCE.sendToServer(new CraftPacket(
-                ClientStorage.craftingStorage, ((CraftingInfo) info).tablePos, true
-        ));
-
+        AbstractImmersiveInfo aInfo = (AbstractImmersiveInfo) info;
+        Network.INSTANCE.sendToServer(new InteractPacket(aInfo.getBlockPosition(), 9, Hand.MAIN_HAND));
         ((CraftingInfo) info).setTicksLeft(ClientConstants.ticksToRenderCrafting); // Reset count if we craft
     }
 
@@ -136,11 +101,11 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
 
         for (int i = 0; i < 9; i++) {
-            renderItem(ClientStorage.craftingStorage[i], stack, info.getPosition(i),
-                    itemSize, forward, Direction.UP, info.getHitbox(i), false);
+            renderItem(info.items[i], stack, info.getPosition(i),
+                    itemSize, forward, Direction.UP, info.getHitbox(i), true);
         }
-        renderItem(ClientStorage.craftingOutput, stack, info.resultPosition,
-                itemSize * 3, forward, info.resultHitbox, true);
+        renderItem(info.outputItem, stack, info.outputPosition,
+                itemSize * 3, forward, info.outputHitbox, true);
     }
 
     @Override
@@ -149,14 +114,22 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     }
 
     @Override
-    protected boolean slotShouldRenderHelpHitbox(CraftingInfo info, int slotNum) {
-        return ClientStorage.craftingStorage[slotNum] == null ||
-                ClientStorage.craftingStorage[slotNum].isEmpty();
+    public void processItems(AbstractWorldStorageInfo info, ItemStack[] items) {
+        for (int i = 0; i <= 8; i++) {
+            info.items[i] = items[i];
+        }
+        CraftingInfo cInfo = (CraftingInfo) info;
+        cInfo.outputItem = items[9];
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
-        ClientSwap.craftingSwap(closest, hand, info.getBlockPosition());
+    public CraftingInfo getNewInfo(BlockPos pos) {
+        return new CraftingInfo(pos, getTickTime());
+    }
+
+    @Override
+    public int getTickTime() {
+        return ClientConstants.ticksToRenderCrafting;
     }
 
     @Override
@@ -168,19 +141,8 @@ public class ImmersiveCrafting extends AbstractImmersive<CraftingInfo> {
     public boolean shouldRender(CraftingInfo info, boolean isInVR) {
         if (Minecraft.getInstance().player == null) return false;
         World level = Minecraft.getInstance().level;
-        return level != null && level.getBlockState(info.tablePos.above()).isAir()
+        return level != null && level.getBlockState(info.getBlockPosition().above()).isAir()
                 && info.readyToRender();
-    }
-
-    public void trackObject(BlockPos tablePos) {
-        for (CraftingInfo info : getTrackedObjects()) {
-            if (info.tablePos.equals(tablePos)) {
-                info.setTicksLeft(ClientConstants.ticksToRenderCrafting);
-                return;
-            }
-        }
-        this.noInfosCooldown = 0;
-        infos.add(new CraftingInfo(tablePos, ClientConstants.ticksToRenderCrafting));
     }
 
     @Override

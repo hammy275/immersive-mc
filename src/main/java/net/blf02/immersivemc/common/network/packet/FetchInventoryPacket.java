@@ -2,6 +2,10 @@ package net.blf02.immersivemc.common.network.packet;
 
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.NetworkClientHandlers;
+import net.blf02.immersivemc.common.network.NetworkUtil;
+import net.blf02.immersivemc.server.storage.GetStorage;
+import net.blf02.immersivemc.server.storage.WorldStorage;
+import net.blf02.immersivemc.server.storage.info.ImmersiveStorage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -9,7 +13,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.EnderChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -70,8 +73,7 @@ public class FetchInventoryPacket {
     }
 
     public static void handleServerToClient(ServerPlayerEntity player, BlockPos pos) {
-        if (player.level.isLoaded(pos) && // Block is loaded
-                player.distanceToSqr(Vector3d.atCenterOf(pos)) < 81) { // Within 9 blocks of target
+        if (NetworkUtil.safeToRun(pos, player)) {
             TileEntity tileEnt = player.level.getBlockEntity(pos);
             if (tileEnt != null) {
                 IInventory inv;
@@ -88,6 +90,12 @@ public class FetchInventoryPacket {
                 }
                 Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
                         new FetchInventoryPacket(stacks, pos));
+            } else if (WorldStorage.usesWorldStorage(player.level.getBlockState(pos))) {
+                ImmersiveStorage storage = GetStorage.getStorage(player, pos);
+                if (storage != null) {
+                    Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
+                            new UpdateStoragePacket(pos, storage.items));
+                }
             }
         }
     }

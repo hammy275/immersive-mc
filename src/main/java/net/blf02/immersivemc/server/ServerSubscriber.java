@@ -6,11 +6,16 @@ import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
 import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
+import net.blf02.immersivemc.server.storage.GetStorage;
 import net.blf02.immersivemc.server.storage.WorldStorage;
+import net.blf02.immersivemc.server.storage.info.ImmersiveStorage;
 import net.blf02.immersivemc.server.tracker.ServerTrackerInit;
 import net.minecraft.block.*;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.*;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -29,7 +34,18 @@ public class ServerSubscriber {
         boolean sendBreakPacket = false;
 
         if (WorldStorage.usesWorldStorage(state)) {
-            WorldStorage.getWorldStorage(world).remove(event.getPos());
+            ImmersiveStorage storage = WorldStorage.getStorage(world).remove(event.getPos());
+            if (storage != null && event.getPlayer().level != null) {
+                for (int i = 0; i <= GetStorage.getLastInputIndex(state); i++) {
+                    Vector3d vecPos = Vector3d.atCenterOf(event.getPos());
+                    ItemStack stack = storage.items[i];
+                    if (stack != null && !stack.isEmpty()) {
+                        ItemEntity itemEnt = new ItemEntity(event.getPlayer().level,
+                                vecPos.x, vecPos.y, vecPos.z, stack);
+                        event.getWorld().addFreshEntity(itemEnt);
+                    }
+                }
+            }
         }
 
         if (state.hasTileEntity()) {

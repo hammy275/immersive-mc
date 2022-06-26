@@ -72,8 +72,8 @@ public class ImmersiveMC {
             int index = 1;
             Network.INSTANCE.registerMessage(index++, SwapPacket.class, SwapPacket::encode,
                     SwapPacket::decode, SwapPacket::handle);
-            Network.INSTANCE.registerMessage(index++, CraftPacket.class, CraftPacket::encode,
-                    CraftPacket::decode, CraftPacket::handle);
+            Network.INSTANCE.registerMessage(index++, ClientCraftPacket.class, ClientCraftPacket::encode,
+                    ClientCraftPacket::decode, ClientCraftPacket::handle);
             Network.INSTANCE.registerMessage(index++, ImmersiveBreakPacket.class, ImmersiveBreakPacket::encode,
                     ImmersiveBreakPacket::decode, ImmersiveBreakPacket::handle);
             Network.INSTANCE.registerMessage(index++, FetchInventoryPacket.class, FetchInventoryPacket::encode,
@@ -96,6 +96,10 @@ public class ImmersiveMC {
                     InventorySwapPacket::decode, InventorySwapPacket::handle);
             Network.INSTANCE.registerMessage(index++, SetRepeaterPacket.class, SetRepeaterPacket::encode,
                     SetRepeaterPacket::decode, SetRepeaterPacket::handle);
+            Network.INSTANCE.registerMessage(index++, InteractPacket.class, InteractPacket::encode,
+                    InteractPacket::decode, InteractPacket::handle);
+            Network.INSTANCE.registerMessage(index++, UpdateStoragePacket.class, UpdateStoragePacket::encode,
+                    UpdateStoragePacket::decode, UpdateStoragePacket::handle);
         });
 
     }

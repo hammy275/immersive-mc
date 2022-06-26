@@ -1,13 +1,36 @@
 package net.blf02.immersivemc.server.storage.info;
 
+import net.blf02.immersivemc.server.storage.WorldStorage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 
+import java.util.Arrays;
+
 public class ImmersiveStorage {
+
+    public final WorldStorage wStorage;
 
     public static final String TYPE = "basic_item_store";
 
     public ItemStack[] items;
+
+    public ImmersiveStorage(WorldStorage storage) {
+        this.wStorage = storage;
+    }
+
+    /**
+     * Initializes this storage ONLY IF IT ISN'T ALREADY!!!
+     * @param numOfItems Number of items to store
+     * @return This object.
+     */
+    public ImmersiveStorage initIfNotAlready(int numOfItems) {
+        if (items == null) {
+            items = new ItemStack[numOfItems];
+            Arrays.fill(items, ItemStack.EMPTY);
+            this.wStorage.setDirty();
+        }
+        return this;
+    }
 
     /**
      * Used to determine which storage type is being loaded from disk. MUST BE CHANGED FOR ANYTHING THAT

@@ -1,6 +1,5 @@
 package net.blf02.immersivemc.common.network.packet;
 
-import net.blf02.immersivemc.client.storage.ClientStorage;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.NetworkClientHandlers;
@@ -16,7 +15,8 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-public class CraftPacket {
+@Deprecated
+public class ClientCraftPacket {
 
     protected final boolean isAskingForRecipe;
     protected final ItemStack[] inv;
@@ -25,7 +25,7 @@ public class CraftPacket {
     protected final ItemStack resItem;
     protected final boolean is2x2;
 
-    public CraftPacket(ItemStack[] inv, BlockPos tablePos, boolean retrieveRecipe) {
+    public ClientCraftPacket(ItemStack[] inv, BlockPos tablePos, boolean retrieveRecipe) {
         this.inv = inv;
         this.tablePos = tablePos;
         this.isAskingForRecipe = retrieveRecipe;
@@ -33,7 +33,7 @@ public class CraftPacket {
         this.is2x2 = false;
     }
 
-    protected CraftPacket(ItemStack resItem, boolean is2x2) {
+    protected ClientCraftPacket(ItemStack resItem, boolean is2x2) {
         this.resItem = resItem;
         this.is2x2 = is2x2;
         this.isAskingForRecipe = false;
@@ -41,7 +41,7 @@ public class CraftPacket {
         this.tablePos = null;
     }
 
-    public static void encode(CraftPacket packet, PacketBuffer buffer) {
+    public static void encode(ClientCraftPacket packet, PacketBuffer buffer) {
         buffer.writeBoolean(packet.resItem == null);
         if (packet.resItem == null) {
             buffer.writeInt(packet.inv.length);
@@ -57,39 +57,37 @@ public class CraftPacket {
 
     }
 
-    public static CraftPacket decode(PacketBuffer buffer) {
+    public static ClientCraftPacket decode(PacketBuffer buffer) {
         if (buffer.readBoolean()) {
             int numItems = buffer.readInt();
             ItemStack[] inv = new ItemStack[numItems];
             for (int i = 0; i < numItems; i++) {
                 inv[i] = buffer.readItem();
             }
-            return new CraftPacket(inv, buffer.readBlockPos(), buffer.readBoolean());
+            return new ClientCraftPacket(inv, buffer.readBlockPos(), buffer.readBoolean());
         } else {
-            return new CraftPacket(buffer.readItem(), buffer.readBoolean());
+            return new ClientCraftPacket(buffer.readItem(), buffer.readBoolean());
         }
 
 
     }
 
-    public static void handle(final CraftPacket message, Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(final ClientCraftPacket message, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             if (!ActiveConfig.useCraftingImmersion) return;
             ServerPlayerEntity player = ctx.get().getSender();
             if (player != null && NetworkUtil.safeToRun(message.tablePos, player)) {
                 if (message.isAskingForRecipe) {
-                    ICraftingRecipe recipe = Swap.getReecipe(player, message.inv);
+                    ICraftingRecipe recipe = Swap.getRecipe(player, message.inv);
                     ItemStack result = recipe == null ? ItemStack.EMPTY : recipe.getResultItem();
                     Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
-                            new CraftPacket(result, message.inv.length == 4));
+                            new ClientCraftPacket(result, message.inv.length == 4));
                 } else {
-                    Swap.handleCrafting(player, message.inv, message.tablePos);
+                    Swap.handleDoCraft(player, message.inv, message.tablePos);
                 }
             } else if (player == null) {
                 if (message.is2x2) {
                     NetworkClientHandlers.setBackpackOutput(message.resItem);
-                } else {
-                    ClientStorage.craftingOutput = message.resItem;
                 }
             }
         });

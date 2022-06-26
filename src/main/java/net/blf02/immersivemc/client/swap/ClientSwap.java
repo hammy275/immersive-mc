@@ -2,7 +2,6 @@ package net.blf02.immersivemc.client.swap;
 
 import net.blf02.immersivemc.client.storage.ClientStorage;
 import net.blf02.immersivemc.common.network.Network;
-import net.blf02.immersivemc.common.network.packet.CraftPacket;
 import net.blf02.immersivemc.common.network.packet.DoAnvilPacket;
 import net.blf02.immersivemc.common.network.packet.DoETablePacket;
 import net.blf02.immersivemc.common.network.packet.GetAnvilOutputPacket;
@@ -20,16 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ClientSwap {
-
-    public static void craftingSwap(int slot, Hand hand, BlockPos tablePos) {
-        if (Minecraft.getInstance().player == null) return;
-        ItemStack playerItemCopy = Minecraft.getInstance().player.getItemInHand(hand).copy();
-        playerItemCopy.setCount(1);
-        ClientStorage.craftingStorage[slot] = playerItemCopy;
-        Network.INSTANCE.sendToServer(new CraftPacket(ClientStorage.craftingStorage,
-                tablePos, true));
-
-    }
 
     public static void eTableSwap(int immersiveSlot, Hand hand, BlockPos pos) {
         if (Minecraft.getInstance().player == null) return;
