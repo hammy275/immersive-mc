@@ -1,8 +1,10 @@
 package net.blf02.immersivemc.server.storage;
 
 import net.blf02.immersivemc.server.storage.info.ImmersiveStorage;
+import net.minecraft.block.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
 
 import java.util.HashMap;
@@ -10,11 +12,36 @@ import java.util.Map;
 
 public class WorldStorage extends WorldSavedData {
 
-    public Map<BlockPos, ImmersiveStorage> itemInfo = new HashMap<>();
+    protected Map<BlockPos, ImmersiveStorage> itemInfo = new HashMap<>();
 
     public WorldStorage() {
         super("immersivemc_data");
     }
+
+    public static boolean usesWorldStorage(BlockState state) {
+        return state.getBlock() == Blocks.CRAFTING_TABLE ||
+                state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock
+                || state.getBlock() instanceof EnchantingTableBlock;
+    }
+
+    public static WorldStorage getWorldStorage(ServerWorld world) {
+        return world.getDataStorage().computeIfAbsent(WorldStorage::new, "immersivemc_data");
+    }
+
+    public void remove(BlockPos pos) {
+        itemInfo.remove(pos);
+        this.setDirty();
+    }
+
+    public void add(BlockPos pos, ImmersiveStorage storage) {
+        itemInfo.put(pos, storage);
+        this.setDirty();
+    }
+
+    public ImmersiveStorage get(BlockPos pos) {
+        return itemInfo.get(pos);
+    }
+
 
     @Override
     public void load(CompoundNBT nbt) {

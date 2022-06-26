@@ -6,33 +6,31 @@ import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
 import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
+import net.blf02.immersivemc.server.storage.WorldStorage;
 import net.blf02.immersivemc.server.tracker.ServerTrackerInit;
-import net.minecraft.block.AnvilBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.EnchantingTableBlock;
-import net.minecraft.block.RepeaterBlock;
-import net.minecraft.block.SmithingTableBlock;
+import net.minecraft.block.*;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.tileentity.AbstractFurnaceTileEntity;
-import net.minecraft.tileentity.BrewingStandTileEntity;
-import net.minecraft.tileentity.ChestTileEntity;
-import net.minecraft.tileentity.EnderChestTileEntity;
-import net.minecraft.tileentity.JukeboxTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.*;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 public class ServerSubscriber {
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void blockBreak(BlockEvent.BreakEvent event) {
         if (event.getWorld().isClientSide()) return; // Only run server-side
+        ServerWorld world = (ServerWorld) event.getWorld();
         BlockState state = event.getState();
         boolean sendBreakPacket = false;
+
+        if (WorldStorage.usesWorldStorage(state)) {
+            WorldStorage.getWorldStorage(world).remove(event.getPos());
+        }
 
         if (state.hasTileEntity()) {
             TileEntity tileEntity = event.getWorld().getBlockEntity(event.getPos());
