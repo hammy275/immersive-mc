@@ -38,6 +38,60 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Swap {
 
+    public static void enchantingTableSwap(ServerPlayerEntity player, int slot, Hand hand, BlockPos pos) {
+        if (player == null) return;
+        ImmersiveStorage enchStorage = GetStorage.getEnchantingStorage(player, pos);
+        if (slot == 0) {
+            ItemStack toEnchant = player.getItemInHand(hand).copy();
+            ItemStack toPlayer = enchStorage.items[0].copy();
+            if (!toEnchant.isEmpty() && !toEnchant.isEnchantable()) return;
+            player.setItemInHand(hand, toPlayer);
+            enchStorage.items[0] = toEnchant;
+        } else if (player.getItemInHand(hand).isEmpty()) {
+            doEnchanting(slot, pos, player, hand);
+
+        }
+        enchStorage.wStorage.setDirty();
+    }
+
+    public static void doEnchanting(int slot, BlockPos pos, ServerPlayerEntity player, Hand hand) {
+        // NOTE: slot is 1-3, depending on which enchantment the player is going for.
+        if (!player.getItemInHand(hand).isEmpty()) return;
+        if (slot < 1 || slot > 3) return;
+        ImmersiveStorage storage = GetStorage.getEnchantingStorage(player, pos);
+        ItemStack enchantedItem = storage.items[0].copy();
+        if (enchantedItem.isEmpty()) return;
+        int lapisInInventory = 0;
+        for (int i = 0; i < player.inventory.items.size(); i++) {
+            if (Tags.Items.GEMS_LAPIS.contains(player.inventory.getItem(i).getItem())) {
+                lapisInInventory += player.inventory.getItem(i).getCount();
+            }
+        }
+        if (lapisInInventory < slot && !player.abilities.instabuild) return;
+
+        EnchantmentContainer container = new EnchantmentContainer(-1,
+                player.inventory, IWorldPosCallable.create(player.level, pos));
+        container.setItem(1, new ItemStack(Items.LAPIS_LAZULI, 64));
+        container.setItem(0, enchantedItem);
+        if (container.clickMenuButton(player, slot - 1)) {
+            int lapisToTake = slot;
+            for (int i = 0; i < player.inventory.items.size(); i++) {
+                if (Tags.Items.GEMS_LAPIS.contains(player.inventory.getItem(i).getItem())) {
+                    ItemStack stack = player.inventory.getItem(i);
+                    while (!stack.isEmpty() && lapisToTake > 0) {
+                        stack.shrink(1);
+                        lapisToTake--;
+                    }
+                }
+                if (lapisToTake == 0) {
+                    break;
+                }
+            }
+            player.setItemInHand(hand, enchantedItem);
+            storage.items[0] = ItemStack.EMPTY;
+        }
+    }
+
     public static void anvilSwap(int slot, Hand hand, BlockPos pos, ServerPlayerEntity player) {
         World level = player.level;
         boolean isReallyAnvil = level.getBlockState(pos).getBlock() instanceof AnvilBlock;
@@ -272,41 +326,6 @@ public class Swap {
             Util.ItemStackMergeResult result = Util.mergeStacks(chestItem, playerItem, false);
             player.setItemInHand(hand, result.mergedFrom);
             player.getEnderChestInventory().setItem(slot, result.mergedInto);
-        }
-    }
-
-    public static void handleETable(int slot, BlockPos pos, ServerPlayerEntity player, Hand hand, int power) {
-        if (!player.getItemInHand(hand).isEmpty()) return;
-        if (power < 1 || power > 3) return;
-        int lapisInInventory = 0;
-        for (int i = 0; i < player.inventory.items.size(); i++) {
-            if (Tags.Items.GEMS_LAPIS.contains(player.inventory.getItem(i).getItem())) {
-                lapisInInventory += player.inventory.getItem(i).getCount();
-            }
-        }
-        if (lapisInInventory < power && !player.abilities.instabuild) return;
-        ItemStack enchantedItem = player.inventory.getItem(slot).copy();
-
-        EnchantmentContainer container = new EnchantmentContainer(-1,
-                player.inventory, IWorldPosCallable.create(player.level, pos));
-        container.setItem(1, new ItemStack(Items.LAPIS_LAZULI, 64));
-        container.setItem(0, enchantedItem);
-        if (container.clickMenuButton(player, power - 1)) {
-            player.inventory.getItem(slot).shrink(1);
-            int lapisToTake = power;
-            for (int i = 0; i < player.inventory.items.size(); i++) {
-                if (Tags.Items.GEMS_LAPIS.contains(player.inventory.getItem(i).getItem())) {
-                    ItemStack stack = player.inventory.getItem(i);
-                    while (!stack.isEmpty() && lapisToTake > 0) {
-                        stack.shrink(1);
-                        lapisToTake--;
-                    }
-                }
-                if (lapisToTake == 0) {
-                    break;
-                }
-            }
-            player.setItemInHand(hand, enchantedItem);
         }
     }
 

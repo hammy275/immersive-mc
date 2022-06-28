@@ -35,7 +35,6 @@ public class WorldStorage extends WorldSavedData {
 
     public static WorldStorage getStorage(PlayerEntity player) {
         if (player instanceof ServerPlayerEntity) {
-            ServerPlayerEntity spe = (ServerPlayerEntity) player;
             return getStorage((ServerWorld) player.level);
         }
         throw new IllegalArgumentException("Can only get storage server side!");

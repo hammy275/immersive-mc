@@ -1,8 +1,11 @@
 package net.blf02.immersivemc.common.network.packet;
 
-import net.blf02.immersivemc.client.storage.ClientStorage;
+import net.blf02.immersivemc.client.immersive.ImmersiveETable;
+import net.blf02.immersivemc.client.immersive.info.EnchantingInfo;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.NetworkUtil;
+import net.blf02.immersivemc.common.storage.ImmersiveStorage;
+import net.blf02.immersivemc.server.storage.GetStorage;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.EnchantmentContainer;
@@ -21,7 +24,6 @@ import java.util.function.Supplier;
 
 public class GetEnchantmentsPacket {
 
-    public final ItemStack stack;
     public final BlockPos pos;
 
     public final int weakXPLevels;
@@ -36,11 +38,10 @@ public class GetEnchantmentsPacket {
     public final int strongEnchHint;
     public final int strongLevelHint;
 
-    public GetEnchantmentsPacket(ItemStack stack, BlockPos pos) {
-        this.stack = stack;
+    public GetEnchantmentsPacket(BlockPos pos) {
         this.pos = pos;
 
-        this.weakXPLevels = -1;
+        this.weakXPLevels = -999;
         this.weakEnchHint = -1;
         this.weakLevelHint = -1;
         this.midXPLevels = -1;
@@ -53,7 +54,8 @@ public class GetEnchantmentsPacket {
 
     public GetEnchantmentsPacket(int weakXPLevels, int weakEnchHint, int weakLevelHint,
                                  int midXPLevels, int midEnchHint, int midLevelHint,
-                                 int strongXPLevels, int strongEnchHint, int strongLevelHint) {
+                                 int strongXPLevels, int strongEnchHint, int strongLevelHint,
+                                 BlockPos pos) {
         this.weakXPLevels = weakXPLevels; // XP levels needed
         this.weakEnchHint = weakEnchHint; // Enchantment you'll get
         this.weakLevelHint = weakLevelHint; // Enchantment level you'll get
@@ -64,14 +66,12 @@ public class GetEnchantmentsPacket {
         this.strongEnchHint = strongEnchHint;
         this.strongLevelHint = strongLevelHint;
 
-        this.stack = null;
-        this.pos = null;
+        this.pos = pos;
     }
 
     public static void encode(GetEnchantmentsPacket packet, PacketBuffer buffer) {
-        buffer.writeBoolean(packet.stack != null); // Whether we're asking for enchs (true) or getting them (false)
-        if (packet.stack != null) {
-            buffer.writeItem(packet.stack);
+        buffer.writeBoolean(packet.weakXPLevels == -999); // Whether we're asking for enchs (true) or getting them (false)
+        if (packet.weakXPLevels == -999) {
             buffer.writeBlockPos(packet.pos);
         } else {
             buffer.writeInt(packet.weakXPLevels);
@@ -83,16 +83,18 @@ public class GetEnchantmentsPacket {
             buffer.writeInt(packet.strongXPLevels);
             buffer.writeInt(packet.strongEnchHint);
             buffer.writeInt(packet.strongLevelHint);
+            buffer.writeBlockPos(packet.pos);
         }
     }
 
     public static GetEnchantmentsPacket decode(PacketBuffer buffer) {
         if (buffer.readBoolean()) {
-            return new GetEnchantmentsPacket(buffer.readItem(), buffer.readBlockPos());
+            return new GetEnchantmentsPacket(buffer.readBlockPos());
         } else {
             return new GetEnchantmentsPacket(buffer.readInt(), buffer.readInt(), buffer.readInt(),
                     buffer.readInt(), buffer.readInt(), buffer.readInt(),
-                    buffer.readInt(), buffer.readInt(), buffer.readInt());
+                    buffer.readInt(), buffer.readInt(), buffer.readInt(),
+                    buffer.readBlockPos());
         }
     }
 
@@ -101,25 +103,29 @@ public class GetEnchantmentsPacket {
             ServerPlayerEntity player = ctx.get().getSender();
             if (player == null) {
                 handleClient(message);
-            } else if (NetworkUtil.safeToRun(message.pos, player)){
-                TileEntity tileEnt = player.level.getBlockEntity(message.pos);
-                if (tileEnt instanceof EnchantingTableTileEntity) {
-                    EnchantmentContainer container = new EnchantmentContainer(-1,
-                            player.inventory, IWorldPosCallable.create(player.level, message.pos));
-                    container.setItem(1, new ItemStack(Items.LAPIS_LAZULI, 64));
-                    container.setItem(0, message.stack);
+            } else if (NetworkUtil.safeToRun(message.pos, player)) {
+                ImmersiveStorage enchantStorage = GetStorage.getEnchantingStorage(player, message.pos);
+                if (enchantStorage.items[0] != null && !enchantStorage.items[0].isEmpty()) {
+                    TileEntity tileEnt = player.level.getBlockEntity(message.pos);
+                    if (tileEnt instanceof EnchantingTableTileEntity) {
+                        EnchantmentContainer container = new EnchantmentContainer(-1,
+                                player.inventory, IWorldPosCallable.create(player.level, message.pos));
+                        container.setItem(1, new ItemStack(Items.LAPIS_LAZULI, 64));
+                        container.setItem(0, enchantStorage.items[0]);
 
-                    int[] xpLevels = container.costs;
-                    int[] descs = container.enchantClue;
-                    int[] enchLevels = container.levelClue;
+                        int[] xpLevels = container.costs;
+                        int[] descs = container.enchantClue;
+                        int[] enchLevels = container.levelClue;
 
 
-                    Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
-                            new GetEnchantmentsPacket(
-                                    xpLevels[0], descs[0], enchLevels[0],
-                                    xpLevels[1], descs[1], enchLevels[1],
-                                    xpLevels[2], descs[2], enchLevels[2]
-                            ));
+                        Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
+                                new GetEnchantmentsPacket(
+                                        xpLevels[0], descs[0], enchLevels[0],
+                                        xpLevels[1], descs[1], enchLevels[1],
+                                        xpLevels[2], descs[2], enchLevels[2],
+                                        message.pos
+                                ));
+                    }
                 }
             }
         });
@@ -127,31 +133,33 @@ public class GetEnchantmentsPacket {
     }
 
     protected static void handleClient(GetEnchantmentsPacket message) {
-        Enchantment ench = getEnch(message.weakEnchHint);
-        if (ench != null) {
-            ClientStorage.weakInfo.levelsNeeded = message.weakXPLevels;
-            ClientStorage.weakInfo.textPreview = getDesc(ench, message.weakLevelHint);
-        } else {
-            ClientStorage.weakInfo.textPreview = null;
+        for (EnchantingInfo info : ImmersiveETable.singleton.getTrackedObjects()) {
+            if (info.getBlockPosition().equals(message.pos)) {
+                Enchantment ench = getEnch(message.weakEnchHint);
+                if (ench != null) {
+                    info.weakInfo.levelsNeeded = message.weakXPLevels;
+                    info.weakInfo.textPreview = getDesc(ench, message.weakLevelHint);
+                } else {
+                    info.weakInfo.textPreview = null;
+                }
+
+                ench = getEnch(message.midEnchHint);
+                if (ench != null) {
+                    info.midInfo.levelsNeeded = message.midXPLevels;
+                    info.midInfo.textPreview = getDesc(ench, message.midLevelHint);
+                } else {
+                    info.midInfo.textPreview = null;
+                }
+
+                ench = getEnch(message.strongEnchHint);
+                if (ench != null) {
+                    info.strongInfo.levelsNeeded = message.strongXPLevels;
+                    info.strongInfo.textPreview = getDesc(ench, message.strongLevelHint);
+                } else {
+                    info.strongInfo.textPreview = null;
+                }
+            }
         }
-
-        ench = getEnch(message.midEnchHint);
-        if (ench != null) {
-            ClientStorage.midInfo.levelsNeeded = message.midXPLevels;
-            ClientStorage.midInfo.textPreview = getDesc(ench, message.midLevelHint);
-        } else {
-            ClientStorage.midInfo.textPreview = null;
-        }
-
-        ench = getEnch(message.strongEnchHint);
-        if (ench != null) {
-            ClientStorage.strongInfo.levelsNeeded = message.strongXPLevels;
-            ClientStorage.strongInfo.textPreview = getDesc(ench, message.strongLevelHint);
-        } else {
-            ClientStorage.strongInfo.textPreview = null;
-        }
-
-
     }
 
     protected static Enchantment getEnch(int id) {

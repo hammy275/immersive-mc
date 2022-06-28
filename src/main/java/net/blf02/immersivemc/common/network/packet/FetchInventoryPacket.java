@@ -75,7 +75,13 @@ public class FetchInventoryPacket {
     public static void handleServerToClient(ServerPlayerEntity player, BlockPos pos) {
         if (NetworkUtil.safeToRun(pos, player)) {
             TileEntity tileEnt = player.level.getBlockEntity(pos);
-            if (tileEnt != null) {
+            if (WorldStorage.usesWorldStorage(player.level.getBlockState(pos))) {
+                ImmersiveStorage storage = GetStorage.getStorage(player, pos);
+                if (storage != null) {
+                    Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
+                            new UpdateStoragePacket(pos, storage, storage.getType()));
+                }
+            } else if (tileEnt != null) {
                 IInventory inv;
                 if (tileEnt instanceof IInventory) {
                     inv = (IInventory) tileEnt;
@@ -90,12 +96,6 @@ public class FetchInventoryPacket {
                 }
                 Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
                         new FetchInventoryPacket(stacks, pos));
-            } else if (WorldStorage.usesWorldStorage(player.level.getBlockState(pos))) {
-                ImmersiveStorage storage = GetStorage.getStorage(player, pos);
-                if (storage != null) {
-                    Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
-                            new UpdateStoragePacket(pos, storage, storage.getType()));
-                }
             }
         }
     }

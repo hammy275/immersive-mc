@@ -3,15 +3,21 @@ package net.blf02.immersivemc.client.immersive;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import net.blf02.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
 import net.blf02.immersivemc.client.immersive.info.EnchantingInfo;
-import net.blf02.immersivemc.client.storage.ClientStorage;
-import net.blf02.immersivemc.client.swap.ClientSwap;
 import net.blf02.immersivemc.common.config.ActiveConfig;
-import net.blf02.immersivemc.common.config.CommonConstants;
+import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.packet.GetEnchantmentsPacket;
+import net.blf02.immersivemc.common.network.packet.InteractPacket;
+import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.client.Minecraft;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -19,11 +25,14 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
+public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInfo> {
+
+    private static final Map<Enchantment, Integer> fakeEnch = new HashMap<>();
+    static {
+        fakeEnch.put(Enchantments.MENDING, 32767); // Just for the glimmer effect.
+    }
 
     protected final float[] yOffsets;
 
@@ -48,26 +57,9 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
     }
 
     @Override
-    public void noInfosTick() {
-        super.noInfosTick();
-        if (noInfosCooldown >= 200) {
-            ClientStorage.resetEnchs();
-        } else {
-            noInfosCooldown++;
-        }
-    }
-
-    @Override
     protected void doTick(EnchantingInfo info, boolean isInVR) {
         super.doTick(info, isInVR);
         if (Minecraft.getInstance().player == null || Minecraft.getInstance().level == null) return;
-
-        if (info.getBlockPosition() != null &&
-                Minecraft.getInstance().player.distanceToSqr(Vector3d.atCenterOf(info.getBlockPosition())) >
-                        CommonConstants.distanceSquaredToRemoveImmersive) {
-            info.remove();
-        }
-
 
         for (int x = -1; x <= 1; x++) { // 3x3 area one block and two blocks above must all be air to look nice
             for (int y = 1; y <= 2; y++) {
@@ -126,6 +118,9 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
         Optional<Integer> closest = Util.rayTraceClosest(start, end,
                 info.getHitbox(1), info.getHitbox(2), info.getHitbox(3));
         closest.ifPresent(targetSlot -> info.lookingAtIndex = targetSlot);
+        if (info.ticksActive % (ClientConstants.inventorySyncTime * 4) == 0) {
+            Network.INSTANCE.sendToServer(new GetEnchantmentsPacket(info.getBlockPosition()));
+        }
     }
 
     @Override
@@ -144,11 +139,11 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
     protected void render(EnchantingInfo info, MatrixStack stack, boolean isInVR) {
         float itemSize = ClientConstants.itemScaleSizeETable / info.getItemTransitionCountdown();
 
-        if (!ClientStorage.eTableEnchCopy.isEmpty()) { // If one is active, all are
+        if (!info.itemEnchantedCopy.isEmpty()) {
             for (int i = 0; i <= 2; i++) {
-                ClientStorage.ETableInfo enchInfo =
-                        i == 0 ? ClientStorage.weakInfo : i == 1 ? ClientStorage.midInfo : ClientStorage.strongInfo;
-                renderItem(ClientStorage.eTableEnchCopy, stack, info.getPosition(i + 1), itemSize,
+                EnchantingInfo.ETableInfo enchInfo =
+                        i == 0 ? info.weakInfo : i == 1 ? info.midInfo : info.strongInfo;
+                renderItem(info.itemEnchantedCopy, stack, info.getPosition(i + 1), itemSize,
                         getForwardFromPlayer(Minecraft.getInstance().player), info.getHitbox(i + 1), false);
                 if (info.lookingAtIndex == i) {
                     if (enchInfo.isPresent()) {
@@ -166,8 +161,8 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
 
             }
         }
-        if (!ClientStorage.eTableItem.isEmpty()) {
-            renderItem(ClientStorage.eTableItem, stack, info.getPosition(0), itemSize,
+        if (info.items[0] != null && !info.items[0].isEmpty()) {
+            renderItem(info.items[0], stack, info.getPosition(0), itemSize,
                     getForwardFromPlayer(Minecraft.getInstance().player), info.getHitbox(0), false);
         } else {
             renderHitbox(stack, info.getHitbox(0), info.getPosition(0));
@@ -180,13 +175,36 @@ public class ImmersiveETable extends AbstractImmersive<EnchantingInfo> {
     }
 
     @Override
+    public void processStorageFromNetwork(AbstractWorldStorageInfo infoRaw, ImmersiveStorage storage) {
+        EnchantingInfo info = (EnchantingInfo) infoRaw;
+        info.items[0] = storage.items[0];
+        if (storage.items[0] != null && !storage.items[0].isEmpty()) {
+            info.itemEnchantedCopy = storage.items[0].copy();
+            EnchantmentHelper.setEnchantments(fakeEnch, info.itemEnchantedCopy);
+        } else {
+            info.itemEnchantedCopy = ItemStack.EMPTY;
+        }
+
+    }
+
+    @Override
+    public EnchantingInfo getNewInfo(BlockPos pos) {
+        return new EnchantingInfo(pos, getTickTime());
+    }
+
+    @Override
+    public int getTickTime() {
+        return ClientConstants.ticksToRenderETable;
+    }
+
+    @Override
     protected boolean slotShouldRenderHelpHitbox(EnchantingInfo info, int slotNum) {
-        return ClientStorage.eTableItem == null || ClientStorage.eTableItem.isEmpty();
+        return info.items[0] == null || info.items[0].isEmpty();
     }
 
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
-        ClientSwap.eTableSwap(closest, hand, info.getBlockPosition());
+        Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), closest, hand));
     }
 
     public void trackObject(BlockPos pos) {

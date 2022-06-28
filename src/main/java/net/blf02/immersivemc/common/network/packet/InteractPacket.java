@@ -2,10 +2,7 @@ package net.blf02.immersivemc.common.network.packet;
 
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.server.swap.Swap;
-import net.minecraft.block.AnvilBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SmithingTableBlock;
+import net.minecraft.block.*;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Hand;
@@ -48,6 +45,8 @@ public class InteractPacket {
                     Swap.handleCraftingSwap(player, message.slot, message.hand, message.pos);
                 } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
                     Swap.anvilSwap(message.slot, message.hand, message.pos, player);
+                } else if (state.getBlock() instanceof EnchantingTableBlock) {
+                    Swap.enchantingTableSwap(player, message.slot, message.hand, message.pos);
                 }
             }
         });

@@ -1,18 +1,15 @@
 package net.blf02.immersivemc.client.immersive.info;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.ITextComponent;
 
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class EnchantingInfo extends AbstractImmersiveInfo {
+public class EnchantingInfo extends AbstractWorldStorageInfo {
 
-    protected final Vector3d[] positions = new Vector3d[4];
-    protected final AxisAlignedBB[] hitboxes = new AxisAlignedBB[4];
-    protected final BlockPos tablePos;
     public boolean areaAboveIsAir = false;
     public final int[] yOffsetPositions = new int[]{0,
             ThreadLocalRandom.current().nextInt(10),
@@ -21,10 +18,16 @@ public class EnchantingInfo extends AbstractImmersiveInfo {
 
     public int lookingAtIndex = -1;
     public Direction lastDir = null;
+    public ItemStack itemEnchantedCopy = ItemStack.EMPTY;
+
+    public final ETableInfo weakInfo = new ETableInfo();
+    public final ETableInfo midInfo = new ETableInfo();
+    public final ETableInfo strongInfo = new ETableInfo();
 
     public EnchantingInfo(BlockPos pos, int ticksToExist) {
-        super(ticksToExist);
-        this.tablePos = pos;
+        // Note that items[1], items[2], and items[3] go unused. Instead, all reference this.itemEnchantedCopy
+        // We specify the existance of up to index 3 so we can use up to positions[3] and hitboxes[3]
+        super(pos, ticksToExist, 3);
     }
 
     @Override
@@ -33,53 +36,17 @@ public class EnchantingInfo extends AbstractImmersiveInfo {
     }
 
     @Override
-    public AxisAlignedBB getHitbox(int slot) {
-        return this.hitboxes[slot];
-    }
-
-    @Override
-    public AxisAlignedBB[] getAllHitboxes() {
-        return this.hitboxes;
-    }
-
-    @Override
-    public void setHitbox(int slot, AxisAlignedBB hitbox) {
-        this.hitboxes[slot] = hitbox;
-    }
-
-    @Override
-    public boolean hasHitboxes() {
-        return this.hitboxes[0] != null;
-    }
-
-    @Override
-    public Vector3d getPosition(int slot) {
-        return this.positions[slot];
-    }
-
-    @Override
-    public Vector3d[] getAllPositions() {
-        return this.positions;
-    }
-
-    @Override
-    public void setPosition(int slot, Vector3d position) {
-        this.positions[slot] = position;
-    }
-
-    @Override
-    public boolean hasPositions() {
-        return this.positions[3] != null;
-    }
-
-    @Override
     public boolean readyToRender() {
         return this.hasPositions() && this.hasHitboxes()
                  && areaAboveIsAir;
     }
 
-    @Override
-    public BlockPos getBlockPosition() {
-        return this.tablePos;
+    public static class ETableInfo {
+        public int levelsNeeded;
+        public ITextComponent textPreview = null;
+
+        public boolean isPresent() {
+            return this.textPreview != null;
+        }
     }
 }

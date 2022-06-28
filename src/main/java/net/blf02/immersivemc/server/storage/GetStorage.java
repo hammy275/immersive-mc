@@ -2,10 +2,7 @@ package net.blf02.immersivemc.server.storage;
 
 import net.blf02.immersivemc.common.storage.AnvilStorage;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
-import net.minecraft.block.AnvilBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SmithingTableBlock;
+import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -34,6 +31,8 @@ public class GetStorage {
             return 8;
         } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
             return 1;
+        } else if (state.getBlock() instanceof EnchantingTableBlock) {
+            return 0;
         }
         return -1;
     }
@@ -44,8 +43,14 @@ public class GetStorage {
             return getCraftingStorage(player, pos);
         } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
             return getAnvilStorage(player, pos);
+        } else if (state.getBlock() instanceof EnchantingTableBlock) {
+            return getEnchantingStorage(player, pos);
         }
         return null;
+    }
+
+    public static ImmersiveStorage getEnchantingStorage(PlayerEntity player, BlockPos pos) {
+        return WorldStorage.getStorage(player).getOrCreate(pos).initIfNotAlready(1);
     }
 
     public static AnvilStorage getAnvilStorage(PlayerEntity player, BlockPos pos) {
