@@ -269,7 +269,8 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
     @Override
     protected void initInfo(BackpackInfo info) {
-        // NOOP. Backpack moves constantly, so we need to update things for it every tick.
+        // Get inventory data on initialization
+        Network.INSTANCE.sendToServer(new FetchPlayerStoragePacket("backpack"));
     }
 
     @Override

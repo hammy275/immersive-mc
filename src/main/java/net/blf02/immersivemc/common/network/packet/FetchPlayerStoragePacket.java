@@ -50,7 +50,7 @@ public class FetchPlayerStoragePacket {
             CompoundNBT storageTag = buffer.readNbt();
             String storageType = buffer.readUtf();
             return new FetchPlayerStoragePacket(GetStorage.assembleStorage(storageTag,
-                    storageType, null), storageType);
+                    ImmersiveStorage.TYPE, null), storageType);
         }
     }
 

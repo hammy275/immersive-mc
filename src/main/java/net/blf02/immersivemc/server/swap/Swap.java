@@ -98,6 +98,12 @@ public class Swap {
             ItemStack tableItem = storage.items[slot].copy();
             storage.items[slot] = playerItem;
             player.setItemInHand(hand, tableItem);
+            ICraftingRecipe recipe = getRecipe(player, storage.items);
+            if (recipe != null) {
+                storage.items[4] = recipe.getResultItem();
+            } else {
+                storage.items[4] = ItemStack.EMPTY;
+            }
         } else {
             handleDoCraft(player, storage.items, null);
         }
@@ -199,39 +205,37 @@ public class Swap {
         }
         ICraftingRecipe res = getRecipe(player, stacksIn);
         if (res != null) {
-            if (removeNeededIngredients(player, inv)) {
-                // Give our item to us, remove items from crafting inventory, and show new recipe
-                for (int i = 0; i < stacksIn.length - 1; i++) {
-                    stacksIn[i].shrink(1);
-                }
-                ICraftingRecipe recipe = getRecipe(player, stacksIn);
-                stacksIn[9] = recipe != null ? recipe.getResultItem() : ItemStack.EMPTY;
-                ItemStack stackOut = res.assemble(inv);
-                ItemStack handStack = player.getItemInHand(Hand.MAIN_HAND);
-                ItemStack toGive = ItemStack.EMPTY;
-                if (!handStack.isEmpty() && Util.stacksEqualBesidesCount(stackOut, handStack)) {
-                    Util.ItemStackMergeResult itemRes = Util.mergeStacks(handStack, stackOut, true);
-                    player.setItemInHand(Hand.MAIN_HAND, itemRes.mergedInto);
-                    toGive = itemRes.mergedFrom;
-                } else if (handStack.isEmpty()) {
-                    player.setItemInHand(Hand.MAIN_HAND, stackOut);
-                } else {
-                    toGive = stackOut;
-                }
-                if (!toGive.isEmpty()) {
-                    BlockPos posBlock = tablePos != null ? tablePos.above() : player.blockPosition();
-                    Vector3d pos = Vector3d.atCenterOf(posBlock);
-                    ItemEntity entOut = new ItemEntity(player.level, pos.x, pos.y, pos.z);
-                    entOut.setItem(toGive);
-                    entOut.setDeltaMovement(0, 0, 0);
-                    player.level.addFreshEntity(entOut);
-                } else {
-                    player.level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                            SoundEvents.ITEM_PICKUP, isBackpack ? SoundCategory.PLAYERS : SoundCategory.BLOCKS,
-                            0.2f,
-                            ThreadLocalRandom.current().nextFloat() -
-                                    ThreadLocalRandom.current().nextFloat() * 1.4f + 2f);
-                }
+            // Give our item to us, remove items from crafting inventory, and show new recipe
+            for (int i = 0; i < stacksIn.length - 1; i++) {
+                stacksIn[i].shrink(1);
+            }
+            ICraftingRecipe newRecipe = getRecipe(player, stacksIn);
+            stacksIn[stacksIn.length - 1] = newRecipe != null ? newRecipe.getResultItem() : ItemStack.EMPTY;
+            ItemStack stackOut = res.assemble(inv);
+            ItemStack handStack = player.getItemInHand(Hand.MAIN_HAND);
+            ItemStack toGive = ItemStack.EMPTY;
+            if (!handStack.isEmpty() && Util.stacksEqualBesidesCount(stackOut, handStack)) {
+                Util.ItemStackMergeResult itemRes = Util.mergeStacks(handStack, stackOut, true);
+                player.setItemInHand(Hand.MAIN_HAND, itemRes.mergedInto);
+                toGive = itemRes.mergedFrom;
+            } else if (handStack.isEmpty()) {
+                player.setItemInHand(Hand.MAIN_HAND, stackOut);
+            } else {
+                toGive = stackOut;
+            }
+            if (!toGive.isEmpty()) {
+                BlockPos posBlock = tablePos != null ? tablePos.above() : player.blockPosition();
+                Vector3d pos = Vector3d.atCenterOf(posBlock);
+                ItemEntity entOut = new ItemEntity(player.level, pos.x, pos.y, pos.z);
+                entOut.setItem(toGive);
+                entOut.setDeltaMovement(0, 0, 0);
+                player.level.addFreshEntity(entOut);
+            } else {
+                player.level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                        SoundEvents.ITEM_PICKUP, isBackpack ? SoundCategory.PLAYERS : SoundCategory.BLOCKS,
+                        0.2f,
+                        ThreadLocalRandom.current().nextFloat() -
+                                ThreadLocalRandom.current().nextFloat() * 1.4f + 2f);
             }
         }
     }
@@ -341,21 +345,6 @@ public class Swap {
             player.setItemInHand(hand, result.mergedFrom);
             player.getEnderChestInventory().setItem(slot, result.mergedInto);
         }
-    }
-
-    protected static boolean removeNeededIngredients(ServerPlayerEntity player, CraftingInventory inv) {
-        if (player.isCreative()) return true; // Always succeed if in creative mode
-
-        NonNullList<ItemStack> toRemoves = NonNullList.create();
-        for (int i = 0; i < inv.getHeight() * inv.getWidth(); i++) {
-            toRemoves.add(inv.getItem(i));
-        }
-
-        if (!doAndSimulateRemove(false, toRemoves, player.inventory.items)) {
-            return false;
-        }
-        doAndSimulateRemove(true, toRemoves, player.inventory.items);
-        return true;
     }
 
     /**

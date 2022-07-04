@@ -69,7 +69,8 @@ public class InteractPacket {
             if (message.isPlayerStorageInteract()) {
                 if (message.storageType.equals("backpack")) {
                     ImmersiveStorage storage = GetStorage.getPlayerStorage(player, "backpack");
-                    Swap.handleBackpackCraftingSwap(message.slot, message.hand, storage, player);
+                    // -27 below since 0-26 are inventory slots
+                    Swap.handleBackpackCraftingSwap(message.slot - 27, message.hand, storage, player);
                 }
             } else if (NetworkUtil.safeToRun(message.pos, player)) {
                 BlockState state = player.level.getBlockState(message.pos);

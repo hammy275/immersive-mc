@@ -53,8 +53,10 @@ public class GetStorage {
         }
         if (type.equals("backpack")) {
             ImmersiveStorage storage = new ImmersiveStorage(PlayerStorage.getPlayerStorage(player)).initIfNotAlready(5);
+            storage.identifier = "backpack";
             PlayerStorage.getStorages(player).add(storage);
             PlayerStorage.getPlayerStorage(player).setDirty();
+            return storage;
         }
         throw new IllegalArgumentException("Invalid player storage type!");
     }
