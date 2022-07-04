@@ -122,13 +122,14 @@ public class Swap {
             }
         } else if (!storage.items[2].isEmpty()) { // Craft our result!
             if (!player.getItemInHand(hand).isEmpty()) return;
-            Swap.handleAnvilCraft(storage.items, pos, player, hand);
+            Swap.handleAnvilCraft(storage, pos, player, hand);
         }
         storage.wStorage.setDirty();
     }
 
-    public static void handleAnvilCraft(ItemStack[] items, BlockPos pos, ServerPlayerEntity player, Hand hand) {
+    public static void handleAnvilCraft(AnvilStorage storage, BlockPos pos, ServerPlayerEntity player, Hand hand) {
         if (!player.getItemInHand(hand).isEmpty()) return;
+        ItemStack[] items = storage.items;
         ItemStack left = items[0];
         ItemStack mid = items[1];
         boolean isReallyAnvil = player.level.getBlockState(pos).getBlock() instanceof AnvilBlock;
@@ -157,6 +158,7 @@ public class Swap {
             left.shrink(1);
             mid.shrink(1);
             items[2] = ItemStack.EMPTY;
+            storage.xpLevels = 0;
             player.setItemInHand(hand, resAndCost.getFirst());
         }
     }

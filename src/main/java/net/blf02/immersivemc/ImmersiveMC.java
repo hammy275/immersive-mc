@@ -72,8 +72,6 @@ public class ImmersiveMC {
             int index = 1;
             Network.INSTANCE.registerMessage(index++, SwapPacket.class, SwapPacket::encode,
                     SwapPacket::decode, SwapPacket::handle);
-            Network.INSTANCE.registerMessage(index++, ClientCraftPacket.class, ClientCraftPacket::encode,
-                    ClientCraftPacket::decode, ClientCraftPacket::handle);
             Network.INSTANCE.registerMessage(index++, ImmersiveBreakPacket.class, ImmersiveBreakPacket::encode,
                     ImmersiveBreakPacket::decode, ImmersiveBreakPacket::handle);
             Network.INSTANCE.registerMessage(index++, FetchInventoryPacket.class, FetchInventoryPacket::encode,
