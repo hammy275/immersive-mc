@@ -58,8 +58,8 @@ public class Swap {
         if (!player.getItemInHand(hand).isEmpty()) return;
         if (slot < 1 || slot > 3) return;
         ImmersiveStorage storage = GetStorage.getEnchantingStorage(player, pos);
-        ItemStack enchantedItem = storage.items[0].copy();
-        if (enchantedItem.isEmpty()) return;
+        ItemStack toEnchantItem = storage.items[0].copy();
+        if (toEnchantItem.isEmpty()) return;
         int lapisInInventory = 0;
         for (int i = 0; i < player.inventory.items.size(); i++) {
             if (Tags.Items.GEMS_LAPIS.contains(player.inventory.getItem(i).getItem())) {
@@ -71,7 +71,7 @@ public class Swap {
         EnchantmentContainer container = new EnchantmentContainer(-1,
                 player.inventory, IWorldPosCallable.create(player.level, pos));
         container.setItem(1, new ItemStack(Items.LAPIS_LAZULI, 64));
-        container.setItem(0, enchantedItem);
+        container.setItem(0, toEnchantItem);
         if (container.clickMenuButton(player, slot - 1)) {
             int lapisToTake = slot;
             for (int i = 0; i < player.inventory.items.size(); i++) {
@@ -86,7 +86,7 @@ public class Swap {
                     break;
                 }
             }
-            player.setItemInHand(hand, enchantedItem);
+            player.setItemInHand(hand, container.getSlot(0).getItem());
             storage.items[0] = ItemStack.EMPTY;
         }
     }

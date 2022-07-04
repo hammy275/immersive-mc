@@ -18,6 +18,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -179,7 +180,11 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
         EnchantingInfo info = (EnchantingInfo) infoRaw;
         info.items[0] = storage.items[0];
         if (storage.items[0] != null && !storage.items[0].isEmpty()) {
-            info.itemEnchantedCopy = storage.items[0].copy();
+            if (storage.items[0].getItem() == Items.BOOK) {
+                info.itemEnchantedCopy = new ItemStack(Items.ENCHANTED_BOOK);
+            } else {
+                info.itemEnchantedCopy = storage.items[0].copy();
+            }
             EnchantmentHelper.setEnchantments(fakeEnch, info.itemEnchantedCopy);
         } else {
             info.itemEnchantedCopy = ItemStack.EMPTY;
