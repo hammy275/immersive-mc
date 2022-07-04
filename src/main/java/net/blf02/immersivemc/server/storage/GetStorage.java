@@ -2,14 +2,21 @@ package net.blf02.immersivemc.server.storage;
 
 import net.blf02.immersivemc.common.storage.AnvilStorage;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
-import net.minecraft.block.*;
+import net.minecraft.block.AnvilBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.EnchantingTableBlock;
+import net.minecraft.block.SmithingTableBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.storage.WorldSavedData;
+
+import java.util.List;
 
 public class GetStorage {
 
-    public static ImmersiveStorage assembleStorage(CompoundNBT nbt, String storageType, WorldStorage wStorage) {
+    public static ImmersiveStorage assembleStorage(CompoundNBT nbt, String storageType, WorldSavedData wStorage) {
         // Check storage type, and load storage accordingly
         ImmersiveStorage storage = null;
         if (storageType.equals(ImmersiveStorage.TYPE)) {
@@ -35,6 +42,21 @@ public class GetStorage {
             return 0;
         }
         return -1;
+    }
+
+    public static ImmersiveStorage getPlayerStorage(PlayerEntity player, String type) {
+        List<ImmersiveStorage> storages = PlayerStorage.getStorages(player);
+        for (ImmersiveStorage storage : storages) {
+            if (storage.identifier.equals("backpack")) {
+                return storage;
+            }
+        }
+        if (type.equals("backpack")) {
+            ImmersiveStorage storage = new ImmersiveStorage(PlayerStorage.getPlayerStorage(player)).initIfNotAlready(5);
+            PlayerStorage.getStorages(player).add(storage);
+            PlayerStorage.getPlayerStorage(player).setDirty();
+        }
+        throw new IllegalArgumentException("Invalid player storage type!");
     }
 
     public static ImmersiveStorage getStorage(PlayerEntity player, BlockPos pos) {

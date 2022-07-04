@@ -2,7 +2,7 @@ package net.blf02.immersivemc.client.config.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blf02.immersivemc.ImmersiveMC;
-import net.blf02.immersivemc.client.immersive.BackpackImmersive;
+import net.blf02.immersivemc.client.immersive.ImmersiveBackpack;
 import net.blf02.immersivemc.client.model.BackpackModel;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
@@ -119,7 +119,7 @@ public class BackpackConfigScreen extends Screen {
                 (2f * (float) Math.PI);
         stack.mulPose(Vector3f.YN.rotation(rot));
 
-        BackpackImmersive.getBackpackModel().renderToBuffer(stack,
+        ImmersiveBackpack.getBackpackModel().renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderType.entityCutout(BackpackModel.textureLocation)),
                 15728880, OverlayTexture.NO_OVERLAY,

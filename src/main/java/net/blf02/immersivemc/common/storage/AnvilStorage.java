@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.common.storage;
 
-import net.blf02.immersivemc.server.storage.WorldStorage;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.storage.WorldSavedData;
 
 public class AnvilStorage extends ImmersiveStorage {
 
@@ -9,7 +9,7 @@ public class AnvilStorage extends ImmersiveStorage {
 
     public int xpLevels = 0;
 
-    public AnvilStorage(WorldStorage storage) {
+    public AnvilStorage(WorldSavedData storage) {
         super(storage);
     }
 

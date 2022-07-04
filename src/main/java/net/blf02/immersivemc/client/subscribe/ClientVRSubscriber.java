@@ -3,7 +3,7 @@ package net.blf02.immersivemc.client.subscribe;
 import net.blf02.immersivemc.client.immersive.AbstractImmersive;
 import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.common.vr.util.Util;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;

@@ -94,6 +94,8 @@ public class ImmersiveMC {
                     InteractPacket::decode, InteractPacket::handle);
             Network.INSTANCE.registerMessage(index++, UpdateStoragePacket.class, UpdateStoragePacket::encode,
                     UpdateStoragePacket::decode, UpdateStoragePacket::handle);
+            Network.INSTANCE.registerMessage(index++, FetchPlayerStoragePacket.class, FetchPlayerStoragePacket::encode,
+                    FetchPlayerStoragePacket::decode, FetchPlayerStoragePacket::handle);
         });
 
     }

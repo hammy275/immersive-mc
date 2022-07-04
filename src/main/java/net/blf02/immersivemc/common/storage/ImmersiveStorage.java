@@ -1,8 +1,8 @@
 package net.blf02.immersivemc.common.storage;
 
-import net.blf02.immersivemc.server.storage.WorldStorage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.storage.WorldSavedData;
 
 import java.util.Arrays;
 
@@ -15,7 +15,7 @@ public class ImmersiveStorage {
      * Instance of WorldStorage. Will always exist server-side and NEVER exist client-side.
      * Do not use this in a constructor! Clients also use the constructor!
      */
-    public final WorldStorage wStorage;
+    public final WorldSavedData wStorage;
 
     /**
      * A unique String representing the type of storage this is. Used in WorldStorage when saving/loading NBT.
@@ -27,7 +27,9 @@ public class ImmersiveStorage {
      */
     public ItemStack[] items;
 
-    public ImmersiveStorage(WorldStorage storage) {
+    public String identifier = "world";
+
+    public ImmersiveStorage(WorldSavedData storage) {
         this.wStorage = storage;
     }
 
@@ -61,6 +63,10 @@ public class ImmersiveStorage {
         for (int i = 0; i < length; i++) {
             this.items[i] = ItemStack.of(nbt.getCompound("item" + i));
         }
+        this.identifier = nbt.getString("identifier");
+        if (this.identifier.equals("")) {
+            this.identifier = "world"; // Safe default if string isn't there
+        }
     }
 
     public CompoundNBT save(CompoundNBT nbt) {
@@ -68,6 +74,7 @@ public class ImmersiveStorage {
         for (int i = 0; i < items.length; i++) {
             nbt.put("item" + i, items[i].save(new CompoundNBT()));
         }
+        nbt.putString("identifier", identifier);
         return nbt;
     }
 }

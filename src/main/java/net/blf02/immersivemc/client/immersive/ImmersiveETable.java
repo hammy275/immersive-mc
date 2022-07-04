@@ -10,7 +10,7 @@ import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.GetEnchantmentsPacket;
 import net.blf02.immersivemc.common.network.packet.InteractPacket;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
-import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.common.vr.util.Util;
 import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.Enchantment;

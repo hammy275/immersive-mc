@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import net.blf02.immersivemc.common.storage.AnvilStorage;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.common.storage.workarounds.NullContainer;
-import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.common.vr.util.Util;
 import net.blf02.immersivemc.server.storage.GetStorage;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.Blocks;
@@ -49,7 +49,6 @@ public class Swap {
             enchStorage.items[0] = toEnchant;
         } else if (player.getItemInHand(hand).isEmpty()) {
             doEnchanting(slot, pos, player, hand);
-
         }
         enchStorage.wStorage.setDirty();
     }
@@ -90,6 +89,19 @@ public class Swap {
             player.setItemInHand(hand, enchantedItem);
             storage.items[0] = ItemStack.EMPTY;
         }
+    }
+
+    public static void handleBackpackCraftingSwap(int slot, Hand hand, ImmersiveStorage storage,
+                                                  ServerPlayerEntity player) {
+        if (slot < 4) {
+            ItemStack playerItem = player.getItemInHand(hand).copy();
+            ItemStack tableItem = storage.items[slot].copy();
+            storage.items[slot] = playerItem;
+            player.setItemInHand(hand, tableItem);
+        } else {
+            handleDoCraft(player, storage.items, null);
+        }
+        storage.wStorage.setDirty();
     }
 
     public static void anvilSwap(int slot, Hand hand, BlockPos pos, ServerPlayerEntity player) {
@@ -177,7 +189,7 @@ public class Swap {
 
     public static void handleDoCraft(ServerPlayerEntity player, ItemStack[] stacksIn,
                                      BlockPos tablePos) {
-        boolean isBackpack = stacksIn.length == 4;
+        boolean isBackpack = stacksIn.length == 5;
         int invDim = isBackpack ? 2 : 3;
         CraftingInventory inv = new CraftingInventory(new NullContainer(), invDim, invDim);
         for (int i = 0; i < stacksIn.length - 1; i++) { // -1 from length since we skip the last index since it's the output
@@ -205,7 +217,7 @@ public class Swap {
                     toGive = stackOut;
                 }
                 if (!toGive.isEmpty()) {
-                    BlockPos posBlock = tablePos.above();
+                    BlockPos posBlock = tablePos != null ? tablePos.above() : player.blockPosition();
                     Vector3d pos = Vector3d.atCenterOf(posBlock);
                     ItemEntity entOut = new ItemEntity(player.level, pos.x, pos.y, pos.z);
                     entOut.setItem(toGive);

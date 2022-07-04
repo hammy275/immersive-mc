@@ -11,7 +11,7 @@ import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
-import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.common.vr.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.vrapi.api.data.IVRData;
@@ -73,7 +73,7 @@ public class ClientLogicSubscriber {
         if (ImmersiveMC.SUMMON_BACKPACK.isDown()) {
             if (!backpackPressed) {
                 backpackPressed = true;
-                BackpackImmersive.singleton.doTrack();
+                ImmersiveBackpack.singleton.doTrack();
             }
         } else {
             backpackPressed = false;
@@ -206,11 +206,11 @@ public class ClientLogicSubscriber {
     public static boolean handleLeftClick(PlayerEntity player) {
         if (Minecraft.getInstance().player == null) return false;
 
-        BackpackInfo backpackInfo = BackpackImmersive.singleton.getTrackedObjects().size() > 0 ?
-                BackpackImmersive.singleton.getTrackedObjects().get(0) : null;
+        BackpackInfo backpackInfo = ImmersiveBackpack.singleton.getTrackedObjects().size() > 0 ?
+                ImmersiveBackpack.singleton.getTrackedObjects().get(0) : null;
         // Move to next row on left click if backpack is out
         if (backpackInfo != null && backpackInfo.slotHovered > -1) {
-            BackpackImmersive.onHitboxInteract(player, backpackInfo, backpackInfo.slotHovered);
+            ImmersiveBackpack.onHitboxInteract(player, backpackInfo, backpackInfo.slotHovered);
             return true;
         }
 

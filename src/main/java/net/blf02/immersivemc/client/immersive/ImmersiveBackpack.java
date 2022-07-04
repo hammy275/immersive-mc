@@ -9,11 +9,13 @@ import net.blf02.immersivemc.client.model.BackpackLowDetailModel;
 import net.blf02.immersivemc.client.model.BackpackModel;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
-import net.blf02.immersivemc.common.network.packet.ClientCraftPacket;
+import net.blf02.immersivemc.common.network.packet.FetchPlayerStoragePacket;
+import net.blf02.immersivemc.common.network.packet.InteractPacket;
 import net.blf02.immersivemc.common.network.packet.InventorySwapPacket;
-import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
+import net.blf02.immersivemc.common.vr.util.Util;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
@@ -29,12 +31,11 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 
-import java.util.Arrays;
 import java.util.Optional;
 
-public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
+public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
-    public static final BackpackImmersive singleton = new BackpackImmersive();
+    public static final ImmersiveBackpack singleton = new ImmersiveBackpack();
 
     public static final BackpackModel model = new BackpackModel();
     public static final BackpackLowDetailModel modelLowDetail = new BackpackLowDetailModel();
@@ -42,7 +43,7 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
 
     private final double spacing = 3d/8d;
 
-    public BackpackImmersive() {
+    public ImmersiveBackpack() {
         super(1); // A player only has one backpack
     }
 
@@ -165,21 +166,9 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
         if (slot <= 26) { // Inventory handle
             Network.INSTANCE.sendToServer(new InventorySwapPacket(slot + 9));
             Swap.handleInventorySwap(player, slot + 9, Hand.MAIN_HAND); // Do swap on both sides
-        } else if (slot <= 30) {
-            info.craftingInput[slot - 27] = player.getItemInHand(Hand.MAIN_HAND).copy();
-            if (!info.craftingInput[slot - 27].isEmpty()) info.craftingInput[slot - 27].setCount(1);
-            Network.INSTANCE.sendToServer(new ClientCraftPacket(info.craftingInput, player.blockPosition(),
-                    true));
-        } else if (slot == 31) {
-            Network.INSTANCE.sendToServer(new ClientCraftPacket(info.craftingInput, player.blockPosition(),
-                    false));
-            if (ActiveConfig.clearTableOnUnstackable) {
-                Arrays.fill(info.craftingInput, ItemStack.EMPTY);
-                info.craftingOutput = ItemStack.EMPTY;
-            } else {
-                Network.INSTANCE.sendToServer(new ClientCraftPacket(info.craftingInput, player.blockPosition(),
-                        true));
-            }
+        } else {
+            Network.INSTANCE.sendToServer(new InteractPacket("backpack", slot, Hand.MAIN_HAND));
+            Network.INSTANCE.sendToServer(new FetchPlayerStoragePacket("backpack"));
         }
     }
 
@@ -285,6 +274,17 @@ public class BackpackImmersive extends AbstractImmersive<BackpackInfo> {
 
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {}
+
+    public void processFromNetwork(ImmersiveStorage storage) {
+        if (singleton.infos.size() > 0) {
+            BackpackInfo info = singleton.infos.get(0);
+            for (int i = 0; i <= 3; i++) {
+                info.craftingInput[i] = storage.items[i];
+            }
+            info.craftingOutput = storage.items[4];
+        }
+    }
+
 
     public void doTrack() {
         if (this.infos.isEmpty()) {

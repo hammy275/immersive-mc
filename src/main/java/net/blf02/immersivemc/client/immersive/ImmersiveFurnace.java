@@ -7,7 +7,7 @@ import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
-import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.common.vr.util.Util;
 import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

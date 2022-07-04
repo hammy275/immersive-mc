@@ -1,4 +1,4 @@
-package net.blf02.immersivemc.common.util;
+package net.blf02.immersivemc.common.vr.util;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
