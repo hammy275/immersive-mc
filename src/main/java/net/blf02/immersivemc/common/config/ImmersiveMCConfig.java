@@ -32,7 +32,6 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue autoCenterFurnace;
     public static ForgeConfigSpec.BooleanValue autoCenterBrewing;
     public static ForgeConfigSpec.BooleanValue useLowDetailBackpack;
-    public static ForgeConfigSpec.BooleanValue clearTableOnUnstackable;
     public static ForgeConfigSpec.BooleanValue showPlacementGuide;
 
     static {
@@ -102,9 +101,6 @@ public class ImmersiveMCConfig {
         useLowDetailBackpack = builder
                 .comment("Use lower-detailed bag")
                 .define("low_detail_bag", false);
-        clearTableOnUnstackable = builder
-                .comment("Clear the crafting table after crafting an unstackable item")
-                .define("clear_table_on_unstackable", false);
         showPlacementGuide = builder
                 .comment("Whether to show a particle for where to place items")
                 .define("show_placement_guide", true);
@@ -148,7 +144,6 @@ public class ImmersiveMCConfig {
         autoCenterFurnace.set(false);
         autoCenterBrewing.set(false);
         useLowDetailBackpack.set(false);
-        clearTableOnUnstackable.set(false);
         showPlacementGuide.set(true);
 
     }

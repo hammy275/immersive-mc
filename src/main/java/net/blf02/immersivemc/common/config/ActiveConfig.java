@@ -30,7 +30,6 @@ public class ActiveConfig {
     public static boolean autoCenterFurnace = false;
     public static boolean autoCenterBrewing = false;
     public static boolean useLowDetailBackpack = false;
-    public static boolean clearTableOnUnstackable = false;
     public static boolean showPlacementGuide = true;
 
     public static void loadConfigFromPacket(PacketBuffer buffer) {
@@ -93,7 +92,6 @@ public class ActiveConfig {
         autoCenterFurnace = ImmersiveMCConfig.autoCenterFurnace.get();
         autoCenterBrewing = ImmersiveMCConfig.autoCenterBrewing.get();
         useLowDetailBackpack = ImmersiveMCConfig.useLowDetailBackpack.get();
-        clearTableOnUnstackable = ImmersiveMCConfig.clearTableOnUnstackable.get();
         showPlacementGuide = ImmersiveMCConfig.showPlacementGuide.get();
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
@@ -141,7 +139,6 @@ public class ActiveConfig {
                 "Auto-center furnace: " + autoCenterFurnace + "\n" +
                 "Auto-center brewing: " + autoCenterBrewing + "\n" +
                 "Use low detailed bag: " + useLowDetailBackpack + "\n" +
-                "Clear table after unstackable: " + clearTableOnUnstackable + "\n" +
                 "Show placement guide: " + showPlacementGuide;
         return stringOut;
     }
