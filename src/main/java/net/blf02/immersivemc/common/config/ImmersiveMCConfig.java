@@ -33,6 +33,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue autoCenterBrewing;
     public static ForgeConfigSpec.BooleanValue useLowDetailBackpack;
     public static ForgeConfigSpec.BooleanValue showPlacementGuide;
+    public static ForgeConfigSpec.IntValue itemPlacementMode;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -104,6 +105,9 @@ public class ImmersiveMCConfig {
         showPlacementGuide = builder
                 .comment("Whether to show a particle for where to place items")
                 .define("show_placement_guide", true);
+        itemPlacementMode = builder
+                .comment("Integer representation for the mode to use when placing items using ImmersiveMC")
+                .defineInRange("placement_mode", 0, 0, PlacementMode.values().length - 1);
     }
 
     public static void encode(PacketBuffer buffer) {
@@ -145,6 +149,7 @@ public class ImmersiveMCConfig {
         autoCenterBrewing.set(false);
         useLowDetailBackpack.set(false);
         showPlacementGuide.set(true);
+        itemPlacementMode.set(0);
 
     }
 
