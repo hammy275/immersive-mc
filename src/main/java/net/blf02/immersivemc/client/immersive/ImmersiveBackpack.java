@@ -208,7 +208,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         for (int i = 27; i <= 31; i++) {
             ItemStack item = i == 31 ? info.craftingOutput : info.craftingInput[i - 27];
             if (!item.isEmpty() && info.getPosition(i) != null) {
-                renderItem(item, stack, info.getPosition(i), ClientConstants.itemScaleSizeBackpack, null, info.getHitbox(i), i == 31);
+                renderItem(item, stack, info.getPosition(i), ClientConstants.itemScaleSizeBackpack, null, info.getHitbox(i), true);
             }
         }
 
