@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.common.network.packet;
 
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.config.PlacementMode;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -22,6 +23,7 @@ public class SwapPacket {
     public final BlockPos block;
     public final int slot;
     public final Hand hand;
+    public PlacementMode placementMode = ActiveConfig.placementMode;
 
     public SwapPacket(BlockPos block, int slot, Hand hand) {
         this.block = block;
@@ -30,14 +32,18 @@ public class SwapPacket {
     }
 
     public static void encode(SwapPacket packet, PacketBuffer buffer) {
+        buffer.writeEnum(packet.placementMode);
         buffer.writeBlockPos(packet.block);
         buffer.writeInt(packet.slot);
         buffer.writeInt(packet.hand == Hand.MAIN_HAND ? 0 : 1);
     }
 
     public static SwapPacket decode(PacketBuffer buffer) {
-        return new SwapPacket(buffer.readBlockPos(), buffer.readInt(),
+        PlacementMode mode = buffer.readEnum(PlacementMode.class);
+        SwapPacket packet = new SwapPacket(buffer.readBlockPos(), buffer.readInt(),
                 buffer.readInt() == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND);
+        packet.placementMode = mode;
+        return packet;
     }
 
     public static void handle(final SwapPacket message, Supplier<NetworkEvent.Context> ctx) {
@@ -47,10 +53,10 @@ public class SwapPacket {
                 TileEntity tileEnt = player.level.getBlockEntity(message.block);
                 if (tileEnt instanceof AbstractFurnaceTileEntity && ActiveConfig.useFurnaceImmersion) {
                     AbstractFurnaceTileEntity furnace = (AbstractFurnaceTileEntity) tileEnt;
-                    Swap.handleFurnaceSwap(furnace, player, message.hand, message.slot);
+                    Swap.handleFurnaceSwap(furnace, player, message.hand, message.slot, message.placementMode);
                 } else if (tileEnt instanceof BrewingStandTileEntity && ActiveConfig.useBrewingImmersion) {
                     BrewingStandTileEntity stand = (BrewingStandTileEntity) tileEnt;
-                    Swap.handleBrewingSwap(stand, player, message.hand, message.slot);
+                    Swap.handleBrewingSwap(stand, player, message.hand, message.slot, message.placementMode);
                 } else if (tileEnt instanceof JukeboxTileEntity && ActiveConfig.useJukeboxImmersion) {
                     Swap.handleJukebox((JukeboxTileEntity) tileEnt, player, message.hand);
                 } else if (tileEnt instanceof ChestTileEntity && ActiveConfig.useChestImmersion) {

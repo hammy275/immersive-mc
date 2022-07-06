@@ -1,5 +1,7 @@
 package net.blf02.immersivemc.common.network.packet;
 
+import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.config.PlacementMode;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.server.storage.GetStorage;
@@ -22,6 +24,7 @@ public class InteractPacket {
     public final String storageType;
     public final int slot;
     public final Hand hand;
+    public PlacementMode placementMode = ActiveConfig.placementMode;
 
     public InteractPacket(BlockPos pos, int slot, Hand hand) {
         this.pos = pos;
@@ -39,11 +42,17 @@ public class InteractPacket {
         this.pos = null;
     }
 
+    protected InteractPacket setPlacementMode(PlacementMode mode) {
+        this.placementMode = mode;
+        return this;
+    }
+
     public boolean isPlayerStorageInteract() {
         return this.storageType != null;
     }
 
     public static void encode(InteractPacket packet, PacketBuffer buffer) {
+        buffer.writeEnum(packet.placementMode);
         buffer.writeBoolean(packet.isPlayerStorageInteract());
         if (packet.isPlayerStorageInteract()) {
             buffer.writeUtf(packet.storageType);
@@ -54,12 +63,13 @@ public class InteractPacket {
     }
 
     public static InteractPacket decode(PacketBuffer buffer) {
+        PlacementMode mode = buffer.readEnum(PlacementMode.class);
         if (buffer.readBoolean()) {
             return new InteractPacket(buffer.readUtf(), buffer.readInt(),
-                    buffer.readInt() == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND);
+                    buffer.readInt() == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND).setPlacementMode(mode);
         } else {
             return new InteractPacket(buffer.readBlockPos(), buffer.readInt(),
-                    buffer.readInt() == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND);
+                    buffer.readInt() == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND).setPlacementMode(mode);
         }
     }
 
@@ -70,14 +80,14 @@ public class InteractPacket {
                 if (message.storageType.equals("backpack")) {
                     ImmersiveStorage storage = GetStorage.getPlayerStorage(player, "backpack");
                     // -27 below since 0-26 are inventory slots
-                    Swap.handleBackpackCraftingSwap(message.slot - 27, message.hand, storage, player);
+                    Swap.handleBackpackCraftingSwap(message.slot - 27, message.hand, storage, player, message.placementMode);
                 }
             } else if (NetworkUtil.safeToRun(message.pos, player)) {
                 BlockState state = player.level.getBlockState(message.pos);
                 if (state.getBlock() == Blocks.CRAFTING_TABLE) {
-                    Swap.handleCraftingSwap(player, message.slot, message.hand, message.pos);
+                    Swap.handleCraftingSwap(player, message.slot, message.hand, message.pos, message.placementMode);
                 } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
-                    Swap.anvilSwap(message.slot, message.hand, message.pos, player);
+                    Swap.anvilSwap(message.slot, message.hand, message.pos, player, message.placementMode);
                 } else if (state.getBlock() instanceof EnchantingTableBlock) {
                     Swap.enchantingTableSwap(player, message.slot, message.hand, message.pos);
                 }

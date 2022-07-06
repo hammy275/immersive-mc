@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.server.swap;
 
 import com.mojang.datafixers.util.Pair;
+import net.blf02.immersivemc.common.config.PlacementMode;
 import net.blf02.immersivemc.common.storage.AnvilStorage;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.common.storage.workarounds.NullContainer;
@@ -26,13 +27,15 @@ import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.JukeboxTileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.Hand;
+import net.minecraft.util.IWorldPosCallable;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Tags;
 
-import java.util.AbstractList;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -92,12 +95,14 @@ public class Swap {
     }
 
     public static void handleBackpackCraftingSwap(int slot, Hand hand, ImmersiveStorage storage,
-                                                  ServerPlayerEntity player) {
+                                                  ServerPlayerEntity player, PlacementMode mode) {
         if (slot < 4) {
-            ItemStack playerItem = player.getItemInHand(hand).copy();
-            ItemStack tableItem = storage.items[slot].copy();
-            storage.items[slot] = playerItem;
-            player.setItemInHand(hand, tableItem);
+            ItemStack playerItem = player.getItemInHand(hand);
+            ItemStack tableItem = storage.items[slot];
+            SwapResult result = getSwap(playerItem, tableItem, mode);
+            storage.items[slot] = result.toOther;
+            player.setItemInHand(hand, result.toHand);
+            placeLeftovers(player, result.leftovers);
             ICraftingRecipe recipe = getRecipe(player, storage.items);
             if (recipe != null) {
                 storage.items[4] = recipe.getResultItem();
@@ -110,15 +115,18 @@ public class Swap {
         storage.wStorage.setDirty();
     }
 
-    public static void anvilSwap(int slot, Hand hand, BlockPos pos, ServerPlayerEntity player) {
+    public static void anvilSwap(int slot, Hand hand, BlockPos pos, ServerPlayerEntity player,
+                                 PlacementMode mode) {
         World level = player.level;
         boolean isReallyAnvil = level.getBlockState(pos).getBlock() instanceof AnvilBlock;
         AnvilStorage storage = GetStorage.getAnvilStorage(player, pos);
         if (slot != 2) {
-            ItemStack playerItem = player.getItemInHand(hand).copy();
-            ItemStack anvilItem = storage.items[slot].copy();
-            storage.items[slot] = playerItem;
-            player.setItemInHand(hand, anvilItem);
+            ItemStack playerItem = player.getItemInHand(hand);
+            ItemStack anvilItem = storage.items[slot];
+            SwapResult result = getSwap(playerItem, anvilItem, mode);
+            storage.items[slot] = result.toOther;
+            player.setItemInHand(hand, result.toHand);
+            placeLeftovers(player, result.leftovers);
             storage.items[2] = ItemStack.EMPTY; // Clear output if we change something
             if (isReallyAnvil) storage.xpLevels = 0;
             if (!storage.items[0].isEmpty() && !storage.items[1].isEmpty()) {
@@ -169,13 +177,16 @@ public class Swap {
         }
     }
 
-    public static void handleCraftingSwap(ServerPlayerEntity player, int slot, Hand hand, BlockPos tablePos) {
+    public static void handleCraftingSwap(ServerPlayerEntity player, int slot, Hand hand, BlockPos tablePos,
+                                          PlacementMode mode) {
         ImmersiveStorage storage = GetStorage.getCraftingStorage(player, tablePos);
         if (slot < 9) {
-            ItemStack playerItem = player.getItemInHand(hand).copy();
-            ItemStack tableItem = storage.items[slot];
-            storage.items[slot] = playerItem;
-            player.setItemInHand(hand, tableItem);
+            ItemStack playerItem = player.getItemInHand(hand);
+            ItemStack anvilItem = storage.items[slot];
+            SwapResult result = getSwap(playerItem, anvilItem, mode);
+            storage.items[slot] = result.toOther;
+            player.setItemInHand(hand, result.toHand);
+            placeLeftovers(player, result.leftovers);
             ICraftingRecipe recipe = getRecipe(player, storage.items);
             storage.items[9] = recipe != null ? recipe.getResultItem() : ItemStack.EMPTY;
         } else {
@@ -241,6 +252,7 @@ public class Swap {
     }
 
     public static void handleInventorySwap(PlayerEntity player, int slot, Hand hand) {
+        // Always do full swap since splitting stacks is done when interacting with immersives instead
         ItemStack handStack = player.getItemInHand(hand).copy();
         ItemStack invStack = player.inventory.getItem(slot).copy();
         if (handStack.isEmpty() || invStack.isEmpty() || !Util.stacksEqualBesidesCount(handStack, invStack)) {
@@ -254,19 +266,14 @@ public class Swap {
 
     }
     public static void handleFurnaceSwap(AbstractFurnaceTileEntity furnace, PlayerEntity player,
-                                         Hand hand, int slot) {
+                                         Hand hand, int slot, PlacementMode mode) {
         ItemStack furnaceItem = furnace.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand).copy();
         if (slot != 2) {
-            if (!furnace.canPlaceItem(slot, playerItem) && !playerItem.isEmpty()) return;
-            if (playerItem.isEmpty() || furnaceItem.isEmpty() || !Util.stacksEqualBesidesCount(furnaceItem, playerItem)) {
-                player.setItemInHand(hand, furnaceItem);
-                furnace.setItem(slot, playerItem);
-            } else {
-                Util.ItemStackMergeResult result = Util.mergeStacks(furnaceItem, playerItem, false);
-                player.setItemInHand(hand, result.mergedFrom);
-                furnace.setItem(slot, result.mergedInto);
-            }
+            SwapResult result = getSwap(playerItem, furnaceItem, mode);
+            player.setItemInHand(hand, result.toHand);
+            furnace.setItem(slot, result.toOther);
+            placeLeftovers(player, result.leftovers);
         } else {
             if (playerItem.isEmpty()) {
                 player.setItemInHand(hand, furnaceItem);
@@ -280,7 +287,7 @@ public class Swap {
     }
 
     public static void handleBrewingSwap(BrewingStandTileEntity stand, PlayerEntity player,
-                                         Hand hand, int slot) {
+                                         Hand hand, int slot, PlacementMode mode) {
         ItemStack standItem = stand.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand).copy();
         if (slot < 3) { // Potions
@@ -290,14 +297,10 @@ public class Swap {
             stand.setItem(slot, playerItem);
         } else { // Ingredient and Fuel
             if (!stand.canPlaceItem(slot, playerItem) && playerItem != ItemStack.EMPTY) return;
-            if (playerItem.isEmpty() || standItem.isEmpty() || !Util.stacksEqualBesidesCount(standItem, playerItem)) {
-                player.setItemInHand(hand, standItem);
-                stand.setItem(slot, playerItem);
-            } else {
-                Util.ItemStackMergeResult result = Util.mergeStacks(standItem, playerItem, false);
-                player.setItemInHand(hand, result.mergedFrom);
-                stand.setItem(slot, result.mergedInto);
-            }
+            SwapResult result = getSwap(playerItem, standItem, mode);
+            player.setItemInHand(hand, result.toHand);
+            stand.setItem(slot, result.toOther);
+            placeLeftovers(player, result.leftovers);
         }
     }
 
@@ -347,57 +350,6 @@ public class Swap {
         }
     }
 
-    /**
-     * Checks/actually removes items from an inventory
-     * @param doRemoval Whether to actually remove the items from the inventory or not
-     * @param toRemoves List with items to remove/check. The "recipe".
-     * @param inventory List of items to remove from/check. The "inventory"
-     * @return true if all removals can be done or were done. false otherwise
-     */
-    private static boolean doAndSimulateRemove(boolean doRemoval, AbstractList<ItemStack> toRemoves,
-                                               AbstractList<ItemStack> inventory) {
-        if (!doRemoval) {
-            NonNullList<ItemStack> inventoryClone = NonNullList.create();
-            for (ItemStack s : inventory) {
-                inventoryClone.add(s.copy());
-            }
-            inventory = inventoryClone;
-        }
-
-        for (ItemStack toRemove : toRemoves) {
-            boolean didRemoval = false;
-            if (toRemove.isEmpty()) continue; // We can always remove nothingness, and we don't actually remove it
-
-            // Error out if item count isn't exactly 1 (this function depends on it)
-            if (toRemove.getCount() != 1) throw new IllegalArgumentException("Must remove exactly 1 item.");
-
-            for (ItemStack invItem : inventory) {
-                if (invItem.isEmpty()) continue; // No way we can equal an empty item
-                boolean tagsBothNullOrNot = invItem.hasTag() == toRemove.hasTag();
-                boolean sameBaseItem = invItem.getItem() == toRemove.getItem();
-                boolean equalTags;
-                if (tagsBothNullOrNot) {
-                    if (invItem.hasTag()) {
-                        equalTags = invItem.getTag().equals(toRemove.getTag()); // Actually compare tags
-                    } else {
-                        equalTags = true; // Both items have no tags
-                    }
-                } else {
-                    equalTags = false; // One item tag is null, the other isn't
-                }
-                if (tagsBothNullOrNot && sameBaseItem && equalTags) {
-                    invItem.shrink(1);
-                    didRemoval = true;
-                    break;
-                }
-            }
-            if (!didRemoval) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static Pair<ItemStack, Integer> getAnvilOutput(ItemStack left, ItemStack mid, boolean isReallyAnvil, ServerPlayerEntity player) {
         AbstractRepairContainer container;
         if (isReallyAnvil) {
@@ -415,4 +367,84 @@ public class Swap {
         }
         return new Pair<>(res, level);
     }
+
+    /**
+     * Get Swap Information.
+     *
+     * Will handle swapping the handIn stack to the otherIn stack using PlacementMode mode.
+     *
+     * This function DOES NOT modify the stacks coming in!
+     *
+     * @param handIn The stack in the player's hand. This is what's subtracted from.
+     * @param otherIn The other stack. This is what's being placed into.
+     * @param mode The placement mode as configured by the player.
+     * @return A SwapResult representing the new items to give to the player, the object, and any leftovers to
+     * give to the player some other way (or to alert to failing the swap entirely).
+     */
+    public static SwapResult getSwap(ItemStack handIn, ItemStack otherIn, PlacementMode mode) {
+        int toPlace;
+        switch (mode) {
+            case PLACE_ONE:
+                toPlace = 1;
+                break;
+            case PLACE_QUARTER:
+                toPlace = (int) Math.max(handIn.getCount() / 4d, 1);
+                break;
+            case PLACE_HALF:
+                toPlace = (int) Math.max(handIn.getCount() / 2d, 1);
+                break;
+            case PLACE_ALL:
+                toPlace = handIn.getCount();
+                break;
+            default:
+                throw new IllegalArgumentException("Unhandled placement mode " + mode);
+        }
+
+        // Swap toPlace from handIn to otherIn
+        ItemStack toHand;
+        ItemStack toOther;
+        ItemStack leftovers;
+        if (Util.stacksEqualBesidesCount(handIn, otherIn) && !handIn.isEmpty() && !otherIn.isEmpty()) {
+            ItemStack handInCountAdjusted = handIn.copy();
+            handInCountAdjusted.setCount(toPlace);
+            Util.ItemStackMergeResult mergeResult = Util.mergeStacks(otherIn.copy(), handInCountAdjusted, false);
+            toOther = mergeResult.mergedInto;
+            // Take our original hand, shrink by all of the amount to be moved, then grow by the amount
+            // that didn't get moved
+            toHand = handIn.copy();
+            toHand.shrink(toPlace);
+            toHand.grow(mergeResult.mergedFrom.getCount());
+            leftovers = ItemStack.EMPTY;
+        } else if (handIn.isEmpty()) { // We grab the items from the immersive into our hand
+            return new SwapResult(otherIn.copy(), ItemStack.EMPTY, ItemStack.EMPTY);
+        } else { // We're placing into a slot of air OR the other slot contains something that isn't what we have
+            toOther = handIn.copy();
+            toOther.setCount(toPlace);
+            toHand = handIn.copy();
+            toHand.shrink(toPlace);
+            leftovers = otherIn.copy();
+        }
+        return new SwapResult(toHand, toOther, leftovers);
+    }
+
+    public static void placeLeftovers(PlayerEntity player, ItemStack leftovers) {
+        if (!leftovers.isEmpty()) {
+            ItemEntity item = new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), leftovers);
+            player.level.addFreshEntity(item);
+        }
+    }
+
+
+
+    public static class SwapResult {
+        public final ItemStack toHand;
+        public final ItemStack toOther;
+        public final ItemStack leftovers;
+        public SwapResult(ItemStack toHand, ItemStack toOther, ItemStack leftovers) {
+            this.toHand = toHand;
+            this.toOther = toOther;
+            this.leftovers = leftovers;
+        }
+    }
+
 }

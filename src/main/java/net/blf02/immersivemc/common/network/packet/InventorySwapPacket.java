@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.common.network.packet;
 
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.config.PlacementMode;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -12,17 +13,21 @@ import java.util.function.Supplier;
 public class InventorySwapPacket {
 
     public final int slot;
+    public PlacementMode placementMode = ActiveConfig.placementMode;
 
     public InventorySwapPacket(int invSlotRaw) {
         this.slot = invSlotRaw;
     }
 
     public static void encode(InventorySwapPacket packet, PacketBuffer buffer) {
-        buffer.writeInt(packet.slot);
+        buffer.writeEnum(packet.placementMode).writeInt(packet.slot);
     }
 
     public static InventorySwapPacket decode(PacketBuffer buffer) {
-        return new InventorySwapPacket(buffer.readInt());
+        PlacementMode mode = buffer.readEnum(PlacementMode.class);
+        InventorySwapPacket packet = new InventorySwapPacket(buffer.readInt());
+        packet.placementMode = mode;
+        return packet;
     }
 
     public static void handle(InventorySwapPacket message, Supplier<NetworkEvent.Context> ctx) {
