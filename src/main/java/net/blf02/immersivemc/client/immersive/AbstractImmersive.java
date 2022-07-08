@@ -107,7 +107,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     public int getCooldownVR() {
-        return 20;
+        return 12;
     }
 
     public int getCooldownDesktop() {
