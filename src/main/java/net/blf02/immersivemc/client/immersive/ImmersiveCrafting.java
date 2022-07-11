@@ -102,10 +102,11 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
 
         for (int i = 0; i < 9; i++) {
             renderItem(info.items[i], stack, info.getPosition(i),
-                    itemSize, forward, Direction.UP, info.getHitbox(i), true);
+                    itemSize, forward, Direction.UP, info.getHitbox(i), true, -1);
         }
         renderItem(info.outputItem, stack, info.outputPosition,
-                itemSize * 3, forward, info.outputHitbox, true);
+                itemSize * 3, forward, null, info.outputHitbox, true,
+                (int) (info.ticksActive % 100d * 3.6d)); // * 3.6 = * 360/100
     }
 
     @Override

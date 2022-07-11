@@ -170,7 +170,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     public void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size, Direction facing,
                            AxisAlignedBB hitbox, boolean renderItemCounts) {
-        renderItem(item, stack, pos, size, facing, null, hitbox, renderItemCounts);
+        renderItem(item, stack, pos, size, facing, null, hitbox, renderItemCounts, -1);
     }
 
     /**
@@ -182,9 +182,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param facing Direction to face (should be the direction of the block). Can be null to look at camera.
      * @param upDown Direction upwards or downwards. Can be null if not facing up or down.
      * @param hitbox Hitbox for debug rendering
+     * @param renderItemCounts Whether to render an item count with the item
      */
     public void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size, Direction facing, Direction upDown,
-                           AxisAlignedBB hitbox, boolean renderItemCounts) {
+                           AxisAlignedBB hitbox, boolean renderItemCounts, int spinDegrees) {
         ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         if (item != null && item != ItemStack.EMPTY && pos != null) {
             stack.pushPose();
@@ -201,7 +202,9 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
             // Rotate the item to face the player properly
             int degreesRotation = 0; // If North, we're already good
-            if (facing == Direction.WEST) {
+            if (spinDegrees > -1) {
+                degreesRotation = spinDegrees;
+            } else if (facing == Direction.WEST) {
                 degreesRotation = 90;
             } else if (facing == Direction.SOUTH) {
                 degreesRotation = 180;

@@ -178,7 +178,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
                 int endTop = startTop + 9;
                 boolean showCount = i >= startTop && i <= endTop;
                 renderItem(info.items[i], stack, info.getPosition(i),
-                        itemSize, forward, Direction.UP, info.getHitbox(i), showCount);
+                        itemSize, forward, Direction.UP, info.getHitbox(i), showCount, -1);
             }
 
             if (info.other != null) {
@@ -187,7 +187,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
                     int endTop = startTop + 9 + 27;
                     boolean showCount = i >= startTop && i <= endTop;
                     renderItem(info.items[i], stack, info.getPosition(i),
-                            itemSize, forward, Direction.UP, info.getHitbox(i), showCount);
+                            itemSize, forward, Direction.UP, info.getHitbox(i), showCount, -1);
                 }
             }
         }
