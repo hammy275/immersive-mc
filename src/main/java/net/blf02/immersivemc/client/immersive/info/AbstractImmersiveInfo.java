@@ -11,6 +11,16 @@ public abstract class AbstractImmersiveInfo {
     public int ticksActive = 0;
     public boolean initCompleted = false;
     protected AxisAlignedBB[] inputHitboxes = null;
+    /*
+    This variable is used in ONLY two spots:
+        - By BackpackInfo to determine which hitbox is hovered over for trigger presses*
+        - By desktop users to determine which hitbox is moused over
+    Don't re-use this variable for other purposes unless you factor in the above! Mainly how that in VR,
+    this variable will ONLY be updated for BackpackInfo instances.
+
+    * - This was done because backpacks were implemented before the InfoTriggerHitboxes system.
+     */
+    public int slotHovered = -1;
 
     public AbstractImmersiveInfo(int ticksToExist) {
         this.ticksLeft = ticksToExist;

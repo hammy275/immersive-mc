@@ -91,6 +91,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     public void onRemove(I info) {}
 
+    protected boolean slotHelpBoxIsGreen(I info, int slotNum) {
+        return info.slotHovered == slotNum;
+    }
+
     public void tick(I info, boolean isInVR) {
         if (enabledInConfig()) {
             if (!info.initCompleted) {
@@ -146,7 +150,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                             AxisAlignedBB itemBox = info.getInputSlots()[i];
                             AxisAlignedBB toShow = itemBox
                                     .move(0, itemBox.getYsize() / 2, 0);
-                            renderItemGuide(stack, toShow, 0.2f);
+                            renderItemGuide(stack, toShow, 0.2f, slotHelpBoxIsGreen(info, i));
                         }
                     }
                 }
@@ -260,7 +264,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         renderHitbox(stack, hitbox, pos);
     }
 
-    protected void renderItemGuide(MatrixStack stack, AxisAlignedBB hitbox, float alpha) {
+    protected void renderItemGuide(MatrixStack stack, AxisAlignedBB hitbox, float alpha, boolean isGreen) {
         if (hitbox != null) {
             ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
             Vector3d pos = hitbox.getCenter();
@@ -270,7 +274,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                     -renderInfo.getPosition().z + pos.z);
             IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().renderBuffers().bufferSource();
             cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
-                    0, 1, 1, alpha, (float) (hitbox.getSize() / 2f));
+                    0, 1, isGreen ? 0 : 1, alpha, (float) (hitbox.getSize() / 2f));
             stack.popPose();
         }
     }

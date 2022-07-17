@@ -11,27 +11,16 @@ import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
-import net.blf02.immersivemc.common.vr.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
+import net.blf02.immersivemc.common.vr.util.Util;
 import net.blf02.vrapi.api.data.IVRData;
-import net.minecraft.block.AbstractChestBlock;
-import net.minecraft.block.AnvilBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.EnchantingTableBlock;
-import net.minecraft.block.EnderChestBlock;
-import net.minecraft.block.RepeaterBlock;
-import net.minecraft.block.SmithingTableBlock;
+import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.AbstractFurnaceTileEntity;
-import net.minecraft.tileentity.BrewingStandTileEntity;
-import net.minecraft.tileentity.ChestTileEntity;
-import net.minecraft.tileentity.EnderChestTileEntity;
-import net.minecraft.tileentity.JukeboxTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.*;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
@@ -83,7 +72,7 @@ public class ClientLogicSubscriber {
             tracker.doTick(event.player);
         }
         for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
-            tickInfos(singleton);
+            tickInfos(singleton, event.player);
         }
         if (Minecraft.getInstance().gameMode == null || Minecraft.getInstance().level == null) return;
 
@@ -164,7 +153,7 @@ public class ClientLogicSubscriber {
 
     }
 
-    protected <I extends AbstractImmersiveInfo> void tickInfos(AbstractImmersive<I> singleton) {
+    protected <I extends AbstractImmersiveInfo> void tickInfos(AbstractImmersive<I> singleton, PlayerEntity player) {
         if (singleton.getTrackedObjects().size() == 0) {
             singleton.noInfosTick(); // Run onNoInfos() function if we don't have any infos right now
         } else {
@@ -178,6 +167,12 @@ public class ClientLogicSubscriber {
 
             for (I info : infos) {
                 singleton.tick(info, VRPluginVerify.clientInVR);
+                if (info.hasHitboxes()) {
+                    Tuple<Vector3d, Vector3d> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
+                    Optional<Integer> closest = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
+                            info.getAllHitboxes());
+                    info.slotHovered = closest.orElse(-1);
+                }
                 if (info.getTicksLeft() <= 0) {
                     toRemove.add(info);
                 }

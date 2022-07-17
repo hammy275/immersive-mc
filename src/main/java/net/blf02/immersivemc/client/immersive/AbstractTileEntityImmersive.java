@@ -32,7 +32,8 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
     @Override
     protected boolean slotShouldRenderHelpHitbox(I info, int slotNum) {
         if (info.getTileEntity() instanceof IInventory) {
-            return info.items[slotNum] == null || info.items[slotNum].isEmpty();
+            return (info.items[slotNum] == null || info.items[slotNum].isEmpty())
+                    && info.getInputSlots()[slotNum] != null; // So far, only the chest can have a null input slot
         } else {
             // Should be implemented on sub-class
             throw new IllegalArgumentException("Can't check input slot has item for non-IInventory's!");

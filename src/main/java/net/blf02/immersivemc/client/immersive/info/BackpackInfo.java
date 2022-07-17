@@ -28,7 +28,6 @@ public class BackpackInfo extends AbstractImmersiveInfo {
     public Vector3d backVec = Vector3d.ZERO;
     public Vector3f rgb = new Vector3f(0, 0, 0);
     public int topRow = 0;
-    public int slotHovered = -1;
     public ItemStack[] craftingInput = new ItemStack[]{ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
     public ItemStack craftingOutput = ItemStack.EMPTY;
 
