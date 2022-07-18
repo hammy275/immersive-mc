@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.common.network.packet;
 
+import net.blf02.immersivemc.client.SafeClientUtil;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.PlacementMode;
 import net.blf02.immersivemc.server.swap.Swap;
@@ -13,7 +14,7 @@ import java.util.function.Supplier;
 public class InventorySwapPacket {
 
     public final int slot;
-    public PlacementMode placementMode = ActiveConfig.placementMode;
+    public PlacementMode placementMode = SafeClientUtil.getPlacementMode();
 
     public InventorySwapPacket(int invSlotRaw) {
         this.slot = invSlotRaw;

@@ -3,7 +3,6 @@ package net.blf02.immersivemc.common.config;
 import net.blf02.immersivemc.ImmersiveMC;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
 
 public class ActiveConfig {
@@ -68,7 +67,7 @@ public class ActiveConfig {
 
     public static void loadConfigFromFile(boolean forceLoadServerSettings) {
         // Synced values (only loaded if we're not in a server)
-        if (Minecraft.getInstance().level == null || forceLoadServerSettings) {
+        if (forceLoadServerSettings) {
             useAnvilImmersion = ImmersiveMCConfig.useAnvilImmersion.get();
             useBrewingImmersion = ImmersiveMCConfig.useBrewingImmersion.get();
             useChestImmersion = ImmersiveMCConfig.useChestImmersion.get();

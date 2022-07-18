@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.common.network.packet;
 
-import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.client.SafeClientUtil;
 import net.blf02.immersivemc.common.config.PlacementMode;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
@@ -24,7 +24,7 @@ public class InteractPacket {
     public final String storageType;
     public final int slot;
     public final Hand hand;
-    public PlacementMode placementMode = ActiveConfig.placementMode;
+    public PlacementMode placementMode = SafeClientUtil.getPlacementMode();
 
     public InteractPacket(BlockPos pos, int slot, Hand hand) {
         this.pos = pos;

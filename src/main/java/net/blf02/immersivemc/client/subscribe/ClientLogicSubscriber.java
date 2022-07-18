@@ -244,6 +244,15 @@ public class ClientLogicSubscriber {
             return true;
         }
 
+        // Just before returning false, see if we're in a hitbox, so we can do a full stack place and return true
+        for (AbstractImmersive<?> immersive : Immersives.IMMERSIVES) {
+            for (AbstractImmersiveInfo info : immersive.getTrackedObjects()) {
+                if (info.slotHovered != -1) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 

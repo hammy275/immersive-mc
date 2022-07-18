@@ -1,17 +1,13 @@
 package net.blf02.immersivemc.common.network.packet;
 
+import net.blf02.immersivemc.client.SafeClientUtil;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.PlacementMode;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.AbstractFurnaceTileEntity;
-import net.minecraft.tileentity.BrewingStandTileEntity;
-import net.minecraft.tileentity.ChestTileEntity;
-import net.minecraft.tileentity.EnderChestTileEntity;
-import net.minecraft.tileentity.JukeboxTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.*;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -23,7 +19,7 @@ public class SwapPacket {
     public final BlockPos block;
     public final int slot;
     public final Hand hand;
-    public PlacementMode placementMode = ActiveConfig.placementMode;
+    public PlacementMode placementMode = SafeClientUtil.getPlacementMode();
 
     public SwapPacket(BlockPos block, int slot, Hand hand) {
         this.block = block;
