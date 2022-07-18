@@ -57,7 +57,13 @@ public class ClientLogicSubscriber {
 
         if (ClientUtil.immersiveLeftClickCooldown > 0) {
             ClientUtil.immersiveLeftClickCooldown--;
+        } else if (Minecraft.getInstance().options.keyAttack.isDown()) {
+            if (handleLeftClick(Minecraft.getInstance().player)) {
+                ClientUtil.immersiveLeftClickCooldown += 6;
+            }
         }
+
+
 
         if (ImmersiveMC.SUMMON_BACKPACK.isDown()) {
             if (!backpackPressed) {
@@ -131,15 +137,6 @@ public class ClientLogicSubscriber {
             if (cooldown > 0) {
                 event.setCanceled(true);
                 ClientUtil.setRightClickCooldown(cooldown);
-            }
-        } else if (event.getHand() == Hand.MAIN_HAND && event.isAttack()) {
-            if (ClientUtil.immersiveLeftClickCooldown > 0) {
-                event.setCanceled(true);
-                return; // Cancel left click if we're on cooldown
-            }
-            if (handleLeftClick(Minecraft.getInstance().player)) {
-                event.setCanceled(true);
-                ClientUtil.immersiveLeftClickCooldown += 6;
             }
         }
     }

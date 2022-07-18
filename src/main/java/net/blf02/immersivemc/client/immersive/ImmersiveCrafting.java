@@ -148,6 +148,6 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
 
     @Override
     public int getCooldownVR() {
-        return 5;
+        return 7;
     }
 }
