@@ -363,7 +363,7 @@ public class Swap {
         ItemStack res = container.getSlot(2).getItem();
         int level = 0;
         if (isReallyAnvil) {
-            level = ((RepairContainer) container).getCost();
+            level = ((RepairContainer) container).cost.get();
         }
         return new Pair<>(res, level);
     }

@@ -297,7 +297,7 @@ public class ClientLogicSubscriber {
         RayTraceResult looking = Minecraft.getInstance().hitResult;
         if (looking == null || looking.getType() != RayTraceResult.Type.BLOCK) return 0;
 
-        if (ActiveConfig.rightClickChest) {
+        if (ActiveConfig.rightClickChest && ActiveConfig.useChestImmersion) {
             BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
             BlockState state = player.level.getBlockState(pos);
             boolean isChest = state.getBlock() instanceof AbstractChestBlock && player.level.getBlockEntity(pos) instanceof ChestTileEntity;

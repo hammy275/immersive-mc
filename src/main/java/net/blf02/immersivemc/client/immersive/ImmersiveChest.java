@@ -168,6 +168,14 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
     }
 
     @Override
+    protected boolean slotShouldRenderHelpHitbox(ChestInfo info, int slotNum) {
+        if (info.getTileEntity() instanceof EnderChestTileEntity) {
+            return info.items[slotNum] == null || info.items[slotNum].isEmpty();
+        }
+        return super.slotShouldRenderHelpHitbox(info, slotNum);
+    }
+
+    @Override
     protected void render(ChestInfo info, MatrixStack stack, boolean isInVR) {
         float itemSize = ClientConstants.itemScaleSizeChest / info.getItemTransitionCountdown();
         Direction forward = info.forward;
