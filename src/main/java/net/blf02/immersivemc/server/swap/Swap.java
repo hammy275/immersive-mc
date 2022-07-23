@@ -5,7 +5,7 @@ import net.blf02.immersivemc.common.config.PlacementMode;
 import net.blf02.immersivemc.common.storage.AnvilStorage;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.common.storage.workarounds.NullContainer;
-import net.blf02.immersivemc.common.vr.util.Util;
+import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.server.storage.GetStorage;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.Blocks;

@@ -15,7 +15,7 @@ import net.blf02.immersivemc.common.network.packet.InventorySwapPacket;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
-import net.blf02.immersivemc.common.vr.util.Util;
+import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;

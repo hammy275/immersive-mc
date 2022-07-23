@@ -4,7 +4,7 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.GrabItemPacket;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
-import net.blf02.immersivemc.common.vr.util.Util;
+import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.vrapi.api.data.IVRData;

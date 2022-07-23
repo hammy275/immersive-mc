@@ -11,7 +11,7 @@ import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
-import net.blf02.immersivemc.common.vr.util.Util;
+import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.EnderChestBlock;

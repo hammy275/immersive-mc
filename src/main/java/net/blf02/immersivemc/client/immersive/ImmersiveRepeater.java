@@ -7,7 +7,7 @@ import net.blf02.immersivemc.client.immersive.info.RepeaterInfo;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SetRepeaterPacket;
-import net.blf02.immersivemc.common.vr.util.Util;
+import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;

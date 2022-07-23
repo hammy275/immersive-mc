@@ -2,7 +2,7 @@ package net.blf02.immersivemc.common.network.packet;
 
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.NetworkUtil;
-import net.blf02.immersivemc.common.vr.util.Util;
+import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.server.ChestToOpenCount;
 import net.minecraft.entity.monster.piglin.PiglinTasks;
 import net.minecraft.entity.player.ServerPlayerEntity;
