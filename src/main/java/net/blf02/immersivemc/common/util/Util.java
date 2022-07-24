@@ -17,6 +17,12 @@ import java.util.Optional;
 
 public class Util {
 
+    public static void addStackToInventory(PlayerEntity player, ItemStack item) {
+        if (!item.isEmpty()) {
+            player.inventory.add(item);
+        }
+    }
+
     public static boolean canPickUpItem(ItemEntity item, PlayerEntity player) {
         /* It seems pickup delay isn't synced client side.
            Although this doesn't cover a lot of use cases, odds are, if an item isn't moving, it can be picked up

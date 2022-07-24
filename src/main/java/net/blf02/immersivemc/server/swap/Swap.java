@@ -101,7 +101,7 @@ public class Swap {
             ItemStack tableItem = storage.items[slot];
             SwapResult result = getSwap(playerItem, tableItem, mode);
             storage.items[slot] = result.toOther;
-            player.setItemInHand(hand, result.toHand);
+            givePlayerItemSwap(result.toHand, playerItem, player, hand);
             placeLeftovers(player, result.leftovers);
             ICraftingRecipe recipe = getRecipe(player, storage.items);
             if (recipe != null) {
@@ -125,7 +125,7 @@ public class Swap {
             ItemStack anvilItem = storage.items[slot];
             SwapResult result = getSwap(playerItem, anvilItem, mode);
             storage.items[slot] = result.toOther;
-            player.setItemInHand(hand, result.toHand);
+            givePlayerItemSwap(result.toHand, playerItem, player, hand);
             placeLeftovers(player, result.leftovers);
             storage.items[2] = ItemStack.EMPTY; // Clear output if we change something
             if (isReallyAnvil) storage.xpLevels = 0;
@@ -185,7 +185,7 @@ public class Swap {
             ItemStack anvilItem = storage.items[slot];
             SwapResult result = getSwap(playerItem, anvilItem, mode);
             storage.items[slot] = result.toOther;
-            player.setItemInHand(hand, result.toHand);
+            givePlayerItemSwap(result.toHand, playerItem, player, hand);
             placeLeftovers(player, result.leftovers);
             ICraftingRecipe recipe = getRecipe(player, storage.items);
             storage.items[9] = recipe != null ? recipe.getResultItem() : ItemStack.EMPTY;
@@ -271,7 +271,7 @@ public class Swap {
         ItemStack playerItem = player.getItemInHand(hand).copy();
         if (slot != 2) {
             SwapResult result = getSwap(playerItem, furnaceItem, mode);
-            player.setItemInHand(hand, result.toHand);
+            givePlayerItemSwap(result.toHand, playerItem, player, hand);
             furnace.setItem(slot, result.toOther);
             placeLeftovers(player, result.leftovers);
         } else {
@@ -298,7 +298,7 @@ public class Swap {
         } else { // Ingredient and Fuel
             if (!stand.canPlaceItem(slot, playerItem) && playerItem != ItemStack.EMPTY) return;
             SwapResult result = getSwap(playerItem, standItem, mode);
-            player.setItemInHand(hand, result.toHand);
+            givePlayerItemSwap(result.toHand, playerItem, player, hand);
             stand.setItem(slot, result.toOther);
             placeLeftovers(player, result.leftovers);
         }
@@ -434,6 +434,13 @@ public class Swap {
         }
     }
 
+    public static void givePlayerItemSwap(ItemStack toPlayer, ItemStack fromPlayer, PlayerEntity player, Hand hand) {
+        if (fromPlayer.isEmpty() && toPlayer.getMaxStackSize() > 1) {
+            Util.addStackToInventory(player, toPlayer);
+        } else {
+            player.setItemInHand(hand, toPlayer);
+        }
+    }
 
 
     public static class SwapResult {
