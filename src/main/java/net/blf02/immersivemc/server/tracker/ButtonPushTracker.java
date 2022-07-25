@@ -39,6 +39,7 @@ public class ButtonPushTracker extends AbstractTracker {
                         pos);
                 if (res != null && res.getBlockPos().equals(pos)) {
                     button.press(state, player.level, pos);
+                    button.playSound(null, player.level, pos, true);
                 }
             }
         }
