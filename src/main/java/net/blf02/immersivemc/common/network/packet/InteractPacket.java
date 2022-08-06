@@ -40,6 +40,10 @@ public class InteractPacket {
         this.hand = hand;
 
         this.pos = null;
+
+        if (type.equals("backpack")) {
+            placementMode = SafeClientUtil.getPlacementMode(true);
+        }
     }
 
     protected InteractPacket setPlacementMode(PlacementMode mode) {

@@ -14,4 +14,12 @@ public class SafeClientUtil {
             return null;
         }
     }
+
+    public static PlacementMode getPlacementMode(boolean leftClickAlreadyDoesSomething) {
+        if (FMLLoader.getDist() == Dist.CLIENT) {
+            return ClientUtil.getPlacementModeIndirect(leftClickAlreadyDoesSomething);
+        } else {
+            return null;
+        }
+    }
 }

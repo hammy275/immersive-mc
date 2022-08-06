@@ -149,7 +149,6 @@ public class BackpackConfigScreen extends Screen {
 
     protected void setRGB(Double newVal, char type) {
         Vector3i rgb = new Vector3i(getRGB('r'), getRGB('g'), getRGB('b'));
-        System.out.print(newVal + "\r");
         if (type == 'r') {
             rgb = new Vector3i(newVal, rgb.getY(), rgb.getZ());
         } else if (type == 'g') {

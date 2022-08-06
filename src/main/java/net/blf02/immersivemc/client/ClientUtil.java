@@ -40,7 +40,11 @@ public class ClientUtil {
     }
 
     public static PlacementMode getPlacementModeIndirect() {
-        return Minecraft.getInstance().options.keyAttack.isDown() && VRPluginVerify.clientInVR
-                ? PlacementMode.PLACE_ALL : ActiveConfig.placementMode;
+        return getPlacementModeIndirect(false);
+    }
+
+    public static PlacementMode getPlacementModeIndirect(boolean leftClickAlreadyDoesSomething) {
+        return Minecraft.getInstance().options.keyAttack.isDown() && VRPluginVerify.clientInVR &&
+                !leftClickAlreadyDoesSomething ? PlacementMode.PLACE_ALL : ActiveConfig.placementMode;
     }
 }

@@ -139,7 +139,10 @@ public class ClientLogicSubscriber {
                 ClientUtil.setRightClickCooldown(cooldown);
             }
         } else if (event.isAttack() &&
-                (ClientUtil.immersiveLeftClickCooldown > 0 || handleLeftClick(Minecraft.getInstance().player))) {
+                (ClientUtil.immersiveLeftClickCooldown > 0)) {
+            event.setCanceled(true);
+        } else if (event.isAttack() && ClientUtil.immersiveLeftClickCooldown <= 0 && handleLeftClick(Minecraft.getInstance().player)) {
+            ClientUtil.immersiveLeftClickCooldown += 6;
             event.setCanceled(true);
         }
     }
