@@ -2,7 +2,7 @@
 
 Makes Minecraft more immersive!
 
-<img alt="Crafting Demo" src="docs/ImmersiveCrafting.gif" width="320"/>
+<img alt="Crafting Demo" src="https://github.com/hammy3502/immersive-mc/raw/master/wiki/gif/ImmersiveMC%20Crafting%20Table%20NonVR.gif" width="320"/>
 <img alt="VR Chest and Jukebox Demo" src="docs/ImmersiveVRChestAndJukebox.gif" width="320"/>
 <img alt="VR Grab" src="docs/ImmersiveVRGrab.gif" width="320"/>
 
