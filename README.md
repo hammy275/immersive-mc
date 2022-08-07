@@ -17,7 +17,3 @@ You can use things such as the crafting table, furnaces, and brewing stands with
 There's VR support! In fact, this mod was primarily built to make VR a better experience!
 
 You'll need my API mod, [mc-vr-api](https://www.curseforge.com/minecraft/mc-mods/mc-vr-api) to use this in VR. With this mod installed, you'll be able to use your actual hands to place items, instead of just right clicking!
-
-## Status
-
-This mod is currently a work in progress. There are available alpha builds, which you can grab from the [releases page](https://github.com/hammy3502/immersive-mc/releases) or from [CurseForge](https://www.curseforge.com/minecraft/mc-mods/immersivemc)!
