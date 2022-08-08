@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.client.immersive;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
@@ -17,14 +17,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.EnderChestBlock;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.EnderChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
 
 import java.util.Objects;
@@ -59,21 +59,21 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
             if (chest == null) continue;
             Direction forward = chest.getBlockState().getValue(HorizontalBlock.FACING);
             info.forward = forward;
-            Vector3d pos = getTopCenterOfBlock(chest.getBlockPos());
+            Vec3 pos = getTopCenterOfBlock(chest.getBlockPos());
             Direction left = getLeftOfDirection(forward);
 
-            Vector3d leftOffset = new Vector3d(
+            Vec3 leftOffset = new Vec3(
                     left.getNormal().getX() * spacing, 0, left.getNormal().getZ() * spacing);
-            Vector3d rightOffset = new Vector3d(
+            Vec3 rightOffset = new Vec3(
                     left.getNormal().getX() * -spacing, 0, left.getNormal().getZ() * -spacing);
 
-            Vector3d topOffset = new Vector3d(
+            Vec3 topOffset = new Vec3(
                     forward.getNormal().getX() * -spacing, 0, forward.getNormal().getZ() * -spacing);
-            Vector3d botOffset = new Vector3d(
+            Vec3 botOffset = new Vec3(
                     forward.getNormal().getX() * spacing, 0, forward.getNormal().getZ() * spacing);
 
 
-            Vector3d[] positions = new Vector3d[]{
+            Vec3[] positions = new Vec3[]{
                     pos.add(leftOffset).add(topOffset), pos.add(topOffset), pos.add(rightOffset).add(topOffset),
                     pos.add(leftOffset), pos, pos.add(rightOffset),
                     pos.add(leftOffset).add(botOffset), pos.add(botOffset), pos.add(rightOffset).add(botOffset)
@@ -82,7 +82,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
             int startTop = 9 * info.getRowNum() + 27 * i;
             int endTop = startTop + 9;
             for (int z = startTop; z < endTop; z++) {
-                Vector3d posRaw = positions[z % 9];
+                Vec3 posRaw = positions[z % 9];
                 info.setPosition(z, posRaw.add(0, -0.2, 0));
                 info.setHitbox(z, createHitbox(posRaw.add(0, -0.2, 0), hitboxSize));
             }
@@ -90,7 +90,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
             int startMid = 9 * info.getNextRow(info.getRowNum()) + 27 * i;
             int endMid = startMid + 9;
             for (int z = startMid; z < endMid; z++) {
-                Vector3d posRaw = positions[z % 9];
+                Vec3 posRaw = positions[z % 9];
                 info.setPosition(z, posRaw.add(0, -0.325, 0));
                 info.setHitbox(z, null);
             }
@@ -98,7 +98,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
             int startBot = 9 * info.getNextRow(info.getNextRow(info.getRowNum())) + 27 * i;
             int endBot = startBot + 9;
             for (int z = startBot; z < endBot; z++) {
-                Vector3d posRaw = positions[z % 9];
+                Vec3 posRaw = positions[z % 9];
                 info.setPosition(z, posRaw.add(0, -0.45, 0));
                 info.setHitbox(z, null);
             }
@@ -107,11 +107,11 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
         for (int chestNum = 0; chestNum <= 1; chestNum++) {
             TileEntity chest = chests[chestNum];
             if (chest == null) continue;
-            Vector3d forward = Vector3d.atLowerCornerOf(info.forward.getNormal());
-            Vector3d left = Vector3d.atLowerCornerOf(getLeftOfDirection(info.forward).getNormal());
-            Vector3d frontMid = getTopCenterOfBlock(chest.getBlockPos()).add(forward.multiply(0.5, 0.5, 0.5));
+            Vec3 forward = Vec3.atLowerCornerOf(info.forward.getNormal());
+            Vec3 left = Vec3.atLowerCornerOf(getLeftOfDirection(info.forward).getNormal());
+            Vec3 frontMid = getTopCenterOfBlock(chest.getBlockPos()).add(forward.multiply(0.5, 0.5, 0.5));
             if (info.isOpen) {
-                Vector3d linePos = frontMid.add(forward.multiply(-0.5, -0.5, -0.5));
+                Vec3 linePos = frontMid.add(forward.multiply(-0.5, -0.5, -0.5));
                 linePos = linePos.add(0, 0.5, 0);
                 info.openClosePositions[chestNum] = linePos;
                 info.openCloseHitboxes[chestNum] = new AxisAlignedBB(
@@ -121,7 +121,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
                                 .add(forward.multiply(0.625, 0.625, 0.625))
                 );
             } else {
-                Vector3d linePos = frontMid.add(0, -0.375, 0);
+                Vec3 linePos = frontMid.add(0, -0.375, 0);
                 info.openClosePositions[chestNum] = linePos;
                 info.openCloseHitboxes[chestNum] = new AxisAlignedBB(
                         linePos.add(left.multiply(-0.5, -0.5, -0.5)).add(0, -1d/4d, 0)
@@ -135,8 +135,8 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
         if (info.openCloseCooldown <= 0 && !ActiveConfig.rightClickChest) {
             if (VRPluginVerify.clientInVR && VRPlugin.API.apiActive(Minecraft.getInstance().player)
                     && info.openCloseHitboxes != null) {
-                Vector3d current0 = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController0().position();
-                Vector3d current1 = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1().position();
+                Vec3 current0 = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController0().position();
+                Vec3 current1 = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1().position();
 
                 double diff0 = current0.y - info.lastY0;
                 double diff1 = current1.y - info.lastY1;
@@ -176,7 +176,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
     }
 
     @Override
-    protected void render(ChestInfo info, MatrixStack stack, boolean isInVR) {
+    protected void render(ChestInfo info, PoseStack stack, boolean isInVR) {
         float itemSize = ClientConstants.itemScaleSizeChest / info.getItemTransitionCountdown();
         Direction forward = info.forward;
 
@@ -274,7 +274,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, HumanoidArm hand) {
         if (!VRPluginVerify.clientInVR && !ActiveConfig.rightClickChest) return;
         if (!((ChestInfo) info).isOpen) return;
         Network.INSTANCE.sendToServer(new SwapPacket(

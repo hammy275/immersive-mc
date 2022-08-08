@@ -5,27 +5,27 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.math.vector.Vector3f;
 
 import java.util.Arrays;
 
 public class BackpackInfo extends AbstractImmersiveInfo {
 
-    protected final Vector3d[] positions = new Vector3d[32];
+    protected final Vec3[] positions = new Vec3[32];
     protected final AxisAlignedBB[] hitboxes = new AxisAlignedBB[32];
     // 0-26: Inventory
     // 27-31: Input crafting
     // 32: Output crafting
 
-    public Vector3d handPos = Vector3d.ZERO;
-    public Vector3d lookVec = Vector3d.ZERO;
-    public Vector3d renderPos = Vector3d.ZERO;
-    public Vector3d centerTopPos = Vector3d.ZERO;
-    public Vector3d downVec = Vector3d.ZERO;
+    public Vec3 handPos = Vec3.ZERO;
+    public Vec3 lookVec = Vec3.ZERO;
+    public Vec3 renderPos = Vec3.ZERO;
+    public Vec3 centerTopPos = Vec3.ZERO;
+    public Vec3 downVec = Vec3.ZERO;
     public float handPitch = 0;
     public float handYaw = 0;
-    public Vector3d backVec = Vector3d.ZERO;
+    public Vec3 backVec = Vec3.ZERO;
     public Vector3f rgb = new Vector3f(0, 0, 0);
     public int topRow = 0;
     public ItemStack[] craftingInput = new ItemStack[]{ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
@@ -62,17 +62,17 @@ public class BackpackInfo extends AbstractImmersiveInfo {
     }
 
     @Override
-    public Vector3d getPosition(int slot) {
+    public Vec3 getPosition(int slot) {
         return positions[slot];
     }
 
     @Override
-    public Vector3d[] getAllPositions() {
+    public Vec3[] getAllPositions() {
         return positions;
     }
 
     @Override
-    public void setPosition(int slot, Vector3d position) {
+    public void setPosition(int slot, Vec3 position) {
         positions[slot] = position;
     }
 

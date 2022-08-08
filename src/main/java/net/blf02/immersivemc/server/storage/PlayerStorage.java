@@ -1,17 +1,10 @@
 package net.blf02.immersivemc.server.storage;
 
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Uses WorldSavedData to hold player storage
@@ -26,7 +19,7 @@ public class PlayerStorage extends WorldSavedData {
         super("immersivemc_player_data");
     }
 
-    public static List<ImmersiveStorage> getStorages(PlayerEntity player) {
+    public static List<ImmersiveStorage> getStorages(Player player) {
         List<ImmersiveStorage> immersiveStorages = getPlayerStorage(player).playerStorages.get(player.getUUID());
         if (immersiveStorages == null) {
             immersiveStorages = new ArrayList<>();
@@ -35,9 +28,9 @@ public class PlayerStorage extends WorldSavedData {
         return immersiveStorages;
     }
 
-    public static PlayerStorage getPlayerStorage(PlayerEntity player) {
+    public static PlayerStorage getPlayerStorage(Player player) {
         if (!player.level.isClientSide) {
-            ServerPlayerEntity sPlayer = (ServerPlayerEntity) player;
+            ServerPlayer sPlayer = (ServerPlayer) player;
             return sPlayer.getServer().overworld().getDataStorage()
                     .computeIfAbsent(PlayerStorage::new, "immersivemc_player_data");
         }

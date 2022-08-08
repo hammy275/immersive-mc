@@ -8,7 +8,7 @@ import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extends AbstractTileEntityImmersiveInfo<T>>
     extends AbstractImmersive<I> {
@@ -50,7 +50,7 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
         }
 
         if (Minecraft.getInstance().player != null && info.getTileEntity() != null &&
-                Minecraft.getInstance().player.distanceToSqr(Vector3d.atCenterOf(info.getTileEntity().getBlockPos())) >
+                Minecraft.getInstance().player.distanceToSqr(Vec3.atCenterOf(info.getTileEntity().getBlockPos())) >
                 CommonConstants.distanceSquaredToRemoveImmersive) {
             info.remove();
         }

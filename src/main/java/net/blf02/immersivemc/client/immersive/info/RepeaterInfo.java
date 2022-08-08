@@ -3,12 +3,12 @@ package net.blf02.immersivemc.client.immersive.info;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 public class RepeaterInfo extends AbstractImmersiveInfo {
 
     protected AxisAlignedBB[] hitboxes = new AxisAlignedBB[4];
-    protected Vector3d[] positions = new Vector3d[4];
+    protected Vec3[] positions = new Vec3[4];
     protected final BlockPos pos;
     public boolean[] grabbedCurrent = new boolean[]{false, false}; // Index is for controller num
 
@@ -43,17 +43,17 @@ public class RepeaterInfo extends AbstractImmersiveInfo {
     }
 
     @Override
-    public Vector3d getPosition(int index) {
+    public Vec3 getPosition(int index) {
         return positions[index];
     }
 
     @Override
-    public Vector3d[] getAllPositions() {
+    public Vec3[] getAllPositions() {
         return positions;
     }
 
     @Override
-    public void setPosition(int slot, Vector3d position) {
+    public void setPosition(int slot, Vec3 position) {
         positions[slot] = position;
     }
 

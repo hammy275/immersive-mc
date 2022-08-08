@@ -2,7 +2,7 @@ package net.blf02.immersivemc.client.immersive.info;
 
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 public abstract class AbstractImmersiveInfo {
 
@@ -56,11 +56,11 @@ public abstract class AbstractImmersiveInfo {
 
     public abstract boolean hasHitboxes();
 
-    public abstract Vector3d getPosition(int slot);
+    public abstract Vec3 getPosition(int slot);
 
-    public abstract Vector3d[] getAllPositions();
+    public abstract Vec3[] getAllPositions();
 
-    public abstract void setPosition(int slot, Vector3d position);
+    public abstract void setPosition(int slot, Vec3 position);
 
     public abstract boolean hasPositions();
 

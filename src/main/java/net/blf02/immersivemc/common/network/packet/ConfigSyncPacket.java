@@ -5,7 +5,7 @@ import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.server.PlayerConfigs;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -62,7 +62,7 @@ public class ConfigSyncPacket {
                 Network.INSTANCE.sendToServer(getToServerConfigPacket());
             } else if (message.kickMe && ctx.get().getSender() != null) { // If asking to be kicked, kick
                 ctx.get().getSender().connection.disconnect(
-                        new StringTextComponent("The server is using a different version of ImmersiveMC than you!"));
+                        new TextComponent("The server is using a different version of ImmersiveMC than you!"));
             } else if (ctx.get().getSender() != null) { // Get config from client
                 PlayerConfigs.registerConfig(ctx.get().getSender(), message.buffer);
             }

@@ -2,8 +2,8 @@ package net.blf02.immersivemc.server.storage;
 
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.block.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.Player;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
@@ -26,15 +26,15 @@ public class WorldStorage extends WorldSavedData {
     public static boolean usesWorldStorage(BlockState state) {
         return state.getBlock() == Blocks.CRAFTING_TABLE ||
                 state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock
-                || state.getBlock() instanceof EnchantingTableBlock;
+                || state.getBlock() instanceof EnchantmentTableBlock;
     }
 
     public static WorldStorage getStorage(ServerWorld world) {
         return world.getDataStorage().computeIfAbsent(WorldStorage::new, "immersivemc_data");
     }
 
-    public static WorldStorage getStorage(PlayerEntity player) {
-        if (player instanceof ServerPlayerEntity) {
+    public static WorldStorage getStorage(Player player) {
+        if (player instanceof ServerPlayer) {
             return getStorage((ServerWorld) player.level);
         }
         throw new IllegalArgumentException("Can only get storage server side!");

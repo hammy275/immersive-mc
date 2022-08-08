@@ -3,11 +3,11 @@ package net.blf02.immersivemc.client.immersive.info;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 public abstract class AbstractWorldStorageInfo extends AbstractImmersiveInfo {
 
-    protected Vector3d[] positions;
+    protected Vec3[] positions;
     protected AxisAlignedBB[] hitboxes;
     public ItemStack[] items;
     protected final BlockPos pos;
@@ -16,7 +16,7 @@ public abstract class AbstractWorldStorageInfo extends AbstractImmersiveInfo {
     public AbstractWorldStorageInfo(BlockPos pos, int ticksToExist, int maxSlotIndex) {
         super(ticksToExist);
         this.pos = pos;
-        this.positions = new Vector3d[maxSlotIndex + 1];
+        this.positions = new Vec3[maxSlotIndex + 1];
         this.items = new ItemStack[maxSlotIndex + 1];
         this.hitboxes = new AxisAlignedBB[maxSlotIndex + 1];
         this.maxSlotIndex = maxSlotIndex;
@@ -43,17 +43,17 @@ public abstract class AbstractWorldStorageInfo extends AbstractImmersiveInfo {
     }
 
     @Override
-    public Vector3d getPosition(int slot) {
+    public Vec3 getPosition(int slot) {
         return this.positions[slot];
     }
 
     @Override
-    public Vector3d[] getAllPositions() {
+    public Vec3[] getAllPositions() {
         return this.positions;
     }
 
     @Override
-    public void setPosition(int slot, Vector3d position) {
+    public void setPosition(int slot, Vec3 position) {
         this.positions[slot] = position;
     }
 

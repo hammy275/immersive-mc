@@ -7,7 +7,7 @@ import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.server.storage.GetStorage;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.inventory.container.EnchantmentContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -16,7 +16,7 @@ import net.minecraft.tileentity.EnchantingTableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -100,7 +100,7 @@ public class GetEnchantmentsPacket {
 
     public static void handle(GetEnchantmentsPacket message, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity player = ctx.get().getSender();
+            ServerPlayer player = ctx.get().getSender();
             if (player == null) {
                 handleClient(message);
             } else if (NetworkUtil.safeToRun(message.pos, player)) {
@@ -166,7 +166,7 @@ public class GetEnchantmentsPacket {
         return Enchantment.byId(id);
     }
 
-    protected static StringTextComponent getDesc(Enchantment ench, int enchLevel) {
-        return new StringTextComponent(ench.getFullname(enchLevel).getString() + "...?");
+    protected static TextComponent getDesc(Enchantment ench, int enchLevel) {
+        return new TextComponent(ench.getFullname(enchLevel).getString() + "...?");
     }
 }

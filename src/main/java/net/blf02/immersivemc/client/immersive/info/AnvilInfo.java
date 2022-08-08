@@ -2,7 +2,7 @@ package net.blf02.immersivemc.client.immersive.info;
 
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Arrays;
 
@@ -10,7 +10,7 @@ public class AnvilInfo extends AbstractWorldStorageInfo {
     public Direction renderDirection;
     public boolean isReallyAnvil;
 
-    public Vector3d textPos = null;
+    public Vec3 textPos = null;
     public Direction lastDir = null;
 
     public int anvilCost = 0;

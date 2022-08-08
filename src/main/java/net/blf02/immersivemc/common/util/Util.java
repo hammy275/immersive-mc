@@ -4,26 +4,26 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.RepeaterBlock;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
 
 import java.util.Optional;
 
 public class Util {
 
-    public static void addStackToInventory(PlayerEntity player, ItemStack item) {
+    public static void addStackToInventory(Player player, ItemStack item) {
         if (!item.isEmpty()) {
             player.inventory.add(item);
         }
     }
 
-    public static boolean canPickUpItem(ItemEntity item, PlayerEntity player) {
+    public static boolean canPickUpItem(ItemEntity item, Player player) {
         /* It seems pickup delay isn't synced client side.
            Although this doesn't cover a lot of use cases, odds are, if an item isn't moving, it can be picked up
            Plus, it somewhat makes sense */
@@ -31,18 +31,18 @@ public class Util {
                 && Math.abs(item.getDeltaMovement().x) <= 0.01 && Math.abs(item.getDeltaMovement().z) <= 0.01;
     }
 
-    public static boolean rayTrace(AxisAlignedBB target, Vector3d rayStart, Vector3d rayEnd) {
+    public static boolean rayTrace(AxisAlignedBB target, Vec3 rayStart, Vec3 rayEnd) {
         // If the start or end of the ray is in the target hitbox, we immediately return true
         if (target.contains(rayStart) || target.contains(rayEnd)) {
             return true;
         }
         // Gets the "hit" for our ray.
-        Optional<Vector3d> closestHitOpt = target.clip(rayStart, rayEnd);
+        Optional<Vec3> closestHitOpt = target.clip(rayStart, rayEnd);
         // Return whether or not we have a hit
         return closestHitOpt.isPresent();
     }
 
-    public static Optional<Integer> rayTraceClosest(Vector3d rayStart, Vector3d rayEnd, AxisAlignedBB... targets) {
+    public static Optional<Integer> rayTraceClosest(Vec3 rayStart, Vec3 rayEnd, AxisAlignedBB... targets) {
         double dist = Double.MAX_VALUE;
         Integer winner = null;
         int i = 0;
@@ -55,7 +55,7 @@ public class Util {
                     return Optional.of(i);
                 }
                 // Gets the "hit" for our ray.
-                Optional<Vector3d> closestHitOpt = target.clip(rayStart, rayEnd);
+                Optional<Vec3> closestHitOpt = target.clip(rayStart, rayEnd);
                 double distTemp = closestHitOpt.isPresent() ? closestHitOpt.get().distanceTo(rayStart) : -1;
                 if (closestHitOpt.isPresent() && distTemp < dist) {
                     winner = i;
@@ -67,7 +67,7 @@ public class Util {
         return Optional.ofNullable(winner);
     }
 
-    public static Optional<Integer> getFirstIntersect(Vector3d pos, AxisAlignedBB... targets) {
+    public static Optional<Integer> getFirstIntersect(Vec3 pos, AxisAlignedBB... targets) {
         int i = 0;
         for (AxisAlignedBB target : targets) {
             if (target != null && target.contains(pos)) {
@@ -78,7 +78,7 @@ public class Util {
         return Optional.empty();
     }
 
-    public static Optional<Integer> getClosestIntersect(Vector3d pos, AxisAlignedBB[] targets, Vector3d[] positions) {
+    public static Optional<Integer> getClosestIntersect(Vec3 pos, AxisAlignedBB[] targets, Vec3[] positions) {
         if (targets.length != positions.length) throw new IllegalArgumentException("Targets and positions must be same length!");
         int res = -1;
         double distanceToBeat = Double.MAX_VALUE;

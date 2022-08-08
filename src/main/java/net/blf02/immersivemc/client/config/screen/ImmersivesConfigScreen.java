@@ -1,29 +1,27 @@
 package net.blf02.immersivemc.client.config.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.SettingsScreen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.widget.list.OptionsRowList;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.List;
 
 public class ImmersivesConfigScreen extends Screen {
 
     protected final Screen lastScreen;
-    protected OptionsRowList list;
+    protected OptionsList list;
     protected boolean notInWorld;
 
     protected static int BUTTON_WIDTH = 128;
     protected static int BUTTON_HEIGHT = 20;
 
     public ImmersivesConfigScreen(Screen screen) {
-        super(new TranslationTextComponent("screen.immersivemc.immersives_config.title"));
+        super(new TranslatableComponent("screen.immersivemc.immersives_config.title"));
         this.lastScreen = screen;
     }
 
@@ -31,9 +29,9 @@ public class ImmersivesConfigScreen extends Screen {
     protected void init() {
         super.init();
         this.notInWorld = Minecraft.getInstance().level == null && Minecraft.getInstance().player == null;
-        this.addButton(new Button(
+        this.addWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("gui.done"),
+                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("gui.done"),
                 (button) -> this.onClose()));
         if (this.notInWorld) {
             initNotInWorld();
@@ -41,7 +39,7 @@ public class ImmersivesConfigScreen extends Screen {
     }
 
     protected void initNotInWorld() {
-        this.list = new OptionsRowList(Minecraft.getInstance(), this.width, this.height,
+        this.list = new OptionsList(Minecraft.getInstance(), this.width, this.height,
                 32, this.height - 32, 24);
 
         initOptionsList();
@@ -66,7 +64,7 @@ public class ImmersivesConfigScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
 
         if (this.notInWorld) {
@@ -74,12 +72,12 @@ public class ImmersivesConfigScreen extends Screen {
 
             drawCenteredString(stack, this.font, this.title.getString(),
                     this.width / 2, 8, 0xFFFFFF);
-            drawCenteredString(stack, this.font, new TranslationTextComponent("screen.immersivemc.immersives_config.subtitle"),
+            drawCenteredString(stack, this.font, new TranslatableComponent("screen.immersivemc.immersives_config.subtitle"),
                     this.width / 2, 8 + this.font.lineHeight, 0xFFFFFF);
         } else {
             // Not actually sure if you can get here, but I'm playing things safe by catching if you're in a world while
             // you try to adjust this
-            drawCenteredString(stack, this.font, new TranslationTextComponent("screen.immersivemc.immersives_config.inworld"),
+            drawCenteredString(stack, this.font, new TranslatableComponent("screen.immersivemc.immersives_config.inworld"),
                     this.width / 2, this.height / 2, 0xFFFFFF);
         }
 

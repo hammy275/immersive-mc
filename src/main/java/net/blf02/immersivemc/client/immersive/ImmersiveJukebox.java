@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.client.immersive;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.JukeboxInfo;
@@ -8,12 +8,12 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
 
 public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEntity, JukeboxInfo> {
@@ -30,7 +30,7 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
 
     @Override
     protected void initInfo(JukeboxInfo info) {
-        Vector3d topCenter = getTopCenterOfBlock(info.getTileEntity().getBlockPos());
+        Vec3 topCenter = getTopCenterOfBlock(info.getTileEntity().getBlockPos());
         info.setPosition(0, topCenter);
         // North and south
         AxisAlignedBB hitbox = createHitbox(topCenter, 1f/16f);
@@ -39,7 +39,7 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
     }
 
     @Override
-    protected void render(JukeboxInfo info, MatrixStack stack, boolean isInVR) {
+    protected void render(JukeboxInfo info, PoseStack stack, boolean isInVR) {
         renderHitbox(stack, info.getHitbox(0), info.getPosition(0));
     }
 
@@ -54,7 +54,7 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, HumanoidArm hand) {
         if (!VRPluginVerify.clientInVR) return;
         Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), 0, hand));
     }

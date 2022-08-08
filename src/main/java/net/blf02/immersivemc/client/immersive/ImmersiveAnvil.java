@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.client.immersive;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
@@ -14,13 +14,13 @@ import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SmithingTableBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.math.vector.Vector3i;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponent;
 import net.minecraft.world.World;
 
 import java.util.Objects;
@@ -54,13 +54,13 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
         info.renderDirection = facing.getClockWise();
 
         Vector3i temp = facing.getOpposite().getNormal();
-        Vector3d facingOppositeNormal = new Vector3d(temp.getX(), temp.getY(), temp.getZ());
+        Vec3 facingOppositeNormal = new Vec3(temp.getX(), temp.getY(), temp.getZ());
         temp = facing.getNormal();
-        Vector3d facingNormal = new Vector3d(temp.getX(), temp.getY(), temp.getZ());
+        Vec3 facingNormal = new Vec3(temp.getX(), temp.getY(), temp.getZ());
 
-        Vector3d middle = getTopCenterOfBlock(info.getBlockPosition());
-        Vector3d left = middle.add(facingOppositeNormal.multiply(dist, dist, dist));
-        Vector3d right = middle.add(facingNormal.multiply(dist, dist, dist));
+        Vec3 middle = getTopCenterOfBlock(info.getBlockPosition());
+        Vec3 left = middle.add(facingOppositeNormal.multiply(dist, dist, dist));
+        Vec3 right = middle.add(facingNormal.multiply(dist, dist, dist));
 
         info.setPosition(0, left);
         info.setPosition(1, middle);
@@ -113,12 +113,12 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
     }
 
     @Override
-    protected void render(AnvilInfo info, MatrixStack stack, boolean isInVR) {
+    protected void render(AnvilInfo info, PoseStack stack, boolean isInVR) {
         float itemSize = ClientConstants.itemScaleSizeAnvil / info.getItemTransitionCountdown();
 
         // Render experience levels needed if we have an experience cost to show
         if (info.isReallyAnvil && info.anvilCost > 0) {
-            renderText(new StringTextComponent("Levels Needed: " + info.anvilCost), stack,
+            renderText(new TextComponent("Levels Needed: " + info.anvilCost), stack,
                     info.textPos);
         }
 
@@ -158,7 +158,7 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, HumanoidArm hand) {
         Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), closest, hand));
     }
 

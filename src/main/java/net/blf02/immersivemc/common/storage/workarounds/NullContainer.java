@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.common.storage.workarounds;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 
@@ -13,7 +13,7 @@ public class NullContainer extends Container {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity p_75145_1_) {
+    public boolean stillValid(Player p_75145_1_) {
         return true;
     }
 

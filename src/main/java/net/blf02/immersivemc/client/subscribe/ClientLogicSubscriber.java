@@ -17,14 +17,14 @@ import net.blf02.immersivemc.common.util.Util;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.tileentity.*;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
@@ -82,7 +82,7 @@ public class ClientLogicSubscriber {
         }
         if (Minecraft.getInstance().gameMode == null || Minecraft.getInstance().level == null) return;
 
-        PlayerEntity player = event.player;
+        Player player = event.player;
 
         // Get block that we're looking at
         RayTraceResult looking = Minecraft.getInstance().hitResult;
@@ -111,7 +111,7 @@ public class ClientLogicSubscriber {
             ImmersiveChest.singleton.trackObject(tileEntity);
         } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
             ImmersiveAnvil.singleton.trackObject(pos);
-        } else if (state.getBlock() instanceof EnchantingTableBlock) {
+        } else if (state.getBlock() instanceof EnchantmentTableBlock) {
             ImmersiveETable.singleton.trackObject(pos);
             return;
         } else if (state.getBlock() instanceof RepeaterBlock) {
@@ -121,7 +121,7 @@ public class ClientLogicSubscriber {
         // Extra special tracker additions
         BlockPos belowPos = pos.below();
         BlockState belowState = level.getBlockState(belowPos);
-        if (belowState.getBlock() instanceof EnchantingTableBlock) {
+        if (belowState.getBlock() instanceof EnchantmentTableBlock) {
             ImmersiveETable.singleton.trackObject(pos);
         } else if (belowState.getBlock() == Blocks.CRAFTING_TABLE) {
             ImmersiveCrafting.singleton.trackObject(pos);
@@ -156,7 +156,7 @@ public class ClientLogicSubscriber {
 
     }
 
-    protected <I extends AbstractImmersiveInfo> void tickInfos(AbstractImmersive<I> singleton, PlayerEntity player) {
+    protected <I extends AbstractImmersiveInfo> void tickInfos(AbstractImmersive<I> singleton, Player player) {
         if (singleton.getTrackedObjects().size() == 0) {
             singleton.noInfosTick(); // Run onNoInfos() function if we don't have any infos right now
         } else {
@@ -171,7 +171,7 @@ public class ClientLogicSubscriber {
             for (I info : infos) {
                 singleton.tick(info, VRPluginVerify.clientInVR);
                 if (info.hasHitboxes()) {
-                    Tuple<Vector3d, Vector3d> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
+                    Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
                     Optional<Integer> closest = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
                             info.getAllHitboxes());
                     info.slotHovered = closest.orElse(-1);
@@ -201,7 +201,7 @@ public class ClientLogicSubscriber {
         }
     }
 
-    public static boolean handleLeftClick(PlayerEntity player) {
+    public static boolean handleLeftClick(Player player) {
         if (Minecraft.getInstance().player == null) return false;
 
         BackpackInfo backpackInfo = ImmersiveBackpack.singleton.getTrackedObjects().size() > 0 ?
@@ -259,13 +259,13 @@ public class ClientLogicSubscriber {
         return false;
     }
 
-    public static int handleRightClick(PlayerEntity player) {
+    public static int handleRightClick(Player player) {
         if (Minecraft.getInstance().gameMode == null) return 0;
         boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR && VRPlugin.API.apiActive(player);
         double dist = Minecraft.getInstance().gameMode.getPickRange();
-        Vector3d start = player.getEyePosition(1);
-        Vector3d viewVec = player.getViewVector(1);
-        Vector3d end = player.getEyePosition(1).add(viewVec.x * dist, viewVec.y * dist,
+        Vec3 start = player.getEyePosition(1);
+        Vec3 viewVec = player.getViewVector(1);
+        Vec3 end = player.getEyePosition(1).add(viewVec.x * dist, viewVec.y * dist,
                 viewVec.z * dist);
 
         if (!inVR) { // Don't handle right clicks for VR players, they have hands!
@@ -299,7 +299,7 @@ public class ClientLogicSubscriber {
         return 0;
     }
 
-    protected static int handleRightClickBlockRayTrace(PlayerEntity player) {
+    protected static int handleRightClickBlockRayTrace(Player player) {
         RayTraceResult looking = Minecraft.getInstance().hitResult;
         if (looking == null || looking.getType() != RayTraceResult.Type.BLOCK) return 0;
 

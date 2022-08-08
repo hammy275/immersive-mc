@@ -12,10 +12,10 @@ import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.server.tracker.ServerTrackerInit;
 import net.minecraft.block.*;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.*;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -37,7 +37,7 @@ public class ServerSubscriber {
             ImmersiveStorage storage = WorldStorage.getStorage(world).remove(event.getPos());
             if (storage != null && event.getPlayer().level != null) {
                 for (int i = 0; i <= GetStorage.getLastInputIndex(state); i++) {
-                    Vector3d vecPos = Vector3d.atCenterOf(event.getPos());
+                    Vec3 vecPos = Vec3.atCenterOf(event.getPos());
                     ItemStack stack = storage.items[i];
                     if (stack != null && !stack.isEmpty()) {
                         ItemEntity itemEnt = new ItemEntity(event.getPlayer().level,
@@ -57,7 +57,7 @@ public class ServerSubscriber {
         } else {
             sendBreakPacket = state.getBlock() == Blocks.CRAFTING_TABLE ||
             state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock
-            || state.getBlock() instanceof EnchantingTableBlock || state.getBlock() instanceof RepeaterBlock;
+            || state.getBlock() instanceof EnchantmentTableBlock || state.getBlock() instanceof RepeaterBlock;
         }
 
         if (sendBreakPacket) {
@@ -86,9 +86,9 @@ public class ServerSubscriber {
 
     @SubscribeEvent
     public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!event.getPlayer().level.isClientSide && event.getPlayer() instanceof ServerPlayerEntity) {
+        if (!event.getPlayer().level.isClientSide && event.getPlayer() instanceof ServerPlayer) {
             ActiveConfig.loadConfigFromFile(true);
-            Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
+            Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()),
                     new ConfigSyncPacket());
         }
 

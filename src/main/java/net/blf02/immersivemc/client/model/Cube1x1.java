@@ -1,13 +1,12 @@
 package net.blf02.immersivemc.client.model;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.blf02.immersivemc.ImmersiveMC;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.Model;
-import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public class Cube1x1 extends Model {
     private final ModelRenderer bb_main;
@@ -26,11 +25,11 @@ public class Cube1x1 extends Model {
     }
 
     @Override
-    public void renderToBuffer(MatrixStack stack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+    public void renderToBuffer(PoseStack stack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         bb_main.render(stack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
-    public void render(MatrixStack stack, IVertexBuilder buffer,
+    public void render(PoseStack stack, VertexConsumer buffer,
                        float red, float green, float blue, float alpha, float size) {
         // size is in blocks
         stack.pushPose();

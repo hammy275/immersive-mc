@@ -3,7 +3,7 @@ package net.blf02.immersivemc.client.immersive.info;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 public class ChestInfo extends AbstractTileEntityImmersiveInfo<TileEntity> {
 
@@ -16,7 +16,7 @@ public class ChestInfo extends AbstractTileEntityImmersiveInfo<TileEntity> {
     public double lastY0;
     public double lastY1;
     public AxisAlignedBB[] openCloseHitboxes = new AxisAlignedBB[]{null, null};
-    public Vector3d[] openClosePositions = new Vector3d[]{null, null};
+    public Vec3[] openClosePositions = new Vec3[]{null, null};
     public int openCloseCooldown = 0;
 
     public ChestInfo(TileEntity tileEntity, int ticksToExist, TileEntity other) {

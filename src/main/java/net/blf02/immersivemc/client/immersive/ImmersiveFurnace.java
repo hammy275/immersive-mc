@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.client.immersive;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
@@ -9,12 +9,12 @@ import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.block.AbstractFurnaceBlock;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
 
 public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnaceTileEntity, ImmersiveFurnaceInfo> {
@@ -60,18 +60,18 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
 
         AbstractFurnaceTileEntity furnace = info.getTileEntity();
         Direction forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
-        Vector3d pos = getDirectlyInFront(forward, furnace.getBlockPos());
+        Vec3 pos = getDirectlyInFront(forward, furnace.getBlockPos());
 
         // Gets the offset on the x and z axis that the items should be placed in front of the furnace
         Direction left = getLeftOfDirection(forward);
-        Vector3d toSmeltAndFuelOffset = new Vector3d(
+        Vec3 toSmeltAndFuelOffset = new Vec3(
                 left.getNormal().getX() * 0.25, 0, left.getNormal().getZ() * 0.25);
-        Vector3d outputOffset = new Vector3d(
+        Vec3 outputOffset = new Vec3(
                 left.getNormal().getX() * 0.75, 0, left.getNormal().getZ() * 0.75);
 
-        Vector3d posToSmelt;
-        Vector3d posFuel;
-        Vector3d posOutput;
+        Vec3 posToSmelt;
+        Vec3 posFuel;
+        Vec3 posOutput;
         if (ActiveConfig.autoCenterFurnace) {
             posFuel = pos.add(left.getNormal().getX() * 0.5, 0.25, left.getNormal().getZ() * 0.5);
             if (info.items[2] == null || info.items[2].isEmpty()) {
@@ -108,7 +108,7 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
 
     }
 
-    protected void render(ImmersiveFurnaceInfo info, MatrixStack stack, boolean isInVR) {
+    protected void render(ImmersiveFurnaceInfo info, PoseStack stack, boolean isInVR) {
         float size = ClientConstants.itemScaleSizeFurnace / info.getItemTransitionCountdown();
 
         // Render all of the items
@@ -128,7 +128,7 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int slot, Hand hand) {
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int slot, HumanoidArm hand) {
         ImmersiveFurnaceInfo infoF = (ImmersiveFurnaceInfo) info;
         if (info.getPosition(0) == null && slot == 2) { // We're right clicking on the output slot, but there's no input slot
             ItemStack handItem = player.getItemInHand(hand);

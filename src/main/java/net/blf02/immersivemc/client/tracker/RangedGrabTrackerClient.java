@@ -12,10 +12,10 @@ import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class RangedGrabTrackerClient extends AbstractTracker {
     }
 
     @Override
-    protected void tick(PlayerEntity player) {
+    protected void tick(Player player) {
         IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
         IVRData controller = vrPlayer.getController0();
 
@@ -49,9 +49,9 @@ public class RangedGrabTrackerClient extends AbstractTracker {
             } else {
                 selected = null;
 
-                Vector3d start = controller.position();
-                Vector3d viewVec = controller.getLookAngle();
-                Vector3d end = start.add(viewVec.x * dist, viewVec.y * dist,
+                Vec3 start = controller.position();
+                Vec3 viewVec = controller.getLookAngle();
+                Vec3 end = start.add(viewVec.x * dist, viewVec.y * dist,
                         viewVec.z * dist);
 
                 List<Entity> ents = player.level.getEntities(player, player.getBoundingBox().inflate(10),
@@ -69,7 +69,7 @@ public class RangedGrabTrackerClient extends AbstractTracker {
         }
 
         if (selected != null) {
-            Vector3d pos = selected.position().add(0, 0.2, 0);
+            Vec3 pos = selected.position().add(0, 0.2, 0);
             selected.level.addParticle(new RedstoneParticleData(0, 1, 1, 1),
                     pos.x, pos.y, pos.z, 0.01, 0.01, 0.01);
         }
@@ -78,7 +78,7 @@ public class RangedGrabTrackerClient extends AbstractTracker {
     }
 
     @Override
-    protected boolean shouldTick(PlayerEntity player) {
+    protected boolean shouldTick(Player player) {
         return VRPluginVerify.clientInVR && Minecraft.getInstance().gameMode != null
                 && ActiveConfig.useRangedGrab && VRPlugin.API.apiActive(player);
     }

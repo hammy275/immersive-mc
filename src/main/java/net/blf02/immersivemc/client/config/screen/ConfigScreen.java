@@ -1,12 +1,12 @@
 package net.blf02.immersivemc.client.config.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.TranslatableComponent;
 
 public class ConfigScreen extends Screen {
 
@@ -16,7 +16,7 @@ public class ConfigScreen extends Screen {
     protected static int BUTTON_HEIGHT = 20;
 
     public ConfigScreen(Screen screen) {
-        super(new TranslationTextComponent("screen.immersivemc.config.title"));
+        super(new TranslatableComponent("screen.immersivemc.config.title"));
         this.lastScreen = screen;
     }
 
@@ -25,31 +25,31 @@ public class ConfigScreen extends Screen {
         ActiveConfig.loadConfigFromFile(); // Load config so we're working with our current values when changing them
         super.init();
 
-        this.addButton(new Button(
+        this.addWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 16,
-                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("config.immersivemc.backpack"),
+                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("config.immersivemc.backpack"),
                 (button) -> Minecraft.getInstance().setScreen(new BackpackConfigScreen(this))
         ));
 
-        this.addButton(new Button(
+        this.addWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2, this.height / 2,
-                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("config.immersivemc.immersives_customize"),
+                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("config.immersivemc.immersives_customize"),
                 (button) -> Minecraft.getInstance().setScreen(new ImmersivesCustomizeScreen(this))
         ));
 
-        this.addButton(new Button(
+        this.addWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2, this.height / 2 + BUTTON_HEIGHT + 16,
-                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("config.immersivemc.immersives"),
+                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("config.immersivemc.immersives"),
                 (button) -> Minecraft.getInstance().setScreen(new ImmersivesConfigScreen(this))
         ));
 
-        this.addButton(new Button(
+        this.addWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2 - (BUTTON_WIDTH / 2) - 8, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("gui.done"),
+                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("gui.done"),
                 (button) -> this.onClose()));
-        this.addButton(new Button(
+        this.addWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2 + (BUTTON_WIDTH / 2) + 8, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("config.immersivemc.reset"),
+                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("config.immersivemc.reset"),
                 (button) -> {
                     ImmersiveMCConfig.resetToDefault();
                     ActiveConfig.loadConfigFromFile();
@@ -58,7 +58,7 @@ public class ConfigScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
 
         drawCenteredString(stack, this.font, this.title.getString(),

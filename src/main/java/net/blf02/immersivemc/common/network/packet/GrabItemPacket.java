@@ -6,7 +6,7 @@ import net.blf02.immersivemc.server.tracker.RangedGrabTrackerServer;
 import net.blf02.immersivemc.server.tracker.ServerTrackerInit;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -35,7 +35,7 @@ public class GrabItemPacket {
     public static void handle(final GrabItemPacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             if (!ActiveConfig.useRangedGrab) return;
-            ServerPlayerEntity player = ctx.get().getSender();
+            ServerPlayer player = ctx.get().getSender();
             if (player != null) {
                 Entity ent = player.level.getEntity(packet.entityId);
                 if (ent instanceof ItemEntity && player.distanceToSqr(ent) <= 144 &&

@@ -238,7 +238,7 @@ Build: 1.16.5-36.1.51 - Sat Jul 17 02:13:02 GMT 2021
 		Fix mod menu URL click bounds (#7804)
 
 	thelnfamous1:
-		Adds knockback attribute to players and updated knockback calculation to PlayerEntity#attack (#7806)
+		Adds knockback attribute to players and updated knockback calculation to Player#attack (#7806)
 
 	kinglemming:
 		Convenience change for potion enumeration - does not change patch size in any meaningful way! (#7811)
@@ -1543,7 +1543,7 @@ Build: 1.16.3-34.0.7 - Tue Sep 15 20:07:25 GMT 2020
 =========
 Build: 1.16.3-34.0.6 - Tue Sep 15 19:47:08 GMT 2020
 	cyborgmas:
-		Add MatrixStack-aware alternatives to the methods in GuiUtils (#7127)
+		Add PoseStack-aware alternatives to the methods in GuiUtils (#7127)
 
 =========
 Build: 1.16.3-34.0.5 - Tue Sep 15 16:51:58 GMT 2020

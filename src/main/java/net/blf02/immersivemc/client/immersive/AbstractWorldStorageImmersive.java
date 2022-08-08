@@ -8,7 +8,7 @@ import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStorageInfo> extends AbstractImmersive<I> {
     public AbstractWorldStorageImmersive(int maxImmersives) {
@@ -34,7 +34,7 @@ public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStora
             Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
         }
         if (Minecraft.getInstance().player != null &&
-                Minecraft.getInstance().player.distanceToSqr(Vector3d.atCenterOf(info.getBlockPosition())) >
+                Minecraft.getInstance().player.distanceToSqr(Vec3.atCenterOf(info.getBlockPosition())) >
                         CommonConstants.distanceSquaredToRemoveImmersive) {
             info.remove();
         }

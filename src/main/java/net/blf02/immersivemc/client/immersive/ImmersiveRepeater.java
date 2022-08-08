@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.client.immersive;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.RepeaterInfo;
@@ -13,11 +13,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.RepeaterBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
 
 import java.util.Objects;
@@ -38,8 +38,8 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
 
         Direction facing = state.getValue(HorizontalBlock.FACING);
         Direction forwardDir = facing.getOpposite();
-        Vector3d forward = Vector3d.atLowerCornerOf(forwardDir.getNormal());
-        Vector3d centerPos = getTopCenterOfBlock(info.getBlockPosition()).add(0, -0.675, 0);
+        Vec3 forward = Vec3.atLowerCornerOf(forwardDir.getNormal());
+        Vec3 centerPos = getTopCenterOfBlock(info.getBlockPosition()).add(0, -0.675, 0);
 
         info.setPosition(0, centerPos.add(forward.multiply(1d/16d, 0, 1d/16d)));
         info.setPosition(1, centerPos.add(forward.multiply(-1d/16d, 0, -1d/16d)));
@@ -63,7 +63,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
         if (isInVR) {
             BlockState state = Minecraft.getInstance().level.getBlockState(info.getBlockPosition());
             for (int c = 0; c <= 1; c++) {
-                Vector3d pos = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(c).position();
+                Vec3 pos = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(c).position();
                 Optional<Integer> hit = Util.getClosestIntersect(pos, info.getAllHitboxes(), info.getAllPositions());
                 int repeaterValue = state.getValue(RepeaterBlock.DELAY);
                 if (hit.isPresent()) {
@@ -96,7 +96,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
-    protected void render(RepeaterInfo info, MatrixStack stack, boolean isInVR) {
+    protected void render(RepeaterInfo info, PoseStack stack, boolean isInVR) {
         for (int i = 0; i <= 3; i++) {
             renderHitbox(stack, info.getHitbox(i), info.getPosition(i));
         }
@@ -113,7 +113,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, HumanoidArm hand) {
         // NOOP. Handled in doTick().
     }
 

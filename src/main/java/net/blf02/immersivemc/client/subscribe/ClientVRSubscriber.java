@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
@@ -36,9 +36,9 @@ public class ClientVRSubscriber {
 
         // Track things the HMD is looking at (cursor is already covered in ClientLogicSubscriber)
         double dist = Minecraft.getInstance().gameMode.getPickRange();
-        Vector3d start = event.vrPlayer.getHMD().position();
-        Vector3d look = event.vrPlayer.getHMD().getLookAngle();
-        Vector3d end = event.vrPlayer.getHMD().position().add(look.x * dist, look.y * dist, look.z * dist);
+        Vec3 start = event.vrPlayer.getHMD().position();
+        Vec3 look = event.vrPlayer.getHMD().getLookAngle();
+        Vec3 end = event.vrPlayer.getHMD().position().add(look.x * dist, look.y * dist, look.z * dist);
         BlockRayTraceResult res = event.player.level.clip(new RayTraceContext(start, end, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE,
                 null));
         ClientLogicSubscriber.possiblyTrack(res.getBlockPos(), event.player.level.getBlockState(res.getBlockPos()),
@@ -61,7 +61,7 @@ public class ClientVRSubscriber {
         if (info.hasHitboxes()) {
             for (int c = 0; c <= 1; c++) {
                 IVRData controller = vrPlayer.getController(c);
-                Vector3d pos = controller.position();
+                Vec3 pos = controller.position();
                 Optional<Integer> hit = Util.getFirstIntersect(pos, info.getAllHitboxes());
                 if (hit.isPresent()) {
                     singleton.onAnyRightClick(info);

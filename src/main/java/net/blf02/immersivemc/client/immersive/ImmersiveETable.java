@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.client.immersive;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
@@ -11,19 +11,19 @@ import net.blf02.immersivemc.common.network.packet.GetEnchantmentsPacket;
 import net.blf02.immersivemc.common.network.packet.InteractPacket;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.common.util.Util;
-import net.minecraft.block.EnchantingTableBlock;
+import net.minecraft.block.EnchantmentTableBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.text.TextComponent;
 import net.minecraft.world.World;
 
 import java.util.*;
@@ -82,7 +82,7 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
 
         float hitboxSize = ClientConstants.itemScaleSizeETable / 2f;
 
-        Vector3d inp = Vector3d.upFromBottomCenterOf(info.getBlockPosition(), 1.25);
+        Vec3 inp = Vec3.upFromBottomCenterOf(info.getBlockPosition(), 1.25);
         info.setPosition(0, inp.add(this.getYDiffFromOffset(info, 0)));
         info.setHitbox(0, createHitbox(inp, hitboxSize));
 
@@ -90,14 +90,14 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
         Direction rightFromMid = facing.getClockWise(); // From the perspective of the ETable facing the player
         Direction leftFromMid = facing.getCounterClockWise();
 
-        Vector3d midItem = inp.add(0, 0.5, 0);
-        Vector3d unit = new Vector3d(rightFromMid.getNormal().getX(), rightFromMid.getNormal().getY(),
+        Vec3 midItem = inp.add(0, 0.5, 0);
+        Vec3 unit = new Vec3(rightFromMid.getNormal().getX(), rightFromMid.getNormal().getY(),
                 rightFromMid.getNormal().getZ());
-        Vector3d weakItem = midItem.add(unit.multiply(0.5, 0.5, 0.5));
+        Vec3 weakItem = midItem.add(unit.multiply(0.5, 0.5, 0.5));
 
-        unit = new Vector3d(leftFromMid.getNormal().getX(), leftFromMid.getNormal().getY(),
+        unit = new Vec3(leftFromMid.getNormal().getX(), leftFromMid.getNormal().getY(),
                 leftFromMid.getNormal().getZ());
-        Vector3d strongItem = midItem.add(unit.multiply(0.5, 0.5, 0.5));
+        Vec3 strongItem = midItem.add(unit.multiply(0.5, 0.5, 0.5));
 
         info.setPosition(1, weakItem.add(this.getYDiffFromOffset(info, 1)));
         info.setPosition(2, midItem.add(this.getYDiffFromOffset(info, 2)));
@@ -111,10 +111,10 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
         double dist = Minecraft.getInstance().gameMode.getPickRange();
         info.lookingAtIndex = -1;
 
-        PlayerEntity player = Minecraft.getInstance().player;
-        Vector3d start = player.getEyePosition(1);
-        Vector3d viewVec = player.getViewVector(1);
-        Vector3d end = player.getEyePosition(1).add(viewVec.x * dist, viewVec.y * dist,
+        Player player = Minecraft.getInstance().player;
+        Vec3 start = player.getEyePosition(1);
+        Vec3 viewVec = player.getViewVector(1);
+        Vec3 end = player.getEyePosition(1).add(viewVec.x * dist, viewVec.y * dist,
                 viewVec.z * dist);
         Optional<Integer> closest = Util.rayTraceClosest(start, end,
                 info.getHitbox(1), info.getHitbox(2), info.getHitbox(3));
@@ -126,7 +126,7 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
 
     @Override
     public boolean hasValidBlock(EnchantingInfo info, World level) {
-        return level.getBlockState(info.getBlockPosition()).getBlock() instanceof EnchantingTableBlock;
+        return level.getBlockState(info.getBlockPosition()).getBlock() instanceof EnchantmentTableBlock;
     }
 
     @Override
@@ -137,7 +137,7 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
     }
 
     @Override
-    protected void render(EnchantingInfo info, MatrixStack stack, boolean isInVR) {
+    protected void render(EnchantingInfo info, PoseStack stack, boolean isInVR) {
         float itemSize = ClientConstants.itemScaleSizeETable / info.getItemTransitionCountdown();
 
         if (!info.itemEnchantedCopy.isEmpty()) {
@@ -148,14 +148,14 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
                         getForwardFromPlayer(Minecraft.getInstance().player), info.getHitbox(i + 1), false);
                 if (info.lookingAtIndex == i) {
                     if (enchInfo.isPresent()) {
-                        renderText(new StringTextComponent(enchInfo.levelsNeeded + " (" + (i + 1) + ")"),
+                        renderText(new TextComponent(enchInfo.levelsNeeded + " (" + (i + 1) + ")"),
                                 stack,
                                 info.getPosition(i + 1).add(0, 0.33, 0));
                         renderText(enchInfo.textPreview,
                                 stack,
                                 info.getPosition(i + 1).add(0, -0.33, 0));
                     } else {
-                        renderText(new StringTextComponent("No Enchantment!"),
+                        renderText(new TextComponent("No Enchantment!"),
                                 stack, info.getPosition(i + 1).add(0, -0.2, 0));
                     }
                 }
@@ -208,7 +208,7 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, HumanoidArm hand) {
         Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), closest, hand));
     }
 
@@ -223,8 +223,8 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
         infos.add(new EnchantingInfo(pos, ClientConstants.ticksToRenderETable));
     }
 
-    protected Vector3d getYDiffFromOffset(EnchantingInfo info, int slot) {
-        return new Vector3d(0, this.yOffsets[info.yOffsetPositions[slot]], 0);
+    protected Vec3 getYDiffFromOffset(EnchantingInfo info, int slot) {
+        return new Vec3(0, this.yOffsets[info.yOffsetPositions[slot]], 0);
     }
 
     @Override

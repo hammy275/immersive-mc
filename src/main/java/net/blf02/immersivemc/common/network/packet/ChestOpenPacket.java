@@ -5,7 +5,7 @@ import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.server.ChestToOpenCount;
 import net.minecraft.entity.monster.piglin.PiglinTasks;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.EnderChestTileEntity;
@@ -35,7 +35,7 @@ public class ChestOpenPacket {
 
     public static void handle(final ChestOpenPacket message, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity player = ctx.get().getSender();
+            ServerPlayer player = ctx.get().getSender();
             if (player != null) {
                 if (NetworkUtil.safeToRun(message.pos, player)) {
                     TileEntity tileEnt = player.level.getBlockEntity(message.pos);

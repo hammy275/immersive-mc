@@ -3,12 +3,12 @@ package net.blf02.immersivemc.client.immersive.info;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 public abstract class AbstractTileEntityImmersiveInfo<T extends TileEntity> extends AbstractImmersiveInfo {
 
     protected T tileEntity;
-    protected Vector3d[] positions;
+    protected Vec3[] positions;
     public ItemStack[] items;
     public final int maxSlotIndex;
     protected final BlockPos pos;
@@ -23,7 +23,7 @@ public abstract class AbstractTileEntityImmersiveInfo<T extends TileEntity> exte
     public AbstractTileEntityImmersiveInfo(T tileEntity, int ticksToExist, int maxSlotIndex) {
         super(ticksToExist);
         this.tileEntity = tileEntity;
-        this.positions = new Vector3d[maxSlotIndex+1];
+        this.positions = new Vec3[maxSlotIndex+1];
         this.maxSlotIndex = maxSlotIndex;
         this.items = new ItemStack[maxSlotIndex+1];
         this.pos = this.tileEntity.getBlockPos();
@@ -34,17 +34,17 @@ public abstract class AbstractTileEntityImmersiveInfo<T extends TileEntity> exte
     }
 
     @Override
-    public Vector3d getPosition(int slot) {
+    public Vec3 getPosition(int slot) {
         return positions[slot];
     }
 
     @Override
-    public Vector3d[] getAllPositions() {
+    public Vec3[] getAllPositions() {
         return positions;
     }
 
     @Override
-    public void setPosition(int slot, Vector3d position) {
+    public void setPosition(int slot, Vec3 position) {
         positions[slot] = position;
     }
 

@@ -7,7 +7,7 @@ import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.server.storage.GetStorage;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.block.*;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -23,10 +23,10 @@ public class InteractPacket {
     public final BlockPos pos;
     public final String storageType;
     public final int slot;
-    public final Hand hand;
+    public final HumanoidArm hand;
     public PlacementMode placementMode = SafeClientUtil.getPlacementMode();
 
-    public InteractPacket(BlockPos pos, int slot, Hand hand) {
+    public InteractPacket(BlockPos pos, int slot, HumanoidArm hand) {
         this.pos = pos;
         this.slot = slot;
         this.hand = hand;
@@ -34,7 +34,7 @@ public class InteractPacket {
         this.storageType = null;
     }
 
-    public InteractPacket(String type, int slot, Hand hand) {
+    public InteractPacket(String type, int slot, HumanoidArm hand) {
         this.storageType = type;
         this.slot = slot;
         this.hand = hand;
@@ -79,7 +79,7 @@ public class InteractPacket {
 
     public static void handle(final InteractPacket message, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity player = ctx.get().getSender();
+            ServerPlayer player = ctx.get().getSender();
             if (message.isPlayerStorageInteract()) {
                 if (message.storageType.equals("backpack")) {
                     ImmersiveStorage storage = GetStorage.getPlayerStorage(player, "backpack");
@@ -92,7 +92,7 @@ public class InteractPacket {
                     Swap.handleCraftingSwap(player, message.slot, message.hand, message.pos, message.placementMode);
                 } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
                     Swap.anvilSwap(message.slot, message.hand, message.pos, player, message.placementMode);
-                } else if (state.getBlock() instanceof EnchantingTableBlock) {
+                } else if (state.getBlock() instanceof EnchantmentTableBlock) {
                     Swap.enchantingTableSwap(player, message.slot, message.hand, message.pos);
                 }
             }

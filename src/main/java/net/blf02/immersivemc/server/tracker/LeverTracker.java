@@ -9,13 +9,13 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalFaceBlock;
 import net.minecraft.block.LeverBlock;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.state.properties.AttachFace;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +29,7 @@ public class LeverTracker extends AbstractTracker {
     }
 
     @Override
-    protected void tick(PlayerEntity player) {
+    protected void tick(Player player) {
         LeverInfo info = infos.get(player.getGameProfile().getName());
         if (info == null) {
             info = new LeverInfo();
@@ -38,7 +38,7 @@ public class LeverTracker extends AbstractTracker {
         info.tick();
         if (info.cooldown > 0) return;
         for (int c = 0; c <= 1; c++) {
-            Vector3d handPos = VRPlugin.API.getVRPlayer(player).getController(c).position();
+            Vec3 handPos = VRPlugin.API.getVRPlayer(player).getController(c).position();
             BlockPos handBlockPos = new BlockPos(handPos);
             BlockPos leverPos;
             BlockState state;
@@ -54,12 +54,12 @@ public class LeverTracker extends AbstractTracker {
             } else {
                 continue;
             }
-            Vector3d hitboxPos;
+            Vec3 hitboxPos;
             if (state.getValue(HorizontalFaceBlock.FACE) == AttachFace.WALL) {
-                hitboxPos = Vector3d.atCenterOf(leverPos);
+                hitboxPos = Vec3.atCenterOf(leverPos);
                 Direction facing = state.getValue(HorizontalFaceBlock.FACING);
                 Direction towardsWall = facing.getOpposite();
-                Vector3d unit = Vector3d.atLowerCornerOf(towardsWall.getNormal()); // Converts Vector3i to Vector3d
+                Vec3 unit = Vec3.atLowerCornerOf(towardsWall.getNormal()); // Converts Vector3i to Vec3
                 hitboxPos = hitboxPos.add(unit.multiply(0.25, 0.25, 0.25));
                 if (state.getValue(LeverBlock.POWERED)) {
                     hitboxPos = hitboxPos.add(0, -1d/3d, 0);
@@ -67,14 +67,14 @@ public class LeverTracker extends AbstractTracker {
                     hitboxPos = hitboxPos.add(0, 1d/3d, 0);
                 }
             } else {
-                hitboxPos = Vector3d.atCenterOf(leverPos);
+                hitboxPos = Vec3.atCenterOf(leverPos);
                 Direction facingOn = state.getValue(HorizontalFaceBlock.FACING);
                 Direction facingOff = facingOn.getOpposite();
-                Vector3d unit;
+                Vec3 unit;
                 if (state.getValue(LeverBlock.POWERED)) {
-                    unit = Vector3d.atLowerCornerOf(facingOn.getNormal());
+                    unit = Vec3.atLowerCornerOf(facingOn.getNormal());
                 } else {
-                    unit = Vector3d.atLowerCornerOf(facingOff.getNormal());
+                    unit = Vec3.atLowerCornerOf(facingOff.getNormal());
                 }
                 hitboxPos = hitboxPos.add(unit.multiply(0.25, 0.25, 0.25));
             }
@@ -82,7 +82,7 @@ public class LeverTracker extends AbstractTracker {
             AxisAlignedBB hitbox = new AxisAlignedBB(hitboxPos.x - size, hitboxPos.y - size, hitboxPos.z - size,
                     hitboxPos.x + size, hitboxPos.y + size, hitboxPos.z + size);
             if (hitbox.contains(handPos)) {
-                Vector3d last = info.getLastPos(c);
+                Vec3 last = info.getLastPos(c);
                 if (last.distanceToSqr(handPos) > 0.1*0.1) { // If our hand moved a significant amount
                     info.cooldown = 20;
                     LeverBlock leverBlock = (LeverBlock) Blocks.LEVER;
@@ -95,7 +95,7 @@ public class LeverTracker extends AbstractTracker {
     }
 
     @Override
-    protected boolean shouldTick(PlayerEntity player) {
+    protected boolean shouldTick(Player player) {
         return ActiveConfig.useLever &&
                 VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player)
                 && PlayerConfigs.getConfig(player).useLevers;
@@ -103,8 +103,8 @@ public class LeverTracker extends AbstractTracker {
 
     public static class LeverInfo {
         public int cooldown = 0;
-        public Vector3d lastPosMain = Vector3d.ZERO;
-        public Vector3d lastPosOff = Vector3d.ZERO;
+        public Vec3 lastPosMain = Vec3.ZERO;
+        public Vec3 lastPosOff = Vec3.ZERO;
 
         public void tick() {
             if (cooldown > 0) {
@@ -112,11 +112,11 @@ public class LeverTracker extends AbstractTracker {
             }
         }
 
-        public Vector3d getLastPos(int c) {
+        public Vec3 getLastPos(int c) {
             return c == 0 ? lastPosMain : lastPosOff;
         }
 
-        public void setLastPos(int c, Vector3d pos) {
+        public void setLastPos(int c, Vec3 pos) {
             if (c == 0) {
                 lastPosMain = pos;
             } else {

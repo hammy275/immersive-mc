@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.client.immersive;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
@@ -9,24 +10,13 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -56,11 +46,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param level The level to check
      * @return true if the block exists, false if it does not
      */
-    public abstract boolean hasValidBlock(I info, World level);
+    public abstract boolean hasValidBlock(I info, Level level);
 
     public abstract boolean shouldRender(I info, boolean isInVR);
 
-    protected abstract void render(I info, MatrixStack stack, boolean isInVR);
+    protected abstract void render(I info, PoseStack stack, boolean isInVR);
 
     protected abstract boolean enabledInConfig();
 
@@ -82,10 +72,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     }
 
-    public abstract void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest,
-                                          Hand hand);
+    public abstract void handleRightClick(AbstractImmersiveInfo info, Player player, int closest,
+                                          HumanoidArm hand);
 
-    public void handleTriggerHitboxRightClick(InfoTriggerHitboxes info, PlayerEntity player, int hitboxNum) {
+    public void handleTriggerHitboxRightClick(InfoTriggerHitboxes info, Player player, int hitboxNum) {
         // No-op by default. Only needed realistically if the `info` implements InfoTriggerHitboxes
     }
 
@@ -139,7 +129,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      *
      * This is the render method that should be called by outside functions
      */
-    public void doRender(I info, MatrixStack stack, boolean isInVR) {
+    public void doRender(I info, PoseStack stack, boolean isInVR) {
         if (shouldRender(info, isInVR)) {
             try {
                 render(info, stack, isInVR);
@@ -172,7 +162,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     }
 
-    public void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size, Direction facing,
+    public void renderItem(ItemStack item, PoseStack stack, Vec3 pos, float size, Direction facing,
                            AxisAlignedBB hitbox, boolean renderItemCounts) {
         renderItem(item, stack, pos, size, facing, null, hitbox, renderItemCounts, -1);
     }
@@ -180,7 +170,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     /**
      * Renders an item at the specified position
      * @param item Item to render
-     * @param stack MatrixStack in
+     * @param stack PoseStack in
      * @param pos Position to render at
      * @param size Size to render at
      * @param facing Direction to face (should be the direction of the block). Can be null to look at camera.
@@ -188,7 +178,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param hitbox Hitbox for debug rendering
      * @param renderItemCounts Whether to render an item count with the item
      */
-    public void renderItem(ItemStack item, MatrixStack stack, Vector3d pos, float size, Direction facing, Direction upDown,
+    public void renderItem(ItemStack item, PoseStack stack, Vec3 pos, float size, Direction facing, Direction upDown,
                            AxisAlignedBB hitbox, boolean renderItemCounts, int spinDegrees) {
         ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         if (item != null && item != ItemStack.EMPTY && pos != null) {
@@ -202,7 +192,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             // Scale the item to be a good size
             stack.scale(size, size, size);
 
-            Vector3d textPos = pos;
+            Vec3 textPos = pos;
 
             // Rotate the item to face the player properly
             int degreesRotation = 0; // If North, we're already good
@@ -234,7 +224,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             } else if (facing == null) {
                 stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
                 stack.mulPose(Vector3f.YP.rotationDegrees(180));
-                Vector3d textMove = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR ?
+                Vec3 textMove = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR ?
                         VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD().getLookAngle() :
                         Minecraft.getInstance().player.getLookAngle();
                 textMove = textMove.multiply(-0.05, -0.05, -0.05);
@@ -257,17 +247,17 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             stack.popPose();
 
             if (renderItemCounts && item.getCount() > 1) {
-                this.renderText(new StringTextComponent(String.valueOf(item.getCount())),
+                this.renderText(new TextComponent(String.valueOf(item.getCount())),
                         stack, textPos, facing == null ? 0.0025f : 0.01f);
             }
         }
         renderHitbox(stack, hitbox, pos);
     }
 
-    protected void renderItemGuide(MatrixStack stack, AxisAlignedBB hitbox, float alpha, boolean isGreen) {
+    protected void renderItemGuide(PoseStack stack, AxisAlignedBB hitbox, float alpha, boolean isGreen) {
         if (hitbox != null) {
             ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
-            Vector3d pos = hitbox.getCenter();
+            Vec3 pos = hitbox.getCenter();
             stack.pushPose();
             stack.translate(-renderInfo.getPosition().x + pos.x,
                     -renderInfo.getPosition().y + pos.y,
@@ -279,15 +269,15 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         }
     }
 
-    protected void renderHitbox(MatrixStack stack, AxisAlignedBB hitbox, Vector3d pos) {
+    protected void renderHitbox(PoseStack stack, AxisAlignedBB hitbox, Vec3 pos) {
         renderHitbox(stack, hitbox, pos, false);
     }
 
-    protected void renderHitbox(MatrixStack stack, AxisAlignedBB hitbox, Vector3d pos, boolean alwaysRender) {
+    protected void renderHitbox(PoseStack stack, AxisAlignedBB hitbox, Vec3 pos, boolean alwaysRender) {
         renderHitbox(stack, hitbox, pos, alwaysRender, 1, 1, 1);
     }
 
-    protected void renderHitbox(MatrixStack stack, AxisAlignedBB hitbox, Vector3d pos, boolean alwaysRender,
+    protected void renderHitbox(PoseStack stack, AxisAlignedBB hitbox, Vec3 pos, boolean alwaysRender,
                                 float red, float green, float blue) {
         if ((Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() || alwaysRender) &&
                 hitbox != null && pos != null) {
@@ -305,11 +295,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         }
     }
 
-    public void renderText(ITextComponent text, MatrixStack stack, Vector3d pos) {
+    public void renderText(ITextComponent text, PoseStack stack, Vec3 pos) {
         renderText(text, stack, pos, 0.02f);
     }
 
-    public void renderText(ITextComponent text, MatrixStack stack, Vector3d pos, float textSize) {
+    public void renderText(ITextComponent text, PoseStack stack, Vec3 pos, float textSize) {
         ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.pushPose();
         stack.translate(-renderInfo.getPosition().x + pos.x,
@@ -353,30 +343,30 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      *
      * @param forwardFromBlock Direction forward from block. Can also be opposite direction of player
      * @param pos BlockPos of block
-     * @return Vector3d of the front-right of the block face from the block's perspective (front left from the player's)
+     * @return Vec3 of the front-right of the block face from the block's perspective (front left from the player's)
      */
-    public Vector3d getDirectlyInFront(Direction forwardFromBlock, BlockPos pos) {
+    public Vec3 getDirectlyInFront(Direction forwardFromBlock, BlockPos pos) {
         // This mess sets pos to always be directly in front of the face of the tile entity
         if (forwardFromBlock == Direction.SOUTH) {
             BlockPos front = pos.relative(forwardFromBlock);
-            return new Vector3d(front.getX(), front.getY(), front.getZ());
+            return new Vec3(front.getX(), front.getY(), front.getZ());
         } else if (forwardFromBlock == Direction.WEST) {
             BlockPos front = pos;
-            return new Vector3d(front.getX(), front.getY(), front.getZ());
+            return new Vec3(front.getX(), front.getY(), front.getZ());
         } else if (forwardFromBlock == Direction.NORTH) {
             BlockPos front = pos.relative(Direction.EAST);
-            return new Vector3d(front.getX(), front.getY(), front.getZ());
+            return new Vec3(front.getX(), front.getY(), front.getZ());
         } else if (forwardFromBlock == Direction.EAST) {
             BlockPos front = pos.relative(Direction.SOUTH).relative(Direction.EAST);
-            return new Vector3d(front.getX(), front.getY(), front.getZ());
+            return new Vec3(front.getX(), front.getY(), front.getZ());
         } else {
             throw new IllegalArgumentException("Furnaces can't point up or down?!?!");
         }
     }
 
-    public Vector3d getTopCenterOfBlock(BlockPos pos) {
+    public Vec3 getTopCenterOfBlock(BlockPos pos) {
         // Only add 0.5 to y since atCenterOf moves it up 0.5 for us
-        return Vector3d.upFromBottomCenterOf(pos, 1);
+        return Vec3.upFromBottomCenterOf(pos, 1);
     }
 
     /**
@@ -386,7 +376,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param player Player to get forward from
      * @return The forward direction of a block to use.
      */
-    public Direction getForwardFromPlayer(PlayerEntity player) {
+    public Direction getForwardFromPlayer(Player player) {
         return player.getDirection().getOpposite();
     }
 
@@ -398,7 +388,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param size Size of hitbox
      * @return
      */
-    public AxisAlignedBB createHitbox(Vector3d pos, float size) {
+    public AxisAlignedBB createHitbox(Vec3 pos, float size) {
         return new AxisAlignedBB(
                 pos.x - size,
                 pos.y - size,

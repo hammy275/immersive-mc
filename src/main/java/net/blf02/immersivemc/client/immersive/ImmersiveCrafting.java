@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.client.immersive;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
@@ -12,11 +12,11 @@ import net.blf02.immersivemc.common.network.packet.InteractPacket;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
 
 import java.util.Objects;
@@ -40,21 +40,21 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
         Objects.requireNonNull(Minecraft.getInstance().player);
 
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
-        Vector3d pos = getTopCenterOfBlock(info.getBlockPosition());
+        Vec3 pos = getTopCenterOfBlock(info.getBlockPosition());
         Direction left = getLeftOfDirection(forward);
 
-        Vector3d leftOffset = new Vector3d(
+        Vec3 leftOffset = new Vec3(
                 left.getNormal().getX() * spacing, 0, left.getNormal().getZ() * spacing);
-        Vector3d rightOffset = new Vector3d(
+        Vec3 rightOffset = new Vec3(
                 left.getNormal().getX() * -spacing, 0, left.getNormal().getZ() * -spacing);
 
-        Vector3d topOffset = new Vector3d(
+        Vec3 topOffset = new Vec3(
                 forward.getNormal().getX() * -spacing, 0, forward.getNormal().getZ() * -spacing);
-        Vector3d botOffset = new Vector3d(
+        Vec3 botOffset = new Vec3(
                 forward.getNormal().getX() * spacing, 0, forward.getNormal().getZ() * spacing);
 
 
-        Vector3d[] positions = new Vector3d[]{
+        Vec3[] positions = new Vec3[]{
                 pos.add(leftOffset).add(topOffset), pos.add(topOffset), pos.add(rightOffset).add(topOffset),
                 pos.add(leftOffset), pos, pos.add(rightOffset),
                 pos.add(leftOffset).add(botOffset), pos.add(botOffset), pos.add(rightOffset).add(botOffset)
@@ -84,19 +84,19 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, HumanoidArm hand) {
         Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), closest, hand));
     }
 
     @Override
-    public void handleTriggerHitboxRightClick(InfoTriggerHitboxes info, PlayerEntity player, int hitboxNum) {
+    public void handleTriggerHitboxRightClick(InfoTriggerHitboxes info, Player player, int hitboxNum) {
         AbstractImmersiveInfo aInfo = (AbstractImmersiveInfo) info;
         Network.INSTANCE.sendToServer(new InteractPacket(aInfo.getBlockPosition(), 9, Hand.MAIN_HAND));
         ((CraftingInfo) info).setTicksLeft(ClientConstants.ticksToRenderCrafting); // Reset count if we craft
     }
 
     @Override
-    protected void render(CraftingInfo info, MatrixStack stack, boolean isInVR) {
+    protected void render(CraftingInfo info, PoseStack stack, boolean isInVR) {
         float itemSize = ClientConstants.itemScaleSizeCrafting / info.getItemTransitionCountdown();
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
 

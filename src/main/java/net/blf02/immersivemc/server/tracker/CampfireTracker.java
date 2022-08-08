@@ -9,7 +9,7 @@ import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CampfireBlock;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CampfireCookingRecipe;
@@ -17,7 +17,7 @@ import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.server.ServerWorld;
 
 import java.util.HashMap;
@@ -34,7 +34,7 @@ public class CampfireTracker extends AbstractTracker {
     }
 
     @Override
-    protected void tick(PlayerEntity player) {
+    protected void tick(Player player) {
         CookInfo info = cookTime.get(player.getGameProfile().getName());
         if (info == null) return;
         for (int c = 0; c <= 1; c++) {
@@ -49,7 +49,7 @@ public class CampfireTracker extends AbstractTracker {
                 cookTime.remove(player.getGameProfile().getName());
             } else if (recipe.isPresent() &&
                     ThreadLocalRandom.current().nextInt(4) == 0) { // Not ready to smelt yet, show particle
-                Vector3d pos = VRPlugin.API.getVRPlayer(player).getController(c).position();
+                Vec3 pos = VRPlugin.API.getVRPlayer(player).getController(c).position();
                 if (player.level instanceof ServerWorld) {
                     ServerWorld serverLevel = (ServerWorld) player.level;
                     serverLevel.sendParticles(ParticleTypes.SMOKE, pos.x, pos.y, pos.z,
@@ -60,7 +60,7 @@ public class CampfireTracker extends AbstractTracker {
     }
 
     @Override
-    protected boolean shouldTick(PlayerEntity player) {
+    protected boolean shouldTick(Player player) {
         if (!ActiveConfig.useCampfireImmersion) return false;
         if (!VRPluginVerify.hasAPI) return false;
         if (!VRPlugin.API.playerInVR(player)) return false;
@@ -108,21 +108,21 @@ public class CampfireTracker extends AbstractTracker {
     }
 
     public static class CookInfo {
-        protected int mainHand = 0;
-        protected int offHand = 0;
+        protected int mainHumanoidArm = 0;
+        protected int offHumanoidArm = 0;
         public ItemStack stackHeldMain = ItemStack.EMPTY;
         public ItemStack stackHeldOff = ItemStack.EMPTY;
 
         public void set(int controller, int value) {
             if (controller == 0) {
-                mainHand = value;
+                mainHumanoidArm = value;
             } else {
-                offHand = value;
+                offHumanoidArm = value;
             }
         }
 
         public int get(int controller) {
-            return controller == 0 ? mainHand : offHand;
+            return controller == 0 ? mainHumanoidArm : offHand;
         }
 
         public void add(int controller, int amount) {
@@ -143,8 +143,8 @@ public class CampfireTracker extends AbstractTracker {
 
         @Override
         public String toString() {
-            return "Main Hand: " + stackHeldMain + " w/ " + mainHand + " ticks" +
-                    "\nOff Hand: " + stackHeldOff + " w/ " + offHand + " ticks";
+            return "Main Hand: " + stackHeldMain + " w/ " + mainHumanoidArm + " ticks" +
+                    "\nOff Hand: " + stackHeldOff + " w/ " + offHumanoidArm + " ticks";
         }
     }
 

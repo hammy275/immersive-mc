@@ -1,10 +1,10 @@
 package net.blf02.immersivemc.common.network;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.network.IPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.network.NetworkDirection;
@@ -21,7 +21,7 @@ public class Distributors {
     protected static Consumer<IPacket<?>> nearbyPosition(final Supplier<NearbyDistributorData> data) {
         return packet -> {
             MinecraftServer server = LogicalSidedProvider.INSTANCE.get(LogicalSide.SERVER);
-            for (ServerPlayerEntity player : server.getPlayerList().getPlayers()) {
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 if (player.distanceToSqr(data.get().pos) <= data.get().distanceSqr) {
                     player.connection.connection.send(packet);
                 }
@@ -31,16 +31,16 @@ public class Distributors {
 
     public static class NearbyDistributorData {
 
-        public final Vector3d pos;
+        public final Vec3 pos;
         public final int distanceSqr;
 
-        public NearbyDistributorData(Vector3d pos, int distance) {
+        public NearbyDistributorData(Vec3 pos, int distance) {
             this.pos = pos;
             this.distanceSqr = distance * distance;
         }
 
         public NearbyDistributorData(BlockPos pos, int distance) {
-            this(Vector3d.atCenterOf(pos), distance);
+            this(Vec3.atCenterOf(pos), distance);
         }
     }
 }

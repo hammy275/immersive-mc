@@ -1,14 +1,14 @@
 package net.blf02.immersivemc.common.tracker;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 
 public abstract class AbstractTracker {
 
-    protected abstract void tick(PlayerEntity player);
+    protected abstract void tick(Player player);
 
-    protected abstract boolean shouldTick(PlayerEntity player);
+    protected abstract boolean shouldTick(Player player);
 
-    public void doTick(PlayerEntity player) {
+    public void doTick(Player player) {
         if (shouldTick(player)) {
             tick(player);
         }

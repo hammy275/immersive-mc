@@ -1,33 +1,27 @@
 package net.blf02.immersivemc.client.config.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.blf02.immersivemc.common.config.PlacementMode;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.SettingsScreen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.widget.list.OptionsRowList;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.settings.IteratableOption;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-
-import java.util.List;
+import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 public class ImmersivesCustomizeScreen extends Screen {
 
     protected final Screen lastScreen;
-    protected OptionsRowList list;
+    protected OptionsList list;
 
     protected static int BUTTON_WIDTH = 256;
     protected static int BUTTON_HEIGHT = 20;
 
 
     public ImmersivesCustomizeScreen(Screen lastScreen) {
-        super(new TranslationTextComponent("screen.immersivemc.immersives_customize.title"));
+        super(new TranslatableComponent("screen.immersivemc.immersives_customize.title"));
         this.lastScreen = lastScreen;
     }
 
@@ -35,7 +29,7 @@ public class ImmersivesCustomizeScreen extends Screen {
     protected void init() {
         super.init();
 
-        this.list = new OptionsRowList(Minecraft.getInstance(), this.width, this.height,
+        this.list = new OptionsList(Minecraft.getInstance(), this.width, this.height,
                 32, this.height - 32, 24);
 
         ScreenUtils.addOption("center_brewing", ImmersiveMCConfig.autoCenterBrewing, this.list);
@@ -51,7 +45,7 @@ public class ImmersivesCustomizeScreen extends Screen {
                     ImmersiveMCConfig.itemPlacementMode.save();
                     ActiveConfig.loadConfigFromFile();
                 },
-                (ignored, option) -> new StringTextComponent(
+                (ignored, option) -> new TextComponent(
                         I18n.get("config.immersivemc.placement_mode",
                                 I18n.get("config.immersivemc.placement_mode." + ImmersiveMCConfig.itemPlacementMode.get()))
                 )
@@ -59,14 +53,14 @@ public class ImmersivesCustomizeScreen extends Screen {
 
         this.children.add(this.list);
 
-        this.addButton(new Button(
+        this.addWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("gui.done"),
+                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("gui.done"),
                 (button) -> this.onClose()));
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
 
         this.list.render(stack, mouseX, mouseY, partialTicks);

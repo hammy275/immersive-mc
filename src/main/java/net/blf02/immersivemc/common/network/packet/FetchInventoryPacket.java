@@ -6,7 +6,7 @@ import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.server.storage.GetStorage;
 import net.blf02.immersivemc.server.storage.WorldStorage;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -62,7 +62,7 @@ public class FetchInventoryPacket {
 
     public static void handle(final FetchInventoryPacket message, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity player = ctx.get().getSender();
+            ServerPlayer player = ctx.get().getSender();
             if (player != null) { // Asking for inventory data
                 handleServerToClient(player, message.pos);
             } else { // Receiving inventory data
@@ -72,7 +72,7 @@ public class FetchInventoryPacket {
         ctx.get().setPacketHandled(true);
     }
 
-    public static void handleServerToClient(ServerPlayerEntity player, BlockPos pos) {
+    public static void handleServerToClient(ServerPlayer player, BlockPos pos) {
         if (NetworkUtil.safeToRun(pos, player)) {
             TileEntity tileEnt = player.level.getBlockEntity(pos);
             if (WorldStorage.usesWorldStorage(player.level.getBlockState(pos))) {

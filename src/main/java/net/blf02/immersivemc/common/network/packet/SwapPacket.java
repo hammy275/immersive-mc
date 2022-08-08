@@ -5,7 +5,7 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.PlacementMode;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.server.swap.Swap;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.*;
 import net.minecraft.util.Hand;
@@ -18,10 +18,10 @@ public class SwapPacket {
 
     public final BlockPos block;
     public final int slot;
-    public final Hand hand;
+    public final HumanoidArm hand;
     public PlacementMode placementMode = SafeClientUtil.getPlacementMode();
 
-    public SwapPacket(BlockPos block, int slot, Hand hand) {
+    public SwapPacket(BlockPos block, int slot, HumanoidArm hand) {
         this.block = block;
         this.slot = slot;
         this.hand = hand;
@@ -44,7 +44,7 @@ public class SwapPacket {
 
     public static void handle(final SwapPacket message, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity player = ctx.get().getSender();
+            ServerPlayer player = ctx.get().getSender();
             if (player != null && NetworkUtil.safeToRun(message.block, player)) {
                 TileEntity tileEnt = player.level.getBlockEntity(message.block);
                 if (tileEnt instanceof AbstractFurnaceTileEntity && ActiveConfig.useFurnaceImmersion) {

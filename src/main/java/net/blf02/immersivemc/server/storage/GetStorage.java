@@ -2,15 +2,13 @@ package net.blf02.immersivemc.server.storage;
 
 import net.blf02.immersivemc.common.storage.AnvilStorage;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
-import net.minecraft.block.AnvilBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.EnchantingTableBlock;
-import net.minecraft.block.SmithingTableBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.AnvilBlock;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EnchantmentTableBlock;
+import net.minecraft.world.level.block.SmithingTableBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
@@ -38,13 +36,13 @@ public class GetStorage {
             return 8;
         } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
             return 1;
-        } else if (state.getBlock() instanceof EnchantingTableBlock) {
+        } else if (state.getBlock() instanceof EnchantmentTableBlock) {
             return 0;
         }
         return -1;
     }
 
-    public static ImmersiveStorage getPlayerStorage(PlayerEntity player, String type) {
+    public static ImmersiveStorage getPlayerStorage(Player player, String type) {
         List<ImmersiveStorage> storages = PlayerStorage.getStorages(player);
         for (ImmersiveStorage storage : storages) {
             if (storage.identifier.equals("backpack")) {
@@ -61,23 +59,23 @@ public class GetStorage {
         throw new IllegalArgumentException("Invalid player storage type!");
     }
 
-    public static ImmersiveStorage getStorage(PlayerEntity player, BlockPos pos) {
+    public static ImmersiveStorage getStorage(Player player, BlockPos pos) {
         BlockState state = player.level.getBlockState(pos);
         if (state.getBlock() == Blocks.CRAFTING_TABLE) {
             return getCraftingStorage(player, pos);
         } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
             return getAnvilStorage(player, pos);
-        } else if (state.getBlock() instanceof EnchantingTableBlock) {
+        } else if (state.getBlock() instanceof EnchantmentTableBlock) {
             return getEnchantingStorage(player, pos);
         }
         return null;
     }
 
-    public static ImmersiveStorage getEnchantingStorage(PlayerEntity player, BlockPos pos) {
+    public static ImmersiveStorage getEnchantingStorage(Player player, BlockPos pos) {
         return WorldStorage.getStorage(player).getOrCreate(pos).initIfNotAlready(1);
     }
 
-    public static AnvilStorage getAnvilStorage(PlayerEntity player, BlockPos pos) {
+    public static AnvilStorage getAnvilStorage(Player player, BlockPos pos) {
         WorldStorage wStorage = WorldStorage.getStorage(player);
         ImmersiveStorage storageOld = wStorage.get(pos);
         AnvilStorage storage;
@@ -91,7 +89,7 @@ public class GetStorage {
         return storage;
     }
 
-    public static ImmersiveStorage getCraftingStorage(PlayerEntity player, BlockPos pos) {
+    public static ImmersiveStorage getCraftingStorage(Player player, BlockPos pos) {
         return WorldStorage.getStorage(player).getOrCreate(pos).initIfNotAlready(10);
     }
 }

@@ -4,13 +4,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 public class CraftingInfo extends AbstractWorldStorageInfo implements InfoTriggerHitboxes {
 
     public Direction lastDir = null;
 
-    public Vector3d outputPosition;
+    public Vec3 outputPosition;
     public AxisAlignedBB outputHitbox;
     public ItemStack outputItem;
 

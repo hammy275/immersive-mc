@@ -1,25 +1,19 @@
 package net.blf02.immersivemc.client.config.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import net.blf02.immersivemc.ImmersiveMC;
 import net.blf02.immersivemc.client.immersive.ImmersiveBackpack;
 import net.blf02.immersivemc.client.model.BackpackModel;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.SettingsScreen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.widget.list.OptionsRowList;
+import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.settings.SliderPercentageOption;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.math.vector.Vector3i;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.time.Instant;
 import java.util.List;
@@ -31,28 +25,28 @@ helpful in writing this.
 public class BackpackConfigScreen extends Screen {
 
     protected final Screen parentScreen;
-    protected OptionsRowList list;
+    protected OptionsList list;
 
     protected static int BUTTON_WIDTH = 128;
     protected static int BUTTON_HEIGHT = 20;
 
     public BackpackConfigScreen(Screen lastScreen) {
-        super(new TranslationTextComponent("screen." + ImmersiveMC.MOD_ID + ".backpack_config.title"));
+        super(new TranslatableComponent("screen." + ImmersiveMC.MOD_ID + ".backpack_config.title"));
         this.parentScreen = lastScreen;
     }
 
     @Override
     protected void init() {
-        this.list = new OptionsRowList(Minecraft.getInstance(), this.width / 2, this.height / 2,
+        this.list = new OptionsList(Minecraft.getInstance(), this.width / 2, this.height / 2,
                 32, this.height - 32, 24);
 
         initOptionsList();
 
         this.children.add(this.list);
 
-        this.addButton(new Button(
+        this.addWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("gui.done"),
+                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("gui.done"),
                 (button) -> this.onClose()));
     }
 
@@ -63,25 +57,25 @@ public class BackpackConfigScreen extends Screen {
                 "config.immersivemc.backpack_r", 0, 255, 1,
                 (ignored) -> (double) getRGB('r'), (ignored, newVal) -> setRGB(newVal, 'r'),
                 (ignored, ignored2) ->
-                        new StringTextComponent(I18n.get("config.immersivemc.backpack_r") + ": " + getRGB('r')
+                        new TextComponent(I18n.get("config.immersivemc.backpack_r") + ": " + getRGB('r')
                         )));
         this.list.addBig(new SliderPercentageOption(
                 "config.immersivemc.backpack_g", 0, 255, 1,
                 (ignored) -> (double) getRGB('g'), (ignored, newVal) -> setRGB(newVal, 'g'),
                 (ignored, ignored2) ->
-                        new StringTextComponent(I18n.get("config.immersivemc.backpack_g") + ": " + getRGB('g')
+                        new TextComponent(I18n.get("config.immersivemc.backpack_g") + ": " + getRGB('g')
                         )));
         this.list.addBig(new SliderPercentageOption(
                 "config.immersivemc.backpack_b", 0, 255, 1,
                 (ignored) -> (double) getRGB('b'), (ignored, newVal) -> setRGB(newVal, 'b'),
                 (ignored, ignored2) ->
-                        new StringTextComponent(I18n.get("config.immersivemc.backpack_b") + ": " + getRGB('b')
+                        new TextComponent(I18n.get("config.immersivemc.backpack_b") + ": " + getRGB('b')
                         )));
 
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
 
         this.list.render(stack, mouseX, mouseY, partialTicks);
@@ -100,7 +94,7 @@ public class BackpackConfigScreen extends Screen {
 
     }
 
-    protected void renderBackpack(MatrixStack stack) {
+    protected void renderBackpack(PoseStack stack) {
         stack.pushPose();
 
         Vector3f rgb = new Vector3f(ActiveConfig.backpackColor >> 16, ActiveConfig.backpackColor >> 8 & 255,

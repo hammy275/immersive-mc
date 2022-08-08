@@ -9,7 +9,7 @@ import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.block.AbstractButtonBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -22,7 +22,7 @@ public class ButtonPushTracker extends AbstractTracker {
     }
 
     @Override
-    protected void tick(PlayerEntity player) {
+    protected void tick(Player player) {
         IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
         for (int i = 0; i <= 1; i++) {
             IVRData controller = vrPlayer.getController(i);
@@ -46,7 +46,7 @@ public class ButtonPushTracker extends AbstractTracker {
     }
 
     @Override
-    protected boolean shouldTick(PlayerEntity player) {
+    protected boolean shouldTick(Player player) {
         return ActiveConfig.useButton &&
                 VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player) && VRPlugin.API.apiActive(player)
                 && PlayerConfigs.getConfig(player).useButtons;

@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.client.immersive;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
@@ -8,11 +8,11 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
 
 import java.util.Objects;
@@ -65,26 +65,26 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
 
         BrewingStandTileEntity stand = info.getTileEntity();
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
-        Vector3d pos = getDirectlyInFront(forward, stand.getBlockPos());
+        Vec3 pos = getDirectlyInFront(forward, stand.getBlockPos());
         Direction left = getLeftOfDirection(forward);
 
-        Vector3d leftOffset = new Vector3d(
+        Vec3 leftOffset = new Vec3(
                 left.getNormal().getX() * 0.25, 0, left.getNormal().getZ() * 0.25);
-        Vector3d midOffset = new Vector3d(
+        Vec3 midOffset = new Vec3(
                 left.getNormal().getX() * 0.5, 0, left.getNormal().getZ() * 0.5);
-        Vector3d rightOffset = new Vector3d(
+        Vec3 rightOffset = new Vec3(
                 left.getNormal().getX() * 0.75, 0, left.getNormal().getZ() * 0.75);
 
 
-        Vector3d posLeftBottle = pos.add(leftOffset).add(0, 1d/3d, 0);
+        Vec3 posLeftBottle = pos.add(leftOffset).add(0, 1d/3d, 0);
         info.setPosition(0, posLeftBottle);
         double midY = ActiveConfig.autoCenterBrewing ? 1d/3d : 0.25;
-        Vector3d posMidBottle = pos.add(midOffset).add(0, midY, 0);
+        Vec3 posMidBottle = pos.add(midOffset).add(0, midY, 0);
         info.setPosition(1, posMidBottle);
-        Vector3d posRightBottle = pos.add(rightOffset).add(0, 1d/3d, 0);
+        Vec3 posRightBottle = pos.add(rightOffset).add(0, 1d/3d, 0);
         info.setPosition(2, posRightBottle);
-        Vector3d posIngredient;
-        Vector3d posFuel;
+        Vec3 posIngredient;
+        Vec3 posFuel;
         if (ActiveConfig.autoCenterBrewing) {
             posIngredient = pos.add(midOffset).add(0, 0.6, 0);
             posFuel = pos.add(midOffset).add(0, 0.85, 0);
@@ -116,7 +116,7 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
     }
 
     @Override
-    protected void render(BrewingInfo info, MatrixStack stack, boolean isInVR) {
+    protected void render(BrewingInfo info, PoseStack stack, boolean isInVR) {
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
 
         float size = ClientConstants.itemScaleSizeBrewing / info.getItemTransitionCountdown();
@@ -134,7 +134,7 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, HumanoidArm hand) {
         BrewingInfo infoB = (BrewingInfo) info;
         Network.INSTANCE.sendToServer(new SwapPacket(
                 infoB.getTileEntity().getBlockPos(), closest, hand

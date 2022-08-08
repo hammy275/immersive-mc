@@ -1,21 +1,21 @@
 package net.blf02.immersivemc.mixin;
 
 import net.blf02.immersivemc.server.ChestToOpenCount;
-import net.minecraft.tileentity.ChestTileEntity;
-import net.minecraft.tileentity.LockableTileEntity;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ChestTileEntity.class)
+@Mixin(ChestBlockEntity.class)
 public class ChestTileEntityMixin {
 
-    @Inject(method="getOpenCount(Lnet/minecraft/world/World;Lnet/minecraft/tileentity/LockableTileEntity;III)I",
+    @Inject(method="getOpenCount",
     at=@At("RETURN"), cancellable = true)
-    private static void onGetOpenCount(World world, LockableTileEntity chest, int ignored1, int ignored2, int ignored3, CallbackInfoReturnable<Integer> cir) {
+    private static void onGetOpenCount(BlockGetter blockGetter, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
         cir.setReturnValue(cir.getReturnValue() +
-                ChestToOpenCount.chestImmersiveOpenCount.getOrDefault(chest.getBlockPos(), 0));
+                ChestToOpenCount.chestImmersiveOpenCount.getOrDefault(pos, 0));
     }
 }

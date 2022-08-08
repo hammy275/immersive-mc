@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.client.immersive;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
@@ -23,11 +23,11 @@ import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 
@@ -71,16 +71,16 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         info.centerTopPos = info.handPos.add(0, -0.05, 0);
         info.centerTopPos = info.centerTopPos.add(info.backVec.multiply(1d/6d, 1d/6d, 1d/6d)); // Back on arm
         // Multiply massively so the < 1E-4D check from .normalize() rarely kicks in
-        Vector3d rightVec = info.lookVec.multiply(1E16D, 0, 1E16D).normalize();
+        Vec3 rightVec = info.lookVec.multiply(1E16D, 0, 1E16D).normalize();
         if (ActiveConfig.leftHandedBackpack) {
-            rightVec = new Vector3d(rightVec.z, 0, -rightVec.x).multiply(0.25, 0, 0.25);
+            rightVec = new Vec3(rightVec.z, 0, -rightVec.x).multiply(0.25, 0, 0.25);
         } else {
-            rightVec = new Vector3d(-rightVec.z, 0, rightVec.x).multiply(0.25, 0, 0.25);
+            rightVec = new Vec3(-rightVec.z, 0, rightVec.x).multiply(0.25, 0, 0.25);
         }
         info.centerTopPos = info.centerTopPos.add(rightVec);
 
 
-        Vector3d leftVec = rightVec.multiply(-1, 0, -1);
+        Vec3 leftVec = rightVec.multiply(-1, 0, -1);
 
         // Note: rightVec and leftVec refer to the vectors for right-handed people. Swap the names if referring to
         // left-handed guys, gals, and non-binary pals.
@@ -88,20 +88,20 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         Vector3f downVecF = new Vector3f(0, -1, 0);
         downVecF.transform(Vector3f.XN.rotation(info.handPitch));
         downVecF.transform(Vector3f.YN.rotation(info.handYaw));
-        info.downVec = new Vector3d(downVecF.x(), downVecF.y(), downVecF.z()).normalize();
+        info.downVec = new Vec3(downVecF.x(), downVecF.y(), downVecF.z()).normalize();
 
         // Item hitboxes and positions
-        Vector3d leftOffset = new Vector3d(
+        Vec3 leftOffset = new Vec3(
                 leftVec.x * spacing, leftVec.y * spacing, leftVec.z * spacing);
-        Vector3d rightOffset = new Vector3d(
+        Vec3 rightOffset = new Vec3(
                 rightVec.x * spacing, rightVec.y * spacing, rightVec.z * spacing);
 
         double tbSpacing = spacing / 4d;
-        Vector3d topOffset = info.lookVec.multiply(tbSpacing, tbSpacing, tbSpacing);
-        Vector3d botOffset = info.backVec.multiply(tbSpacing, tbSpacing, tbSpacing);
+        Vec3 topOffset = info.lookVec.multiply(tbSpacing, tbSpacing, tbSpacing);
+        Vec3 botOffset = info.backVec.multiply(tbSpacing, tbSpacing, tbSpacing);
 
-        Vector3d pos = info.centerTopPos;
-        Vector3d[] positions = new Vector3d[]{
+        Vec3 pos = info.centerTopPos;
+        Vec3[] positions = new Vec3[]{
                 pos.add(leftOffset).add(topOffset), pos.add(topOffset), pos.add(rightOffset).add(topOffset),
                 pos.add(leftOffset), pos, pos.add(rightOffset),
                 pos.add(leftOffset).add(botOffset), pos.add(botOffset), pos.add(rightOffset).add(botOffset)};
@@ -111,33 +111,33 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         int midStart = 9 * info.getMidRow();
         int midEnd = midStart + 8;
 
-        Vector3d downOne = info.downVec.multiply(0.125, 0.125, 0.125);
-        Vector3d downTwo = downOne.multiply(2, 2, 2);
+        Vec3 downOne = info.downVec.multiply(0.125, 0.125, 0.125);
+        Vec3 downTwo = downOne.multiply(2, 2, 2);
 
         for (int i = 0; i <= 26; i++) {
-            Vector3d posRaw = positions[i % 9];
-            Vector3d yDown = inRange(i, start, end) ? Vector3d.ZERO :
+            Vec3 posRaw = positions[i % 9];
+            Vec3 yDown = inRange(i, start, end) ? Vec3.ZERO :
                     inRange(i, midStart, midEnd) ? downOne : downTwo;
-            Vector3d slotPos = posRaw;
+            Vec3 slotPos = posRaw;
             slotPos = slotPos.add(yDown);
             info.setPosition(i, slotPos);
             info.setHitbox(i, createHitbox(info.getPosition(i), 0.05f));
         }
 
-        Vector3d upVec = info.downVec.multiply(-1, -1, -1);
+        Vec3 upVec = info.downVec.multiply(-1, -1, -1);
 
         double upMult = 0.05;
 
         // Multiply these by 4 since rightVec is multiplied by 0.25 above
-        Vector3d leftCraftingPos = info.centerTopPos.add(rightVec.multiply(0.3125*4, 0.3125*4, 0.3125*4))
+        Vec3 leftCraftingPos = info.centerTopPos.add(rightVec.multiply(0.3125*4, 0.3125*4, 0.3125*4))
                 .add(upVec.multiply(upMult, upMult, upMult));
-        Vector3d rightCraftingPos = info.centerTopPos.add(rightVec.multiply(0.4375*4, 0.4375*4, 0.4375*4))
+        Vec3 rightCraftingPos = info.centerTopPos.add(rightVec.multiply(0.4375*4, 0.4375*4, 0.4375*4))
                 .add(upVec.multiply(upMult, upMult, upMult));
-        Vector3d centerCraftingPos = info.centerTopPos.add(rightVec.multiply(0.375*4, 0.375*4, 0.375*4))
+        Vec3 centerCraftingPos = info.centerTopPos.add(rightVec.multiply(0.375*4, 0.375*4, 0.375*4))
                 .add(upVec.multiply(upMult, upMult, upMult));
 
         double craftingOffset = 0.625;
-        Vector3d[] craftingPositions = new Vector3d[]{
+        Vec3[] craftingPositions = new Vec3[]{
                 leftCraftingPos.add(topOffset.multiply(craftingOffset, craftingOffset, craftingOffset)),
                 rightCraftingPos.add(topOffset.multiply(craftingOffset, craftingOffset, craftingOffset)),
                 leftCraftingPos.add(botOffset.multiply(craftingOffset, craftingOffset, craftingOffset)),
@@ -162,7 +162,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         }
     }
 
-    public static void onHitboxInteract(PlayerEntity player, BackpackInfo info, int slot) {
+    public static void onHitboxInteract(Player player, BackpackInfo info, int slot) {
         if (slot <= 26) { // Inventory handle
             Network.INSTANCE.sendToServer(new InventorySwapPacket(slot + 9));
             Swap.handleInventorySwap(player, slot + 9, Hand.MAIN_HAND); // Do swap on both sides
@@ -190,7 +190,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
-    protected void render(BackpackInfo info, MatrixStack stack, boolean isInVR) {
+    protected void render(BackpackInfo info, PoseStack stack, boolean isInVR) {
         for (int i = 0; i <= 31; i++) {
             AxisAlignedBB hitbox = info.getHitbox(i);
             renderHitbox(stack, hitbox, info.getPosition(i));
@@ -213,7 +213,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         }
 
         stack.pushPose();
-        Vector3d pos = info.renderPos;
+        Vec3 pos = info.renderPos;
 
         ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.translate(-renderInfo.getPosition().x + pos.x,
@@ -274,7 +274,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, PlayerEntity player, int closest, Hand hand) {}
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, HumanoidArm hand) {}
 
     public void processFromNetwork(ImmersiveStorage storage) {
         if (singleton.infos.size() > 0) {

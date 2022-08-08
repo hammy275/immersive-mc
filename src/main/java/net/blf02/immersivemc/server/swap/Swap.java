@@ -7,41 +7,29 @@ import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.common.storage.workarounds.NullContainer;
 import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.server.storage.GetStorage;
-import net.minecraft.block.AnvilBlock;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.JukeboxBlock;
-import net.minecraft.block.SmithingTableBlock;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.container.AbstractRepairContainer;
-import net.minecraft.inventory.container.EnchantmentContainer;
-import net.minecraft.inventory.container.RepairContainer;
-import net.minecraft.inventory.container.SmithingTableContainer;
-import net.minecraft.item.*;
-import net.minecraft.item.crafting.ICraftingRecipe;
-import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
-import net.minecraft.tileentity.AbstractFurnaceTileEntity;
-import net.minecraft.tileentity.BrewingStandTileEntity;
-import net.minecraft.tileentity.ChestTileEntity;
-import net.minecraft.tileentity.JukeboxTileEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.IWorldPosCallable;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.level.block.AnvilBlock;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.JukeboxBlock;
+import net.minecraft.world.level.block.SmithingTableBlock;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
 
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Swap {
 
-    public static void enchantingTableSwap(ServerPlayerEntity player, int slot, Hand hand, BlockPos pos) {
+    public static void enchantingTableSwap(ServerPlayer player, int slot, HumanoidArm hand, BlockPos pos) {
         if (player == null) return;
         ImmersiveStorage enchStorage = GetStorage.getEnchantingStorage(player, pos);
         if (slot == 0) {
@@ -56,7 +44,7 @@ public class Swap {
         enchStorage.wStorage.setDirty();
     }
 
-    public static void doEnchanting(int slot, BlockPos pos, ServerPlayerEntity player, Hand hand) {
+    public static void doEnchanting(int slot, BlockPos pos, ServerPlayer player, HumanoidArm hand) {
         // NOTE: slot is 1-3, depending on which enchantment the player is going for.
         if (!player.getItemInHand(hand).isEmpty()) return;
         if (slot < 1 || slot > 3) return;
@@ -94,8 +82,8 @@ public class Swap {
         }
     }
 
-    public static void handleBackpackCraftingSwap(int slot, Hand hand, ImmersiveStorage storage,
-                                                  ServerPlayerEntity player, PlacementMode mode) {
+    public static void handleBackpackCraftingSwap(int slot, HumanoidArm hand, ImmersiveStorage storage,
+                                                  ServerPlayer player, PlacementMode mode) {
         if (slot < 4) {
             ItemStack playerItem = player.getItemInHand(hand);
             ItemStack tableItem = storage.items[slot];
@@ -115,7 +103,7 @@ public class Swap {
         storage.wStorage.setDirty();
     }
 
-    public static void anvilSwap(int slot, Hand hand, BlockPos pos, ServerPlayerEntity player,
+    public static void anvilSwap(int slot, HumanoidArm hand, BlockPos pos, ServerPlayer player,
                                  PlacementMode mode) {
         World level = player.level;
         boolean isReallyAnvil = level.getBlockState(pos).getBlock() instanceof AnvilBlock;
@@ -141,7 +129,7 @@ public class Swap {
         storage.wStorage.setDirty();
     }
 
-    public static void handleAnvilCraft(AnvilStorage storage, BlockPos pos, ServerPlayerEntity player, Hand hand) {
+    public static void handleAnvilCraft(AnvilStorage storage, BlockPos pos, ServerPlayer player, HumanoidArm hand) {
         if (!player.getItemInHand(hand).isEmpty()) return;
         ItemStack[] items = storage.items;
         ItemStack left = items[0];
@@ -177,7 +165,7 @@ public class Swap {
         }
     }
 
-    public static void handleCraftingSwap(ServerPlayerEntity player, int slot, Hand hand, BlockPos tablePos,
+    public static void handleCraftingSwap(ServerPlayer player, int slot, HumanoidArm hand, BlockPos tablePos,
                                           PlacementMode mode) {
         ImmersiveStorage storage = GetStorage.getCraftingStorage(player, tablePos);
         if (slot < 9) {
@@ -195,7 +183,7 @@ public class Swap {
         storage.wStorage.setDirty();
     }
 
-    public static ICraftingRecipe getRecipe(ServerPlayerEntity player, ItemStack[] stacksIn) {
+    public static ICraftingRecipe getRecipe(ServerPlayer player, ItemStack[] stacksIn) {
         int invDim = stacksIn.length == 10 ? 3 : 2; // 10 since stacksIn includes the output slot
         CraftingInventory inv = new CraftingInventory(new NullContainer(), invDim, invDim);
         for (int i = 0; i < stacksIn.length - 1; i++) {
@@ -206,7 +194,7 @@ public class Swap {
         return res.orElse(null);
     }
 
-    public static void handleDoCraft(ServerPlayerEntity player, ItemStack[] stacksIn,
+    public static void handleDoCraft(ServerPlayer player, ItemStack[] stacksIn,
                                      BlockPos tablePos) {
         boolean isBackpack = stacksIn.length == 5;
         int invDim = isBackpack ? 2 : 3;
@@ -236,7 +224,7 @@ public class Swap {
             }
             if (!toGive.isEmpty()) {
                 BlockPos posBlock = tablePos != null ? tablePos.above() : player.blockPosition();
-                Vector3d pos = Vector3d.atCenterOf(posBlock);
+                Vec3 pos = Vec3.atCenterOf(posBlock);
                 ItemEntity entOut = new ItemEntity(player.level, pos.x, pos.y, pos.z);
                 entOut.setItem(toGive);
                 entOut.setDeltaMovement(0, 0, 0);
@@ -251,7 +239,7 @@ public class Swap {
         }
     }
 
-    public static void handleInventorySwap(PlayerEntity player, int slot, Hand hand) {
+    public static void handleInventorySwap(Player player, int slot, HumanoidArm hand) {
         // Always do full swap since splitting stacks is done when interacting with immersives instead
         ItemStack handStack = player.getItemInHand(hand).copy();
         ItemStack invStack = player.inventory.getItem(slot).copy();
@@ -265,8 +253,8 @@ public class Swap {
         }
 
     }
-    public static void handleFurnaceSwap(AbstractFurnaceTileEntity furnace, PlayerEntity player,
-                                         Hand hand, int slot, PlacementMode mode) {
+    public static void handleFurnaceSwap(AbstractFurnaceTileEntity furnace, Player player,
+                                         HumanoidArm hand, int slot, PlacementMode mode) {
         ItemStack furnaceItem = furnace.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand).copy();
         if (slot != 2) {
@@ -286,8 +274,8 @@ public class Swap {
         }
     }
 
-    public static void handleBrewingSwap(BrewingStandTileEntity stand, PlayerEntity player,
-                                         Hand hand, int slot, PlacementMode mode) {
+    public static void handleBrewingSwap(BrewingStandTileEntity stand, Player player,
+                                         HumanoidArm hand, int slot, PlacementMode mode) {
         ItemStack standItem = stand.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand).copy();
         if (slot < 3) { // Potions
@@ -305,21 +293,21 @@ public class Swap {
     }
 
     public static void handleJukebox(JukeboxTileEntity jukebox,
-                                     ServerPlayerEntity player, Hand hand) {
+                                     ServerPlayer player, HumanoidArm hand) {
         ItemStack playerItem = player.getItemInHand(hand);
         if (jukebox.getRecord() == ItemStack.EMPTY &&
                 playerItem.getItem() instanceof MusicDiscItem) {
             // Code from vanilla jukebox
             ((JukeboxBlock) Blocks.JUKEBOX).setRecord(player.level, jukebox.getBlockPos(), jukebox.getBlockState(),
                     playerItem);
-            player.level.levelEvent((PlayerEntity)null, 1010, jukebox.getBlockPos(), Item.getId(playerItem.getItem()));
+            player.level.levelEvent((Player)null, 1010, jukebox.getBlockPos(), Item.getId(playerItem.getItem()));
             playerItem.shrink(1);
             player.awardStat(Stats.PLAY_RECORD);
         }
     }
 
     public static void handleChest(ChestTileEntity chestIn,
-                                   PlayerEntity player, Hand hand,
+                                   Player player, HumanoidArm hand,
                                    int slot) {
         ChestTileEntity chest = slot > 26 ? Util.getOtherChest(chestIn) : chestIn;
         if (chest != null) {
@@ -337,7 +325,7 @@ public class Swap {
         }
     }
 
-    public static void handleEnderChest(PlayerEntity player, Hand hand, int slot) {
+    public static void handleEnderChest(Player player, HumanoidArm hand, int slot) {
         ItemStack chestItem = player.getEnderChestInventory().getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand);
         if (playerItem.isEmpty() || chestItem.isEmpty() || !Util.stacksEqualBesidesCount(chestItem, playerItem)) {
@@ -350,7 +338,7 @@ public class Swap {
         }
     }
 
-    public static Pair<ItemStack, Integer> getAnvilOutput(ItemStack left, ItemStack mid, boolean isReallyAnvil, ServerPlayerEntity player) {
+    public static Pair<ItemStack, Integer> getAnvilOutput(ItemStack left, ItemStack mid, boolean isReallyAnvil, ServerPlayer player) {
         AbstractRepairContainer container;
         if (isReallyAnvil) {
             container = new RepairContainer(-1, player.inventory);
@@ -411,7 +399,7 @@ public class Swap {
             toOther = mergeResult.mergedInto;
             // Take our original hand, shrink by all of the amount to be moved, then grow by the amount
             // that didn't get moved
-            toHand = handIn.copy();
+            toHumanoidArm = handIn.copy();
             toHand.shrink(toPlace);
             toHand.grow(mergeResult.mergedFrom.getCount());
             leftovers = ItemStack.EMPTY;
@@ -420,21 +408,21 @@ public class Swap {
         } else { // We're placing into a slot of air OR the other slot contains something that isn't what we have
             toOther = handIn.copy();
             toOther.setCount(toPlace);
-            toHand = handIn.copy();
+            toHumanoidArm = handIn.copy();
             toHand.shrink(toPlace);
             leftovers = otherIn.copy();
         }
         return new SwapResult(toHand, toOther, leftovers);
     }
 
-    public static void placeLeftovers(PlayerEntity player, ItemStack leftovers) {
+    public static void placeLeftovers(Player player, ItemStack leftovers) {
         if (!leftovers.isEmpty()) {
             ItemEntity item = new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), leftovers);
             player.level.addFreshEntity(item);
         }
     }
 
-    public static void givePlayerItemSwap(ItemStack toPlayer, ItemStack fromPlayer, PlayerEntity player, Hand hand) {
+    public static void givePlayerItemSwap(ItemStack toPlayer, ItemStack fromPlayer, Player player, HumanoidArm hand) {
         if (fromPlayer.isEmpty() && toPlayer.getMaxStackSize() > 1) {
             Util.addStackToInventory(player, toPlayer);
         } else {
@@ -448,7 +436,7 @@ public class Swap {
         public final ItemStack toOther;
         public final ItemStack leftovers;
         public SwapResult(ItemStack toHand, ItemStack toOther, ItemStack leftovers) {
-            this.toHand = toHand;
+            this.toHumanoidArm = toHand;
             this.toOther = toOther;
             this.leftovers = leftovers;
         }
