@@ -96,7 +96,7 @@ public class ClientLogicSubscriber {
 
     }
 
-    public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, World level) {
+    public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         if (tileEntity instanceof AbstractFurnaceBlockEntity) {
             AbstractFurnaceBlockEntity furnace = (AbstractFurnaceBlockEntity) tileEntity;
             ImmersiveFurnace.getSingleton().trackObject(furnace);
@@ -132,7 +132,7 @@ public class ClientLogicSubscriber {
     public void onClick(InputEvent.ClickInputEvent event) {
         // Don't run code if we're on spectator mode
         if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSpectator()) return;
-        if (event.getHand() == Hand.MAIN_HAND && event.isUseItem()) {
+        if (event.getHand() == InteractionHand.MAIN_HAND && event.isUseItem()) {
             int cooldown = handleRightClick(Minecraft.getInstance().player);
             if (cooldown > 0) {
                 event.setCanceled(true);
@@ -275,7 +275,7 @@ public class ClientLogicSubscriber {
                         Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
                         if (closest.isPresent()) {
                             singleton.onAnyRightClick(info);
-                            singleton.handleRightClick(info, player, closest.get(), Hand.MAIN_HAND);
+                            singleton.handleRightClick(info, player, closest.get(), InteractionHand.MAIN_HAND);
                             return singleton.getCooldownDesktop();
                         } else if (info instanceof InfoTriggerHitboxes) {
                             InfoTriggerHitboxes triggerInfo = (InfoTriggerHitboxes) info;

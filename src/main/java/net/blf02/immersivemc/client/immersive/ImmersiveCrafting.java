@@ -10,14 +10,14 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.InteractPacket;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.Player;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.World;
 
 import java.util.Objects;
 
@@ -84,14 +84,14 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, HumanoidArm hand) {
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
         Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), closest, hand));
     }
 
     @Override
     public void handleTriggerHitboxRightClick(InfoTriggerHitboxes info, Player player, int hitboxNum) {
         AbstractImmersiveInfo aInfo = (AbstractImmersiveInfo) info;
-        Network.INSTANCE.sendToServer(new InteractPacket(aInfo.getBlockPosition(), 9, Hand.MAIN_HAND));
+        Network.INSTANCE.sendToServer(new InteractPacket(aInfo.getBlockPosition(), 9, InteractionHand.MAIN_HAND));
         ((CraftingInfo) info).setTicksLeft(ClientConstants.ticksToRenderCrafting); // Reset count if we craft
     }
 
@@ -134,14 +134,14 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
     }
 
     @Override
-    public boolean hasValidBlock(CraftingInfo info, World level) {
+    public boolean hasValidBlock(CraftingInfo info, Level level) {
         return level.getBlockState(info.getBlockPosition()) .getBlock() == Blocks.CRAFTING_TABLE;
     }
 
     @Override
     public boolean shouldRender(CraftingInfo info, boolean isInVR) {
         if (Minecraft.getInstance().player == null) return false;
-        World level = Minecraft.getInstance().level;
+        Level level = Minecraft.getInstance().level;
         return level != null && level.getBlockState(info.getBlockPosition().above()).isAir()
                 && info.readyToRender();
     }

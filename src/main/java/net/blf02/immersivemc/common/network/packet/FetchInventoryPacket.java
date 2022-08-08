@@ -79,9 +79,9 @@ public class FetchInventoryPacket {
                             new UpdateStoragePacket(pos, storage, storage.getType()));
                 }
             } else if (tileEnt != null) {
-                IInventory inv;
-                if (tileEnt instanceof IInventory) {
-                    inv = (IInventory) tileEnt;
+                Container inv;
+                if (tileEnt instanceof Container) {
+                    inv = (Container) tileEnt;
                 } else if (tileEnt instanceof EnderChestBlockEntity) {
                     inv = player.getEnderChestInventory();
                 } else {

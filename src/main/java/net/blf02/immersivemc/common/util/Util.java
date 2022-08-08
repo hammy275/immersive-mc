@@ -1,17 +1,18 @@
 package net.blf02.immersivemc.common.util;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ChestBlock;
-import net.minecraft.block.RepeaterBlock;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.Player;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.ChestBlockEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AABB;
-import net.minecraft.util.math.BlockPos;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.RepeaterBlock;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.World;
 
 import java.util.Optional;
 
@@ -19,7 +20,7 @@ public class Util {
 
     public static void addStackToInventory(Player player, ItemStack item) {
         if (!item.isEmpty()) {
-            player.inventory.add(item);
+            player.getInventory().add(item);
         }
     }
 
@@ -27,7 +28,7 @@ public class Util {
         /* It seems pickup delay isn't synced client side.
            Although this doesn't cover a lot of use cases, odds are, if an item isn't moving, it can be picked up
            Plus, it somewhat makes sense */
-        return (!item.hasPickUpDelay() || player.abilities.instabuild)
+        return (!item.hasPickUpDelay() || player.getAbilities().instabuild)
                 && Math.abs(item.getDeltaMovement().x) <= 0.01 && Math.abs(item.getDeltaMovement().z) <= 0.01;
     }
 
@@ -148,7 +149,7 @@ public class Util {
         return new ItemStackMergeResult(into, fromAmount == 0 ? ItemStack.EMPTY : from);
     }
 
-    public static void setRepeater(World level, BlockPos pos, int newDelay) {
+    public static void setRepeater(Level level, BlockPos pos, int newDelay) {
         BlockState state = level.getBlockState(pos);
         if (state.getBlock() instanceof RepeaterBlock) {
             state = state.setValue(RepeaterBlock.DELAY, newDelay);

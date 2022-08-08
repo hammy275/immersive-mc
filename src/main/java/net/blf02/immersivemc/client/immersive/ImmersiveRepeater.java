@@ -12,8 +12,9 @@ import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.RepeaterBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -82,14 +83,14 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
-    public boolean hasValidBlock(RepeaterInfo info, World level) {
+    public boolean hasValidBlock(RepeaterInfo info, Level level) {
         return level.getBlockState(info.getBlockPosition()).getBlock() instanceof RepeaterBlock;
     }
 
     @Override
     public boolean shouldRender(RepeaterInfo info, boolean isInVR) {
         if (Minecraft.getInstance().player == null) return false;
-        World level = Minecraft.getInstance().level;
+        Level level = Minecraft.getInstance().level;
         return level != null && level.getBlockState(info.getBlockPosition().above()).isAir()
                 && info.readyToRender();
     }
@@ -112,7 +113,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, HumanoidArm hand) {
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
         // NOOP. Handled in doTick().
     }
 

@@ -8,12 +8,12 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.Player;
-import net.minecraft.tileentity.BrewingStandBlockEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.World;
 
 import java.util.Objects;
 
@@ -40,7 +40,7 @@ public class ImmersiveBrewing extends AbstractBlockEntityImmersive<BrewingStandB
     }
 
     @Override
-    public boolean hasValidBlock(BrewingInfo info, World level) {
+    public boolean hasValidBlock(BrewingInfo info, Level level) {
         return level.getBlockEntity(info.getBlockPosition()) instanceof BrewingStandBlockEntity;
     }
 
@@ -134,7 +134,7 @@ public class ImmersiveBrewing extends AbstractBlockEntityImmersive<BrewingStandB
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, HumanoidArm hand) {
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
         BrewingInfo infoB = (BrewingInfo) info;
         Network.INSTANCE.sendToServer(new SwapPacket(
                 infoB.getBlockEntity().getBlockPos(), closest, hand

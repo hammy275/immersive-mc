@@ -7,10 +7,11 @@ import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.server.storage.GetStorage;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.block.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.InteractionHand;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -23,10 +24,10 @@ public class InteractPacket {
     public final BlockPos pos;
     public final String storageType;
     public final int slot;
-    public final HumanoidArm hand;
+    public final InteractionHand hand;
     public PlacementMode placementMode = SafeClientUtil.getPlacementMode();
 
-    public InteractPacket(BlockPos pos, int slot, HumanoidArm hand) {
+    public InteractPacket(BlockPos pos, int slot, InteractionHand hand) {
         this.pos = pos;
         this.slot = slot;
         this.hand = hand;
@@ -34,7 +35,7 @@ public class InteractPacket {
         this.storageType = null;
     }
 
-    public InteractPacket(String type, int slot, HumanoidArm hand) {
+    public InteractPacket(String type, int slot, InteractionHand hand) {
         this.storageType = type;
         this.slot = slot;
         this.hand = hand;
@@ -63,17 +64,17 @@ public class InteractPacket {
         } else {
             buffer.writeBlockPos(packet.pos);
         }
-        buffer.writeInt(packet.slot).writeInt(packet.hand == Hand.MAIN_HAND ? 0 : 1);
+        buffer.writeInt(packet.slot).writeInt(packet.hand == InteractionHand.MAIN_HAND ? 0 : 1);
     }
 
     public static InteractPacket decode(FriendlyByteBuf buffer) {
         PlacementMode mode = buffer.readEnum(PlacementMode.class);
         if (buffer.readBoolean()) {
             return new InteractPacket(buffer.readUtf(), buffer.readInt(),
-                    buffer.readInt() == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND).setPlacementMode(mode);
+                    buffer.readInt() == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND).setPlacementMode(mode);
         } else {
             return new InteractPacket(buffer.readBlockPos(), buffer.readInt(),
-                    buffer.readInt() == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND).setPlacementMode(mode);
+                    buffer.readInt() == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND).setPlacementMode(mode);
         }
     }
 

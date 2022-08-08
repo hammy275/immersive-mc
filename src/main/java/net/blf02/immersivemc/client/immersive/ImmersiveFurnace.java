@@ -8,14 +8,14 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;
-import net.minecraft.block.AbstractFurnaceBlock;
-import net.minecraft.entity.player.Player;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.AbstractFurnaceBlockEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.World;
 
 public class ImmersiveFurnace extends AbstractBlockEntityImmersive<AbstractFurnaceBlockEntity, ImmersiveFurnaceInfo> {
 
@@ -42,7 +42,7 @@ public class ImmersiveFurnace extends AbstractBlockEntityImmersive<AbstractFurna
     }
 
     @Override
-    public boolean hasValidBlock(ImmersiveFurnaceInfo info, World level) {
+    public boolean hasValidBlock(ImmersiveFurnaceInfo info, Level level) {
         return level.getBlockEntity(info.getBlockPosition()) instanceof AbstractFurnaceBlockEntity;
     }
 
@@ -128,9 +128,9 @@ public class ImmersiveFurnace extends AbstractBlockEntityImmersive<AbstractFurna
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int slot, HumanoidArm hand) {
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int slot, InteractionHand hand) {
         ImmersiveFurnaceInfo infoF = (ImmersiveFurnaceInfo) info;
-        if (info.getPosition(0) == null && slot == 2) { // We're right clicking on the output slot, but there's no input slot
+        if (info.getPosition(0) == null && slot == 2) { // We're right-clicking on the output slot, but there's no input slot
             ItemStack handItem = player.getItemInHand(hand);
             if (!handItem.isEmpty() &&
                     (!Util.stacksEqualBesidesCount(handItem, infoF.items[2]) || handItem.getCount() == handItem.getMaxStackSize())) {

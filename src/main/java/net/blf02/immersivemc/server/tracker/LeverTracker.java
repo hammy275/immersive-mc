@@ -86,7 +86,7 @@ public class LeverTracker extends AbstractTracker {
                 if (last.distanceToSqr(handPos) > 0.1*0.1) { // If our hand moved a significant amount
                     info.cooldown = 20;
                     LeverBlock leverBlock = (LeverBlock) Blocks.LEVER;
-                    leverBlock.use(state, player.level, leverPos, player, c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND,
+                    leverBlock.use(state, player.level, leverPos, player, c == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND,
                             null);
                 }
             }

@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.client.immersive;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
@@ -18,18 +19,16 @@ import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.blf02.vrapi.api.data.IVRData;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.renderer.Camera;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.player.Player;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AABB;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.World;
-import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
@@ -166,9 +165,9 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     public static void onHitboxInteract(Player player, BackpackInfo info, int slot) {
         if (slot <= 26) { // Inventory handle
             Network.INSTANCE.sendToServer(new InventorySwapPacket(slot + 9));
-            Swap.handleInventorySwap(player, slot + 9, Hand.MAIN_HAND); // Do swap on both sides
+            Swap.handleInventorySwap(player, slot + 9, InteractionHand.MAIN_HAND); // Do swap on both sides
         } else {
-            Network.INSTANCE.sendToServer(new InteractPacket("backpack", slot, Hand.MAIN_HAND));
+            Network.INSTANCE.sendToServer(new InteractPacket("backpack", slot, InteractionHand.MAIN_HAND));
             Network.INSTANCE.sendToServer(new FetchPlayerStoragePacket("backpack"));
         }
     }
@@ -178,7 +177,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
-    public boolean hasValidBlock(BackpackInfo info, World level) {
+    public boolean hasValidBlock(BackpackInfo info, Level level) {
         return true;
     }
 
@@ -198,7 +197,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         }
 
         for (int i = 0; i <= 26; i++) {
-            ItemStack item = Minecraft.getInstance().player.inventory.getItem(i + 9);
+            ItemStack item = Minecraft.getInstance().player.getInventory().getItem(i + 9);
             if (!item.isEmpty() && info.getPosition(i) != null) {
                 final float size =
                         info.slotHovered == i ? ClientConstants.itemScaleSizeBackpackSelected : ClientConstants.itemScaleSizeBackpack;
@@ -261,7 +260,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     protected boolean slotShouldRenderHelpHitbox(BackpackInfo info, int slotNum) {
         if (Minecraft.getInstance().player == null) return false;
         if (slotNum <= 26) {
-            return Minecraft.getInstance().player.inventory.getItem(slotNum + 9).isEmpty();
+            return Minecraft.getInstance().player.getInventory().getItem(slotNum + 9).isEmpty();
         } else { // Crafting input
             int tableIndex = slotNum - 27;
             return info.craftingInput[tableIndex] == null || info.craftingInput[tableIndex].isEmpty();
@@ -275,7 +274,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, HumanoidArm hand) {}
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {}
 
     public void processFromNetwork(ImmersiveStorage storage) {
         if (singleton.infos.size() > 0) {

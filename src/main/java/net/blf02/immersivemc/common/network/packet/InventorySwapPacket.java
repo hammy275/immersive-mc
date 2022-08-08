@@ -36,7 +36,7 @@ public class InventorySwapPacket {
             if (!ActiveConfig.useBackpack) return;
             ServerPlayer player = ctx.get().getSender();
             if (player != null) {
-                Swap.handleInventorySwap(player, message.slot, Hand.MAIN_HAND);
+                Swap.handleInventorySwap(player, message.slot, InteractionHand.MAIN_HAND);
             }
         });
         ctx.get().setPacketHandled(true);

@@ -6,8 +6,8 @@ import net.blf02.immersivemc.common.config.CommonConstants;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.world.Container;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 
 public abstract class AbstractBlockEntityImmersive<T extends BlockEntity, I extends AbstractBlockEntityImmersiveInfo<T>>
@@ -31,19 +31,19 @@ public abstract class AbstractBlockEntityImmersive<T extends BlockEntity, I exte
 
     @Override
     protected boolean slotShouldRenderHelpHitbox(I info, int slotNum) {
-        if (info.getBlockEntity() instanceof IInventory) {
+        if (info.getBlockEntity() instanceof Container) {
             return (info.items[slotNum] == null || info.items[slotNum].isEmpty())
                     && info.getInputSlots()[slotNum] != null; // So far, only the chest can have a null input slot
         } else {
             // Should be implemented on sub-class
-            throw new IllegalArgumentException("Can't check input slot has item for non-IInventory's!");
+            throw new IllegalArgumentException("Can't check input slot has item for non-Container's!");
         }
     }
 
     @Override
     protected void doTick(I info, boolean isInVR) {
         super.doTick(info, isInVR);
-        if (info.getBlockEntity() instanceof IInventory) {
+        if (info.getBlockEntity() instanceof Container) {
             if (info.ticksActive % ClientConstants.inventorySyncTime == 0) {
                 Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
             }

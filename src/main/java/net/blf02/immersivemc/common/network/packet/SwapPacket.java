@@ -5,12 +5,12 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.PlacementMode;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.server.swap.Swap;
-import net.minecraft.entity.player.ServerPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.tileentity.*;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.block.entity.*;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -18,10 +18,10 @@ public class SwapPacket {
 
     public final BlockPos block;
     public final int slot;
-    public final HumanoidArm hand;
+    public final InteractionHand hand;
     public PlacementMode placementMode = SafeClientUtil.getPlacementMode();
 
-    public SwapPacket(BlockPos block, int slot, HumanoidArm hand) {
+    public SwapPacket(BlockPos block, int slot, InteractionHand hand) {
         this.block = block;
         this.slot = slot;
         this.hand = hand;
@@ -31,13 +31,13 @@ public class SwapPacket {
         buffer.writeEnum(packet.placementMode);
         buffer.writeBlockPos(packet.block);
         buffer.writeInt(packet.slot);
-        buffer.writeInt(packet.hand == Hand.MAIN_HAND ? 0 : 1);
+        buffer.writeInt(packet.hand == InteractionHand.MAIN_HAND ? 0 : 1);
     }
 
     public static SwapPacket decode(FriendlyByteBuf buffer) {
         PlacementMode mode = buffer.readEnum(PlacementMode.class);
         SwapPacket packet = new SwapPacket(buffer.readBlockPos(), buffer.readInt(),
-                buffer.readInt() == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND);
+                buffer.readInt() == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
         packet.placementMode = mode;
         return packet;
     }

@@ -66,7 +66,7 @@ public class ClientVRSubscriber {
                 if (hit.isPresent()) {
                     singleton.onAnyRightClick(info);
                     singleton.handleRightClick(info, Minecraft.getInstance().player, hit.get(),
-                            c == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND);
+                            c == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
                     if (Minecraft.getInstance().options.keyAttack.isDown()) {
                         cooldown = 20; // Set long cooldown if whole stack is placed
                     } else {

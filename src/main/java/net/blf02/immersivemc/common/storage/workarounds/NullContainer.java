@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.common.storage.workarounds;
 
 import net.minecraft.entity.player.Player;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.container.Container;
 
 /**
@@ -18,7 +18,7 @@ public class NullContainer extends Container {
     }
 
     @Override
-    public void slotsChanged(IInventory p_75130_1_) {
+    public void slotsChanged(Container p_75130_1_) {
 
     }
 }

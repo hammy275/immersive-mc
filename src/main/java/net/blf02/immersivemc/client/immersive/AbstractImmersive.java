@@ -19,9 +19,9 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -83,7 +83,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     public abstract void handleRightClick(AbstractImmersiveInfo info, Player player, int closest,
-                                          HumanoidArm hand);
+                                          InteractionHand hand);
 
     public void handleTriggerHitboxRightClick(InfoTriggerHitboxes info, Player player, int hitboxNum) {
         // No-op by default. Only needed realistically if the `info` implements InfoTriggerHitboxes
@@ -252,7 +252,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             Minecraft.getInstance().getItemRenderer().renderStatic(item, type,
                     15728880,
                     OverlayTexture.NO_OVERLAY,
-                    stack, Minecraft.getInstance().renderBuffers().bufferSource());
+                    stack, Minecraft.getInstance().renderBuffers().bufferSource(), 0);
 
             stack.popPose();
 
@@ -305,11 +305,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         }
     }
 
-    public void renderText(FormattedText text, PoseStack stack, Vec3 pos) {
+    public void renderText(Component text, PoseStack stack, Vec3 pos) {
         renderText(text, stack, pos, 0.02f);
     }
 
-    public void renderText(FormattedText text, PoseStack stack, Vec3 pos, float textSize) {
+    public void renderText(Component text, PoseStack stack, Vec3 pos, float textSize) {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.pushPose();
         stack.translate(-renderInfo.getPosition().x + pos.x,

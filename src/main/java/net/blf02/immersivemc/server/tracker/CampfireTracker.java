@@ -38,7 +38,7 @@ public class CampfireTracker extends AbstractTracker {
         CookInfo info = cookTime.get(player.getGameProfile().getName());
         if (info == null) return;
         for (int c = 0; c <= 1; c++) {
-            ItemStack toSmelt = c == 0 ? player.getItemInHand(Hand.MAIN_HAND) : player.getItemInHand(Hand.OFF_HAND);
+            ItemStack toSmelt = c == 0 ? player.getItemInHand(InteractionHand.MAIN_HAND) : player.getItemInHand(InteractionHand.OFF_HAND);
             Optional<CampfireCookingRecipe> recipe =
                     player.level.getRecipeManager().getRecipeFor(IRecipeType.CAMPFIRE_COOKING, new Inventory(toSmelt), player.level);
             if (recipe.isPresent() && info.get(c) >= recipe.get().getCookingTime() / 2) { // Attempt to smelt the held controller's item if we reach cook time.
@@ -82,9 +82,9 @@ public class CampfireTracker extends AbstractTracker {
                 if (!campfire.getValue(CampfireBlock.LIT)) continue; // Immediately continue if no campfire is lit
                 ItemStack stackNew;
                 if (c == 0) {
-                    stackNew = player.getItemInHand(Hand.MAIN_HAND);
+                    stackNew = player.getItemInHand(InteractionHand.MAIN_HAND);
                 } else {
-                    stackNew = player.getItemInHand(Hand.OFF_HAND);
+                    stackNew = player.getItemInHand(InteractionHand.OFF_HAND);
                 }
                 // Get info instance ready
                 CookInfo info = cookTime.get(player.getGameProfile().getName());
@@ -108,21 +108,21 @@ public class CampfireTracker extends AbstractTracker {
     }
 
     public static class CookInfo {
-        protected int mainHumanoidArm = 0;
-        protected int offHumanoidArm = 0;
+        protected int mainInteractionHand = 0;
+        protected int offInteractionHand = 0;
         public ItemStack stackHeldMain = ItemStack.EMPTY;
         public ItemStack stackHeldOff = ItemStack.EMPTY;
 
         public void set(int controller, int value) {
             if (controller == 0) {
-                mainHumanoidArm = value;
+                mainInteractionHand = value;
             } else {
-                offHumanoidArm = value;
+                offInteractionHand = value;
             }
         }
 
         public int get(int controller) {
-            return controller == 0 ? mainHumanoidArm : offHand;
+            return controller == 0 ? mainInteractionHand : offHand;
         }
 
         public void add(int controller, int amount) {
@@ -143,8 +143,8 @@ public class CampfireTracker extends AbstractTracker {
 
         @Override
         public String toString() {
-            return "Main Hand: " + stackHeldMain + " w/ " + mainHumanoidArm + " ticks" +
-                    "\nOff Hand: " + stackHeldOff + " w/ " + offHumanoidArm + " ticks";
+            return "Main Hand: " + stackHeldMain + " w/ " + mainInteractionHand + " ticks" +
+                    "\nOff Hand: " + stackHeldOff + " w/ " + offInteractionHand + " ticks";
         }
     }
 

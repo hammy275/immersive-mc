@@ -9,23 +9,23 @@ import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
+import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
-import net.blf02.immersivemc.common.util.Util;
-import net.minecraft.block.AbstractChestBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.EnderChestBlock;
-import net.minecraft.block.HorizontalDirectionalBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.Player;
-import net.minecraft.tileentity.ChestBlockEntity;
-import net.minecraft.tileentity.EnderChestBlockEntity;
-import net.minecraft.tileentity.BlockEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AABB;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractChestBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EnderChestBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.World;
 
 import java.util.Objects;
 
@@ -44,7 +44,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
         super.doTick(info, isInVR);
 
         // super.tick() does this for the main regular chest. This does it for the other chest, and for ender chests
-        // (which don't implement IInventory)
+        // (which don't implement Container)
         if (info.ticksActive % ClientConstants.inventorySyncTime == 0) {
             if (info.other != null) {
                 Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.other.getBlockPos()));
@@ -223,7 +223,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     }
 
     @Override
-    public boolean hasValidBlock(ChestInfo info, World level) {
+    public boolean hasValidBlock(ChestInfo info, Level level) {
         return chestsValid(info);
     }
 
@@ -274,7 +274,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, HumanoidArm hand) {
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
         if (!VRPluginVerify.clientInVR && !ActiveConfig.rightClickChest) return;
         if (!((ChestInfo) info).isOpen) return;
         Network.INSTANCE.sendToServer(new SwapPacket(

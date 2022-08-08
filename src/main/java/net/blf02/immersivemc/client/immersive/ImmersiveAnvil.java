@@ -12,8 +12,12 @@ import net.blf02.immersivemc.common.storage.AnvilStorage;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.SmithingTableBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -49,7 +53,7 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
         }
         info.renderDirection = facing.getClockWise();
 
-        Vector3i temp = facing.getOpposite().getNormal();
+        Vec3i temp = facing.getOpposite().getNormal();
         Vec3 facingOppositeNormal = new Vec3(temp.getX(), temp.getY(), temp.getZ());
         temp = facing.getNormal();
         Vec3 facingNormal = new Vec3(temp.getX(), temp.getY(), temp.getZ());
@@ -94,7 +98,7 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
     }
 
     @Override
-    public boolean hasValidBlock(AnvilInfo info, World level) {
+    public boolean hasValidBlock(AnvilInfo info, Level level) {
         BlockState anvil = level.getBlockState(info.getBlockPosition());
         return isAnvil(anvil) || anvil.getBlock() instanceof SmithingTableBlock;
     }
@@ -102,7 +106,7 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
     @Override
     public boolean shouldRender(AnvilInfo info, boolean isInVR) {
         if (Minecraft.getInstance().player == null) return false;
-        World level = Minecraft.getInstance().level;
+        Level level = Minecraft.getInstance().level;
         return level != null && level.getBlockState(info.getBlockPosition().above()).isAir()
                 && info.readyToRender();
 
@@ -154,7 +158,7 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, HumanoidArm hand) {
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
         Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), closest, hand));
     }
 

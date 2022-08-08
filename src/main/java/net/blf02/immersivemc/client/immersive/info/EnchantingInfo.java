@@ -2,7 +2,7 @@ package net.blf02.immersivemc.client.immersive.info;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Arrays;
@@ -43,7 +43,7 @@ public class EnchantingInfo extends AbstractWorldStorageInfo {
 
     public static class ETableInfo {
         public int levelsNeeded;
-        public FormattedText textPreview = null;
+        public Component textPreview = null;
 
         public boolean isPresent() {
             return this.textPreview != null;

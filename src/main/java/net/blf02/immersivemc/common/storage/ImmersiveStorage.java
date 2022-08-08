@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.common.storage;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.storage.WorldSavedData;
 
 import java.util.Arrays;

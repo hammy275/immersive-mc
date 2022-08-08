@@ -11,7 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -29,7 +29,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Swap {
 
-    public static void enchantingTableSwap(ServerPlayer player, int slot, HumanoidArm hand, BlockPos pos) {
+    public static void enchantingTableSwap(ServerPlayer player, int slot, InteractionHand hand, BlockPos pos) {
         if (player == null) return;
         ImmersiveStorage enchStorage = GetStorage.getEnchantingStorage(player, pos);
         if (slot == 0) {
@@ -44,7 +44,7 @@ public class Swap {
         enchStorage.wStorage.setDirty();
     }
 
-    public static void doEnchanting(int slot, BlockPos pos, ServerPlayer player, HumanoidArm hand) {
+    public static void doEnchanting(int slot, BlockPos pos, ServerPlayer player, InteractionHand hand) {
         // NOTE: slot is 1-3, depending on which enchantment the player is going for.
         if (!player.getItemInHand(hand).isEmpty()) return;
         if (slot < 1 || slot > 3) return;
@@ -82,7 +82,7 @@ public class Swap {
         }
     }
 
-    public static void handleBackpackCraftingSwap(int slot, HumanoidArm hand, ImmersiveStorage storage,
+    public static void handleBackpackCraftingSwap(int slot, InteractionHand hand, ImmersiveStorage storage,
                                                   ServerPlayer player, PlacementMode mode) {
         if (slot < 4) {
             ItemStack playerItem = player.getItemInHand(hand);
@@ -103,9 +103,9 @@ public class Swap {
         storage.wStorage.setDirty();
     }
 
-    public static void anvilSwap(int slot, HumanoidArm hand, BlockPos pos, ServerPlayer player,
+    public static void anvilSwap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player,
                                  PlacementMode mode) {
-        World level = player.level;
+        Level level = player.level;
         boolean isReallyAnvil = level.getBlockState(pos).getBlock() instanceof AnvilBlock;
         AnvilStorage storage = GetStorage.getAnvilStorage(player, pos);
         if (slot != 2) {
@@ -129,7 +129,7 @@ public class Swap {
         storage.wStorage.setDirty();
     }
 
-    public static void handleAnvilCraft(AnvilStorage storage, BlockPos pos, ServerPlayer player, HumanoidArm hand) {
+    public static void handleAnvilCraft(AnvilStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
         if (!player.getItemInHand(hand).isEmpty()) return;
         ItemStack[] items = storage.items;
         ItemStack left = items[0];
@@ -165,7 +165,7 @@ public class Swap {
         }
     }
 
-    public static void handleCraftingSwap(ServerPlayer player, int slot, HumanoidArm hand, BlockPos tablePos,
+    public static void handleCraftingSwap(ServerPlayer player, int slot, InteractionHand hand, BlockPos tablePos,
                                           PlacementMode mode) {
         ImmersiveStorage storage = GetStorage.getCraftingStorage(player, tablePos);
         if (slot < 9) {
@@ -211,14 +211,14 @@ public class Swap {
             ICraftingRecipe newRecipe = getRecipe(player, stacksIn);
             stacksIn[stacksIn.length - 1] = newRecipe != null ? newRecipe.getResultItem() : ItemStack.EMPTY;
             ItemStack stackOut = res.assemble(inv);
-            ItemStack handStack = player.getItemInHand(Hand.MAIN_HAND);
+            ItemStack handStack = player.getItemInHand(InteractionHand.MAIN_HAND);
             ItemStack toGive = ItemStack.EMPTY;
             if (!handStack.isEmpty() && Util.stacksEqualBesidesCount(stackOut, handStack)) {
                 Util.ItemStackMergeResult itemRes = Util.mergeStacks(handStack, stackOut, true);
-                player.setItemInHand(Hand.MAIN_HAND, itemRes.mergedInto);
+                player.setItemInHand(InteractionHand.MAIN_HAND, itemRes.mergedInto);
                 toGive = itemRes.mergedFrom;
             } else if (handStack.isEmpty()) {
-                player.setItemInHand(Hand.MAIN_HAND, stackOut);
+                player.setItemInHand(InteractionHand.MAIN_HAND, stackOut);
             } else {
                 toGive = stackOut;
             }
@@ -239,7 +239,7 @@ public class Swap {
         }
     }
 
-    public static void handleInventorySwap(Player player, int slot, HumanoidArm hand) {
+    public static void handleInventorySwap(Player player, int slot, InteractionHand hand) {
         // Always do full swap since splitting stacks is done when interacting with immersives instead
         ItemStack handStack = player.getItemInHand(hand).copy();
         ItemStack invStack = player.inventory.getItem(slot).copy();
@@ -254,7 +254,7 @@ public class Swap {
 
     }
     public static void handleFurnaceSwap(AbstractFurnaceBlockEntity furnace, Player player,
-                                         HumanoidArm hand, int slot, PlacementMode mode) {
+                                         InteractionHand hand, int slot, PlacementMode mode) {
         ItemStack furnaceItem = furnace.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand).copy();
         if (slot != 2) {
@@ -275,7 +275,7 @@ public class Swap {
     }
 
     public static void handleBrewingSwap(BrewingStandBlockEntity stand, Player player,
-                                         HumanoidArm hand, int slot, PlacementMode mode) {
+                                         InteractionHand hand, int slot, PlacementMode mode) {
         ItemStack standItem = stand.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand).copy();
         if (slot < 3) { // Potions
@@ -293,7 +293,7 @@ public class Swap {
     }
 
     public static void handleJukebox(JukeboxBlockEntity jukebox,
-                                     ServerPlayer player, HumanoidArm hand) {
+                                     ServerPlayer player, InteractionHand hand) {
         ItemStack playerItem = player.getItemInHand(hand);
         if (jukebox.getRecord() == ItemStack.EMPTY &&
                 playerItem.getItem() instanceof MusicDiscItem) {
@@ -307,7 +307,7 @@ public class Swap {
     }
 
     public static void handleChest(ChestBlockEntity chestIn,
-                                   Player player, HumanoidArm hand,
+                                   Player player, InteractionHand hand,
                                    int slot) {
         ChestBlockEntity chest = slot > 26 ? Util.getOtherChest(chestIn) : chestIn;
         if (chest != null) {
@@ -325,7 +325,7 @@ public class Swap {
         }
     }
 
-    public static void handleEnderChest(Player player, HumanoidArm hand, int slot) {
+    public static void handleEnderChest(Player player, InteractionHand hand, int slot) {
         ItemStack chestItem = player.getEnderChestInventory().getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand);
         if (playerItem.isEmpty() || chestItem.isEmpty() || !Util.stacksEqualBesidesCount(chestItem, playerItem)) {
@@ -399,17 +399,17 @@ public class Swap {
             toOther = mergeResult.mergedInto;
             // Take our original hand, shrink by all of the amount to be moved, then grow by the amount
             // that didn't get moved
-            toHumanoidArm = handIn.copy();
-            toHand.shrink(toPlace);
-            toHand.grow(mergeResult.mergedFrom.getCount());
+            toInteractionHand = handIn.copy();
+            toInteractionHand.shrink(toPlace);
+            toInteractionHand.grow(mergeResult.mergedFrom.getCount());
             leftovers = ItemStack.EMPTY;
         } else if (handIn.isEmpty()) { // We grab the items from the immersive into our hand
             return new SwapResult(otherIn.copy(), ItemStack.EMPTY, ItemStack.EMPTY);
         } else { // We're placing into a slot of air OR the other slot contains something that isn't what we have
             toOther = handIn.copy();
             toOther.setCount(toPlace);
-            toHumanoidArm = handIn.copy();
-            toHand.shrink(toPlace);
+            toInteractionHand = handIn.copy();
+            toInteractionHand.shrink(toPlace);
             leftovers = otherIn.copy();
         }
         return new SwapResult(toHand, toOther, leftovers);
@@ -422,7 +422,7 @@ public class Swap {
         }
     }
 
-    public static void givePlayerItemSwap(ItemStack toPlayer, ItemStack fromPlayer, Player player, HumanoidArm hand) {
+    public static void givePlayerItemSwap(ItemStack toPlayer, ItemStack fromPlayer, Player player, InteractionHand hand) {
         if (fromPlayer.isEmpty() && toPlayer.getMaxStackSize() > 1) {
             Util.addStackToInventory(player, toPlayer);
         } else {
@@ -436,7 +436,7 @@ public class Swap {
         public final ItemStack toOther;
         public final ItemStack leftovers;
         public SwapResult(ItemStack toHand, ItemStack toOther, ItemStack leftovers) {
-            this.toHumanoidArm = toHand;
+            this.toInteractionHand = toHand;
             this.toOther = toOther;
             this.leftovers = leftovers;
         }
