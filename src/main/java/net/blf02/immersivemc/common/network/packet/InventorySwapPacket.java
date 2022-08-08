@@ -5,7 +5,7 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.PlacementMode;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.entity.player.ServerPlayer;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Hand;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -20,11 +20,11 @@ public class InventorySwapPacket {
         this.slot = invSlotRaw;
     }
 
-    public static void encode(InventorySwapPacket packet, PacketBuffer buffer) {
+    public static void encode(InventorySwapPacket packet, FriendlyByteBuf buffer) {
         buffer.writeEnum(packet.placementMode).writeInt(packet.slot);
     }
 
-    public static InventorySwapPacket decode(PacketBuffer buffer) {
+    public static InventorySwapPacket decode(FriendlyByteBuf buffer) {
         PlacementMode mode = buffer.readEnum(PlacementMode.class);
         InventorySwapPacket packet = new InventorySwapPacket(buffer.readInt());
         packet.placementMode = mode;

@@ -1,14 +1,14 @@
 package net.blf02.immersivemc.client.immersive.info;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public abstract class AbstractWorldStorageInfo extends AbstractImmersiveInfo {
 
     protected Vec3[] positions;
-    protected AxisAlignedBB[] hitboxes;
+    protected AABB[] hitboxes;
     public ItemStack[] items;
     protected final BlockPos pos;
     public final int maxSlotIndex;
@@ -18,22 +18,22 @@ public abstract class AbstractWorldStorageInfo extends AbstractImmersiveInfo {
         this.pos = pos;
         this.positions = new Vec3[maxSlotIndex + 1];
         this.items = new ItemStack[maxSlotIndex + 1];
-        this.hitboxes = new AxisAlignedBB[maxSlotIndex + 1];
+        this.hitboxes = new AABB[maxSlotIndex + 1];
         this.maxSlotIndex = maxSlotIndex;
     }
 
     @Override
-    public AxisAlignedBB getHitbox(int slot) {
+    public AABB getHitbox(int slot) {
         return hitboxes[slot];
     }
 
     @Override
-    public AxisAlignedBB[] getAllHitboxes() {
+    public AABB[] getAllHitboxes() {
         return this.hitboxes;
     }
 
     @Override
-    public void setHitbox(int slot, AxisAlignedBB hitbox) {
+    public void setHitbox(int slot, AABB hitbox) {
         this.hitboxes[slot] = hitbox;
     }
 

@@ -3,13 +3,13 @@ package net.blf02.immersivemc.client.immersive.info;
 import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.AABB;
 
 public class ImmersiveFurnaceInfo extends AbstractTileEntityImmersiveInfo<AbstractFurnaceTileEntity> {
 
-    protected AxisAlignedBB toSmeltHitbox = null;
-    protected AxisAlignedBB fuelHitbox = null;
-    protected AxisAlignedBB outputHitbox = null;
+    protected AABB toSmeltHitbox = null;
+    protected AABB fuelHitbox = null;
+    protected AABB outputHitbox = null;
     public final Direction forward;
 
     public ImmersiveFurnaceInfo(AbstractFurnaceTileEntity furnace, int ticksLeft) {
@@ -19,10 +19,10 @@ public class ImmersiveFurnaceInfo extends AbstractTileEntityImmersiveInfo<Abstra
 
     @Override
     public void setInputSlots() {
-        this.inputHitboxes = new AxisAlignedBB[]{this.toSmeltHitbox, this.fuelHitbox};
+        this.inputHitboxes = new AABB[]{this.toSmeltHitbox, this.fuelHitbox};
     }
 
-    public AxisAlignedBB getHitbox(int slot) {
+    public AABB getHitbox(int slot) {
         switch (slot) {
             case 0:
                 return toSmeltHitbox;
@@ -34,11 +34,11 @@ public class ImmersiveFurnaceInfo extends AbstractTileEntityImmersiveInfo<Abstra
         throw new IllegalArgumentException("Only has slots 0 to 2.");
     }
 
-    public AxisAlignedBB[] getAllHitboxes() {
-        return new AxisAlignedBB[]{toSmeltHitbox, fuelHitbox, outputHitbox};
+    public AABB[] getAllHitboxes() {
+        return new AABB[]{toSmeltHitbox, fuelHitbox, outputHitbox};
     }
 
-    public void setHitbox(int slot, AxisAlignedBB hitbox) {
+    public void setHitbox(int slot, AABB hitbox) {
         switch (slot) {
             case 0:
                 this.toSmeltHitbox = hitbox;

@@ -13,23 +13,24 @@ import net.blf02.immersivemc.common.network.packet.FetchPlayerStoragePacket;
 import net.blf02.immersivemc.common.network.packet.InteractPacket;
 import net.blf02.immersivemc.common.network.packet.InventorySwapPacket;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
+import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
-import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.model.Model;
+import net.minecraft.client.renderer.Camera;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.Player;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.AABB;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
 
@@ -192,7 +193,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     @Override
     protected void render(BackpackInfo info, PoseStack stack, boolean isInVR) {
         for (int i = 0; i <= 31; i++) {
-            AxisAlignedBB hitbox = info.getHitbox(i);
+            AABB hitbox = info.getHitbox(i);
             renderHitbox(stack, hitbox, info.getPosition(i));
         }
 
@@ -215,7 +216,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         stack.pushPose();
         Vec3 pos = info.renderPos;
 
-        ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.translate(-renderInfo.getPosition().x + pos.x,
                 -renderInfo.getPosition().y + pos.y,
                 -renderInfo.getPosition().z + pos.z);

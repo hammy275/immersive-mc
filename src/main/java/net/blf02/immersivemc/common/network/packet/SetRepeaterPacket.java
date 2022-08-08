@@ -4,7 +4,7 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.entity.player.ServerPlayer;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -20,11 +20,11 @@ public class SetRepeaterPacket {
         this.newDelay = newDelay;
     }
 
-    public static void encode(SetRepeaterPacket packet, PacketBuffer buffer) {
+    public static void encode(SetRepeaterPacket packet, FriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos).writeInt(packet.newDelay);
     }
 
-    public static SetRepeaterPacket decode(PacketBuffer buffer) {
+    public static SetRepeaterPacket decode(FriendlyByteBuf buffer) {
         return new SetRepeaterPacket(buffer.readBlockPos(), buffer.readInt());
     }
 

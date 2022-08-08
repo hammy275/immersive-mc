@@ -3,18 +3,15 @@ package net.blf02.immersivemc.common.network.packet;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.NetworkClientHandlers;
 import net.blf02.immersivemc.common.network.NetworkUtil;
+import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.server.storage.GetStorage;
 import net.blf02.immersivemc.server.storage.WorldStorage;
-import net.blf02.immersivemc.common.storage.ImmersiveStorage;
-import net.minecraft.entity.player.ServerPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.EnderChestTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
@@ -36,7 +33,7 @@ public class FetchInventoryPacket {
         return this.items != null;
     }
 
-    public static void encode(FetchInventoryPacket packet, PacketBuffer buffer) {
+    public static void encode(FetchInventoryPacket packet, FriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos);
         buffer.writeBoolean(packet.isRequest());
         if (packet.isRequest()) {
@@ -47,7 +44,7 @@ public class FetchInventoryPacket {
         }
     }
 
-    public static FetchInventoryPacket decode(PacketBuffer buffer) {
+    public static FetchInventoryPacket decode(FriendlyByteBuf buffer) {
         BlockPos pos = buffer.readBlockPos();
         ItemStack[] stacks = null;
         if (buffer.readBoolean()) {

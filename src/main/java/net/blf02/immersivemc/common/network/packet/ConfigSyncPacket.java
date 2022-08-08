@@ -4,7 +4,7 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.server.PlayerConfigs;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.text.TextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 public class ConfigSyncPacket {
 
-    protected PacketBuffer buffer;
+    protected FriendlyByteBuf buffer;
     protected boolean kickMe = false;
     protected boolean isToServerConfigPacket = false;
 
@@ -33,11 +33,11 @@ public class ConfigSyncPacket {
         return packet;
     }
 
-    public ConfigSyncPacket(PacketBuffer configBuffer) {
+    public ConfigSyncPacket(FriendlyByteBuf configBuffer) {
         this.buffer = configBuffer;
     }
 
-    public static void encode(ConfigSyncPacket packet, PacketBuffer buffer) {
+    public static void encode(ConfigSyncPacket packet, FriendlyByteBuf buffer) {
         buffer.writeBoolean(packet.kickMe); // Write if we're asking the server to kick us
         if (!packet.kickMe) { // If we don't want to kick us, write the config data
             if (packet.isToServerConfigPacket) {
@@ -48,7 +48,7 @@ public class ConfigSyncPacket {
         }
     }
 
-    public static ConfigSyncPacket decode(PacketBuffer buffer) {
+    public static ConfigSyncPacket decode(FriendlyByteBuf buffer) {
         if (buffer.readBoolean()) { // If we want to be kicked, just return a kick packet
             return getKickMePacket();
         }

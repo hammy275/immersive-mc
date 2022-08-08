@@ -13,9 +13,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -137,8 +140,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                     // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
                     for (int i = 0; i < info.getInputSlots().length; i++) {
                         if (slotShouldRenderHelpHitbox(info, i)) {
-                            AxisAlignedBB itemBox = info.getInputSlots()[i];
-                            AxisAlignedBB toShow = itemBox
+                            AABB itemBox = info.getInputSlots()[i];
+                            AABB toShow = itemBox
                                     .move(0, itemBox.getYsize() / 2, 0);
                             renderItemGuide(stack, toShow, 0.2f, slotHelpBoxIsGreen(info, i));
                         }
@@ -163,7 +166,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     public void renderItem(ItemStack item, PoseStack stack, Vec3 pos, float size, Direction facing,
-                           AxisAlignedBB hitbox, boolean renderItemCounts) {
+                           AABB hitbox, boolean renderItemCounts) {
         renderItem(item, stack, pos, size, facing, null, hitbox, renderItemCounts, -1);
     }
 
@@ -179,8 +182,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param renderItemCounts Whether to render an item count with the item
      */
     public void renderItem(ItemStack item, PoseStack stack, Vec3 pos, float size, Direction facing, Direction upDown,
-                           AxisAlignedBB hitbox, boolean renderItemCounts, int spinDegrees) {
-        ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+                           AABB hitbox, boolean renderItemCounts, int spinDegrees) {
+        Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         if (item != null && item != ItemStack.EMPTY && pos != null) {
             stack.pushPose();
 
@@ -254,9 +257,9 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         renderHitbox(stack, hitbox, pos);
     }
 
-    protected void renderItemGuide(PoseStack stack, AxisAlignedBB hitbox, float alpha, boolean isGreen) {
+    protected void renderItemGuide(PoseStack stack, AABB hitbox, float alpha, boolean isGreen) {
         if (hitbox != null) {
-            ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+            Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
             Vec3 pos = hitbox.getCenter();
             stack.pushPose();
             stack.translate(-renderInfo.getPosition().x + pos.x,
@@ -269,19 +272,19 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         }
     }
 
-    protected void renderHitbox(PoseStack stack, AxisAlignedBB hitbox, Vec3 pos) {
+    protected void renderHitbox(PoseStack stack, AABB hitbox, Vec3 pos) {
         renderHitbox(stack, hitbox, pos, false);
     }
 
-    protected void renderHitbox(PoseStack stack, AxisAlignedBB hitbox, Vec3 pos, boolean alwaysRender) {
+    protected void renderHitbox(PoseStack stack, AABB hitbox, Vec3 pos, boolean alwaysRender) {
         renderHitbox(stack, hitbox, pos, alwaysRender, 1, 1, 1);
     }
 
-    protected void renderHitbox(PoseStack stack, AxisAlignedBB hitbox, Vec3 pos, boolean alwaysRender,
+    protected void renderHitbox(PoseStack stack, AABB hitbox, Vec3 pos, boolean alwaysRender,
                                 float red, float green, float blue) {
         if ((Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() || alwaysRender) &&
                 hitbox != null && pos != null) {
-            ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+            Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
             // Use a new stack here, so we don't conflict with the stack.scale() for the item itself
             stack.pushPose();
             stack.translate(-renderInfo.getPosition().x + pos.x,
@@ -300,7 +303,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     public void renderText(ITextComponent text, PoseStack stack, Vec3 pos, float textSize) {
-        ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.pushPose();
         stack.translate(-renderInfo.getPosition().x + pos.x,
                 -renderInfo.getPosition().y + pos.y,
@@ -388,8 +391,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param size Size of hitbox
      * @return
      */
-    public AxisAlignedBB createHitbox(Vec3 pos, float size) {
-        return new AxisAlignedBB(
+    public AABB createHitbox(Vec3 pos, float size) {
+        return new AABB(
                 pos.x - size,
                 pos.y - size,
                 pos.z - size,

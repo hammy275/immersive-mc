@@ -253,7 +253,7 @@ Build: 1.16.5-36.1.51 - Sat Jul 17 02:13:02 GMT 2021
 		Regen patches
 
 	daemonumbra:
-		Removed sidedness from PacketBuffer methods. (#7236)
+		Removed sidedness from FriendlyByteBuf methods. (#7236)
 		
 		Affected methods:
 		* readLongArray (x2)

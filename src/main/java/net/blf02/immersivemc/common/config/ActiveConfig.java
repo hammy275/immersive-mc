@@ -3,7 +3,7 @@ package net.blf02.immersivemc.common.config;
 import net.blf02.immersivemc.ImmersiveMC;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class ActiveConfig {
 
@@ -32,7 +32,7 @@ public class ActiveConfig {
     public static boolean showPlacementGuide = true;
     public static PlacementMode placementMode = PlacementMode.PLACE_ONE;
 
-    public static void loadConfigFromPacket(PacketBuffer buffer) {
+    public static void loadConfigFromPacket(FriendlyByteBuf buffer) {
         int serverNetworkVersion = buffer.readInt();
         if (serverNetworkVersion != Network.PROTOCOL_VERSION) {
             Network.INSTANCE.sendToServer(ConfigSyncPacket.getKickMePacket());
@@ -114,7 +114,7 @@ public class ActiveConfig {
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
-    public static PacketBuffer encodeServerOnlyConfig(PacketBuffer buffer) {
+    public static FriendlyByteBuf encodeServerOnlyConfig(FriendlyByteBuf buffer) {
         buffer.writeBoolean(ActiveConfig.useButton).writeBoolean(ActiveConfig.useCampfireImmersion)
                 .writeBoolean(ActiveConfig.useLever).writeBoolean(ActiveConfig.useRangedGrab);
         return buffer;

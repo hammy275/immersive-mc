@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.client.immersive.info;
 
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.AABB;
 
 /**
  * Attached to immersive infos to signify that they have hitboxes that should only activate
@@ -8,7 +8,7 @@ import net.minecraft.util.math.AxisAlignedBB;
  */
 public interface InfoTriggerHitboxes {
 
-    public AxisAlignedBB getTriggerHitbox(int hitboxNum);
+    public AABB getTriggerHitbox(int hitboxNum);
 
-    public AxisAlignedBB[] getTriggerHitboxes();
+    public AABB[] getTriggerHitboxes();
 }

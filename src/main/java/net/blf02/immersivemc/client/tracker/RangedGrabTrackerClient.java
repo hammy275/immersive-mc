@@ -14,7 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.Player;
 import net.minecraft.particles.RedstoneParticleData;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.LinkedList;
@@ -56,11 +56,11 @@ public class RangedGrabTrackerClient extends AbstractTracker {
 
                 List<Entity> ents = player.level.getEntities(player, player.getBoundingBox().inflate(10),
                         (entity -> entity instanceof ItemEntity && Util.canPickUpItem((ItemEntity) entity, player)));
-                List<AxisAlignedBB> hitboxes = new LinkedList<>();
+                List<AABB> hitboxes = new LinkedList<>();
                 for (Entity ent : ents) {
                     hitboxes.add(ent.getBoundingBox().inflate(1d/3d));
                 }
-                Optional<Integer> result = Util.rayTraceClosest(start, end, hitboxes.toArray(new AxisAlignedBB[0]));
+                Optional<Integer> result = Util.rayTraceClosest(start, end, hitboxes.toArray(new AABB[0]));
 
                 if (result.isPresent()) {
                     selected = (ItemEntity) ents.get(result.get());

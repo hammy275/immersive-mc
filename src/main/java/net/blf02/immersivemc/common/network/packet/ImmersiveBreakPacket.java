@@ -5,7 +5,7 @@ import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.minecraft.entity.player.ServerPlayer;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -23,11 +23,11 @@ public class ImmersiveBreakPacket {
         this.pos = pos;
     }
 
-    public static void encode(ImmersiveBreakPacket packet, PacketBuffer buffer) {
+    public static void encode(ImmersiveBreakPacket packet, FriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos);
     }
 
-    public static ImmersiveBreakPacket decode(PacketBuffer buffer) {
+    public static ImmersiveBreakPacket decode(FriendlyByteBuf buffer) {
         return new ImmersiveBreakPacket(buffer.readBlockPos());
     }
 

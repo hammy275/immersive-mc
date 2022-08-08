@@ -2,12 +2,12 @@ package net.blf02.immersivemc.client.immersive.info;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class ChestInfo extends AbstractTileEntityImmersiveInfo<TileEntity> {
 
-    protected AxisAlignedBB[] hitboxes = new AxisAlignedBB[54];
+    protected AABB[] hitboxes = new AABB[54];
     public TileEntity other = null;
     public Direction forward = null;
     public boolean failRender = false; // Used for thread safety when changing `other`
@@ -15,7 +15,7 @@ public class ChestInfo extends AbstractTileEntityImmersiveInfo<TileEntity> {
     public boolean isOpen = false;
     public double lastY0;
     public double lastY1;
-    public AxisAlignedBB[] openCloseHitboxes = new AxisAlignedBB[]{null, null};
+    public AABB[] openCloseHitboxes = new AABB[]{null, null};
     public Vec3[] openClosePositions = new Vec3[]{null, null};
     public int openCloseCooldown = 0;
 
@@ -44,23 +44,23 @@ public class ChestInfo extends AbstractTileEntityImmersiveInfo<TileEntity> {
         if (this.isOpen) {
             this.inputHitboxes = this.hitboxes;
         } else {
-            this.inputHitboxes = new AxisAlignedBB[0];
+            this.inputHitboxes = new AABB[0];
         }
 
     }
 
     @Override
-    public AxisAlignedBB getHitbox(int slot) {
+    public AABB getHitbox(int slot) {
         return hitboxes[slot];
     }
 
     @Override
-    public AxisAlignedBB[] getAllHitboxes() {
+    public AABB[] getAllHitboxes() {
         return hitboxes;
     }
 
     @Override
-    public void setHitbox(int slot, AxisAlignedBB hitbox) {
+    public void setHitbox(int slot, AABB hitbox) {
         hitboxes[slot] = hitbox;
     }
 

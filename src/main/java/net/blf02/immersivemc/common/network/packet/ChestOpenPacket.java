@@ -6,7 +6,7 @@ import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.server.ChestToOpenCount;
 import net.minecraft.entity.monster.piglin.PiglinTasks;
 import net.minecraft.entity.player.ServerPlayer;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.EnderChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -25,11 +25,11 @@ public class ChestOpenPacket {
         this.isOpen = isOpenPacket;
     }
 
-    public static void encode(ChestOpenPacket packet, PacketBuffer buffer) {
+    public static void encode(ChestOpenPacket packet, FriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos).writeBoolean(packet.isOpen);
     }
 
-    public static ChestOpenPacket decode(PacketBuffer buffer) {
+    public static ChestOpenPacket decode(FriendlyByteBuf buffer) {
         return new ChestOpenPacket(buffer.readBlockPos(), buffer.readBoolean());
     }
 

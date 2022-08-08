@@ -3,7 +3,7 @@ package net.blf02.immersivemc.client.immersive.info;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.AABB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.math.vector.Vector3f;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 public class BackpackInfo extends AbstractImmersiveInfo {
 
     protected final Vec3[] positions = new Vec3[32];
-    protected final AxisAlignedBB[] hitboxes = new AxisAlignedBB[32];
+    protected final AABB[] hitboxes = new AABB[32];
     // 0-26: Inventory
     // 27-31: Input crafting
     // 32: Output crafting
@@ -42,17 +42,17 @@ public class BackpackInfo extends AbstractImmersiveInfo {
     }
 
     @Override
-    public AxisAlignedBB getHitbox(int slot) {
+    public AABB getHitbox(int slot) {
         return hitboxes[slot];
     }
 
     @Override
-    public AxisAlignedBB[] getAllHitboxes() {
+    public AABB[] getAllHitboxes() {
         return hitboxes;
     }
 
     @Override
-    public void setHitbox(int slot, AxisAlignedBB hitbox) {
+    public void setHitbox(int slot, AABB hitbox) {
         hitboxes[slot] = hitbox;
     }
 

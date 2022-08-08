@@ -1,11 +1,11 @@
 package net.blf02.immersivemc.client.immersive.info;
 
 import net.minecraft.tileentity.JukeboxTileEntity;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.AABB;
 
 public class JukeboxInfo extends AbstractTileEntityImmersiveInfo<JukeboxTileEntity> {
 
-    protected AxisAlignedBB discHitbox = null;
+    protected AABB discHitbox = null;
 
     public JukeboxInfo(JukeboxTileEntity tileEntity, int ticksToExist) {
         super(tileEntity, ticksToExist, 0);
@@ -13,21 +13,21 @@ public class JukeboxInfo extends AbstractTileEntityImmersiveInfo<JukeboxTileEnti
 
     @Override
     public void setInputSlots() {
-        this.inputHitboxes = new AxisAlignedBB[]{discHitbox};
+        this.inputHitboxes = new AABB[]{discHitbox};
     }
 
     @Override
-    public AxisAlignedBB getHitbox(int slot) {
+    public AABB getHitbox(int slot) {
         return discHitbox;
     }
 
     @Override
-    public AxisAlignedBB[] getAllHitboxes() {
-        return new AxisAlignedBB[]{discHitbox};
+    public AABB[] getAllHitboxes() {
+        return new AABB[]{discHitbox};
     }
 
     @Override
-    public void setHitbox(int slot, AxisAlignedBB hitbox) {
+    public void setHitbox(int slot, AABB hitbox) {
         // We can ignore the slot
         this.discHitbox = hitbox;
     }

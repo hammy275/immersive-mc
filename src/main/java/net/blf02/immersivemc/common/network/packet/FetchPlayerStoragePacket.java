@@ -6,7 +6,7 @@ import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.server.storage.GetStorage;
 import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -32,7 +32,7 @@ public class FetchPlayerStoragePacket {
         return this.storage == null;
     }
 
-    public static void encode(FetchPlayerStoragePacket packet, PacketBuffer buffer) {
+    public static void encode(FetchPlayerStoragePacket packet, FriendlyByteBuf buffer) {
         buffer.writeBoolean(packet.isRequest());
         if (packet.isRequest()) {
             buffer.writeUtf(packet.type);
@@ -42,7 +42,7 @@ public class FetchPlayerStoragePacket {
         }
     }
 
-    public static FetchPlayerStoragePacket decode(PacketBuffer buffer) {
+    public static FetchPlayerStoragePacket decode(FriendlyByteBuf buffer) {
         boolean isRequest = buffer.readBoolean();
         if (isRequest) {
             return new FetchPlayerStoragePacket(buffer.readUtf());

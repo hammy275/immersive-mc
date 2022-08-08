@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.common.config;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class ServerPlayerConfig {
 
@@ -20,7 +20,7 @@ public class ServerPlayerConfig {
         this.useRangedGrab = useRangedGrab;
     }
 
-    public ServerPlayerConfig(PacketBuffer buffer) {
+    public ServerPlayerConfig(FriendlyByteBuf buffer) {
         this(buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean());
     }
 }

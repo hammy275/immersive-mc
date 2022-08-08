@@ -2,7 +2,7 @@ package net.blf02.immersivemc.client.immersive.info;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.AABB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
@@ -11,7 +11,7 @@ public class CraftingInfo extends AbstractWorldStorageInfo implements InfoTrigge
     public Direction lastDir = null;
 
     public Vec3 outputPosition;
-    public AxisAlignedBB outputHitbox;
+    public AABB outputHitbox;
     public ItemStack outputItem;
 
     public CraftingInfo(BlockPos pos, int ticksToExist) {
@@ -34,12 +34,12 @@ public class CraftingInfo extends AbstractWorldStorageInfo implements InfoTrigge
     }
 
     @Override
-    public AxisAlignedBB getTriggerHitbox(int hitboxNum) {
+    public AABB getTriggerHitbox(int hitboxNum) {
         return this.outputHitbox;
     }
 
     @Override
-    public AxisAlignedBB[] getTriggerHitboxes() {
-        return new AxisAlignedBB[]{this.outputHitbox};
+    public AABB[] getTriggerHitboxes() {
+        return new AABB[]{this.outputHitbox};
     }
 }

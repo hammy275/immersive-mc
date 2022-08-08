@@ -2,13 +2,13 @@ package net.blf02.immersivemc.client.immersive.info;
 
 import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.AABB;
 
 public class BrewingInfo extends AbstractTileEntityImmersiveInfo<BrewingStandTileEntity> {
 
-    protected AxisAlignedBB fuelHitbox = null;
-    protected AxisAlignedBB ingredientHitbox = null;
-    protected AxisAlignedBB[] bottleHitboxes = new AxisAlignedBB[]{null, null, null};
+    protected AABB fuelHitbox = null;
+    protected AABB ingredientHitbox = null;
+    protected AABB[] bottleHitboxes = new AABB[]{null, null, null};
 
     public Direction lastDir = null;
 
@@ -22,7 +22,7 @@ public class BrewingInfo extends AbstractTileEntityImmersiveInfo<BrewingStandTil
     }
 
     @Override
-    public AxisAlignedBB getHitbox(int slot) {
+    public AABB getHitbox(int slot) {
         if (slot < 0 || slot > 4) {
             throw new IllegalArgumentException("Only supports slots 0-4");
         } else if (slot < 3) {
@@ -35,13 +35,13 @@ public class BrewingInfo extends AbstractTileEntityImmersiveInfo<BrewingStandTil
     }
 
     @Override
-    public AxisAlignedBB[] getAllHitboxes() {
-        return new AxisAlignedBB[]
+    public AABB[] getAllHitboxes() {
+        return new AABB[]
                 {bottleHitboxes[0], bottleHitboxes[1], bottleHitboxes[2], ingredientHitbox, fuelHitbox};
     }
 
     @Override
-    public void setHitbox(int slot, AxisAlignedBB hitbox) {
+    public void setHitbox(int slot, AABB hitbox) {
         if (slot < 0 || slot > 4) {
             throw new IllegalArgumentException("Only supports slots 0-4");
         } else if (slot < 3) {

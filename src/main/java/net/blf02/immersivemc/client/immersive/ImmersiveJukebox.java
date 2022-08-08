@@ -12,7 +12,7 @@ import net.minecraft.entity.player.Player;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
 
@@ -33,7 +33,7 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
         Vec3 topCenter = getTopCenterOfBlock(info.getTileEntity().getBlockPos());
         info.setPosition(0, topCenter);
         // North and south
-        AxisAlignedBB hitbox = createHitbox(topCenter, 1f/16f);
+        AABB hitbox = createHitbox(topCenter, 1f/16f);
         hitbox = hitbox.inflate(0, 0, 0.25); // Rectangular hitbox that covers disc slot
         info.setHitbox(0, hitbox);
     }

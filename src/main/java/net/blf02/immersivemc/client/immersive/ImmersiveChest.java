@@ -23,7 +23,7 @@ import net.minecraft.tileentity.EnderChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
 
@@ -114,7 +114,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
                 Vec3 linePos = frontMid.add(forward.multiply(-0.5, -0.5, -0.5));
                 linePos = linePos.add(0, 0.5, 0);
                 info.openClosePositions[chestNum] = linePos;
-                info.openCloseHitboxes[chestNum] = new AxisAlignedBB(
+                info.openCloseHitboxes[chestNum] = new AABB(
                         linePos.add(left.multiply(-0.5, -0.5, -0.5)).add(0, -1d/4d, 0)
                           .add(forward.multiply(-0.625, -0.625, -0.625)),
                         linePos.add(left.multiply(0.5, 0.5, 0.5)).add(0, 1d/4d, 0)
@@ -123,7 +123,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
             } else {
                 Vec3 linePos = frontMid.add(0, -0.375, 0);
                 info.openClosePositions[chestNum] = linePos;
-                info.openCloseHitboxes[chestNum] = new AxisAlignedBB(
+                info.openCloseHitboxes[chestNum] = new AABB(
                         linePos.add(left.multiply(-0.5, -0.5, -0.5)).add(0, -1d/4d, 0)
                                 .add(forward.multiply(-0.15, -0.15, -0.15)),
                         linePos.add(left.multiply(0.5, 0.5, 0.5)).add(0, 1d/4d, 0)

@@ -13,7 +13,7 @@ import net.minecraft.entity.player.Player;
 import net.minecraft.state.properties.AttachFace;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.AABB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
@@ -79,7 +79,7 @@ public class LeverTracker extends AbstractTracker {
                 hitboxPos = hitboxPos.add(unit.multiply(0.25, 0.25, 0.25));
             }
             double size = 0.25;
-            AxisAlignedBB hitbox = new AxisAlignedBB(hitboxPos.x - size, hitboxPos.y - size, hitboxPos.z - size,
+            AABB hitbox = new AABB(hitboxPos.x - size, hitboxPos.y - size, hitboxPos.z - size,
                     hitboxPos.x + size, hitboxPos.y + size, hitboxPos.z + size);
             if (hitbox.contains(handPos)) {
                 Vec3 last = info.getLastPos(c);

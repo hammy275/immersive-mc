@@ -8,7 +8,7 @@ import net.blf02.immersivemc.server.storage.GetStorage;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.ServerPlayer;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -55,7 +55,7 @@ public class InteractPacket {
         return this.storageType != null;
     }
 
-    public static void encode(InteractPacket packet, PacketBuffer buffer) {
+    public static void encode(InteractPacket packet, FriendlyByteBuf buffer) {
         buffer.writeEnum(packet.placementMode);
         buffer.writeBoolean(packet.isPlayerStorageInteract());
         if (packet.isPlayerStorageInteract()) {
@@ -66,7 +66,7 @@ public class InteractPacket {
         buffer.writeInt(packet.slot).writeInt(packet.hand == Hand.MAIN_HAND ? 0 : 1);
     }
 
-    public static InteractPacket decode(PacketBuffer buffer) {
+    public static InteractPacket decode(FriendlyByteBuf buffer) {
         PlacementMode mode = buffer.readEnum(PlacementMode.class);
         if (buffer.readBoolean()) {
             return new InteractPacket(buffer.readUtf(), buffer.readInt(),

@@ -11,7 +11,7 @@ import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.inventory.container.EnchantmentContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.tileentity.EnchantingTableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IWorldPosCallable;
@@ -69,7 +69,7 @@ public class GetEnchantmentsPacket {
         this.pos = pos;
     }
 
-    public static void encode(GetEnchantmentsPacket packet, PacketBuffer buffer) {
+    public static void encode(GetEnchantmentsPacket packet, FriendlyByteBuf buffer) {
         buffer.writeBoolean(packet.weakXPLevels == -999); // Whether we're asking for enchs (true) or getting them (false)
         if (packet.weakXPLevels == -999) {
             buffer.writeBlockPos(packet.pos);
@@ -87,7 +87,7 @@ public class GetEnchantmentsPacket {
         }
     }
 
-    public static GetEnchantmentsPacket decode(PacketBuffer buffer) {
+    public static GetEnchantmentsPacket decode(FriendlyByteBuf buffer) {
         if (buffer.readBoolean()) {
             return new GetEnchantmentsPacket(buffer.readBlockPos());
         } else {

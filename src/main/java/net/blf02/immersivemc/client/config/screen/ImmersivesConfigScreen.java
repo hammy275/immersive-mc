@@ -44,7 +44,7 @@ public class ImmersivesConfigScreen extends Screen {
 
         initOptionsList();
 
-        this.children.add(this.list);
+        this.addWidget(this.list);
     }
 
     protected void initOptionsList() {

@@ -4,7 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.blf02.immersivemc.common.config.PlacementMode;
+import net.minecraft.client.CycleOption;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
@@ -36,19 +38,19 @@ public class ImmersivesCustomizeScreen extends Screen {
         ScreenUtils.addOption("center_furnace", ImmersiveMCConfig.autoCenterFurnace, this.list);
         ScreenUtils.addOption("right_click_chest", ImmersiveMCConfig.rightClickChest, this.list);
         ScreenUtils.addOption("show_placement_guide", ImmersiveMCConfig.showPlacementGuide, this.list);
-        this.list.addBig(new IteratableOption(
+        this.list.addBig(CycleOption.create(
                 "config.immersivemc.placement_mode",
-                (ignored, newIndex) -> {
+                (ignored, option) -> new TextComponent(
+                        I18n.get("config.immersivemc.placement_mode",
+                                I18n.get("config.immersivemc.placement_mode." + ImmersiveMCConfig.itemPlacementMode.get()))
+                ),
+                (ignored, ignored2, newIndex) -> {
                     ImmersiveMCConfig.itemPlacementMode.set(
                             (ImmersiveMCConfig.itemPlacementMode.get() + newIndex) % PlacementMode.values().length
                     );
                     ImmersiveMCConfig.itemPlacementMode.save();
                     ActiveConfig.loadConfigFromFile();
-                },
-                (ignored, option) -> new TextComponent(
-                        I18n.get("config.immersivemc.placement_mode",
-                                I18n.get("config.immersivemc.placement_mode." + ImmersiveMCConfig.itemPlacementMode.get()))
-                )
+                }
         ));
 
         this.children.add(this.list);

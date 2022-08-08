@@ -7,7 +7,7 @@ import net.blf02.immersivemc.server.tracker.ServerTrackerInit;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.ServerPlayer;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -24,11 +24,11 @@ public class GrabItemPacket {
         this.entityId = entityId;
     }
 
-    public static void encode(GrabItemPacket packet, PacketBuffer buffer) {
+    public static void encode(GrabItemPacket packet, FriendlyByteBuf buffer) {
         buffer.writeInt(packet.entityId);
     }
 
-    public static GrabItemPacket decode(PacketBuffer buffer) {
+    public static GrabItemPacket decode(FriendlyByteBuf buffer) {
         return new GrabItemPacket(buffer.readInt());
     }
 

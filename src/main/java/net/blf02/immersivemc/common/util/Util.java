@@ -8,7 +8,7 @@ import net.minecraft.entity.player.Player;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.AABB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
@@ -31,7 +31,7 @@ public class Util {
                 && Math.abs(item.getDeltaMovement().x) <= 0.01 && Math.abs(item.getDeltaMovement().z) <= 0.01;
     }
 
-    public static boolean rayTrace(AxisAlignedBB target, Vec3 rayStart, Vec3 rayEnd) {
+    public static boolean rayTrace(AABB target, Vec3 rayStart, Vec3 rayEnd) {
         // If the start or end of the ray is in the target hitbox, we immediately return true
         if (target.contains(rayStart) || target.contains(rayEnd)) {
             return true;
@@ -42,11 +42,11 @@ public class Util {
         return closestHitOpt.isPresent();
     }
 
-    public static Optional<Integer> rayTraceClosest(Vec3 rayStart, Vec3 rayEnd, AxisAlignedBB... targets) {
+    public static Optional<Integer> rayTraceClosest(Vec3 rayStart, Vec3 rayEnd, AABB... targets) {
         double dist = Double.MAX_VALUE;
         Integer winner = null;
         int i = 0;
-        for (AxisAlignedBB target : targets) {
+        for (AABB target : targets) {
             // This is needed since, with chest immersives for example, we don't know
             // if we have a single chest or double chest. As a result, we can have null targets.
             if (target != null) {
@@ -67,9 +67,9 @@ public class Util {
         return Optional.ofNullable(winner);
     }
 
-    public static Optional<Integer> getFirstIntersect(Vec3 pos, AxisAlignedBB... targets) {
+    public static Optional<Integer> getFirstIntersect(Vec3 pos, AABB... targets) {
         int i = 0;
-        for (AxisAlignedBB target : targets) {
+        for (AABB target : targets) {
             if (target != null && target.contains(pos)) {
                 return Optional.of(i);
             }
@@ -78,7 +78,7 @@ public class Util {
         return Optional.empty();
     }
 
-    public static Optional<Integer> getClosestIntersect(Vec3 pos, AxisAlignedBB[] targets, Vec3[] positions) {
+    public static Optional<Integer> getClosestIntersect(Vec3 pos, AABB[] targets, Vec3[] positions) {
         if (targets.length != positions.length) throw new IllegalArgumentException("Targets and positions must be same length!");
         int res = -1;
         double distanceToBeat = Double.MAX_VALUE;

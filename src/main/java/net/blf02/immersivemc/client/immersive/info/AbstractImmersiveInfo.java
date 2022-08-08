@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.client.immersive.info;
 
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public abstract class AbstractImmersiveInfo {
@@ -10,7 +10,7 @@ public abstract class AbstractImmersiveInfo {
     protected int itemTransitionCountdown = 10; // Used for transitions for the items
     public int ticksActive = 0;
     public boolean initCompleted = false;
-    protected AxisAlignedBB[] inputHitboxes = null;
+    protected AABB[] inputHitboxes = null;
     /*
     This variable is used in ONLY two spots:
         - By BackpackInfo to determine which hitbox is hovered over for trigger presses*
@@ -32,7 +32,7 @@ public abstract class AbstractImmersiveInfo {
      * Gets all the slot IDs that represent inputs. Used for guiding.
      * @return An array of all hitboxes that represent inputs
      */
-    public AxisAlignedBB[] getInputSlots() {
+    public AABB[] getInputSlots() {
         return this.inputHitboxes;
     }
 
@@ -48,11 +48,11 @@ public abstract class AbstractImmersiveInfo {
         this.ticksLeft = value;
     }
 
-    public abstract AxisAlignedBB getHitbox(int slot);
+    public abstract AABB getHitbox(int slot);
 
-    public abstract AxisAlignedBB[] getAllHitboxes();
+    public abstract AABB[] getAllHitboxes();
 
-    public abstract void setHitbox(int slot, AxisAlignedBB hitbox);
+    public abstract void setHitbox(int slot, AABB hitbox);
 
     public abstract boolean hasHitboxes();
 

@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.common.config;
 
 import net.blf02.immersivemc.common.network.Network;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ImmersiveMCConfig {
@@ -110,7 +110,7 @@ public class ImmersiveMCConfig {
                 .defineInRange("placement_mode", 0, 0, PlacementMode.values().length - 1);
     }
 
-    public static void encode(PacketBuffer buffer) {
+    public static void encode(FriendlyByteBuf buffer) {
         buffer.writeInt(Network.PROTOCOL_VERSION).writeInt(CONFIG_VERSION)
                 .writeBoolean(useAnvilImmersion.get())
                 .writeBoolean(useBrewingImmersion.get())

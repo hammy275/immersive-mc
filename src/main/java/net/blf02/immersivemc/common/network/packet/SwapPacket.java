@@ -6,7 +6,7 @@ import net.blf02.immersivemc.common.config.PlacementMode;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.minecraft.entity.player.ServerPlayer;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.tileentity.*;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -27,14 +27,14 @@ public class SwapPacket {
         this.hand = hand;
     }
 
-    public static void encode(SwapPacket packet, PacketBuffer buffer) {
+    public static void encode(SwapPacket packet, FriendlyByteBuf buffer) {
         buffer.writeEnum(packet.placementMode);
         buffer.writeBlockPos(packet.block);
         buffer.writeInt(packet.slot);
         buffer.writeInt(packet.hand == Hand.MAIN_HAND ? 0 : 1);
     }
 
-    public static SwapPacket decode(PacketBuffer buffer) {
+    public static SwapPacket decode(FriendlyByteBuf buffer) {
         PlacementMode mode = buffer.readEnum(PlacementMode.class);
         SwapPacket packet = new SwapPacket(buffer.readBlockPos(), buffer.readInt(),
                 buffer.readInt() == 0 ? Hand.MAIN_HAND : Hand.OFF_HAND);
