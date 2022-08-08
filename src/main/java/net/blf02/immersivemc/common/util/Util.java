@@ -6,7 +6,7 @@ import net.minecraft.block.RepeaterBlock;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.Player;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.ChestBlockEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AABB;
 import net.minecraft.util.math.BlockPos;
@@ -94,16 +94,16 @@ public class Util {
         return res == -1 ? Optional.empty() : Optional.of(res);
     }
 
-    public static ChestTileEntity getOtherChest(ChestTileEntity chest) {
+    public static ChestBlockEntity getOtherChest(ChestBlockEntity chest) {
         return getOtherChest(chest, true);
     }
 
-    protected static ChestTileEntity getOtherChest(ChestTileEntity chest, boolean checkOther) {
+    protected static ChestBlockEntity getOtherChest(ChestBlockEntity chest, boolean checkOther) {
         // Gets the chest this one is connected to. Can be null.
         Direction otherDir = ChestBlock.getConnectedDirection(chest.getBlockState());
         BlockPos otherPos = chest.getBlockPos().relative(otherDir);
-        if (chest.getLevel() != null && chest.getLevel().getBlockEntity(otherPos) instanceof ChestTileEntity) {
-            ChestTileEntity other = (ChestTileEntity) chest.getLevel().getBlockEntity(otherPos);
+        if (chest.getLevel() != null && chest.getLevel().getBlockEntity(otherPos) instanceof ChestBlockEntity) {
+            ChestBlockEntity other = (ChestBlockEntity) chest.getLevel().getBlockEntity(otherPos);
             if (checkOther && other != null) { // Make sure the chest we think we're connected to is connected back to us
                 return getOtherChest(other, false) == chest ? other : null;
             }

@@ -1,10 +1,11 @@
 package net.blf02.immersivemc.client.immersive.info;
 
-import net.minecraft.tileentity.BrewingStandTileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AABB;
 
-public class BrewingInfo extends AbstractTileEntityImmersiveInfo<BrewingStandTileEntity> {
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
+import net.minecraft.world.phys.AABB;
+
+public class BrewingInfo extends AbstractBlockEntityImmersiveInfo<BrewingStandBlockEntity> {
 
     protected AABB fuelHitbox = null;
     protected AABB ingredientHitbox = null;
@@ -12,7 +13,7 @@ public class BrewingInfo extends AbstractTileEntityImmersiveInfo<BrewingStandTil
 
     public Direction lastDir = null;
 
-    public BrewingInfo(BrewingStandTileEntity tileEntity, int ticksToExist) {
+    public BrewingInfo(BrewingStandBlockEntity tileEntity, int ticksToExist) {
         super(tileEntity, ticksToExist, 4);
     }
 

@@ -5,7 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "mixins.survival_extras_2.refmap.json",
   "mixins": [
-    "ChestTileEntityMixin"
+    "ChestBlockEntityMixin"
   ],
   "client": [
   ]

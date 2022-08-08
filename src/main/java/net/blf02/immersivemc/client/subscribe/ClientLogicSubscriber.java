@@ -90,24 +90,24 @@ public class ClientLogicSubscriber {
 
         BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
         BlockState state = player.level.getBlockState(pos);
-        TileEntity tileEntity = player.level.getBlockEntity(pos);
+        BlockEntity tileEntity = player.level.getBlockEntity(pos);
 
         possiblyTrack(pos, state, tileEntity, Minecraft.getInstance().level);
 
     }
 
-    public static void possiblyTrack(BlockPos pos, BlockState state, TileEntity tileEntity, World level) {
-        if (tileEntity instanceof AbstractFurnaceTileEntity) {
-            AbstractFurnaceTileEntity furnace = (AbstractFurnaceTileEntity) tileEntity;
+    public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, World level) {
+        if (tileEntity instanceof AbstractFurnaceBlockEntity) {
+            AbstractFurnaceBlockEntity furnace = (AbstractFurnaceBlockEntity) tileEntity;
             ImmersiveFurnace.getSingleton().trackObject(furnace);
-        } else if (tileEntity instanceof BrewingStandTileEntity) {
-            BrewingStandTileEntity stand = (BrewingStandTileEntity) tileEntity;
+        } else if (tileEntity instanceof BrewingStandBlockEntity) {
+            BrewingStandBlockEntity stand = (BrewingStandBlockEntity) tileEntity;
             ImmersiveBrewing.getSingleton().trackObject(stand);
         } else if (state.getBlock() == Blocks.CRAFTING_TABLE) {
             ImmersiveCrafting.singleton.trackObject(pos);
-        } else if (tileEntity instanceof JukeboxTileEntity) {
-            ImmersiveJukebox.getSingleton().trackObject((JukeboxTileEntity) tileEntity);
-        } else if (tileEntity instanceof ChestTileEntity || tileEntity instanceof EnderChestTileEntity) {
+        } else if (tileEntity instanceof JukeboxBlockEntity) {
+            ImmersiveJukebox.getSingleton().trackObject((JukeboxBlockEntity) tileEntity);
+        } else if (tileEntity instanceof ChestBlockEntity || tileEntity instanceof EnderChestBlockEntity) {
             ImmersiveChest.singleton.trackObject(tileEntity);
         } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
             ImmersiveAnvil.singleton.trackObject(pos);
@@ -233,9 +233,9 @@ public class ClientLogicSubscriber {
         if (looking != null && looking.getType() == RayTraceResult.Type.BLOCK) {
             BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
             BlockState state = player.level.getBlockState(pos);
-            TileEntity tileEnt = player.level.getBlockEntity(pos);
+            BlockEntity tileEnt = player.level.getBlockEntity(pos);
 
-            if (tileEnt instanceof ChestTileEntity || tileEnt instanceof EnderChestTileEntity) {
+            if (tileEnt instanceof ChestBlockEntity || tileEnt instanceof EnderChestBlockEntity) {
                 ChestInfo chestInfo = ImmersiveChest.findImmersive(tileEnt);
                 if (chestInfo != null && chestInfo.isOpen) {
                     chestInfo.nextRow();
@@ -306,8 +306,8 @@ public class ClientLogicSubscriber {
         if (ActiveConfig.rightClickChest && ActiveConfig.useChestImmersion) {
             BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
             BlockState state = player.level.getBlockState(pos);
-            boolean isChest = state.getBlock() instanceof AbstractChestBlock && player.level.getBlockEntity(pos) instanceof ChestTileEntity;
-            boolean isEnderChest = state.getBlock() instanceof EnderChestBlock && player.level.getBlockEntity(pos) instanceof EnderChestTileEntity;
+            boolean isChest = state.getBlock() instanceof AbstractChestBlock && player.level.getBlockEntity(pos) instanceof ChestBlockEntity;
+            boolean isEnderChest = state.getBlock() instanceof EnderChestBlock && player.level.getBlockEntity(pos) instanceof EnderChestBlockEntity;
             if ((isChest || isEnderChest) && !player.isCrouching()) { // Crouch to still open chest
                 ChestInfo info = ImmersiveChest.findImmersive(player.level.getBlockEntity(pos));
                 if (info != null) {

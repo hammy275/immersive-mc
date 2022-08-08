@@ -9,7 +9,7 @@ import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.Player;
-import net.minecraft.tileentity.BrewingStandTileEntity;
+import net.minecraft.tileentity.BrewingStandBlockEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.world.phys.Vec3;
@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 
 import java.util.Objects;
 
-public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTileEntity, BrewingInfo> {
+public class ImmersiveBrewing extends AbstractBlockEntityImmersive<BrewingStandBlockEntity, BrewingInfo> {
 
     protected static final ImmersiveBrewing singleton = new ImmersiveBrewing();
 
@@ -30,7 +30,7 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
     }
 
     @Override
-    public BrewingInfo getNewInfo(BrewingStandTileEntity tileEnt) {
+    public BrewingInfo getNewInfo(BrewingStandBlockEntity tileEnt) {
         return new BrewingInfo(tileEnt, ClientConstants.ticksToRenderBrewing);
     }
 
@@ -41,7 +41,7 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
 
     @Override
     public boolean hasValidBlock(BrewingInfo info, World level) {
-        return level.getBlockEntity(info.getBlockPosition()) instanceof BrewingStandTileEntity;
+        return level.getBlockEntity(info.getBlockPosition()) instanceof BrewingStandBlockEntity;
     }
 
     @Override
@@ -50,8 +50,8 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
             return false;
         }
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
-        return info.getTileEntity().getLevel() != null &&
-                info.getTileEntity().getLevel().getBlockState(info.getTileEntity().getBlockPos().relative(forward)).isAir()
+        return info.getBlockEntity().getLevel() != null &&
+                info.getBlockEntity().getLevel().getBlockState(info.getBlockEntity().getBlockPos().relative(forward)).isAir()
                 && info.readyToRender();
     }
 
@@ -63,7 +63,7 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
     protected void setHitboxes(BrewingInfo info) {
         Objects.requireNonNull(Minecraft.getInstance().player);
 
-        BrewingStandTileEntity stand = info.getTileEntity();
+        BrewingStandBlockEntity stand = info.getBlockEntity();
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         Vec3 pos = getDirectlyInFront(forward, stand.getBlockPos());
         Direction left = getLeftOfDirection(forward);
@@ -137,7 +137,7 @@ public class ImmersiveBrewing extends AbstractTileEntityImmersive<BrewingStandTi
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, HumanoidArm hand) {
         BrewingInfo infoB = (BrewingInfo) info;
         Network.INSTANCE.sendToServer(new SwapPacket(
-                infoB.getTileEntity().getBlockPos(), closest, hand
+                infoB.getBlockEntity().getBlockPos(), closest, hand
         ));
     }
 }

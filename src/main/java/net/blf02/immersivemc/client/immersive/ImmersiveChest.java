@@ -15,12 +15,12 @@ import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.EnderChestBlock;
-import net.minecraft.block.HorizontalBlock;
+import net.minecraft.block.HorizontalDirectionalBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.Player;
-import net.minecraft.tileentity.ChestTileEntity;
-import net.minecraft.tileentity.EnderChestTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.ChestBlockEntity;
+import net.minecraft.tileentity.EnderChestBlockEntity;
+import net.minecraft.tileentity.BlockEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AABB;
@@ -29,7 +29,7 @@ import net.minecraft.world.World;
 
 import java.util.Objects;
 
-public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, ChestInfo> {
+public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, ChestInfo> {
 
     public static ImmersiveChest singleton = new ImmersiveChest();
     private final double spacing = 3d/16d;
@@ -48,16 +48,16 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
         if (info.ticksActive % ClientConstants.inventorySyncTime == 0) {
             if (info.other != null) {
                 Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.other.getBlockPos()));
-            } else if (info.getTileEntity() instanceof EnderChestTileEntity) {
+            } else if (info.getBlockEntity() instanceof EnderChestBlockEntity) {
                 Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
             }
         }
 
-        TileEntity[] chests = new TileEntity[]{info.getTileEntity(), info.other};
+        BlockEntity[] chests = new BlockEntity[]{info.getBlockEntity(), info.other};
         for (int i = 0; i <= 1; i++) {
-            TileEntity chest = chests[i];
+            BlockEntity chest = chests[i];
             if (chest == null) continue;
-            Direction forward = chest.getBlockState().getValue(HorizontalBlock.FACING);
+            Direction forward = chest.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
             info.forward = forward;
             Vec3 pos = getTopCenterOfBlock(chest.getBlockPos());
             Direction left = getLeftOfDirection(forward);
@@ -105,7 +105,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
         }
 
         for (int chestNum = 0; chestNum <= 1; chestNum++) {
-            TileEntity chest = chests[chestNum];
+            BlockEntity chest = chests[chestNum];
             if (chest == null) continue;
             Vec3 forward = Vec3.atLowerCornerOf(info.forward.getNormal());
             Vec3 left = Vec3.atLowerCornerOf(getLeftOfDirection(info.forward).getNormal());
@@ -169,7 +169,7 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
 
     @Override
     protected boolean slotShouldRenderHelpHitbox(ChestInfo info, int slotNum) {
-        if (info.getTileEntity() instanceof EnderChestTileEntity) {
+        if (info.getBlockEntity() instanceof EnderChestBlockEntity) {
             return info.items[slotNum] == null || info.items[slotNum].isEmpty();
         }
         return super.slotShouldRenderHelpHitbox(info, slotNum);
@@ -208,10 +208,10 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
     }
 
     @Override
-    public ChestInfo getNewInfo(TileEntity tileEnt) {
-        if (tileEnt instanceof ChestTileEntity) {
-            return new ChestInfo(tileEnt, ClientConstants.ticksToRenderChest, Util.getOtherChest((ChestTileEntity) tileEnt));
-        } else if (tileEnt instanceof EnderChestTileEntity) {
+    public ChestInfo getNewInfo(BlockEntity tileEnt) {
+        if (tileEnt instanceof ChestBlockEntity) {
+            return new ChestInfo(tileEnt, ClientConstants.ticksToRenderChest, Util.getOtherChest((ChestBlockEntity) tileEnt));
+        } else if (tileEnt instanceof EnderChestBlockEntity) {
             return new ChestInfo(tileEnt, ClientConstants.ticksToRenderChest, null);
         }
         throw new IllegalArgumentException("ImmersiveChest can only track chests and ender chests!");
@@ -235,10 +235,10 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
 
     public boolean chestsValid(ChestInfo info) {
         try {
-            Block mainChestBlock = info.getTileEntity().getLevel().getBlockState(info.getBlockPosition()).getBlock();
+            Block mainChestBlock = info.getBlockEntity().getLevel().getBlockState(info.getBlockPosition()).getBlock();
             boolean mainChestExists = mainChestBlock instanceof AbstractChestBlock || mainChestBlock instanceof EnderChestBlock;
-            boolean otherChestExists = info.other == null ? true : (info.getTileEntity().getLevel() != null &&
-                    info.getTileEntity().getLevel().getBlockState(info.other.getBlockPos()).getBlock() instanceof AbstractChestBlock);
+            boolean otherChestExists = info.other == null ? true : (info.getBlockEntity().getLevel() != null &&
+                    info.getBlockEntity().getLevel().getBlockState(info.other.getBlockPos()).getBlock() instanceof AbstractChestBlock);
             return mainChestExists && otherChestExists;
         } catch (NullPointerException e) {
             return false;
@@ -247,13 +247,13 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
     }
 
     @Override
-    public boolean shouldTrack(TileEntity tileEnt) {
+    public boolean shouldTrack(BlockEntity tileEnt) {
         // Make sure this isn't an "other" chest.
-        if (tileEnt instanceof ChestTileEntity) {
-            ChestTileEntity other = Util.getOtherChest((ChestTileEntity) tileEnt);
+        if (tileEnt instanceof ChestBlockEntity) {
+            ChestBlockEntity other = Util.getOtherChest((ChestBlockEntity) tileEnt);
             if (other != null) { // If we have an other chest, make sure that one isn't already being tracked
                 for (ChestInfo info : ImmersiveChest.singleton.getTrackedObjects()) {
-                    if (info.getTileEntity() == other) { // If the info we're looking at is our neighboring chest
+                    if (info.getBlockEntity() == other) { // If the info we're looking at is our neighboring chest
                         if (info.other == null) { // If our neighboring chest's info isn't tracking us
                             info.failRender = true;
                             info.other = tileEnt; // Track us
@@ -282,10 +282,10 @@ public class ImmersiveChest extends AbstractTileEntityImmersive<TileEntity, Ches
         ));
     }
 
-    public static ChestInfo findImmersive(TileEntity chest) {
+    public static ChestInfo findImmersive(BlockEntity chest) {
         Objects.requireNonNull(chest);
         for (ChestInfo info : singleton.getTrackedObjects()) {
-            if (info.getTileEntity() == chest || info.other == chest) {
+            if (info.getBlockEntity() == chest || info.other == chest) {
                 return info;
             }
         }

@@ -8,15 +8,15 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
+import net.minecraft.core.Direction;
 import net.minecraft.entity.player.Player;
-import net.minecraft.tileentity.JukeboxTileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AABB;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.World;
 
-public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEntity, JukeboxInfo> {
+public class ImmersiveJukebox extends AbstractBlockEntityImmersive<JukeboxBlockEntity, JukeboxInfo> {
     
     protected static ImmersiveJukebox singleton = new ImmersiveJukebox();
 
@@ -30,7 +30,7 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
 
     @Override
     protected void initInfo(JukeboxInfo info) {
-        Vec3 topCenter = getTopCenterOfBlock(info.getTileEntity().getBlockPos());
+        Vec3 topCenter = getTopCenterOfBlock(info.getBlockEntity().getBlockPos());
         info.setPosition(0, topCenter);
         // North and south
         AABB hitbox = createHitbox(topCenter, 1f/16f);
@@ -60,7 +60,7 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
     }
 
     @Override
-    public JukeboxInfo getNewInfo(JukeboxTileEntity tileEnt) {
+    public JukeboxInfo getNewInfo(JukeboxBlockEntity tileEnt) {
         return new JukeboxInfo(tileEnt, ClientConstants.ticksToHandleJukebox);
     }
 
@@ -70,14 +70,14 @@ public class ImmersiveJukebox extends AbstractTileEntityImmersive<JukeboxTileEnt
     }
 
     @Override
-    public boolean hasValidBlock(JukeboxInfo info, World level) {
-        return level.getBlockEntity(info.getBlockPosition()) instanceof JukeboxTileEntity;
+    public boolean hasValidBlock(JukeboxInfo info, Level level) {
+        return level.getBlockEntity(info.getBlockPosition()) instanceof JukeboxBlockEntity;
     }
 
     @Override
     public boolean shouldRender(JukeboxInfo info, boolean isInVR) {
-        return info.getTileEntity().getLevel() != null &&
-                info.getTileEntity().getLevel().getBlockState(info.getTileEntity().getBlockPos().relative(Direction.UP)).isAir() &&
+        return info.getBlockEntity().getLevel() != null &&
+                info.getBlockEntity().getLevel().getBlockState(info.getBlockEntity().getBlockPos().relative(Direction.UP)).isAir() &&
                 info.readyToRender();
     }
 }

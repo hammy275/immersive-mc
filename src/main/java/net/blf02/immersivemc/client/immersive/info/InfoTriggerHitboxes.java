@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.client.immersive.info;
 
-import net.minecraft.util.math.AABB;
+import net.minecraft.world.phys.AABB;
 
 /**
  * Attached to immersive infos to signify that they have hitboxes that should only activate

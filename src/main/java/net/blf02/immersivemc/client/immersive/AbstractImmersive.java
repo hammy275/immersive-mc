@@ -9,11 +9,18 @@ import net.blf02.immersivemc.client.model.Cube1x1;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -239,8 +246,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 stack.mulPose(Vector3f.XP.rotationDegrees(upDownRot));
             }
 
-            ItemCameraTransforms.TransformType type = facing == null ? ItemCameraTransforms.TransformType.GROUND :
-                    ItemCameraTransforms.TransformType.FIXED;
+            ItemTransforms.TransformType type = facing == null ? ItemTransforms.TransformType.GROUND :
+                    ItemTransforms.TransformType.FIXED;
 
             Minecraft.getInstance().getItemRenderer().renderStatic(item, type,
                     15728880,
@@ -265,7 +272,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             stack.translate(-renderInfo.getPosition().x + pos.x,
                     -renderInfo.getPosition().y + pos.y,
                     -renderInfo.getPosition().z + pos.z);
-            IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+            MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
             cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
                     0, 1, isGreen ? 0 : 1, alpha, (float) (hitbox.getSize() / 2f));
             stack.popPose();
@@ -290,19 +297,19 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             stack.translate(-renderInfo.getPosition().x + pos.x,
                     -renderInfo.getPosition().y + pos.y,
                     -renderInfo.getPosition().z + pos.z);
-            IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-            WorldRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
+            MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+            LevelRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
                     hitbox.move(-pos.x, -pos.y, -pos.z),
                     red, green, blue, 1);
             stack.popPose();
         }
     }
 
-    public void renderText(ITextComponent text, PoseStack stack, Vec3 pos) {
+    public void renderText(FormattedText text, PoseStack stack, Vec3 pos) {
         renderText(text, stack, pos, 0.02f);
     }
 
-    public void renderText(ITextComponent text, PoseStack stack, Vec3 pos, float textSize) {
+    public void renderText(FormattedText text, PoseStack stack, Vec3 pos, float textSize) {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.pushPose();
         stack.translate(-renderInfo.getPosition().x + pos.x,
@@ -310,7 +317,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 -renderInfo.getPosition().z + pos.z);
         stack.mulPose(renderInfo.rotation());
         stack.scale(-textSize, -textSize, -textSize);
-        FontRenderer font = Minecraft.getInstance().font;
+        Font font = Minecraft.getInstance().font;
         float size = -font.width(text) / 2f;
         font.drawInBatch(text, size, 0, 0xFFFFFFFF, false,
                 stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), false,

@@ -1,9 +1,9 @@
 package net.blf02.immersivemc.client.immersive.info;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AABB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class CraftingInfo extends AbstractWorldStorageInfo implements InfoTriggerHitboxes {

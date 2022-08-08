@@ -1,13 +1,14 @@
 package net.blf02.immersivemc.client.immersive.info;
 
-import net.minecraft.tileentity.JukeboxTileEntity;
-import net.minecraft.util.math.AABB;
 
-public class JukeboxInfo extends AbstractTileEntityImmersiveInfo<JukeboxTileEntity> {
+import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
+import net.minecraft.world.phys.AABB;
+
+public class JukeboxInfo extends AbstractBlockEntityImmersiveInfo<JukeboxBlockEntity> {
 
     protected AABB discHitbox = null;
 
-    public JukeboxInfo(JukeboxTileEntity tileEntity, int ticksToExist) {
+    public JukeboxInfo(JukeboxBlockEntity tileEntity, int ticksToExist) {
         super(tileEntity, ticksToExist, 0);
     }
 

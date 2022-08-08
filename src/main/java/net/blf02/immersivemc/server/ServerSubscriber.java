@@ -48,12 +48,12 @@ public class ServerSubscriber {
             }
         }
 
-        if (state.hasTileEntity()) {
-            TileEntity tileEntity = event.getWorld().getBlockEntity(event.getPos());
-            sendBreakPacket = tileEntity instanceof AbstractFurnaceTileEntity ||
-                    tileEntity instanceof JukeboxTileEntity ||
-                    tileEntity instanceof BrewingStandTileEntity ||
-                    tileEntity instanceof ChestTileEntity || tileEntity instanceof EnderChestTileEntity;
+        if (state.hasBlockEntity()) {
+            BlockEntity tileEntity = event.getWorld().getBlockEntity(event.getPos());
+            sendBreakPacket = tileEntity instanceof AbstractFurnaceBlockEntity ||
+                    tileEntity instanceof JukeboxBlockEntity ||
+                    tileEntity instanceof BrewingStandBlockEntity ||
+                    tileEntity instanceof ChestBlockEntity || tileEntity instanceof EnderChestBlockEntity;
         } else {
             sendBreakPacket = state.getBlock() == Blocks.CRAFTING_TABLE ||
             state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock

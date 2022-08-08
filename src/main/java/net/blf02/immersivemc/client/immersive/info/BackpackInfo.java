@@ -1,12 +1,12 @@
 package net.blf02.immersivemc.client.immersive.info;
 
+import com.mojang.math.Vector3f;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.AABB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.math.vector.Vector3f;
 
 import java.util.Arrays;
 

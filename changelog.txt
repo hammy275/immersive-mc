@@ -209,7 +209,7 @@ Build: 1.16.5-36.1.52 - Sat Jul 17 02:23:52 GMT 2021
 =========
 Build: 1.16.5-36.1.51 - Sat Jul 17 02:13:02 GMT 2021
 	queekusme:
-		Changed AbstractFurnaceTileEntity's canBurn and burn functions to use IRecipe's 'assemble' instead of 'getResultItem' (#7756)
+		Changed AbstractFurnaceBlockEntity's canBurn and burn functions to use IRecipe's 'assemble' instead of 'getResultItem' (#7756)
 
 	judge40:
 		[1.16.x] Remove redundant mobgriefing check in SmallFireaballEntity. (#7761)
@@ -1337,7 +1337,7 @@ Build: 1.16.3-34.1.23 - Fri Oct 16 19:10:02 GMT 2020
 =========
 Build: 1.16.3-34.1.22 - Thu Oct 15 19:49:26 GMT 2020
 	richard:
-		Adds tag support for Enchantments, Potions, and TileEntityTypes (#7379)
+		Adds tag support for Enchantments, Potions, and BlockEntityTypes (#7379)
 
 =========
 Build: 1.16.3-34.1.21 - Thu Oct 15 19:43:33 GMT 2020
@@ -1401,7 +1401,7 @@ Build: 1.16.3-34.1.11 - Tue Oct 06 19:38:36 GMT 2020
 	richard:
 		Add back patches to Screen allowing for item tooltips to be auto wrapped again (#7378)
 		
-		Only deals with the methods receiving an ItemStack or ITextComponent(s), the methods that take IReorderingProcessor(s) are left alone.
+		Only deals with the methods receiving an ItemStack or FormattedText(s), the methods that take IReorderingProcessor(s) are left alone.
 
 =========
 Build: 1.16.3-34.1.10 - Mon Oct 05 14:34:56 GMT 2020

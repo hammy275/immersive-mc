@@ -7,9 +7,9 @@ import net.blf02.immersivemc.server.ChestToOpenCount;
 import net.minecraft.entity.monster.piglin.PiglinTasks;
 import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.tileentity.ChestTileEntity;
-import net.minecraft.tileentity.EnderChestTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.ChestBlockEntity;
+import net.minecraft.tileentity.EnderChestBlockEntity;
+import net.minecraft.tileentity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -38,11 +38,11 @@ public class ChestOpenPacket {
             ServerPlayer player = ctx.get().getSender();
             if (player != null) {
                 if (NetworkUtil.safeToRun(message.pos, player)) {
-                    TileEntity tileEnt = player.level.getBlockEntity(message.pos);
-                    if (tileEnt instanceof ChestTileEntity) {
+                    BlockEntity tileEnt = player.level.getBlockEntity(message.pos);
+                    if (tileEnt instanceof ChestBlockEntity) {
                         if (!ActiveConfig.useChestImmersion) return;
-                        ChestTileEntity chest = (ChestTileEntity) tileEnt;
-                        ChestTileEntity other = Util.getOtherChest(chest);
+                        ChestBlockEntity chest = (ChestBlockEntity) tileEnt;
+                        ChestBlockEntity other = Util.getOtherChest(chest);
                         if (message.isOpen) {
                             chest.startOpen(player);
                             changeChestCount(chest.getBlockPos(), 1);
@@ -59,9 +59,9 @@ public class ChestOpenPacket {
                                 changeChestCount(other.getBlockPos(), -1);
                             }
                         }
-                    } else if (tileEnt instanceof EnderChestTileEntity) {
+                    } else if (tileEnt instanceof EnderChestBlockEntity) {
                         if (!ActiveConfig.useChestImmersion) return;
-                        EnderChestTileEntity chest = (EnderChestTileEntity) tileEnt;
+                        EnderChestBlockEntity chest = (EnderChestBlockEntity) tileEnt;
                         if (message.isOpen) {
                             chest.startOpen();
                             changeChestCount(chest.getBlockPos(), 1);

@@ -46,18 +46,18 @@ public class SwapPacket {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
             if (player != null && NetworkUtil.safeToRun(message.block, player)) {
-                TileEntity tileEnt = player.level.getBlockEntity(message.block);
-                if (tileEnt instanceof AbstractFurnaceTileEntity && ActiveConfig.useFurnaceImmersion) {
-                    AbstractFurnaceTileEntity furnace = (AbstractFurnaceTileEntity) tileEnt;
+                BlockEntity tileEnt = player.level.getBlockEntity(message.block);
+                if (tileEnt instanceof AbstractFurnaceBlockEntity && ActiveConfig.useFurnaceImmersion) {
+                    AbstractFurnaceBlockEntity furnace = (AbstractFurnaceBlockEntity) tileEnt;
                     Swap.handleFurnaceSwap(furnace, player, message.hand, message.slot, message.placementMode);
-                } else if (tileEnt instanceof BrewingStandTileEntity && ActiveConfig.useBrewingImmersion) {
-                    BrewingStandTileEntity stand = (BrewingStandTileEntity) tileEnt;
+                } else if (tileEnt instanceof BrewingStandBlockEntity && ActiveConfig.useBrewingImmersion) {
+                    BrewingStandBlockEntity stand = (BrewingStandBlockEntity) tileEnt;
                     Swap.handleBrewingSwap(stand, player, message.hand, message.slot, message.placementMode);
-                } else if (tileEnt instanceof JukeboxTileEntity && ActiveConfig.useJukeboxImmersion) {
-                    Swap.handleJukebox((JukeboxTileEntity) tileEnt, player, message.hand);
-                } else if (tileEnt instanceof ChestTileEntity && ActiveConfig.useChestImmersion) {
-                    Swap.handleChest((ChestTileEntity) tileEnt, player, message.hand, message.slot);
-                } else if (tileEnt instanceof EnderChestTileEntity && ActiveConfig.useChestImmersion) {
+                } else if (tileEnt instanceof JukeboxBlockEntity && ActiveConfig.useJukeboxImmersion) {
+                    Swap.handleJukebox((JukeboxBlockEntity) tileEnt, player, message.hand);
+                } else if (tileEnt instanceof ChestBlockEntity && ActiveConfig.useChestImmersion) {
+                    Swap.handleChest((ChestBlockEntity) tileEnt, player, message.hand, message.slot);
+                } else if (tileEnt instanceof EnderChestBlockEntity && ActiveConfig.useChestImmersion) {
                     Swap.handleEnderChest(player, message.hand, message.slot);
                 }
             }

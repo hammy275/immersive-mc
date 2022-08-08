@@ -253,7 +253,7 @@ public class Swap {
         }
 
     }
-    public static void handleFurnaceSwap(AbstractFurnaceTileEntity furnace, Player player,
+    public static void handleFurnaceSwap(AbstractFurnaceBlockEntity furnace, Player player,
                                          HumanoidArm hand, int slot, PlacementMode mode) {
         ItemStack furnaceItem = furnace.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand).copy();
@@ -274,7 +274,7 @@ public class Swap {
         }
     }
 
-    public static void handleBrewingSwap(BrewingStandTileEntity stand, Player player,
+    public static void handleBrewingSwap(BrewingStandBlockEntity stand, Player player,
                                          HumanoidArm hand, int slot, PlacementMode mode) {
         ItemStack standItem = stand.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand).copy();
@@ -292,7 +292,7 @@ public class Swap {
         }
     }
 
-    public static void handleJukebox(JukeboxTileEntity jukebox,
+    public static void handleJukebox(JukeboxBlockEntity jukebox,
                                      ServerPlayer player, HumanoidArm hand) {
         ItemStack playerItem = player.getItemInHand(hand);
         if (jukebox.getRecord() == ItemStack.EMPTY &&
@@ -306,10 +306,10 @@ public class Swap {
         }
     }
 
-    public static void handleChest(ChestTileEntity chestIn,
+    public static void handleChest(ChestBlockEntity chestIn,
                                    Player player, HumanoidArm hand,
                                    int slot) {
-        ChestTileEntity chest = slot > 26 ? Util.getOtherChest(chestIn) : chestIn;
+        ChestBlockEntity chest = slot > 26 ? Util.getOtherChest(chestIn) : chestIn;
         if (chest != null) {
             slot = slot % 27;
             ItemStack chestItem = chest.getItem(slot).copy();

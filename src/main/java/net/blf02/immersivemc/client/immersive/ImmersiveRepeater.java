@@ -9,16 +9,15 @@ import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SetRepeaterPacket;
 import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.block.RepeaterBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.Player;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.RepeaterBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.World;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -36,7 +35,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
         Objects.requireNonNull(Minecraft.getInstance().level);
         BlockState state = Minecraft.getInstance().level.getBlockState(info.getBlockPosition());
 
-        Direction facing = state.getValue(HorizontalBlock.FACING);
+        Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
         Direction forwardDir = facing.getOpposite();
         Vec3 forward = Vec3.atLowerCornerOf(forwardDir.getNormal());
         Vec3 centerPos = getTopCenterOfBlock(info.getBlockPosition()).add(0, -0.675, 0);

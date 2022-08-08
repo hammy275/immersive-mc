@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ChestBlockEntity.class)
-public class ChestTileEntityMixin {
+public class ChestBlockEntityMixin {
 
     @Inject(method="getOpenCount",
     at=@At("RETURN"), cancellable = true)

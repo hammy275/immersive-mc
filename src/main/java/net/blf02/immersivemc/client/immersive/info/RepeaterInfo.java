@@ -1,8 +1,8 @@
 package net.blf02.immersivemc.client.immersive.info;
 
 import net.blf02.immersivemc.client.config.ClientConstants;
-import net.minecraft.util.math.AABB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class RepeaterInfo extends AbstractImmersiveInfo {

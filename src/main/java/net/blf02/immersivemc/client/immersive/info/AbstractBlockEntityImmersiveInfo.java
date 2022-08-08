@@ -1,11 +1,11 @@
 package net.blf02.immersivemc.client.immersive.info;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 
-public abstract class AbstractTileEntityImmersiveInfo<T extends TileEntity> extends AbstractImmersiveInfo {
+public abstract class AbstractBlockEntityImmersiveInfo<T extends BlockEntity> extends AbstractImmersiveInfo {
 
     protected T tileEntity;
     protected Vec3[] positions;
@@ -20,7 +20,7 @@ public abstract class AbstractTileEntityImmersiveInfo<T extends TileEntity> exte
      * @param maxSlotIndex Maximum slot number if this tile entity represents an inventory.
      *                     Set to the number of positions that need storing if no slots exist.
      */
-    public AbstractTileEntityImmersiveInfo(T tileEntity, int ticksToExist, int maxSlotIndex) {
+    public AbstractBlockEntityImmersiveInfo(T tileEntity, int ticksToExist, int maxSlotIndex) {
         super(ticksToExist);
         this.tileEntity = tileEntity;
         this.positions = new Vec3[maxSlotIndex+1];
@@ -29,7 +29,7 @@ public abstract class AbstractTileEntityImmersiveInfo<T extends TileEntity> exte
         this.pos = this.tileEntity.getBlockPos();
     }
 
-    public T getTileEntity() {
+    public T getBlockEntity() {
         return this.tileEntity;
     }
 

@@ -11,13 +11,13 @@ import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.entity.player.Player;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.AbstractFurnaceTileEntity;
+import net.minecraft.tileentity.AbstractFurnaceBlockEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
 
-public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnaceTileEntity, ImmersiveFurnaceInfo> {
+public class ImmersiveFurnace extends AbstractBlockEntityImmersive<AbstractFurnaceBlockEntity, ImmersiveFurnaceInfo> {
 
     // We don't ever expect this to get too big (since this mod runs on clients separately)
 
@@ -32,7 +32,7 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
     }
 
     @Override
-    public ImmersiveFurnaceInfo getNewInfo(AbstractFurnaceTileEntity tileEnt) {
+    public ImmersiveFurnaceInfo getNewInfo(AbstractFurnaceBlockEntity tileEnt) {
         return new ImmersiveFurnaceInfo(tileEnt, ClientConstants.ticksToRenderFurnace);
     }
 
@@ -43,14 +43,14 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
 
     @Override
     public boolean hasValidBlock(ImmersiveFurnaceInfo info, World level) {
-        return level.getBlockEntity(info.getBlockPosition()) instanceof AbstractFurnaceTileEntity;
+        return level.getBlockEntity(info.getBlockPosition()) instanceof AbstractFurnaceBlockEntity;
     }
 
     @Override
     public boolean shouldRender(ImmersiveFurnaceInfo info, boolean isInVR) {
         Direction forward = info.forward;
-        return forward != null && info.getTileEntity().getLevel() != null &&
-                info.getTileEntity().getLevel().getBlockState(info.getTileEntity().getBlockPos().relative(forward)).isAir()
+        return forward != null && info.getBlockEntity().getLevel() != null &&
+                info.getBlockEntity().getLevel().getBlockState(info.getBlockEntity().getBlockPos().relative(forward)).isAir()
                 && info.readyToRender();
     }
 
@@ -58,7 +58,7 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
     protected void doTick(ImmersiveFurnaceInfo info, boolean isInVR) {
         super.doTick(info, isInVR);
 
-        AbstractFurnaceTileEntity furnace = info.getTileEntity();
+        AbstractFurnaceBlockEntity furnace = info.getBlockEntity();
         Direction forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
         Vec3 pos = getDirectlyInFront(forward, furnace.getBlockPos());
 
@@ -141,7 +141,7 @@ public class ImmersiveFurnace extends AbstractTileEntityImmersive<AbstractFurnac
             }
         }
         Network.INSTANCE.sendToServer(new SwapPacket(
-                infoF.getTileEntity().getBlockPos(), slot, hand
+                infoF.getBlockEntity().getBlockPos(), slot, hand
         ));
     }
 

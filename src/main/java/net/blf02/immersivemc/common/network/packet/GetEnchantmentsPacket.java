@@ -12,8 +12,8 @@ import net.minecraft.inventory.container.EnchantmentContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.tileentity.EnchantingTableTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.EnchantingTableBlockEntity;
+import net.minecraft.tileentity.BlockEntity;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponent;
@@ -106,8 +106,8 @@ public class GetEnchantmentsPacket {
             } else if (NetworkUtil.safeToRun(message.pos, player)) {
                 ImmersiveStorage enchantStorage = GetStorage.getEnchantingStorage(player, message.pos);
                 if (enchantStorage.items[0] != null && !enchantStorage.items[0].isEmpty()) {
-                    TileEntity tileEnt = player.level.getBlockEntity(message.pos);
-                    if (tileEnt instanceof EnchantingTableTileEntity) {
+                    BlockEntity tileEnt = player.level.getBlockEntity(message.pos);
+                    if (tileEnt instanceof EnchantingTableBlockEntity) {
                         EnchantmentContainer container = new EnchantmentContainer(-1,
                                 player.inventory, IWorldPosCallable.create(player.level, message.pos));
                         container.setItem(1, new ItemStack(Items.LAPIS_LAZULI, 64));

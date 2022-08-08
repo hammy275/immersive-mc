@@ -1,19 +1,19 @@
 package net.blf02.immersivemc.client.immersive;
 
 import net.blf02.immersivemc.client.config.ClientConstants;
-import net.blf02.immersivemc.client.immersive.info.AbstractTileEntityImmersiveInfo;
+import net.blf02.immersivemc.client.immersive.info.AbstractBlockEntityImmersiveInfo;
 import net.blf02.immersivemc.common.config.CommonConstants;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 
-public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extends AbstractTileEntityImmersiveInfo<T>>
+public abstract class AbstractBlockEntityImmersive<T extends BlockEntity, I extends AbstractBlockEntityImmersiveInfo<T>>
     extends AbstractImmersive<I> {
 
-    public AbstractTileEntityImmersive(int maxImmersives) {
+    public AbstractBlockEntityImmersive(int maxImmersives) {
         super(maxImmersives);
     }
 
@@ -31,7 +31,7 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
 
     @Override
     protected boolean slotShouldRenderHelpHitbox(I info, int slotNum) {
-        if (info.getTileEntity() instanceof IInventory) {
+        if (info.getBlockEntity() instanceof IInventory) {
             return (info.items[slotNum] == null || info.items[slotNum].isEmpty())
                     && info.getInputSlots()[slotNum] != null; // So far, only the chest can have a null input slot
         } else {
@@ -43,14 +43,14 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
     @Override
     protected void doTick(I info, boolean isInVR) {
         super.doTick(info, isInVR);
-        if (info.getTileEntity() instanceof IInventory) {
+        if (info.getBlockEntity() instanceof IInventory) {
             if (info.ticksActive % ClientConstants.inventorySyncTime == 0) {
                 Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
             }
         }
 
-        if (Minecraft.getInstance().player != null && info.getTileEntity() != null &&
-                Minecraft.getInstance().player.distanceToSqr(Vec3.atCenterOf(info.getTileEntity().getBlockPos())) >
+        if (Minecraft.getInstance().player != null && info.getBlockEntity() != null &&
+                Minecraft.getInstance().player.distanceToSqr(Vec3.atCenterOf(info.getBlockEntity().getBlockPos())) >
                 CommonConstants.distanceSquaredToRemoveImmersive) {
             info.remove();
         }
@@ -70,7 +70,7 @@ public abstract class AbstractTileEntityImmersive<T extends TileEntity, I extend
 
     public void trackObject(T tileEnt) {
         for (I info : getTrackedObjects()) {
-            if (info.getTileEntity() == tileEnt) {
+            if (info.getBlockEntity() == tileEnt) {
                 info.setTicksLeft(getTickTime());
                 return;
             }

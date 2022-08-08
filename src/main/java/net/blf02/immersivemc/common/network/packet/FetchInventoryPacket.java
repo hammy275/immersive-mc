@@ -71,7 +71,7 @@ public class FetchInventoryPacket {
 
     public static void handleServerToClient(ServerPlayer player, BlockPos pos) {
         if (NetworkUtil.safeToRun(pos, player)) {
-            TileEntity tileEnt = player.level.getBlockEntity(pos);
+            BlockEntity tileEnt = player.level.getBlockEntity(pos);
             if (WorldStorage.usesWorldStorage(player.level.getBlockState(pos))) {
                 ImmersiveStorage storage = GetStorage.getStorage(player, pos);
                 if (storage != null) {
@@ -82,7 +82,7 @@ public class FetchInventoryPacket {
                 IInventory inv;
                 if (tileEnt instanceof IInventory) {
                     inv = (IInventory) tileEnt;
-                } else if (tileEnt instanceof EnderChestTileEntity) {
+                } else if (tileEnt instanceof EnderChestBlockEntity) {
                     inv = player.getEnderChestInventory();
                 } else {
                     return;

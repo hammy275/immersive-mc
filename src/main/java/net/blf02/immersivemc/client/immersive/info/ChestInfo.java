@@ -1,14 +1,14 @@
 package net.blf02.immersivemc.client.immersive.info;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AABB;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public class ChestInfo extends AbstractTileEntityImmersiveInfo<TileEntity> {
+public class ChestInfo extends AbstractBlockEntityImmersiveInfo<BlockEntity> {
 
     protected AABB[] hitboxes = new AABB[54];
-    public TileEntity other = null;
+    public BlockEntity other = null;
     public Direction forward = null;
     public boolean failRender = false; // Used for thread safety when changing `other`
     protected int rowNum = 0;
@@ -19,7 +19,7 @@ public class ChestInfo extends AbstractTileEntityImmersiveInfo<TileEntity> {
     public Vec3[] openClosePositions = new Vec3[]{null, null};
     public int openCloseCooldown = 0;
 
-    public ChestInfo(TileEntity tileEntity, int ticksToExist, TileEntity other) {
+    public ChestInfo(BlockEntity tileEntity, int ticksToExist, BlockEntity other) {
         super(tileEntity, ticksToExist, 53); // Accounts for double chest
         this.other = other;
     }

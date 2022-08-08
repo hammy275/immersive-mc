@@ -1,11 +1,11 @@
 package net.blf02.immersivemc.common.network;
 
 import net.blf02.immersivemc.client.immersive.AbstractImmersive;
-import net.blf02.immersivemc.client.immersive.AbstractTileEntityImmersive;
+import net.blf02.immersivemc.client.immersive.AbstractBlockEntityImmersive;
 import net.blf02.immersivemc.client.immersive.ImmersiveBackpack;
 import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import net.blf02.immersivemc.client.immersive.info.AbstractTileEntityImmersiveInfo;
+import net.blf02.immersivemc.client.immersive.info.AbstractBlockEntityImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.minecraft.item.ItemStack;
@@ -25,9 +25,9 @@ public class NetworkClientHandlers {
     public static void handleReceiveInvData(ItemStack[] stacks, BlockPos pos) {
         Objects.requireNonNull(stacks);
         for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
-            if (singleton instanceof AbstractTileEntityImmersive<?, ?>) {
-                AbstractTileEntityImmersive<?, ?> tileImm = (AbstractTileEntityImmersive<?, ?>) singleton;
-                for (AbstractTileEntityImmersiveInfo<?> info : tileImm.getTrackedObjects()) {
+            if (singleton instanceof AbstractBlockEntityImmersive<?, ?>) {
+                AbstractBlockEntityImmersive<?, ?> tileImm = (AbstractBlockEntityImmersive<?, ?>) singleton;
+                for (AbstractBlockEntityImmersiveInfo<?> info : tileImm.getTrackedObjects()) {
                     if (info.getBlockPosition().equals(pos)) {
                         for (int i = 0; i < stacks.length; i++) {
                             info.items[i] = stacks[i];
