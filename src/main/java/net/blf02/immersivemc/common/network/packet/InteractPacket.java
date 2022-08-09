@@ -6,13 +6,16 @@ import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.server.storage.GetStorage;
 import net.blf02.immersivemc.server.swap.Swap;
-import net.minecraft.block.*;
 import net.minecraft.core.BlockPos;
-import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.Hand;
-import net.minecraft.world.entity.InteractionHand;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.block.AnvilBlock;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EnchantmentTableBlock;
+import net.minecraft.world.level.block.SmithingTableBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 

@@ -60,6 +60,7 @@ public class ImmersiveMC {
         event.enqueueWork(() -> {
             MinecraftForge.EVENT_BUS.register(new ClientLogicSubscriber());
             MinecraftForge.EVENT_BUS.register(new ClientRenderSubscriber());
+            MinecraftForge.EVENT_BUS.addListener(ClientInit::registerLayers);
             ClientRegistry.registerKeyBinding(SUMMON_BACKPACK);
             ClientRegistry.registerKeyBinding(OPEN_SETTINGS);
         });

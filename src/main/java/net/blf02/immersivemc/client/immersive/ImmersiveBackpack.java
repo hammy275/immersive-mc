@@ -24,7 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.entity.InteractionHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -37,9 +37,12 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
     public static final ImmersiveBackpack singleton = new ImmersiveBackpack();
 
-    public static final BackpackModel model = new BackpackModel();
-    public static final BackpackLowDetailModel modelLowDetail = new BackpackLowDetailModel();
-    public static final BackpackCraftingModel craftingModel = new BackpackCraftingModel();
+    public static final BackpackModel model =
+            new BackpackModel(Minecraft.getInstance().getEntityModels().bakeLayer(BackpackModel.LAYER_LOCATION));
+    public static final BackpackLowDetailModel modelLowDetail =
+            new BackpackLowDetailModel(Minecraft.getInstance().getEntityModels().bakeLayer(BackpackLowDetailModel.LAYER_LOCATION));
+    public static final BackpackCraftingModel craftingModel =
+            new BackpackCraftingModel(Minecraft.getInstance().getEntityModels().bakeLayer(BackpackCraftingModel.LAYER_LOCATION));
 
     private final double spacing = 3d/8d;
 

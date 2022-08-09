@@ -40,7 +40,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected final List<I> infos;
     public final int maxImmersives;
-    protected static final Cube1x1 cubeModel = new Cube1x1();
+    protected static final Cube1x1 cubeModel = new Cube1x1(Minecraft.getInstance().getEntityModels().bakeLayer(Cube1x1.LAYER_LOCATION));
 
     public AbstractImmersive(int maxImmersives) {
         Immersives.IMMERSIVES.add(this);
@@ -273,7 +273,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                     -renderInfo.getPosition().y + pos.y,
                     -renderInfo.getPosition().z + pos.z);
             MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-            cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
+            cubeModel.renderToBuffer(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
+                    OverlayTexture.NO_OVERLAY,
                     0, 1, isGreen ? 0 : 1, alpha, (float) (hitbox.getSize() / 2f));
             stack.popPose();
         }
