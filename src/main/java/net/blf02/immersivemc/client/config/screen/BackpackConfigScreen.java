@@ -48,9 +48,9 @@ public class BackpackConfigScreen extends Screen {
 
         initOptionsList();
 
-        this.addWidget(this.list);
+        this.addRenderableWidget(this.list);
 
-        this.addWidget(new Button(
+        this.addRenderableWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2, this.height - 26,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("gui.done"),
                 (button) -> this.onClose()));

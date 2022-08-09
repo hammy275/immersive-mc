@@ -31,7 +31,7 @@ public class ImmersivesConfigScreen extends Screen {
     protected void init() {
         super.init();
         this.notInWorld = Minecraft.getInstance().level == null && Minecraft.getInstance().player == null;
-        this.addWidget(new Button(
+        this.addRenderableWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2, this.height - 26,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("gui.done"),
                 (button) -> this.onClose()));
@@ -46,7 +46,7 @@ public class ImmersivesConfigScreen extends Screen {
 
         initOptionsList();
 
-        this.addWidget(this.list);
+        this.addRenderableWidget(this.list);
     }
 
     protected void initOptionsList() {

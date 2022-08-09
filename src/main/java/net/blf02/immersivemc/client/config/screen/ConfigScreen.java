@@ -25,29 +25,29 @@ public class ConfigScreen extends Screen {
         ActiveConfig.loadConfigFromFile(); // Load config so we're working with our current values when changing them
         super.init();
 
-        this.addWidget(new Button(
+        this.addRenderableWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 16,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("config.immersivemc.backpack"),
                 (button) -> Minecraft.getInstance().setScreen(new BackpackConfigScreen(this))
         ));
 
-        this.addWidget(new Button(
+        this.addRenderableWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2, this.height / 2,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("config.immersivemc.immersives_customize"),
                 (button) -> Minecraft.getInstance().setScreen(new ImmersivesCustomizeScreen(this))
         ));
 
-        this.addWidget(new Button(
+        this.addRenderableWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2, this.height / 2 + BUTTON_HEIGHT + 16,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("config.immersivemc.immersives"),
                 (button) -> Minecraft.getInstance().setScreen(new ImmersivesConfigScreen(this))
         ));
 
-        this.addWidget(new Button(
+        this.addRenderableWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2 - (BUTTON_WIDTH / 2) - 8, this.height - 26,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("gui.done"),
                 (button) -> this.onClose()));
-        this.addWidget(new Button(
+        this.addRenderableWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2 + (BUTTON_WIDTH / 2) + 8, this.height - 26,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("config.immersivemc.reset"),
                 (button) -> {
