@@ -1,13 +1,13 @@
 package net.blf02.immersivemc.common.storage.workarounds;
 
-import net.minecraft.entity.player.Player;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.container.Container;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 
 /**
  * Used so slotsChanged() calls can be ignored
  */
-public class NullContainer extends Container {
+public class NullContainer extends AbstractContainerMenu {
     public NullContainer() {
         super(null, -1);
     }

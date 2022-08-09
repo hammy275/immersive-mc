@@ -4,11 +4,11 @@ import net.blf02.immersivemc.client.immersive.ImmersiveBackpack;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.server.storage.GetStorage;
-import net.minecraft.entity.player.ServerPlayer;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
@@ -37,7 +37,7 @@ public class FetchPlayerStoragePacket {
         if (packet.isRequest()) {
             buffer.writeUtf(packet.type);
         } else {
-            buffer.writeNbt(packet.storage.save(new CompoundNBT()));
+            buffer.writeNbt(packet.storage.save(new CompoundTag()));
             buffer.writeUtf(packet.type);
         }
     }
@@ -47,7 +47,7 @@ public class FetchPlayerStoragePacket {
         if (isRequest) {
             return new FetchPlayerStoragePacket(buffer.readUtf());
         } else {
-            CompoundNBT storageTag = buffer.readNbt();
+            CompoundTag storageTag = buffer.readNbt();
             String storageType = buffer.readUtf();
             return new FetchPlayerStoragePacket(GetStorage.assembleStorage(storageTag,
                     ImmersiveStorage.TYPE, null), storageType);

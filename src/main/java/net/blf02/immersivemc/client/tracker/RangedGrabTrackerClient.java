@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.client.tracker;
 
+import com.mojang.math.Vector3f;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.GrabItemPacket;
@@ -10,11 +11,11 @@ import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.Player;
-import net.minecraft.particles.RedstoneParticleData;
-import net.minecraft.util.math.AABB;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.LinkedList;
@@ -70,7 +71,7 @@ public class RangedGrabTrackerClient extends AbstractTracker {
 
         if (selected != null) {
             Vec3 pos = selected.position().add(0, 0.2, 0);
-            selected.level.addParticle(new RedstoneParticleData(0, 1, 1, 1),
+            selected.level.addParticle(new DustParticleOptions(new Vector3f(0, 1, 1), 1),
                     pos.x, pos.y, pos.z, 0.01, 0.01, 0.01);
         }
 

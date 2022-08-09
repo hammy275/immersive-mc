@@ -1,5 +1,6 @@
 package net.blf02.immersivemc;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.blf02.immersivemc.client.config.ClientInit;
 import net.blf02.immersivemc.client.subscribe.ClientLogicSubscriber;
 import net.blf02.immersivemc.client.subscribe.ClientRenderSubscriber;
@@ -7,22 +8,20 @@ import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.*;
 import net.blf02.immersivemc.server.ServerSubscriber;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
+import net.minecraft.client.KeyMapping;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.network.FMLNetworkConstants;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import net.minecraftforge.network.NetworkConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -35,16 +34,16 @@ public class ImmersiveMC {
 
     public static final String globalKeyCategory = "key.categories." + MOD_ID;
     public static final String vrKeyCategory = "key.categories." + MOD_ID + ".vr";
-    public static KeyBinding SUMMON_BACKPACK = null;
-    public static KeyBinding OPEN_SETTINGS = null;
+    public static KeyMapping SUMMON_BACKPACK = null;
+    public static KeyMapping OPEN_SETTINGS = null;
 
     public ImmersiveMC() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ImmersiveMCConfig.GENERAL_SPEC,
                 "immersive_mc.toml");
-        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST,
-                () -> new ImmutablePair<>(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
+                () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
         if (FMLLoader.getDist() == Dist.CLIENT) {
             ClientInit.init(); // Load in a separate function so the server-side doesn't yell at us
         }
@@ -53,10 +52,10 @@ public class ImmersiveMC {
 
     protected void clientSetup(FMLClientSetupEvent event) {
         // Map to a very obscure key, so it has no conflicts for VR users
-        SUMMON_BACKPACK = new KeyBinding("key." + MOD_ID + ".backpack", KeyConflictContext.IN_GAME,
-                InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_F23, vrKeyCategory);
-        OPEN_SETTINGS = new KeyBinding("key." + MOD_ID + ".config", KeyConflictContext.IN_GAME,
-                InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_COMMA, globalKeyCategory);
+        SUMMON_BACKPACK = new KeyMapping("key." + MOD_ID + ".backpack", KeyConflictContext.IN_GAME,
+                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F23, vrKeyCategory);
+        OPEN_SETTINGS = new KeyMapping("key." + MOD_ID + ".config", KeyConflictContext.IN_GAME,
+                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_COMMA, globalKeyCategory);
         event.enqueueWork(() -> {
             MinecraftForge.EVENT_BUS.register(new ClientLogicSubscriber());
             MinecraftForge.EVENT_BUS.register(new ClientRenderSubscriber());

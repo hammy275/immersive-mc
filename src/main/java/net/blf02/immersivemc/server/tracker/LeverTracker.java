@@ -5,16 +5,17 @@ import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.server.PlayerConfigs;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.HorizontalFaceBlock;
-import net.minecraft.block.LeverBlock;
-import net.minecraft.entity.player.Player;
-import net.minecraft.state.properties.AttachFace;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AABB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.LeverBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
@@ -55,11 +56,11 @@ public class LeverTracker extends AbstractTracker {
                 continue;
             }
             Vec3 hitboxPos;
-            if (state.getValue(HorizontalFaceBlock.FACE) == AttachFace.WALL) {
+            if (state.getValue(FaceAttachedHorizontalDirectionalBlock.FACE) == AttachFace.WALL) {
                 hitboxPos = Vec3.atCenterOf(leverPos);
-                Direction facing = state.getValue(HorizontalFaceBlock.FACING);
+                Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
                 Direction towardsWall = facing.getOpposite();
-                Vec3 unit = Vec3.atLowerCornerOf(towardsWall.getNormal()); // Converts Vector3i to Vec3
+                Vec3 unit = Vec3.atLowerCornerOf(towardsWall.getNormal()); // Converts Vec3i to Vec3
                 hitboxPos = hitboxPos.add(unit.multiply(0.25, 0.25, 0.25));
                 if (state.getValue(LeverBlock.POWERED)) {
                     hitboxPos = hitboxPos.add(0, -1d/3d, 0);
@@ -68,7 +69,7 @@ public class LeverTracker extends AbstractTracker {
                 }
             } else {
                 hitboxPos = Vec3.atCenterOf(leverPos);
-                Direction facingOn = state.getValue(HorizontalFaceBlock.FACING);
+                Direction facingOn = state.getValue(HorizontalDirectionalBlock.FACING);
                 Direction facingOff = facingOn.getOpposite();
                 Vec3 unit;
                 if (state.getValue(LeverBlock.POWERED)) {

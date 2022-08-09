@@ -7,18 +7,18 @@ import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.server.PlayerConfigs;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.CampfireBlock;
-import net.minecraft.entity.player.Player;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CampfireCookingRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CampfireCookingRecipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.server.ServerWorld;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,9 +40,9 @@ public class CampfireTracker extends AbstractTracker {
         for (int c = 0; c <= 1; c++) {
             ItemStack toSmelt = c == 0 ? player.getItemInHand(InteractionHand.MAIN_HAND) : player.getItemInHand(InteractionHand.OFF_HAND);
             Optional<CampfireCookingRecipe> recipe =
-                    player.level.getRecipeManager().getRecipeFor(IRecipeType.CAMPFIRE_COOKING, new Inventory(toSmelt), player.level);
+                    player.level.getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SimpleContainer(toSmelt), player.level);
             if (recipe.isPresent() && info.get(c) >= recipe.get().getCookingTime() / 2) { // Attempt to smelt the held controller's item if we reach cook time.
-                boolean didGive = player.inventory.add(recipe.get().getResultItem());
+                boolean didGive = player.getInventory().add(recipe.get().getResultItem());
                 if (didGive) {
                     toSmelt.shrink(1);
                 }
@@ -50,8 +50,7 @@ public class CampfireTracker extends AbstractTracker {
             } else if (recipe.isPresent() &&
                     ThreadLocalRandom.current().nextInt(4) == 0) { // Not ready to smelt yet, show particle
                 Vec3 pos = VRPlugin.API.getVRPlayer(player).getController(c).position();
-                if (player.level instanceof ServerWorld) {
-                    ServerWorld serverLevel = (ServerWorld) player.level;
+                if (player.level instanceof ServerLevel serverLevel) {
                     serverLevel.sendParticles(ParticleTypes.SMOKE, pos.x, pos.y, pos.z,
                             1, 0.01, 0.01, 0.01, 0);
                 }
@@ -108,21 +107,21 @@ public class CampfireTracker extends AbstractTracker {
     }
 
     public static class CookInfo {
-        protected int mainInteractionHand = 0;
-        protected int offInteractionHand = 0;
+        protected int mainHand = 0;
+        protected int offHand = 0;
         public ItemStack stackHeldMain = ItemStack.EMPTY;
         public ItemStack stackHeldOff = ItemStack.EMPTY;
 
         public void set(int controller, int value) {
             if (controller == 0) {
-                mainInteractionHand = value;
+                mainHand = value;
             } else {
-                offInteractionHand = value;
+                offHand = value;
             }
         }
 
         public int get(int controller) {
-            return controller == 0 ? mainInteractionHand : offHand;
+            return controller == 0 ? mainHand : offHand;
         }
 
         public void add(int controller, int amount) {
@@ -143,8 +142,8 @@ public class CampfireTracker extends AbstractTracker {
 
         @Override
         public String toString() {
-            return "Main Hand: " + stackHeldMain + " w/ " + mainInteractionHand + " ticks" +
-                    "\nOff Hand: " + stackHeldOff + " w/ " + offInteractionHand + " ticks";
+            return "Main Hand: " + stackHeldMain + " w/ " + mainHand + " ticks" +
+                    "\nOff Hand: " + stackHeldOff + " w/ " + offHand + " ticks";
         }
     }
 

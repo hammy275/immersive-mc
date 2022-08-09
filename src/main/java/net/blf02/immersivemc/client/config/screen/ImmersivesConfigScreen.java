@@ -6,8 +6,10 @@ import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 
@@ -82,7 +84,7 @@ public class ImmersivesConfigScreen extends Screen {
         }
 
         if (this.list != null) {  // Could be null if we're in a world
-            List<IReorderingProcessor> list = SettingsScreen.tooltipAt(this.list, mouseX, mouseY);
+            List<FormattedCharSequence> list = OptionsSubScreen.tooltipAt(this.list, mouseX, mouseY);
             if (list != null) {
                 this.renderTooltip(stack, list, mouseX, mouseY);
             }

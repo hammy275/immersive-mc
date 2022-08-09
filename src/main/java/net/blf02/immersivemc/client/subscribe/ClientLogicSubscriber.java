@@ -11,22 +11,23 @@ import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
+import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
-import net.blf02.immersivemc.common.util.Util;
 import net.blf02.vrapi.api.data.IVRData;
-import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.Player;
-import net.minecraft.tileentity.*;
-import net.minecraft.util.Hand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -49,7 +50,7 @@ public class ClientLogicSubscriber {
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || event.player.level instanceof ServerWorld) return;
+        if (event.phase != TickEvent.Phase.END || event.player.level instanceof ServerLevel) return;
 
         if (ImmersiveMC.OPEN_SETTINGS.isDown() && Minecraft.getInstance().screen == null) {
             Minecraft.getInstance().setScreen(new ConfigScreen(null));
@@ -85,10 +86,10 @@ public class ClientLogicSubscriber {
         Player player = event.player;
 
         // Get block that we're looking at
-        RayTraceResult looking = Minecraft.getInstance().hitResult;
-        if (looking == null || looking.getType() != RayTraceResult.Type.BLOCK) return;
+        HitResult looking = Minecraft.getInstance().hitResult;
+        if (looking == null || looking.getType() != HitResult.Type.BLOCK) return;
 
-        BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
+        BlockPos pos = ((BlockHitResult) looking).getBlockPos();
         BlockState state = player.level.getBlockState(pos);
         BlockEntity tileEntity = player.level.getBlockEntity(pos);
 
@@ -229,9 +230,9 @@ public class ClientLogicSubscriber {
             }
         }
 
-        RayTraceResult looking = Minecraft.getInstance().hitResult;
-        if (looking != null && looking.getType() == RayTraceResult.Type.BLOCK) {
-            BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
+        HitResult looking = Minecraft.getInstance().hitResult;
+        if (looking != null && looking.getType() == HitResult.Type.BLOCK) {
+            BlockPos pos = ((BlockHitResult) looking).getBlockPos();
             BlockState state = player.level.getBlockState(pos);
             BlockEntity tileEnt = player.level.getBlockEntity(pos);
 
@@ -300,11 +301,11 @@ public class ClientLogicSubscriber {
     }
 
     protected static int handleRightClickBlockRayTrace(Player player) {
-        RayTraceResult looking = Minecraft.getInstance().hitResult;
-        if (looking == null || looking.getType() != RayTraceResult.Type.BLOCK) return 0;
+        HitResult looking = Minecraft.getInstance().hitResult;
+        if (looking == null || looking.getType() != HitResult.Type.BLOCK) return 0;
 
         if (ActiveConfig.rightClickChest && ActiveConfig.useChestImmersion) {
-            BlockPos pos = ((BlockRayTraceResult) looking).getBlockPos();
+            BlockPos pos = ((BlockHitResult) looking).getBlockPos();
             BlockState state = player.level.getBlockState(pos);
             boolean isChest = state.getBlock() instanceof AbstractChestBlock && player.level.getBlockEntity(pos) instanceof ChestBlockEntity;
             boolean isEnderChest = state.getBlock() instanceof EnderChestBlock && player.level.getBlockEntity(pos) instanceof EnderChestBlockEntity;

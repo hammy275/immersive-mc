@@ -8,11 +8,15 @@ import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.server.storage.GetStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 
@@ -103,11 +107,11 @@ public class GetEnchantmentsPacket {
                 ImmersiveStorage enchantStorage = GetStorage.getEnchantingStorage(player, message.pos);
                 if (enchantStorage.items[0] != null && !enchantStorage.items[0].isEmpty()) {
                     BlockEntity tileEnt = player.level.getBlockEntity(message.pos);
-                    if (tileEnt instanceof EnchantingTableBlockEntity) {
-                        EnchantmentContainer container = new EnchantmentContainer(-1,
-                                player.inventory, IWorldPosCallable.create(player.level, message.pos));
-                        container.setItem(1, new ItemStack(Items.LAPIS_LAZULI, 64));
-                        container.setItem(0, enchantStorage.items[0]);
+                    if (tileEnt instanceof EnchantmentTableBlockEntity) {
+                        EnchantmentMenu container = new EnchantmentMenu(-1,
+                                player.getInventory(), ContainerLevelAccess.create(player.level, message.pos));
+                        container.setItem(1, 0, new ItemStack(Items.LAPIS_LAZULI, 64));
+                        container.setItem(0, 0, enchantStorage.items[0]);
 
                         int[] xpLevels = container.costs;
                         int[] descs = container.enchantClue;

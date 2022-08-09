@@ -11,12 +11,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.ProgressOption;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.FormattedCharSequence;
 
 import java.time.Instant;
 import java.util.List;
@@ -90,7 +93,7 @@ public class BackpackConfigScreen extends Screen {
 
         renderBackpack(stack);
 
-        List<IReorderingProcessor> list = SettingsScreen.tooltipAt(this.list, mouseX, mouseY);
+        List<FormattedCharSequence> list = OptionsSubScreen.tooltipAt(this.list, mouseX, mouseY);
         if (list != null) {
             this.renderTooltip(stack, list, mouseX, mouseY);
         }
@@ -145,13 +148,13 @@ public class BackpackConfigScreen extends Screen {
     }
 
     protected void setRGB(Double newVal, char type) {
-        Vector3i rgb = new Vector3i(getRGB('r'), getRGB('g'), getRGB('b'));
+        Vec3i rgb = new Vec3i(getRGB('r'), getRGB('g'), getRGB('b'));
         if (type == 'r') {
-            rgb = new Vector3i(newVal, rgb.getY(), rgb.getZ());
+            rgb = new Vec3i(newVal, rgb.getY(), rgb.getZ());
         } else if (type == 'g') {
-            rgb = new Vector3i(rgb.getX(), newVal, rgb.getZ());
+            rgb = new Vec3i(rgb.getX(), newVal, rgb.getZ());
         } else {
-            rgb = new Vector3i(rgb.getX(), rgb.getY(), newVal);
+            rgb = new Vec3i(rgb.getX(), rgb.getY(), newVal);
         }
         ActiveConfig.backpackColor = (rgb.getX() << 16) + (rgb.getY() << 8) + (rgb.getZ());
     }

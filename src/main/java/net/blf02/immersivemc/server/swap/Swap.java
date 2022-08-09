@@ -10,14 +10,15 @@ import net.blf02.immersivemc.server.storage.GetStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.Blocks;
@@ -30,6 +31,7 @@ import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
 
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Swap {
@@ -57,22 +59,22 @@ public class Swap {
         ItemStack toEnchantItem = storage.items[0].copy();
         if (toEnchantItem.isEmpty()) return;
         int lapisInInventory = 0;
-        for (int i = 0; i < player.inventory.items.size(); i++) {
-            if (Tags.Items.GEMS_LAPIS.contains(player.inventory.getItem(i).getItem())) {
-                lapisInInventory += player.inventory.getItem(i).getCount();
+        for (int i = 0; i < player.getInventory().items.size(); i++) {
+            if (player.getInventory().getItem(i).is(Tags.Items.GEMS_LAPIS)) {
+                lapisInInventory += player.getInventory().getItem(i).getCount();
             }
         }
-        if (lapisInInventory < slot && !player.abilities.instabuild) return;
+        if (lapisInInventory < slot && !player.getAbilities().instabuild) return;
 
-        EnchantmentContainer container = new EnchantmentContainer(-1,
-                player.inventory, IWorldPosCallable.create(player.level, pos));
-        container.setItem(1, new ItemStack(Items.LAPIS_LAZULI, 64));
-        container.setItem(0, toEnchantItem);
+        EnchantmentMenu container = new EnchantmentMenu(-1,
+                player.getInventory(), ContainerLevelAccess.create(player.level, pos));
+        container.setItem(1, 0, new ItemStack(Items.LAPIS_LAZULI, 64));
+        container.setItem(0, 0, toEnchantItem);
         if (container.clickMenuButton(player, slot - 1)) {
             int lapisToTake = slot;
-            for (int i = 0; i < player.inventory.items.size(); i++) {
-                if (Tags.Items.GEMS_LAPIS.contains(player.inventory.getItem(i).getItem())) {
-                    ItemStack stack = player.inventory.getItem(i);
+            for (int i = 0; i < player.getInventory().items.size(); i++) {
+                if (player.getInventory().getItem(i).is(Tags.Items.GEMS_LAPIS)) {
+                    ItemStack stack = player.getInventory().getItem(i);
                     while (!stack.isEmpty() && lapisToTake > 0) {
                         stack.shrink(1);
                         lapisToTake--;
@@ -96,7 +98,7 @@ public class Swap {
             storage.items[slot] = result.toOther;
             givePlayerItemSwap(result.toHand, playerItem, player, hand);
             placeLeftovers(player, result.leftovers);
-            ICraftingRecipe recipe = getRecipe(player, storage.items);
+            CraftingRecipe recipe = getRecipe(player, storage.items);
             if (recipe != null) {
                 storage.items[4] = recipe.getResultItem();
             } else {
@@ -143,23 +145,23 @@ public class Swap {
         boolean isSmithingTable = player.level.getBlockState(pos).getBlock() instanceof SmithingTableBlock;
         if (!isReallyAnvil && !isSmithingTable) return; // Bail if we aren't an anvil or a smithing table!
         Pair<ItemStack, Integer> resAndCost = Swap.getAnvilOutput(left, mid, isReallyAnvil, player);
-        if ((player.experienceLevel >= resAndCost.getSecond() || player.abilities.instabuild)
+        if ((player.experienceLevel >= resAndCost.getSecond() || player.getAbilities().instabuild)
                 && !resAndCost.getFirst().isEmpty()) {
-            AbstractRepairContainer container;
+            ItemCombinerMenu container;
             if (isReallyAnvil) {
-                container = new RepairContainer(-1, player.inventory,
-                        IWorldPosCallable.create(player.level, pos));
+                container = new AnvilMenu(-1, player.getInventory(),
+                        ContainerLevelAccess.create(player.level, pos));
 
             } else {
-                container = new SmithingTableContainer(-1, player.inventory,
-                        IWorldPosCallable.create(player.level, pos));
+                container = new SmithingMenu(-1, player.getInventory(),
+                        ContainerLevelAccess.create(player.level, pos));
             }
                     /* Note: Since we create a fresh container here with only the output
                      (used mainly for causing the anvil to make sounds and possibly break),
                      we never subtract XP levels from it. Instead, we just subtract them
                      ourselves here. */
             container.getSlot(2).onTake(player, resAndCost.getFirst());
-            if (!player.abilities.instabuild) {
+            if (!player.getAbilities().instabuild) {
                 player.giveExperienceLevels(-resAndCost.getSecond());
             }
             left.shrink(1);
@@ -180,7 +182,7 @@ public class Swap {
             storage.items[slot] = result.toOther;
             givePlayerItemSwap(result.toHand, playerItem, player, hand);
             placeLeftovers(player, result.leftovers);
-            ICraftingRecipe recipe = getRecipe(player, storage.items);
+            CraftingRecipe recipe = getRecipe(player, storage.items);
             storage.items[9] = recipe != null ? recipe.getResultItem() : ItemStack.EMPTY;
         } else {
             handleDoCraft(player, storage.items, tablePos);
@@ -188,13 +190,13 @@ public class Swap {
         storage.wStorage.setDirty();
     }
 
-    public static ICraftingRecipe getRecipe(ServerPlayer player, ItemStack[] stacksIn) {
+    public static CraftingRecipe getRecipe(ServerPlayer player, ItemStack[] stacksIn) {
         int invDim = stacksIn.length == 10 ? 3 : 2; // 10 since stacksIn includes the output slot
-        CraftingInventory inv = new CraftingInventory(new NullContainer(), invDim, invDim);
+        CraftingContainer inv = new CraftingContainer(new NullContainer(), invDim, invDim);
         for (int i = 0; i < stacksIn.length - 1; i++) {
             inv.setItem(i, stacksIn[i]);
         }
-        Optional<ICraftingRecipe> res = player.getServer().getRecipeManager().getRecipeFor(IRecipeType.CRAFTING,
+        Optional<CraftingRecipe> res = player.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING,
                 inv, player.level);
         return res.orElse(null);
     }
@@ -203,17 +205,17 @@ public class Swap {
                                      BlockPos tablePos) {
         boolean isBackpack = stacksIn.length == 5;
         int invDim = isBackpack ? 2 : 3;
-        CraftingInventory inv = new CraftingInventory(new NullContainer(), invDim, invDim);
+        CraftingContainer inv = new CraftingContainer(new NullContainer(), invDim, invDim);
         for (int i = 0; i < stacksIn.length - 1; i++) { // -1 from length since we skip the last index since it's the output
             inv.setItem(i, stacksIn[i]);
         }
-        ICraftingRecipe res = getRecipe(player, stacksIn);
+        CraftingRecipe res = getRecipe(player, stacksIn);
         if (res != null) {
             // Give our item to us, remove items from crafting inventory, and show new recipe
             for (int i = 0; i < stacksIn.length - 1; i++) {
                 stacksIn[i].shrink(1);
             }
-            ICraftingRecipe newRecipe = getRecipe(player, stacksIn);
+            CraftingRecipe newRecipe = getRecipe(player, stacksIn);
             stacksIn[stacksIn.length - 1] = newRecipe != null ? newRecipe.getResultItem() : ItemStack.EMPTY;
             ItemStack stackOut = res.assemble(inv);
             ItemStack handStack = player.getItemInHand(InteractionHand.MAIN_HAND);
@@ -230,13 +232,12 @@ public class Swap {
             if (!toGive.isEmpty()) {
                 BlockPos posBlock = tablePos != null ? tablePos.above() : player.blockPosition();
                 Vec3 pos = Vec3.atCenterOf(posBlock);
-                ItemEntity entOut = new ItemEntity(player.level, pos.x, pos.y, pos.z);
-                entOut.setItem(toGive);
+                ItemEntity entOut = new ItemEntity(player.level, pos.x, pos.y, pos.z, toGive);
                 entOut.setDeltaMovement(0, 0, 0);
                 player.level.addFreshEntity(entOut);
             } else {
                 player.level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                        SoundEvents.ITEM_PICKUP, isBackpack ? SoundCategory.PLAYERS : SoundCategory.BLOCKS,
+                        SoundEvents.ITEM_PICKUP, isBackpack ? SoundSource.PLAYERS : SoundSource.BLOCKS,
                         0.2f,
                         ThreadLocalRandom.current().nextFloat() -
                                 ThreadLocalRandom.current().nextFloat() * 1.4f + 2f);
@@ -247,14 +248,14 @@ public class Swap {
     public static void handleInventorySwap(Player player, int slot, InteractionHand hand) {
         // Always do full swap since splitting stacks is done when interacting with immersives instead
         ItemStack handStack = player.getItemInHand(hand).copy();
-        ItemStack invStack = player.inventory.getItem(slot).copy();
+        ItemStack invStack = player.getInventory().getItem(slot).copy();
         if (handStack.isEmpty() || invStack.isEmpty() || !Util.stacksEqualBesidesCount(handStack, invStack)) {
             player.setItemInHand(hand, invStack);
-            player.inventory.setItem(slot, handStack);
+            player.getInventory().setItem(slot, handStack);
         } else {
             Util.ItemStackMergeResult res = Util.mergeStacks(invStack, handStack, false);
             player.setItemInHand(hand, res.mergedFrom);
-            player.inventory.setItem(slot, res.mergedInto);
+            player.getInventory().setItem(slot, res.mergedInto);
         }
 
     }
@@ -301,7 +302,7 @@ public class Swap {
                                      ServerPlayer player, InteractionHand hand) {
         ItemStack playerItem = player.getItemInHand(hand);
         if (jukebox.getRecord() == ItemStack.EMPTY &&
-                playerItem.getItem() instanceof MusicDiscItem) {
+                playerItem.getItem() instanceof RecordItem) {
             // Code from vanilla jukebox
             ((JukeboxBlock) Blocks.JUKEBOX).setRecord(player.level, jukebox.getBlockPos(), jukebox.getBlockState(),
                     playerItem);
@@ -344,19 +345,19 @@ public class Swap {
     }
 
     public static Pair<ItemStack, Integer> getAnvilOutput(ItemStack left, ItemStack mid, boolean isReallyAnvil, ServerPlayer player) {
-        AbstractRepairContainer container;
+        ItemCombinerMenu container;
         if (isReallyAnvil) {
-            container = new RepairContainer(-1, player.inventory);
+            container = new AnvilMenu(-1, player.getInventory());
         } else {
-            container = new SmithingTableContainer(-1, player.inventory);
+            container = new SmithingMenu(-1, player.getInventory());
         }
-        container.setItem(0, left);
-        container.setItem(1, mid);
+        container.setItem(0, 0, left);
+        container.setItem(1, 0, mid);
         container.createResult();
         ItemStack res = container.getSlot(2).getItem();
         int level = 0;
         if (isReallyAnvil) {
-            level = ((RepairContainer) container).cost.get();
+            level = ((AnvilMenu) container).cost.get();
         }
         return new Pair<>(res, level);
     }
@@ -404,17 +405,17 @@ public class Swap {
             toOther = mergeResult.mergedInto;
             // Take our original hand, shrink by all of the amount to be moved, then grow by the amount
             // that didn't get moved
-            toInteractionHand = handIn.copy();
-            toInteractionHand.shrink(toPlace);
-            toInteractionHand.grow(mergeResult.mergedFrom.getCount());
+            toHand = handIn.copy();
+            toHand.shrink(toPlace);
+            toHand.grow(mergeResult.mergedFrom.getCount());
             leftovers = ItemStack.EMPTY;
         } else if (handIn.isEmpty()) { // We grab the items from the immersive into our hand
             return new SwapResult(otherIn.copy(), ItemStack.EMPTY, ItemStack.EMPTY);
         } else { // We're placing into a slot of air OR the other slot contains something that isn't what we have
             toOther = handIn.copy();
             toOther.setCount(toPlace);
-            toInteractionHand = handIn.copy();
-            toInteractionHand.shrink(toPlace);
+            toHand = handIn.copy();
+            toHand.shrink(toPlace);
             leftovers = otherIn.copy();
         }
         return new SwapResult(toHand, toOther, leftovers);
@@ -441,7 +442,7 @@ public class Swap {
         public final ItemStack toOther;
         public final ItemStack leftovers;
         public SwapResult(ItemStack toHand, ItemStack toOther, ItemStack leftovers) {
-            this.toInteractionHand = toHand;
+            this.toHand = toHand;
             this.toOther = toOther;
             this.leftovers = leftovers;
         }

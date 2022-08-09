@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.common.storage;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.saveddata.SavedData;
 
 public class AnvilStorage extends ImmersiveStorage {
 
@@ -9,7 +9,7 @@ public class AnvilStorage extends ImmersiveStorage {
 
     public int xpLevels = 0;
 
-    public AnvilStorage(WorldSavedData storage) {
+    public AnvilStorage(SavedData storage) {
         super(storage);
     }
 
@@ -19,14 +19,14 @@ public class AnvilStorage extends ImmersiveStorage {
     }
 
     @Override
-    public void load(CompoundNBT nbt) {
+    public void load(CompoundTag nbt) {
         super.load(nbt);
         this.xpLevels = nbt.getInt("xpLevels");
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT nbtIn) {
-        CompoundNBT nbt = super.save(nbtIn);
+    public CompoundTag save(CompoundTag nbtIn) {
+        CompoundTag nbt = super.save(nbtIn);
         nbt.putInt("xpLevels", xpLevels);
         return nbt;
     }

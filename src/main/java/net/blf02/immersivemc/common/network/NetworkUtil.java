@@ -1,7 +1,7 @@
 package net.blf02.immersivemc.common.network;
 
-import net.minecraft.entity.player.ServerPlayer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 
 public class NetworkUtil {

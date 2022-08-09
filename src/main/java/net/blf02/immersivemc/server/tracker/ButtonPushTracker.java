@@ -7,13 +7,13 @@ import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.server.PlayerConfigs;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
-import net.minecraft.block.AbstractButtonBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.Player;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class ButtonPushTracker extends AbstractTracker {
 
@@ -28,12 +28,12 @@ public class ButtonPushTracker extends AbstractTracker {
             IVRData controller = vrPlayer.getController(i);
             BlockPos pos = new BlockPos(controller.position());
             BlockState state = player.level.getBlockState(pos);
-            if (state.getBlock() instanceof AbstractButtonBlock && !state.getValue(AbstractButtonBlock.POWERED)) {
-                AbstractButtonBlock button = (AbstractButtonBlock) state.getBlock();
+            if (state.getBlock() instanceof ButtonBlock && !state.getValue(ButtonBlock.POWERED)) {
+                ButtonBlock button = (ButtonBlock) state.getBlock();
                 VoxelShape shape = button.getShape(state, player.level, pos,
-                        ISelectionContext.of(player));
+                        CollisionContext.of(player));
                 // Start and end vectors need to be slightly different, so we just give a bit extra on the y axis
-                BlockRayTraceResult res = shape.clip(
+                BlockHitResult res = shape.clip(
                         controller.position().add(0, -0.01, 0),
                         controller.position().add(0, 0.01, 0),
                         pos);

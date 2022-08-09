@@ -7,6 +7,7 @@ import net.blf02.immersivemc.server.ChestToOpenCount;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
@@ -49,7 +50,7 @@ public class ChestOpenPacket {
                                 other.startOpen(player);
                                 changeChestCount(other.getBlockPos(), 1);
                             }
-                            PiglinTasks.angerNearbyPiglins(player, true);
+                            PiglinAi.angerNearbyPiglins(player, true);
                         } else {
                             chest.stopOpen(player);
                             changeChestCount(chest.getBlockPos(), -1);
@@ -62,11 +63,11 @@ public class ChestOpenPacket {
                         if (!ActiveConfig.useChestImmersion) return;
                         EnderChestBlockEntity chest = (EnderChestBlockEntity) tileEnt;
                         if (message.isOpen) {
-                            chest.startOpen();
+                            chest.startOpen(player);
                             changeChestCount(chest.getBlockPos(), 1);
-                            PiglinTasks.angerNearbyPiglins(player, true);
+                            PiglinAi.angerNearbyPiglins(player, true);
                         } else {
-                            chest.stopOpen();
+                            chest.stopOpen(player);
                             changeChestCount(chest.getBlockPos(), -1);
                         }
                     }

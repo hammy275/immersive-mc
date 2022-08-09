@@ -1,13 +1,14 @@
 package net.blf02.immersivemc.server.storage;
 
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
-import net.minecraft.block.*;
-import net.minecraft.entity.player.Player;
-import net.minecraft.entity.player.ServerPlayer;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.saveddata.SavedData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,12 +16,12 @@ import java.util.Map;
 /**
  * Holds ALL OF the save data for ImmersiveMC for a given world/dimension.
  */
-public class WorldStorage extends WorldSavedData {
+public class LevelStorage extends SavedData {
 
     protected Map<BlockPos, ImmersiveStorage> itemInfo = new HashMap<>();
 
-    public WorldStorage() {
-        super("immersivemc_data");
+    private static LevelStorage create() {
+        return new LevelStorage();
     }
 
     public static boolean usesWorldStorage(BlockState state) {
@@ -29,13 +30,13 @@ public class WorldStorage extends WorldSavedData {
                 || state.getBlock() instanceof EnchantmentTableBlock;
     }
 
-    public static WorldStorage getStorage(ServerWorld world) {
-        return world.getDataStorage().computeIfAbsent(WorldStorage::new, "immersivemc_data");
+    public static LevelStorage getStorage(ServerLevel world) {
+        return world.getDataStorage().computeIfAbsent(LevelStorage::load, LevelStorage::create, "immersivemc_data");
     }
 
-    public static WorldStorage getStorage(Player player) {
+    public static LevelStorage getStorage(Player player) {
         if (player instanceof ServerPlayer) {
-            return getStorage((ServerWorld) player.level);
+            return getStorage((ServerLevel) player.level);
         }
         throw new IllegalArgumentException("Can only get storage server side!");
     }
@@ -66,14 +67,15 @@ public class WorldStorage extends WorldSavedData {
     }
 
 
-    @Override
-    public void load(CompoundNBT nbt) {
+    public static LevelStorage load(CompoundTag nbt) {
+        LevelStorage levelStorage = new LevelStorage();
+        Map<BlockPos, ImmersiveStorage> itemInfo = levelStorage.itemInfo;
         itemInfo.clear();
         int numOfStorages = nbt.getInt("numOfStorages");
 
-        CompoundNBT storages = nbt.getCompound("storages");
+        CompoundTag storages = nbt.getCompound("storages");
         for (int i = 0; i < numOfStorages; i++) {
-            CompoundNBT storageInfo = storages.getCompound(String.valueOf(i));
+            CompoundTag storageInfo = storages.getCompound(String.valueOf(i));
 
             BlockPos pos = new BlockPos(storageInfo.getInt("posX"),
                     storageInfo.getInt("posY"),
@@ -81,25 +83,26 @@ public class WorldStorage extends WorldSavedData {
 
             String storageType = storageInfo.getString("dataType");
             ImmersiveStorage storage = GetStorage.assembleStorage(storageInfo.getCompound("data"),
-                    storageType, this);
+                    storageType, levelStorage);
 
             itemInfo.put(pos, storage);
 
         }
+        return levelStorage;
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT nbt) {
+    public CompoundTag save(CompoundTag nbt) {
         nbt.putInt("numOfStorages", itemInfo.size());
-        CompoundNBT storages = new CompoundNBT();
+        CompoundTag storages = new CompoundTag();
         int i = 0;
         for (Map.Entry<BlockPos, ImmersiveStorage> entry : itemInfo.entrySet()) {
-            CompoundNBT storageInfo = new CompoundNBT();
+            CompoundTag storageInfo = new CompoundTag();
 
             storageInfo.putInt("posX", entry.getKey().getX());
             storageInfo.putInt("posY", entry.getKey().getY());
             storageInfo.putInt("posZ", entry.getKey().getZ());
-            storageInfo.put("data", entry.getValue().save(new CompoundNBT()));
+            storageInfo.put("data", entry.getValue().save(new CompoundTag()));
             storageInfo.putString("dataType", entry.getValue().getType());
 
             storages.put(String.valueOf(i), storageInfo);

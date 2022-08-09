@@ -1487,7 +1487,7 @@ Build: 1.16.3-34.0.18 - Thu Sep 24 03:12:19 GMT 2020
 =========
 Build: 1.16.3-34.0.17 - Wed Sep 23 22:10:11 GMT 2020
 	diesieben07:
-		Fix ToggleableKeyBinding differences to vanilla. (#7338)
+		Fix ToggleableKeyMapping differences to vanilla. (#7338)
 
 =========
 Build: 1.16.3-34.0.16 - Wed Sep 23 21:34:47 GMT 2020

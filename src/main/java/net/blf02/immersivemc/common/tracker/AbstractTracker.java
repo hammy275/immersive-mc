@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.common.tracker;
 
-import net.minecraft.entity.player.Player;
+
+import net.minecraft.world.entity.player.Player;
 
 public abstract class AbstractTracker {
 

@@ -3,10 +3,10 @@ package net.blf02.immersivemc.server.tracker;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.server.PlayerConfigs;
-import net.minecraft.command.arguments.EntityAnchorArgument;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.Player;
-import net.minecraft.entity.player.ServerPlayer;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class RangedGrabTrackerServer extends AbstractTracker {
                 if (info.tickTime > 35) {
                     baseVelocity = baseVelocity.add(0, 0.25, 0);
                 }
-                info.item.lookAt(EntityAnchorArgument.Type.EYES, info.player.position().add(0, 1, 0));
+                info.item.lookAt(EntityAnchorArgument.Anchor.EYES, info.player.position().add(0, 1, 0));
                 Vec3 move = info.item.getLookAngle().multiply(moveMultiplier, moveMultiplier, moveMultiplier).add(baseVelocity);
                 info.item.setDeltaMovement(move.x, move.y, move.z);
                 info.item.hurtMarked = true; // velocityChanged from MCP

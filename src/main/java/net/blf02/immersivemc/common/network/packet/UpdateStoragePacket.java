@@ -5,10 +5,10 @@ import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.server.storage.GetStorage;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -25,12 +25,12 @@ public class UpdateStoragePacket {
     }
 
     public static void encode(UpdateStoragePacket packet, FriendlyByteBuf buffer) {
-        buffer.writeBlockPos(packet.pos).writeNbt(packet.storage.save(new CompoundNBT())).writeUtf(packet.storageType);
+        buffer.writeBlockPos(packet.pos).writeNbt(packet.storage.save(new CompoundTag())).writeUtf(packet.storageType);
     }
 
     public static UpdateStoragePacket decode(FriendlyByteBuf buffer) {
         BlockPos pos = buffer.readBlockPos();
-        CompoundNBT nbt = buffer.readNbt();
+        CompoundTag nbt = buffer.readNbt();
         String type = buffer.readUtf();
 
         ImmersiveStorage storage = GetStorage.assembleStorage(nbt, type, null);

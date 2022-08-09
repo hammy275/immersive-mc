@@ -3,18 +3,20 @@ package net.blf02.immersivemc.server.storage;
 import net.blf02.immersivemc.common.storage.AnvilStorage;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EnchantmentTableBlock;
 import net.minecraft.world.level.block.SmithingTableBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.saveddata.SavedData;
 
 import java.util.List;
 
 public class GetStorage {
 
-    public static ImmersiveStorage assembleStorage(CompoundNBT nbt, String storageType, WorldSavedData wStorage) {
+    public static ImmersiveStorage assembleStorage(CompoundTag nbt, String storageType, SavedData wStorage) {
         // Check storage type, and load storage accordingly
         ImmersiveStorage storage = null;
         if (storageType.equals(ImmersiveStorage.TYPE)) {
@@ -72,17 +74,17 @@ public class GetStorage {
     }
 
     public static ImmersiveStorage getEnchantingStorage(Player player, BlockPos pos) {
-        return WorldStorage.getStorage(player).getOrCreate(pos).initIfNotAlready(1);
+        return LevelStorage.getStorage(player).getOrCreate(pos).initIfNotAlready(1);
     }
 
     public static AnvilStorage getAnvilStorage(Player player, BlockPos pos) {
-        WorldStorage wStorage = WorldStorage.getStorage(player);
+        LevelStorage wStorage = LevelStorage.getStorage(player);
         ImmersiveStorage storageOld = wStorage.get(pos);
         AnvilStorage storage;
         if (!(storageOld instanceof AnvilStorage)) {
             storage = new AnvilStorage(wStorage);
             storage.initIfNotAlready(3);
-            WorldStorage.getStorage(player).add(pos, storage);
+            LevelStorage.getStorage(player).add(pos, storage);
         } else {
             storage = (AnvilStorage) storageOld;
         }
@@ -90,6 +92,6 @@ public class GetStorage {
     }
 
     public static ImmersiveStorage getCraftingStorage(Player player, BlockPos pos) {
-        return WorldStorage.getStorage(player).getOrCreate(pos).initIfNotAlready(10);
+        return LevelStorage.getStorage(player).getOrCreate(pos).initIfNotAlready(10);
     }
 }

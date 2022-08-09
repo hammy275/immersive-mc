@@ -5,8 +5,8 @@ import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.server.PlayerConfigs;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.text.TextComponent;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 

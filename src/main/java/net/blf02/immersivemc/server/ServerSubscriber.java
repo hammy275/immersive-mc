@@ -5,36 +5,37 @@ import net.blf02.immersivemc.common.network.Distributors;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
 import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
+import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.server.storage.GetStorage;
-import net.blf02.immersivemc.server.storage.WorldStorage;
-import net.blf02.immersivemc.common.storage.ImmersiveStorage;
+import net.blf02.immersivemc.server.storage.LevelStorage;
 import net.blf02.immersivemc.server.tracker.ServerTrackerInit;
-import net.minecraft.block.*;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.ServerPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.*;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 public class ServerSubscriber {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void blockBreak(BlockEvent.BreakEvent event) {
         if (event.getWorld().isClientSide()) return; // Only run server-side
-        ServerWorld world = (ServerWorld) event.getWorld();
+        ServerLevel world = (ServerLevel) event.getWorld();
         BlockState state = event.getState();
         boolean sendBreakPacket = false;
 
-        if (WorldStorage.usesWorldStorage(state)) {
-            ImmersiveStorage storage = WorldStorage.getStorage(world).remove(event.getPos());
+        if (LevelStorage.usesWorldStorage(state)) {
+            ImmersiveStorage storage = LevelStorage.getStorage(world).remove(event.getPos());
             if (storage != null && event.getPlayer().level != null) {
                 for (int i = 0; i <= GetStorage.getLastInputIndex(state); i++) {
                     Vec3 vecPos = Vec3.atCenterOf(event.getPos());

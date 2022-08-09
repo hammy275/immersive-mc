@@ -9,9 +9,9 @@ import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.blf02.vrapi.event.VRPlayerTickEvent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -39,7 +39,7 @@ public class ClientVRSubscriber {
         Vec3 start = event.vrPlayer.getHMD().position();
         Vec3 look = event.vrPlayer.getHMD().getLookAngle();
         Vec3 end = event.vrPlayer.getHMD().position().add(look.x * dist, look.y * dist, look.z * dist);
-        BlockRayTraceResult res = event.player.level.clip(new RayTraceContext(start, end, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE,
+        BlockHitResult res = event.player.level.clip(new ClipContext(start, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE,
                 null));
         ClientLogicSubscriber.possiblyTrack(res.getBlockPos(), event.player.level.getBlockState(res.getBlockPos()),
                 event.player.level.getBlockEntity(res.getBlockPos()), Minecraft.getInstance().level);

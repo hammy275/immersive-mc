@@ -1,8 +1,8 @@
 package net.blf02.immersivemc.server;
 
 import net.blf02.immersivemc.common.config.ServerPlayerConfig;
-import net.minecraft.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.HashMap;
 import java.util.Map;

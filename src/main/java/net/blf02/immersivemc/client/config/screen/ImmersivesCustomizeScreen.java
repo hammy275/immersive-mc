@@ -8,10 +8,14 @@ import net.minecraft.client.CycleOption;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.FormattedCharSequence;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ImmersivesCustomizeScreen extends Screen {
 
@@ -38,12 +42,12 @@ public class ImmersivesCustomizeScreen extends Screen {
         ScreenUtils.addOption("center_furnace", ImmersiveMCConfig.autoCenterFurnace, this.list);
         ScreenUtils.addOption("right_click_chest", ImmersiveMCConfig.rightClickChest, this.list);
         ScreenUtils.addOption("show_placement_guide", ImmersiveMCConfig.showPlacementGuide, this.list);
+
         this.list.addBig(CycleOption.create(
                 "config.immersivemc.placement_mode",
-                (ignored, option) -> new TextComponent(
-                        I18n.get("config.immersivemc.placement_mode",
-                                I18n.get("config.immersivemc.placement_mode." + ImmersiveMCConfig.itemPlacementMode.get()))
-                ),
+                () -> IntStream.rangeClosed(0, 3).boxed().collect(Collectors.toList()),
+                (optionIndex) -> new TranslatableComponent("config.immersivemc.placement_mode." + optionIndex),
+                (ignored) -> ImmersiveMCConfig.itemPlacementMode.get(),
                 (ignored, ignored2, newIndex) -> {
                     ImmersiveMCConfig.itemPlacementMode.set(
                             (ImmersiveMCConfig.itemPlacementMode.get() + newIndex) % PlacementMode.values().length
@@ -51,9 +55,10 @@ public class ImmersivesCustomizeScreen extends Screen {
                     ImmersiveMCConfig.itemPlacementMode.save();
                     ActiveConfig.loadConfigFromFile();
                 }
+
         ));
 
-        this.children.add(this.list);
+        this.addWidget(this.list);
 
         this.addWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2, this.height - 26,
@@ -72,7 +77,7 @@ public class ImmersivesCustomizeScreen extends Screen {
 
         super.render(stack, mouseX, mouseY, partialTicks);
 
-        List<IReorderingProcessor> list = SettingsScreen.tooltipAt(this.list, mouseX, mouseY);
+        List<FormattedCharSequence> list = OptionsSubScreen.tooltipAt(this.list, mouseX, mouseY);
         if (list != null) {
             this.renderTooltip(stack, list, mouseX, mouseY);
         }
