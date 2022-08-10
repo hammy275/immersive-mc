@@ -59,10 +59,11 @@
   "config.immersivemc.right_click_chest.desc": "When enabled, the immersive chest is opened/closed through a right click, rather than a hand motion.",
   "config.immersivemc.show_placement_guide": "Show Aqua Boxes to Guide in ImmersiveMC",
   "config.immersivemc.show_placement_guide.desc": "When enabled, uses aqua-colored boxes to show where immersives can be interacted with.",
-  "config.immersivemc.placement_mode": "Place %s Your Hand's Items into Immersives",
-  "config.immersivemc.placement_mode.0": "One Item From",
-  "config.immersivemc.placement_mode.1": "a Quarter of",
-  "config.immersivemc.placement_mode.2": "Half of",
-  "config.immersivemc.placement_mode.3": "All of"
+  "config.immersivemc.placement_mode": "Immersive Placement Mode",
+  "config.immersivemc.placement_mode.0": "Place One Item",
+  "config.immersivemc.placement_mode.1": "Place a Quarter of the Items",
+  "config.immersivemc.placement_mode.2": "Place Half of the Items",
+  "config.immersivemc.placement_mode.3": "Place All the Items",
+  "config.immersivemc.placement_mode.desc": "When right-clicking or placing items into immersives, %s from the stack of items in your hand into the immersive."
 
 }

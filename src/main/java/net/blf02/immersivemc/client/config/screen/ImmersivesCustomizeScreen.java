@@ -10,6 +10,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
 
@@ -56,6 +57,11 @@ public class ImmersivesCustomizeScreen extends Screen {
                     ActiveConfig.loadConfigFromFile();
                 }
 
+        ).setTooltip(
+                (minecraft) -> (optionIndex) -> minecraft.font.split(
+                        new TranslatableComponent("config.immersivemc.placement_mode.desc",
+                                I18n.get("config.immersivemc.placement_mode." + optionIndex).toLowerCase()),
+                        200)
         ));
 
         this.addRenderableWidget(this.list);
