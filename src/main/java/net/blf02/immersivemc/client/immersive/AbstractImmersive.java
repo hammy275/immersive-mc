@@ -273,8 +273,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                     -renderInfo.getPosition().y + pos.y,
                     -renderInfo.getPosition().z + pos.z);
             MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-            cubeModel.renderToBuffer(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
-                    OverlayTexture.NO_OVERLAY,
+            cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
                     0, 1, isGreen ? 0 : 1, alpha, (float) (hitbox.getSize() / 2f));
             stack.popPose();
         }
