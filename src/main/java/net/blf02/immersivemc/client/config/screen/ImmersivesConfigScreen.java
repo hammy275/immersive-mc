@@ -31,13 +31,13 @@ public class ImmersivesConfigScreen extends Screen {
     protected void init() {
         super.init();
         this.notInWorld = Minecraft.getInstance().level == null && Minecraft.getInstance().player == null;
+        if (this.notInWorld) {
+            initNotInWorld();
+        }
         this.addRenderableWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2, this.height - 26,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("gui.done"),
                 (button) -> this.onClose()));
-        if (this.notInWorld) {
-            initNotInWorld();
-        }
     }
 
     protected void initNotInWorld() {
@@ -69,9 +69,9 @@ public class ImmersivesConfigScreen extends Screen {
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
 
-        if (this.notInWorld) {
-            this.list.render(stack, mouseX, mouseY, partialTicks);
+        super.render(stack, mouseX, mouseY, partialTicks);
 
+        if (this.notInWorld) {
             drawCenteredString(stack, this.font, this.title.getString(),
                     this.width / 2, 8, 0xFFFFFF);
             drawCenteredString(stack, this.font, new TranslatableComponent("screen.immersivemc.immersives_config.subtitle"),
@@ -89,8 +89,6 @@ public class ImmersivesConfigScreen extends Screen {
                 this.renderTooltip(stack, list, mouseX, mouseY);
             }
         }
-
-        super.render(stack, mouseX, mouseY, partialTicks);
     }
 
     @Override

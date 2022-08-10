@@ -23,8 +23,6 @@ public class ClientRenderSubscriber {
             // Skip rendering if the list is modified mid-render
             // It's fine, since we were only going to read it anyway!!
         }
-
-
     }
 
     protected <I extends AbstractImmersiveInfo> void renderInfos(AbstractImmersive<I> singleton,
