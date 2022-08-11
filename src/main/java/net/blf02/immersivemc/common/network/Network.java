@@ -9,7 +9,7 @@ public class Network {
 
     private static final String FAKE_PROTOCOL_VERSION = ImmersiveMC.MOD_ID;
 
-    public static final int PROTOCOL_VERSION = 1; // Increment post-release
+    public static final int PROTOCOL_VERSION = 2; // Increment post-release
     // Version compatability is handled during config syncing.
 
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
