@@ -1,9 +1,9 @@
 {
   "required": true,
-  "minVersion": "0.8.4",
+  "minVersion": "0.8.5",
   "package": "net.blf02.immersivemc.mixin",
-  "compatibilityLevel": "JAVA_8",
-  "refmap": "mixins.survival_extras_2.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "mixins.immersivemc.refmap.json",
   "mixins": [
     "ContainerOpenersCounterMixin"
   ],
