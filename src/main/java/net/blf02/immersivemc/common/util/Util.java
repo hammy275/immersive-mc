@@ -157,6 +157,21 @@ public class Util {
         }
     }
 
+    public static Vec3 getPlayerVelocity(Vec3 lastTickPos, Vec3 currentTickPos) {
+        return new Vec3(currentTickPos.x - lastTickPos.x, currentTickPos.y - lastTickPos.y,
+                currentTickPos.z - lastTickPos.z);
+    }
+
+    public static double moveTowardsZero(double num, double subtract) {
+        subtract = Math.abs(subtract);
+        if (subtract >= Math.abs(num)) {
+            return 0;
+        } else if (num < 0) {
+            return num + subtract;
+        }
+        return num - subtract;
+    }
+
     public static class ItemStackMergeResult {
 
         public final ItemStack mergedInto;

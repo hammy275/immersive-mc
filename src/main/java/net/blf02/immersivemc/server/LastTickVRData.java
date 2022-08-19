@@ -1,22 +1,28 @@
 package net.blf02.immersivemc.server;
 
+import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.server.data.LastTickData;
 import net.blf02.vrapi.api.data.IVRData;
-import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class LastTickVRData {
-    public static final Map<String, IVRPlayer> lastTickVRData = new HashMap<>();
+    public static final Map<String, LastTickData> lastTickVRData = new HashMap<>();
 
-    public static Vec3 getVelocity(IVRData last, IVRData current) {
+    public static Vec3 getVelocity(IVRData last, IVRData current, LastTickData data) {
+        // Velocity check here is mainly used for hitting thresholds for hand movements
+        // so we account for the player velocity only in such a way where we move towards zero
         if (last == null) {
             return Vec3.ZERO;
         }
-        double x = (current.position().x - last.position().x) / 2d;
-        double y = (current.position().y - last.position().y) / 2d;
-        double z = (current.position().z - last.position().z) / 2d;
+        // Use lastPlayerPos and doubleLastPlayerPos since position is a tick ahead of VR data
+        Vec3 playerVelocity = Util.getPlayerVelocity(data.doubleLastPlayerPos, data.lastPlayerPos);
+        double x = Util.moveTowardsZero(current.position().x - last.position().x, playerVelocity.x);
+        double y = Util.moveTowardsZero(current.position().y - last.position().y, playerVelocity.y);
+        double z = Util.moveTowardsZero(current.position().z - last.position().z, playerVelocity.z);
         return new Vec3(x, y, z);
     }
+
 }
