@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.common.vr;
 
 import net.blf02.immersivemc.client.subscribe.ClientVRSubscriber;
+import net.blf02.immersivemc.server.tracker.ServerVRSubscriber;
 import net.blf02.vrapi.api.IVRAPI;
 import net.blf02.vrapi.api.VRAPIPlugin;
 import net.blf02.vrapi.api.VRAPIPluginProvider;
@@ -21,5 +22,6 @@ public class VRPlugin implements VRAPIPluginProvider {
         if (FMLLoader.getDist() == Dist.CLIENT) {
             MinecraftForge.EVENT_BUS.register(new ClientVRSubscriber());
         }
+        MinecraftForge.EVENT_BUS.register(new ServerVRSubscriber());
     }
 }
