@@ -35,6 +35,8 @@
   "config.immersivemc.campfire.desc": "Enables/disables the ability for VR players to hold food above a campfire to cook it.",
   "config.immersivemc.chest": "Use Chest Immersion",
   "config.immersivemc.chest.desc": "Enables/disables the ability for players to open/close chests without the GUI.",
+  "config.immersivemc.door": "Use Door Immersion [VR Only]",
+  "config.immersivemc.door.desc": "Enables/disables the opening and closing of doors and fence gates using hand motions.",
   "config.immersivemc.crafting": "Use Crafting Immersion",
   "config.immersivemc.crafting.desc": "Enables/disables the placing of items physically on the crafting table.",
   "config.immersivemc.enchanting_table": "Use Enchanting Table Immersion",

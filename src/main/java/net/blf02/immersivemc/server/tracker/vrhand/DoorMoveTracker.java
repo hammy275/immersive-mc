@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.server.tracker.vrhand;
 
+import net.blf02.immersivemc.common.config.ServerPlayerConfig;
 import net.blf02.immersivemc.server.LastTickVRData;
 import net.blf02.immersivemc.server.data.LastTickData;
 import net.blf02.vrapi.api.data.IVRPlayer;
@@ -61,6 +62,11 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
             ));
             cooldown.put(player.getGameProfile().getName(), 10);
         }
+    }
+
+    @Override
+    public boolean isEnabledInConfig(ServerPlayerConfig config) {
+        return config.useDoorImmersion;
     }
 
     public static Direction getDirectionToMove(BlockState state) {

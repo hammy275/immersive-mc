@@ -21,6 +21,7 @@ public class ActiveConfig {
     public static boolean useLever = false;
     public static boolean useBackpack = false;
     public static boolean useRepeaterImmersion = false;
+    public static boolean useDoorImmersion = false;
 
     // Non-synced values
     public static int backpackColor = 11901820;
@@ -57,6 +58,7 @@ public class ActiveConfig {
         useLever = buffer.readBoolean() && useLever;
         useBackpack = buffer.readBoolean() && useBackpack;
         useRepeaterImmersion = buffer.readBoolean() && useRepeaterImmersion;
+        useDoorImmersion = buffer.readBoolean() && useDoorImmersion;
         ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
 
     }
@@ -81,6 +83,7 @@ public class ActiveConfig {
             useLever = ImmersiveMCConfig.useLever.get();
             useBackpack = ImmersiveMCConfig.useBackpack.get();
             useRepeaterImmersion = ImmersiveMCConfig.useRepeaterImmersion.get();
+            useDoorImmersion = ImmersiveMCConfig.useDoorImmersion.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -111,12 +114,14 @@ public class ActiveConfig {
         useLever = false;
         useBackpack = false;
         useRepeaterImmersion = false;
+        useDoorImmersion = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
     public static FriendlyByteBuf encodeServerOnlyConfig(FriendlyByteBuf buffer) {
         buffer.writeBoolean(ActiveConfig.useButton).writeBoolean(ActiveConfig.useCampfireImmersion)
-                .writeBoolean(ActiveConfig.useLever).writeBoolean(ActiveConfig.useRangedGrab);
+                .writeBoolean(ActiveConfig.useLever).writeBoolean(ActiveConfig.useRangedGrab)
+                .writeBoolean(ActiveConfig.useDoorImmersion);
         return buffer;
     }
 
@@ -141,7 +146,8 @@ public class ActiveConfig {
                 "Auto-center brewing: " + autoCenterBrewing + "\n" +
                 "Use low detailed bag: " + useLowDetailBackpack + "\n" +
                 "Show placement guide: " + showPlacementGuide + "\n" +
-                "Placement mode: " + placementMode;
+                "Placement mode: " + placementMode + "\n" +
+                "Use door immersion: " + useDoorImmersion;
         return stringOut;
     }
 }

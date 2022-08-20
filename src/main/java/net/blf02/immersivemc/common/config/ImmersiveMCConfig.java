@@ -6,7 +6,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ImmersiveMCConfig {
 
-    public static final int CONFIG_VERSION = 1; // Increment post-release whenever the config changes
+    public static final int CONFIG_VERSION = 2; // Increment post-release whenever the config changes
 
     public static final ForgeConfigSpec GENERAL_SPEC;
 
@@ -24,6 +24,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useLever;
     public static ForgeConfigSpec.BooleanValue useBackpack;
     public static ForgeConfigSpec.BooleanValue useRepeaterImmersion;
+    public static ForgeConfigSpec.BooleanValue useDoorImmersion;
 
     //Non-synced values
     public static ForgeConfigSpec.IntValue backpackColor;
@@ -82,6 +83,9 @@ public class ImmersiveMCConfig {
         useRepeaterImmersion = builder
                 .comment("Whether VR users can adjust the delay of repeaters using their hands")
                 .define("repeater_immersion", true);
+        useDoorImmersion = builder
+                .comment("Whether VR users can open/close doors and fence gates using their hands")
+                .define("door_immersion", true);
 
         // Non-synced Values
         backpackColor = builder
@@ -122,7 +126,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useCampfireImmersion.get())
                 .writeBoolean(useLever.get())
                 .writeBoolean(useBackpack.get())
-                .writeBoolean(useRepeaterImmersion.get());
+                .writeBoolean(useRepeaterImmersion.get())
+                .writeBoolean(useDoorImmersion.get());
     }
 
     public static void resetToDefault() {
@@ -140,6 +145,7 @@ public class ImmersiveMCConfig {
         useLever.set(true);
         useBackpack.set(true);
         useRepeaterImmersion.set(true);
+        useDoorImmersion.set(true);
 
         // Non-synced defaults
         backpackColor.set(11901820);

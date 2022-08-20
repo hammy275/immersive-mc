@@ -1,6 +1,7 @@
 package net.blf02.immersivemc.server.tracker;
 
 import net.blf02.immersivemc.server.LastTickVRData;
+import net.blf02.immersivemc.server.PlayerConfigs;
 import net.blf02.immersivemc.server.data.LastTickData;
 import net.blf02.immersivemc.server.tracker.vrhand.AbstractVRHandTracker;
 import net.blf02.vrapi.event.VRPlayerTickEvent;
@@ -15,7 +16,8 @@ public class ServerVRSubscriber {
         if (event.phase == TickEvent.Phase.END && !event.player.level.isClientSide) {
             for (AbstractVRHandTracker tracker : ServerTrackerInit.vrPlayerTrackers) {
                 tracker.preTick();
-                if (LastTickVRData.lastTickVRData.get(event.player.getGameProfile().getName()) != null) {
+                if (LastTickVRData.lastTickVRData.get(event.player.getGameProfile().getName()) != null
+                && tracker.isEnabledInConfig(PlayerConfigs.getConfig(event.player))) {
                     tracker.tick(event.player, event.vrPlayer, LastTickVRData.lastTickVRData.get(event.player.getGameProfile().getName()));
                 }
                 LastTickData data = LastTickVRData.lastTickVRData.get(event.player.getGameProfile().getName());

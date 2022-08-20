@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.server.tracker.vrhand;
 
+import net.blf02.immersivemc.common.config.ServerPlayerConfig;
 import net.blf02.immersivemc.server.data.LastTickData;
 import net.blf02.immersivemc.server.tracker.ServerTrackerInit;
 import net.blf02.vrapi.api.data.IVRData;
@@ -25,6 +26,8 @@ public abstract class AbstractVRHandTracker {
 
     protected abstract void runForHand(Player player, InteractionHand hand, ItemStack stackInHand,
                                        IVRPlayer currentVRData, LastTickData lastVRData);
+
+    public abstract boolean isEnabledInConfig(ServerPlayerConfig config);
 
     public void preTick() {
 
