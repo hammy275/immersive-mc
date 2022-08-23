@@ -25,4 +25,9 @@ public class LastTickVRData {
         return new Vec3(x, y, z);
     }
 
+    public static double getAllVelocity(IVRData last, IVRData current, LastTickData data) {
+        Vec3 vel = getVelocity(last, current, data);
+        return Math.abs(vel.x) + Math.abs(vel.y) + Math.abs(vel.z);
+    }
+
 }

@@ -20,11 +20,11 @@ public class ServerVRSubscriber {
                 && tracker.isEnabledInConfig(PlayerConfigs.getConfig(event.player))) {
                     tracker.tick(event.player, event.vrPlayer, LastTickVRData.lastTickVRData.get(event.player.getGameProfile().getName()));
                 }
-                LastTickData data = LastTickVRData.lastTickVRData.get(event.player.getGameProfile().getName());
-                Vec3 doubleLast = data == null ? event.player.position() : data.lastPlayerPos;
-                LastTickVRData.lastTickVRData.put(event.player.getGameProfile().getName(),
-                        new LastTickData(event.vrPlayer, event.player.position(), doubleLast));
             }
+            LastTickData data = LastTickVRData.lastTickVRData.get(event.player.getGameProfile().getName());
+            Vec3 doubleLast = data == null ? event.player.position() : data.lastPlayerPos;
+            LastTickVRData.lastTickVRData.put(event.player.getGameProfile().getName(),
+                    new LastTickData(event.vrPlayer, event.player.position(), doubleLast));
         }
     }
 

@@ -25,6 +25,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useBackpack;
     public static ForgeConfigSpec.BooleanValue useRepeaterImmersion;
     public static ForgeConfigSpec.BooleanValue useDoorImmersion;
+    public static ForgeConfigSpec.BooleanValue useHoeImmersion;
 
     //Non-synced values
     public static ForgeConfigSpec.IntValue backpackColor;
@@ -86,6 +87,9 @@ public class ImmersiveMCConfig {
         useDoorImmersion = builder
                 .comment("Whether VR users can open/close doors and fence gates using their hands")
                 .define("door_immersion", true);
+        useHoeImmersion = builder
+                .comment("Whether VR users can swing a hoe to till ground and harvest wheat")
+                .define("hoe_immersion", true);
 
         // Non-synced Values
         backpackColor = builder
@@ -127,7 +131,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useLever.get())
                 .writeBoolean(useBackpack.get())
                 .writeBoolean(useRepeaterImmersion.get())
-                .writeBoolean(useDoorImmersion.get());
+                .writeBoolean(useDoorImmersion.get())
+                .writeBoolean(useHoeImmersion.get());
     }
 
     public static void resetToDefault() {
@@ -146,6 +151,7 @@ public class ImmersiveMCConfig {
         useBackpack.set(true);
         useRepeaterImmersion.set(true);
         useDoorImmersion.set(true);
+        useHoeImmersion.set(true);
 
         // Non-synced defaults
         backpackColor.set(11901820);
