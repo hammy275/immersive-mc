@@ -43,6 +43,8 @@
   "config.immersivemc.enchanting_table.desc": "Enables/disables the ability to use the enchanting table immersive.",
   "config.immersivemc.furnace": "Use Furnace Immersion",
   "config.immersivemc.furnace.desc": "Enables/disables the ability to use the furnace immersive.",
+  "config.immersivemc.hoe": "Use Hoe Immersion [VR Only]",
+  "config.immersivemc.hoe.desc": "Enables/disables the abiilty to swing a hoe at the ground to till it and to swing it to harvest wheat.",
   "config.immersivemc.jukebox": "Use Jukebox Immersion [VR Only]",
   "config.immersivemc.jukebox.desc": "Enables/disables the ability for VR players to physically put discs in the jukebox.",
   "config.immersivemc.lever": "Use Lever Immersion [VR Only]",
