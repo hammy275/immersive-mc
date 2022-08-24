@@ -104,9 +104,10 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
             renderItem(info.items[i], stack, info.getPosition(i),
                     itemSize, forward, Direction.UP, info.getHitbox(i), true, -1);
         }
+        int degreesRotation = (int) (info.ticksActive % 100d * 3.6d);
         renderItem(info.outputItem, stack, info.outputPosition,
                 itemSize * 3, forward, null, info.outputHitbox, true,
-                (int) (info.ticksActive % 100d * 3.6d)); // * 3.6 = * 360/100
+                ActiveConfig.spinCraftingOutput ? degreesRotation : -1); // * 3.6 = * 360/100
     }
 
     @Override

@@ -63,6 +63,8 @@
   "config.immersivemc.right_click_chest.desc": "When enabled, the immersive chest is opened/closed through a right click, rather than a hand motion.",
   "config.immersivemc.show_placement_guide": "Show Aqua Boxes to Guide in ImmersiveMC",
   "config.immersivemc.show_placement_guide.desc": "When enabled, uses aqua-colored boxes to show where immersives can be interacted with.",
+  "config.immersivemc.spin_crafting_output": "Spin Crafting Output",
+  "config.immersivemc.spin_crafting_output.desc": "Whether the output of a crafting table that's shown above the table should slowly spin.",
   "config.immersivemc.placement_mode": "Immersive Placement Mode",
   "config.immersivemc.placement_mode.0": "Place One Item",
   "config.immersivemc.placement_mode.1": "Place a Quarter of the Items",

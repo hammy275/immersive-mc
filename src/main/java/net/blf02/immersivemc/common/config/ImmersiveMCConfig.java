@@ -36,6 +36,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useLowDetailBackpack;
     public static ForgeConfigSpec.BooleanValue showPlacementGuide;
     public static ForgeConfigSpec.IntValue itemPlacementMode;
+    public static ForgeConfigSpec.BooleanValue spinCraftingOutput;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -116,6 +117,9 @@ public class ImmersiveMCConfig {
         itemPlacementMode = builder
                 .comment("Integer representation for the mode to use when placing items using ImmersiveMC")
                 .defineInRange("placement_mode", 0, 0, PlacementMode.values().length - 1);
+        spinCraftingOutput = builder
+                .comment("Whether the item output of a crafting table should spin")
+                .define("spin_crafting_output", true);
     }
 
     public static void encode(FriendlyByteBuf buffer) {
@@ -162,6 +166,7 @@ public class ImmersiveMCConfig {
         useLowDetailBackpack.set(false);
         showPlacementGuide.set(true);
         itemPlacementMode.set(0);
+        spinCraftingOutput.set(false);
 
     }
 

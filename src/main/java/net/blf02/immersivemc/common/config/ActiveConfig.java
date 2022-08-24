@@ -3,6 +3,7 @@ package net.blf02.immersivemc.common.config;
 import net.blf02.immersivemc.ImmersiveMC;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 
 public class ActiveConfig {
@@ -33,6 +34,7 @@ public class ActiveConfig {
     public static boolean useLowDetailBackpack = false;
     public static boolean showPlacementGuide = true;
     public static PlacementMode placementMode = PlacementMode.PLACE_ONE;
+    public static boolean spinCraftingOutput = true;
 
     public static void loadConfigFromPacket(FriendlyByteBuf buffer) {
         int serverNetworkVersion = buffer.readInt();
@@ -71,7 +73,7 @@ public class ActiveConfig {
 
     public static void loadConfigFromFile(boolean forceLoadServerSettings) {
         // Synced values (only loaded if we're not in a server)
-        if (forceLoadServerSettings) {
+        if (forceLoadServerSettings || Minecraft.getInstance().level == null) {
             useAnvilImmersion = ImmersiveMCConfig.useAnvilImmersion.get();
             useBrewingImmersion = ImmersiveMCConfig.useBrewingImmersion.get();
             useChestImmersion = ImmersiveMCConfig.useChestImmersion.get();
@@ -100,6 +102,7 @@ public class ActiveConfig {
         useLowDetailBackpack = ImmersiveMCConfig.useLowDetailBackpack.get();
         showPlacementGuide = ImmersiveMCConfig.showPlacementGuide.get();
         placementMode = PlacementMode.fromInt(ImmersiveMCConfig.itemPlacementMode.get());
+        spinCraftingOutput = ImmersiveMCConfig.spinCraftingOutput.get();
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
@@ -152,7 +155,8 @@ public class ActiveConfig {
                 "Show placement guide: " + showPlacementGuide + "\n" +
                 "Placement mode: " + placementMode + "\n" +
                 "Use door immersion: " + useDoorImmersion + "\n" +
-                "Use hoe immersion: " + useHoeImmersion;
+                "Use hoe immersion: " + useHoeImmersion + "\n" +
+                "Spin crafting output: " + spinCraftingOutput;
         return stringOut;
     }
 }
