@@ -3,6 +3,7 @@ package net.blf02.immersivemc.client.config.screen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
+import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -40,7 +41,9 @@ public class ConfigScreen extends Screen {
         this.addRenderableWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2, this.height / 2 + BUTTON_HEIGHT + 16,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("config.immersivemc.immersives"),
-                (button) -> Minecraft.getInstance().setScreen(new ImmersivesConfigScreen(this))
+                (button) -> Minecraft.getInstance().setScreen(new ImmersivesConfigScreen(this,
+                        VRPluginVerify.clientInVR ?
+                                ImmersivesConfigScreen.ScreenType.BOTH : ImmersivesConfigScreen.ScreenType.NONVR))
         ));
 
         this.addRenderableWidget(new Button(

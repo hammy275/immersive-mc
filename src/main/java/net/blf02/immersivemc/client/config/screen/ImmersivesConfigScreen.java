@@ -15,6 +15,8 @@ import java.util.List;
 
 public class ImmersivesConfigScreen extends Screen {
 
+    protected final ScreenType type;
+
     protected final Screen lastScreen;
     protected OptionsList list;
     protected boolean notInWorld;
@@ -22,9 +24,10 @@ public class ImmersivesConfigScreen extends Screen {
     protected static int BUTTON_WIDTH = 128;
     protected static int BUTTON_HEIGHT = 20;
 
-    public ImmersivesConfigScreen(Screen screen) {
+    public ImmersivesConfigScreen(Screen screen, ScreenType type) {
         super(new TranslatableComponent("screen.immersivemc.immersives_config.title"));
         this.lastScreen = screen;
+        this.type = type;
     }
 
     @Override
@@ -50,21 +53,28 @@ public class ImmersivesConfigScreen extends Screen {
     }
 
     protected void initOptionsList() {
-        ScreenUtils.addOption("anvil", ImmersiveMCConfig.useAnvilImmersion, this.list);
-        ScreenUtils.addOption("backpack_button", ImmersiveMCConfig.useBackpack, this.list);
-        ScreenUtils.addOption("brewing", ImmersiveMCConfig.useBrewingImmersion, this.list);
-        ScreenUtils.addOption("button", ImmersiveMCConfig.useButton, this.list);
-        ScreenUtils.addOption("campfire", ImmersiveMCConfig.useCampfireImmersion, this.list);
-        ScreenUtils.addOption("chest", ImmersiveMCConfig.useChestImmersion, this.list);
-        ScreenUtils.addOption("crafting", ImmersiveMCConfig.useCraftingImmersion, this.list);
-        ScreenUtils.addOption("door", ImmersiveMCConfig.useDoorImmersion, this.list);
-        ScreenUtils.addOption("enchanting_table", ImmersiveMCConfig.useETableImmersion, this.list);
-        ScreenUtils.addOption("furnace", ImmersiveMCConfig.useFurnaceImmersion, this.list);
-        ScreenUtils.addOption("hoe", ImmersiveMCConfig.useHoeImmersion, this.list);
-        ScreenUtils.addOption("jukebox", ImmersiveMCConfig.useJukeboxImmersion, this.list);
-        ScreenUtils.addOption("lever", ImmersiveMCConfig.useLever, this.list);
-        ScreenUtils.addOption("ranged_grab", ImmersiveMCConfig.useRangedGrab, this.list);
-        ScreenUtils.addOption("repeater", ImmersiveMCConfig.useRepeaterImmersion, this.list);
+        if (this.type.isNonVR()) {
+            ScreenUtils.addOption("anvil", ImmersiveMCConfig.useAnvilImmersion, this.list);
+            ScreenUtils.addOption("brewing", ImmersiveMCConfig.useBrewingImmersion, this.list);
+            ScreenUtils.addOption("chest", ImmersiveMCConfig.useChestImmersion, this.list);
+            ScreenUtils.addOption("crafting", ImmersiveMCConfig.useCraftingImmersion, this.list);
+            ScreenUtils.addOption("enchanting_table", ImmersiveMCConfig.useETableImmersion, this.list);
+            ScreenUtils.addOption("furnace", ImmersiveMCConfig.useFurnaceImmersion, this.list);
+        }
+
+        if (this.type.isVR()) {
+            ScreenUtils.addOption("backpack_button", ImmersiveMCConfig.useBackpack, this.list);
+            ScreenUtils.addOption("button", ImmersiveMCConfig.useButton, this.list);
+            ScreenUtils.addOption("campfire", ImmersiveMCConfig.useCampfireImmersion, this.list);
+            ScreenUtils.addOption("door", ImmersiveMCConfig.useDoorImmersion, this.list);
+            ScreenUtils.addOption("hoe", ImmersiveMCConfig.useHoeImmersion, this.list);
+            ScreenUtils.addOption("jukebox", ImmersiveMCConfig.useJukeboxImmersion, this.list);
+            ScreenUtils.addOption("lever", ImmersiveMCConfig.useLever, this.list);
+            ScreenUtils.addOption("ranged_grab", ImmersiveMCConfig.useRangedGrab, this.list);
+            ScreenUtils.addOption("repeater", ImmersiveMCConfig.useRepeaterImmersion, this.list);
+        }
+
+
     }
 
     @Override
@@ -97,5 +107,19 @@ public class ImmersivesConfigScreen extends Screen {
     public void onClose() {
         Minecraft.getInstance().setScreen(lastScreen);
         ActiveConfig.loadConfigFromFile();
+    }
+
+    public enum ScreenType {
+        VR, // Goes unused, but I may use it at some point
+        NONVR,
+        BOTH;
+
+        public boolean isVR() {
+            return this == VR || this == BOTH;
+        }
+
+        public boolean isNonVR() {
+            return this == NONVR || this == BOTH;
+        }
     }
 }
