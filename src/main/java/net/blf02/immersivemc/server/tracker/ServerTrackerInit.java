@@ -21,4 +21,5 @@ public class ServerTrackerInit {
 
     public static final DoorMoveTracker doorTracker = new DoorMoveTracker();
     public static final HoeTracker hoeTracker = new HoeTracker();
+    public static final PetTracker petTracker = new PetTracker();
 }

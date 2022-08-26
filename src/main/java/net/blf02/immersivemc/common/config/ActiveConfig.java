@@ -24,6 +24,7 @@ public class ActiveConfig {
     public static boolean useRepeaterImmersion = false;
     public static boolean useDoorImmersion = false;
     public static boolean useHoeImmersion = false;
+    public static boolean canPet = false;
 
     // Non-synced values
     public static int backpackColor = 11901820;
@@ -63,6 +64,7 @@ public class ActiveConfig {
         useRepeaterImmersion = buffer.readBoolean() && useRepeaterImmersion;
         useDoorImmersion = buffer.readBoolean() && useDoorImmersion;
         useHoeImmersion = buffer.readBoolean() && useHoeImmersion;
+        canPet = buffer.readBoolean() && canPet;
         ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
 
     }
@@ -89,6 +91,7 @@ public class ActiveConfig {
             useRepeaterImmersion = ImmersiveMCConfig.useRepeaterImmersion.get();
             useDoorImmersion = ImmersiveMCConfig.useDoorImmersion.get();
             useHoeImmersion = ImmersiveMCConfig.useHoeImmersion.get();
+            canPet = ImmersiveMCConfig.canPet.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -122,13 +125,15 @@ public class ActiveConfig {
         useRepeaterImmersion = false;
         useDoorImmersion = false;
         useHoeImmersion = false;
+        canPet = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
     public static FriendlyByteBuf encodeServerOnlyConfig(FriendlyByteBuf buffer) {
         buffer.writeBoolean(ActiveConfig.useButton).writeBoolean(ActiveConfig.useCampfireImmersion)
                 .writeBoolean(ActiveConfig.useLever).writeBoolean(ActiveConfig.useRangedGrab)
-                .writeBoolean(ActiveConfig.useDoorImmersion).writeBoolean(ActiveConfig.useHoeImmersion);
+                .writeBoolean(ActiveConfig.useDoorImmersion).writeBoolean(ActiveConfig.useHoeImmersion)
+                .writeBoolean(ActiveConfig.canPet);
         return buffer;
     }
 
@@ -156,7 +161,8 @@ public class ActiveConfig {
                 "Placement mode: " + placementMode + "\n" +
                 "Use door immersion: " + useDoorImmersion + "\n" +
                 "Use hoe immersion: " + useHoeImmersion + "\n" +
-                "Spin crafting output: " + spinCraftingOutput;
+                "Spin crafting output: " + spinCraftingOutput + "\n" +
+                "Can pet: " + canPet;
         return stringOut;
     }
 }

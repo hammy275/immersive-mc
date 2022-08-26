@@ -49,6 +49,8 @@
   "config.immersivemc.jukebox.desc": "Enables/disables the ability for VR players to physically put discs in the jukebox.",
   "config.immersivemc.lever": "Use Lever Immersion [VR Only]",
   "config.immersivemc.lever.desc": "Enables/disables the ability for VR players to physically flick levers.",
+  "config.immersivemc.pet": "Can Pet Pets [VR Only]",
+  "config.immersivemc.pet.desc": "Whether VR players can pet pets they have tamed (or animals that are tamed for everyone once tamed).",
   "config.immersivemc.ranged_grab": "Use Ranged Grab [VR Only]",
   "config.immersivemc.ranged_grab.desc": "Enables/disables the ability for VR players to grab items by flicking their wrist after holding down the trigger.",
   "config.immersivemc.repeater": "Use Repeater Immersion [VR Only]",
