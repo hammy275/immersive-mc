@@ -9,6 +9,7 @@ import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.packet.GetRecipePacket;
 import net.blf02.immersivemc.common.network.packet.InteractPacket;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.client.Minecraft;
@@ -38,6 +39,9 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
 
     protected void setHitboxes(CraftingInfo info) {
         Objects.requireNonNull(Minecraft.getInstance().player);
+        Objects.requireNonNull(Minecraft.getInstance().level);
+
+        info.isTinkersTable = Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()) != null;
 
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         Vec3 pos = getTopCenterOfBlock(info.getBlockPosition());
@@ -79,6 +83,10 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         if (info.lastDir != forward) {
             setHitboxes(info);
+        }
+
+        if (info.isTinkersTable && info.ticksActive % 4 == 0) { // Retrieve recipe to prevent de-syncs with tinkers
+            Network.INSTANCE.sendToServer(new GetRecipePacket(info.getBlockPosition()));
         }
 
     }

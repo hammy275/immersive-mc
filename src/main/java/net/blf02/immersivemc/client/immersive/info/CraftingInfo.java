@@ -13,6 +13,7 @@ public class CraftingInfo extends AbstractWorldStorageInfo implements InfoTrigge
     public Vec3 outputPosition;
     public AABB outputHitbox;
     public ItemStack outputItem;
+    public boolean isTinkersTable = false;
 
     public CraftingInfo(BlockPos pos, int ticksToExist) {
         super(pos, ticksToExist, 8); // Trigger hitbox is handled in here
