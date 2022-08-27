@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkEvent;
@@ -52,8 +53,8 @@ public class SwapPacket {
                 BlockState state = player.level.getBlockState(message.block);
                 if (ImmersiveCheckers.isFurnace(message.block, state, tileEnt, player.level)
                         && ActiveConfig.useFurnaceImmersion) {
-                    AbstractFurnaceBlockEntity furnace = (AbstractFurnaceBlockEntity) tileEnt;
-                    Swap.handleFurnaceSwap(furnace, player, message.hand, message.slot, message.placementMode);
+                    Swap.handleFurnaceSwap((WorldlyContainer) tileEnt,
+                            player, message.hand, message.slot, message.placementMode);
                 } else if (ImmersiveCheckers.isBrewingStand(message.block, state, tileEnt, player.level)
                         && ActiveConfig.useBrewingImmersion) {
                     BrewingStandBlockEntity stand = (BrewingStandBlockEntity) tileEnt;

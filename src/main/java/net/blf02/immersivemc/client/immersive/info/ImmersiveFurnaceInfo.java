@@ -3,17 +3,17 @@ package net.blf02.immersivemc.client.immersive.info;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 
-public class ImmersiveFurnaceInfo extends AbstractBlockEntityImmersiveInfo<AbstractFurnaceBlockEntity> {
+public class ImmersiveFurnaceInfo extends AbstractBlockEntityImmersiveInfo<BlockEntity> {
 
     protected AABB toSmeltHitbox = null;
     protected AABB fuelHitbox = null;
     protected AABB outputHitbox = null;
     public final Direction forward;
 
-    public ImmersiveFurnaceInfo(AbstractFurnaceBlockEntity furnace, int ticksLeft) {
+    public ImmersiveFurnaceInfo(BlockEntity furnace, int ticksLeft) {
         super(furnace, ticksLeft, 2);
         this.forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
     }

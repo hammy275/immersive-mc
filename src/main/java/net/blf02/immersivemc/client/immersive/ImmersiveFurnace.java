@@ -16,12 +16,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-public class ImmersiveFurnace extends AbstractBlockEntityImmersive<AbstractFurnaceBlockEntity, ImmersiveFurnaceInfo> {
+public class ImmersiveFurnace extends AbstractBlockEntityImmersive<BlockEntity, ImmersiveFurnaceInfo> {
 
     // We don't ever expect this to get too big (since this mod runs on clients separately)
     public ImmersiveFurnace() {
@@ -30,7 +29,7 @@ public class ImmersiveFurnace extends AbstractBlockEntityImmersive<AbstractFurna
 
     @Override
     public ImmersiveFurnaceInfo getNewInfo(BlockEntity tileEnt) {
-        return new ImmersiveFurnaceInfo((AbstractFurnaceBlockEntity) tileEnt, ClientConstants.ticksToRenderFurnace);
+        return new ImmersiveFurnaceInfo(tileEnt, ClientConstants.ticksToRenderFurnace);
     }
 
     @Override
@@ -50,7 +49,7 @@ public class ImmersiveFurnace extends AbstractBlockEntityImmersive<AbstractFurna
     protected void doTick(ImmersiveFurnaceInfo info, boolean isInVR) {
         super.doTick(info, isInVR);
 
-        AbstractFurnaceBlockEntity furnace = info.getBlockEntity();
+        BlockEntity furnace = info.getBlockEntity();
         Direction forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
         Vec3 pos = getDirectlyInFront(forward, furnace.getBlockPos());
 

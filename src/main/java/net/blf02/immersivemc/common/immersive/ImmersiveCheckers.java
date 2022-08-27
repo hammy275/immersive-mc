@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.common.immersive;
 
+import net.blf02.immersivemc.common.compat.IronFurnaces;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -46,7 +47,8 @@ public class ImmersiveCheckers {
     }
 
     public static boolean isFurnace(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return tileEntity instanceof AbstractFurnaceBlockEntity;
+        return tileEntity instanceof AbstractFurnaceBlockEntity ||
+                IronFurnaces.ironFurnaceTileBase.isInstance(tileEntity);
     }
 
     public static boolean isJukebox(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {

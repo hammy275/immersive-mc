@@ -28,7 +28,9 @@ public class NetworkClientHandlers {
                 AbstractBlockEntityImmersive<?, ?> tileImm = (AbstractBlockEntityImmersive<?, ?>) singleton;
                 for (AbstractBlockEntityImmersiveInfo<?> info : tileImm.getTrackedObjects()) {
                     if (info.getBlockPosition().equals(pos)) {
-                        for (int i = 0; i < stacks.length; i++) {
+                        // Use the length of items since some mods have extra slots
+                        // Like IronFurnaces has slots beyond the first 3 of a furnace
+                        for (int i = 0; i < info.items.length; i++) {
                             info.items[i] = stacks[i];
                         }
                         return;
