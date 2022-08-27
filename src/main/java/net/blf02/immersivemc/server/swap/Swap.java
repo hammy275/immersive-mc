@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -175,19 +176,51 @@ public class Swap {
     public static void handleCraftingSwap(ServerPlayer player, int slot, InteractionHand hand, BlockPos tablePos,
                                           PlacementMode mode) {
         ImmersiveStorage storage = GetStorage.getCraftingStorage(player, tablePos);
-        if (slot < 9) {
-            ItemStack playerItem = player.getItemInHand(hand);
-            ItemStack anvilItem = storage.items[slot];
-            SwapResult result = getSwap(playerItem, anvilItem, mode);
-            storage.items[slot] = result.toOther;
-            givePlayerItemSwap(result.toHand, playerItem, player, hand);
-            placeLeftovers(player, result.leftovers);
-            CraftingRecipe recipe = getRecipe(player, storage.items);
-            storage.items[9] = recipe != null ? recipe.getResultItem() : ItemStack.EMPTY;
+        if (player.level.getBlockEntity(tablePos) instanceof Container table) { // Tinker's Construct Table
+            ItemStack playerItem = player.getItemInHand(hand).copy();
+            ItemStack craftingItem = table.getItem(slot).copy();
+            if (slot < 9) {
+                // Only set the output item into our storage since everything else is rendered by TC
+                SwapResult result = getSwap(playerItem, craftingItem, mode);
+                givePlayerItemSwap(result.toHand, playerItem, player, hand);
+                table.setItem(slot, result.toOther);
+                placeLeftovers(player, result.leftovers);
+                ItemStack[] ins = new ItemStack[10];
+                for (int i = 0; i <= 8; i++) {
+                    ins[i] = table.getItem(i);
+                    storage.items[i] = ItemStack.EMPTY;
+                }
+                ins[9] = ItemStack.EMPTY;
+                CraftingRecipe recipe = getRecipe(player, ins);
+                storage.items[9] = recipe != null ? recipe.getResultItem() : ItemStack.EMPTY;
+            } else {
+                // At crafting time, make our storage match the table contents, craft like a vanilla table,
+                // then put our storage back to empty after cloning our crafting results back over
+                for (int i = 0; i <= 8; i++) {
+                    storage.items[i] = table.getItem(i).copy();
+                }
+                handleDoCraft(player, storage.items, tablePos);
+                for (int i = 0; i <= 8; i++) {
+                    // setItem here instead of using non-copies so setItem can sync stuff back
+                    table.setItem(i, storage.items[i]);
+                    storage.items[i] = ItemStack.EMPTY;
+                }
+            }
         } else {
-            handleDoCraft(player, storage.items, tablePos);
+            if (slot < 9) {
+                ItemStack playerItem = player.getItemInHand(hand);
+                ItemStack craftingItem = storage.items[slot];
+                SwapResult result = getSwap(playerItem, craftingItem, mode);
+                storage.items[slot] = result.toOther;
+                givePlayerItemSwap(result.toHand, playerItem, player, hand);
+                placeLeftovers(player, result.leftovers);
+                CraftingRecipe recipe = getRecipe(player, storage.items);
+                storage.items[9] = recipe != null ? recipe.getResultItem() : ItemStack.EMPTY;
+            } else {
+                handleDoCraft(player, storage.items, tablePos);
+            }
+            storage.wStorage.setDirty();
         }
-        storage.wStorage.setDirty();
     }
 
     public static CraftingRecipe getRecipe(ServerPlayer player, ItemStack[] stacksIn) {

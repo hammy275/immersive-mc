@@ -39,7 +39,9 @@ public class ImmersiveCheckers {
     }
 
     public static boolean isCraftingTable(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return state.getBlock() == Blocks.CRAFTING_TABLE;
+        return state.getBlock() == Blocks.CRAFTING_TABLE ||
+                (tileEntity != null &&
+                        tileEntity.getClass().getName().equals("slimeknights.tconstruct.tables.block.entity.table.CraftingStationBlockEntity"));
     }
 
     public static boolean isEnchantingTable(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
