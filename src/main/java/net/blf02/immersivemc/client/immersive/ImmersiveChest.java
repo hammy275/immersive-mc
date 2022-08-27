@@ -13,6 +13,7 @@ import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -24,14 +25,13 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Objects;
 
 public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, ChestInfo> {
-
-    public static ImmersiveChest singleton = new ImmersiveChest();
     private final double spacing = 3d/16d;
     private final double threshold = 0.03;
 
@@ -176,6 +176,16 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     }
 
     @Override
+    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        return tileEntity instanceof ChestBlockEntity || tileEntity instanceof EnderChestBlockEntity;
+    }
+
+    @Override
+    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
+        return Immersives.immersiveChest;
+    }
+
+    @Override
     protected void render(ChestInfo info, PoseStack stack, boolean isInVR) {
         float itemSize = ClientConstants.itemScaleSizeChest / info.getItemTransitionCountdown();
         Direction forward = info.forward;
@@ -247,12 +257,13 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     }
 
     @Override
-    public boolean shouldTrack(BlockEntity tileEnt) {
+    public boolean reallyShouldTrack(BlockEntity tileEnt) {
         // Make sure this isn't an "other" chest.
         if (tileEnt instanceof ChestBlockEntity) {
             ChestBlockEntity other = Util.getOtherChest((ChestBlockEntity) tileEnt);
             if (other != null) { // If we have an other chest, make sure that one isn't already being tracked
-                for (ChestInfo info : ImmersiveChest.singleton.getTrackedObjects()) {
+                for (AbstractImmersiveInfo aInfo : this.getSingleton().getTrackedObjects()) {
+                    ChestInfo info = (ChestInfo) aInfo;
                     if (info.getBlockEntity() == other) { // If the info we're looking at is our neighboring chest
                         if (info.other == null) { // If our neighboring chest's info isn't tracking us
                             info.failRender = true;
@@ -265,7 +276,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
                 }
             }
         }
-        return super.shouldTrack(tileEnt);
+        return super.reallyShouldTrack(tileEnt);
     }
 
     @Override
@@ -284,7 +295,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
 
     public static ChestInfo findImmersive(BlockEntity chest) {
         Objects.requireNonNull(chest);
-        for (ChestInfo info : singleton.getTrackedObjects()) {
+        for (ChestInfo info : Immersives.immersiveChest.getTrackedObjects()) {
             if (info.getBlockEntity() == chest || info.other == chest) {
                 return info;
             }

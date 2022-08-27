@@ -69,7 +69,7 @@ public class ClientLogicSubscriber {
         if (ImmersiveMC.SUMMON_BACKPACK.isDown()) {
             if (!backpackPressed) {
                 backpackPressed = true;
-                ImmersiveBackpack.singleton.doTrack();
+                Immersives.immersiveBackpack.doTrack();
             }
         } else {
             backpackPressed = false;
@@ -98,34 +98,20 @@ public class ClientLogicSubscriber {
     }
 
     public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        if (tileEntity instanceof AbstractFurnaceBlockEntity) {
-            AbstractFurnaceBlockEntity furnace = (AbstractFurnaceBlockEntity) tileEntity;
-            ImmersiveFurnace.getSingleton().trackObject(furnace);
-        } else if (tileEntity instanceof BrewingStandBlockEntity) {
-            BrewingStandBlockEntity stand = (BrewingStandBlockEntity) tileEntity;
-            ImmersiveBrewing.getSingleton().trackObject(stand);
-        } else if (state.getBlock() == Blocks.CRAFTING_TABLE) {
-            ImmersiveCrafting.singleton.trackObject(pos);
-        } else if (tileEntity instanceof JukeboxBlockEntity) {
-            ImmersiveJukebox.getSingleton().trackObject((JukeboxBlockEntity) tileEntity);
-        } else if (tileEntity instanceof ChestBlockEntity || tileEntity instanceof EnderChestBlockEntity) {
-            ImmersiveChest.singleton.trackObject(tileEntity);
-        } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
-            ImmersiveAnvil.singleton.trackObject(pos);
-        } else if (state.getBlock() instanceof EnchantmentTableBlock) {
-            ImmersiveETable.singleton.trackObject(pos);
-            return;
-        } else if (state.getBlock() instanceof RepeaterBlock) {
-            ImmersiveRepeater.singelton.trackObject(pos);
+        for (AbstractImmersive<? extends AbstractImmersiveInfo> immersive : Immersives.IMMERSIVES) {
+            if (immersive.shouldTrack(pos, state, tileEntity, level)) {
+                immersive.trackObject(pos, state, tileEntity, level);
+            }
         }
 
         // Extra special tracker additions
         BlockPos belowPos = pos.below();
         BlockState belowState = level.getBlockState(belowPos);
-        if (belowState.getBlock() instanceof EnchantmentTableBlock) {
-            ImmersiveETable.singleton.trackObject(pos);
-        } else if (belowState.getBlock() == Blocks.CRAFTING_TABLE) {
-            ImmersiveCrafting.singleton.trackObject(pos);
+        BlockEntity belowEntity = level.getBlockEntity(belowPos);
+        if (Immersives.immersiveETable.shouldTrack(belowPos, belowState, belowEntity, level)) {
+            Immersives.immersiveETable.trackObject(belowPos, belowState, belowEntity, level);
+        } else if (Immersives.immersiveCrafting.shouldTrack(belowPos, belowState, belowEntity, level)) {
+            Immersives.immersiveCrafting.trackObject(belowPos, belowState, belowEntity, level);
         }
     }
 
@@ -205,8 +191,8 @@ public class ClientLogicSubscriber {
     public static boolean handleLeftClick(Player player) {
         if (Minecraft.getInstance().player == null) return false;
 
-        BackpackInfo backpackInfo = ImmersiveBackpack.singleton.getTrackedObjects().size() > 0 ?
-                ImmersiveBackpack.singleton.getTrackedObjects().get(0) : null;
+        BackpackInfo backpackInfo = Immersives.immersiveBackpack.getTrackedObjects().size() > 0 ?
+                Immersives.immersiveBackpack.getTrackedObjects().get(0) : null;
         // Move to next row on left click if backpack is out
         if (backpackInfo != null && backpackInfo.slotHovered > -1) {
             ImmersiveBackpack.onHitboxInteract(player, backpackInfo, backpackInfo.slotHovered);
@@ -313,7 +299,7 @@ public class ClientLogicSubscriber {
                 ChestInfo info = ImmersiveChest.findImmersive(player.level.getBlockEntity(pos));
                 if (info != null) {
                     ImmersiveChest.openChest(info);
-                    return ImmersiveChest.singleton.getCooldownDesktop();
+                    return Immersives.immersiveChest.getCooldownDesktop();
                 }
             }
         }

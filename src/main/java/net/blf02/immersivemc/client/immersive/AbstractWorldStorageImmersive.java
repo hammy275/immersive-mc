@@ -8,6 +8,9 @@ import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStorageInfo> extends AbstractImmersive<I> {
@@ -45,7 +48,7 @@ public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStora
         return info.readyToRender();
     }
 
-    public void trackObject(BlockPos pos) {
+    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         for (I info : getTrackedObjects()) {
             if (info.getBlockPosition().equals(pos)) {
                 info.setTicksLeft(getTickTime());

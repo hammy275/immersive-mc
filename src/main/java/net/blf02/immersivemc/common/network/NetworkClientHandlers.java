@@ -2,7 +2,6 @@ package net.blf02.immersivemc.common.network;
 
 import net.blf02.immersivemc.client.immersive.AbstractBlockEntityImmersive;
 import net.blf02.immersivemc.client.immersive.AbstractImmersive;
-import net.blf02.immersivemc.client.immersive.ImmersiveBackpack;
 import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractBlockEntityImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
@@ -16,8 +15,8 @@ import java.util.Objects;
 public class NetworkClientHandlers {
 
     public static void setBackpackOutput(ItemStack output) {
-        if (ImmersiveBackpack.singleton.getTrackedObjects().size() > 0) {
-            BackpackInfo info = ImmersiveBackpack.singleton.getTrackedObjects().get(0);
+        if (Immersives.immersiveBackpack.getTrackedObjects().size() > 0) {
+            BackpackInfo info = Immersives.immersiveBackpack.getTrackedObjects().get(0);
             info.craftingOutput = output;
         }
     }

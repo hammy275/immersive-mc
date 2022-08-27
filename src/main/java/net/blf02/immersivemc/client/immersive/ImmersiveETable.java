@@ -24,6 +24,8 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EnchantmentTableBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
@@ -36,8 +38,6 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
     }
 
     protected final float[] yOffsets;
-
-    public static final ImmersiveETable singleton = new ImmersiveETable();
 
     protected int noInfosCooldown = 0;
 
@@ -208,19 +208,18 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
-        Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), closest, hand));
+    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        return state.getBlock() instanceof EnchantmentTableBlock;
     }
 
-    public void trackObject(BlockPos pos) {
-        for (EnchantingInfo info : getTrackedObjects()) {
-            if (info.getBlockPosition().equals(pos)) {
-                info.setTicksLeft(ClientConstants.ticksToRenderETable);
-                return;
-            }
-        }
-        this.noInfosCooldown = 0;
-        infos.add(new EnchantingInfo(pos, ClientConstants.ticksToRenderETable));
+    @Override
+    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
+        return Immersives.immersiveETable;
+    }
+
+    @Override
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
+        Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), closest, hand));
     }
 
     protected Vec3 getYDiffFromOffset(EnchantingInfo info, int slot) {

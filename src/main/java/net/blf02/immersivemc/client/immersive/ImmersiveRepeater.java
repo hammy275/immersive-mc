@@ -17,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.RepeaterBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
@@ -24,8 +25,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
-
-    public static final ImmersiveRepeater singelton = new ImmersiveRepeater();
 
     public ImmersiveRepeater() {
         super(2); // You really only interact with one repeater at a time, so 2 at most makes sense
@@ -113,11 +112,12 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
-        // NOOP. Handled in doTick().
+    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        return state.getBlock() instanceof RepeaterBlock;
     }
 
-    public void trackObject(BlockPos pos) {
+    @Override
+    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         for (RepeaterInfo info : getTrackedObjects()) {
             if (info.getBlockPosition().equals(pos)) {
                 info.setTicksLeft(ClientConstants.ticksToRenderRepeater);
@@ -125,5 +125,15 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
             }
         }
         infos.add(new RepeaterInfo(pos));
+    }
+
+    @Override
+    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
+        return Immersives.immersiveRepeater;
+    }
+
+    @Override
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
+        // NOOP. Handled in doTick().
     }
 }

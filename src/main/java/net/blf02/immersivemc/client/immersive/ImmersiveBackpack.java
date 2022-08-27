@@ -24,18 +24,19 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
 
 public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
-
-    public static final ImmersiveBackpack singleton = new ImmersiveBackpack();
 
     public static final BackpackModel model =
             new BackpackModel(Minecraft.getInstance().getEntityModels().bakeLayer(BackpackModel.LAYER_LOCATION));
@@ -271,6 +272,21 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
+    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        return false;
+    }
+
+    @Override
+    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+
+    }
+
+    @Override
+    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
+        return Immersives.immersiveBackpack;
+    }
+
+    @Override
     protected void initInfo(BackpackInfo info) {
         // Get inventory data on initialization
         Network.INSTANCE.sendToServer(new FetchPlayerStoragePacket("backpack"));
@@ -280,8 +296,8 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {}
 
     public void processFromNetwork(ImmersiveStorage storage) {
-        if (singleton.infos.size() > 0) {
-            BackpackInfo info = singleton.infos.get(0);
+        if (getSingleton().infos.size() > 0) {
+            BackpackInfo info = (BackpackInfo) getSingleton().infos.get(0);
             for (int i = 0; i <= 3; i++) {
                 info.craftingInput[i] = storage.items[i];
             }

@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.common.network.packet;
 
-import net.blf02.immersivemc.client.immersive.ImmersiveBackpack;
+import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.server.storage.GetStorage;
@@ -70,7 +70,7 @@ public class FetchPlayerStoragePacket {
 
     public static void handleClient(FetchPlayerStoragePacket message) {
         if (message.type.equals("backpack")) {
-            ImmersiveBackpack.singleton.processFromNetwork(message.storage);
+            Immersives.immersiveBackpack.processFromNetwork(message.storage);
         }
     }
 }

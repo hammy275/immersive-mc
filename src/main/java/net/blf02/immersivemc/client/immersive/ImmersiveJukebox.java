@@ -8,24 +8,21 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class ImmersiveJukebox extends AbstractBlockEntityImmersive<JukeboxBlockEntity, JukeboxInfo> {
-    
-    protected static ImmersiveJukebox singleton = new ImmersiveJukebox();
 
     public ImmersiveJukebox() {
         super(1);
-    }
-
-    public static ImmersiveJukebox getSingleton() {
-        return singleton;
     }
 
     @Override
@@ -49,6 +46,16 @@ public class ImmersiveJukebox extends AbstractBlockEntityImmersive<JukeboxBlockE
     }
 
     @Override
+    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        return tileEntity instanceof JukeboxBlockEntity;
+    }
+
+    @Override
+    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
+        return Immersives.immersiveJukebox;
+    }
+
+    @Override
     protected boolean enabledInConfig() {
         return ActiveConfig.useJukeboxImmersion;
     }
@@ -60,8 +67,8 @@ public class ImmersiveJukebox extends AbstractBlockEntityImmersive<JukeboxBlockE
     }
 
     @Override
-    public JukeboxInfo getNewInfo(JukeboxBlockEntity tileEnt) {
-        return new JukeboxInfo(tileEnt, ClientConstants.ticksToHandleJukebox);
+    public JukeboxInfo getNewInfo(BlockEntity tileEnt) {
+        return new JukeboxInfo((JukeboxBlockEntity) tileEnt, getTickTime());
     }
 
     @Override

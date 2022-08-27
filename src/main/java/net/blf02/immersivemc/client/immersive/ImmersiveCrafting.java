@@ -17,13 +17,13 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Objects;
 
 public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInfo> {
-
-    public static final ImmersiveCrafting singleton = new ImmersiveCrafting();
     private final double spacing = 3d/16d;
 
 
@@ -113,6 +113,16 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
     @Override
     protected boolean enabledInConfig() {
         return ActiveConfig.useCraftingImmersion;
+    }
+
+    @Override
+    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        return state.getBlock() == Blocks.CRAFTING_TABLE;
+    }
+
+    @Override
+    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
+        return Immersives.immersiveCrafting;
     }
 
     @Override

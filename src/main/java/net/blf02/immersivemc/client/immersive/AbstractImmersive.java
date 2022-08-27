@@ -25,6 +25,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -65,6 +67,12 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     protected abstract boolean enabledInConfig();
 
     protected abstract boolean slotShouldRenderHelpHitbox(I info, int slotNum);
+
+    public abstract boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level);
+
+    public abstract void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level);
+
+    public abstract AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton();
 
     /**
      * Initializes an `info` instance after it's constructed.

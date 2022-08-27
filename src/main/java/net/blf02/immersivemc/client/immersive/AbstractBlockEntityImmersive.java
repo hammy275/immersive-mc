@@ -6,8 +6,11 @@ import net.blf02.immersivemc.common.config.CommonConstants;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public abstract class AbstractBlockEntityImmersive<T extends BlockEntity, I extends AbstractBlockEntityImmersiveInfo<T>>
@@ -23,7 +26,7 @@ public abstract class AbstractBlockEntityImmersive<T extends BlockEntity, I exte
      * @param tileEnt Tile Entity that the info contains
      * @return The instance
      */
-    public abstract I getNewInfo(T tileEnt);
+    public abstract I getNewInfo(BlockEntity tileEnt);
 
     public abstract int getTickTime();
 
@@ -64,17 +67,17 @@ public abstract class AbstractBlockEntityImmersive<T extends BlockEntity, I exte
      * @param tileEnt Tile entity to check one last time before possibly tracking
      * @return Whether or not we should track this
      */
-    public boolean shouldTrack(T tileEnt) {
+    public boolean reallyShouldTrack(BlockEntity tileEnt) {
         return true;
     }
 
-    public void trackObject(T tileEnt) {
+    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEnt, Level level) {
         for (I info : getTrackedObjects()) {
             if (info.getBlockEntity() == tileEnt) {
                 info.setTicksLeft(getTickTime());
                 return;
             }
         }
-        if (shouldTrack(tileEnt)) infos.add(getNewInfo(tileEnt));
+        if (reallyShouldTrack(tileEnt)) infos.add(getNewInfo(tileEnt));
     }
 }

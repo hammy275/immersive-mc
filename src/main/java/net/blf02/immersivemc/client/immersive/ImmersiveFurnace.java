@@ -8,6 +8,7 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -15,25 +16,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class ImmersiveFurnace extends AbstractBlockEntityImmersive<AbstractFurnaceBlockEntity, ImmersiveFurnaceInfo> {
 
     // We don't ever expect this to get too big (since this mod runs on clients separately)
-
-    protected static final ImmersiveFurnace immersiveFurnace = new ImmersiveFurnace();
-
     public ImmersiveFurnace() {
         super(4);
     }
 
-    public static ImmersiveFurnace getSingleton() {
-        return immersiveFurnace;
-    }
-
     @Override
-    public ImmersiveFurnaceInfo getNewInfo(AbstractFurnaceBlockEntity tileEnt) {
-        return new ImmersiveFurnaceInfo(tileEnt, ClientConstants.ticksToRenderFurnace);
+    public ImmersiveFurnaceInfo getNewInfo(BlockEntity tileEnt) {
+        return new ImmersiveFurnaceInfo((AbstractFurnaceBlockEntity) tileEnt, ClientConstants.ticksToRenderFurnace);
     }
 
     @Override
@@ -125,6 +121,16 @@ public class ImmersiveFurnace extends AbstractBlockEntityImmersive<AbstractFurna
     @Override
     protected boolean enabledInConfig() {
         return ActiveConfig.useFurnaceImmersion;
+    }
+
+    @Override
+    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        return tileEntity instanceof AbstractFurnaceBlockEntity;
+    }
+
+    @Override
+    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
+        return Immersives.immersiveFurnace;
     }
 
     @Override

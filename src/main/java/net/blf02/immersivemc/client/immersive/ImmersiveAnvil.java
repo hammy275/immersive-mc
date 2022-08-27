@@ -20,14 +20,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.SmithingTableBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Objects;
 
 public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
-
-    public static final ImmersiveAnvil singleton = new ImmersiveAnvil();
 
     protected final double dist = 1d/3d;
     public ImmersiveAnvil() {
@@ -158,11 +157,12 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
-        Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), closest, hand));
+    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        return state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock;
     }
 
-    public void trackObject(BlockPos pos) {
+    @Override
+    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         for (AnvilInfo info : getTrackedObjects()) {
             if (info.getBlockPosition().equals(pos)) {
                 info.setTicksLeft(ClientConstants.ticksToRenderAnvil);
@@ -170,6 +170,16 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
             }
         }
         infos.add(new AnvilInfo(pos, ClientConstants.ticksToRenderAnvil));
+    }
+
+    @Override
+    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
+        return Immersives.immersiveAnvil;
+    }
+
+    @Override
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
+        Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), closest, hand));
     }
 
     protected boolean isAnvil(BlockState state) {

@@ -1,6 +1,6 @@
 package net.blf02.immersivemc.common.network.packet;
 
-import net.blf02.immersivemc.client.immersive.ImmersiveETable;
+import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.EnchantingInfo;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.NetworkUtil;
@@ -133,7 +133,7 @@ public class GetEnchantmentsPacket {
     }
 
     protected static void handleClient(GetEnchantmentsPacket message) {
-        for (EnchantingInfo info : ImmersiveETable.singleton.getTrackedObjects()) {
+        for (EnchantingInfo info : Immersives.immersiveETable.getTrackedObjects()) {
             if (info.getBlockPosition().equals(message.pos)) {
                 Enchantment ench = getEnch(message.weakEnchHint);
                 if (ench != null) {
