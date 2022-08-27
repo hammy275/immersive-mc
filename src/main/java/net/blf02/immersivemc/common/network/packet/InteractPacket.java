@@ -2,6 +2,7 @@ package net.blf02.immersivemc.common.network.packet;
 
 import net.blf02.immersivemc.client.SafeClientUtil;
 import net.blf02.immersivemc.common.config.PlacementMode;
+import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.server.storage.GetStorage;
@@ -10,10 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.level.block.AnvilBlock;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.EnchantmentTableBlock;
-import net.minecraft.world.level.block.SmithingTableBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -92,11 +90,12 @@ public class InteractPacket {
                 }
             } else if (NetworkUtil.safeToRun(message.pos, player)) {
                 BlockState state = player.level.getBlockState(message.pos);
-                if (state.getBlock() == Blocks.CRAFTING_TABLE) {
+                BlockEntity tileEnt = player.level.getBlockEntity(message.pos);
+                if (ImmersiveCheckers.isCraftingTable(message.pos, state, tileEnt, player.level)) {
                     Swap.handleCraftingSwap(player, message.slot, message.hand, message.pos, message.placementMode);
-                } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
+                } else if (ImmersiveCheckers.isAnvil(message.pos, state, tileEnt, player.level)) {
                     Swap.anvilSwap(message.slot, message.hand, message.pos, player, message.placementMode);
-                } else if (state.getBlock() instanceof EnchantmentTableBlock) {
+                } else if (ImmersiveCheckers.isEnchantingTable(message.pos, state, tileEnt, player.level)) {
                     Swap.enchantingTableSwap(player, message.slot, message.hand, message.pos);
                 }
             }

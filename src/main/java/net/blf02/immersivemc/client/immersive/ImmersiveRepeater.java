@@ -5,6 +5,7 @@ import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.RepeaterInfo;
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SetRepeaterPacket;
 import net.blf02.immersivemc.common.util.Util;
@@ -82,11 +83,6 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
-    public boolean hasValidBlock(RepeaterInfo info, Level level) {
-        return level.getBlockState(info.getBlockPosition()).getBlock() instanceof RepeaterBlock;
-    }
-
-    @Override
     public boolean shouldRender(RepeaterInfo info, boolean isInVR) {
         if (Minecraft.getInstance().player == null) return false;
         Level level = Minecraft.getInstance().level;
@@ -113,7 +109,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return state.getBlock() instanceof RepeaterBlock;
+        return ImmersiveCheckers.isRepeater(pos, state, tileEntity, level);
     }
 
     @Override

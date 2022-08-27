@@ -5,6 +5,7 @@ import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
@@ -41,6 +42,10 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
 
     @Override
     protected void doTick(ChestInfo info, boolean isInVR) {
+        if (!chestsValid(info)) {
+            info.remove();
+            return;
+        }
         super.doTick(info, isInVR);
 
         // super.tick() does this for the main regular chest. This does it for the other chest, and for ender chests
@@ -177,7 +182,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return tileEntity instanceof ChestBlockEntity || tileEntity instanceof EnderChestBlockEntity;
+        return ImmersiveCheckers.isChest(pos, state, tileEntity, level);
     }
 
     @Override
@@ -230,11 +235,6 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     @Override
     public int getTickTime() {
         return ClientConstants.ticksToRenderChest;
-    }
-
-    @Override
-    public boolean hasValidBlock(ChestInfo info, Level level) {
-        return chestsValid(info);
     }
 
     @Override

@@ -5,6 +5,7 @@ import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.JukeboxInfo;
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
@@ -47,7 +48,7 @@ public class ImmersiveJukebox extends AbstractBlockEntityImmersive<JukeboxBlockE
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return tileEntity instanceof JukeboxBlockEntity;
+        return ImmersiveCheckers.isJukebox(pos, state, tileEntity, level);
     }
 
     @Override
@@ -74,11 +75,6 @@ public class ImmersiveJukebox extends AbstractBlockEntityImmersive<JukeboxBlockE
     @Override
     public int getTickTime() {
         return ClientConstants.ticksToHandleJukebox;
-    }
-
-    @Override
-    public boolean hasValidBlock(JukeboxInfo info, Level level) {
-        return level.getBlockEntity(info.getBlockPosition()) instanceof JukeboxBlockEntity;
     }
 
     @Override

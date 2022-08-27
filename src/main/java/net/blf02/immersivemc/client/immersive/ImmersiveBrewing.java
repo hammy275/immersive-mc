@@ -5,6 +5,7 @@ import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BrewingInfo;
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.minecraft.client.Minecraft;
@@ -34,11 +35,6 @@ public class ImmersiveBrewing extends AbstractBlockEntityImmersive<BrewingStandB
     @Override
     public int getTickTime() {
         return ClientConstants.ticksToRenderBrewing;
-    }
-
-    @Override
-    public boolean hasValidBlock(BrewingInfo info, Level level) {
-        return level.getBlockEntity(info.getBlockPosition()) instanceof BrewingStandBlockEntity;
     }
 
     @Override
@@ -132,7 +128,7 @@ public class ImmersiveBrewing extends AbstractBlockEntityImmersive<BrewingStandB
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return tileEntity instanceof BrewingStandBlockEntity;
+        return ImmersiveCheckers.isBrewingStand(pos, state, tileEntity, level);
     }
 
     @Override

@@ -1,14 +1,13 @@
 package net.blf02.immersivemc.server.storage;
 
+import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.storage.AnvilStorage;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.AnvilBlock;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.EnchantmentTableBlock;
-import net.minecraft.world.level.block.SmithingTableBlock;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
 
@@ -33,12 +32,12 @@ public class GetStorage {
         return storage;
     }
 
-    public static int getLastInputIndex(BlockState state) {
-        if (state.getBlock() == Blocks.CRAFTING_TABLE) {
+    public static int getLastInputIndex(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        if (ImmersiveCheckers.isCraftingTable(pos, state, tileEntity, level)) {
             return 8;
-        } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
+        } else if (ImmersiveCheckers.isAnvil(pos, state, tileEntity, level)) {
             return 1;
-        } else if (state.getBlock() instanceof EnchantmentTableBlock) {
+        } else if (ImmersiveCheckers.isEnchantingTable(pos, state, tileEntity, level)) {
             return 0;
         }
         return -1;
@@ -63,11 +62,12 @@ public class GetStorage {
 
     public static ImmersiveStorage getStorage(Player player, BlockPos pos) {
         BlockState state = player.level.getBlockState(pos);
-        if (state.getBlock() == Blocks.CRAFTING_TABLE) {
+        BlockEntity tileEnt = player.level.getBlockEntity(pos);
+        if (ImmersiveCheckers.isCraftingTable(pos, state, tileEnt, player.level)) {
             return getCraftingStorage(player, pos);
-        } else if (state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock) {
+        } else if (ImmersiveCheckers.isAnvil(pos, state, tileEnt, player.level)) {
             return getAnvilStorage(player, pos);
-        } else if (state.getBlock() instanceof EnchantmentTableBlock) {
+        } else if (ImmersiveCheckers.isEnchantingTable(pos, state, tileEnt, player.level)) {
             return getEnchantingStorage(player, pos);
         }
         return null;

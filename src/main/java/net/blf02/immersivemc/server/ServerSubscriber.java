@@ -1,6 +1,8 @@
 package net.blf02.immersivemc.server;
 
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.immersive.CheckerFunction;
+import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.network.Distributors;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
@@ -10,12 +12,13 @@ import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.server.storage.GetStorage;
 import net.blf02.immersivemc.server.storage.LevelStorage;
 import net.blf02.immersivemc.server.tracker.ServerTrackerInit;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
@@ -34,10 +37,12 @@ public class ServerSubscriber {
         BlockState state = event.getState();
         boolean sendBreakPacket = false;
 
-        if (LevelStorage.usesWorldStorage(state)) {
+        if (LevelStorage.usesWorldStorage(event.getPos(), state, world.getBlockEntity(event.getPos()), world)) {
             ImmersiveStorage storage = LevelStorage.getStorage(world).remove(event.getPos());
             if (storage != null && event.getPlayer().level != null) {
-                for (int i = 0; i <= GetStorage.getLastInputIndex(state); i++) {
+                for (int i = 0;
+                     i <= GetStorage.getLastInputIndex(event.getPos(), state, world.getBlockEntity(event.getPos()), world);
+                     i++) {
                     Vec3 vecPos = Vec3.atCenterOf(event.getPos());
                     ItemStack stack = storage.items[i];
                     if (stack != null && !stack.isEmpty()) {
@@ -49,16 +54,12 @@ public class ServerSubscriber {
             }
         }
 
-        if (state.hasBlockEntity()) {
-            BlockEntity tileEntity = event.getWorld().getBlockEntity(event.getPos());
-            sendBreakPacket = tileEntity instanceof AbstractFurnaceBlockEntity ||
-                    tileEntity instanceof JukeboxBlockEntity ||
-                    tileEntity instanceof BrewingStandBlockEntity ||
-                    tileEntity instanceof ChestBlockEntity || tileEntity instanceof EnderChestBlockEntity;
-        } else {
-            sendBreakPacket = state.getBlock() == Blocks.CRAFTING_TABLE ||
-            state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock
-            || state.getBlock() instanceof EnchantmentTableBlock || state.getBlock() instanceof RepeaterBlock;
+        for (CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> checker : ImmersiveCheckers.CHECKERS) {
+            if (checker.apply(event.getPos(), event.getWorld().getBlockState(event.getPos()),
+                    event.getWorld().getBlockEntity(event.getPos()), event.getPlayer().level)) {
+                sendBreakPacket = true;
+                break;
+            }
         }
 
         if (sendBreakPacket) {

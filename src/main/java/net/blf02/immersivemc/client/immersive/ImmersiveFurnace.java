@@ -5,6 +5,7 @@ import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.ImmersiveFurnaceInfo;
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;
@@ -35,11 +36,6 @@ public class ImmersiveFurnace extends AbstractBlockEntityImmersive<AbstractFurna
     @Override
     public int getTickTime() {
         return ClientConstants.ticksToRenderFurnace;
-    }
-
-    @Override
-    public boolean hasValidBlock(ImmersiveFurnaceInfo info, Level level) {
-        return level.getBlockEntity(info.getBlockPosition()) instanceof AbstractFurnaceBlockEntity;
     }
 
     @Override
@@ -125,7 +121,7 @@ public class ImmersiveFurnace extends AbstractBlockEntityImmersive<AbstractFurna
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return tileEntity instanceof AbstractFurnaceBlockEntity;
+        return ImmersiveCheckers.isFurnace(pos, state, tileEntity, level);
     }
 
     @Override

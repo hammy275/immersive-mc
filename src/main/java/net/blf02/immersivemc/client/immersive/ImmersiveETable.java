@@ -6,6 +6,7 @@ import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
 import net.blf02.immersivemc.client.immersive.info.EnchantingInfo;
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.GetEnchantmentsPacket;
 import net.blf02.immersivemc.common.network.packet.InteractPacket;
@@ -23,7 +24,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.EnchantmentTableBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -125,11 +125,6 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
     }
 
     @Override
-    public boolean hasValidBlock(EnchantingInfo info, Level level) {
-        return level.getBlockState(info.getBlockPosition()).getBlock() instanceof EnchantmentTableBlock;
-    }
-
-    @Override
     public boolean shouldRender(EnchantingInfo info, boolean isInVR) {
         return Minecraft.getInstance().player != null &&
                 Minecraft.getInstance().level != null &&
@@ -209,7 +204,7 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return state.getBlock() instanceof EnchantmentTableBlock;
+        return ImmersiveCheckers.isEnchantingTable(pos, state, tileEntity, level);
     }
 
     @Override

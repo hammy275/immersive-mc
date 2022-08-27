@@ -50,16 +50,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         this.infos = new ArrayList<>(maxImmersives > 0 ? maxImmersives + 1 : 16);
     }
 
-    /**
-     * Used to check whether a valid block exists before ticking an immersive.
-     *
-     * Will remove the immersive if this returns false, and will tick if returns true.
-     * @param info The info to check
-     * @param level The level to check
-     * @return true if the block exists, false if it does not
-     */
-    public abstract boolean hasValidBlock(I info, Level level);
-
     public abstract boolean shouldRender(I info, boolean isInVR);
 
     protected abstract void render(I info, PoseStack stack, boolean isInVR);
@@ -109,7 +99,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 initInfo(info);
                 info.initCompleted = true;
             }
-            if (Minecraft.getInstance().level != null && hasValidBlock(info, Minecraft.getInstance().level)) {
+            if (Minecraft.getInstance().level != null && shouldTrack(info.getBlockPosition(),
+                    Minecraft.getInstance().level.getBlockState(info.getBlockPosition()),
+                    Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()),
+                    Minecraft.getInstance().level)) {
                 doTick(info, isInVR);
                 info.setInputSlots();
             } else {

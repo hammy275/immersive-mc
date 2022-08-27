@@ -1,12 +1,14 @@
 package net.blf02.immersivemc.server.storage;
 
+import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
 
@@ -24,10 +26,10 @@ public class LevelStorage extends SavedData {
         return new LevelStorage();
     }
 
-    public static boolean usesWorldStorage(BlockState state) {
-        return state.getBlock() == Blocks.CRAFTING_TABLE ||
-                state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock
-                || state.getBlock() instanceof EnchantmentTableBlock;
+    public static boolean usesWorldStorage(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        return ImmersiveCheckers.isCraftingTable(pos, state, tileEntity, level) ||
+                ImmersiveCheckers.isAnvil(pos, state, tileEntity, level)
+                || ImmersiveCheckers.isEnchantingTable(pos, state, tileEntity, level);
     }
 
     public static LevelStorage getStorage(ServerLevel world) {
