@@ -25,6 +25,8 @@
   "screen.immersivemc.immersives_config.inworld": "You cannot customize immersives while in-game! Go to the title screen to customize them!",
   "config.immersivemc.anvil": "Use Anvil Immersion",
   "config.immersivemc.anvil.desc": "Enables/disables the ability to use the anvil immersive.",
+  "config.immersivemc.armor": "Use Armor Immersion [VR Only]",
+  "config.immersivemc.armor.desc": "Allows VR users to equip armor by physically placing armor pieces on their person.",
   "config.immersivemc.backpack_button": "Use Backpack Immersion [VR Only]",
   "config.immersivemc.backpack_button.desc": "Enables/disables the ability to use backpacks. VR Only!",
   "config.immersivemc.brewing": "Use Brewing Immersion",

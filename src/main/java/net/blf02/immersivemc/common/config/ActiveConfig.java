@@ -25,6 +25,7 @@ public class ActiveConfig {
     public static boolean useDoorImmersion = false;
     public static boolean useHoeImmersion = false;
     public static boolean canPet = false;
+    public static boolean useArmorImmersion = false;
 
     // Non-synced values
     public static int backpackColor = 11901820;
@@ -65,6 +66,7 @@ public class ActiveConfig {
         useDoorImmersion = buffer.readBoolean() && useDoorImmersion;
         useHoeImmersion = buffer.readBoolean() && useHoeImmersion;
         canPet = buffer.readBoolean() && canPet;
+        useArmorImmersion = buffer.readBoolean() && useArmorImmersion;
         ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
 
     }
@@ -92,6 +94,7 @@ public class ActiveConfig {
             useDoorImmersion = ImmersiveMCConfig.useDoorImmersion.get();
             useHoeImmersion = ImmersiveMCConfig.useHoeImmersion.get();
             canPet = ImmersiveMCConfig.canPet.get();
+            useArmorImmersion = ImmersiveMCConfig.useArmorImmersion.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -126,6 +129,7 @@ public class ActiveConfig {
         useDoorImmersion = false;
         useHoeImmersion = false;
         canPet = false;
+        useArmorImmersion = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -133,7 +137,7 @@ public class ActiveConfig {
         buffer.writeBoolean(ActiveConfig.useButton).writeBoolean(ActiveConfig.useCampfireImmersion)
                 .writeBoolean(ActiveConfig.useLever).writeBoolean(ActiveConfig.useRangedGrab)
                 .writeBoolean(ActiveConfig.useDoorImmersion).writeBoolean(ActiveConfig.useHoeImmersion)
-                .writeBoolean(ActiveConfig.canPet);
+                .writeBoolean(ActiveConfig.canPet).writeBoolean(ActiveConfig.useArmorImmersion);
         return buffer;
     }
 
@@ -162,7 +166,8 @@ public class ActiveConfig {
                 "Use door immersion: " + useDoorImmersion + "\n" +
                 "Use hoe immersion: " + useHoeImmersion + "\n" +
                 "Spin crafting output: " + spinCraftingOutput + "\n" +
-                "Can pet: " + canPet;
+                "Can pet: " + canPet + "\n" +
+                "Use armor immersion: " + useArmorImmersion;
         return stringOut;
     }
 }

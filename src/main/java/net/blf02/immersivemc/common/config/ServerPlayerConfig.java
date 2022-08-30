@@ -5,7 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 public class ServerPlayerConfig {
 
     public static final ServerPlayerConfig EMPTY_CONFIG = new ServerPlayerConfig(false,
-            false, false, false, false, false, false);
+            false, false, false, false, false, false, false);
 
     public boolean useButtons;
     public boolean useCampfire;
@@ -14,10 +14,11 @@ public class ServerPlayerConfig {
     public boolean useDoorImmersion;
     public boolean useHoeImmersion;
     public boolean canPet;
+    public boolean useArmorImmersion;
 
     public ServerPlayerConfig(boolean useButtons, boolean useCampfire, boolean useLevers,
                               boolean useRangedGrab, boolean useDoorImmersion, boolean useHoeImmersion,
-                              boolean canPet) {
+                              boolean canPet, boolean useArmorImmersion) {
         this.useButtons = useButtons;
         this.useCampfire = useCampfire;
         this.useLevers = useLevers;
@@ -25,10 +26,11 @@ public class ServerPlayerConfig {
         this.useDoorImmersion = useDoorImmersion;
         this.useHoeImmersion = useHoeImmersion;
         this.canPet = canPet;
+        this.useArmorImmersion = useArmorImmersion;
     }
 
     public ServerPlayerConfig(FriendlyByteBuf buffer) {
         this(buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(),
-                buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean());
+                buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean());
     }
 }

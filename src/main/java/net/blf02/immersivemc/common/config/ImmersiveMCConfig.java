@@ -27,6 +27,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useDoorImmersion;
     public static ForgeConfigSpec.BooleanValue useHoeImmersion;
     public static ForgeConfigSpec.BooleanValue canPet;
+    public static ForgeConfigSpec.BooleanValue useArmorImmersion;
 
     //Non-synced values
     public static ForgeConfigSpec.IntValue backpackColor;
@@ -95,6 +96,9 @@ public class ImmersiveMCConfig {
         canPet = builder
                 .comment("Whether VR users can pet animals they've tamed (or animals that are tamed for all once tamed, like horses)")
                 .define("can_pet", true);
+        useArmorImmersion = builder
+                .comment("Whether VR users can equip armor by placing the armor on them")
+                .define("armor_immersion", true);
 
         // Non-synced Values
         backpackColor = builder
@@ -141,7 +145,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useRepeaterImmersion.get())
                 .writeBoolean(useDoorImmersion.get())
                 .writeBoolean(useHoeImmersion.get())
-                .writeBoolean(canPet.get());
+                .writeBoolean(canPet.get())
+                .writeBoolean(useArmorImmersion.get());
     }
 
     public static void resetToDefault() {
@@ -162,6 +167,7 @@ public class ImmersiveMCConfig {
         useDoorImmersion.set(true);
         useHoeImmersion.set(true);
         canPet.set(true);
+        useArmorImmersion.set(true);
 
         // Non-synced defaults
         backpackColor.set(11901820);
