@@ -76,4 +76,6 @@
   "config.immersivemc.placement_mode.3": "放置全部物品",
   "config.immersivemc.placement_mode.desc": "当右键单击或将物品放入沉浸式容器时，从你手中的物品堆中取出 %s 放入沉浸器。"
 
+  "immersivemc.immersive.etable.no_ench": "没有附魔！",
+  "immersivemc.immersive.anvil.levels_needed": "需要的等级: %d"
 }
