@@ -65,4 +65,6 @@
   "config.immersivemc.placement_mode.2": "一半的",
   "config.immersivemc.placement_mode.3": "全部的"
 
+  "immersivemc.immersive.etable.no_ench": "没有附魔！",
+  "immersivemc.immersive.anvil.levels_needed": "需要的等级: %d"
 }
