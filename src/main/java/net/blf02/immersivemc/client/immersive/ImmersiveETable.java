@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -150,7 +151,7 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
                                 stack,
                                 info.getPosition(i + 1).add(0, -0.33, 0));
                     } else {
-                        renderText(new TextComponent("No Enchantment!"),
+                        renderText(new TranslatableComponent("immersivemc.immersive.etable.no_ench"),
                                 stack, info.getPosition(i + 1).add(0, -0.2, 0));
                     }
                 }

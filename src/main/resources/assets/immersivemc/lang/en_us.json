@@ -74,6 +74,9 @@
   "config.immersivemc.placement_mode.1": "Place a Quarter of the Items",
   "config.immersivemc.placement_mode.2": "Place Half of the Items",
   "config.immersivemc.placement_mode.3": "Place All the Items",
-  "config.immersivemc.placement_mode.desc": "When right-clicking or placing items into immersives, %s from the stack of items in your hand into the immersive."
+  "config.immersivemc.placement_mode.desc": "When right-clicking or placing items into immersives, %s from the stack of items in your hand into the immersive.",
+
+  "immersivemc.immersive.etable.no_ench": "No Enchantment!",
+  "immersivemc.immersive.anvil.levels_needed": "Levels Needed: %d"
 
 }

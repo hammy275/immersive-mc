@@ -12,6 +12,7 @@ import net.blf02.immersivemc.common.network.packet.InteractPacket;
 import net.blf02.immersivemc.common.storage.AnvilStorage;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -111,7 +112,7 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
 
         // Render experience levels needed if we have an experience cost to show
         if (info.isReallyAnvil && info.anvilCost > 0) {
-            renderText(new TextComponent("Levels Needed: " + info.anvilCost), stack,
+            renderText(new TextComponent(I18n.get("immersivemc.immersive.anvil.levels_needed", info.anvilCost)), stack,
                     info.textPos);
         }
 

@@ -30,9 +30,11 @@ public class NetworkClientHandlers {
                     if (info.getBlockPosition().equals(pos)) {
                         // Use the length of items since some mods have extra slots
                         // Like IronFurnaces has slots beyond the first 3 of a furnace
-                        for (int i = 0; i < info.items.length; i++) {
-                            info.items[i] = stacks[i];
-                        }
+                        try {
+                            for (int i = 0; i < info.items.length; i++) {
+                                info.items[i] = stacks[i];
+                            }
+                        } catch (ArrayIndexOutOfBoundsException ignored) {}
                         return;
                     } else if (info instanceof ChestInfo) {
                         ChestInfo chestInfo = (ChestInfo) info;
