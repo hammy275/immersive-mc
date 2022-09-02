@@ -14,6 +14,7 @@ import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SmithingTableBlock;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -118,7 +119,7 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
 
         // Render experience levels needed if we have an experience cost to show
         if (info.isReallyAnvil && info.anvilCost > 0) {
-            renderText(new StringTextComponent("Levels Needed: " + info.anvilCost), stack,
+            renderText(new StringTextComponent(I18n.get("immersivemc.immersive.anvil.levels_needed", info.anvilCost)), stack,
                     info.textPos);
         }
 

@@ -63,6 +63,9 @@
   "config.immersivemc.placement_mode.0": "One Item From",
   "config.immersivemc.placement_mode.1": "a Quarter of",
   "config.immersivemc.placement_mode.2": "Half of",
-  "config.immersivemc.placement_mode.3": "All of"
+  "config.immersivemc.placement_mode.3": "All of",
+
+  "immersivemc.immersive.etable.no_ench": "No Enchantment!",
+  "immersivemc.immersive.anvil.levels_needed": "Levels Needed: %d"
 
 }

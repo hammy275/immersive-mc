@@ -13,6 +13,7 @@ import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.common.util.Util;
 import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -155,7 +156,7 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
                                 stack,
                                 info.getPosition(i + 1).add(0, -0.33, 0));
                     } else {
-                        renderText(new StringTextComponent("No Enchantment!"),
+                        renderText(new StringTextComponent(I18n.get("immersivemc.immersive.etable.no_ench")),
                                 stack, info.getPosition(i + 1).add(0, -0.2, 0));
                     }
                 }
