@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 public class FeedAnimalsTracker extends AbstractVRHandsTracker {
-    public static final int COOLDOWN_TICKS = 8;
+    public static final int COOLDOWN_TICKS = 20;
 
     protected Map<String, Integer> cooldown = new HashMap<>();
 
@@ -45,16 +45,16 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
         if (inHand.isEmpty()) return;
         List<Animal> nearbyEnts = getLivingNearby(player);
         for (Animal animal : nearbyEnts) {
-            AABB feedbox = getMouthHitbox(animal);
-
-            if (feedbox.contains(vrPlayer.getController0().position()) && feedbox.contains(vrPlayer.getController1().position())) {
-                InteractionResult res = animal.mobInteract(player, hand);
-                if (res == InteractionResult.CONSUME || res == InteractionResult.SUCCESS) {
-                    cooldown.put(player.getGameProfile().getName(), COOLDOWN_TICKS);
-                    break;
+            if (animal.isFood(inHand)) {
+                AABB feedbox = getMouthHitbox(animal);
+                if (feedbox.contains(vrPlayer.getController0().position()) && feedbox.contains(vrPlayer.getController1().position())) {
+                    InteractionResult res = animal.mobInteract(player, hand);
+                    if (res == InteractionResult.CONSUME || res == InteractionResult.SUCCESS) {
+                        cooldown.put(player.getGameProfile().getName(), COOLDOWN_TICKS);
+                        break;
+                    }
                 }
             }
-
         }
     }
 
@@ -65,12 +65,16 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
             You'd think to find the eye position and go a bit below, which is what I tried originally, but cats
             have their eyes literally where their neck is, while dogs have it where their eyes are. So we can't
             really do that, and I'm not putting in exceptions (at least not yet), since I want this to work pretty
-            well with other mods. So instead, I'm putting a box around the eyes lol.
+            well with other mods.
 
-            For now, this uses the entire entity's hitbox, because entity.getLookAngle() is completely breaking down
-            for one reason or another. TODO: Find a fix for this
+            On top of the above, eyes appear to actually originate from the center of the mob, not the front, so we need
+            to draw a giant hitbox width-wise. On top of THAT, due to how "long" cats and dogs are, we need to increase
+            the size of the hitbox width-wise to cover the front of them. All of this said, we go to the eye position,
+            and draw a HUGE box for this.
          */
-        return entity.getBoundingBox().inflate(0.4);
+        return AABB.ofSize(entity.getEyePosition(), entity.getBbWidth() * 1.5,
+                entity.getBbHeight() * (1d/3d),
+                entity.getBbWidth() * 1.5);
     }
 
     public static List<Animal> getLivingNearby(Player player) {
