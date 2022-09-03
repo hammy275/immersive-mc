@@ -1,10 +1,7 @@
 package net.blf02.immersivemc.server.tracker;
 
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
-import net.blf02.immersivemc.server.tracker.vrhand.AbstractVRHandTracker;
-import net.blf02.immersivemc.server.tracker.vrhand.ArmorTracker;
-import net.blf02.immersivemc.server.tracker.vrhand.DoorMoveTracker;
-import net.blf02.immersivemc.server.tracker.vrhand.HoeTracker;
+import net.blf02.immersivemc.server.tracker.vrhand.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,4 +21,5 @@ public class ServerTrackerInit {
     public static final HoeTracker hoeTracker = new HoeTracker();
     public static final PetTracker petTracker = new PetTracker();
     public static final ArmorTracker armorTracker = new ArmorTracker();
+    public static final FeedAnimalsTracker feedAnimalsTracker = new FeedAnimalsTracker();
 }

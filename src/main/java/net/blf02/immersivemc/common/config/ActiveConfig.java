@@ -26,6 +26,7 @@ public class ActiveConfig {
     public static boolean useHoeImmersion = false;
     public static boolean canPet = false;
     public static boolean useArmorImmersion = false;
+    public static boolean canFeedAnimals = false;
 
     // Non-synced values
     public static int backpackColor = 11901820;
@@ -67,6 +68,7 @@ public class ActiveConfig {
         useHoeImmersion = buffer.readBoolean() && useHoeImmersion;
         canPet = buffer.readBoolean() && canPet;
         useArmorImmersion = buffer.readBoolean() && useArmorImmersion;
+        canFeedAnimals = buffer.readBoolean() && canFeedAnimals;
         ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
 
     }
@@ -95,6 +97,7 @@ public class ActiveConfig {
             useHoeImmersion = ImmersiveMCConfig.useHoeImmersion.get();
             canPet = ImmersiveMCConfig.canPet.get();
             useArmorImmersion = ImmersiveMCConfig.useArmorImmersion.get();
+            canFeedAnimals = ImmersiveMCConfig.canFeedAnimals.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -130,6 +133,7 @@ public class ActiveConfig {
         useHoeImmersion = false;
         canPet = false;
         useArmorImmersion = false;
+        canFeedAnimals = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -137,7 +141,8 @@ public class ActiveConfig {
         buffer.writeBoolean(ActiveConfig.useButton).writeBoolean(ActiveConfig.useCampfireImmersion)
                 .writeBoolean(ActiveConfig.useLever).writeBoolean(ActiveConfig.useRangedGrab)
                 .writeBoolean(ActiveConfig.useDoorImmersion).writeBoolean(ActiveConfig.useHoeImmersion)
-                .writeBoolean(ActiveConfig.canPet).writeBoolean(ActiveConfig.useArmorImmersion);
+                .writeBoolean(ActiveConfig.canPet).writeBoolean(ActiveConfig.useArmorImmersion)
+                .writeBoolean(ActiveConfig.canFeedAnimals);
         return buffer;
     }
 
@@ -167,7 +172,8 @@ public class ActiveConfig {
                 "Use hoe immersion: " + useHoeImmersion + "\n" +
                 "Spin crafting output: " + spinCraftingOutput + "\n" +
                 "Can pet: " + canPet + "\n" +
-                "Use armor immersion: " + useArmorImmersion;
+                "Use armor immersion: " + useArmorImmersion + "\n" +
+                "Can feed animals: " + canFeedAnimals;
         return stringOut;
     }
 }

@@ -63,6 +63,7 @@ public class ImmersivesConfigScreen extends Screen {
         }
 
         if (this.type.isVR()) {
+            ScreenUtils.addOption("animals", ImmersiveMCConfig.canFeedAnimals, this.list);
             ScreenUtils.addOption("armor", ImmersiveMCConfig.useArmorImmersion, this.list);
             ScreenUtils.addOption("backpack_button", ImmersiveMCConfig.useBackpack, this.list);
             ScreenUtils.addOption("button", ImmersiveMCConfig.useButton, this.list);

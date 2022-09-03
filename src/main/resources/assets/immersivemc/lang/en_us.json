@@ -23,6 +23,8 @@
   "screen.immersivemc.immersives_config.title": "Enable/Disable Immersives",
   "screen.immersivemc.immersives_config.subtitle": "Note: Any immersives that are disabled by server admins override your settings here!",
   "screen.immersivemc.immersives_config.inworld": "You cannot customize immersives while in-game! Go to the title screen to customize them!",
+  "config.immersivemc.animals": "Feed Animals Immersion [VR Only]",
+  "config.immersivemc.animals.desc": "Hold food or an item used to tame an animal in one hand, then hold both hands at the animal to tame it!",
   "config.immersivemc.anvil": "Use Anvil Immersion",
   "config.immersivemc.anvil.desc": "Enables/disables the ability to use the anvil immersive.",
   "config.immersivemc.armor": "Use Armor Immersion [VR Only]",

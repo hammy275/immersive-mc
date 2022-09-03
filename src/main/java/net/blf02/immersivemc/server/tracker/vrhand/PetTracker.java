@@ -1,9 +1,8 @@
-package net.blf02.immersivemc.server.tracker;
+package net.blf02.immersivemc.server.tracker.vrhand;
 
 import net.blf02.immersivemc.common.config.ServerPlayerConfig;
 import net.blf02.immersivemc.server.LastTickVRData;
 import net.blf02.immersivemc.server.data.LastTickData;
-import net.blf02.immersivemc.server.tracker.vrhand.AbstractVRHandTracker;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
