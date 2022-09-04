@@ -268,7 +268,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return false;
+        return true;
     }
 
     @Override
