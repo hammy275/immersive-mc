@@ -1,0 +1,99 @@
+package net.blf02.immersivemc.server;
+
+import dev.architectury.event.EventResult;
+import dev.architectury.utils.value.IntValue;
+import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.immersive.CheckerFunction;
+import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
+import net.blf02.immersivemc.common.network.Distributors;
+import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
+import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
+import net.blf02.immersivemc.common.storage.ImmersiveStorage;
+import net.blf02.immersivemc.common.tracker.AbstractTracker;
+import net.blf02.immersivemc.server.storage.GetStorage;
+import net.blf02.immersivemc.server.storage.LevelStorage;
+import net.blf02.immersivemc.server.tracker.ServerTrackerInit;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.Nullable;
+
+public class ServerSubscriber {
+
+    public static EventResult blockBreak(Level level, BlockPos pos, BlockState state, ServerPlayer player, @Nullable IntValue xp) {
+        if (level.isClientSide) return EventResult.pass(); // Only run server-side
+        ServerLevel world = (ServerLevel) level;
+        boolean sendBreakPacket = false;
+
+        if (LevelStorage.usesWorldStorage(pos, state, world.getBlockEntity(pos), world)) {
+            ImmersiveStorage storage = LevelStorage.getStorage(world).remove(event.getPos());
+            if (storage != null) {
+                for (int i = 0;
+                     i <= GetStorage.getLastInputIndex(pos, state, world.getBlockEntity(pos), world);
+                     i++) {
+                    Vec3 vecPos = Vec3.atCenterOf(pos);
+                    ItemStack stack = storage.items[i];
+                    if (stack != null && !stack.isEmpty()) {
+                        ItemEntity itemEnt = new ItemEntity(level,
+                                vecPos.x, vecPos.y, vecPos.z, stack);
+                        level.addFreshEntity(itemEnt);
+                    }
+                }
+            }
+        }
+
+        for (CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> checker : ImmersiveCheckers.CHECKERS) {
+            if (checker.apply(pos, level.getBlockState(pos),
+                    level.getBlockEntity(pos), level)) {
+                sendBreakPacket = true;
+                break;
+            }
+        }
+
+        if (sendBreakPacket) {
+            Network.INSTANCE.send(
+                    Distributors.NEARBY_POSITION.with(() -> new Distributors.NearbyDistributorData(event.getPos(), 20)),
+                    new ImmersiveBreakPacket(pos));
+            ChestToOpenCount.chestImmersiveOpenCount.remove(pos);
+        }
+
+        return EventResult.pass();
+    }
+
+    public static void onServerTick(MinecraftServer server) {
+        for (AbstractTracker tracker : ServerTrackerInit.globalTrackers) {
+            tracker.doTick(null);
+        }
+    }
+
+    public static void onPlayerTick(Player player) {
+        if (player.level.isClientSide) return;
+        for (AbstractTracker tracker : ServerTrackerInit.playerTrackers) {
+            tracker.doTick(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerJoin(Player player) {
+        if (!player.level.isClientSide && player instanceof ServerPlayer) {
+            ActiveConfig.loadConfigFromFile(true);
+            Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+                    new ConfigSyncPacket());
+        }
+
+
+    }
+}
