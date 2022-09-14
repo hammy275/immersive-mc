@@ -135,8 +135,8 @@ dependencies {
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.18.2-40.1.51'
-    compileOnly fg.deobf("net.blf02:vrapi:1.4.0-1.18.2")
-    runtimeOnly fg.deobf("net.blf02:vrapi:1.4.0-1.18.2")
+    compileOnly fg.deobf("net.blf02:vrapi:2.0.0-pre1-forge")
+    runtimeOnly fg.deobf("net.blf02:vrapi:2.0.0-pre1-forge")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
