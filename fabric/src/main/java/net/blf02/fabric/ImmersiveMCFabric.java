@@ -1,11 +1,11 @@
 package net.blf02.fabric;
 
-import net.blf02.ExampleMod;
+import net.blf02.immersivemc.ImmersiveMC;
 import net.fabricmc.api.ModInitializer;
 
 public class ImmersiveMCFabric implements ModInitializer {
     @Override
     public void onInitialize() {
-        ExampleMod.init();
+        ImmersiveMC.init();
     }
 }
