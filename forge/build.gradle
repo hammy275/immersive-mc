@@ -16,6 +16,13 @@ loom {
     }
 }
 
+repositories {
+    maven {
+        name = "blf02"
+        url = "https://blf02.net:4567"
+    }
+}
+
 configurations {
     common
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
@@ -28,6 +35,7 @@ dependencies {
     forge "net.minecraftforge:forge:${rootProject.forge_version}"
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
+    modImplementation "net.blf02:vrapi:2.0.0-pre1-forge"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }

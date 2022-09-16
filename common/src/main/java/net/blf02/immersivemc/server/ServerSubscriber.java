@@ -11,9 +11,11 @@ import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
 import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
+import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.server.storage.GetStorage;
 import net.blf02.immersivemc.server.storage.LevelStorage;
 import net.blf02.immersivemc.server.tracker.ServerTrackerInit;
+import net.blf02.immersivemc.server.tracker.ServerVRSubscriber;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -25,10 +27,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 public class ServerSubscriber {
@@ -39,7 +37,7 @@ public class ServerSubscriber {
         boolean sendBreakPacket = false;
 
         if (LevelStorage.usesWorldStorage(pos, state, world.getBlockEntity(pos), world)) {
-            ImmersiveStorage storage = LevelStorage.getStorage(world).remove(event.getPos());
+            ImmersiveStorage storage = LevelStorage.getStorage(world).remove(pos);
             if (storage != null) {
                 for (int i = 0;
                      i <= GetStorage.getLastInputIndex(pos, state, world.getBlockEntity(pos), world);
@@ -65,7 +63,7 @@ public class ServerSubscriber {
 
         if (sendBreakPacket) {
             Network.INSTANCE.send(
-                    Distributors.NEARBY_POSITION.with(() -> new Distributors.NearbyDistributorData(event.getPos(), 20)),
+                    Distributors.NEARBY_POSITION.with(() -> new Distributors.NearbyDistributorData(pos, 20)),
                     new ImmersiveBreakPacket(pos));
             ChestToOpenCount.chestImmersiveOpenCount.remove(pos);
         }
@@ -84,13 +82,15 @@ public class ServerSubscriber {
         for (AbstractTracker tracker : ServerTrackerInit.playerTrackers) {
             tracker.doTick(player);
         }
+        if (VRPluginVerify.hasAPI) {
+            ServerVRSubscriber.vrPlayerTick(player);
+        }
     }
 
-    @SubscribeEvent
     public static void onPlayerJoin(Player player) {
         if (!player.level.isClientSide && player instanceof ServerPlayer) {
             ActiveConfig.loadConfigFromFile(true);
-            Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+            Network.INSTANCE.send((ServerPlayer) player,
                     new ConfigSyncPacket());
         }
 

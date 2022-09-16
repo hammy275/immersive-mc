@@ -1,12 +1,13 @@
 package net.blf02.immersivemc.client.subscribe;
 
 import dev.architectury.event.EventResult;
-import dev.architectury.event.events.client.ClientLifecycleEvent;
-import dev.architectury.event.events.client.ClientTickEvent;
 import net.blf02.immersivemc.ImmersiveMC;
 import net.blf02.immersivemc.client.ClientUtil;
 import net.blf02.immersivemc.client.config.screen.ConfigScreen;
-import net.blf02.immersivemc.client.immersive.*;
+import net.blf02.immersivemc.client.immersive.AbstractImmersive;
+import net.blf02.immersivemc.client.immersive.ImmersiveBackpack;
+import net.blf02.immersivemc.client.immersive.ImmersiveChest;
+import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
@@ -26,18 +27,15 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.block.AbstractChestBlock;
+import net.minecraft.world.level.block.EnderChestBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -95,6 +93,10 @@ public class ClientLogicSubscriber {
 
         possiblyTrack(pos, state, tileEntity, Minecraft.getInstance().level);
 
+        if (VRPluginVerify.hasAPI) {
+            ClientVRSubscriber.immersiveTickVR(player);
+        }
+
     }
 
     public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
@@ -131,6 +133,7 @@ public class ClientLogicSubscriber {
             ClientUtil.immersiveLeftClickCooldown += 6;
             return EventResult.interruptTrue();
         }
+        return EventResult.pass();
     }
 
     public static void onDisconnect(Player player) {

@@ -8,15 +8,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ClientUtil {
 
 
     public static int immersiveLeftClickCooldown = 0;
 
-    @OnlyIn(Dist.CLIENT)
     public static Tuple<Vec3, Vec3> getStartAndEndOfLookTrace(Player player) {
         double dist = Minecraft.getInstance().gameMode.getPickRange();
         Vec3 start;
@@ -34,7 +31,6 @@ public class ClientUtil {
         return new Tuple<>(start, end);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static void setRightClickCooldown(int amount) {
         Minecraft.getInstance().rightClickDelay = amount;
     }

@@ -4,6 +4,14 @@ plugins {
 
 repositories {
     maven { url "https://maven.quiltmc.org/repository/release/" }
+    maven {
+        name = "Fuzs Mod Resources"
+        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+    }
+    maven {
+        name = "blf02"
+        url = "https://blf02.net:4567"
+    }
 }
 
 architectury {
@@ -32,6 +40,9 @@ dependencies {
         exclude group: "net.fabricmc"
         exclude group: "net.fabricmc.fabric-api"
     }
+
+    modImplementation "net.minecraftforge:forgeconfigapiport-fabric:3.2.4"
+    modImplementation "net.blf02:vrapi:2.0.0-pre1-quilt"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionQuilt")) { transitive false }
