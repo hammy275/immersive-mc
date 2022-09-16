@@ -5,7 +5,6 @@ import dev.architectury.utils.value.IntValue;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.immersive.CheckerFunction;
 import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
-import net.blf02.immersivemc.common.network.Distributors;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
 import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
@@ -26,8 +25,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class ServerSubscriber {
 
@@ -62,9 +64,9 @@ public class ServerSubscriber {
         }
 
         if (sendBreakPacket) {
-            Network.INSTANCE.send(
-                    Distributors.NEARBY_POSITION.with(() -> new Distributors.NearbyDistributorData(pos, 20)),
-                    new ImmersiveBreakPacket(pos));
+            AABB nearbyBox = AABB.ofSize(Vec3.atCenterOf(pos), 20, 20, 20);
+            List<ServerPlayer> nearby = level.getEntitiesOfClass(ServerPlayer.class, nearbyBox);
+            Network.INSTANCE.sendToPlayers(nearby, new ImmersiveBreakPacket(pos));
             ChestToOpenCount.chestImmersiveOpenCount.remove(pos);
         }
 
@@ -90,7 +92,7 @@ public class ServerSubscriber {
     public static void onPlayerJoin(Player player) {
         if (!player.level.isClientSide && player instanceof ServerPlayer) {
             ActiveConfig.loadConfigFromFile(true);
-            Network.INSTANCE.send((ServerPlayer) player,
+            Network.INSTANCE.sendToPlayer((ServerPlayer) player,
                     new ConfigSyncPacket());
         }
 

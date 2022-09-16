@@ -14,7 +14,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import dev.architectury.networking.NetworkManager;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
@@ -78,7 +77,7 @@ public class FetchInventoryPacket {
             if (LevelStorage.usesWorldStorage(pos, player.level.getBlockState(pos), tileEnt, player.level)) {
                 ImmersiveStorage storage = GetStorage.getStorage(player, pos);
                 if (storage != null) {
-                    Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
+                    Network.INSTANCE.sendToPlayer(player,
                             new UpdateStoragePacket(pos, storage, storage.getType()));
                 }
             } else if (tileEnt != null) {
@@ -94,7 +93,7 @@ public class FetchInventoryPacket {
                 for (int i = 0; i < inv.getContainerSize(); i++) {
                     stacks[i] = inv.getItem(i);
                 }
-                Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
+                Network.INSTANCE.sendToPlayer(player,
                         new FetchInventoryPacket(stacks, pos));
             }
         }

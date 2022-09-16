@@ -6,6 +6,7 @@ import net.blf02.immersivemc.common.storage.AnvilStorage;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.common.storage.workarounds.NullContainer;
 import net.blf02.immersivemc.common.util.Util;
+import net.blf02.immersivemc.mixin.AnvilMenuMixin;
 import net.blf02.immersivemc.server.storage.GetStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,7 +31,6 @@ import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.Tags;
 
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -61,7 +61,7 @@ public class Swap {
         if (toEnchantItem.isEmpty()) return;
         int lapisInInventory = 0;
         for (int i = 0; i < player.getInventory().items.size(); i++) {
-            if (player.getInventory().getItem(i).is(Tags.Items.GEMS_LAPIS)) {
+            if (player.getInventory().getItem(i).getItem() == Items.LAPIS_LAZULI) {
                 lapisInInventory += player.getInventory().getItem(i).getCount();
             }
         }
@@ -74,7 +74,7 @@ public class Swap {
         if (container.clickMenuButton(player, slot - 1)) {
             int lapisToTake = slot;
             for (int i = 0; i < player.getInventory().items.size(); i++) {
-                if (player.getInventory().getItem(i).is(Tags.Items.GEMS_LAPIS)) {
+                if (player.getInventory().getItem(i).getItem() == Items.LAPIS_LAZULI) {
                     ItemStack stack = player.getInventory().getItem(i);
                     while (!stack.isEmpty() && lapisToTake > 0) {
                         stack.shrink(1);
@@ -390,7 +390,7 @@ public class Swap {
         ItemStack res = container.getSlot(2).getItem();
         int level = 0;
         if (isReallyAnvil) {
-            level = ((AnvilMenu) container).cost.get();
+            level = ((AnvilMenuMixin) container).getCost().get();
         }
         return new Pair<>(res, level);
     }

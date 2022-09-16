@@ -3,7 +3,6 @@ package net.blf02.immersivemc;
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
-import net.blf02.immersivemc.client.config.screen.ConfigScreen;
 import net.blf02.immersivemc.client.model.BackpackCraftingModel;
 import net.blf02.immersivemc.client.model.BackpackLowDetailModel;
 import net.blf02.immersivemc.client.model.BackpackModel;
@@ -21,9 +20,6 @@ public class ImmersiveMCClient {
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_COMMA, ImmersiveMC.globalKeyCategory);
         KeyMappingRegistry.register(ImmersiveMC.SUMMON_BACKPACK);
         KeyMappingRegistry.register(ImmersiveMC.OPEN_SETTINGS);
-
-        ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
-                () -> new ConfigGuiHandler.ConfigGuiFactory((minecraft, screen) -> new ConfigScreen(screen)));
 
         EntityModelLayerRegistry.register(BackpackCraftingModel.LAYER_LOCATION, BackpackCraftingModel::createBodyLayer);
         EntityModelLayerRegistry.register(BackpackLowDetailModel.LAYER_LOCATION, BackpackLowDetailModel::createBodyLayer);

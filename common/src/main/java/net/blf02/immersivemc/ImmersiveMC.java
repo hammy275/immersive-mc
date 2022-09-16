@@ -8,7 +8,6 @@ import dev.architectury.event.events.common.TickEvent;
 import dev.architectury.platform.Platform;
 import dev.architectury.utils.Env;
 import net.blf02.immersivemc.client.subscribe.ClientLogicSubscriber;
-import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.*;
 import net.blf02.immersivemc.server.ServerSubscriber;
@@ -48,8 +47,6 @@ public class ImmersiveMC {
             ImmersiveMCClient.init();
         }
         serverSetup();
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ImmersiveMCConfig.GENERAL_SPEC,
-                "immersive_mc.toml");
     }
 
     protected static void serverSetup() {

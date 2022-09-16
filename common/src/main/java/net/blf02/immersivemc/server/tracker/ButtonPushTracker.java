@@ -4,6 +4,7 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
+import net.blf02.immersivemc.mixin.ButtonBlockMixin;
 import net.blf02.immersivemc.server.PlayerConfigs;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
@@ -39,7 +40,7 @@ public class ButtonPushTracker extends AbstractTracker {
                         pos);
                 if (res != null && res.getBlockPos().equals(pos)) {
                     button.press(state, player.level, pos);
-                    button.playSound(null, player.level, pos, true);
+                    ((ButtonBlockMixin) button).playSound(null, player.level, pos, true);
                 }
             }
         }

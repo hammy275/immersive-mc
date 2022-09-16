@@ -39,7 +39,7 @@ public class UpdateStoragePacket {
 
     public static void handle(final UpdateStoragePacket message, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
-            if (ctx.get().getSender() == null) {
+            if (ctx.get().getPlayer() == null) {
                 for (AbstractWorldStorageImmersive<? extends AbstractWorldStorageInfo> immersive : Immersives.WS_IMMERSIVES) {
                     for (AbstractWorldStorageInfo info : immersive.getTrackedObjects()) {
                         if (info.getBlockPosition().equals(message.pos)) {

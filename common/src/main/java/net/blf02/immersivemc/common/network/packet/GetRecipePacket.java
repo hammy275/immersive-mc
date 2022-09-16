@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.common.network.packet;
 
+import dev.architectury.networking.NetworkManager;
 import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.CraftingInfo;
 import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
@@ -13,8 +14,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
-import dev.architectury.networking.NetworkManager;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
@@ -64,7 +63,7 @@ public class GetRecipePacket {
                     CraftingRecipe recipe = Swap.getRecipe(sender, items);
                     ItemStack output = recipe != null ? recipe.getResultItem() : ItemStack.EMPTY;
                     GetStorage.getCraftingStorage(sender, packet.pos).items[9] = output;
-                    Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sender),
+                    Network.INSTANCE.sendToPlayer(sender,
                             new GetRecipePacket(packet.pos, output));
                 }
 

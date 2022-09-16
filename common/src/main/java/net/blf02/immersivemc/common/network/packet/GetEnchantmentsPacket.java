@@ -18,7 +18,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
 import dev.architectury.networking.NetworkManager;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
@@ -118,7 +117,7 @@ public class GetEnchantmentsPacket {
                         int[] enchLevels = container.levelClue;
 
 
-                        Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
+                        Network.INSTANCE.sendToPlayer(player,
                                 new GetEnchantmentsPacket(
                                         xpLevels[0], descs[0], enchLevels[0],
                                         xpLevels[1], descs[1], enchLevels[1],

@@ -8,7 +8,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import dev.architectury.networking.NetworkManager;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
@@ -61,7 +60,7 @@ public class FetchPlayerStoragePacket {
                 handleClient(message);
             } else { // Client to server
                 ImmersiveStorage storage = GetStorage.getPlayerStorage(player, message.type);
-                Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
+                Network.INSTANCE.sendToPlayer(player,
                         new FetchPlayerStoragePacket(storage, message.type));
             }
         });
