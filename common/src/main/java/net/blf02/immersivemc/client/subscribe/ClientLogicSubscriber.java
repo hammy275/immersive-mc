@@ -22,7 +22,6 @@ import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -49,9 +48,8 @@ public class ClientLogicSubscriber {
         ActiveConfig.loadOffConfig(); // Load "disabled" config, so stuff is disabled if the server isn't running ImmersiveMC
     }
 
-    public static void onPlayerTick(Player player) {
-        if (player.level instanceof ServerLevel) return;
-
+    public static void onClientTick(Minecraft minecraft) {
+        Player player = Minecraft.getInstance().player;
         if (ImmersiveMC.OPEN_SETTINGS.isDown() && Minecraft.getInstance().screen == null) {
             Minecraft.getInstance().setScreen(new ConfigScreen(null));
         }

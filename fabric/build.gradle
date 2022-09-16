@@ -36,8 +36,8 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
-    modImplementation "net.minecraftforge:forgeconfigapiport-fabric:3.2.4"
-    modImplementation "net.blf02:vrapi:2.0.0-pre1-fabric"
+    modApi "net.minecraftforge:forgeconfigapiport-fabric:3.2.4"
+    modApi "net.blf02:vrapi:2.0.0-pre1-fabric"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }

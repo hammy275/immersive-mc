@@ -1,4 +1,4 @@
-package net.blf02.forge;
+package net.blf02.immersivemc_forge;
 
 import dev.architectury.platform.forge.EventBuses;
 import net.blf02.immersivemc.ImmersiveMC;

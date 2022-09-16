@@ -2,6 +2,7 @@ package net.blf02.immersivemc;
 
 import dev.architectury.event.events.client.ClientLifecycleEvent;
 import dev.architectury.event.events.client.ClientRawInputEvent;
+import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.event.events.common.BlockEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
@@ -32,7 +33,7 @@ public class ImmersiveMC {
         if (Platform.getEnvironment() == Env.CLIENT) {
             // ClientLogic
             ClientLifecycleEvent.CLIENT_LEVEL_LOAD.register(ClientLogicSubscriber::onClientLogin);
-            TickEvent.PLAYER_POST.register(ClientLogicSubscriber::onPlayerTick);
+            ClientTickEvent.CLIENT_POST.register(ClientLogicSubscriber::onClientTick);
             ClientRawInputEvent.MOUSE_CLICKED_PRE.register(ClientLogicSubscriber::onClick);
             PlayerEvent.PLAYER_QUIT.register(ClientLogicSubscriber::onDisconnect);
         }

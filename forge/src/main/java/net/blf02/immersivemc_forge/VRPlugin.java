@@ -1,4 +1,4 @@
-package net.blf02.forge;
+package net.blf02.immersivemc_forge;
 
 import net.blf02.vrapi.api.IVRAPI;
 import net.blf02.vrapi.api.VRAPIPlugin;

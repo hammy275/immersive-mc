@@ -1,13 +1,12 @@
 package net.blf02.immersivemc.common.network.packet;
 
+import dev.architectury.networking.NetworkManager;
 import net.blf02.immersivemc.client.immersive.AbstractImmersive;
 import net.blf02.immersivemc.client.immersive.Immersives;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import dev.architectury.networking.NetworkManager;
 
 import java.util.function.Supplier;
 
@@ -33,8 +32,7 @@ public class ImmersiveBreakPacket {
 
     public static <I extends AbstractImmersiveInfo> void handle(final ImmersiveBreakPacket message, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
-            if (player == null) { // From server to client
+            if (ctx.get().getPlayer() == null) { // From server to client
                 boolean breakOut = false;
                 for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
                     for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {

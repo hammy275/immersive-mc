@@ -1,4 +1,4 @@
-package net.blf02.quilt;
+package net.blf02.immersivemc_quilt;
 
 import net.blf02.immersivemc.ImmersiveMC;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
