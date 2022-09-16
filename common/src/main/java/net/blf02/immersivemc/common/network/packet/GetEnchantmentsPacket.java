@@ -17,7 +17,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
-import net.minecraftforge.network.NetworkEvent;
+import dev.architectury.networking.NetworkManager;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
@@ -98,9 +98,9 @@ public class GetEnchantmentsPacket {
         }
     }
 
-    public static void handle(GetEnchantmentsPacket message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
+    public static void handle(GetEnchantmentsPacket message, Supplier<NetworkManager.PacketContext> ctx) {
+        ctx.get().queue(() -> {
+            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
             if (player == null) {
                 handleClient(message);
             } else if (NetworkUtil.safeToRun(message.pos, player)) {
@@ -129,7 +129,7 @@ public class GetEnchantmentsPacket {
                 }
             }
         });
-        ctx.get().setPacketHandled(true);
+        
     }
 
     protected static void handleClient(GetEnchantmentsPacket message) {

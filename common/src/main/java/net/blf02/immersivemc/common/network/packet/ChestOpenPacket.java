@@ -11,7 +11,7 @@ import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
-import net.minecraftforge.network.NetworkEvent;
+import dev.architectury.networking.NetworkManager;
 
 import java.util.function.Supplier;
 
@@ -33,9 +33,9 @@ public class ChestOpenPacket {
         return new ChestOpenPacket(buffer.readBlockPos(), buffer.readBoolean());
     }
 
-    public static void handle(final ChestOpenPacket message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
+    public static void handle(final ChestOpenPacket message, Supplier<NetworkManager.PacketContext> ctx) {
+        ctx.get().queue(() -> {
+            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
             if (player != null) {
                 if (NetworkUtil.safeToRun(message.pos, player)) {
                     BlockEntity tileEnt = player.level.getBlockEntity(message.pos);
@@ -74,7 +74,7 @@ public class ChestOpenPacket {
                 }
             }
         });
-        ctx.get().setPacketHandled(true);
+        
     }
 
     protected static void changeChestCount(BlockPos pos, int amount) {

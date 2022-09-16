@@ -13,7 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraftforge.network.NetworkEvent;
+import dev.architectury.networking.NetworkManager;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
@@ -47,9 +47,9 @@ public class GetRecipePacket {
         return new GetRecipePacket(buffer.readBlockPos(), buffer.readBoolean() ? null : buffer.readItem());
     }
 
-    public static void handle(final GetRecipePacket packet, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer sender = ctx.get().getSender();
+    public static void handle(final GetRecipePacket packet, Supplier<NetworkManager.PacketContext> ctx) {
+        ctx.get().queue(() -> {
+            ServerPlayer sender = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
             if (sender == null) {
                 handleClient(packet);
             } else if (NetworkUtil.safeToRun(packet.pos, sender)) {
@@ -70,7 +70,7 @@ public class GetRecipePacket {
 
             }
         });
-        ctx.get().setPacketHandled(true);
+        
 
     }
 

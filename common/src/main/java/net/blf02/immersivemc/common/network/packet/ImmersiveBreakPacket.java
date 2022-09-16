@@ -7,7 +7,7 @@ import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import dev.architectury.networking.NetworkManager;
 
 import java.util.function.Supplier;
 
@@ -31,9 +31,9 @@ public class ImmersiveBreakPacket {
         return new ImmersiveBreakPacket(buffer.readBlockPos());
     }
 
-    public static <I extends AbstractImmersiveInfo> void handle(final ImmersiveBreakPacket message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
+    public static <I extends AbstractImmersiveInfo> void handle(final ImmersiveBreakPacket message, Supplier<NetworkManager.PacketContext> ctx) {
+        ctx.get().queue(() -> {
+            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
             if (player == null) { // From server to client
                 boolean breakOut = false;
                 for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
@@ -52,6 +52,6 @@ public class ImmersiveBreakPacket {
                 }
             }
         });
-        ctx.get().setPacketHandled(true);
+        
     }
 }

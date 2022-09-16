@@ -13,7 +13,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
-import net.minecraftforge.network.NetworkEvent;
+import dev.architectury.networking.NetworkManager;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
@@ -60,16 +60,16 @@ public class FetchInventoryPacket {
         return new FetchInventoryPacket(stacks, pos);
     }
 
-    public static void handle(final FetchInventoryPacket message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
+    public static void handle(final FetchInventoryPacket message, Supplier<NetworkManager.PacketContext> ctx) {
+        ctx.get().queue(() -> {
+            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
             if (player != null) { // Asking for inventory data
                 handleServerToClient(player, message.pos);
             } else { // Receiving inventory data
                 NetworkClientHandlers.handleReceiveInvData(message.items, message.pos);
             }
         });
-        ctx.get().setPacketHandled(true);
+        
     }
 
     public static void handleServerToClient(ServerPlayer player, BlockPos pos) {

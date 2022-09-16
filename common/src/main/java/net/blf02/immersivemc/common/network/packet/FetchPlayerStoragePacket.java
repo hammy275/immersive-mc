@@ -7,7 +7,7 @@ import net.blf02.immersivemc.server.storage.GetStorage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import dev.architectury.networking.NetworkManager;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
@@ -54,9 +54,9 @@ public class FetchPlayerStoragePacket {
         }
     }
 
-    public static void handle(FetchPlayerStoragePacket message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
+    public static void handle(FetchPlayerStoragePacket message, Supplier<NetworkManager.PacketContext> ctx) {
+        ctx.get().queue(() -> {
+            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
             if (player == null) { // Server to client
                 handleClient(message);
             } else { // Client to server
@@ -65,7 +65,6 @@ public class FetchPlayerStoragePacket {
                         new FetchPlayerStoragePacket(storage, message.type));
             }
         });
-        ctx.get().setPacketHandled(true);
     }
 
     public static void handleClient(FetchPlayerStoragePacket message) {

@@ -6,7 +6,7 @@ import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.server.PlayerConfigs;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraftforge.network.NetworkEvent;
+import dev.architectury.networking.NetworkManager;
 
 import java.util.function.Supplier;
 
@@ -55,8 +55,8 @@ public class ConfigSyncPacket {
         return new ConfigSyncPacket(buffer); // Return a packet to be written to ActiveConfig
     }
 
-    public static void handle(final ConfigSyncPacket message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
+    public static void handle(final ConfigSyncPacket message, Supplier<NetworkManager.PacketContext> ctx) {
+        ctx.get().queue(() -> {
             if (ctx.get().getSender() == null) { // If from the server, we just need to load the config
                 ActiveConfig.loadConfigFromPacket(message.buffer);
                 Network.INSTANCE.sendToServer(getToServerConfigPacket());
@@ -67,6 +67,6 @@ public class ConfigSyncPacket {
                 PlayerConfigs.registerConfig(ctx.get().getSender(), message.buffer);
             }
         });
-        ctx.get().setPacketHandled(true);
+        
     }
 }

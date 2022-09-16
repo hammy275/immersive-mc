@@ -8,7 +8,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraftforge.network.NetworkEvent;
+import dev.architectury.networking.NetworkManager;
 
 import java.util.function.Supplier;
 
@@ -32,10 +32,10 @@ public class GrabItemPacket {
         return new GrabItemPacket(buffer.readInt());
     }
 
-    public static void handle(final GrabItemPacket packet, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
+    public static void handle(final GrabItemPacket packet, Supplier<NetworkManager.PacketContext> ctx) {
+        ctx.get().queue(() -> {
             if (!ActiveConfig.useRangedGrab) return;
-            ServerPlayer player = ctx.get().getSender();
+            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
             if (player != null) {
                 Entity ent = player.level.getEntity(packet.entityId);
                 if (ent instanceof ItemEntity && player.distanceToSqr(ent) <= 144 &&
@@ -45,7 +45,7 @@ public class GrabItemPacket {
                 }
             }
         });
-        ctx.get().setPacketHandled(true);
+        
     }
 
 

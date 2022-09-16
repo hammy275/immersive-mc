@@ -8,7 +8,7 @@ import net.blf02.immersivemc.server.storage.GetStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import dev.architectury.networking.NetworkManager;
 
 import java.util.function.Supplier;
 
@@ -37,8 +37,8 @@ public class UpdateStoragePacket {
         return new UpdateStoragePacket(pos, storage, type);
     }
 
-    public static void handle(final UpdateStoragePacket message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
+    public static void handle(final UpdateStoragePacket message, Supplier<NetworkManager.PacketContext> ctx) {
+        ctx.get().queue(() -> {
             if (ctx.get().getSender() == null) {
                 for (AbstractWorldStorageImmersive<? extends AbstractWorldStorageInfo> immersive : Immersives.WS_IMMERSIVES) {
                     for (AbstractWorldStorageInfo info : immersive.getTrackedObjects()) {
@@ -49,6 +49,6 @@ public class UpdateStoragePacket {
                 }
             }
         });
-        ctx.get().setPacketHandled(true);
+        
     }
 }

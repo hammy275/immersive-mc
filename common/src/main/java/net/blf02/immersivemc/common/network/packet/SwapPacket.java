@@ -1,5 +1,6 @@
 package net.blf02.immersivemc.common.network.packet;
 
+import dev.architectury.networking.NetworkManager;
 import net.blf02.immersivemc.client.SafeClientUtil;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.PlacementMode;
@@ -13,7 +14,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -45,9 +45,9 @@ public class SwapPacket {
         return packet;
     }
 
-    public static void handle(final SwapPacket message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
+    public static void handle(final SwapPacket message, Supplier<NetworkManager.PacketContext> ctx) {
+        ctx.get().queue(() -> {
+            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
             if (NetworkUtil.safeToRun(message.block, player)) {
                 BlockEntity tileEnt = player.level.getBlockEntity(message.block);
                 BlockState state = player.level.getBlockState(message.block);
@@ -72,7 +72,7 @@ public class SwapPacket {
                 }
             }
         });
-        ctx.get().setPacketHandled(true);
+        
     }
 
 

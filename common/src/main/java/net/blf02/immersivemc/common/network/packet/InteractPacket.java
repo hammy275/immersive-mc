@@ -13,7 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.network.NetworkEvent;
+import dev.architectury.networking.NetworkManager;
 
 import java.util.function.Supplier;
 
@@ -79,9 +79,9 @@ public class InteractPacket {
         }
     }
 
-    public static void handle(final InteractPacket message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
+    public static void handle(final InteractPacket message, Supplier<NetworkManager.PacketContext> ctx) {
+        ctx.get().queue(() -> {
+            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
             if (message.isPlayerStorageInteract()) {
                 if (message.storageType.equals("backpack")) {
                     ImmersiveStorage storage = GetStorage.getPlayerStorage(player, "backpack");
@@ -100,7 +100,7 @@ public class InteractPacket {
                 }
             }
         });
-        ctx.get().setPacketHandled(true);
+        
     }
 
 }
