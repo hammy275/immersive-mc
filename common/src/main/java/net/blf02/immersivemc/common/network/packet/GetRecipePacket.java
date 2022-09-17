@@ -48,7 +48,7 @@ public class GetRecipePacket {
 
     public static void handle(final GetRecipePacket packet, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
-            ServerPlayer sender = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
+            ServerPlayer sender = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (sender == null) {
                 handleClient(packet);
             } else if (NetworkUtil.safeToRun(packet.pos, sender)) {

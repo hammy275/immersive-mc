@@ -61,7 +61,7 @@ public class FetchInventoryPacket {
 
     public static void handle(final FetchInventoryPacket message, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
+            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player != null) { // Asking for inventory data
                 handleServerToClient(player, message.pos);
             } else { // Receiving inventory data

@@ -35,7 +35,7 @@ public class ChestOpenPacket {
 
     public static void handle(final ChestOpenPacket message, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
+            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player != null) {
                 if (NetworkUtil.safeToRun(message.pos, player)) {
                     BlockEntity tileEnt = player.level.getBlockEntity(message.pos);

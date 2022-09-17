@@ -31,7 +31,7 @@ public class SetRepeaterPacket {
     public static void handle(SetRepeaterPacket message, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
             if (!ActiveConfig.useRepeaterImmersion) return;
-            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
+            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (NetworkUtil.safeToRun(message.pos, player)) {
                 if (message.newDelay >= 1 && message.newDelay <= 4) {
                     Util.setRepeater(player.level, message.pos, message.newDelay);

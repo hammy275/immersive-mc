@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import dev.architectury.networking.NetworkManager;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.function.Supplier;
 
@@ -39,7 +40,8 @@ public class UpdateStoragePacket {
 
     public static void handle(final UpdateStoragePacket message, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
-            if (ctx.get().getPlayer() == null) {
+            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
+            if (player == null) {
                 for (AbstractWorldStorageImmersive<? extends AbstractWorldStorageInfo> immersive : Immersives.WS_IMMERSIVES) {
                     for (AbstractWorldStorageInfo info : immersive.getTrackedObjects()) {
                         if (info.getBlockPosition().equals(message.pos)) {

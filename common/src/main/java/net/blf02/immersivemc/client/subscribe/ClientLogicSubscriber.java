@@ -49,6 +49,7 @@ public class ClientLogicSubscriber {
     }
 
     public static void onClientTick(Minecraft minecraft) {
+        if (Minecraft.getInstance().level == null) return;
         Player player = Minecraft.getInstance().player;
         if (ImmersiveMC.OPEN_SETTINGS.isDown() && Minecraft.getInstance().screen == null) {
             Minecraft.getInstance().setScreen(new ConfigScreen(null));

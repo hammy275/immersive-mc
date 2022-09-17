@@ -99,7 +99,7 @@ public class GetEnchantmentsPacket {
 
     public static void handle(GetEnchantmentsPacket message, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
+            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player == null) {
                 handleClient(message);
             } else if (NetworkUtil.safeToRun(message.pos, player)) {

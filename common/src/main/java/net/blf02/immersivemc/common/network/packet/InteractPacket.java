@@ -81,7 +81,7 @@ public class InteractPacket {
 
     public static void handle(final InteractPacket message, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
+            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (message.isPlayerStorageInteract()) {
                 if (message.storageType.equals("backpack")) {
                     ImmersiveStorage storage = GetStorage.getPlayerStorage(player, "backpack");

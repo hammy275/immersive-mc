@@ -12,5 +12,6 @@ public class ImmersiveMCFabric implements ModInitializer {
         ImmersiveMC.init();
         ModLoadingContext.registerConfig(ImmersiveMC.MOD_ID, ModConfig.Type.COMMON, ImmersiveMCConfig.GENERAL_SPEC,
                 "immersive_mc.toml");
+        VRPlugin.initVR();
     }
 }

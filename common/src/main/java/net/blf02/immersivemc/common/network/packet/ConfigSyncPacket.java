@@ -58,13 +58,14 @@ public class ConfigSyncPacket {
 
     public static void handle(final ConfigSyncPacket message, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
-            if (ctx.get().getPlayer() == null) { // If from the server, we just need to load the config
+            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
+            if (player == null) { // If from the server, we just need to load the config
                 ActiveConfig.loadConfigFromPacket(message.buffer);
                 Network.INSTANCE.sendToServer(getToServerConfigPacket());
-            } else if (message.kickMe && ctx.get().getPlayer() != null) { // If asking to be kicked, kick
+            } else if (message.kickMe) { // If asking to be kicked, kick
                 ((ServerPlayer) ctx.get().getPlayer()).connection.disconnect(
                         new TextComponent("The server is using a different version of ImmersiveMC than you!"));
-            } else if (ctx.get().getPlayer() != null) { // Get config from client
+            } else { // Get config from client
                 PlayerConfigs.registerConfig(ctx.get().getPlayer(), message.buffer);
             }
         });

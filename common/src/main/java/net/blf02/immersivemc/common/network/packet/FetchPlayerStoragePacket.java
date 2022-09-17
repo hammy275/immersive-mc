@@ -55,7 +55,7 @@ public class FetchPlayerStoragePacket {
 
     public static void handle(FetchPlayerStoragePacket message, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
+            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player == null) { // Server to client
                 handleClient(message);
             } else { // Client to server

@@ -34,7 +34,7 @@ public class InventorySwapPacket {
     public static void handle(InventorySwapPacket message, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
             if (!ActiveConfig.useBackpack) return;
-            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
+            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player != null) {
                 Swap.handleInventorySwap(player, message.slot, InteractionHand.MAIN_HAND);
             }

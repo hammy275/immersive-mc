@@ -35,7 +35,7 @@ public class GrabItemPacket {
     public static void handle(final GrabItemPacket packet, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
             if (!ActiveConfig.useRangedGrab) return;
-            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
+            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player != null) {
                 Entity ent = player.level.getEntity(packet.entityId);
                 if (ent instanceof ItemEntity && player.distanceToSqr(ent) <= 144 &&

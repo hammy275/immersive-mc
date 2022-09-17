@@ -47,7 +47,7 @@ public class SwapPacket {
 
     public static void handle(final SwapPacket message, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() == null ? null : (ServerPlayer) ctx.get().getPlayer();
+            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (NetworkUtil.safeToRun(message.block, player)) {
                 BlockEntity tileEnt = player.level.getBlockEntity(message.block);
                 BlockState state = player.level.getBlockState(message.block);
