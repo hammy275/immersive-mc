@@ -8,6 +8,14 @@ Then you'll love ImmersiveMC!
 <img alt="VR Chest and Jukebox Demo" src="docs/ImmersiveVRChestAndJukebox.gif" width="320"/>
 <img alt="VR Grab" src="docs/ImmersiveVRGrab.gif" width="320"/>
 
+## Requirements
+
+ImmersiveMC has a few requirements:
+
+- [Architectury API](https://www.curseforge.com/minecraft/mc-mods/architectury-api) if you're playing ImmersiveMC 1.18.2 Beta 2 or higher.
+- [mc-vr-api](https://www.curseforge.com/minecraft/mc-mods/mc-vr-api) if you're playing in VR.
+- [Forge Config API Port](https://www.curseforge.com/minecraft/mc-mods/forge-config-api-port-fabric) if you're playing under Fabric.
+
 ## What is it?
 
 The goal of ImmersiveMC is to make Minecraft more immersive! It most obviously does this by minimizing the amount of GUIs you need to interact with.
@@ -19,6 +27,10 @@ You can use things such as the crafting table, furnaces, and brewing stands with
 There's VR support! In fact, this mod was primarily built to make VR a better experience!
 
 You'll need my API mod, [mc-vr-api](https://www.curseforge.com/minecraft/mc-mods/mc-vr-api) to use this in VR. With this mod installed, you'll be able to use your actual hands to place items, instead of just right clicking!
+
+## Need Help?
+
+Check out the [wiki](https://github.com/hammy3502/immersive-mc/wiki)!
 
 ## Version Support
 
