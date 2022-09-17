@@ -69,6 +69,8 @@ public class ActiveConfig {
         canPet = buffer.readBoolean() && canPet;
         useArmorImmersion = buffer.readBoolean() && useArmorImmersion;
         canFeedAnimals = buffer.readBoolean() && canFeedAnimals;
+
+        buffer.release();
         ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
 
     }

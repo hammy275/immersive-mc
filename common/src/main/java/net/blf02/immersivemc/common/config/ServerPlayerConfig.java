@@ -35,5 +35,6 @@ public class ServerPlayerConfig {
         this(buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(),
                 buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(),
                 buffer.readBoolean());
+        buffer.release();
     }
 }

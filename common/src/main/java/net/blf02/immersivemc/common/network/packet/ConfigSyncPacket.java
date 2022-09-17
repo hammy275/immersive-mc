@@ -53,6 +53,7 @@ public class ConfigSyncPacket {
         if (buffer.readBoolean()) { // If we want to be kicked, just return a kick packet
             return getKickMePacket();
         }
+        buffer.retain();
         return new ConfigSyncPacket(buffer); // Return a packet to be written to ActiveConfig
     }
 
