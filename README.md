@@ -1,6 +1,8 @@
 # immersive-mc
 
-Makes Minecraft more immersive!
+Are you sick of in-game GUIs? Do you want to make your game immersive, whether you're in VR or not? Do you want to take Vivecraft to the next level?
+
+Then you'll love ImmersiveMC!
 
 <img alt="Crafting Demo" src="https://github.com/hammy3502/immersive-mc/raw/v1.0.0/wiki/gif/ImmersiveMC%20Crafting%20Table%20NonVR.gif" width="320"/>
 <img alt="VR Chest and Jukebox Demo" src="docs/ImmersiveVRChestAndJukebox.gif" width="320"/>
@@ -17,3 +19,17 @@ You can use things such as the crafting table, furnaces, and brewing stands with
 There's VR support! In fact, this mod was primarily built to make VR a better experience!
 
 You'll need my API mod, [mc-vr-api](https://www.curseforge.com/minecraft/mc-mods/mc-vr-api) to use this in VR. With this mod installed, you'll be able to use your actual hands to place items, instead of just right clicking!
+
+## Version Support
+
+1.16.1: This version is only supported under Beta 1.1, which you can download [here](https://github.com/hammy3502/immersive-mc/releases/download/v1.0.0-beta1.1/immersivemc-1.0.0-beta1.1-1.16.1.jar)
+
+1.16.5: Grab a release!
+
+1.18.2: The 1.18.2 version of ImmersiveMC is currently in development! Feel free to grab an alpha/beta, and report any bugs you find!
+
+1.19.2+: Future versions coming soon!
+
+Fabric: Fabric support is here! With Vivecraft supporting both Forge and Fabric, it only makes sense for ImmersiveMC to, too! Fabric is supported starting with ImmersiveMC 1.18.2 Beta 2.
+
+Other Forge Versions: There are no plans to backport ImmerisveMC to older versions of Minecraft, nor are there any plans to port it to minor versions of Minecraft that have newer versions. For example, there are no plans to port ImmersiveMC to 1.18.1, as 1.18.2 already exists.
