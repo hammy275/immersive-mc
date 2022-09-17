@@ -4,7 +4,7 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.PlacementMode;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
-import net.blf02.immersivemc.mixin.MinecraftMixin;
+import net.blf02.immersivemc.mixin.MinecraftMixinAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
@@ -33,7 +33,7 @@ public class ClientUtil {
     }
 
     public static void setRightClickCooldown(int amount) {
-        ((MinecraftMixin) Minecraft.getInstance()).setRightClickDelay(amount);
+        ((MinecraftMixinAccessor) Minecraft.getInstance()).setRightClickDelay(amount);
     }
 
     public static PlacementMode getPlacementModeIndirect() {

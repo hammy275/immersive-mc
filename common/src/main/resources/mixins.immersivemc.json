@@ -5,12 +5,13 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "mixins.immersivemc.refmap.json",
   "mixins": [
-    "ContainerOpenersCounterMixin",
     "AnvilMenuMixin",
-    "ButtonBlockMixin"
+    "ButtonBlockMixin",
+    "ContainerOpenersCounterMixin"
   ],
   "client": [
     "GameRendererMixin",
-    "MinecraftMixin"
+    "MinecraftMixin",
+    "MinecraftMixinAccessor"
   ]
 }

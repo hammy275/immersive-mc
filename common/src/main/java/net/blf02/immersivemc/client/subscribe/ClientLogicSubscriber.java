@@ -1,6 +1,5 @@
 package net.blf02.immersivemc.client.subscribe;
 
-import dev.architectury.event.EventResult;
 import net.blf02.immersivemc.ImmersiveMC;
 import net.blf02.immersivemc.client.ClientUtil;
 import net.blf02.immersivemc.client.config.screen.ConfigScreen;
@@ -116,23 +115,23 @@ public class ClientLogicSubscriber {
         }
     }
 
-    public static EventResult onClick(Minecraft client, int button, int action, int mods) {
+    public static boolean onClick(int button) {
         // Don't run code if we're on spectator mode
-        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSpectator()) return EventResult.pass();
+        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSpectator()) return false;
         if (button == 1) {
             int cooldown = handleRightClick(Minecraft.getInstance().player);
             if (cooldown > 0) {
                 ClientUtil.setRightClickCooldown(cooldown);
-                return EventResult.interruptTrue();
+                return true;
             }
         } else if (button == 0 &&
                 (ClientUtil.immersiveLeftClickCooldown > 0)) {
-            return EventResult.interruptTrue();
+            return true;
         } else if (button == 0 && ClientUtil.immersiveLeftClickCooldown <= 0 && handleLeftClick(Minecraft.getInstance().player)) {
             ClientUtil.immersiveLeftClickCooldown += 6;
-            return EventResult.interruptTrue();
+            return true;
         }
-        return EventResult.pass();
+        return false;
     }
 
     public static void onDisconnect(Player player) {

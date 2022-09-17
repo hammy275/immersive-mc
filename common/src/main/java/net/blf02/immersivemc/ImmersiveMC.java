@@ -1,7 +1,6 @@
 package net.blf02.immersivemc;
 
 import dev.architectury.event.events.client.ClientLifecycleEvent;
-import dev.architectury.event.events.client.ClientRawInputEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.event.events.common.BlockEvent;
 import dev.architectury.event.events.common.PlayerEvent;
@@ -34,7 +33,6 @@ public class ImmersiveMC {
             // ClientLogic
             ClientLifecycleEvent.CLIENT_LEVEL_LOAD.register(ClientLogicSubscriber::onClientLogin);
             ClientTickEvent.CLIENT_POST.register(ClientLogicSubscriber::onClientTick);
-            ClientRawInputEvent.MOUSE_CLICKED_PRE.register(ClientLogicSubscriber::onClick);
             PlayerEvent.PLAYER_QUIT.register(ClientLogicSubscriber::onDisconnect);
         }
 
