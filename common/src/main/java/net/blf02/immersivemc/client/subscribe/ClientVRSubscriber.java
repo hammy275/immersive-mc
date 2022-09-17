@@ -37,7 +37,7 @@ public class ClientVRSubscriber {
         Vec3 look = vrPlayer.getHMD().getLookAngle();
         Vec3 end = vrPlayer.getHMD().position().add(look.x * dist, look.y * dist, look.z * dist);
         BlockHitResult res = player.level.clip(new ClipContext(start, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE,
-                null));
+                player));
         ClientLogicSubscriber.possiblyTrack(res.getBlockPos(), player.level.getBlockState(res.getBlockPos()),
                 player.level.getBlockEntity(res.getBlockPos()), Minecraft.getInstance().level);
 
