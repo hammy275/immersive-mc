@@ -13,6 +13,11 @@ public class ImmersiveMCQuilt implements ModInitializer {
         ImmersiveMC.init();
         ModLoadingContext.registerConfig(ImmersiveMC.MOD_ID, ModConfig.Type.COMMON, ImmersiveMCConfig.GENERAL_SPEC,
                 "immersive_mc.toml");
-        VRPlugin.initVR();
+        try {
+            Class.forName("net.blf02.vrapi.api.IVRAPI");
+            VRPlugin.initVR();
+        } catch (ClassNotFoundException e) {
+            ImmersiveMC.LOGGER.info("Not loading with mc-vr-api; it wasn't found!");
+        }
     }
 }
