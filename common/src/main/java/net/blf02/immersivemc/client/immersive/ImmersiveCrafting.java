@@ -44,25 +44,8 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
         info.isTinkersTable = Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()) != null;
 
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
-        Vec3 pos = getTopCenterOfBlock(info.getBlockPosition());
-        Direction left = getLeftOfDirection(forward);
 
-        Vec3 leftOffset = new Vec3(
-                left.getNormal().getX() * -spacing, 0, left.getNormal().getZ() * -spacing);
-        Vec3 rightOffset = new Vec3(
-                left.getNormal().getX() * spacing, 0, left.getNormal().getZ() * spacing);
-
-        Vec3 topOffset = new Vec3(
-                forward.getNormal().getX() * -spacing, 0, forward.getNormal().getZ() * -spacing);
-        Vec3 botOffset = new Vec3(
-                forward.getNormal().getX() * spacing, 0, forward.getNormal().getZ() * spacing);
-
-
-        Vec3[] positions = new Vec3[]{
-                pos.add(leftOffset).add(topOffset), pos.add(topOffset), pos.add(rightOffset).add(topOffset),
-                pos.add(leftOffset), pos, pos.add(rightOffset),
-                pos.add(leftOffset).add(botOffset), pos.add(botOffset), pos.add(rightOffset).add(botOffset)
-        };
+        Vec3[] positions = get3x3Grid(info.getBlockPosition(), spacing);
         float hitboxSize = ClientConstants.itemScaleSizeCrafting / 3f;
         for (int i = 0; i < 9; i++) {
             info.setPosition(i, positions[i]);
