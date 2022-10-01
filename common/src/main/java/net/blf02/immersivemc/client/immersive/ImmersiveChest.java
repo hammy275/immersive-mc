@@ -306,6 +306,8 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
         }
     }
 
-
-
+    @Override
+    public boolean hitboxesAvailable(AbstractImmersiveInfo info) {
+        return ((ChestInfo) info).isOpen;
+    }
 }

@@ -107,4 +107,9 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
             info.remove(); // Remove immersive if we're closing the chest
         }
     }
+
+    @Override
+    public boolean hitboxesAvailable(AbstractImmersiveInfo info) {
+        return ((ShulkerInfo) info).isOpen;
+    }
 }

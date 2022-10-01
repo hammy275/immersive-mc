@@ -55,7 +55,7 @@ public class ClientVRSubscriber {
     }
 
     protected static boolean handleInfo(AbstractImmersive singleton, AbstractImmersiveInfo info, IVRPlayer vrPlayer) {
-        if (info.hasHitboxes()) {
+        if (info.hasHitboxes() && singleton.hitboxesAvailable(info)) {
             for (int c = 0; c <= 1; c++) {
                 IVRData controller = vrPlayer.getController(c);
                 Vec3 pos = controller.position();

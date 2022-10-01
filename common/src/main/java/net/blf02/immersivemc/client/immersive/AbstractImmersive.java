@@ -50,6 +50,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         this.infos = new ArrayList<>(maxImmersives > 0 ? maxImmersives + 1 : 16);
     }
 
+    public boolean hitboxesAvailable(AbstractImmersiveInfo info) {
+        return true;
+    }
+
     public abstract boolean shouldRender(I info, boolean isInVR);
 
     protected abstract void render(I info, PoseStack stack, boolean isInVR);

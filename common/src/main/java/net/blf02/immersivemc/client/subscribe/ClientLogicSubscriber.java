@@ -259,7 +259,7 @@ public class ClientLogicSubscriber {
         if (!inVR) { // Don't handle right clicks for VR players, they have hands!
             for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
                 for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
-                    if (info.hasHitboxes()) {
+                    if (info.hasHitboxes() && singleton.hitboxesAvailable(info)) {
                         Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
                         if (closest.isPresent()) {
                             singleton.onAnyRightClick(info);
