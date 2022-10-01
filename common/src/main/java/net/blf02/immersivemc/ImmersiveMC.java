@@ -55,8 +55,8 @@ public class ImmersiveMC {
                 ImmersiveBreakPacket::decode, ImmersiveBreakPacket::handle);
         Network.INSTANCE.register(FetchInventoryPacket.class, FetchInventoryPacket::encode,
                 FetchInventoryPacket::decode, FetchInventoryPacket::handle);
-        Network.INSTANCE.register(ChestOpenPacket.class, ChestOpenPacket::encode,
-                ChestOpenPacket::decode, ChestOpenPacket::handle);
+        Network.INSTANCE.register(ChestShulkerOpenPacket.class, ChestShulkerOpenPacket::encode,
+                ChestShulkerOpenPacket::decode, ChestShulkerOpenPacket::handle);
         Network.INSTANCE.register(GrabItemPacket.class, GrabItemPacket::encode,
                 GrabItemPacket::decode, GrabItemPacket::handle);
         Network.INSTANCE.register(ConfigSyncPacket.class, ConfigSyncPacket::encode,

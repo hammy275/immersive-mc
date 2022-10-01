@@ -7,7 +7,7 @@ import net.blf02.immersivemc.client.immersive.info.ChestInfo;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.network.Network;
-import net.blf02.immersivemc.common.network.packet.ChestOpenPacket;
+import net.blf02.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import net.blf02.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.util.Util;
@@ -300,7 +300,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
 
     public static void openChest(ChestInfo info) {
         info.isOpen = !info.isOpen;
-        Network.INSTANCE.sendToServer(new ChestOpenPacket(info.getBlockPosition(), info.isOpen));
+        Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(info.getBlockPosition(), info.isOpen));
         if (!info.isOpen) {
             info.remove(); // Remove immersive if we're closing the chest
         }

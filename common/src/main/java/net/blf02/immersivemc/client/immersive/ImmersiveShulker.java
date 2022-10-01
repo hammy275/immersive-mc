@@ -7,6 +7,7 @@ import net.blf02.immersivemc.client.immersive.info.ShulkerInfo;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -35,7 +36,7 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
 
     @Override
     public boolean shouldRender(ShulkerInfo info, boolean isInVR) {
-        return info.readyToRender() && (info.isOpen || true); // TODO: Remove true
+        return info.readyToRender() && info.isOpen;
     }
 
     @Override
@@ -85,7 +86,7 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
 
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
-        if (((ShulkerInfo) info).isOpen || true) { // TODO: Remove true check
+        if (((ShulkerInfo) info).isOpen) {
             Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), closest, hand));
         }
 
@@ -96,6 +97,14 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
         super.doTick(info, isInVR);
         if (info.lastDir != getForwardFromPlayer(Minecraft.getInstance().player)) {
             setHitboxes(info);
+        }
+    }
+
+    public static void openShulkerBox(ShulkerInfo info) {
+        info.isOpen = !info.isOpen;
+        Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(info.getBlockPosition(), info.isOpen));
+        if (!info.isOpen) {
+            info.remove(); // Remove immersive if we're closing the chest
         }
     }
 }

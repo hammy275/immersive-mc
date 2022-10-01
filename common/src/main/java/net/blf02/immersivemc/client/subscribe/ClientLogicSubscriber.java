@@ -3,10 +3,7 @@ package net.blf02.immersivemc.client.subscribe;
 import net.blf02.immersivemc.ImmersiveMC;
 import net.blf02.immersivemc.client.ClientUtil;
 import net.blf02.immersivemc.client.config.screen.ConfigScreen;
-import net.blf02.immersivemc.client.immersive.AbstractImmersive;
-import net.blf02.immersivemc.client.immersive.ImmersiveBackpack;
-import net.blf02.immersivemc.client.immersive.ImmersiveChest;
-import net.blf02.immersivemc.client.immersive.Immersives;
+import net.blf02.immersivemc.client.immersive.*;
 import net.blf02.immersivemc.client.immersive.info.*;
 import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
 import net.blf02.immersivemc.common.config.ActiveConfig;
@@ -304,6 +301,18 @@ public class ClientLogicSubscriber {
                 if (info != null) {
                     ImmersiveChest.openChest(info);
                     return Immersives.immersiveChest.getCooldownDesktop();
+                }
+            }
+        }
+        if (ActiveConfig.useShulkerImmersion) {
+            BlockPos pos = ((BlockHitResult) looking).getBlockPos();
+            BlockEntity blockEnt = player.level.getBlockEntity(pos);
+            if (blockEnt instanceof ShulkerBoxBlockEntity) {
+                for (ShulkerInfo info : Immersives.immersiveShulker.getTrackedObjects()) {
+                    if (info.getBlockPosition().equals(pos)) {
+                        ImmersiveShulker.openShulkerBox(info);
+                        return Immersives.immersiveShulker.getCooldownDesktop();
+                    }
                 }
             }
         }

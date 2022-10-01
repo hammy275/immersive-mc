@@ -12,28 +12,29 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import dev.architectury.networking.NetworkManager;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 
 import java.util.function.Supplier;
 
-public class ChestOpenPacket {
+public class ChestShulkerOpenPacket {
 
     public BlockPos pos;
     public boolean isOpen;
 
-    public ChestOpenPacket(BlockPos pos, boolean isOpenPacket) {
+    public ChestShulkerOpenPacket(BlockPos pos, boolean isOpenPacket) {
         this.pos = pos;
         this.isOpen = isOpenPacket;
     }
 
-    public static void encode(ChestOpenPacket packet, FriendlyByteBuf buffer) {
+    public static void encode(ChestShulkerOpenPacket packet, FriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos).writeBoolean(packet.isOpen);
     }
 
-    public static ChestOpenPacket decode(FriendlyByteBuf buffer) {
-        return new ChestOpenPacket(buffer.readBlockPos(), buffer.readBoolean());
+    public static ChestShulkerOpenPacket decode(FriendlyByteBuf buffer) {
+        return new ChestShulkerOpenPacket(buffer.readBlockPos(), buffer.readBoolean());
     }
 
-    public static void handle(final ChestOpenPacket message, Supplier<NetworkManager.PacketContext> ctx) {
+    public static void handle(final ChestShulkerOpenPacket message, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player != null) {
@@ -69,6 +70,13 @@ public class ChestOpenPacket {
                         } else {
                             chest.stopOpen(player);
                             changeChestCount(chest.getBlockPos(), -1);
+                        }
+                    } else if (tileEnt instanceof ShulkerBoxBlockEntity shulkerBox) {
+                        if (!ActiveConfig.useShulkerImmersion) return;
+                        if (message.isOpen) {
+                            shulkerBox.startOpen(player);
+                        } else {
+                            shulkerBox.stopOpen(player);
                         }
                     }
                 }
