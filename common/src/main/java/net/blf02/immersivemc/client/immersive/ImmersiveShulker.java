@@ -44,7 +44,7 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
         float itemSize = ClientConstants.itemScaleSizeShulker / info.getItemTransitionCountdown();
         for (int i = 0; i < 27; i++) {
             renderItem(info.items[i], stack, info.getPosition(i), itemSize,
-                    getForwardFromPlayer(Minecraft.getInstance().player).getOpposite(), null,
+                    getForwardFromPlayer(Minecraft.getInstance().player), null,
                     info.getHitbox(i), true, -1);
         }
     }
@@ -70,14 +70,14 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
     }
 
     public void setHitboxes(ShulkerInfo info) {
-        Vec3[] positions = get3x3VerticalGrid(info.getBlockPosition(), 0.124);
+        Vec3[] positions = get3x3VerticalGrid(info.getBlockPosition(), 0.15);
         for (int i = 0; i < 27; i++) {
             info.setHitbox(i, null);
             info.setPosition(i, null);
         }
         for (int i = 0; i < 9; i++) {
-            positions[i] = positions[i].add(0, 0.3, 0); // Move up a bit for gap in Shulker box
-            info.setHitbox(i + info.getRowNum() * 9, createHitbox(positions[i], 0.062f));
+            positions[i] = positions[i].add(0, 0.25, 0); // Move up a bit for gap in Shulker box
+            info.setHitbox(i + info.getRowNum() * 9, createHitbox(positions[i], 0.075f));
             info.setPosition(i + info.getRowNum() * 9, positions[i]);
         }
 
