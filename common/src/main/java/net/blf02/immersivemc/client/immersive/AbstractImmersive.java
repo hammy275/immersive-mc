@@ -409,15 +409,15 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 pos.z + size);
     }
 
-    public Vec3[] get3x3Grid(BlockPos blockPos, double spacing) {
+    public Vec3[] get3x3HorizontalGrid(BlockPos blockPos, double spacing) {
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         Vec3 pos = getTopCenterOfBlock(blockPos);
         Direction left = getLeftOfDirection(forward);
 
         Vec3 leftOffset = new Vec3(
-                left.getNormal().getX() * -spacing, 0, left.getNormal().getZ() * -spacing);
-        Vec3 rightOffset = new Vec3(
                 left.getNormal().getX() * spacing, 0, left.getNormal().getZ() * spacing);
+        Vec3 rightOffset = new Vec3(
+                left.getNormal().getX() * -spacing, 0, left.getNormal().getZ() * -spacing);
 
         Vec3 topOffset = new Vec3(
                 forward.getNormal().getX() * -spacing, 0, forward.getNormal().getZ() * -spacing);
@@ -430,6 +430,26 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 pos.add(leftOffset), pos, pos.add(rightOffset),
                 pos.add(leftOffset).add(botOffset), pos.add(botOffset), pos.add(rightOffset).add(botOffset)
         };
+    }
+
+    public Vec3[] get3x3VerticalGrid(BlockPos blockPos, double spacing) {
+        Vec3 posBotLeft = getDirectlyInFront(getForwardFromPlayer(Minecraft.getInstance().player), blockPos);
+        Direction left = getLeftOfDirection(getForwardFromPlayer(Minecraft.getInstance().player));
+        Vec3 pos = posBotLeft.add(left.getNormal().getX() * 0.5, 0.5, left.getNormal().getZ() * 0.5);
+        Vec3 leftOffset = new Vec3(
+                left.getNormal().getX() * -spacing, 0, left.getNormal().getZ() * -spacing);
+        Vec3 rightOffset = new Vec3(
+                left.getNormal().getX() * spacing, 0, left.getNormal().getZ() * spacing);
+
+        Vec3 upOffset = new Vec3(0, spacing, 0);
+        Vec3 downOffset = new Vec3(0, -spacing, 0);
+
+        return new Vec3[]{
+                pos.add(leftOffset).add(upOffset), pos.add(upOffset), pos.add(rightOffset).add(upOffset),
+                pos.add(leftOffset), pos, pos.add(rightOffset),
+                pos.add(leftOffset).add(downOffset), pos.add(downOffset), pos.add(rightOffset).add(downOffset)
+        };
+
     }
 
 }

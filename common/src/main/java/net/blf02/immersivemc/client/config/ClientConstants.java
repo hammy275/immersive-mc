@@ -12,6 +12,7 @@ public class ClientConstants {
     public static final int ticksToRenderETable = 60*20; // 1 min
     public static final int ticksToRenderBackpack = Integer.MAX_VALUE; // You dismiss the backpack manually
     public static final int ticksToRenderRepeater = 80; // We're always pointing at one, so we don't need it much longer after that
+    public static final int ticksToRenderShulker = 300;
 
     // Size of items when rendered in front of something immersive
     public static final float itemScaleSizeFurnace = 0.5f;
@@ -22,6 +23,7 @@ public class ClientConstants {
     public static final float itemScaleSizeETable = 0.42f;
     public static final float itemScaleSizeBackpack = 0.2f;
     public static final float itemScaleSizeBackpackSelected = 0.3f;
+    public static final float itemScaleSizeShulker = 0.1f;
 
     // Time to transition in ticks
     public static final int transitionTime = 20;

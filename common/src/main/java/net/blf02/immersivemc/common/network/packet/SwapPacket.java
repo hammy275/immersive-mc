@@ -69,6 +69,8 @@ public class SwapPacket {
                     } else if (tileEnt instanceof EnderChestBlockEntity) {
                         Swap.handleEnderChest(player, message.hand, message.slot);
                     }
+                } else if (ImmersiveCheckers.isShulkerBox(message.block, state, tileEnt, player.level)) {
+                    Swap.shulkerBoxSwap(player, message.slot, message.hand, message.block);
                 }
             }
         });

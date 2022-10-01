@@ -7,10 +7,7 @@ import net.blf02.immersivemc.client.immersive.AbstractImmersive;
 import net.blf02.immersivemc.client.immersive.ImmersiveBackpack;
 import net.blf02.immersivemc.client.immersive.ImmersiveChest;
 import net.blf02.immersivemc.client.immersive.Immersives;
-import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
-import net.blf02.immersivemc.client.immersive.info.ChestInfo;
-import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
+import net.blf02.immersivemc.client.immersive.info.*;
 import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
@@ -30,6 +27,7 @@ import net.minecraft.world.level.block.EnderChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -225,6 +223,14 @@ public class ClientLogicSubscriber {
                 if (chestInfo != null && chestInfo.isOpen) {
                     chestInfo.nextRow();
                     return true;
+                }
+            } else if (tileEnt instanceof ShulkerBoxBlockEntity shulkerBox) {
+                for (ShulkerInfo info : Immersives.immersiveShulker.getTrackedObjects()) {
+                    if (info.getBlockPosition().equals(shulkerBox.getBlockPos())) {
+                        info.nextRow();
+                        Immersives.immersiveShulker.setHitboxes(info);
+                        return true;
+                    }
                 }
             }
         } else if (backpackInfo != null) {

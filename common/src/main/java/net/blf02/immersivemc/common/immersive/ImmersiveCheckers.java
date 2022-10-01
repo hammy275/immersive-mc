@@ -24,6 +24,7 @@ public class ImmersiveCheckers {
         CHECKERS.add(ImmersiveCheckers::isFurnace);
         CHECKERS.add(ImmersiveCheckers::isJukebox);
         CHECKERS.add(ImmersiveCheckers::isRepeater);
+        CHECKERS.add(ImmersiveCheckers::isShulkerBox);
     }
 
     public static boolean isAnvil(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
@@ -59,6 +60,10 @@ public class ImmersiveCheckers {
 
     public static boolean isRepeater(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return state.getBlock() instanceof RepeaterBlock;
+    }
+
+    public static boolean isShulkerBox(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        return tileEntity instanceof ShulkerBoxBlockEntity;
     }
 
 

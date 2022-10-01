@@ -85,7 +85,6 @@ public class HoeTracker extends AbstractVRHandTracker {
 
     @Override
     public boolean isEnabledInConfig(ServerPlayerConfig config) {
-        // TODO: Replace with config entry
         return config.useHoeImmersion;
     }
 }

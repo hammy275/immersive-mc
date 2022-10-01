@@ -27,6 +27,7 @@ public class ActiveConfig {
     public static boolean canPet = false;
     public static boolean useArmorImmersion = false;
     public static boolean canFeedAnimals = false;
+    public static boolean useShulkerImmersion = false;
 
     // Non-synced values
     public static int backpackColor = 11901820;
@@ -69,6 +70,7 @@ public class ActiveConfig {
         canPet = buffer.readBoolean() && canPet;
         useArmorImmersion = buffer.readBoolean() && useArmorImmersion;
         canFeedAnimals = buffer.readBoolean() && canFeedAnimals;
+        useShulkerImmersion = buffer.readBoolean() && useShulkerImmersion;
 
         buffer.release();
         ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
@@ -100,6 +102,7 @@ public class ActiveConfig {
             canPet = ImmersiveMCConfig.canPet.get();
             useArmorImmersion = ImmersiveMCConfig.useArmorImmersion.get();
             canFeedAnimals = ImmersiveMCConfig.canFeedAnimals.get();
+            useShulkerImmersion = ImmersiveMCConfig.useShulkerImmersion.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -136,6 +139,7 @@ public class ActiveConfig {
         canPet = false;
         useArmorImmersion = false;
         canFeedAnimals = false;
+        useShulkerImmersion = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -175,7 +179,8 @@ public class ActiveConfig {
                 "Spin crafting output: " + spinCraftingOutput + "\n" +
                 "Can pet: " + canPet + "\n" +
                 "Use armor immersion: " + useArmorImmersion + "\n" +
-                "Can feed animals: " + canFeedAnimals;
+                "Can feed animals: " + canFeedAnimals + "\n" +
+                "Use Shulker Box Immersion: " + useShulkerImmersion;
         return stringOut;
     }
 }

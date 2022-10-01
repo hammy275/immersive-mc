@@ -6,7 +6,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ImmersiveMCConfig {
 
-    public static final int CONFIG_VERSION = 2; // Increment post-release whenever the config changes
+    public static final int CONFIG_VERSION = 3; // Increment post-release whenever the config changes
 
     public static final ForgeConfigSpec GENERAL_SPEC;
 
@@ -29,6 +29,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue canPet;
     public static ForgeConfigSpec.BooleanValue useArmorImmersion;
     public static ForgeConfigSpec.BooleanValue canFeedAnimals;
+    public static ForgeConfigSpec.BooleanValue useShulkerImmersion;
 
     //Non-synced values
     public static ForgeConfigSpec.IntValue backpackColor;
@@ -103,6 +104,9 @@ public class ImmersiveMCConfig {
         canFeedAnimals = builder
                 .comment("Whether VR users can feed animals using both hands")
                 .define("feed_animals", true);
+        useShulkerImmersion = builder
+                .comment("Whether immersives on Shulker Boxes should be allowed")
+                .define("shulker_box_immersion", true);
 
         // Non-synced Values
         backpackColor = builder
@@ -151,7 +155,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useHoeImmersion.get())
                 .writeBoolean(canPet.get())
                 .writeBoolean(useArmorImmersion.get())
-                .writeBoolean(canFeedAnimals.get());
+                .writeBoolean(canFeedAnimals.get())
+                .writeBoolean(useShulkerImmersion.get());
     }
 
     public static void resetToDefault() {
@@ -174,6 +179,7 @@ public class ImmersiveMCConfig {
         canPet.set(true);
         useArmorImmersion.set(true);
         canFeedAnimals.set(true);
+        useShulkerImmersion.set(true);
 
         // Non-synced defaults
         backpackColor.set(11901820);

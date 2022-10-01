@@ -23,5 +23,6 @@ public class Immersives {
     public static final ImmersiveFurnace immersiveFurnace = new ImmersiveFurnace();
     public static final ImmersiveJukebox immersiveJukebox = new ImmersiveJukebox();
     public static final ImmersiveRepeater immersiveRepeater = new ImmersiveRepeater();
+    public static final ImmersiveShulker immersiveShulker = new ImmersiveShulker();
 
 }

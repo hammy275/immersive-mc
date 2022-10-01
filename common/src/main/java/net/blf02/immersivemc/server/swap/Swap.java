@@ -30,12 +30,28 @@ import net.minecraft.world.level.block.SmithingTableBlock;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Swap {
+
+    public static void shulkerBoxSwap(ServerPlayer player, int slot, InteractionHand hand, BlockPos pos) {
+        if (player.level.getBlockEntity(pos) instanceof ShulkerBoxBlockEntity shulkerBox) {
+            ItemStack shulkerItem = shulkerBox.getItem(slot).copy();
+            ItemStack playerItem = player.getItemInHand(hand);
+            if (playerItem.isEmpty() || shulkerItem.isEmpty() || !Util.stacksEqualBesidesCount(shulkerItem, playerItem)) {
+                player.setItemInHand(hand, shulkerItem);
+                shulkerBox.setItem(slot, playerItem);
+            } else {
+                Util.ItemStackMergeResult result = Util.mergeStacks(shulkerItem, playerItem, false);
+                player.setItemInHand(hand, result.mergedFrom);
+                shulkerBox.setItem(slot, result.mergedInto);
+            }
+        }
+    }
 
     public static void enchantingTableSwap(ServerPlayer player, int slot, InteractionHand hand, BlockPos pos) {
         if (player == null) return;
