@@ -20,15 +20,15 @@ public class ServerPlayerConfig {
     public ServerPlayerConfig(boolean useButtons, boolean useCampfire, boolean useLevers,
                               boolean useRangedGrab, boolean useDoorImmersion, boolean useHoeImmersion,
                               boolean canPet, boolean useArmorImmersion, boolean canFeedAnimals) {
-        this.useButtons = useButtons;
-        this.useCampfire = useCampfire;
-        this.useLevers = useLevers;
-        this.useRangedGrab = useRangedGrab;
-        this.useDoorImmersion = useDoorImmersion;
-        this.useHoeImmersion = useHoeImmersion;
-        this.canPet = canPet;
-        this.useArmorImmersion = useArmorImmersion;
-        this.canFeedAnimals = canFeedAnimals;
+        this.useButtons = useButtons && ActiveConfig.useButton;
+        this.useCampfire = useCampfire && ActiveConfig.useCampfireImmersion;
+        this.useLevers = useLevers && ActiveConfig.useLever;
+        this.useRangedGrab = useRangedGrab && ActiveConfig.useRangedGrab;
+        this.useDoorImmersion = useDoorImmersion && ActiveConfig.useDoorImmersion;
+        this.useHoeImmersion = useHoeImmersion && ActiveConfig.useHoeImmersion;
+        this.canPet = canPet && ActiveConfig.canPet;
+        this.useArmorImmersion = useArmorImmersion && ActiveConfig.useArmorImmersion;
+        this.canFeedAnimals = canFeedAnimals && ActiveConfig.canFeedAnimals;
     }
 
     public ServerPlayerConfig(FriendlyByteBuf buffer) {
