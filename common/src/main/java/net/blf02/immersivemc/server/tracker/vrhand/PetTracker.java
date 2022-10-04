@@ -2,6 +2,7 @@ package net.blf02.immersivemc.server.tracker.vrhand;
 
 import net.blf02.immersivemc.common.config.ServerPlayerConfig;
 import net.blf02.immersivemc.server.LastTickVRData;
+import net.blf02.immersivemc.server.PlayerConfigs;
 import net.blf02.immersivemc.server.data.LastTickData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.particles.ParticleTypes;
@@ -55,7 +56,11 @@ public class PetTracker extends AbstractVRHandTracker {
         List<LivingEntity> pets = new LinkedList<>();
         List<Entity> ents = player.level.getEntities(player, AABB.ofSize(player.position(), 10, 10, 10));
         for (Entity e : ents) {
-            if (e instanceof TamableAnimal ta) {
+            if (PlayerConfigs.getConfig(player).canPetAnyLiving) {
+                if (e instanceof LivingEntity le) {
+                    pets.add(le);
+                }
+            } else if (e instanceof TamableAnimal ta) {
                 if (ta.getOwner() == player) {
                     pets.add(ta);
                 }

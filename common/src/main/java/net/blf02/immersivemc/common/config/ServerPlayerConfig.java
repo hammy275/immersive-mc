@@ -5,7 +5,8 @@ import net.minecraft.network.FriendlyByteBuf;
 public class ServerPlayerConfig {
 
     public static final ServerPlayerConfig EMPTY_CONFIG = new ServerPlayerConfig(false,
-            false, false, false, false, false, false, false, false);
+            false, false, false, false, false,
+            false, false, false, false);
 
     public boolean useButtons;
     public boolean useCampfire;
@@ -16,10 +17,12 @@ public class ServerPlayerConfig {
     public boolean canPet;
     public boolean useArmorImmersion;
     public boolean canFeedAnimals;
+    public boolean canPetAnyLiving;
 
     public ServerPlayerConfig(boolean useButtons, boolean useCampfire, boolean useLevers,
                               boolean useRangedGrab, boolean useDoorImmersion, boolean useHoeImmersion,
-                              boolean canPet, boolean useArmorImmersion, boolean canFeedAnimals) {
+                              boolean canPet, boolean useArmorImmersion, boolean canFeedAnimals,
+                              boolean canPetAnyLiving) {
         this.useButtons = useButtons && ActiveConfig.useButton;
         this.useCampfire = useCampfire && ActiveConfig.useCampfireImmersion;
         this.useLevers = useLevers && ActiveConfig.useLever;
@@ -29,12 +32,13 @@ public class ServerPlayerConfig {
         this.canPet = canPet && ActiveConfig.canPet;
         this.useArmorImmersion = useArmorImmersion && ActiveConfig.useArmorImmersion;
         this.canFeedAnimals = canFeedAnimals && ActiveConfig.canFeedAnimals;
+        this.canPetAnyLiving = canPetAnyLiving && ActiveConfig.canPetAnyLiving;
     }
 
     public ServerPlayerConfig(FriendlyByteBuf buffer) {
         this(buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(),
                 buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(),
-                buffer.readBoolean());
+                buffer.readBoolean(), buffer.readBoolean());
         buffer.release();
     }
 }

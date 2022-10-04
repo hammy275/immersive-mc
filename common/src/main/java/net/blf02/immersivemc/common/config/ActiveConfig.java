@@ -28,6 +28,7 @@ public class ActiveConfig {
     public static boolean useArmorImmersion = false;
     public static boolean canFeedAnimals = false;
     public static boolean useShulkerImmersion = false;
+    public static boolean canPetAnyLiving = false;
 
     // Non-synced values
     public static int backpackColor = 11901820;
@@ -71,6 +72,7 @@ public class ActiveConfig {
         useArmorImmersion = buffer.readBoolean() && useArmorImmersion;
         canFeedAnimals = buffer.readBoolean() && canFeedAnimals;
         useShulkerImmersion = buffer.readBoolean() && useShulkerImmersion;
+        canPetAnyLiving = buffer.readBoolean() && canPetAnyLiving;
 
         buffer.release();
         ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
@@ -103,6 +105,7 @@ public class ActiveConfig {
             useArmorImmersion = ImmersiveMCConfig.useArmorImmersion.get();
             canFeedAnimals = ImmersiveMCConfig.canFeedAnimals.get();
             useShulkerImmersion = ImmersiveMCConfig.useShulkerImmersion.get();
+            canPetAnyLiving = ImmersiveMCConfig.canPetAnyLiving.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -140,6 +143,7 @@ public class ActiveConfig {
         useArmorImmersion = false;
         canFeedAnimals = false;
         useShulkerImmersion = false;
+        canPetAnyLiving = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -148,7 +152,7 @@ public class ActiveConfig {
                 .writeBoolean(ActiveConfig.useLever).writeBoolean(ActiveConfig.useRangedGrab)
                 .writeBoolean(ActiveConfig.useDoorImmersion).writeBoolean(ActiveConfig.useHoeImmersion)
                 .writeBoolean(ActiveConfig.canPet).writeBoolean(ActiveConfig.useArmorImmersion)
-                .writeBoolean(ActiveConfig.canFeedAnimals);
+                .writeBoolean(ActiveConfig.canFeedAnimals).writeBoolean(ActiveConfig.canPetAnyLiving);
         return buffer;
     }
 
@@ -180,7 +184,8 @@ public class ActiveConfig {
                 "Can pet: " + canPet + "\n" +
                 "Use armor immersion: " + useArmorImmersion + "\n" +
                 "Can feed animals: " + canFeedAnimals + "\n" +
-                "Use Shulker Box Immersion: " + useShulkerImmersion;
+                "Use Shulker Box Immersion: " + useShulkerImmersion + "\n" +
+                "Can pet any living: " + canPetAnyLiving;
         return stringOut;
     }
 }

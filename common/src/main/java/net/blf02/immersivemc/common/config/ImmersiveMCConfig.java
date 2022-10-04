@@ -30,6 +30,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useArmorImmersion;
     public static ForgeConfigSpec.BooleanValue canFeedAnimals;
     public static ForgeConfigSpec.BooleanValue useShulkerImmersion;
+    public static ForgeConfigSpec.BooleanValue canPetAnyLiving;
 
     //Non-synced values
     public static ForgeConfigSpec.IntValue backpackColor;
@@ -107,6 +108,9 @@ public class ImmersiveMCConfig {
         useShulkerImmersion = builder
                 .comment("Whether immersives on Shulker Boxes should be allowed")
                 .define("shulker_box_immersion", true);
+        canPetAnyLiving = builder
+                .comment("Whether VR players can pet any living entity instead of just pets that they're owners of. Requires 'can_pet' to be enabled!")
+                .define("can_pet_any_living", false);
 
         // Non-synced Values
         backpackColor = builder
@@ -156,7 +160,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(canPet.get())
                 .writeBoolean(useArmorImmersion.get())
                 .writeBoolean(canFeedAnimals.get())
-                .writeBoolean(useShulkerImmersion.get());
+                .writeBoolean(useShulkerImmersion.get())
+                .writeBoolean(canPetAnyLiving.get());
     }
 
     public static void resetToDefault() {
@@ -180,6 +185,7 @@ public class ImmersiveMCConfig {
         useArmorImmersion.set(true);
         canFeedAnimals.set(true);
         useShulkerImmersion.set(true);
+        canPetAnyLiving.set(false);
 
         // Non-synced defaults
         backpackColor.set(11901820);
