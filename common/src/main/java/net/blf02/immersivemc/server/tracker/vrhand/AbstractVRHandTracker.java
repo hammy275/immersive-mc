@@ -29,7 +29,7 @@ public abstract class AbstractVRHandTracker {
 
     public abstract boolean isEnabledInConfig(ServerPlayerConfig config);
 
-    public void preTick() {
+    public void preTick(Player player) {
 
     }
 

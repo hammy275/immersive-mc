@@ -27,15 +27,13 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
     public Map<String, Integer> cooldown = new HashMap<>();
 
     @Override
-    public void preTick() {
-        super.preTick();
-        for (Map.Entry<String, Integer> entry : cooldown.entrySet()) {
-            int newCooldown = entry.getValue() - 1;
-            if (newCooldown <= 0) {
-                cooldown.remove(entry.getKey());
-            } else {
-                cooldown.put(entry.getKey(), newCooldown);
-            }
+    public void preTick(Player player) {
+        super.preTick(player);
+        int newCooldown = cooldown.getOrDefault(player.getGameProfile().getName(), 0) - 1;
+        if (newCooldown <= 0) {
+            cooldown.remove(player.getGameProfile().getName());
+        } else {
+            cooldown.put(player.getGameProfile().getName(), newCooldown);
         }
     }
 

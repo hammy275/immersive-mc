@@ -15,7 +15,7 @@ public class ServerVRSubscriber {
         if (!player.level.isClientSide && VRPlugin.API.playerInVR(player)) {
             IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
             for (AbstractVRHandTracker tracker : ServerTrackerInit.vrPlayerTrackers) {
-                tracker.preTick();
+                tracker.preTick(player);
                 if (LastTickVRData.lastTickVRData.get(player.getGameProfile().getName()) != null
                 && tracker.isEnabledInConfig(PlayerConfigs.getConfig(player))) {
                     tracker.tick(player, vrPlayer, LastTickVRData.lastTickVRData.get(player.getGameProfile().getName()));
