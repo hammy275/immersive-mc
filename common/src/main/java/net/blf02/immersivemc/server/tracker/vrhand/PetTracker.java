@@ -7,11 +7,19 @@ import net.blf02.immersivemc.server.data.LastTickData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.animal.Cat;
+import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.animal.horse.Donkey;
+import net.minecraft.world.entity.animal.horse.Horse;
+import net.minecraft.world.entity.animal.horse.Mule;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
@@ -41,6 +49,23 @@ public class PetTracker extends AbstractVRHandTracker {
                         Vec3 pos = currentVRData.getController(hand.ordinal()).position();
                         level.sendParticles(ParticleTypes.HEART, pos.x, pos.y, pos.z, ThreadLocalRandom.current().nextInt(5) + 1,
                                 0.25, 0.1, 0.25, 0.00001);
+                        if (ThreadLocalRandom.current().nextInt(5) == 0) {
+                            SoundEvent sound = null;
+                            if (entity instanceof Wolf) {
+                                sound = SoundEvents.WOLF_PANT;
+                            } else if (entity instanceof Cat) {
+                                sound = SoundEvents.CAT_PURREOW;
+                            } else if (entity instanceof Horse) {
+                                sound = SoundEvents.HORSE_AMBIENT;
+                            } else if (entity instanceof Donkey) {
+                                sound = SoundEvents.DONKEY_AMBIENT;
+                            } else if (entity instanceof Mule) {
+                                sound = SoundEvents.MULE_AMBIENT;
+                            }
+                            if (sound != null) {
+                                level.playSound(null, entity, sound, SoundSource.NEUTRAL, 1f, 1f);
+                            }
+                        }
                     }
                 }
             }
