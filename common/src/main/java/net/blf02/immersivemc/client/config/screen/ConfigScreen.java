@@ -42,7 +42,7 @@ public class ConfigScreen extends Screen {
                 (this.width - BUTTON_WIDTH) / 2, this.height / 2 + BUTTON_HEIGHT + 16,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("config.immersivemc.immersives"),
                 (button) -> Minecraft.getInstance().setScreen(new ImmersivesConfigScreen(this,
-                        VRPluginVerify.clientInVR ?
+                        VRPluginVerify.hasAPI ?
                                 ImmersivesConfigScreen.ScreenType.BOTH : ImmersivesConfigScreen.ScreenType.NONVR))
         ));
 

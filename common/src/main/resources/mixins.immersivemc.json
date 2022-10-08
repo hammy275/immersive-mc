@@ -7,7 +7,8 @@
   "mixins": [
     "AnvilMenuMixin",
     "ButtonBlockMixin",
-    "ContainerOpenersCounterMixin"
+    "ContainerOpenersCounterMixin",
+    "LivingEntityMixin"
   ],
   "client": [
     "GameRendererMixin",
