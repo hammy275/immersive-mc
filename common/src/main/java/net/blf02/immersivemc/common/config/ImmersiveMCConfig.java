@@ -113,7 +113,7 @@ public class ImmersiveMCConfig {
                 .comment("Whether VR players can pet any living entity instead of just pets that they're owners of. Requires 'can_pet' to be enabled!")
                 .define("can_pet_any_living", false);
         immersiveShield = builder
-                .comment("Whether VR users can use a more immersive shield.")
+                .comment("Whether VR users can use a more immersive shield. They only need to hold a shield in the direction to block, no need to right click!")
                 .define("immersive_shield", true);
 
         // Non-synced Values
