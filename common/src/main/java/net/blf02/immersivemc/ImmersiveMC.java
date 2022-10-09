@@ -10,6 +10,7 @@ import dev.architectury.utils.Env;
 import net.blf02.immersivemc.client.subscribe.ClientLogicSubscriber;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.*;
+import net.blf02.immersivemc.common.subscribe.CommonSubscriber;
 import net.blf02.immersivemc.server.ServerSubscriber;
 import net.minecraft.client.KeyMapping;
 import org.apache.logging.log4j.LogManager;
@@ -34,6 +35,7 @@ public class ImmersiveMC {
             ClientLifecycleEvent.CLIENT_LEVEL_LOAD.register(ClientLogicSubscriber::onClientLogin);
             ClientTickEvent.CLIENT_POST.register(ClientLogicSubscriber::onClientTick);
             PlayerEvent.PLAYER_QUIT.register(ClientLogicSubscriber::onDisconnect);
+            ClientTickEvent.CLIENT_LEVEL_POST.register(CommonSubscriber::globalTick);
         }
 
         // ServerSubscriber
@@ -41,6 +43,8 @@ public class ImmersiveMC {
         TickEvent.SERVER_POST.register(ServerSubscriber::onServerTick);
         TickEvent.PLAYER_POST.register(ServerSubscriber::onPlayerTick);
         PlayerEvent.PLAYER_JOIN.register(ServerSubscriber::onPlayerJoin);
+        TickEvent.PLAYER_POST.register(CommonSubscriber::onPlayerTick);
+        TickEvent.SERVER_POST.register(CommonSubscriber::globalTick);
 
         if (Platform.getEnvironment() == Env.CLIENT) {
             ImmersiveMCClient.init();

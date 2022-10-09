@@ -292,7 +292,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         renderHitbox(stack, hitbox, pos, alwaysRender, 1, 1, 1);
     }
 
-    protected void renderHitbox(PoseStack stack, AABB hitbox, Vec3 pos, boolean alwaysRender,
+    public static void renderHitbox(PoseStack stack, AABB hitbox, Vec3 pos, boolean alwaysRender,
                                 float red, float green, float blue) {
         if ((Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() || alwaysRender) &&
                 hitbox != null && pos != null) {
