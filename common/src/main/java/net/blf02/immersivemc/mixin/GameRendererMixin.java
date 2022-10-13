@@ -11,7 +11,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
 
-    @Inject(method="renderLevel", at=@At(value = "INVOKE_STRING", args="ldc=hand", target="Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V"))
+    @Inject(method="renderLevel", at=
+            {@At(value = "INVOKE_STRING", args="ldc=hand", target="Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V"),
+                    // This one is for non-mixin Vivecraft. Can remove once that is phased out.
+            @At(value = "INVOKE_STRING", args="ldc=ShadersEnd", target="Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V")}
+    )
     private void renderLevelLast(float f, long l, PoseStack poseStack, CallbackInfo ci) {
         ClientRenderSubscriber.onWorldRender(poseStack);
     }
