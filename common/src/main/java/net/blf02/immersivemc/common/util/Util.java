@@ -32,17 +32,6 @@ public class Util {
                 && Math.abs(item.getDeltaMovement().x) <= 0.01 && Math.abs(item.getDeltaMovement().z) <= 0.01;
     }
 
-    public static boolean rayTrace(AABB target, Vec3 rayStart, Vec3 rayEnd) {
-        // If the start or end of the ray is in the target hitbox, we immediately return true
-        if (target.contains(rayStart) || target.contains(rayEnd)) {
-            return true;
-        }
-        // Gets the "hit" for our ray.
-        Optional<Vec3> closestHitOpt = target.clip(rayStart, rayEnd);
-        // Return whether or not we have a hit
-        return closestHitOpt.isPresent();
-    }
-
     public static Optional<Integer> rayTraceClosest(Vec3 rayStart, Vec3 rayEnd, AABB... targets) {
         double dist = Double.MAX_VALUE;
         Integer winner = null;
