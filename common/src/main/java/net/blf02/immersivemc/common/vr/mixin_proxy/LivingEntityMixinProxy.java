@@ -44,7 +44,8 @@ public class LivingEntityMixinProxy {
                         float toRot = (float) (iHand == InteractionHand.MAIN_HAND ? Math.PI / -2f : Math.PI / 2f);
                         Vec3 handVec = hand.getLookAngle().yRot(toRot).normalize();
                         Vec3 attackerVec = damageSource.getSourcePosition().vectorTo(player.position()).normalize();
-                        if (handVec.dot(attackerVec) < 0) {
+                        double angle = Math.acos(handVec.dot(attackerVec)); // Angle in radians
+                        if (angle <= Math.PI && angle >= 2 * Math.PI / 3) { // 60 degrees in each direction from shield vec
                             return true;
                         }
                     }
