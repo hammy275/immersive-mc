@@ -61,8 +61,8 @@ public class ConfigSyncPacket {
         ctx.get().queue(() -> {
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player == null) { // If from the server, we just need to load the config
-                Network.INSTANCE.sendToServer(getToServerConfigPacket()); // Send server our preferences before we load its
                 ActiveConfig.loadConfigFromPacket(message.buffer);
+                Network.INSTANCE.sendToServer(getToServerConfigPacket()); // Send server our preferences before we load its
             } else if (message.kickMe) { // If asking to be kicked, kick
                 ((ServerPlayer) ctx.get().getPlayer()).connection.disconnect(
                         new TextComponent("The server is using a different version of ImmersiveMC than you!"));
