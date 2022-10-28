@@ -12,16 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
 
-    @Inject(method = "isBlocking", at = @At("HEAD"), cancellable = true)
-    public void isBlocking(CallbackInfoReturnable<Boolean> cir) {
-        if (VRPluginVerify.hasAPI) {
-            Boolean isBlocking = LivingEntityMixinProxy.isBlocking((LivingEntity) (Object) this);
-            if (isBlocking != null) {
-                cir.setReturnValue(isBlocking);
-            }
-        }
-    }
-
     @Inject(method = "isDamageSourceBlocked", at = @At("HEAD"), cancellable = true)
     public void isDamageSourceBlocked(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
         if (VRPluginVerify.hasAPI) {

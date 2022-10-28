@@ -14,29 +14,30 @@ import net.minecraft.world.phys.Vec3;
 
 public class LivingEntityMixinProxy {
 
-    public static Boolean isBlocking(LivingEntity living) {
+    private static boolean isImmersiveBlocking(LivingEntity living) {
         if (living instanceof Player player &&
-                ActiveConfig.immersiveShield && VRPlugin.API.playerInVR(player)) {
+                ActiveConfig.immersiveShield && VRPlugin.API.playerInVR(player)
+                && player.getUseItem().isEmpty()) {
             for (InteractionHand iHand : InteractionHand.values()) {
                 if (player.getItemInHand(iHand).getUseAnimation() == UseAnim.BLOCK) {
                     return true;
                 }
             }
-            return false;
         }
-        return null;
+        return false;
     }
 
     public static Boolean isDamageSourceBlocked(LivingEntity living, DamageSource damageSource) {
         if (living instanceof Player player &&
-                ActiveConfig.immersiveShield && VRPlugin.API.playerInVR(player)) {
+                ActiveConfig.immersiveShield && VRPlugin.API.playerInVR(player) && isImmersiveBlocking(player)) {
+            // Guaranteed to not block piercing arrows
             if (damageSource.getDirectEntity() instanceof AbstractArrow arrow) {
                 if (arrow.getPierceLevel() > 0) {
                     return false;
                 }
             }
 
-            if (!damageSource.isBypassArmor() && player.isBlocking() && damageSource.getSourcePosition() != null) {
+            if (!damageSource.isBypassArmor() && damageSource.getSourcePosition() != null) {
                 IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
                 for (InteractionHand iHand : InteractionHand.values()) {
                     if (player.getItemInHand(iHand).getUseAnimation() == UseAnim.BLOCK) {
