@@ -414,9 +414,12 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     public Vec3[] get3x3HorizontalGrid(BlockPos blockPos, double spacing) {
-        Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
+        return get3x3HorizontalGrid(blockPos, spacing, getForwardFromPlayer(Minecraft.getInstance().player));
+    }
+
+    public Vec3[] get3x3HorizontalGrid(BlockPos blockPos, double spacing, Direction blockForward) {
         Vec3 pos = getTopCenterOfBlock(blockPos);
-        Direction left = getLeftOfDirection(forward);
+        Direction left = getLeftOfDirection(blockForward);
 
         Vec3 leftOffset = new Vec3(
                 left.getNormal().getX() * -spacing, 0, left.getNormal().getZ() * -spacing);
@@ -424,9 +427,9 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 left.getNormal().getX() * spacing, 0, left.getNormal().getZ() * spacing);
 
         Vec3 topOffset = new Vec3(
-                forward.getNormal().getX() * -spacing, 0, forward.getNormal().getZ() * -spacing);
+                blockForward.getNormal().getX() * -spacing, 0, blockForward.getNormal().getZ() * -spacing);
         Vec3 botOffset = new Vec3(
-                forward.getNormal().getX() * spacing, 0, forward.getNormal().getZ() * spacing);
+                blockForward.getNormal().getX() * spacing, 0, blockForward.getNormal().getZ() * spacing);
 
 
         return new Vec3[]{

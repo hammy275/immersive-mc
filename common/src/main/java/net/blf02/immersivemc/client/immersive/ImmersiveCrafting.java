@@ -20,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Objects;
@@ -43,9 +44,12 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
 
         info.isTinkersTable = Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()) != null;
 
-        Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
+        // If it's from Tinkers, it has a direction to use already.
+        Direction forward = info.isTinkersTable ?
+                Minecraft.getInstance().level.getBlockState(info.getBlockPosition()).getValue(BlockStateProperties.HORIZONTAL_FACING) :
+                getForwardFromPlayer(Minecraft.getInstance().player);
 
-        Vec3[] positions = get3x3HorizontalGrid(info.getBlockPosition(), spacing);
+        Vec3[] positions = get3x3HorizontalGrid(info.getBlockPosition(), spacing, forward);
         float hitboxSize = ClientConstants.itemScaleSizeCrafting / 3f;
         for (int i = 0; i < 9; i++) {
             info.setPosition(i, positions[i]);
