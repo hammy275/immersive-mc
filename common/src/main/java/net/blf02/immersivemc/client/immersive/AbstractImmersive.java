@@ -419,9 +419,9 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         Direction left = getLeftOfDirection(forward);
 
         Vec3 leftOffset = new Vec3(
-                left.getNormal().getX() * spacing, 0, left.getNormal().getZ() * spacing);
-        Vec3 rightOffset = new Vec3(
                 left.getNormal().getX() * -spacing, 0, left.getNormal().getZ() * -spacing);
+        Vec3 rightOffset = new Vec3(
+                left.getNormal().getX() * spacing, 0, left.getNormal().getZ() * spacing);
 
         Vec3 topOffset = new Vec3(
                 forward.getNormal().getX() * -spacing, 0, forward.getNormal().getZ() * -spacing);
