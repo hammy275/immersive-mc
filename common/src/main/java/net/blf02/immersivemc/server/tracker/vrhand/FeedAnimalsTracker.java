@@ -47,7 +47,8 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
         for (Animal animal : nearbyEnts) {
             if (animal.isFood(inHand)) {
                 AABB feedbox = getMouthHitbox(animal);
-                if (feedbox.contains(vrPlayer.getController0().position()) && feedbox.contains(vrPlayer.getController1().position())) {
+                if (feedbox.contains(vrPlayer.getController0().position()) && feedbox.contains(vrPlayer.getController1().position())
+                && vrPlayer.getController0().position().distanceToSqr(vrPlayer.getController1().position()) < 0.5) {
                     InteractionResult res = animal.mobInteract(player, hand);
                     if (res == InteractionResult.CONSUME || res == InteractionResult.SUCCESS) {
                         cooldown.put(player.getGameProfile().getName(), COOLDOWN_TICKS);
@@ -72,9 +73,9 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
             the size of the hitbox width-wise to cover the front of them. All of this said, we go to the eye position,
             and draw a HUGE box for this.
          */
-        return AABB.ofSize(entity.getEyePosition(), entity.getBbWidth() * 1.5,
-                entity.getBbHeight() * (1d/3d),
-                entity.getBbWidth() * 1.5);
+        return AABB.ofSize(entity.getEyePosition(), entity.getBbWidth() * 2.25,
+                entity.getBbHeight() * 0.5,
+                entity.getBbWidth() * 2.25);
     }
 
     public static List<Animal> getLivingNearby(Player player) {
