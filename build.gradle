@@ -125,8 +125,7 @@ mixin {
 
 repositories {
     maven {
-        name = "blf02"
-        url = "https://blf02.net:4567"
+        url = "https://cursemaven.com"
     }
 }
 
@@ -135,8 +134,8 @@ dependencies {
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.16.5-36.2.20'
-    compileOnly fg.deobf("net.blf02:vrapi:1.4.0")
-    runtimeOnly fg.deobf("net.blf02:vrapi:1.4.0")
+    compileOnly fg.deobf("curse.maven:mcvrapi-591092:3769198")
+    runtimeOnly fg.deobf("curse.maven:mcvrapi-591092:3769198")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
