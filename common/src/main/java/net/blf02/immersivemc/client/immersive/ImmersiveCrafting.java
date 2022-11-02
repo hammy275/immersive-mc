@@ -44,10 +44,14 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
 
         info.isTinkersTable = Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()) != null;
 
-        // If it's from Tinkers, it has a direction to use already.
-        Direction forward = info.isTinkersTable ?
-                Minecraft.getInstance().level.getBlockState(info.getBlockPosition()).getValue(BlockStateProperties.HORIZONTAL_FACING) :
-                getForwardFromPlayer(Minecraft.getInstance().player);
+        Direction forward;
+        try { // try-catch prevents some funny race, I think? See #117
+            forward = info.isTinkersTable ?
+                    Minecraft.getInstance().level.getBlockState(info.getBlockPosition()).getValue(BlockStateProperties.HORIZONTAL_FACING) :
+                    getForwardFromPlayer(Minecraft.getInstance().player);
+        } catch (IllegalArgumentException e) {
+            forward = getForwardFromPlayer(Minecraft.getInstance().player);
+        }
 
         Vec3[] positions = get3x3HorizontalGrid(info.getBlockPosition(), spacing, forward);
         float hitboxSize = ClientConstants.itemScaleSizeCrafting / 3f;
