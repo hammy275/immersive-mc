@@ -1,4 +1,4 @@
-# immersive-mc
+# ImmersiveMC
 
 Are you sick of in-game GUIs? Do you want to make your game immersive, whether you're in VR or not? Do you want to take Vivecraft to the next level?
 
@@ -38,10 +38,10 @@ Check out the [wiki](https://github.com/hammy3502/immersive-mc/wiki)!
 
 1.16.5: Grab a release!
 
-1.18.2: The 1.18.2 version of ImmersiveMC is currently in development! Feel free to grab an alpha/beta, and report any bugs you find!
+1.18.2: The 1.18.2 version of ImmersiveMC has been released! Grab a release and get playing!
 
 1.19.2+: Future versions coming soon!
 
 Fabric: Fabric support is here! With Vivecraft supporting both Forge and Fabric, it only makes sense for ImmersiveMC to, too! Fabric is supported starting with ImmersiveMC 1.18.2 Beta 2.
 
-Other Forge Versions: There are no plans to backport ImmerisveMC to older versions of Minecraft, nor are there any plans to port it to minor versions of Minecraft that have newer versions. For example, there are no plans to port ImmersiveMC to 1.18.1, as 1.18.2 already exists.
+Other/Older Versions: There are no plans to backport ImmerisveMC to older versions of Minecraft, nor are there any plans to port it to minor versions of Minecraft that have newer versions. For example, there are no plans to port ImmersiveMC to 1.18.1, as 1.18.2 already exists.
