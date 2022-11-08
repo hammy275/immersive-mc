@@ -43,6 +43,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     protected final List<I> infos;
     public final int maxImmersives;
     protected static final Cube1x1 cubeModel = new Cube1x1(Minecraft.getInstance().getEntityModels().bakeLayer(Cube1x1.LAYER_LOCATION));
+    protected boolean forceDisableItemGuide = false;
 
     public AbstractImmersive(int maxImmersives) {
         Immersives.IMMERSIVES.add(this);
@@ -148,7 +149,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         if (shouldRender(info, isInVR)) {
             try {
                 render(info, stack, isInVR);
-                if (ActiveConfig.showPlacementGuide) {
+                if (ActiveConfig.showPlacementGuide && !forceDisableItemGuide) {
                     // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
                     for (int i = 0; i < info.getInputSlots().length; i++) {
                         if (slotShouldRenderHelpHitbox(info, i)) {
@@ -240,7 +241,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
                 stack.mulPose(Vector3f.YP.rotationDegrees(180));
                 Vec3 textMove = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR ?
-                        VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD().getLookAngle() :
+                        VRPlugin.API.getRenderVRPlayer().getHMD().getLookAngle() :
                         Minecraft.getInstance().player.getLookAngle();
                 textMove = textMove.multiply(-0.05, -0.05, -0.05);
                 textPos = textPos.add(textMove);

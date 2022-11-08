@@ -13,8 +13,7 @@ repositories {
         url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
     }
     maven {
-        name = "blf02"
-        url = "https://blf02.net:4567"
+        url = "https://cursemaven.com"
     }
 }
 
@@ -37,7 +36,7 @@ dependencies {
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
     modApi "net.minecraftforge:forgeconfigapiport-fabric:3.2.4"
-    modApi "net.blf02:vrapi:2.0.0-pre1-fabric"
+    modApi "curse.maven:mcvrapi-591092:4073386"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }

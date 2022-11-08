@@ -19,6 +19,7 @@ import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.server.swap.Swap;
 import net.blf02.vrapi.api.data.IVRData;
+import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
@@ -36,6 +37,13 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
 
+/**
+ * This uses a hack when rendering where we re-calculate all the positions and hitboxes
+ * based on the render player rather than the post-tick player (like everything else uses) into a separate info.
+ *
+ * From there, we render that info, using the regular tick-based info in appropriate spots (mainly for getting
+ * stored items in crafting and stuff).
+ */
 public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
     public static final BackpackModel model =
@@ -49,14 +57,188 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
     public ImmersiveBackpack() {
         super(1); // A player only has one backpack
+        forceDisableItemGuide = true;
     }
 
     @Override
     protected void doTick(BackpackInfo info, boolean isInVR) {
         super.doTick(info, isInVR);
-        int controllerNum = 1;
-        IVRData backpackController = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(controllerNum);
-        IVRData handController = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(controllerNum == 1 ? 0 : 1);
+        IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player);
+        calculatePositions(info, vrPlayer);
+        Optional<Integer> hitboxIntersect = Util.getFirstIntersect(vrPlayer.getController0().position(),
+                info.getAllHitboxes());
+        if (hitboxIntersect.isPresent()) {
+            info.slotHovered = hitboxIntersect.get();
+        } else {
+            info.slotHovered = -1;
+        }
+    }
+
+    public static void onHitboxInteract(Player player, BackpackInfo info, int slot) {
+        if (slot <= 26) { // Inventory handle
+            Network.INSTANCE.sendToServer(new InventorySwapPacket(slot + 9));
+            Swap.handleInventorySwap(player, slot + 9, InteractionHand.MAIN_HAND); // Do swap on both sides
+        } else {
+            Network.INSTANCE.sendToServer(new InteractPacket("backpack", slot, InteractionHand.MAIN_HAND));
+            Network.INSTANCE.sendToServer(new FetchPlayerStoragePacket("backpack"));
+        }
+    }
+
+    protected boolean inRange(int num, int start, int end) {
+        return start <= num && num <= end;
+    }
+
+    @Override
+    public boolean shouldRender(BackpackInfo info, boolean isInVR) {
+        return Minecraft.getInstance().player != null &&
+                VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(Minecraft.getInstance().player) &&
+                VRPlugin.API.apiActive(Minecraft.getInstance().player) &&
+                info.readyToRender();
+    }
+
+    @Override
+    protected void render(BackpackInfo tickInfo, PoseStack stack, boolean isInVR) {
+        // Basically use a copy of the info from doTick(), except use positions from renderPlayer to have smoother backpack
+        BackpackInfo renderInfo = getRenderInfo(tickInfo);
+        for (int i = 0; i <= 31; i++) {
+            AABB hitbox = renderInfo.getHitbox(i);
+            renderHitbox(stack, hitbox, renderInfo.getPosition(i));
+        }
+
+        for (int i = 0; i <= 26; i++) {
+            ItemStack item = Minecraft.getInstance().player.getInventory().getItem(i + 9);
+            if (!item.isEmpty() && renderInfo.getPosition(i) != null) {
+                final float size =
+                        renderInfo.slotHovered == i ? ClientConstants.itemScaleSizeBackpackSelected : ClientConstants.itemScaleSizeBackpack;
+                renderItem(item, stack, renderInfo.getPosition(i), size, null, renderInfo.getHitbox(i), true);
+            }
+        }
+
+        for (int i = 27; i <= 31; i++) {
+            // tickInfo actually holds item information, so we use that here
+            ItemStack item = i == 31 ? tickInfo.craftingOutput : tickInfo.craftingInput[i - 27];
+            if (!item.isEmpty() && renderInfo.getPosition(i) != null) {
+                renderItem(item, stack, renderInfo.getPosition(i), ClientConstants.itemScaleSizeBackpack, null, renderInfo.getHitbox(i), true);
+            }
+        }
+
+        stack.pushPose();
+        Vec3 pos = renderInfo.renderPos;
+
+        Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+        stack.translate(-cameraInfo.getPosition().x + pos.x,
+                -cameraInfo.getPosition().y + pos.y,
+                -cameraInfo.getPosition().z + pos.z);
+        stack.scale(0.5f, 0.5f, 0.5f);
+
+        stack.translate(0, 1.5, 0); // Translate origin to our hand
+
+        stack.mulPose(Vector3f.YN.rotation(renderInfo.handYaw));
+        stack.mulPose(Vector3f.XN.rotation(renderInfo.handPitch));
+        stack.mulPose(Vector3f.ZP.rotation((float) Math.PI)); // Rotate
+
+        stack.translate(0, -1.5, 0); // Move back to where we started
+
+        // Basically move the model to the side of the origin
+        stack.translate(ActiveConfig.leftHandedBackpack ? -0.5 : 0.5, 0, 0);
+
+        // Render the model (finally!)
+        getBackpackModel().renderToBuffer(stack,
+                Minecraft.getInstance().renderBuffers().bufferSource()
+                        .getBuffer(RenderType.entityCutout(BackpackModel.textureLocation)),
+                15728880, OverlayTexture.NO_OVERLAY,
+                renderInfo.rgb.x(), renderInfo.rgb.y(), renderInfo.rgb.z(), 1);
+
+        // Translate and render the crafting on the side of the backpack and down a bit
+        // (yes, positive y in this context moves it down lol)
+        stack.translate(ActiveConfig.leftHandedBackpack ? -0.75 : 0.75, 0.25, 0);
+        craftingModel.renderToBuffer(stack,
+                Minecraft.getInstance().renderBuffers().bufferSource()
+                        .getBuffer(RenderType.entityCutout(BackpackCraftingModel.textureLocation)),
+                15728880, OverlayTexture.NO_OVERLAY,
+                1, 1, 1, 1);
+
+        stack.popPose();
+
+        // Render item guides here instead since we're using renderInfo
+        for (int i = 0; i < renderInfo.getInputSlots().length; i++) {
+            if (slotShouldRenderHelpHitbox(tickInfo, i)) { // Use tickInfo here since it holds info about crafting
+                AABB itemBox = renderInfo.getInputSlots()[i];
+                AABB toShow = itemBox
+                        .move(0, itemBox.getYsize() / 2, 0);
+                renderItemGuide(stack, toShow, 0.2f, slotHelpBoxIsGreen(renderInfo, i));
+            }
+        }
+    }
+
+    @Override
+    protected boolean enabledInConfig() {
+        return ActiveConfig.useBackpack;
+    }
+
+    @Override
+    protected boolean slotShouldRenderHelpHitbox(BackpackInfo info, int slotNum) {
+        if (Minecraft.getInstance().player == null) return false;
+        if (slotNum <= 26) {
+            return Minecraft.getInstance().player.getInventory().getItem(slotNum + 9).isEmpty();
+        } else { // Crafting input
+            int tableIndex = slotNum - 27;
+            return info.craftingInput[tableIndex] == null || info.craftingInput[tableIndex].isEmpty();
+        }
+    }
+
+    @Override
+    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        return true;
+    }
+
+    @Override
+    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+
+    }
+
+    @Override
+    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
+        return Immersives.immersiveBackpack;
+    }
+
+    @Override
+    protected void initInfo(BackpackInfo info) {
+        // Get inventory data on initialization
+        Network.INSTANCE.sendToServer(new FetchPlayerStoragePacket("backpack"));
+    }
+
+    @Override
+    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {}
+
+    public void processFromNetwork(ImmersiveStorage storage) {
+        if (getSingleton().infos.size() > 0) {
+            BackpackInfo info = (BackpackInfo) getSingleton().infos.get(0);
+            for (int i = 0; i <= 3; i++) {
+                info.craftingInput[i] = storage.items[i];
+            }
+            info.craftingOutput = storage.items[4];
+        }
+    }
+
+
+    public void doTrack() {
+        if (this.infos.isEmpty()) {
+            this.infos.add(new BackpackInfo());
+        } else {
+            this.infos.clear();
+        }
+    }
+
+    public static Model getBackpackModel() {
+        if (ActiveConfig.useLowDetailBackpack) {
+            return modelLowDetail;
+        }
+        return model;
+    }
+
+    private void calculatePositions(BackpackInfo info, IVRPlayer vrPlayer) {
+        IVRData backpackController = vrPlayer.getController(1);
         info.handPos = backpackController.position();
         info.handPitch = (float) Math.toRadians(backpackController.getPitch());
         info.handYaw = (float) Math.toRadians(backpackController.getYaw());
@@ -155,164 +337,18 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
         info.setPosition(31, centerCraftingPos.add(upVec.multiply(0.125, 0.125, 0.125)));
         info.setHitbox(31, createHitbox(info.getPosition(31), 0.05f));
-
-
-        Optional<Integer> hitboxIntersect = Util.getFirstIntersect(handController.position(),
-                info.getAllHitboxes());
-        if (hitboxIntersect.isPresent()) {
-            info.slotHovered = hitboxIntersect.get();
-        } else {
-            info.slotHovered = -1;
-        }
     }
 
-    public static void onHitboxInteract(Player player, BackpackInfo info, int slot) {
-        if (slot <= 26) { // Inventory handle
-            Network.INSTANCE.sendToServer(new InventorySwapPacket(slot + 9));
-            Swap.handleInventorySwap(player, slot + 9, InteractionHand.MAIN_HAND); // Do swap on both sides
-        } else {
-            Network.INSTANCE.sendToServer(new InteractPacket("backpack", slot, InteractionHand.MAIN_HAND));
-            Network.INSTANCE.sendToServer(new FetchPlayerStoragePacket("backpack"));
-        }
-    }
-
-    protected boolean inRange(int num, int start, int end) {
-        return start <= num && num <= end;
-    }
-
-    @Override
-    public boolean shouldRender(BackpackInfo info, boolean isInVR) {
-        return Minecraft.getInstance().player != null &&
-                VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(Minecraft.getInstance().player) &&
-                VRPlugin.API.apiActive(Minecraft.getInstance().player) &&
-                info.readyToRender();
-    }
-
-    @Override
-    protected void render(BackpackInfo info, PoseStack stack, boolean isInVR) {
-        for (int i = 0; i <= 31; i++) {
-            AABB hitbox = info.getHitbox(i);
-            renderHitbox(stack, hitbox, info.getPosition(i));
-        }
-
-        for (int i = 0; i <= 26; i++) {
-            ItemStack item = Minecraft.getInstance().player.getInventory().getItem(i + 9);
-            if (!item.isEmpty() && info.getPosition(i) != null) {
-                final float size =
-                        info.slotHovered == i ? ClientConstants.itemScaleSizeBackpackSelected : ClientConstants.itemScaleSizeBackpack;
-                renderItem(item, stack, info.getPosition(i), size, null, info.getHitbox(i), true);
-            }
-        }
-
-        for (int i = 27; i <= 31; i++) {
-            ItemStack item = i == 31 ? info.craftingOutput : info.craftingInput[i - 27];
-            if (!item.isEmpty() && info.getPosition(i) != null) {
-                renderItem(item, stack, info.getPosition(i), ClientConstants.itemScaleSizeBackpack, null, info.getHitbox(i), true);
-            }
-        }
-
-        stack.pushPose();
-        Vec3 pos = info.renderPos;
-
-        Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
-        stack.translate(-renderInfo.getPosition().x + pos.x,
-                -renderInfo.getPosition().y + pos.y,
-                -renderInfo.getPosition().z + pos.z);
-        stack.scale(0.5f, 0.5f, 0.5f);
-
-        stack.translate(0, 1.5, 0); // Translate origin to our hand
-
-        stack.mulPose(Vector3f.YN.rotation(info.handYaw));
-        stack.mulPose(Vector3f.XN.rotation(info.handPitch));
-        stack.mulPose(Vector3f.ZP.rotation((float) Math.PI)); // Rotate
-
-        stack.translate(0, -1.5, 0); // Move back to where we started
-
-        // Basically move the model to the side of the origin
-        stack.translate(ActiveConfig.leftHandedBackpack ? -0.5 : 0.5, 0, 0);
-
-        // Render the model (finally!)
-        getBackpackModel().renderToBuffer(stack,
-                Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderType.entityCutout(BackpackModel.textureLocation)),
-                15728880, OverlayTexture.NO_OVERLAY,
-                info.rgb.x(), info.rgb.y(), info.rgb.z(), 1);
-
-        // Translate and render the crafting on the side of the backpack and down a bit
-        // (yes, positive y in this context moves it down lol)
-        stack.translate(ActiveConfig.leftHandedBackpack ? -0.75 : 0.75, 0.25, 0);
-        craftingModel.renderToBuffer(stack,
-                Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderType.entityCutout(BackpackCraftingModel.textureLocation)),
-                15728880, OverlayTexture.NO_OVERLAY,
-                1, 1, 1, 1);
-
-        stack.popPose();
-    }
-
-    @Override
-    protected boolean enabledInConfig() {
-        return ActiveConfig.useBackpack;
-    }
-
-    @Override
-    protected boolean slotShouldRenderHelpHitbox(BackpackInfo info, int slotNum) {
-        if (Minecraft.getInstance().player == null) return false;
-        if (slotNum <= 26) {
-            return Minecraft.getInstance().player.getInventory().getItem(slotNum + 9).isEmpty();
-        } else { // Crafting input
-            int tableIndex = slotNum - 27;
-            return info.craftingInput[tableIndex] == null || info.craftingInput[tableIndex].isEmpty();
-        }
-    }
-
-    @Override
-    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return true;
-    }
-
-    @Override
-    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-
-    }
-
-    @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveBackpack;
-    }
-
-    @Override
-    protected void initInfo(BackpackInfo info) {
-        // Get inventory data on initialization
-        Network.INSTANCE.sendToServer(new FetchPlayerStoragePacket("backpack"));
-    }
-
-    @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {}
-
-    public void processFromNetwork(ImmersiveStorage storage) {
-        if (getSingleton().infos.size() > 0) {
-            BackpackInfo info = (BackpackInfo) getSingleton().infos.get(0);
-            for (int i = 0; i <= 3; i++) {
-                info.craftingInput[i] = storage.items[i];
-            }
-            info.craftingOutput = storage.items[4];
-        }
-    }
-
-
-    public void doTrack() {
-        if (this.infos.isEmpty()) {
-            this.infos.add(new BackpackInfo());
-        } else {
-            this.infos.clear();
-        }
-    }
-
-    public static Model getBackpackModel() {
-        if (ActiveConfig.useLowDetailBackpack) {
-            return modelLowDetail;
-        }
-        return model;
+    /**
+     * Hack to create a separate info instance for our render function.
+     * @param tickInfo tickInfo from doTick()
+     * @return A BackpackInfo that's best used for rendering (so our model updates for all the frames)
+     */
+    private BackpackInfo getRenderInfo(BackpackInfo tickInfo) {
+        BackpackInfo renderInfo = new BackpackInfo();
+        calculatePositions(renderInfo, VRPlugin.API.getRenderVRPlayer());
+        renderInfo.setInputSlots();
+        renderInfo.slotHovered = tickInfo.slotHovered;
+        return renderInfo;
     }
 }
