@@ -49,7 +49,8 @@ public class ClientLogicSubscriber {
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || event.player.level instanceof ServerWorld) return;
+        if (event.phase != TickEvent.Phase.END || event.player.level instanceof ServerWorld
+                || event.player != Minecraft.getInstance().player) return;
 
         if (ImmersiveMC.OPEN_SETTINGS.isDown() && Minecraft.getInstance().screen == null) {
             Minecraft.getInstance().setScreen(new ConfigScreen(null));
