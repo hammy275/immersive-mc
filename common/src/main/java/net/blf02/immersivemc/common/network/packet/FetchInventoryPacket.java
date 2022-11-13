@@ -5,7 +5,7 @@ import net.blf02.immersivemc.common.network.NetworkClientHandlers;
 import net.blf02.immersivemc.common.network.NetworkUtil;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.server.storage.GetStorage;
-import net.blf02.immersivemc.server.storage.LevelStorage;
+import net.blf02.immersivemc.server.storage.ImmersiveMCLevelStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -74,7 +74,7 @@ public class FetchInventoryPacket {
     public static void handleServerToClient(ServerPlayer player, BlockPos pos) {
         if (NetworkUtil.safeToRun(pos, player)) {
             BlockEntity tileEnt = player.level.getBlockEntity(pos);
-            if (LevelStorage.usesWorldStorage(pos, player.level.getBlockState(pos), tileEnt, player.level)) {
+            if (ImmersiveMCLevelStorage.usesWorldStorage(pos, player.level.getBlockState(pos), tileEnt, player.level)) {
                 ImmersiveStorage storage = GetStorage.getStorage(player, pos);
                 if (storage != null) {
                     Network.INSTANCE.sendToPlayer(player,

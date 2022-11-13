@@ -18,12 +18,12 @@ import java.util.Map;
 /**
  * Holds ALL OF the save data for ImmersiveMC for a given world/dimension.
  */
-public class LevelStorage extends SavedData {
+public class ImmersiveMCLevelStorage extends SavedData {
 
     protected Map<BlockPos, ImmersiveStorage> itemInfo = new HashMap<>();
 
-    private static LevelStorage create() {
-        return new LevelStorage();
+    private static ImmersiveMCLevelStorage create() {
+        return new ImmersiveMCLevelStorage();
     }
 
     public static boolean usesWorldStorage(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
@@ -32,13 +32,13 @@ public class LevelStorage extends SavedData {
                 || ImmersiveCheckers.isEnchantingTable(pos, state, tileEntity, level);
     }
 
-    public static LevelStorage getStorage(ServerLevel world) {
-        return world.getDataStorage().computeIfAbsent(LevelStorage::load, LevelStorage::create, "immersivemc_data");
+    public static ImmersiveMCLevelStorage getLevelStorage(ServerLevel world) {
+        return world.getDataStorage().computeIfAbsent(ImmersiveMCLevelStorage::load, ImmersiveMCLevelStorage::create, "immersivemc_data");
     }
 
-    public static LevelStorage getStorage(Player player) {
+    public static ImmersiveMCLevelStorage getLevelStorage(Player player) {
         if (player instanceof ServerPlayer) {
-            return getStorage((ServerLevel) player.level);
+            return getLevelStorage((ServerLevel) player.level);
         }
         throw new IllegalArgumentException("Can only get storage server side!");
     }
@@ -69,8 +69,8 @@ public class LevelStorage extends SavedData {
     }
 
 
-    public static LevelStorage load(CompoundTag nbt) {
-        LevelStorage levelStorage = new LevelStorage();
+    public static ImmersiveMCLevelStorage load(CompoundTag nbt) {
+        ImmersiveMCLevelStorage levelStorage = new ImmersiveMCLevelStorage();
         Map<BlockPos, ImmersiveStorage> itemInfo = levelStorage.itemInfo;
         itemInfo.clear();
         int numOfStorages = nbt.getInt("numOfStorages");

@@ -13,18 +13,18 @@ import java.util.function.Supplier;
 
 public class FetchPlayerStoragePacket {
 
-    public final String type;
+    public final String storageKey;
 
     public final ImmersiveStorage storage;
 
-    public FetchPlayerStoragePacket(String type) {
-        this.type = type;
+    public FetchPlayerStoragePacket(String storageKey) {
+        this.storageKey = storageKey;
         this.storage = null;
     }
 
-    public FetchPlayerStoragePacket(ImmersiveStorage storage, String storageType) {
+    public FetchPlayerStoragePacket(ImmersiveStorage storage, String storageKey) {
         this.storage = storage;
-        this.type = storageType;
+        this.storageKey = storageKey;
     }
 
     public boolean isRequest() {
@@ -34,10 +34,10 @@ public class FetchPlayerStoragePacket {
     public static void encode(FetchPlayerStoragePacket packet, FriendlyByteBuf buffer) {
         buffer.writeBoolean(packet.isRequest());
         if (packet.isRequest()) {
-            buffer.writeUtf(packet.type);
+            buffer.writeUtf(packet.storageKey);
         } else {
             buffer.writeNbt(packet.storage.save(new CompoundTag()));
-            buffer.writeUtf(packet.type);
+            buffer.writeUtf(packet.storageKey);
         }
     }
 
@@ -59,15 +59,15 @@ public class FetchPlayerStoragePacket {
             if (player == null) { // Server to client
                 handleClient(message);
             } else { // Client to server
-                ImmersiveStorage storage = GetStorage.getPlayerStorage(player, message.type);
+                ImmersiveStorage storage = GetStorage.getPlayerStorage(player, message.storageKey);
                 Network.INSTANCE.sendToPlayer(player,
-                        new FetchPlayerStoragePacket(storage, message.type));
+                        new FetchPlayerStoragePacket(storage, message.storageKey));
             }
         });
     }
 
     public static void handleClient(FetchPlayerStoragePacket message) {
-        if (message.type.equals("backpack")) {
+        if (message.storageKey.equals("backpack")) {
             Immersives.immersiveBackpack.processFromNetwork(message.storage);
         }
     }

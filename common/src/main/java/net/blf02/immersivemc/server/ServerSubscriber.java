@@ -12,7 +12,7 @@ import net.blf02.immersivemc.common.storage.ImmersiveStorage;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.immersivemc.server.storage.GetStorage;
-import net.blf02.immersivemc.server.storage.LevelStorage;
+import net.blf02.immersivemc.server.storage.ImmersiveMCLevelStorage;
 import net.blf02.immersivemc.server.tracker.ServerTrackerInit;
 import net.blf02.immersivemc.server.tracker.ServerVRSubscriber;
 import net.minecraft.core.BlockPos;
@@ -38,8 +38,8 @@ public class ServerSubscriber {
         ServerLevel world = (ServerLevel) level;
         boolean sendBreakPacket = false;
 
-        if (LevelStorage.usesWorldStorage(pos, state, world.getBlockEntity(pos), world)) {
-            ImmersiveStorage storage = LevelStorage.getStorage(world).remove(pos);
+        if (ImmersiveMCLevelStorage.usesWorldStorage(pos, state, world.getBlockEntity(pos), world)) {
+            ImmersiveStorage storage = ImmersiveMCLevelStorage.getLevelStorage(world).remove(pos);
             if (storage != null) {
                 for (int i = 0;
                      i <= GetStorage.getLastInputIndex(pos, state, world.getBlockEntity(pos), world);

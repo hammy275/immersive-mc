@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 public class InteractPacket {
 
     public final BlockPos pos;
-    public final String storageType;
+    public final String storageKey;
     public final int slot;
     public final InteractionHand hand;
     public PlacementMode placementMode = SafeClientUtil.getPlacementMode();
@@ -33,17 +33,17 @@ public class InteractPacket {
         this.slot = slot;
         this.hand = hand;
 
-        this.storageType = null;
+        this.storageKey = null;
     }
 
-    public InteractPacket(String type, int slot, InteractionHand hand) {
-        this.storageType = type;
+    public InteractPacket(String storageKey, int slot, InteractionHand hand) {
+        this.storageKey = storageKey;
         this.slot = slot;
         this.hand = hand;
 
         this.pos = null;
 
-        if (type.equals("backpack")) {
+        if (storageKey.equals("backpack")) {
             placementMode = SafeClientUtil.getPlacementMode(true);
         }
     }
@@ -54,14 +54,14 @@ public class InteractPacket {
     }
 
     public boolean isPlayerStorageInteract() {
-        return this.storageType != null;
+        return this.storageKey != null;
     }
 
     public static void encode(InteractPacket packet, FriendlyByteBuf buffer) {
         buffer.writeEnum(packet.placementMode);
         buffer.writeBoolean(packet.isPlayerStorageInteract());
         if (packet.isPlayerStorageInteract()) {
-            buffer.writeUtf(packet.storageType);
+            buffer.writeUtf(packet.storageKey);
         } else {
             buffer.writeBlockPos(packet.pos);
         }
@@ -83,7 +83,7 @@ public class InteractPacket {
         ctx.get().queue(() -> {
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (message.isPlayerStorageInteract()) {
-                if (message.storageType.equals("backpack")) {
+                if (message.storageKey.equals("backpack")) {
                     ImmersiveStorage storage = GetStorage.getPlayerStorage(player, "backpack");
                     // -27 below since 0-26 are inventory slots
                     Swap.handleBackpackCraftingSwap(message.slot - 27, message.hand, storage, player, message.placementMode);

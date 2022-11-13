@@ -43,18 +43,18 @@ public class GetStorage {
         return -1;
     }
 
-    public static ImmersiveStorage getPlayerStorage(Player player, String type) {
-        List<ImmersiveStorage> storages = PlayerStorage.getStorages(player);
+    public static ImmersiveStorage getPlayerStorage(Player player, String playerStorageKey) {
+        List<ImmersiveStorage> storages = ImmersiveMCPlayerStorages.getStorages(player);
         for (ImmersiveStorage storage : storages) {
             if (storage.identifier.equals("backpack")) {
                 return storage;
             }
         }
-        if (type.equals("backpack")) {
-            ImmersiveStorage storage = new ImmersiveStorage(PlayerStorage.getPlayerStorage(player)).initIfNotAlready(5);
+        if (playerStorageKey.equals("backpack")) {
+            ImmersiveStorage storage = new ImmersiveStorage(ImmersiveMCPlayerStorages.getPlayerStorage(player)).initIfNotAlready(5);
             storage.identifier = "backpack";
-            PlayerStorage.getStorages(player).add(storage);
-            PlayerStorage.getPlayerStorage(player).setDirty();
+            ImmersiveMCPlayerStorages.getStorages(player).add(storage);
+            ImmersiveMCPlayerStorages.getPlayerStorage(player).setDirty();
             return storage;
         }
         throw new IllegalArgumentException("Invalid player storage type!");
@@ -74,17 +74,17 @@ public class GetStorage {
     }
 
     public static ImmersiveStorage getEnchantingStorage(Player player, BlockPos pos) {
-        return LevelStorage.getStorage(player).getOrCreate(pos).initIfNotAlready(1);
+        return ImmersiveMCLevelStorage.getLevelStorage(player).getOrCreate(pos).initIfNotAlready(1);
     }
 
     public static AnvilStorage getAnvilStorage(Player player, BlockPos pos) {
-        LevelStorage wStorage = LevelStorage.getStorage(player);
+        ImmersiveMCLevelStorage wStorage = ImmersiveMCLevelStorage.getLevelStorage(player);
         ImmersiveStorage storageOld = wStorage.get(pos);
         AnvilStorage storage;
         if (!(storageOld instanceof AnvilStorage)) {
             storage = new AnvilStorage(wStorage);
             storage.initIfNotAlready(3);
-            LevelStorage.getStorage(player).add(pos, storage);
+            ImmersiveMCLevelStorage.getLevelStorage(player).add(pos, storage);
         } else {
             storage = (AnvilStorage) storageOld;
         }
@@ -92,6 +92,6 @@ public class GetStorage {
     }
 
     public static ImmersiveStorage getCraftingStorage(Player player, BlockPos pos) {
-        return LevelStorage.getStorage(player).getOrCreate(pos).initIfNotAlready(10);
+        return ImmersiveMCLevelStorage.getLevelStorage(player).getOrCreate(pos).initIfNotAlready(10);
     }
 }

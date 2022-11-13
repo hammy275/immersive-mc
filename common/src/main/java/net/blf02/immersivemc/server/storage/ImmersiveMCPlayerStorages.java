@@ -13,12 +13,12 @@ import java.util.*;
  *
  * Not using capabilities because [REDACTED]
  */
-public class PlayerStorage extends SavedData {
+public class ImmersiveMCPlayerStorages extends SavedData {
 
     protected Map<UUID, List<ImmersiveStorage>> playerStorages = new HashMap<>();
 
-    private static PlayerStorage create() {
-        return new PlayerStorage();
+    private static ImmersiveMCPlayerStorages create() {
+        return new ImmersiveMCPlayerStorages();
     }
 
     public static List<ImmersiveStorage> getStorages(Player player) {
@@ -30,17 +30,17 @@ public class PlayerStorage extends SavedData {
         return immersiveStorages;
     }
 
-    public static PlayerStorage getPlayerStorage(Player player) {
+    public static ImmersiveMCPlayerStorages getPlayerStorage(Player player) {
         if (!player.level.isClientSide) {
             ServerPlayer sPlayer = (ServerPlayer) player;
             return sPlayer.getServer().overworld().getDataStorage()
-                    .computeIfAbsent(PlayerStorage::load, PlayerStorage::create, "immersivemc_player_data");
+                    .computeIfAbsent(ImmersiveMCPlayerStorages::load, ImmersiveMCPlayerStorages::create, "immersivemc_player_data");
         }
         throw new IllegalArgumentException("Can only access storage on server-side!");
     }
 
-    public static PlayerStorage load(CompoundTag nbt) {
-        PlayerStorage playerStorage = new PlayerStorage();
+    public static ImmersiveMCPlayerStorages load(CompoundTag nbt) {
+        ImmersiveMCPlayerStorages playerStorage = new ImmersiveMCPlayerStorages();
         Set<String> keys = nbt.getAllKeys();
         for (String uuidStr : keys) {
             UUID uuid = UUID.fromString(uuidStr);
