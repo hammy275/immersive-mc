@@ -79,13 +79,13 @@ public class ClientLogicSubscriber {
 
         // Get block that we're looking at
         HitResult looking = Minecraft.getInstance().hitResult;
-        if (looking == null || looking.getType() != HitResult.Type.BLOCK) return;
+        if (looking != null && looking.getType() == HitResult.Type.BLOCK) {
+            BlockPos pos = ((BlockHitResult) looking).getBlockPos();
+            BlockState state = Minecraft.getInstance().level.getBlockState(pos);
+            BlockEntity tileEntity = Minecraft.getInstance().level.getBlockEntity(pos);
 
-        BlockPos pos = ((BlockHitResult) looking).getBlockPos();
-        BlockState state = player.level.getBlockState(pos);
-        BlockEntity tileEntity = player.level.getBlockEntity(pos);
-
-        possiblyTrack(pos, state, tileEntity, Minecraft.getInstance().level);
+            possiblyTrack(pos, state, tileEntity, Minecraft.getInstance().level);
+        }
 
         if (VRPluginVerify.hasAPI) {
             ClientVRSubscriber.immersiveTickVR(player);

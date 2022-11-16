@@ -18,12 +18,15 @@ public class NetworkHandler {
     public static final NetworkHandler INSTANCE = new NetworkHandler();
 
     private final List<PacketInfo<?>> packetInfos = new ArrayList<>();
+    private final Map<Class<?>, Integer> packetInfosMap = new HashMap<>();
 
     private final NetworkChannel channel = NetworkChannel.create(
             new ResourceLocation(ImmersiveMC.MOD_ID, "immersive_mc"));
 
     private final List<Object> toServer = new LinkedList<>();
     private final Map<ServerPlayer, List<Object>> toClients = new HashMap<>();
+
+    private int registerIndex = 0;
 
     private NetworkHandler() {
         channel.register(MegaPacket.class, MegaPacket::encode, MegaPacket::decode, MegaPacket::handle);
@@ -48,17 +51,12 @@ public class NetworkHandler {
 
     public <T> void register(Class<T> type, BiConsumer<T, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, T> decoder, BiConsumer<T, Supplier<NetworkManager.PacketContext>> handler) {
         packetInfos.add(new PacketInfo<>(type, encoder, decoder, handler));
+        packetInfosMap.put(type, registerIndex++);
     }
 
     public Tuple<Integer, BiConsumer<Object, FriendlyByteBuf>> getEncoder(Object packet) {
-        for (int i = 0; i < this.packetInfos.size(); i++) {
-            PacketInfo<?> info = this.packetInfos.get(i);
-            if (info.type().isInstance(packet)) {
-                // Everything is an object, so this should hopefully work
-                return new Tuple<>(i, (BiConsumer<Object, FriendlyByteBuf>) info.encoder());
-            }
-        }
-        throw new IllegalArgumentException("No encoder defined for class " + packet.getClass());
+        int index = this.packetInfosMap.get(packet.getClass());
+        return new Tuple<>(index, (BiConsumer<Object, FriendlyByteBuf>) this.packetInfos.get(index).encoder());
     }
 
     public Function<FriendlyByteBuf, Object> getDecoder(int index) {
@@ -66,22 +64,22 @@ public class NetworkHandler {
     }
 
     public BiConsumer<Object, Supplier<NetworkManager.PacketContext>> getHandler(Object packet) {
-        for (int i = 0; i < this.packetInfos.size(); i++) {
-            PacketInfo<?> info = this.packetInfos.get(i);
-            if (info.type().isInstance(packet)) {
-                return (BiConsumer<Object, Supplier<NetworkManager.PacketContext>>) info.handler();
-            }
-        }
-        throw new IllegalArgumentException("No handler defined for class " + packet.getClass());
+        int index = this.packetInfosMap.get(packet.getClass());
+        return (BiConsumer<Object, Supplier<NetworkManager.PacketContext>>) this.packetInfos.get(index).handler();
     }
 
+    // Called at the very end of every tick to send mega packets around.
     public void tick(boolean isClientSide) {
         if (isClientSide) {
-            channel.sendToServer(new MegaPacket(this.toServer));
-            this.toServer.clear();
+            if (this.toServer.size() > 0) {
+                channel.sendToServer(new MegaPacket(this.toServer));
+                this.toServer.clear();
+            }
         } else {
             for (Map.Entry<ServerPlayer, List<Object>> playerPacketPair : this.toClients.entrySet()) {
-                channel.sendToPlayer(playerPacketPair.getKey(), new MegaPacket(playerPacketPair.getValue()));
+                if (playerPacketPair.getValue().size() > 0) {
+                    channel.sendToPlayer(playerPacketPair.getKey(), new MegaPacket(playerPacketPair.getValue()));
+                }
             }
             this.toClients.clear();
         }
