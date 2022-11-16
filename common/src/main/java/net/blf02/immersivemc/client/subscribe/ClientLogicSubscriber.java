@@ -7,6 +7,7 @@ import net.blf02.immersivemc.client.immersive.*;
 import net.blf02.immersivemc.client.immersive.info.*;
 import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.network.NetworkHandler;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
@@ -89,6 +90,8 @@ public class ClientLogicSubscriber {
         if (VRPluginVerify.hasAPI) {
             ClientVRSubscriber.immersiveTickVR(player);
         }
+
+        NetworkHandler.INSTANCE.tick(true);
 
     }
 

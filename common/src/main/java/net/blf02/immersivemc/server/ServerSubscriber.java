@@ -6,6 +6,7 @@ import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.immersive.CheckerFunction;
 import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.network.Network;
+import net.blf02.immersivemc.common.network.NetworkHandler;
 import net.blf02.immersivemc.common.network.packet.ConfigSyncPacket;
 import net.blf02.immersivemc.common.network.packet.ImmersiveBreakPacket;
 import net.blf02.immersivemc.common.storage.ImmersiveStorage;
@@ -77,6 +78,7 @@ public class ServerSubscriber {
         for (AbstractTracker tracker : ServerTrackerInit.globalTrackers) {
             tracker.doTick(null);
         }
+        NetworkHandler.INSTANCE.tick(false);
     }
 
     public static void onPlayerTick(Player player) {
