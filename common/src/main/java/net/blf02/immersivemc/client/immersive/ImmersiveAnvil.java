@@ -118,8 +118,9 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
 
         // Render the actual items
         for (int i = 0; i <= 2; i++) {
+            float renderSize = info.slotHovered == i ? itemSize * 1.25f : itemSize;
             renderItem(info.items[i], stack, info.getPosition(i),
-                    itemSize, info.renderDirection, Direction.UP, info.getHitbox(i), false, -1);
+                    renderSize, info.renderDirection, Direction.UP, info.getHitbox(i), false, -1);
         }
     }
 

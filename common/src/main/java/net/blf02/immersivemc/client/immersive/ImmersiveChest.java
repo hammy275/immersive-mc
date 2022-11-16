@@ -182,8 +182,9 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
                 int startTop = 9 * info.getRowNum();
                 int endTop = startTop + 9;
                 boolean showCount = i >= startTop && i <= endTop;
+                float renderSize = info.slotHovered == i ? itemSize * 1.25f : itemSize;
                 renderItem(info.items[i], stack, info.getPosition(i),
-                        itemSize, forward, Direction.UP, info.getHitbox(i), showCount, -1);
+                        renderSize, forward, Direction.UP, info.getHitbox(i), showCount, -1);
             }
 
             if (info.other != null) {
@@ -191,8 +192,9 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
                     int startTop = 9 * info.getRowNum() + 27;
                     int endTop = startTop + 9 + 27;
                     boolean showCount = i >= startTop && i <= endTop;
+                    float renderSize = info.slotHovered == i ? itemSize * 1.25f : itemSize;
                     renderItem(info.items[i], stack, info.getPosition(i),
-                            itemSize, forward, Direction.UP, info.getHitbox(i), showCount, -1);
+                            renderSize, forward, Direction.UP, info.getHitbox(i), showCount, -1);
                 }
             }
         }

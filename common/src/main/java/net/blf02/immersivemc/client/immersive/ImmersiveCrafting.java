@@ -100,8 +100,9 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
 
         for (int i = 0; i < 9; i++) {
+            float renderSize = info.slotHovered == i ? itemSize * 1.25f : itemSize;
             renderItem(info.items[i], stack, info.getPosition(i),
-                    itemSize, forward, Direction.UP, info.getHitbox(i), true, -1);
+                    renderSize, forward, Direction.UP, info.getHitbox(i), true, -1);
         }
         int degreesRotation = (int) (info.ticksActive % 100d * 3.6d);
         renderItem(info.outputItem, stack, info.outputPosition,

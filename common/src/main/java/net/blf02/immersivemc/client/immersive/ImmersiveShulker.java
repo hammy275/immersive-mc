@@ -43,7 +43,8 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
     protected void render(ShulkerInfo info, PoseStack stack, boolean isInVR) {
         float itemSize = ClientConstants.itemScaleSizeShulker / info.getItemTransitionCountdown();
         for (int i = 0; i < 27; i++) {
-            renderItem(info.items[i], stack, info.getPosition(i), itemSize,
+            float renderSize = info.slotHovered == i ? itemSize * 1.25f : itemSize;
+            renderItem(info.items[i], stack, info.getPosition(i), renderSize,
                     getForwardFromPlayer(Minecraft.getInstance().player), null,
                     info.getHitbox(i), true, -1);
         }

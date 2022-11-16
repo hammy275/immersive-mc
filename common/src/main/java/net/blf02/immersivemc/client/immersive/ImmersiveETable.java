@@ -140,7 +140,8 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
             for (int i = 0; i <= 2; i++) {
                 EnchantingInfo.ETableInfo enchInfo =
                         i == 0 ? info.weakInfo : i == 1 ? info.midInfo : info.strongInfo;
-                renderItem(info.itemEnchantedCopy, stack, info.getPosition(i + 1), itemSize,
+                float renderSize = info.slotHovered == i + 1 ? itemSize * 1.25f : itemSize;
+                renderItem(info.itemEnchantedCopy, stack, info.getPosition(i + 1), renderSize,
                         getForwardFromPlayer(Minecraft.getInstance().player), info.getHitbox(i + 1), false);
                 if (info.lookingAtIndex == i) {
                     if (enchInfo.isPresent()) {
@@ -158,8 +159,9 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
 
             }
         }
+        float renderSize = info.slotHovered == 0 ? itemSize * 1.25f : itemSize;
         if (info.items[0] != null && !info.items[0].isEmpty()) {
-            renderItem(info.items[0], stack, info.getPosition(0), itemSize,
+            renderItem(info.items[0], stack, info.getPosition(0), renderSize,
                     getForwardFromPlayer(Minecraft.getInstance().player), info.getHitbox(0), false);
         } else {
             renderHitbox(stack, info.getHitbox(0), info.getPosition(0));
