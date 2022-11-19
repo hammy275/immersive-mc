@@ -7,7 +7,6 @@ import net.blf02.immersivemc.client.immersive.*;
 import net.blf02.immersivemc.client.immersive.info.*;
 import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
 import net.blf02.immersivemc.common.config.ActiveConfig;
-import net.blf02.immersivemc.common.network.NetworkHandler;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
@@ -79,19 +78,17 @@ public class ClientLogicSubscriber {
 
         // Get block that we're looking at
         HitResult looking = Minecraft.getInstance().hitResult;
-        if (looking != null && looking.getType() == HitResult.Type.BLOCK) {
-            BlockPos pos = ((BlockHitResult) looking).getBlockPos();
-            BlockState state = Minecraft.getInstance().level.getBlockState(pos);
-            BlockEntity tileEntity = Minecraft.getInstance().level.getBlockEntity(pos);
+        if (looking == null || looking.getType() != HitResult.Type.BLOCK) return;
 
-            possiblyTrack(pos, state, tileEntity, Minecraft.getInstance().level);
-        }
+        BlockPos pos = ((BlockHitResult) looking).getBlockPos();
+        BlockState state = player.level.getBlockState(pos);
+        BlockEntity tileEntity = player.level.getBlockEntity(pos);
+
+        possiblyTrack(pos, state, tileEntity, Minecraft.getInstance().level);
 
         if (VRPluginVerify.hasAPI) {
             ClientVRSubscriber.immersiveTickVR(player);
         }
-
-        NetworkHandler.INSTANCE.tick(true);
 
     }
 
