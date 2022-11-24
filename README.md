@@ -16,6 +16,8 @@ ImmersiveMC has a few requirements:
 - [mc-vr-api](https://www.curseforge.com/minecraft/mc-mods/mc-vr-api) if you're playing in VR.
 - [Forge Config API Port](https://www.curseforge.com/minecraft/mc-mods/forge-config-api-port-fabric) if you're playing under Fabric.
 
+Additionally, ImmersiveMC (and its requirements) **must be installed on BOTH the server and client to use it!**
+
 ## What is it?
 
 The goal of ImmersiveMC is to make Minecraft more immersive! It most obviously does this by minimizing the amount of GUIs you need to interact with.
