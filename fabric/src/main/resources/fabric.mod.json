@@ -12,7 +12,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.blf02.immersivemc_fabric.ImmersiveMCFabric"
+      "com.hammy275.immersivemc_fabric.ImmersiveMCFabric"
     ]
   },
   "depends": {

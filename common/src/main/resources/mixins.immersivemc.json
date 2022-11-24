@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8.5",
-  "package": "net.blf02.immersivemc.mixin",
+  "package": "com.hammy275.immersivemc.mixin",
   "compatibilityLevel": "JAVA_17",
   "refmap": "immersivemc-common-refmap.json",
   "mixins": [

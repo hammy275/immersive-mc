@@ -13,7 +13,7 @@
     "environment": "*",
     "entrypoints": {
       "init": [
-        "net.blf02.quilt.ImmersiveMCQuilt"
+        "com.hammy275.quilt.ImmersiveMCQuilt"
       ]
     },
     "depends": [

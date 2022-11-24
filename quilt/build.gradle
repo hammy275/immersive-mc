@@ -40,8 +40,8 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
     }
 
-    modApi "net.minecraftforge:forgeconfigapiport-fabric:3.2.4"
-    modApi "curse.maven:mcvrapi-591092:4073380"
+    modApi "net.minecraftforge:forgeconfigapiport-fabric:4.2.6"
+    modApi "curse.maven:mcvrapi-591092:4073382"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionQuilt")) { transitive false }
