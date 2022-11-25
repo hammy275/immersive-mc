@@ -346,9 +346,10 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
      */
     private BackpackInfo getRenderInfo(BackpackInfo tickInfo) {
         BackpackInfo renderInfo = new BackpackInfo();
+        renderInfo.slotHovered = tickInfo.slotHovered;
+        renderInfo.topRow = tickInfo.topRow;
         calculatePositions(renderInfo, VRPlugin.API.getRenderVRPlayer());
         renderInfo.setInputSlots();
-        renderInfo.slotHovered = tickInfo.slotHovered;
         return renderInfo;
     }
 }
