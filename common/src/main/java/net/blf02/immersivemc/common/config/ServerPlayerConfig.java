@@ -6,7 +6,7 @@ public class ServerPlayerConfig {
 
     public static final ServerPlayerConfig EMPTY_CONFIG = new ServerPlayerConfig(false,
             false, false, false, false, false,
-            false, false, false, false);
+            false, false, false, false, 0);
 
     public boolean useButtons;
     public boolean useCampfire;
@@ -18,11 +18,12 @@ public class ServerPlayerConfig {
     public boolean useArmorImmersion;
     public boolean canFeedAnimals;
     public boolean canPetAnyLiving;
+    public int rangedGrabRange;
 
     public ServerPlayerConfig(boolean useButtons, boolean useCampfire, boolean useLevers,
                               boolean useRangedGrab, boolean useDoorImmersion, boolean useHoeImmersion,
                               boolean canPet, boolean useArmorImmersion, boolean canFeedAnimals,
-                              boolean canPetAnyLiving) {
+                              boolean canPetAnyLiving, int rangedGrabRange) {
         this.useButtons = useButtons && ActiveConfig.useButton;
         this.useCampfire = useCampfire && ActiveConfig.useCampfireImmersion;
         this.useLevers = useLevers && ActiveConfig.useLever;
@@ -33,12 +34,13 @@ public class ServerPlayerConfig {
         this.useArmorImmersion = useArmorImmersion && ActiveConfig.useArmorImmersion;
         this.canFeedAnimals = canFeedAnimals && ActiveConfig.canFeedAnimals;
         this.canPetAnyLiving = canPetAnyLiving && ActiveConfig.canPetAnyLiving;
+        this.rangedGrabRange = Math.min(rangedGrabRange, ActiveConfig.rangedGrabRange);
     }
 
     public ServerPlayerConfig(FriendlyByteBuf buffer) {
         this(buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(),
                 buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(),
-                buffer.readBoolean(), buffer.readBoolean());
+                buffer.readBoolean(), buffer.readBoolean(), buffer.readInt());
         buffer.release();
     }
 }

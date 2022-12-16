@@ -30,6 +30,7 @@ public class ActiveConfig {
     public static boolean useShulkerImmersion = false;
     public static boolean canPetAnyLiving = false;
     public static boolean immersiveShield = false;
+    public static int rangedGrabRange = 0;
 
     // Non-synced values
     public static int backpackColor = 11901820;
@@ -94,6 +95,8 @@ public class ActiveConfig {
         useShulkerImmersion = buffer.readBoolean() && useShulkerImmersion;
         canPetAnyLiving = buffer.readBoolean() && canPetAnyLiving;
         immersiveShield = buffer.readBoolean() && immersiveShield;
+        // Always use minimum value between client and server
+        rangedGrabRange = Math.min(buffer.readInt(), rangedGrabRange);
 
     }
 
@@ -125,6 +128,7 @@ public class ActiveConfig {
             useShulkerImmersion = ImmersiveMCConfig.useShulkerImmersion.get();
             canPetAnyLiving = ImmersiveMCConfig.canPetAnyLiving.get();
             immersiveShield = ImmersiveMCConfig.immersiveShield.get();
+            rangedGrabRange = ImmersiveMCConfig.rangedGrabRange.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -164,6 +168,7 @@ public class ActiveConfig {
         useShulkerImmersion = false;
         canPetAnyLiving = false;
         immersiveShield = false;
+        rangedGrabRange = 0;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -172,7 +177,8 @@ public class ActiveConfig {
                 .writeBoolean(ActiveConfig.useLever).writeBoolean(ActiveConfig.useRangedGrab)
                 .writeBoolean(ActiveConfig.useDoorImmersion).writeBoolean(ActiveConfig.useHoeImmersion)
                 .writeBoolean(ActiveConfig.canPet).writeBoolean(ActiveConfig.useArmorImmersion)
-                .writeBoolean(ActiveConfig.canFeedAnimals).writeBoolean(ActiveConfig.canPetAnyLiving);
+                .writeBoolean(ActiveConfig.canFeedAnimals).writeBoolean(ActiveConfig.canPetAnyLiving)
+                .writeInt(ActiveConfig.rangedGrabRange);
         return buffer;
     }
 

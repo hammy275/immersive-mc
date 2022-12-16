@@ -32,6 +32,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useShulkerImmersion;
     public static ForgeConfigSpec.BooleanValue canPetAnyLiving;
     public static ForgeConfigSpec.BooleanValue immersiveShield;
+    public static ForgeConfigSpec.IntValue rangedGrabRange;
 
     //Non-synced values
     public static ForgeConfigSpec.IntValue backpackColor;
@@ -115,6 +116,9 @@ public class ImmersiveMCConfig {
         immersiveShield = builder
                 .comment("Whether VR users can use a more immersive shield. They only need to hold a shield in the direction to block, no need to right click!")
                 .define("immersive_shield", true);
+        rangedGrabRange = builder
+                .comment("Range in blocks that VR players can pick up items using ranged grab. Set to -1 to use Minecraft's pick range.")
+                .defineInRange("ranged_grab_range", 8, -1, 12);
 
         // Non-synced Values
         backpackColor = builder
@@ -166,7 +170,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(canFeedAnimals.get())
                 .writeBoolean(useShulkerImmersion.get())
                 .writeBoolean(canPetAnyLiving.get())
-                .writeBoolean(immersiveShield.get());
+                .writeBoolean(immersiveShield.get())
+                .writeInt(rangedGrabRange.get());
     }
 
     public static void resetToDefault() {
@@ -192,6 +197,7 @@ public class ImmersiveMCConfig {
         useShulkerImmersion.set(true);
         canPetAnyLiving.set(false);
         immersiveShield.set(true);
+        rangedGrabRange.set(8);
 
         // Non-synced defaults
         backpackColor.set(11901820);
