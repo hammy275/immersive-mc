@@ -31,6 +31,10 @@ There's VR support! In fact, this mod was primarily built to make VR a better ex
 
 You'll need my API mod, [mc-vr-api](https://www.curseforge.com/minecraft/mc-mods/mc-vr-api) to use this in VR. With this mod installed, you'll be able to use your actual hands to place items, instead of just right clicking!
 
+## NOTE
+
+**ImmersiveMC is needed on both the server and the client! ImmersiveMC is *NOT* a client-side mod!**
+
 ## Need Help?
 
 Check out the [wiki](https://github.com/hammy3502/immersive-mc/wiki)!
