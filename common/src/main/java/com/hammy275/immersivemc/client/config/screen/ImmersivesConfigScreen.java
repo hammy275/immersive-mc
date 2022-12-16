@@ -19,7 +19,7 @@ public class ImmersivesConfigScreen extends Screen {
 
     protected final Screen lastScreen;
     protected OptionsList list;
-    protected boolean notInWorld;
+
 
     protected static int BUTTON_WIDTH = 128;
     protected static int BUTTON_HEIGHT = 20;
@@ -33,8 +33,7 @@ public class ImmersivesConfigScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        this.notInWorld = Minecraft.getInstance().level == null && Minecraft.getInstance().player == null;
-        if (this.notInWorld) {
+        if (canShowConfigScreen()) {
             initNotInWorld();
         }
         this.addRenderableWidget(new Button(
@@ -88,15 +87,14 @@ public class ImmersivesConfigScreen extends Screen {
 
         super.render(stack, mouseX, mouseY, partialTicks);
 
-        if (this.notInWorld) {
+        if (canShowConfigScreen()) {
             drawCenteredString(stack, this.font, this.title.getString(),
                     this.width / 2, 8, 0xFFFFFF);
             drawCenteredString(stack, this.font, Component.translatable("screen.immersivemc.immersives_config.subtitle"),
                     this.width / 2, 8 + this.font.lineHeight, 0xFFFFFF);
         } else {
-            // Not actually sure if you can get here, but I'm playing things safe by catching if you're in a world while
-            // you try to adjust this
-            drawCenteredString(stack, this.font, Component.translatable("screen.immersivemc.immersives_config.inworld"),
+            // This is pretty rare, only happening when we're in a world but haven't finished the S2C part of ImmersiveMC's handshake
+            drawCenteredString(stack, this.font, Component.translatable("screen.immersivemc.immersives_config.cant_change"),
                     this.width / 2, this.height / 2, 0xFFFFFF);
         }
 
@@ -112,6 +110,12 @@ public class ImmersivesConfigScreen extends Screen {
     public void onClose() {
         Minecraft.getInstance().setScreen(lastScreen);
         ActiveConfig.loadConfigFromFile();
+        ActiveConfig.reloadAfterServer();
+    }
+
+    public boolean canShowConfigScreen() {
+        return Minecraft.getInstance().level == null ||
+                ActiveConfig.serverCopy != null;
     }
 
     public enum ScreenType {
