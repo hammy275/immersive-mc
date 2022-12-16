@@ -2,6 +2,7 @@ package net.blf02.immersivemc.server;
 
 import dev.architectury.event.EventResult;
 import dev.architectury.utils.value.IntValue;
+import net.blf02.immersivemc.ImmersiveMC;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.immersive.CheckerFunction;
 import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
@@ -76,6 +77,14 @@ public class ServerSubscriber {
     public static void onServerTick(MinecraftServer server) {
         for (AbstractTracker tracker : ServerTrackerInit.globalTrackers) {
             tracker.doTick(null);
+        }
+
+        if (ActiveConfig.clientForceServerReloadForLAN) {
+            ImmersiveMC.LOGGER.debug("Force-reloading config due to singleplayer config change!");
+            ActiveConfig.loadConfigFromFile(true);
+            ImmersiveMC.LOGGER.debug("Sending new config to all players.");
+            Network.INSTANCE.sendToPlayers(server.getPlayerList().getPlayers(), new ConfigSyncPacket());
+            ActiveConfig.clientForceServerReloadForLAN = false;
         }
     }
 

@@ -42,6 +42,16 @@ public class ActiveConfig {
     public static PlacementMode placementMode = PlacementMode.PLACE_ONE;
     public static boolean spinCraftingOutput = true;
 
+    // For changing config values in-game
+    public static FriendlyByteBuf serverCopy = null;
+
+    // On a singleplayer world, the server and client share this value.
+    // When set to true when the client-side changes a config value, the server sees
+    // this as true, and reloads the config globally, so we can sync it to other
+    // LAN players.
+    public static boolean clientForceServerReloadForLAN = false;
+
+
     public static void loadConfigFromPacket(FriendlyByteBuf buffer) {
         int serverNetworkVersion = buffer.readInt();
         if (serverNetworkVersion != Network.PROTOCOL_VERSION) {
@@ -51,6 +61,15 @@ public class ActiveConfig {
         if (serverConfigVersion != ImmersiveMCConfig.CONFIG_VERSION) { // Kick if we have a different config version
             Network.INSTANCE.sendToServer(ConfigSyncPacket.getKickMePacket());
         }
+        serverCopy = new FriendlyByteBuf(buffer.copy()); // Store copy of server configuration
+        serverCopy.retain();
+        loadFromByteBuffer(buffer);
+        buffer.release();
+        ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
+
+    }
+
+    private static void loadFromByteBuffer(FriendlyByteBuf buffer) {
         // We combine client config with server, so if a user doesn't want to use an immersion, they don't
         // even if a server is OK with it.
         loadConfigFromFile(true);
@@ -76,9 +95,6 @@ public class ActiveConfig {
         canPetAnyLiving = buffer.readBoolean() && canPetAnyLiving;
         immersiveShield = buffer.readBoolean() && immersiveShield;
 
-        buffer.release();
-        ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
-
     }
 
     public static void loadConfigFromFile() {
@@ -86,7 +102,7 @@ public class ActiveConfig {
     }
 
     public static void loadConfigFromFile(boolean forceLoadServerSettings) {
-        // Synced values (only loaded if we're not in a server)
+        // Synced values (only loaded if we're not in a server, or we are the server)
         if (forceLoadServerSettings || Minecraft.getInstance().level == null) {
             useAnvilImmersion = ImmersiveMCConfig.useAnvilImmersion.get();
             useBrewingImmersion = ImmersiveMCConfig.useBrewingImmersion.get();
@@ -192,5 +208,20 @@ public class ActiveConfig {
                 "Can pet any living: " + canPetAnyLiving + "\n" +
                 "Use immersive shield: " + immersiveShield;
         return stringOut;
+    }
+
+    public static void reloadAfterServer() {
+        // Only call on client!
+        if (serverCopy != null) {
+            int oldIndex = serverCopy.readerIndex();
+            loadFromByteBuffer(serverCopy);
+            serverCopy.readerIndex(oldIndex);
+            ImmersiveMC.LOGGER.debug("Reloaded config while in-game: \n" + asString());
+            Network.INSTANCE.sendToServer(ConfigSyncPacket.getToServerConfigPacket()); // Also send our new config to server
+
+            // If we're the host of an SP game, reload config server-side. This re-syncs configs
+            // with all clients connected on a LAN world.
+            ActiveConfig.clientForceServerReloadForLAN = true;
+        }
     }
 }

@@ -133,6 +133,7 @@ public class ClientLogicSubscriber {
         for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
             singleton.getTrackedObjects().clear();
         }
+        ActiveConfig.serverCopy = null; // Reset server copy of config
 
     }
 
