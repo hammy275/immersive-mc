@@ -47,6 +47,7 @@ public class ImmersivesCustomizeScreen extends Screen {
         ScreenUtils.addOption("show_placement_guide", ImmersiveMCConfig.showPlacementGuide, this.list);
         ScreenUtils.addOption("spin_crafting_output", ImmersiveMCConfig.spinCraftingOutput, this.list);
         ScreenUtils.addOption("pet_any_living", ImmersiveMCConfig.canPetAnyLiving, this.list);
+        ScreenUtils.addOption("right_click_in_vr", ImmersiveMCConfig.rightClickInVR, this.list);
 
         this.list.addBig(CycleOption.create(
                 "config.immersivemc.placement_mode",

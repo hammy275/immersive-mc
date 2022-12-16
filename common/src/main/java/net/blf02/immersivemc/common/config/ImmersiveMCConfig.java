@@ -44,6 +44,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue showPlacementGuide;
     public static ForgeConfigSpec.IntValue itemPlacementMode;
     public static ForgeConfigSpec.BooleanValue spinCraftingOutput;
+    public static ForgeConfigSpec.BooleanValue rightClickInVR;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -148,6 +149,9 @@ public class ImmersiveMCConfig {
         spinCraftingOutput = builder
                 .comment("Whether the item output of a crafting table should spin")
                 .define("spin_crafting_output", true);
+        rightClickInVR = builder
+                .comment("Allow right-clicking immersives in VR, like how NonVR users do.")
+                .define("right_click_in_vr", false);
     }
 
     public static void encode(FriendlyByteBuf buffer) {
@@ -209,6 +213,7 @@ public class ImmersiveMCConfig {
         showPlacementGuide.set(true);
         itemPlacementMode.set(0);
         spinCraftingOutput.set(false);
+        rightClickInVR.set(false);
 
     }
 

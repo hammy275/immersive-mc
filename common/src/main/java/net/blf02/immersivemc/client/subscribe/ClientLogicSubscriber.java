@@ -76,6 +76,10 @@ public class ClientLogicSubscriber {
         }
         if (Minecraft.getInstance().gameMode == null || Minecraft.getInstance().level == null) return;
 
+        if (VRPluginVerify.hasAPI) {
+            ClientVRSubscriber.immersiveTickVR(player);
+        }
+
         // Get block that we're looking at
         HitResult looking = Minecraft.getInstance().hitResult;
         if (looking == null || looking.getType() != HitResult.Type.BLOCK) return;
@@ -85,10 +89,6 @@ public class ClientLogicSubscriber {
         BlockEntity tileEntity = player.level.getBlockEntity(pos);
 
         possiblyTrack(pos, state, tileEntity, Minecraft.getInstance().level);
-
-        if (VRPluginVerify.hasAPI) {
-            ClientVRSubscriber.immersiveTickVR(player);
-        }
 
     }
 
@@ -257,7 +257,7 @@ public class ClientLogicSubscriber {
         Vec3 end = player.getEyePosition(1).add(viewVec.x * dist, viewVec.y * dist,
                 viewVec.z * dist);
 
-        if (!inVR) { // Don't handle right clicks for VR players, they have hands!
+        if (!inVR || ActiveConfig.rightClickInVR) { // Don't handle right clicks for VR players, they have hands (unless they config to!)!
             for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
                 for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
                     if (info.hasHitboxes() && singleton.hitboxesAvailable(info)) {
