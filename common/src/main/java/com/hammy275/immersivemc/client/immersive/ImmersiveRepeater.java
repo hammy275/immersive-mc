@@ -32,6 +32,11 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
+    public boolean isVROnly() {
+        return true;
+    }
+
+    @Override
     protected void initInfo(RepeaterInfo info) {
         Objects.requireNonNull(Minecraft.getInstance().level);
         BlockState state = Minecraft.getInstance().level.getBlockState(info.getBlockPosition());

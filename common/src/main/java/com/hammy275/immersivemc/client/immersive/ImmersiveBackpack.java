@@ -61,6 +61,11 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
+    public boolean isVROnly() {
+        return true;
+    }
+
+    @Override
     protected void doTick(BackpackInfo info, boolean isInVR) {
         super.doTick(info, isInVR);
         IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player);

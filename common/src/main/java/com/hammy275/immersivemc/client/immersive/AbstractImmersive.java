@@ -84,6 +84,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     }
 
+    public boolean isVROnly() {
+        return false;
+    }
+
     public abstract void handleRightClick(AbstractImmersiveInfo info, Player player, int closest,
                                           InteractionHand hand);
 

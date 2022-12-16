@@ -27,6 +27,11 @@ public class ImmersiveJukebox extends AbstractBlockEntityImmersive<JukeboxBlockE
     }
 
     @Override
+    public boolean isVROnly() {
+        return true;
+    }
+
+    @Override
     protected void initInfo(JukeboxInfo info) {
         Vec3 topCenter = getTopCenterOfBlock(info.getBlockEntity().getBlockPos());
         info.setPosition(0, topCenter);
