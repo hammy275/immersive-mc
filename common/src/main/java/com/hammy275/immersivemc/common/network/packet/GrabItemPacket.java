@@ -1,7 +1,9 @@
 package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.ServerPlayerConfig;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.server.PlayerConfigs;
 import com.hammy275.immersivemc.server.tracker.RangedGrabTrackerServer;
 import com.hammy275.immersivemc.server.tracker.ServerTrackerInit;
 import net.minecraft.network.FriendlyByteBuf;
@@ -38,7 +40,14 @@ public class GrabItemPacket {
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player != null) {
                 Entity ent = player.level.getEntity(packet.entityId);
-                if (ent instanceof ItemEntity && player.distanceToSqr(ent) <= 144 &&
+                ServerPlayerConfig config = PlayerConfigs.getConfig(player);
+                int range;
+                if (config.rangedGrabRange == -1) {
+                    range = 5;
+                } else {
+                    range = (config.rangedGrabRange + 1) * 2;
+                }
+                if (ent instanceof ItemEntity && player.distanceToSqr(ent) <= range * range &&
                         Util.canPickUpItem((ItemEntity) ent, player)) {
                     ItemEntity item = (ItemEntity) ent;
                     ServerTrackerInit.rangedGrabTracker.infos.add(new RangedGrabTrackerServer.RangedGrabInfo(item, player));
