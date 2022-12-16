@@ -4,7 +4,8 @@ Are you sick of in-game GUIs? Do you want to make your game immersive, whether y
 
 Then you'll love ImmersiveMC!
 
-<img alt="Crafting Demo" src="https://github.com/hammy3502/immersive-mc/raw/v1.0.0/wiki/gif/ImmersiveMC%20Crafting%20Table%20NonVR.gif" width="320"/>
+<img alt="Crafting Demo" src="docs/ImmersiveMCNonVRCrafting.gif" width="320"/>
+<img alt="Chest Demo" src="docs/ImmersiveMCNonVRChest.gif" width="320"/>
 <img alt="VR Chest and Jukebox Demo" src="docs/ImmersiveVRChestAndJukebox.gif" width="320"/>
 <img alt="VR Grab" src="docs/ImmersiveVRGrab.gif" width="320"/>
 
