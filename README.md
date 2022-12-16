@@ -43,7 +43,9 @@ Check out the [wiki](https://github.com/hammy3502/immersive-mc/wiki)!
 
 1.18.2: The 1.18.2 version of ImmersiveMC has been released! Grab a release and get playing!
 
-1.19.2+: Future versions coming soon!
+1.19.2+: The 1.19.2 version of ImmersiveMC is available! You can grab a release from the side and get to playing!
+
+Future Versions of Minecraft: Coming Soon!
 
 Fabric: Fabric support is here! With Vivecraft supporting both Forge and Fabric, it only makes sense for ImmersiveMC to, too! Fabric is supported starting with ImmersiveMC 1.18.2 Beta 2.
 
