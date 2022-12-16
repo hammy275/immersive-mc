@@ -42,6 +42,7 @@ public class ActiveConfig {
     public static boolean showPlacementGuide = true;
     public static PlacementMode placementMode = PlacementMode.PLACE_ONE;
     public static boolean spinCraftingOutput = true;
+    public static boolean rightClickInVR = false;
 
     // For changing config values in-game
     public static FriendlyByteBuf serverCopy = null;
@@ -143,6 +144,7 @@ public class ActiveConfig {
         showPlacementGuide = ImmersiveMCConfig.showPlacementGuide.get();
         placementMode = PlacementMode.fromInt(ImmersiveMCConfig.itemPlacementMode.get());
         spinCraftingOutput = ImmersiveMCConfig.spinCraftingOutput.get();
+        rightClickInVR = ImmersiveMCConfig.rightClickInVR.get();
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
@@ -212,7 +214,9 @@ public class ActiveConfig {
                 "Can feed animals: " + canFeedAnimals + "\n" +
                 "Use Shulker Box Immersion: " + useShulkerImmersion + "\n" +
                 "Can pet any living: " + canPetAnyLiving + "\n" +
-                "Use immersive shield: " + immersiveShield;
+                "Use immersive shield: " + immersiveShield + "\n" +
+                "Ranged grab range: " + rangedGrabRange + "\n" +
+                "Right click in VR: " + rightClickInVR;
         return stringOut;
     }
 

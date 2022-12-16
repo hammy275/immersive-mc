@@ -86,6 +86,8 @@
   "config.immersivemc.ranged_grab_range": "Ranged Grab Range [VR Only]",
   "config.immersivemc.ranged_grab_range.desc": "Maximum range for ranged grab.",
   "config.immersivemc.use_pick_range": "Use Pick Range as Ranged Grab Range",
+  "config.immersivemc.right_click_in_vr": "Right Click Interactions in VR",
+  "config.immersivemc.right_click_in_vr.desc": "Allow right-clicking in VR to interact with immersives, similarly to non-VR users.",
 
   "immersivemc.immersive.etable.no_ench": "No Enchantment!",
   "immersivemc.immersive.anvil.levels_needed": "Levels Needed: %d"
