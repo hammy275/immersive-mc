@@ -33,7 +33,7 @@ You'll need my API mod, [mc-vr-api](https://www.curseforge.com/minecraft/mc-mods
 
 ## NOTE
 
-**ImmersiveMC is needed on both the server and the client! ImmersiveMC is *NOT* a client-side mod!**
+**ImmersiveMC is needed on both the server and the client! ImmersiveMC is *NOT* a client-side only mod!**
 
 ## Need Help?
 
