@@ -22,7 +22,6 @@
 
   "screen.immersivemc.immersives_config.title": "开启/关闭 沉浸模式",
   "screen.immersivemc.immersives_config.subtitle": "提示：所有被服务器管理员设置的选项将会覆盖客户端的配置！",
-  "screen.immersivemc.immersives_config.inworld": "你无法在游戏内自定义沉浸模式！请回到主页面自定义！",
   "config.immersivemc.anvil": "使用沉浸式铁砧",
   "config.immersivemc.anvil.desc": "启用/禁用 沉浸式使用铁砧的能力。",
   "config.immersivemc.backpack_button": "使用沉浸式背包 [VR 独占]",

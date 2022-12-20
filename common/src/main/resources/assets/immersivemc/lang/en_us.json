@@ -22,7 +22,7 @@
 
   "screen.immersivemc.immersives_config.title": "Enable/Disable Immersives",
   "screen.immersivemc.immersives_config.subtitle": "Note: Any immersives that are disabled by server admins override your settings here!",
-  "screen.immersivemc.immersives_config.inworld": "You cannot customize immersives while in-game! Go to the title screen to customize them!",
+  "screen.immersivemc.immersives_config.cant_change": "Can't change the config right now! Wait a bit for the server's config to sync!",
   "config.immersivemc.animals": "Feed Animals Immersion [VR Only]",
   "config.immersivemc.animals.desc": "Hold food or an item used to tame an animal in one hand, then hold both hands at the animal to tame it!",
   "config.immersivemc.anvil": "Use Anvil Immersion",
@@ -38,7 +38,7 @@
   "config.immersivemc.campfire": "Use Campfire Immmersion [VR Only]",
   "config.immersivemc.campfire.desc": "Enables/disables the ability for VR players to hold food above a campfire to cook it.",
   "config.immersivemc.chest": "Use Chest Immersion",
-  "config.immersivemc.chest.desc": "Enables/disables the ability for players to open/close chests without the GUI. Make sure to enable 'Right Click Chests' to use the chest outside of VR!",
+  "config.immersivemc.chest.desc": "Enables/disables the ability for players to open/close chests without the GUI. Make sure to enable 'Right Click Chests' to use the chest outside of VR! You can punch the chest to cycle which items are on top!",
   "config.immersivemc.door": "Use Door Immersion [VR Only]",
   "config.immersivemc.door.desc": "Enables/disables the opening and closing of doors and fence gates using hand motions.",
   "config.immersivemc.crafting": "Use Crafting Immersion",
@@ -62,7 +62,7 @@
   "config.immersivemc.shield": "Use Immersive Shields [VR Only]",
   "config.immersivemc.shield.desc": "When enabled, allows VR users to hold their shields in the direction of something to block it; no need to right click!",
   "config.immersivemc.shulker": "Use Shulker Box Immersion",
-  "config.immersivemc.shulker.desc": "Enables/disables the ability to use the Shulker Box immersive.",
+  "config.immersivemc.shulker.desc": "Enables/disables the ability to use the Shulker Box immersive. You can punch the Shulker Box to cycle which items are shown!",
 
   "screen.immersivemc.immersives_customize.title": "Customize Immersives",
   "config.immersivemc.center_brewing": "Center Items for Brewing Immersive",
@@ -70,7 +70,7 @@
   "config.immersivemc.center_furnace": "Center Items for Furnace Immersive",
   "config.immersivemc.center_furnace.desc": "When enabled, item placements for the furnace are centered, rather than emulate the GUI.",
   "config.immersivemc.right_click_chest": "Right Click Chests",
-  "config.immersivemc.right_click_chest.desc": "When enabled, the immersive chest is opened/closed through a right click, rather than a hand motion. This allows Non-VR players to use the chest immersion!",
+  "config.immersivemc.right_click_chest.desc": "When enabled, the immersive chest is opened/closed through a right click, rather than a hand motion. This allows Non-VR players to use the chest immersion! Punch the chest to cycle which row you have selected.",
   "config.immersivemc.show_placement_guide": "Show Aqua Boxes to Guide in ImmersiveMC",
   "config.immersivemc.show_placement_guide.desc": "When enabled, uses aqua-colored boxes to show where immersives can be interacted with.",
   "config.immersivemc.spin_crafting_output": "Spin Crafting Output",
@@ -83,6 +83,11 @@
   "config.immersivemc.placement_mode.desc": "When right-clicking or placing items into immersives, %s from the stack of items in your hand into the immersive.",
   "config.immersivemc.pet_any_living": "Allow Pettting Anything Living",
   "config.immersivemc.pet_any_living.desc": "When enabled while the ability to pet is also enabled, VR users can pet any living entity, rather than just pets they own.",
+  "config.immersivemc.ranged_grab_range": "Ranged Grab Range [VR Only]",
+  "config.immersivemc.ranged_grab_range.desc": "Maximum range for ranged grab.",
+  "config.immersivemc.use_pick_range": "Use Pick Range as Ranged Grab Range",
+  "config.immersivemc.right_click_in_vr": "Right Click Interactions in VR",
+  "config.immersivemc.right_click_in_vr.desc": "Allow right-clicking in VR to interact with immersives, similarly to non-VR users.",
 
   "immersivemc.immersive.etable.no_ench": "No Enchantment!",
   "immersivemc.immersive.anvil.levels_needed": "Levels Needed: %d"

@@ -38,7 +38,8 @@ public class RangedGrabTrackerClient extends AbstractTracker {
         IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
         IVRData controller = vrPlayer.getController0();
 
-        double dist = Minecraft.getInstance().gameMode.getPickRange();
+        double dist = ActiveConfig.rangedGrabRange == -1 ?
+                Minecraft.getInstance().gameMode.getPickRange() : ActiveConfig.rangedGrabRange;
 
         if (last != null) {
             if (Minecraft.getInstance().options.keyAttack.isDown()) {

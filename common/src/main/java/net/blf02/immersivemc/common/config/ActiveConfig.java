@@ -30,6 +30,7 @@ public class ActiveConfig {
     public static boolean useShulkerImmersion = false;
     public static boolean canPetAnyLiving = false;
     public static boolean immersiveShield = false;
+    public static int rangedGrabRange = 0;
 
     // Non-synced values
     public static int backpackColor = 11901820;
@@ -41,6 +42,17 @@ public class ActiveConfig {
     public static boolean showPlacementGuide = true;
     public static PlacementMode placementMode = PlacementMode.PLACE_ONE;
     public static boolean spinCraftingOutput = true;
+    public static boolean rightClickInVR = false;
+
+    // For changing config values in-game
+    public static FriendlyByteBuf serverCopy = null;
+
+    // On a singleplayer world, the server and client share this value.
+    // When set to true when the client-side changes a config value, the server sees
+    // this as true, and reloads the config globally, so we can sync it to other
+    // LAN players.
+    public static boolean clientForceServerReloadForLAN = false;
+
 
     public static void loadConfigFromPacket(FriendlyByteBuf buffer) {
         int serverNetworkVersion = buffer.readInt();
@@ -51,6 +63,15 @@ public class ActiveConfig {
         if (serverConfigVersion != ImmersiveMCConfig.CONFIG_VERSION) { // Kick if we have a different config version
             Network.INSTANCE.sendToServer(ConfigSyncPacket.getKickMePacket());
         }
+        serverCopy = new FriendlyByteBuf(buffer.copy()); // Store copy of server configuration
+        serverCopy.retain();
+        loadFromByteBuffer(buffer);
+        buffer.release();
+        ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
+
+    }
+
+    private static void loadFromByteBuffer(FriendlyByteBuf buffer) {
         // We combine client config with server, so if a user doesn't want to use an immersion, they don't
         // even if a server is OK with it.
         loadConfigFromFile(true);
@@ -75,9 +96,8 @@ public class ActiveConfig {
         useShulkerImmersion = buffer.readBoolean() && useShulkerImmersion;
         canPetAnyLiving = buffer.readBoolean() && canPetAnyLiving;
         immersiveShield = buffer.readBoolean() && immersiveShield;
-
-        buffer.release();
-        ImmersiveMC.LOGGER.debug("Loaded config from network: \n" + asString());
+        // Always use minimum value between client and server
+        rangedGrabRange = Math.min(buffer.readInt(), rangedGrabRange);
 
     }
 
@@ -86,7 +106,7 @@ public class ActiveConfig {
     }
 
     public static void loadConfigFromFile(boolean forceLoadServerSettings) {
-        // Synced values (only loaded if we're not in a server)
+        // Synced values (only loaded if we're not in a server, or we are the server)
         if (forceLoadServerSettings || Minecraft.getInstance().level == null) {
             useAnvilImmersion = ImmersiveMCConfig.useAnvilImmersion.get();
             useBrewingImmersion = ImmersiveMCConfig.useBrewingImmersion.get();
@@ -109,6 +129,7 @@ public class ActiveConfig {
             useShulkerImmersion = ImmersiveMCConfig.useShulkerImmersion.get();
             canPetAnyLiving = ImmersiveMCConfig.canPetAnyLiving.get();
             immersiveShield = ImmersiveMCConfig.immersiveShield.get();
+            rangedGrabRange = ImmersiveMCConfig.rangedGrabRange.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -123,6 +144,7 @@ public class ActiveConfig {
         showPlacementGuide = ImmersiveMCConfig.showPlacementGuide.get();
         placementMode = PlacementMode.fromInt(ImmersiveMCConfig.itemPlacementMode.get());
         spinCraftingOutput = ImmersiveMCConfig.spinCraftingOutput.get();
+        rightClickInVR = ImmersiveMCConfig.rightClickInVR.get();
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
@@ -148,6 +170,7 @@ public class ActiveConfig {
         useShulkerImmersion = false;
         canPetAnyLiving = false;
         immersiveShield = false;
+        rangedGrabRange = 0;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -156,7 +179,8 @@ public class ActiveConfig {
                 .writeBoolean(ActiveConfig.useLever).writeBoolean(ActiveConfig.useRangedGrab)
                 .writeBoolean(ActiveConfig.useDoorImmersion).writeBoolean(ActiveConfig.useHoeImmersion)
                 .writeBoolean(ActiveConfig.canPet).writeBoolean(ActiveConfig.useArmorImmersion)
-                .writeBoolean(ActiveConfig.canFeedAnimals).writeBoolean(ActiveConfig.canPetAnyLiving);
+                .writeBoolean(ActiveConfig.canFeedAnimals).writeBoolean(ActiveConfig.canPetAnyLiving)
+                .writeInt(ActiveConfig.rangedGrabRange);
         return buffer;
     }
 
@@ -190,7 +214,24 @@ public class ActiveConfig {
                 "Can feed animals: " + canFeedAnimals + "\n" +
                 "Use Shulker Box Immersion: " + useShulkerImmersion + "\n" +
                 "Can pet any living: " + canPetAnyLiving + "\n" +
-                "Use immersive shield: " + immersiveShield;
+                "Use immersive shield: " + immersiveShield + "\n" +
+                "Ranged grab range: " + rangedGrabRange + "\n" +
+                "Right click in VR: " + rightClickInVR;
         return stringOut;
+    }
+
+    public static void reloadAfterServer() {
+        // Only call on client!
+        if (serverCopy != null) {
+            int oldIndex = serverCopy.readerIndex();
+            loadFromByteBuffer(serverCopy);
+            serverCopy.readerIndex(oldIndex);
+            ImmersiveMC.LOGGER.debug("Reloaded config while in-game: \n" + asString());
+            Network.INSTANCE.sendToServer(ConfigSyncPacket.getToServerConfigPacket()); // Also send our new config to server
+
+            // If we're the host of an SP game, reload config server-side. This re-syncs configs
+            // with all clients connected on a LAN world.
+            ActiveConfig.clientForceServerReloadForLAN = true;
+        }
     }
 }
