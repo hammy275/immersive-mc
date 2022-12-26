@@ -14,6 +14,9 @@
     "entrypoints": {
       "init": [
         "com.hammy275.quilt.ImmersiveMCQuilt"
+      ],
+      "modmenu": [
+        "com.hammy275.immersivemc_fabric.ModMenuIntegration"
       ]
     },
     "depends": [

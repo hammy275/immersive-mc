@@ -13,6 +13,9 @@
   "entrypoints": {
     "main": [
       "com.hammy275.immersivemc_fabric.ImmersiveMCFabric"
+    ],
+    "modmenu": [
+      "com.hammy275.immersivemc_fabric.ModMenuIntegration"
     ]
   },
   "depends": {
