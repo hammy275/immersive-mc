@@ -45,6 +45,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.IntValue itemPlacementMode;
     public static ForgeConfigSpec.BooleanValue spinCraftingOutput;
     public static ForgeConfigSpec.BooleanValue rightClickInVR;
+    public static ForgeConfigSpec.BooleanValue resourcePack3dCompat;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -152,6 +153,9 @@ public class ImmersiveMCConfig {
         rightClickInVR = builder
                 .comment("Allow right-clicking immersives in VR, like how NonVR users do.")
                 .define("right_click_in_vr", false);
+        resourcePack3dCompat = builder
+                .comment("Enables compatability for 3D resource packs like Classic 3D (16x)")
+                .define("resource_pack_3d_compat", false);
     }
 
     public static void encode(FriendlyByteBuf buffer) {
@@ -214,6 +218,7 @@ public class ImmersiveMCConfig {
         itemPlacementMode.set(0);
         spinCraftingOutput.set(false);
         rightClickInVR.set(false);
+        resourcePack3dCompat.set(false);
 
     }
 

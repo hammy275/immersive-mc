@@ -53,7 +53,7 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
             forward = getForwardFromPlayer(Minecraft.getInstance().player);
         }
 
-        Vec3[] positions = get3x3HorizontalGrid(info.getBlockPosition(), spacing, forward);
+        Vec3[] positions = get3x3HorizontalGrid(info.getBlockPosition(), spacing, forward, ActiveConfig.resourcePack3dCompat);
         float hitboxSize = ClientConstants.itemScaleSizeCrafting / 3f;
         for (int i = 0; i < 9; i++) {
             info.setPosition(i, positions[i]);

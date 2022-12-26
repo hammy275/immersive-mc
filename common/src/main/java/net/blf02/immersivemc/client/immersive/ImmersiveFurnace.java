@@ -52,6 +52,11 @@ public class ImmersiveFurnace extends AbstractBlockEntityImmersive<BlockEntity, 
         BlockEntity furnace = info.getBlockEntity();
         Direction forward = furnace.getBlockState().getValue(AbstractFurnaceBlock.FACING);
         Vec3 pos = getDirectlyInFront(forward, furnace.getBlockPos());
+        if (ActiveConfig.resourcePack3dCompat) {
+            pos = pos.add(forward.getNormal().getX() * 1d/32d,
+                    forward.getNormal().getY() * 1d/32d,
+                    forward.getNormal().getZ() * 1d/32d);
+        }
 
         // Gets the offset on the x and z axis that the items should be placed in front of the furnace
         Direction left = getLeftOfDirection(forward);
