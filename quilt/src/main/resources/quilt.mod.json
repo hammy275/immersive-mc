@@ -34,7 +34,7 @@
       },
       {
         "id": "architectury",
-        "version": ">=4.9.83"
+        "version": ">=6.2.46"
       },
       {
         "id": "forgeconfigapiport",
