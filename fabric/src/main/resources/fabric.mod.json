@@ -13,6 +13,9 @@
   "entrypoints": {
     "main": [
       "net.blf02.immersivemc_fabric.ImmersiveMCFabric"
+    ],
+    "modmenu": [
+      "net.blf02.immersivemc_fabric.ModMenuIntegration"
     ]
   },
   "depends": {
