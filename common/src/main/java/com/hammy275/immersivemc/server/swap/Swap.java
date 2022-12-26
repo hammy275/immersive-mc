@@ -313,7 +313,7 @@ public class Swap {
         ItemStack furnaceItem = furnace.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand).copy();
         if (slot != 2) {
-            if (slot != 1 || furnace.canPlaceItem(1, playerItem)) {
+            if (slot != 1 || furnace.canPlaceItem(1, playerItem) || playerItem.isEmpty()) {
                 SwapResult result = getSwap(playerItem, furnaceItem, mode);
                 givePlayerItemSwap(result.toHand, playerItem, player, hand);
                 furnace.setItem(slot, result.toOther);
