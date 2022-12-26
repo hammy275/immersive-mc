@@ -88,6 +88,8 @@
   "config.immersivemc.use_pick_range": "Use Pick Range as Ranged Grab Range",
   "config.immersivemc.right_click_in_vr": "Right Click Interactions in VR",
   "config.immersivemc.right_click_in_vr.desc": "Allow right-clicking in VR to interact with immersives, similarly to non-VR users.",
+  "config.immersivemc.3d_compat": "3D Resource Pack Compatability",
+  "config.immersivemc.3d_compat.desc": "Moves the item areas for immersives to increase compatability with resource packs such as Classic 3D (16x).",
 
   "immersivemc.immersive.etable.no_ench": "No Enchantment!",
   "immersivemc.immersive.anvil.levels_needed": "Levels Needed: %d"

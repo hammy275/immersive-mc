@@ -418,11 +418,15 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     public Vec3[] get3x3HorizontalGrid(BlockPos blockPos, double spacing) {
-        return get3x3HorizontalGrid(blockPos, spacing, getForwardFromPlayer(Minecraft.getInstance().player));
+        return get3x3HorizontalGrid(blockPos, spacing, getForwardFromPlayer(Minecraft.getInstance().player), false);
     }
 
-    public Vec3[] get3x3HorizontalGrid(BlockPos blockPos, double spacing, Direction blockForward) {
+    public Vec3[] get3x3HorizontalGrid(BlockPos blockPos, double spacing, Direction blockForward,
+                                       boolean use3DCompat) {
         Vec3 pos = getTopCenterOfBlock(blockPos);
+        if (use3DCompat) {
+            pos = pos.add(0, 1d/16d, 0);
+        }
         Direction left = getLeftOfDirection(blockForward);
 
         Vec3 leftOffset = new Vec3(

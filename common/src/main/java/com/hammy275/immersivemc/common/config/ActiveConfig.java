@@ -43,6 +43,7 @@ public class ActiveConfig {
     public static PlacementMode placementMode = PlacementMode.PLACE_ONE;
     public static boolean spinCraftingOutput = true;
     public static boolean rightClickInVR = false;
+    public static boolean resourcePack3dCompat = false;
 
     // For changing config values in-game
     public static FriendlyByteBuf serverCopy = null;
@@ -145,6 +146,7 @@ public class ActiveConfig {
         placementMode = PlacementMode.fromInt(ImmersiveMCConfig.itemPlacementMode.get());
         spinCraftingOutput = ImmersiveMCConfig.spinCraftingOutput.get();
         rightClickInVR = ImmersiveMCConfig.rightClickInVR.get();
+        resourcePack3dCompat = ImmersiveMCConfig.resourcePack3dCompat.get();
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
@@ -216,7 +218,8 @@ public class ActiveConfig {
                 "Can pet any living: " + canPetAnyLiving + "\n" +
                 "Use immersive shield: " + immersiveShield + "\n" +
                 "Ranged grab range: " + rangedGrabRange + "\n" +
-                "Right click in VR: " + rightClickInVR;
+                "Right click in VR: " + rightClickInVR + "\n" +
+                "3D resource pack compatability: " + resourcePack3dCompat;
         return stringOut;
     }
 
