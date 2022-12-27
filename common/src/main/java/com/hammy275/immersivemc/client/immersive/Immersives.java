@@ -16,6 +16,7 @@ public class Immersives {
 
     public static final ImmersiveAnvil immersiveAnvil = new ImmersiveAnvil();
     public static final ImmersiveBackpack immersiveBackpack = new ImmersiveBackpack();
+    public static final ImmersiveBeacon immersiveBeacon = new ImmersiveBeacon();
     public static final ImmersiveBrewing immersiveBrewing = new ImmersiveBrewing();
     public static final ImmersiveChest immersiveChest = new ImmersiveChest();
     public static final ImmersiveCrafting immersiveCrafting = new ImmersiveCrafting();

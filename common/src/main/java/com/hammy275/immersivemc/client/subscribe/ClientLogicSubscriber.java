@@ -164,6 +164,13 @@ public class ClientLogicSubscriber {
                     Optional<Integer> closest = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
                             info.getAllHitboxes());
                     info.slotHovered = closest.orElse(-1);
+                    if (info.slotHovered == -1 && info instanceof InfoTriggerHitboxes tInfo) {
+                        closest = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
+                                tInfo.getTriggerHitboxes());
+                        info.triggerHitboxSlotHovered = closest.orElse(-1);
+                    } else {
+                        info.triggerHitboxSlotHovered = -1;
+                    }
                 }
                 if (info.getTicksLeft() <= 0) {
                     toRemove.add(info);

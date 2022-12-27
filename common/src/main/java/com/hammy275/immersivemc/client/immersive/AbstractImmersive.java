@@ -7,12 +7,17 @@ import com.hammy275.immersivemc.client.model.Cube1x1;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.mixin.DragonFireballRendererMixin;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -20,6 +25,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -38,6 +44,7 @@ import java.util.List;
  * @param <I> Info type
  */
 public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
+    public static final int maxLight = LightTexture.pack(15, 15);
 
     protected final List<I> infos;
     public final int maxImmersives;
@@ -331,6 +338,41 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         font.drawInBatch(text, size, 0, 0xFFFFFFFF, false,
                 stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), false,
                 0, 15728880);
+        stack.popPose();
+    }
+
+    public void renderImage(PoseStack stack, ResourceLocation imageLocation, Vec3 pos, Direction facing,
+                            float size) {
+        Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+        stack.pushPose();
+        stack.translate(-renderInfo.getPosition().x + pos.x,
+                -renderInfo.getPosition().y + pos.y,
+                -renderInfo.getPosition().z + pos.z);
+        stack.scale(size, size, size);
+
+        // If north, we're good to go
+        if (facing == Direction.WEST) {
+            stack.mulPose(Vector3f.YP.rotationDegrees(90));
+        } else if (facing == Direction.SOUTH) {
+            stack.mulPose(Vector3f.YP.rotationDegrees(180));
+        } else if (facing == Direction.EAST) {
+            stack.mulPose(Vector3f.YP.rotationDegrees(270));
+        } else if (facing == null) {
+            stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+            stack.mulPose(Vector3f.YP.rotationDegrees(180));
+        }
+
+        VertexConsumer vertexConsumer =
+                Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.entityCutoutNoCull(imageLocation));
+        PoseStack.Pose pose = stack.last();
+        Matrix4f matrix4f = pose.pose();
+        Matrix3f matrix3f = pose.normal();
+
+        DragonFireballRendererMixin.vertex(vertexConsumer, matrix4f, matrix3f, maxLight, 0f, 0, 0, 1);
+        DragonFireballRendererMixin.vertex(vertexConsumer, matrix4f, matrix3f, maxLight, 1f, 0, 1, 1);
+        DragonFireballRendererMixin.vertex(vertexConsumer, matrix4f, matrix3f, maxLight, 1f, 1, 1, 0);
+        DragonFireballRendererMixin.vertex(vertexConsumer, matrix4f, matrix3f, maxLight, 0f, 1, 0, 0);
+
         stack.popPose();
     }
 

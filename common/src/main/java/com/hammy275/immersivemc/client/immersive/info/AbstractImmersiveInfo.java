@@ -21,6 +21,7 @@ public abstract class AbstractImmersiveInfo {
     * - This was done because backpacks were implemented before the InfoTriggerHitboxes system.
      */
     public int slotHovered = -1;
+    public int triggerHitboxSlotHovered = -1; // Same warnings as above
 
     public AbstractImmersiveInfo(int ticksToExist) {
         this.ticksLeft = ticksToExist;

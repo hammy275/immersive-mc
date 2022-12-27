@@ -69,6 +69,8 @@ public class GetStorage {
             return getAnvilStorage(player, pos);
         } else if (ImmersiveCheckers.isEnchantingTable(pos, state, tileEnt, player.level)) {
             return getEnchantingStorage(player, pos);
+        } else if (ImmersiveCheckers.isBeacon(pos, state, tileEnt, player.level)) {
+            return getBeaconStorage(player, pos);
         }
         return null;
     }
@@ -93,5 +95,9 @@ public class GetStorage {
 
     public static ImmersiveStorage getCraftingStorage(Player player, BlockPos pos) {
         return ImmersiveMCLevelStorage.getLevelStorage(player).getOrCreate(pos).initIfNotAlready(10);
+    }
+
+    public static ImmersiveStorage getBeaconStorage(Player player, BlockPos pos) {
+        return ImmersiveMCLevelStorage.getLevelStorage(player).getOrCreate(pos).initIfNotAlready(1);
     }
 }
