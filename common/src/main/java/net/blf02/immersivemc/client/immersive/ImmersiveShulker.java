@@ -11,9 +11,11 @@ import net.blf02.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -45,7 +47,7 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
         for (int i = 0; i < 27; i++) {
             float renderSize = info.slotHovered == i ? itemSize * 1.25f : itemSize;
             renderItem(info.items[i], stack, info.getPosition(i), renderSize,
-                    getForwardFromPlayer(Minecraft.getInstance().player), null,
+                    info.viewForwardDir, info.upDownRender,
                     info.getHitbox(i), true, -1);
         }
     }
@@ -71,18 +73,75 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
     }
 
     public void setHitboxes(ShulkerInfo info) {
-        Vec3[] positions = get3x3VerticalGrid(info.getBlockPosition(), 0.15);
+        BlockEntity shulker = Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition());
+        Direction forward = shulker.getBlockState().getValue(ShulkerBoxBlock.FACING);
+        Vec3 forwardVec = new Vec3(forward.getNormal().getX(), forward.getNormal().getY(), forward.getNormal().getZ());
+        Vec3[] positions;
+        info.upDownRender = null;
+        if (forward == Direction.DOWN || forward == Direction.UP) {
+            positions = get3x3VerticalGrid(info.getBlockPosition(), 0.15);
+            for (int i = 0; i < positions.length; i++) {
+                positions[i] = positions[i].add(forwardVec.scale(0.25));
+            }
+            info.viewForwardDir = getForwardFromPlayer(Minecraft.getInstance().player);
+        } else {
+            Direction left = forward.getCounterClockWise();
+            Vec3 leftVec = new Vec3(left.getNormal().getX(), left.getNormal().getY(),
+                    left.getNormal().getZ());
+            Vec3 centerPos = Vec3.atCenterOf(info.getBlockPosition());
+
+            Vec3 leftPos = centerPos.add(leftVec.scale(0.5));
+            Vec3 rightPos = centerPos.add(leftVec.scale(-0.5));
+            Vec3 topPos = centerPos.add(0, 0.5, 0);
+            Vec3 botPos = centerPos.add(0, -0.5, 0);
+
+            Vec3 playerPos = Minecraft.getInstance().player.getEyePosition();
+
+            double leftDist = playerPos.distanceToSqr(leftPos);
+            double rightDist = playerPos.distanceToSqr(rightPos);
+            double topDist = playerPos.distanceToSqr(topPos);
+            double botDist = playerPos.distanceToSqr(botPos);
+
+            double min = Math.min(leftDist, rightDist);
+            min = Math.min(min, topDist);
+            min = Math.min(min, botDist);
+
+            if (min == leftDist) { // Closest to left
+                positions = get3x3VerticalGrid(info.getBlockPosition(), 0.15, forward.getCounterClockWise());
+                for (int i = 0; i < positions.length; i++) {
+                    positions[i] = positions[i].add(forwardVec.scale(0.25));
+                }
+                info.viewForwardDir = left;
+            } else if (min == rightDist) {
+                positions = get3x3VerticalGrid(info.getBlockPosition(), 0.15, forward.getClockWise());
+                for (int i = 0; i < positions.length; i++) {
+                    positions[i] = positions[i].add(forwardVec.scale(0.25));
+                }
+                info.viewForwardDir = left.getOpposite();
+            } else if (min == topDist) {
+                positions = get3x3HorizontalGrid(info.getBlockPosition(), 0.15, forward, false);
+                for (int i = 0; i < positions.length; i++) {
+                    positions[i] = positions[i].add(forwardVec.scale(0.25));
+                }
+                info.viewForwardDir = getForwardFromPlayer(Minecraft.getInstance().player);
+                info.upDownRender = Direction.UP;
+            } else {
+                positions = get3x3HorizontalGrid(info.getBlockPosition(), 0.15, forward, false);
+                for (int i = 0; i < positions.length; i++) {
+                    positions[i] = positions[i].add(0, -1, 0).add(forwardVec.scale(0.25));
+                }
+                info.viewForwardDir = getForwardFromPlayer(Minecraft.getInstance().player);
+                info.upDownRender = Direction.DOWN;
+            }
+        }
         for (int i = 0; i < 27; i++) {
             info.setHitbox(i, null);
             info.setPosition(i, null);
         }
         for (int i = 0; i < 9; i++) {
-            positions[i] = positions[i].add(0, 0.25, 0); // Move up a bit for gap in Shulker box
             info.setHitbox(i + info.getRowNum() * 9, createHitbox(positions[i], 0.075f));
             info.setPosition(i + info.getRowNum() * 9, positions[i]);
         }
-
-        info.lastDir = getForwardFromPlayer(Minecraft.getInstance().player);
     }
 
     @Override
@@ -96,9 +155,7 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
     @Override
     protected void doTick(ShulkerInfo info, boolean isInVR) {
         super.doTick(info, isInVR);
-        if (info.lastDir != getForwardFromPlayer(Minecraft.getInstance().player)) {
-            setHitboxes(info);
-        }
+        setHitboxes(info);
     }
 
     public static void openShulkerBox(ShulkerInfo info) {

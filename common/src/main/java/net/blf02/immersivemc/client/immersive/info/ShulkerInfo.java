@@ -9,7 +9,8 @@ public class ShulkerInfo extends AbstractBlockEntityImmersiveInfo<ShulkerBoxBloc
     protected AABB[] hitboxes = new AABB[27];
     public boolean isOpen = false;
     protected int rowNum = 0;
-    public Direction lastDir = null;
+    public Direction viewForwardDir = null;
+    public Direction upDownRender = null;
 
     /**
      * Constructor
