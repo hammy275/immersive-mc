@@ -31,6 +31,7 @@ public class ActiveConfig {
     public static boolean canPetAnyLiving = false;
     public static boolean immersiveShield = false;
     public static int rangedGrabRange = 0;
+    public static boolean useBeaconImmersion = false;
 
     // Non-synced values
     public static int backpackColor = 11901820;
@@ -99,6 +100,7 @@ public class ActiveConfig {
         immersiveShield = buffer.readBoolean() && immersiveShield;
         // Always use minimum value between client and server
         rangedGrabRange = Math.min(buffer.readInt(), rangedGrabRange);
+        useBeaconImmersion = buffer.readBoolean() && useBeaconImmersion;
 
     }
 
@@ -131,6 +133,7 @@ public class ActiveConfig {
             canPetAnyLiving = ImmersiveMCConfig.canPetAnyLiving.get();
             immersiveShield = ImmersiveMCConfig.immersiveShield.get();
             rangedGrabRange = ImmersiveMCConfig.rangedGrabRange.get();
+            useBeaconImmersion = ImmersiveMCConfig.useBeaconImmersion.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -173,6 +176,7 @@ public class ActiveConfig {
         canPetAnyLiving = false;
         immersiveShield = false;
         rangedGrabRange = 0;
+        useBeaconImmersion = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -219,7 +223,8 @@ public class ActiveConfig {
                 "Use immersive shield: " + immersiveShield + "\n" +
                 "Ranged grab range: " + rangedGrabRange + "\n" +
                 "Right click in VR: " + rightClickInVR + "\n" +
-                "3D resource pack compatability: " + resourcePack3dCompat;
+                "3D resource pack compatability: " + resourcePack3dCompat + "\n" +
+                "Use beacon immersion: " + useBeaconImmersion;
         return stringOut;
     }
 

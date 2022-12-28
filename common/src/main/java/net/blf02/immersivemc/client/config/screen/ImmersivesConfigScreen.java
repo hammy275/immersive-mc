@@ -54,6 +54,7 @@ public class ImmersivesConfigScreen extends Screen {
     protected void initOptionsList() {
         if (this.type.isNonVR()) {
             ScreenUtils.addOption("anvil", ImmersiveMCConfig.useAnvilImmersion, this.list);
+            ScreenUtils.addOption("beacon", ImmersiveMCConfig.useBeaconImmersion, this.list);
             ScreenUtils.addOption("brewing", ImmersiveMCConfig.useBrewingImmersion, this.list);
             ScreenUtils.addOption("chest", ImmersiveMCConfig.useChestImmersion, this.list);
             ScreenUtils.addOption("crafting", ImmersiveMCConfig.useCraftingImmersion, this.list);

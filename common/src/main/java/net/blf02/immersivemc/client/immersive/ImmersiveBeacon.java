@@ -7,6 +7,7 @@ import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
 import net.blf02.immersivemc.client.immersive.info.BeaconInfo;
 import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.BeaconConfirmPacket;
@@ -60,29 +61,33 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
             }
         }
 
+        float effectSize = (float) effectHitboxSize / info.getItemTransitionCountdown();
+
         for (int i = 0; i <= 4; i++) {
             if (info.triggerBoxes[i] != null) {
                 renderImage(stack, effectLocations[i], info.triggerBoxes[i].getCenter().add(0, -0.05, 0), info.lastPlayerDir,
-                        info.triggerHitboxSlotHovered == i ? 0.25f : 0.2f);
+                        info.triggerHitboxSlotHovered == i ? effectSize * 1.25f : effectSize);
             }
         }
 
+        float displaySize = (float) displayHitboxSize / info.getItemTransitionCountdown();
+
         if (info.effectSelected != -1) {
             renderImage(stack, effectLocations[info.effectSelected], info.effectSelectedDisplayPos.add(0, -0.05, 0),
-                    info.lastPlayerDir, (float) displayHitboxSize);
+                    info.lastPlayerDir, displaySize);
         }
 
         if (info.triggerBoxes[6] != null) { // Regen and plus
             renderImage(stack, regenerationLocation, info.triggerBoxes[5].getCenter().add(0, -0.05, 0),
-                    info.lastPlayerDir, (float) displayHitboxSize);
+                    info.lastPlayerDir, info.triggerHitboxSlotHovered == 5 ? displaySize * 1.25f : displaySize);
             renderImage(stack, addLocation, info.triggerBoxes[6].getCenter().add(0, -0.05, 0),
-                    info.lastPlayerDir, (float) displayHitboxSize);
+                    info.lastPlayerDir, info.triggerHitboxSlotHovered == 6 ? displaySize * 1.25f : displaySize);
         }
 
         if (info.triggerBoxes[7] != null && info.isReadyForConfirmExceptPayment()) {
             if (info.isReadyForConfirm()) {
                 renderImage(stack, confirmLocation, info.triggerBoxes[7].getCenter().add(0, -0.1, 0),
-                        info.lastPlayerDir, ClientConstants.itemScaleSizeBeacon);
+                        info.lastPlayerDir, info.triggerHitboxSlotHovered == 7 ? itemSize * 1.25f : itemSize);
             }
             double xMult = 0;
             double zMult = 0;
@@ -114,6 +119,17 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
 
     protected void setHitboxesAndPositions(BeaconInfo info) {
         if (Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()) instanceof BeaconBlockEntity beacon) {
+            for (int x = -1; x <= 1; x++) { // 3x3 area one block and two blocks above must all be air to look nice
+                for (int y = 1; y <= 2; y++) {
+                    for (int z = -1; z <= 1; z++) {
+                        if (!Minecraft.getInstance().level.getBlockState(info.getBlockPosition().offset(x, y, z)).isAir()) {
+                            info.areaAboveIsAir = false;
+                            return;
+                        }
+                    }
+                }
+            }
+            info.areaAboveIsAir = true;
 
             // NOTE: Unlike most other places in ImmersiveMC, left refers to left from the player's
             // perspective, not the block's!
@@ -200,7 +216,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
 
     @Override
     protected boolean enabledInConfig() {
-        return true; // TODO: Replace with config entry
+        return ActiveConfig.useBeaconImmersion;
     }
 
     @Override

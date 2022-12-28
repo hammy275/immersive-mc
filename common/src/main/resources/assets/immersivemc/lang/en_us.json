@@ -31,6 +31,8 @@
   "config.immersivemc.armor.desc": "Allows VR users to equip armor by physically placing armor pieces on their person.",
   "config.immersivemc.backpack_button": "Use Backpack Immersion [VR Only]",
   "config.immersivemc.backpack_button.desc": "Enables/disables the ability to use backpacks. VR Only!",
+  "config.immersivemc.beacon": "Use Beacon Immersion",
+  "config.immersivemc.beacon.desc": "Enables/disables the ability to use the beacon immersive.",
   "config.immersivemc.brewing": "Use Brewing Immersion",
   "config.immersivemc.brewing.desc": "Enables/disables the ability to use the brewing stand immersive.",
   "config.immersivemc.button": "Use Button Immersion [VR Only]",
