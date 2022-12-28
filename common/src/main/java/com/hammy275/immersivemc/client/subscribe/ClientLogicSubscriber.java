@@ -272,6 +272,16 @@ public class ClientLogicSubscriber {
         Vec3 end = player.getEyePosition(1).add(viewVec.x * dist, viewVec.y * dist,
                 viewVec.z * dist);
 
+        HitResult looking = Minecraft.getInstance().hitResult;
+        if (ActiveConfig.crouchBypassImmersion &&
+                looking != null && looking.getType() == HitResult.Type.BLOCK &&
+                Minecraft.getInstance().player.isSecondaryUseActive()) {
+            if (Util.isHittingImmersive((BlockHitResult) looking, Minecraft.getInstance().level)) {
+                return -1;
+            }
+
+        }
+
         if (!inVR || ActiveConfig.rightClickInVR) { // Don't handle right clicks for VR players, they have hands (unless they config to!)!
             for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
                 if (singleton.isVROnly() && !inVR) continue;
