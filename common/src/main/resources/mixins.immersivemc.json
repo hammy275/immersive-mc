@@ -6,12 +6,14 @@
   "refmap": "immersivemc-common-refmap.json",
   "mixins": [
     "AnvilMenuMixin",
+    "BeaconBlockEntityMixin",
     "ButtonBlockMixin",
     "ContainerOpenersCounterMixin",
     "LivingEntityMixin",
     "ProjectileMixin"
   ],
   "client": [
+    "DragonFireballRendererMixin",
     "GameRendererMixin",
     "MinecraftMixin",
     "MinecraftMixinAccessor"

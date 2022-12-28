@@ -79,6 +79,8 @@ public class ImmersiveMC {
                 FetchPlayerStoragePacket::decode, FetchPlayerStoragePacket::handle);
         Network.INSTANCE.register(GetRecipePacket.class, GetRecipePacket::encode,
                 GetRecipePacket::decode, GetRecipePacket::handle);
+        Network.INSTANCE.register(BeaconConfirmPacket.class, BeaconConfirmPacket::encode,
+                BeaconConfirmPacket::decode, BeaconConfirmPacket::handle);
 
     }
 }

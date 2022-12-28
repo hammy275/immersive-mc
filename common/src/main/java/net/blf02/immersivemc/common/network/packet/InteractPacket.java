@@ -97,6 +97,8 @@ public class InteractPacket {
                     Swap.anvilSwap(message.slot, message.hand, message.pos, player, message.placementMode);
                 } else if (ImmersiveCheckers.isEnchantingTable(message.pos, state, tileEnt, player.level)) {
                     Swap.enchantingTableSwap(player, message.slot, message.hand, message.pos);
+                } else if (ImmersiveCheckers.isBeacon(message.pos, state, tileEnt, player.level)) {
+                    Swap.beaconSwap(player, message.hand, message.pos);
                 }
             }
         });

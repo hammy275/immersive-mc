@@ -13,13 +13,23 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
-import net.minecraft.world.item.*;
+import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.EnchantmentMenu;
+import net.minecraft.world.inventory.ItemCombinerMenu;
+import net.minecraft.world.inventory.SmithingMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -37,6 +47,27 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Swap {
+
+    public static void beaconSwap(ServerPlayer player, InteractionHand hand, BlockPos pos) {
+        if (!player.getItemInHand(hand).is(ItemTags.BEACON_PAYMENT_ITEMS) && !player.getItemInHand(hand).isEmpty()) return;
+        ImmersiveStorage beaconStorage = GetStorage.getBeaconStorage(player, pos);
+        ItemStack playerItem = player.getItemInHand(hand).copy();
+        ItemStack beaconItem = beaconStorage.items[0].copy();
+        if (!beaconItem.isEmpty()) {
+            placeLeftovers(player, beaconItem);
+            beaconStorage.items[0] = ItemStack.EMPTY;
+        }
+        if (!playerItem.isEmpty()) {
+            beaconStorage.items[0] = playerItem.copy();
+            beaconStorage.items[0].setCount(1);
+            playerItem.shrink(1);
+            if (playerItem.isEmpty()) {
+                playerItem = ItemStack.EMPTY;
+            }
+            player.setItemInHand(hand, playerItem);
+        }
+        beaconStorage.wStorage.setDirty();
+    }
 
     public static void shulkerBoxSwap(ServerPlayer player, int slot, InteractionHand hand, BlockPos pos) {
         if (player.level.getBlockEntity(pos) instanceof ShulkerBoxBlockEntity shulkerBox) {

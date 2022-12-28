@@ -29,7 +29,8 @@ public class ImmersiveMCLevelStorage extends SavedData {
     public static boolean usesWorldStorage(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return ImmersiveCheckers.isCraftingTable(pos, state, tileEntity, level) ||
                 ImmersiveCheckers.isAnvil(pos, state, tileEntity, level)
-                || ImmersiveCheckers.isEnchantingTable(pos, state, tileEntity, level);
+                || ImmersiveCheckers.isEnchantingTable(pos, state, tileEntity, level)
+                || ImmersiveCheckers.isBeacon(pos, state, tileEntity, level);
     }
 
     public static ImmersiveMCLevelStorage getLevelStorage(ServerLevel world) {
