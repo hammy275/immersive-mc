@@ -92,6 +92,7 @@
   "config.immersivemc.3d_compat.desc": "Moves the item areas for immersives to increase compatability with resource packs such as Classic 3D (16x).",
 
   "immersivemc.immersive.etable.no_ench": "No Enchantment!",
-  "immersivemc.immersive.anvil.levels_needed": "Levels Needed: %d"
+  "immersivemc.immersive.anvil.levels_needed": "Levels Needed: %d",
+  "immersivemc.immersive.beacon.selected": "Selected:"
 
 }
