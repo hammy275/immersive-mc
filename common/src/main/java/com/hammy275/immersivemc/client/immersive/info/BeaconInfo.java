@@ -25,6 +25,7 @@ public class BeaconInfo extends AbstractWorldStorageInfo implements InfoTriggerH
      */
     public AABB[] triggerBoxes = new AABB[8];
     public Vec3 effectSelectedDisplayPos = null;
+    public boolean areaAboveIsAir = false;
     public BeaconInfo(BlockPos pos) {
         super(pos, ClientConstants.ticksToRenderBeacon, 0);
     }
@@ -37,7 +38,8 @@ public class BeaconInfo extends AbstractWorldStorageInfo implements InfoTriggerH
     @Override
     public boolean readyToRender() {
         return super.readyToRender() && lastPlayerDir != null
-                && triggerBoxes[1] != null && effectSelectedDisplayPos != null;
+                && triggerBoxes[1] != null && effectSelectedDisplayPos != null
+                && areaAboveIsAir;
     }
 
     @Override
