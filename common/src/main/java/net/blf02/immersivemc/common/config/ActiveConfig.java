@@ -32,6 +32,7 @@ public class ActiveConfig {
     public static boolean immersiveShield = false;
     public static int rangedGrabRange = 0;
     public static boolean useBeaconImmersion = false;
+    public static boolean crouchBypassImmersion = false;
 
     // Non-synced values
     public static int backpackColor = 11901820;
@@ -101,6 +102,7 @@ public class ActiveConfig {
         // Always use minimum value between client and server
         rangedGrabRange = Math.min(buffer.readInt(), rangedGrabRange);
         useBeaconImmersion = buffer.readBoolean() && useBeaconImmersion;
+        crouchBypassImmersion = buffer.readBoolean() && crouchBypassImmersion;
 
     }
 
@@ -134,6 +136,7 @@ public class ActiveConfig {
             immersiveShield = ImmersiveMCConfig.immersiveShield.get();
             rangedGrabRange = ImmersiveMCConfig.rangedGrabRange.get();
             useBeaconImmersion = ImmersiveMCConfig.useBeaconImmersion.get();
+            crouchBypassImmersion = ImmersiveMCConfig.crouchBypassImmersion.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -177,6 +180,7 @@ public class ActiveConfig {
         immersiveShield = false;
         rangedGrabRange = 0;
         useBeaconImmersion = false;
+        crouchBypassImmersion = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -186,7 +190,7 @@ public class ActiveConfig {
                 .writeBoolean(ActiveConfig.useDoorImmersion).writeBoolean(ActiveConfig.useHoeImmersion)
                 .writeBoolean(ActiveConfig.canPet).writeBoolean(ActiveConfig.useArmorImmersion)
                 .writeBoolean(ActiveConfig.canFeedAnimals).writeBoolean(ActiveConfig.canPetAnyLiving)
-                .writeInt(ActiveConfig.rangedGrabRange);
+                .writeInt(ActiveConfig.rangedGrabRange).writeBoolean(ActiveConfig.crouchBypassImmersion);
         return buffer;
     }
 

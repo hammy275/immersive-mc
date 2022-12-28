@@ -6,7 +6,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ImmersiveMCConfig {
 
-    public static final int CONFIG_VERSION = 3; // Increment post-release whenever the config changes
+    public static final int CONFIG_VERSION = 4; // Increment post-release whenever the config changes
 
     public static final ForgeConfigSpec GENERAL_SPEC;
 
@@ -34,6 +34,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue immersiveShield;
     public static ForgeConfigSpec.IntValue rangedGrabRange;
     public static ForgeConfigSpec.BooleanValue useBeaconImmersion;
+    public static ForgeConfigSpec.BooleanValue crouchBypassImmersion;
 
     //Non-synced values
     public static ForgeConfigSpec.IntValue backpackColor;
@@ -125,6 +126,9 @@ public class ImmersiveMCConfig {
         useBeaconImmersion = builder
                 .comment("Whether immersives on beacons should be allowed")
                 .define("beacon_immersion", true);
+        crouchBypassImmersion = builder
+                .comment("Allow users to crouch + right-click to bypass immersives. Disable if non-ImmersiveMC users have trouble while crouching+right-clicking blocks that ImmersiveMC uses!")
+                .define("crouch_bypass_immersion", true);
 
         // Non-synced Values
         backpackColor = builder
@@ -184,7 +188,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(canPetAnyLiving.get())
                 .writeBoolean(immersiveShield.get())
                 .writeInt(rangedGrabRange.get())
-                .writeBoolean(useBeaconImmersion.get());
+                .writeBoolean(useBeaconImmersion.get())
+                .writeBoolean(crouchBypassImmersion.get());
     }
 
     public static void resetToDefault() {
@@ -212,6 +217,7 @@ public class ImmersiveMCConfig {
         immersiveShield.set(true);
         rangedGrabRange.set(8);
         useBeaconImmersion.set(true);
+        crouchBypassImmersion.set(true);
 
         // Non-synced defaults
         backpackColor.set(11901820);

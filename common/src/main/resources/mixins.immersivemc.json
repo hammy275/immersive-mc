@@ -10,7 +10,8 @@
     "ButtonBlockMixin",
     "ContainerOpenersCounterMixin",
     "LivingEntityMixin",
-    "ProjectileMixin"
+    "ProjectileMixin",
+    "ServerPlayerGameModeMixin"
   ],
   "client": [
     "DragonFireballRendererMixin",

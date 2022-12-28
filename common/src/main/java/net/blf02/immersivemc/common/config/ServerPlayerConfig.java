@@ -6,7 +6,7 @@ public class ServerPlayerConfig {
 
     public static final ServerPlayerConfig EMPTY_CONFIG = new ServerPlayerConfig(false,
             false, false, false, false, false,
-            false, false, false, false, 0);
+            false, false, false, false, 0, false);
 
     public boolean useButtons;
     public boolean useCampfire;
@@ -19,11 +19,12 @@ public class ServerPlayerConfig {
     public boolean canFeedAnimals;
     public boolean canPetAnyLiving;
     public int rangedGrabRange;
+    public boolean crouchBypassImmersion;
 
     public ServerPlayerConfig(boolean useButtons, boolean useCampfire, boolean useLevers,
                               boolean useRangedGrab, boolean useDoorImmersion, boolean useHoeImmersion,
                               boolean canPet, boolean useArmorImmersion, boolean canFeedAnimals,
-                              boolean canPetAnyLiving, int rangedGrabRange) {
+                              boolean canPetAnyLiving, int rangedGrabRange, boolean crouchBypassImmersion) {
         this.useButtons = useButtons && ActiveConfig.useButton;
         this.useCampfire = useCampfire && ActiveConfig.useCampfireImmersion;
         this.useLevers = useLevers && ActiveConfig.useLever;
@@ -35,12 +36,13 @@ public class ServerPlayerConfig {
         this.canFeedAnimals = canFeedAnimals && ActiveConfig.canFeedAnimals;
         this.canPetAnyLiving = canPetAnyLiving && ActiveConfig.canPetAnyLiving;
         this.rangedGrabRange = Math.min(rangedGrabRange, ActiveConfig.rangedGrabRange);
+        this.crouchBypassImmersion = crouchBypassImmersion;
     }
 
     public ServerPlayerConfig(FriendlyByteBuf buffer) {
         this(buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(),
                 buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(),
-                buffer.readBoolean(), buffer.readBoolean(), buffer.readInt());
+                buffer.readBoolean(), buffer.readBoolean(), buffer.readInt(), buffer.readBoolean());
         buffer.release();
     }
 }

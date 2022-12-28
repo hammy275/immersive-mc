@@ -1,6 +1,8 @@
 package net.blf02.immersivemc.common.util;
 
 
+import net.blf02.immersivemc.common.immersive.CheckerFunction;
+import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -9,14 +11,28 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.RepeaterBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
 
 public class Util {
+
+    public static boolean isHittingImmersive(BlockHitResult result, Level level) {
+        BlockPos pos = result.getBlockPos();
+        BlockState state = level.getBlockState(pos);
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        for (CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> checker : ImmersiveCheckers.CHECKERS) {
+            if (checker.apply(pos, state, blockEntity, level)) {
+                return true; // "I'm totally not crouching" if SHIFT+Right-clicking an immersive
+            }
+        }
+        return false;
+    }
 
     public static void addStackToInventory(Player player, ItemStack item) {
         if (!item.isEmpty()) {
