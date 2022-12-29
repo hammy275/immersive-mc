@@ -150,7 +150,11 @@ public class ClientLogicSubscriber {
             int i = 0;
 
             for (I info : infos) {
-                singleton.tick(info, VRPluginVerify.clientInVR);
+                // Make sure we can safely use this immersion before ticking it.
+                if (singleton.shouldTrack(info.getBlockPosition(), Minecraft.getInstance().level.getBlockState(info.getBlockPosition()),
+                        Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()), Minecraft.getInstance().level)) {
+                    singleton.tick(info, VRPluginVerify.clientInVR);
+                }
                 if (info.hasHitboxes()) {
                     Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
                     Optional<Integer> closest = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),

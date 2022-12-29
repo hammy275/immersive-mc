@@ -36,7 +36,7 @@ public class ServerPlayerConfig {
         this.canFeedAnimals = canFeedAnimals && ActiveConfig.canFeedAnimals;
         this.canPetAnyLiving = canPetAnyLiving && ActiveConfig.canPetAnyLiving;
         this.rangedGrabRange = Math.min(rangedGrabRange, ActiveConfig.rangedGrabRange);
-        this.crouchBypassImmersion = crouchBypassImmersion;
+        this.crouchBypassImmersion = crouchBypassImmersion && ActiveConfig.crouchBypassImmersion;
     }
 
     public ServerPlayerConfig(FriendlyByteBuf buffer) {
