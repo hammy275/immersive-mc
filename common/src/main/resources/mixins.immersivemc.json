@@ -17,6 +17,7 @@
     "DragonFireballRendererMixin",
     "GameRendererMixin",
     "MinecraftMixin",
-    "MinecraftMixinAccessor"
+    "MinecraftMixinAccessor",
+    "MultiPlayerGameModeMixin"
   ]
 }
