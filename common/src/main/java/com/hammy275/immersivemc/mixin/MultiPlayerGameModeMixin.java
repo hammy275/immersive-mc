@@ -18,7 +18,7 @@ public class MultiPlayerGameModeMixin {
     private Minecraft minecraft;
 
     @ModifyVariable(method= "performUseItemOn(Lnet/minecraft/client/player/LocalPlayer;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;",
-            at=@At("STORE"), index = 9, ordinal = 1, print = true)
+            at=@At("STORE"), index = 9, ordinal = 1)
     // Matches bl2
     public boolean isCrouchingCondition(boolean value) {
         if (!ActiveConfig.crouchBypassImmersion) return value;
