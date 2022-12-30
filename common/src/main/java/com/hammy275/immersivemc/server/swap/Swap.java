@@ -37,6 +37,7 @@ import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.SmithingTableBlock;
+import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
@@ -410,6 +411,21 @@ public class Swap {
                 player.setItemInHand(hand, result.mergedFrom);
                 chest.setItem(slot, result.mergedInto);
             }
+        }
+    }
+
+    public static void handleBarrel(BarrelBlockEntity barrel,
+                                    Player player, InteractionHand hand,
+                                    int slot) {
+        ItemStack barrelItem = barrel.getItem(slot).copy();
+        ItemStack playerItem = player.getItemInHand(hand);
+        if (playerItem.isEmpty() || barrelItem.isEmpty() || !Util.stacksEqualBesidesCount(barrelItem, playerItem)) {
+            player.setItemInHand(hand, barrelItem);
+            barrel.setItem(slot, playerItem);
+        } else {
+            Util.ItemStackMergeResult result = Util.mergeStacks(barrelItem, playerItem, false);
+            player.setItemInHand(hand, result.mergedFrom);
+            barrel.setItem(slot, result.mergedInto);
         }
     }
 

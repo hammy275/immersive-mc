@@ -33,7 +33,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Objects;
 
 public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, ChestInfo> {
-    private final double spacing = 3d/16d;
+    public static final double spacing = 3d/16d;
     private final double threshold = 0.03;
 
     public ImmersiveChest() {

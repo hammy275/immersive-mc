@@ -5,16 +5,19 @@ import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
+import com.hammy275.immersivemc.client.immersive.ImmersiveBarrel;
 import com.hammy275.immersivemc.client.immersive.ImmersiveChest;
 import com.hammy275.immersivemc.client.immersive.ImmersiveShulker;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
+import com.hammy275.immersivemc.client.immersive.info.BarrelInfo;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.client.immersive.info.ShulkerInfo;
 import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
@@ -249,6 +252,12 @@ public class ClientLogicSubscriber {
                         return true;
                     }
                 }
+            } else if (ImmersiveCheckers.isBarrel(pos, state, tileEnt, player.level)) {
+                BarrelInfo barrelInfo = ImmersiveBarrel.findImmersive(tileEnt);
+                if (barrelInfo != null && barrelInfo.isOpen) {
+                    barrelInfo.nextRow();
+                    return true;
+                }
             }
         } else if (backpackInfo != null) {
             backpackInfo.gotoNextRow();
@@ -332,6 +341,12 @@ public class ClientLogicSubscriber {
                 if (info != null) {
                     ImmersiveChest.openChest(info);
                     return Immersives.immersiveChest.getCooldownDesktop();
+                }
+            } else if (ImmersiveCheckers.isBarrel(pos, state, player.level.getBlockEntity(pos), player.level)) {
+                BarrelInfo info = ImmersiveBarrel.findImmersive(player.level.getBlockEntity(pos));
+                if (info != null) {
+                    ImmersiveBarrel.openBarrel(info);
+                    return Immersives.immersiveBarrel.getCooldownDesktop();
                 }
             }
         }

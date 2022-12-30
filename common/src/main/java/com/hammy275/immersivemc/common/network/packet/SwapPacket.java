@@ -71,6 +71,9 @@ public class SwapPacket {
                     }
                 } else if (ImmersiveCheckers.isShulkerBox(message.block, state, tileEnt, player.level)) {
                     Swap.shulkerBoxSwap(player, message.slot, message.hand, message.block);
+                } else if (ImmersiveCheckers.isBarrel(message.block, state, tileEnt, player.level)) {
+                    Swap.handleBarrel((BarrelBlockEntity) tileEnt, player,
+                            message.hand, message.slot);
                 }
             }
         });

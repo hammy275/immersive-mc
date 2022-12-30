@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
+import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
@@ -77,6 +78,15 @@ public class ChestShulkerOpenPacket {
                             shulkerBox.startOpen(player);
                         } else {
                             shulkerBox.stopOpen(player);
+                        }
+                    } else if (tileEnt instanceof BarrelBlockEntity barrel) {
+                        if (message.isOpen) {
+                            barrel.startOpen(player);
+                            changeChestCount(barrel.getBlockPos(), 1);
+                            PiglinAi.angerNearbyPiglins(player, true);
+                        } else {
+                            barrel.stopOpen(player);
+                            changeChestCount(barrel.getBlockPos(), -1);
                         }
                     }
                 }
