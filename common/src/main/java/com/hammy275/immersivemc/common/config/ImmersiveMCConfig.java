@@ -34,6 +34,8 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue immersiveShield;
     public static ForgeConfigSpec.IntValue rangedGrabRange;
     public static ForgeConfigSpec.BooleanValue useBeaconImmersion;
+
+    // C2S Only Sync
     public static ForgeConfigSpec.BooleanValue crouchBypassImmersion;
 
     //Non-synced values
@@ -126,8 +128,10 @@ public class ImmersiveMCConfig {
         useBeaconImmersion = builder
                 .comment("Whether immersives on beacons should be allowed")
                 .define("beacon_immersion", true);
+
+        // C2S Only Sync
         crouchBypassImmersion = builder
-                .comment("Allow users to crouch + right-click to bypass immersives. Disable if non-ImmersiveMC users have trouble while crouching+right-clicking blocks that ImmersiveMC uses!")
+                .comment("Allow users to crouch + right-click to bypass immersives.")
                 .define("crouch_bypass_immersion", true);
 
         // Non-synced Values
@@ -188,8 +192,7 @@ public class ImmersiveMCConfig {
                 .writeBoolean(canPetAnyLiving.get())
                 .writeBoolean(immersiveShield.get())
                 .writeInt(rangedGrabRange.get())
-                .writeBoolean(useBeaconImmersion.get())
-                .writeBoolean(crouchBypassImmersion.get());
+                .writeBoolean(useBeaconImmersion.get());
     }
 
     public static void resetToDefault() {
@@ -217,6 +220,8 @@ public class ImmersiveMCConfig {
         immersiveShield.set(true);
         rangedGrabRange.set(rangedGrabRange.getDefault());
         useBeaconImmersion.set(true);
+
+        // C2S Synced Values
         crouchBypassImmersion.set(true);
 
         // Non-synced defaults

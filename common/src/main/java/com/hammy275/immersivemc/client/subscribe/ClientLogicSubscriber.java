@@ -327,7 +327,7 @@ public class ClientLogicSubscriber {
             BlockState state = player.level.getBlockState(pos);
             boolean isChest = state.getBlock() instanceof AbstractChestBlock && player.level.getBlockEntity(pos) instanceof ChestBlockEntity;
             boolean isEnderChest = state.getBlock() instanceof EnderChestBlock && player.level.getBlockEntity(pos) instanceof EnderChestBlockEntity;
-            if ((isChest || isEnderChest) && !player.isCrouching()) { // Crouch to still open chest
+            if (isChest || isEnderChest) {
                 ChestInfo info = ImmersiveChest.findImmersive(player.level.getBlockEntity(pos));
                 if (info != null) {
                     ImmersiveChest.openChest(info);
