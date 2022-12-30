@@ -32,6 +32,8 @@ public class ActiveConfig {
     public static boolean immersiveShield = false;
     public static int rangedGrabRange = 0;
     public static boolean useBeaconImmersion = false;
+
+    // C2S Synced values
     public static boolean crouchBypassImmersion = false;
 
     // Non-synced values
@@ -102,7 +104,6 @@ public class ActiveConfig {
         // Always use minimum value between client and server
         rangedGrabRange = Math.min(buffer.readInt(), rangedGrabRange);
         useBeaconImmersion = buffer.readBoolean() && useBeaconImmersion;
-        crouchBypassImmersion = buffer.readBoolean() && crouchBypassImmersion;
 
     }
 
@@ -136,10 +137,12 @@ public class ActiveConfig {
             immersiveShield = ImmersiveMCConfig.immersiveShield.get();
             rangedGrabRange = ImmersiveMCConfig.rangedGrabRange.get();
             useBeaconImmersion = ImmersiveMCConfig.useBeaconImmersion.get();
-            crouchBypassImmersion = ImmersiveMCConfig.crouchBypassImmersion.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
+
+        // C2S Synced values
+        crouchBypassImmersion = ImmersiveMCConfig.crouchBypassImmersion.get();
 
         // Non-synced values
         backpackColor = ImmersiveMCConfig.backpackColor.get();
@@ -228,7 +231,8 @@ public class ActiveConfig {
                 "Ranged grab range: " + rangedGrabRange + "\n" +
                 "Right click in VR: " + rightClickInVR + "\n" +
                 "3D resource pack compatability: " + resourcePack3dCompat + "\n" +
-                "Use beacon immersion: " + useBeaconImmersion;
+                "Use beacon immersion: " + useBeaconImmersion + "\n" +
+                "Crouch bypass immersion: " + crouchBypassImmersion;
         return stringOut;
     }
 
