@@ -3,10 +3,21 @@ package net.blf02.immersivemc.client.subscribe;
 import net.blf02.immersivemc.ImmersiveMC;
 import net.blf02.immersivemc.client.ClientUtil;
 import net.blf02.immersivemc.client.config.screen.ConfigScreen;
-import net.blf02.immersivemc.client.immersive.*;
-import net.blf02.immersivemc.client.immersive.info.*;
+import net.blf02.immersivemc.client.immersive.AbstractImmersive;
+import net.blf02.immersivemc.client.immersive.ImmersiveBackpack;
+import net.blf02.immersivemc.client.immersive.ImmersiveBarrel;
+import net.blf02.immersivemc.client.immersive.ImmersiveChest;
+import net.blf02.immersivemc.client.immersive.ImmersiveShulker;
+import net.blf02.immersivemc.client.immersive.Immersives;
+import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import net.blf02.immersivemc.client.immersive.info.BackpackInfo;
+import net.blf02.immersivemc.client.immersive.info.BarrelInfo;
+import net.blf02.immersivemc.client.immersive.info.ChestInfo;
+import net.blf02.immersivemc.client.immersive.info.InfoTriggerHitboxes;
+import net.blf02.immersivemc.client.immersive.info.ShulkerInfo;
 import net.blf02.immersivemc.client.tracker.ClientTrackerInit;
 import net.blf02.immersivemc.common.config.ActiveConfig;
+import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.tracker.AbstractTracker;
 import net.blf02.immersivemc.common.util.Util;
 import net.blf02.immersivemc.common.vr.VRPlugin;
@@ -241,6 +252,12 @@ public class ClientLogicSubscriber {
                         return true;
                     }
                 }
+            } else if (ImmersiveCheckers.isBarrel(pos, state, tileEnt, player.level)) {
+                BarrelInfo barrelInfo = ImmersiveBarrel.findImmersive(tileEnt);
+                if (barrelInfo != null && barrelInfo.isOpen) {
+                    barrelInfo.nextRow();
+                    return true;
+                }
             }
         } else if (backpackInfo != null) {
             backpackInfo.gotoNextRow();
@@ -324,6 +341,12 @@ public class ClientLogicSubscriber {
                 if (info != null) {
                     ImmersiveChest.openChest(info);
                     return Immersives.immersiveChest.getCooldownDesktop();
+                }
+            } else if (ImmersiveCheckers.isBarrel(pos, state, player.level.getBlockEntity(pos), player.level)) {
+                BarrelInfo info = ImmersiveBarrel.findImmersive(player.level.getBlockEntity(pos));
+                if (info != null) {
+                    ImmersiveBarrel.openBarrel(info);
+                    return Immersives.immersiveBarrel.getCooldownDesktop();
                 }
             }
         }

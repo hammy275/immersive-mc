@@ -14,6 +14,7 @@ public class ClientConstants {
     public static final int ticksToRenderRepeater = 80; // We're always pointing at one, so we don't need it much longer after that
     public static final int ticksToRenderShulker = 300;
     public static final int ticksToRenderBeacon = 60*20;
+    public static final int ticksToRenderBarrel = ticksToRenderChest;
 
     // Size of items when rendered in front of something immersive
     public static final float itemScaleSizeFurnace = 0.5f;
@@ -26,6 +27,7 @@ public class ClientConstants {
     public static final float itemScaleSizeBackpackSelected = 0.3f;
     public static final float itemScaleSizeShulker = 0.2f;
     public static final float itemScaleSizeBeacon = 0.42f;
+    public static final float itemScaleSizeBarrel = itemScaleSizeShulker;
 
     // Time to transition in ticks
     public static final int transitionTime = 20;
