@@ -3,7 +3,7 @@
   "quilt_loader": {
     "group": "${group}",
     "id": "immersivemc",
-    "version": "1.1.2",
+    "version": "1.2.0",
     "name": "ImmersiveMC",
     "description": "Minimizes the need to interact with GUIs in Minecraft!\n\nWorks great both in and out of VR!\n\nRequires the MC VR API mod if you want to use this the best in VR!\n\nThanks to yaosiqian for Simplified Chinese translations!\n\nThanks to the Vivecraft developers for inspiration for the backpack, and to various members of the Discord for ideas!\n\nThanks to the guide from leo3418 for the Config Screen!",
     "authors": ["hammy3502"],
@@ -11,6 +11,12 @@
     "icon": "assets/immersivemc/icon.png",
     "intermediate_mappings": "net.fabricmc:intermediary",
     "environment": "*",
+    "metadata": {
+      "contact": {
+        "homepage": "https://hammy275.com/immersivemcwiki",
+        "issues": "https://hammy275.com/immersivemcissues"
+      }
+    },
     "entrypoints": {
       "init": [
         "net.blf02.quilt.ImmersiveMCQuilt"

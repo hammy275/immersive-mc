@@ -1,13 +1,14 @@
 modLoader = "javafml"
-loaderVersion = "[40,)"
-#issueTrackerURL = ""
+loaderVersion = "[43,)"
+issueTrackerURL = "https://hammy275.com/immersivemcissues"
 license = "GNU GPLv3"
 
 [[mods]]
 modId = "immersivemc"
-version = "1.1.2"
+version = "1.2.0"
 displayName = "ImmersiveMC"
-authors = "hammy3502"
+displayURL = "https://hammy275.com/immersivemcwiki"
+authors = "hammy275"
 description = '''
 Minimizes the need to interact with GUIs in Minecraft!
 
@@ -26,14 +27,14 @@ Thanks to the guide from leo3418 for the Config Screen!
 [[dependencies.immersivemc]]
 modId = "forge"
 mandatory = true
-versionRange = "[40,)"
+versionRange = "[43,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.immersivemc]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.18.2,)"
+versionRange = "[1.19.2,)"
 ordering = "NONE"
 side = "BOTH"
 
