@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BarrelInfo;
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
@@ -67,7 +68,7 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
 
     @Override
     protected boolean enabledInConfig() {
-        return true; // TODO: Replace with config entry
+        return ActiveConfig.useBarrelImmersion;
     }
 
     @Override
