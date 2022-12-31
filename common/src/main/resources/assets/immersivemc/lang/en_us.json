@@ -8,8 +8,10 @@
   "screen.immersivemc.config.title": "ImmersiveMC Config",
   "config.immersivemc.backpack": "Customize Bag",
   "config.immersivemc.immersives": "Enable/Disable Immersives",
+  "config.immersivemc.wiki_button": "Need Help? Visit the Wiki!",
   "config.immersivemc.reset": "Reset to Defaults",
   "config.immersivemc.immersives_customize": "Customize Immersives",
+  "config.immersivemc.open_wiki_message": "Would you like to open the ImmersiveMC wiki, copy it to your clipboard, or cancel?",
 
   "screen.immersivemc.backpack_config.title": "Bag Customization",
   "config.immersivemc.left_handed_backpack": "Use Left Handed Bag",

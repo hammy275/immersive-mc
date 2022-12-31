@@ -4,17 +4,22 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 public class ConfigScreen extends Screen {
 
     protected final Screen lastScreen;
 
-    protected static int BUTTON_WIDTH = 128;
+    protected static int BUTTON_WIDTH = 160;
     protected static int BUTTON_HEIGHT = 20;
+
+    protected static final String WIKI_URL = "https://hammy275.com/immersivemcwiki";
 
     public ConfigScreen(Screen screen) {
         super(Component.translatable("screen.immersivemc.config.title"));
@@ -44,6 +49,22 @@ public class ConfigScreen extends Screen {
                 (button) -> Minecraft.getInstance().setScreen(new ImmersivesConfigScreen(this,
                         VRPluginVerify.hasAPI ?
                                 ImmersivesConfigScreen.ScreenType.BOTH : ImmersivesConfigScreen.ScreenType.NONVR))
+        ));
+
+        this.addRenderableWidget(new Button(
+                (this.width - BUTTON_WIDTH) / 2, this.height - 26 - 32,
+                BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("config.immersivemc.wiki_button"),
+                (button -> Minecraft.getInstance().setScreen(
+                        new ConfirmLinkScreen((clickedYes) -> {
+                            if (clickedYes) {
+                                Util.getPlatform().openUri(WIKI_URL);
+                            }
+                            Minecraft.getInstance().setScreen(this);
+                        }, Component.translatable("config.immersivemc.open_wiki_message"),
+                                Component.empty(),
+                                WIKI_URL,
+                                CommonComponents.GUI_CANCEL,
+                                true)))
         ));
 
         this.addRenderableWidget(new Button(
