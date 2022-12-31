@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.client.config.ClientConstants;
 import net.blf02.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import net.blf02.immersivemc.client.immersive.info.BarrelInfo;
+import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.immersive.ImmersiveCheckers;
 import net.blf02.immersivemc.common.network.Network;
 import net.blf02.immersivemc.common.network.packet.ChestShulkerOpenPacket;
@@ -67,7 +68,7 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
 
     @Override
     protected boolean enabledInConfig() {
-        return true; // TODO: Replace with config entry
+        return ActiveConfig.useBarrelImmersion;
     }
 
     @Override

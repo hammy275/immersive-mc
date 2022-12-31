@@ -34,6 +34,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue immersiveShield;
     public static ForgeConfigSpec.IntValue rangedGrabRange;
     public static ForgeConfigSpec.BooleanValue useBeaconImmersion;
+    public static ForgeConfigSpec.BooleanValue useBarrelImmersion;
 
     // C2S Only Sync
     public static ForgeConfigSpec.BooleanValue crouchBypassImmersion;
@@ -128,6 +129,9 @@ public class ImmersiveMCConfig {
         useBeaconImmersion = builder
                 .comment("Whether immersives on beacons should be allowed")
                 .define("beacon_immersion", true);
+        useBarrelImmersion = builder
+                .comment("Whether immersives on barrels should be allowed")
+                .define("barrel_immersion", true);
 
         // C2S Only Sync
         crouchBypassImmersion = builder
@@ -192,7 +196,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(canPetAnyLiving.get())
                 .writeBoolean(immersiveShield.get())
                 .writeInt(rangedGrabRange.get())
-                .writeBoolean(useBeaconImmersion.get());
+                .writeBoolean(useBeaconImmersion.get())
+                .writeBoolean(useBarrelImmersion.get());
     }
 
     public static void resetToDefault() {
@@ -220,6 +225,7 @@ public class ImmersiveMCConfig {
         immersiveShield.set(true);
         rangedGrabRange.set(8);
         useBeaconImmersion.set(true);
+        useBarrelImmersion.set(true);
 
         // C2S Synced Values
         crouchBypassImmersion.set(true);

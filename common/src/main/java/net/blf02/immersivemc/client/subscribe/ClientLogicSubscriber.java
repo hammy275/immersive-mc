@@ -331,9 +331,9 @@ public class ClientLogicSubscriber {
         HitResult looking = Minecraft.getInstance().hitResult;
         if (looking == null || looking.getType() != HitResult.Type.BLOCK) return 0;
 
+        BlockPos pos = ((BlockHitResult) looking).getBlockPos();
+        BlockState state = player.level.getBlockState(pos);
         if (ActiveConfig.rightClickChest && ActiveConfig.useChestImmersion) {
-            BlockPos pos = ((BlockHitResult) looking).getBlockPos();
-            BlockState state = player.level.getBlockState(pos);
             boolean isChest = state.getBlock() instanceof AbstractChestBlock && player.level.getBlockEntity(pos) instanceof ChestBlockEntity;
             boolean isEnderChest = state.getBlock() instanceof EnderChestBlock && player.level.getBlockEntity(pos) instanceof EnderChestBlockEntity;
             if (isChest || isEnderChest) {
@@ -342,16 +342,17 @@ public class ClientLogicSubscriber {
                     ImmersiveChest.openChest(info);
                     return Immersives.immersiveChest.getCooldownDesktop();
                 }
-            } else if (ImmersiveCheckers.isBarrel(pos, state, player.level.getBlockEntity(pos), player.level)) {
-                BarrelInfo info = ImmersiveBarrel.findImmersive(player.level.getBlockEntity(pos));
-                if (info != null) {
-                    ImmersiveBarrel.openBarrel(info);
-                    return Immersives.immersiveBarrel.getCooldownDesktop();
-                }
+            }
+        }
+        if (ActiveConfig.useBarrelImmersion &&
+                ImmersiveCheckers.isBarrel(pos, state, player.level.getBlockEntity(pos), player.level)) {
+            BarrelInfo info = ImmersiveBarrel.findImmersive(player.level.getBlockEntity(pos));
+            if (info != null) {
+                ImmersiveBarrel.openBarrel(info);
+                return Immersives.immersiveBarrel.getCooldownDesktop();
             }
         }
         if (ActiveConfig.useShulkerImmersion) {
-            BlockPos pos = ((BlockHitResult) looking).getBlockPos();
             BlockEntity blockEnt = player.level.getBlockEntity(pos);
             if (blockEnt instanceof ShulkerBoxBlockEntity) {
                 for (ShulkerInfo info : Immersives.immersiveShulker.getTrackedObjects()) {
