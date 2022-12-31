@@ -17,7 +17,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
@@ -226,7 +226,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
             info.effectSelected = hitboxNum;
         } else if (hitboxNum == 7) {
             Network.INSTANCE.sendToServer(new BeaconConfirmPacket(info.getBlockPosition(), info.getEffectId(),
-                    info.regenSelected ? Registry.MOB_EFFECT.getId(MobEffects.REGENERATION) : -1));
+                    info.regenSelected ? BuiltInRegistries.MOB_EFFECT.getId(MobEffects.REGENERATION) : -1));
             info.remove();
         } else {
             info.regenSelected = hitboxNum == 5;

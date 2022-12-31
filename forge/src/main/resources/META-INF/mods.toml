@@ -27,20 +27,20 @@ Thanks to the guide from leo3418 for the Config Screen!
 [[dependencies.immersivemc]]
 modId = "forge"
 mandatory = true
-versionRange = "[43,)"
+versionRange = "[44,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.immersivemc]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.19.2,)"
+versionRange = "[1.19.3,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.immersivemc]]
 modId = "architectury"
 mandatory = true
-versionRange = "[6.2.46,)"
+versionRange = "[7.0.66,)"
 ordering = "AFTER"
 side = "BOTH"

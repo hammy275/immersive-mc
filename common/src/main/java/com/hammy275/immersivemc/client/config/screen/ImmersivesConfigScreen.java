@@ -6,12 +6,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
-import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FormattedCharSequence;
-
-import java.util.List;
 
 public class ImmersivesConfigScreen extends Screen {
 
@@ -36,10 +32,11 @@ public class ImmersivesConfigScreen extends Screen {
         if (canShowConfigScreen()) {
             initNotInWorld();
         }
-        this.addRenderableWidget(new Button(
-                (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("gui.done"),
-                (button) -> this.onClose()));
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.done"),
+                        (button) -> this.onClose())
+                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                .pos((this.width - BUTTON_WIDTH) / 2, this.height - 26)
+                .build());
     }
 
     protected void initNotInWorld() {
@@ -98,13 +95,6 @@ public class ImmersivesConfigScreen extends Screen {
             // This is pretty rare, only happening when we're in a world but haven't finished the S2C part of ImmersiveMC's handshake
             drawCenteredString(stack, this.font, Component.translatable("screen.immersivemc.immersives_config.cant_change"),
                     this.width / 2, this.height / 2, 0xFFFFFF);
-        }
-
-        if (this.list != null) {  // Could be null if we're in a world
-            List<FormattedCharSequence> list = OptionsSubScreen.tooltipAt(this.list, mouseX, mouseY);
-            if (list != null) {
-                this.renderTooltip(stack, list, mouseX, mouseY);
-            }
         }
     }
 

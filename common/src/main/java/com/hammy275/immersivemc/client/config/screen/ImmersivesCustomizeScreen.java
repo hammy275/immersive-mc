@@ -8,14 +8,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
-import net.minecraft.client.gui.screens.OptionsSubScreen;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FormattedCharSequence;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 public class ImmersivesCustomizeScreen extends Screen {
@@ -54,9 +52,9 @@ public class ImmersivesCustomizeScreen extends Screen {
         this.list.addBig(
                 new OptionInstance<>(
                         "config.immersivemc.placement_mode",
-                        mc -> placementMode -> Minecraft.getInstance().font.split(
+                        placementMode -> Tooltip.create(
                                 Component.translatable("config.immersivemc.placement_mode.desc",
-                                        I18n.get("config.immersivemc.placement_mode." + placementMode.ordinal()).toLowerCase()), 200),
+                                        I18n.get("config.immersivemc.placement_mode." + placementMode.ordinal()).toLowerCase())),
                         (component, placementMode) -> Component.translatable("config.immersivemc.placement_mode." + placementMode.ordinal()),
                         new OptionInstance.LazyEnum<>(
                                 () -> Arrays.asList(PlacementMode.values()),
@@ -93,10 +91,11 @@ public class ImmersivesCustomizeScreen extends Screen {
 
         this.addRenderableWidget(this.list);
 
-        this.addRenderableWidget(new Button(
-                (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("gui.done"),
-                (button) -> this.onClose()));
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.done"),
+                        (button) -> this.onClose())
+                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                .pos((this.width - BUTTON_WIDTH) / 2, this.height - 26)
+                .build());
     }
 
     @Override
@@ -108,10 +107,6 @@ public class ImmersivesCustomizeScreen extends Screen {
         drawCenteredString(stack, this.font, this.title.getString(),
                 this.width / 2, 8, 0xFFFFFF);
 
-        List<FormattedCharSequence> list = OptionsSubScreen.tooltipAt(this.list, mouseX, mouseY);
-        if (list != null) {
-            this.renderTooltip(stack, list, mouseX, mouseY);
-        }
     }
 
     @Override

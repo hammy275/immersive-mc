@@ -1,23 +1,23 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
+import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
 import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
 import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.packet.FetchPlayerStoragePacket;
+import com.hammy275.immersivemc.common.network.packet.InteractPacket;
+import com.hammy275.immersivemc.common.network.packet.InventorySwapPacket;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.server.swap.Swap;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
-import com.hammy275.immersivemc.common.network.packet.FetchPlayerStoragePacket;
-import com.hammy275.immersivemc.common.network.packet.InteractPacket;
-import com.hammy275.immersivemc.common.network.packet.InventorySwapPacket;
+import com.mojang.math.Axis;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Camera;
@@ -34,6 +34,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 import java.util.Optional;
 
@@ -138,9 +139,9 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
         stack.translate(0, 1.5, 0); // Translate origin to our hand
 
-        stack.mulPose(Vector3f.YN.rotation(renderInfo.handYaw));
-        stack.mulPose(Vector3f.XN.rotation(renderInfo.handPitch));
-        stack.mulPose(Vector3f.ZP.rotation((float) Math.PI)); // Rotate
+        stack.mulPose(Axis.YN.rotation(renderInfo.handYaw));
+        stack.mulPose(Axis.XN.rotation(renderInfo.handPitch));
+        stack.mulPose(Axis.ZP.rotation((float) Math.PI)); // Rotate
 
         stack.translate(0, -1.5, 0); // Move back to where we started
 
@@ -277,8 +278,8 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         // left-handed guys, gals, and non-binary pals.
 
         Vector3f downVecF = new Vector3f(0, -1, 0);
-        downVecF.transform(Vector3f.XN.rotation(info.handPitch));
-        downVecF.transform(Vector3f.YN.rotation(info.handYaw));
+        downVecF.rotate(Axis.XN.rotation(info.handPitch));
+        downVecF.rotate(Axis.YN.rotation(info.handYaw));
         info.downVec = new Vec3(downVecF.x(), downVecF.y(), downVecF.z()).normalize();
 
         // Item hitboxes and positions

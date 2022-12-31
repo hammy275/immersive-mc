@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.client.immersive.info;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.phys.AABB;
@@ -64,15 +64,15 @@ public class BeaconInfo extends AbstractWorldStorageInfo implements InfoTriggerH
     public int getEffectId() {
         switch (this.effectSelected) {
             case 0:
-                return Registry.MOB_EFFECT.getId(MobEffects.MOVEMENT_SPEED);
+                return BuiltInRegistries.MOB_EFFECT.getId(MobEffects.MOVEMENT_SPEED);
             case 1:
-                return Registry.MOB_EFFECT.getId(MobEffects.DIG_SPEED);
+                return BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DIG_SPEED);
             case 2:
-                return Registry.MOB_EFFECT.getId(MobEffects.DAMAGE_RESISTANCE);
+                return BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DAMAGE_RESISTANCE);
             case 3:
-                return Registry.MOB_EFFECT.getId(MobEffects.JUMP);
+                return BuiltInRegistries.MOB_EFFECT.getId(MobEffects.JUMP);
             case 4:
-                return Registry.MOB_EFFECT.getId(MobEffects.DAMAGE_BOOST);
+                return BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DAMAGE_BOOST);
             default:
                 return -1;
         }

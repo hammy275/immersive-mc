@@ -31,54 +31,55 @@ public class ConfigScreen extends Screen {
         ActiveConfig.loadConfigFromFile(); // Load config so we're working with our current values when changing them
         super.init();
 
-        this.addRenderableWidget(new Button(
-                (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 16,
-                BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("config.immersivemc.backpack"),
-                (button) -> Minecraft.getInstance().setScreen(new BackpackConfigScreen(this))
-        ));
+        this.addRenderableWidget(Buttons.getScreenButton(new BackpackConfigScreen(this),
+                "config.immersivemc.backpack")
+                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                .pos((this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 32)
+                .build());
 
-        this.addRenderableWidget(new Button(
-                (this.width - BUTTON_WIDTH) / 2, this.height / 2,
-                BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("config.immersivemc.immersives_customize"),
-                (button) -> Minecraft.getInstance().setScreen(new ImmersivesCustomizeScreen(this))
-        ));
+        this.addRenderableWidget(Buttons.getScreenButton(new ImmersivesCustomizeScreen(this),
+                "config.immersivemc.immersives_customize")
+                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                .pos((this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT)
+                .build());
 
-        this.addRenderableWidget(new Button(
-                (this.width - BUTTON_WIDTH) / 2, this.height / 2 + BUTTON_HEIGHT + 16,
-                BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("config.immersivemc.immersives"),
-                (button) -> Minecraft.getInstance().setScreen(new ImmersivesConfigScreen(this,
+        this.addRenderableWidget(Buttons.getScreenButton(new ImmersivesConfigScreen(this,
                         VRPluginVerify.hasAPI ?
-                                ImmersivesConfigScreen.ScreenType.BOTH : ImmersivesConfigScreen.ScreenType.NONVR))
-        ));
+                        ImmersivesConfigScreen.ScreenType.BOTH : ImmersivesConfigScreen.ScreenType.NONVR),
+                "config.immersivemc.immersives")
+                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                .pos((this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT + 32)
+                .build());
 
-        this.addRenderableWidget(new Button(
-                (this.width - BUTTON_WIDTH) / 2, this.height - 26 - 32,
-                BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("config.immersivemc.wiki_button"),
-                (button -> Minecraft.getInstance().setScreen(
-                        new ConfirmLinkScreen((clickedYes) -> {
-                            if (clickedYes) {
-                                Util.getPlatform().openUri(WIKI_URL);
-                            }
-                            Minecraft.getInstance().setScreen(this);
-                        }, Component.translatable("config.immersivemc.open_wiki_message"),
-                                Component.empty(),
-                                WIKI_URL,
-                                CommonComponents.GUI_CANCEL,
-                                true)))
-        ));
+        this.addRenderableWidget(Buttons.getScreenButton(new ConfirmLinkScreen((clickedYes) -> {
+            if (clickedYes) {
+                Util.getPlatform().openUri(WIKI_URL);
+            }
+            Minecraft.getInstance().setScreen(this);
+        }, Component.translatable("config.immersivemc.open_wiki_message"),
+                Component.empty(),
+                WIKI_URL,
+                CommonComponents.GUI_CANCEL,
+                true), "config.immersivemc.wiki_button")
+                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                .pos((this.width - BUTTON_WIDTH) / 2, this.height - BUTTON_HEIGHT - 26 - 16)
+                .build());
 
-        this.addRenderableWidget(new Button(
-                (this.width - BUTTON_WIDTH) / 2 - (BUTTON_WIDTH / 2) - 8, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("gui.done"),
-                (button) -> this.onClose()));
-        this.addRenderableWidget(new Button(
-                (this.width - BUTTON_WIDTH) / 2 + (BUTTON_WIDTH / 2) + 8, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("config.immersivemc.reset"),
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.done"),
+                (button) -> this.onClose())
+                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                .pos((this.width - BUTTON_WIDTH) / 2 - (BUTTON_WIDTH / 2) - 8, this.height - 26)
+                .build());
+
+        this.addRenderableWidget(Button.builder(Component.translatable("config.immersivemc.reset"),
                 (button) -> {
                     ImmersiveMCConfig.resetToDefault();
                     ActiveConfig.loadConfigFromFile();
-                }
-        ));
+                })
+                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                .pos((this.width - BUTTON_WIDTH) / 2 + (BUTTON_WIDTH / 2) + 8, this.height - 26)
+                .build());
+
     }
 
     @Override

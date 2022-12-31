@@ -10,9 +10,7 @@ import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.mixin.DragonFireballRendererMixin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -34,6 +32,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -249,7 +249,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 textPos = textPos.add(0, 0, -0.15);
             } else if (facing == null) {
                 stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-                stack.mulPose(Vector3f.YP.rotationDegrees(180));
+                stack.mulPose(Axis.YP.rotationDegrees(180));
                 Vec3 textMove = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR ?
                         VRPlugin.API.getRenderVRPlayer().getHMD().getLookAngle() :
                         Minecraft.getInstance().player.getLookAngle();
@@ -258,8 +258,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             }
 
             if (facing != null) {
-                stack.mulPose(Vector3f.YP.rotationDegrees(degreesRotation));
-                stack.mulPose(Vector3f.XP.rotationDegrees(upDownRot));
+                stack.mulPose(Axis.YP.rotationDegrees(degreesRotation));
+                stack.mulPose(Axis.XP.rotationDegrees(upDownRot));
             }
 
             ItemTransforms.TransformType type = facing == null ? ItemTransforms.TransformType.GROUND :
@@ -352,14 +352,14 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
         // If north, we're good to go
         if (facing == Direction.WEST) {
-            stack.mulPose(Vector3f.YP.rotationDegrees(90));
+            stack.mulPose(Axis.YP.rotationDegrees(90));
         } else if (facing == Direction.SOUTH) {
-            stack.mulPose(Vector3f.YP.rotationDegrees(180));
+            stack.mulPose(Axis.YP.rotationDegrees(180));
         } else if (facing == Direction.EAST) {
-            stack.mulPose(Vector3f.YP.rotationDegrees(270));
+            stack.mulPose(Axis.YP.rotationDegrees(270));
         } else if (facing == null) {
             stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-            stack.mulPose(Vector3f.YP.rotationDegrees(180));
+            stack.mulPose(Axis.YP.rotationDegrees(180));
         }
 
         VertexConsumer vertexConsumer =
