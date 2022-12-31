@@ -19,9 +19,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.AbstractChestBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EnderChestBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
@@ -42,10 +39,6 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
 
     @Override
     protected void doTick(ChestInfo info, boolean isInVR) {
-        if (!chestsValid(info)) {
-            info.remove();
-            return;
-        }
         super.doTick(info, isInVR);
 
         // super.tick() does this for the main regular chest. This does it for the other chest, and for ender chests
@@ -82,12 +75,14 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
                 info.setHitbox(z, null);
             }
 
-            int startBot = 9 * info.getNextRow(info.getNextRow(info.getRowNum())) + 27 * i;
-            int endBot = startBot + 9;
-            for (int z = startBot; z < endBot; z++) {
-                Vec3 posRaw = positions[z % 9];
-                info.setPosition(z, posRaw.add(0, -0.45, 0));
-                info.setHitbox(z, null);
+            if (!info.isTFCChest) {
+                int startBot = 9 * info.getNextRow(info.getNextRow(info.getRowNum())) + 27 * i;
+                int endBot = startBot + 9;
+                for (int z = startBot; z < endBot; z++) {
+                    Vec3 posRaw = positions[z % 9];
+                    info.setPosition(z, posRaw.add(0, -0.45, 0));
+                    info.setHitbox(z, null);
+                }
             }
         }
 
@@ -224,20 +219,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     @Override
     public boolean shouldRender(ChestInfo info, boolean isInVR) {
         boolean dataReady = info.forward != null && info.readyToRender();
-        return !info.failRender && dataReady && chestsValid(info);
-    }
-
-    public boolean chestsValid(ChestInfo info) {
-        try {
-            Block mainChestBlock = info.getBlockEntity().getLevel().getBlockState(info.getBlockPosition()).getBlock();
-            boolean mainChestExists = mainChestBlock instanceof AbstractChestBlock || mainChestBlock instanceof EnderChestBlock;
-            boolean otherChestExists = info.other == null ? true : (info.getBlockEntity().getLevel() != null &&
-                    info.getBlockEntity().getLevel().getBlockState(info.other.getBlockPos()).getBlock() instanceof AbstractChestBlock);
-            return mainChestExists && otherChestExists;
-        } catch (NullPointerException e) {
-            return false;
-        }
-
+        return !info.failRender && dataReady;
     }
 
     @Override

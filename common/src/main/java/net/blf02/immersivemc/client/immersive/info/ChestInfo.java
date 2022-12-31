@@ -18,10 +18,12 @@ public class ChestInfo extends AbstractBlockEntityImmersiveInfo<BlockEntity> {
     public AABB[] openCloseHitboxes = new AABB[]{null, null};
     public Vec3[] openClosePositions = new Vec3[]{null, null};
     public int openCloseCooldown = 0;
+    public boolean isTFCChest;
 
     public ChestInfo(BlockEntity tileEntity, int ticksToExist, BlockEntity other) {
         super(tileEntity, ticksToExist, 53); // Accounts for double chest
         this.other = other;
+        this.isTFCChest = tileEntity.getClass().getName().startsWith("net.dries007.tfc");
     }
 
     public void nextRow() {
@@ -29,7 +31,8 @@ public class ChestInfo extends AbstractBlockEntityImmersiveInfo<BlockEntity> {
     }
 
     public int getNextRow(int rowIn) {
-        if (++rowIn > 2) {
+        int rowMax = this.isTFCChest ? 1 : 2;
+        if (++rowIn > rowMax) {
             return 0;
         }
         return rowIn;
@@ -71,8 +74,15 @@ public class ChestInfo extends AbstractBlockEntityImmersiveInfo<BlockEntity> {
 
     @Override
     public boolean hasItems() {
-        boolean mainChest = items[26] != null;
-        boolean otherChest = this.other == null || items[53] != null;
+        boolean mainChest;
+        boolean otherChest;
+        if (this.isTFCChest) {
+            mainChest = items[17] != null;
+            otherChest = this.other == null || items[44] != null;
+        } else {
+            mainChest = items[26] != null;
+            otherChest = this.other == null || items[53] != null;
+        }
         return mainChest && otherChest;
     }
 }
