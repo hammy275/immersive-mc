@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.mixin.MinecraftMixinAccessor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -43,5 +44,21 @@ public class ClientUtil {
     public static PlacementMode getPlacementModeIndirect(boolean leftClickAlreadyDoesSomething) {
         return Minecraft.getInstance().options.keyAttack.isDown() &&
                 !leftClickAlreadyDoesSomething ? PlacementMode.PLACE_ALL : ActiveConfig.placementMode;
+    }
+
+    /**
+     * Get Direction best represented by the velocity of a controller
+     * @param velocity Velocity from getVelocity()
+     * @return A Direction best representing the current direction of the velocity.
+     */
+    public static Direction getClosestDirection(Vec3 velocity) {
+        double max = Math.max(Math.abs(velocity.x), Math.max(Math.abs(velocity.y), Math.abs(velocity.z)));
+        if (max == Math.abs(velocity.x)) {
+            return velocity.x < 0 ? Direction.WEST : Direction.EAST;
+        } else if (max == Math.abs(velocity.y)) {
+            return velocity.y < 0 ? Direction.DOWN : Direction.UP;
+        } else {
+            return velocity.z < 0 ? Direction.NORTH : Direction.SOUTH;
+        }
     }
 }

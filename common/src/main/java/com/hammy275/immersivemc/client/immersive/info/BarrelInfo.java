@@ -1,9 +1,11 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
+import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class BarrelInfo extends AbstractBlockEntityImmersiveInfo<BarrelBlockEntity> {
 
@@ -12,6 +14,10 @@ public class BarrelInfo extends AbstractBlockEntityImmersiveInfo<BarrelBlockEnti
     protected AABB[] hitboxes = new AABB[27];
     public boolean updateHitboxes = false;
     public Direction forward = null;
+    public AABB pullHitbox = null;
+    public IVRData[] lastVRData = new IVRData[2];
+    public Vec3 lastPlayerPos = null;
+    public int placeItemCooldown = 0;
 
     public BarrelInfo(BarrelBlockEntity tileEntity) {
         super(tileEntity, ClientConstants.ticksToRenderBarrel, 26);
