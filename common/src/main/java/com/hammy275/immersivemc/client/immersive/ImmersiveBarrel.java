@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BarrelInfo;
@@ -8,7 +9,10 @@ import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
+import com.hammy275.immersivemc.common.vr.VRPlugin;
+import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,11 +23,14 @@ import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Objects;
 
 public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEntity, BarrelInfo> {
+    public static final double MOVE_THRESHOLD = 0.045;
+
     public ImmersiveBarrel() {
         super(4);
     }
@@ -41,9 +48,46 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
     @Override
     protected void doTick(BarrelInfo info, boolean isInVR) {
         super.doTick(info, isInVR);
+        if (info.placeItemCooldown > 0) {
+            info.placeItemCooldown--;
+        }
         if (info.updateHitboxes) {
             setHitboxes(info);
             info.updateHitboxes = false;
+        }
+
+        if (!info.isOpen && info.pullHitbox != null && VRPluginVerify.clientInVR
+            && VRPlugin.API.apiActive(Minecraft.getInstance().player)) {
+            for (int c = 0; c <= 1; c++) {
+                IVRData controller = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(c);
+                if (info.lastVRData[c] != null && info.lastPlayerPos != null) {
+                    Vec3 last = info.lastVRData[c].position();
+                    Vec3 current = controller.position();
+                    Vec3 change = new Vec3(
+                      current.x - last.x,
+                      current.y - last.y,
+                      current.z - last.z
+                    );
+                    Vec3 playerPos = Minecraft.getInstance().player.position();
+                    Vec3 playerPosChange = new Vec3(
+                            playerPos.x - info.lastPlayerPos.x,
+                            playerPos.y - info.lastPlayerPos.y,
+                            playerPos.z - info.lastPlayerPos.z
+                    );
+                    change = change.subtract(playerPosChange);
+                    Direction dir = ClientUtil.getClosestDirection(change);
+                    double moveAmount = Math.max(
+                            Math.abs(change.x),
+                            Math.max(Math.abs(change.y), Math.abs(change.z)));
+                    if (info.pullHitbox.contains(current) &&
+                            dir == info.forward && moveAmount >= MOVE_THRESHOLD) {
+                        info.placeItemCooldown = 10; // Used since barrel handle is by an item spot
+                        openBarrel(info);
+                    }
+                }
+                info.lastVRData[c] = controller;
+                info.lastPlayerPos = Minecraft.getInstance().player.position();
+            }
         }
     }
 
@@ -62,6 +106,10 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
                         getForwardFromPlayer(Minecraft.getInstance().player) : info.forward;
                 renderItem(info.items[i], stack, info.getPosition(i),
                         renderSize, neswDir, info.forward, info.getHitbox(i), true, -1);
+            }
+        } else {
+            if (info.pullHitbox != null) {
+                renderHitbox(stack, info.pullHitbox, info.pullHitbox.getCenter());
             }
         }
     }
@@ -94,8 +142,25 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
                     positionsRaw[i] = positionsRaw[i].add(0, -1, 0);
                 }
             }
+
+            Vec3 topCenter = getTopCenterOfBlock(info.getBlockPosition());
+            // Handle always on the west side. Also bump up a bit since handle is off-center
+            info.pullHitbox = AABB.ofSize(topCenter.add(-0.25, 0.15, 1d/16d),
+                    0.35, 0.5, 0.35);
         } else {
             positionsRaw = get3x3VerticalGrid(info.getBlockPosition(), ImmersiveChest.spacing, facing);
+            Vec3 forwardBotLeft = getDirectlyInFront(facing, info.getBlockPosition());
+            Direction handleDir = facing.getCounterClockWise();
+            Vec3 handleDirVec = new Vec3(handleDir.getNormal().getX(), handleDir.getNormal().getY(),
+                    handleDir.getNormal().getZ());
+            Vec3 forwardVec = new Vec3(facing.getNormal().getX(), facing.getNormal().getY(),
+                    facing.getNormal().getZ());
+            Vec3 pos = forwardBotLeft.add(handleDirVec.scale(0.75))
+                    .add(0, 0.5625, 0).add(forwardVec.scale(0.15));
+            double xSize = facing.getAxis() == Direction.Axis.X ? 0.5 : 0.35;
+            double zSize = facing.getAxis() == Direction.Axis.Z ? 0.5 : 0.35;
+            info.pullHitbox = AABB.ofSize(pos, xSize, 0.35, zSize);
+
         }
         int startIndex = 9 * info.getRowNum();
         float hitboxSize = ClientConstants.itemScaleSizeChest / 3f * 1.1f;
@@ -120,7 +185,7 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
     @Override
     public void handleRightClick(AbstractImmersiveInfo bInfo, Player player, int closest, InteractionHand hand) {
         BarrelInfo info = (BarrelInfo) bInfo;
-        if (!info.isOpen) return;
+        if (!info.isOpen || info.placeItemCooldown > 0) return;
         Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), closest, hand));
     }
 
