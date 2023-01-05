@@ -1,7 +1,6 @@
 package net.blf02.immersivemc.client.immersive.info;
 
 import net.blf02.immersivemc.client.config.ClientConstants;
-import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.phys.AABB;
@@ -15,7 +14,7 @@ public class BarrelInfo extends AbstractBlockEntityImmersiveInfo<BarrelBlockEnti
     public boolean updateHitboxes = false;
     public Direction forward = null;
     public AABB pullHitbox = null;
-    public IVRData[] lastVRData = new IVRData[2];
+    public Vec3[] lastControllerPos = new Vec3[2];
     public Vec3 lastPlayerPos = null;
     public int placeItemCooldown = 0;
 

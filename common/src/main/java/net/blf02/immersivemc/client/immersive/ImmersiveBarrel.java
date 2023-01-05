@@ -12,7 +12,6 @@ import net.blf02.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import net.blf02.immersivemc.common.network.packet.SwapPacket;
 import net.blf02.immersivemc.common.vr.VRPlugin;
 import net.blf02.immersivemc.common.vr.VRPluginVerify;
-import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -59,10 +58,9 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
         if (!info.isOpen && info.pullHitbox != null && VRPluginVerify.clientInVR
             && VRPlugin.API.apiActive(Minecraft.getInstance().player)) {
             for (int c = 0; c <= 1; c++) {
-                IVRData controller = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(c);
-                if (info.lastVRData[c] != null && info.lastPlayerPos != null) {
-                    Vec3 last = info.lastVRData[c].position();
-                    Vec3 current = controller.position();
+                Vec3 current = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(c).position();
+                if (info.lastControllerPos[c] != null && info.lastPlayerPos != null) {
+                    Vec3 last = info.lastControllerPos[c];
                     Vec3 change = new Vec3(
                       current.x - last.x,
                       current.y - last.y,
@@ -85,7 +83,7 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
                         openBarrel(info);
                     }
                 }
-                info.lastVRData[c] = controller;
+                info.lastControllerPos[c] = current;
                 info.lastPlayerPos = Minecraft.getInstance().player.position();
             }
         }
