@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[43,)"
+loaderVersion = "[40,)"
 issueTrackerURL = "https://hammy275.com/immersivemcissues"
 license = "GNU GPLv3"
 
@@ -27,14 +27,14 @@ Thanks to the guide from leo3418 for the Config Screen!
 [[dependencies.immersivemc]]
 modId = "forge"
 mandatory = true
-versionRange = "[43,)"
+versionRange = "[40,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.immersivemc]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.19.2,)"
+versionRange = "[1.18.2,)"
 ordering = "NONE"
 side = "BOTH"
 
