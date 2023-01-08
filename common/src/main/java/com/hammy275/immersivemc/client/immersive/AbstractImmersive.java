@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.mixin.DragonFireballRendererMixin;
@@ -444,6 +445,9 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @return The forward direction of a block to use.
      */
     public Direction getForwardFromPlayer(Player player) {
+        if (VRPluginVerify.clientInVR && VRPlugin.API.playerInVR(player)) {
+            return Util.horizontalDirectionFromLook(VRPlugin.API.getVRPlayer(player).getHMD().getLookAngle()).getOpposite();
+        }
         return player.getDirection().getOpposite();
     }
 
