@@ -77,8 +77,7 @@ public class ImmersivesCustomizeScreen extends Screen {
                 new OptionInstance<>(
                         "config.immersivemc.placement_guide_mode",
                         mc -> guideMode -> mc.font.split(
-                                Component.translatable("config.immersivemc.placement_guide_mode.desc",
-                                        I18n.get("config.immersivemc.placement_guide_mode." + guideMode.ordinal())), 200),
+                                Component.translatable("config.immersivemc.placement_guide_mode.desc"), 200),
                         (component, guideMode) -> Component.translatable("config.immersivemc.placement_guide_mode." + guideMode.ordinal()),
                         new OptionInstance.LazyEnum<>(
                                 () -> Arrays.asList(PlacementGuideMode.values()),
