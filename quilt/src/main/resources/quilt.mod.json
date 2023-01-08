@@ -19,10 +19,10 @@
     },
     "entrypoints": {
       "init": [
-        "net.blf02.quilt.ImmersiveMCQuilt"
+        "com.hammy275.immersivemc_quilt.ImmersiveMCQuilt"
       ],
       "modmenu": [
-        "net.blf02.immersivemc_fabric.ModMenuIntegration"
+        "com.hammy275.immersivemc_quilt.ModMenuIntegration"
       ]
     },
     "depends": [
