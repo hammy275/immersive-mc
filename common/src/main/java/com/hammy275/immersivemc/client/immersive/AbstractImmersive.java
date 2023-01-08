@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.client.model.Cube1x1;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.mixin.DragonFireballRendererMixin;
@@ -159,7 +160,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         if (shouldRender(info, isInVR)) {
             try {
                 render(info, stack, isInVR);
-                if (ActiveConfig.showPlacementGuide && !forceDisableItemGuide) {
+                if (ActiveConfig.placementGuideMode != PlacementGuideMode.OFF && !forceDisableItemGuide) {
                     // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
                     for (int i = 0; i < info.getInputSlots().length; i++) {
                         if (slotShouldRenderHelpHitbox(info, i)) {
@@ -282,16 +283,20 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected void renderItemGuide(PoseStack stack, AABB hitbox, float alpha, boolean isGreen) {
         if (hitbox != null) {
-            Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
-            Vec3 pos = hitbox.getCenter();
-            stack.pushPose();
-            stack.translate(-renderInfo.getPosition().x + pos.x,
-                    -renderInfo.getPosition().y + pos.y,
-                    -renderInfo.getPosition().z + pos.z);
-            MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-            cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
-                    0, 1, isGreen ? 0 : 1, alpha, (float) (hitbox.getSize() / 2f));
-            stack.popPose();
+            if (ActiveConfig.placementGuideMode == PlacementGuideMode.CUBE) {
+                Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+                Vec3 pos = hitbox.getCenter();
+                stack.pushPose();
+                stack.translate(-renderInfo.getPosition().x + pos.x,
+                        -renderInfo.getPosition().y + pos.y,
+                        -renderInfo.getPosition().z + pos.z);
+                MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+                cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
+                        0, 1, isGreen ? 0 : 1, alpha, (float) (hitbox.getSize() / 2f));
+                stack.popPose();
+            } else if (ActiveConfig.placementGuideMode == PlacementGuideMode.OUTLINE) {
+                renderHitbox(stack, hitbox, hitbox.getCenter(), true, 0, 1, isGreen ? 0 : 1);
+            }
         }
     }
 

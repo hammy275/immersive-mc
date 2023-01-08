@@ -46,7 +46,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue autoCenterFurnace;
     public static ForgeConfigSpec.BooleanValue autoCenterBrewing;
     public static ForgeConfigSpec.BooleanValue useLowDetailBackpack;
-    public static ForgeConfigSpec.BooleanValue showPlacementGuide;
+    public static ForgeConfigSpec.IntValue placementGuideMode;
     public static ForgeConfigSpec.IntValue itemPlacementMode;
     public static ForgeConfigSpec.BooleanValue spinCraftingOutput;
     public static ForgeConfigSpec.BooleanValue rightClickInVR;
@@ -157,9 +157,9 @@ public class ImmersiveMCConfig {
         useLowDetailBackpack = builder
                 .comment("Use lower-detailed bag")
                 .define("low_detail_bag", false);
-        showPlacementGuide = builder
-                .comment("Whether to show a particle for where to place items")
-                .define("show_placement_guide", true);
+        placementGuideMode = builder
+                .comment("The mode for the placement guide")
+                .defineInRange("placement_guide_mode", 0, 0, PlacementGuideMode.values().length - 1);
         itemPlacementMode = builder
                 .comment("Integer representation for the mode to use when placing items using ImmersiveMC")
                 .defineInRange("placement_mode", 0, 0, PlacementMode.values().length - 1);
@@ -237,7 +237,7 @@ public class ImmersiveMCConfig {
         autoCenterFurnace.set(false);
         autoCenterBrewing.set(false);
         useLowDetailBackpack.set(false);
-        showPlacementGuide.set(true);
+        placementGuideMode.set(0);
         itemPlacementMode.set(0);
         spinCraftingOutput.set(false);
         rightClickInVR.set(false);

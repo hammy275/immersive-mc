@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
+import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -40,7 +41,6 @@ public class ImmersivesCustomizeScreen extends Screen {
         ScreenUtils.addOption("center_brewing", ImmersiveMCConfig.autoCenterBrewing, this.list);
         ScreenUtils.addOption("center_furnace", ImmersiveMCConfig.autoCenterFurnace, this.list);
         ScreenUtils.addOption("right_click_chest", ImmersiveMCConfig.rightClickChest, this.list);
-        ScreenUtils.addOption("show_placement_guide", ImmersiveMCConfig.showPlacementGuide, this.list);
         ScreenUtils.addOption("spin_crafting_output", ImmersiveMCConfig.spinCraftingOutput, this.list);
         ScreenUtils.addOption("pet_any_living", ImmersiveMCConfig.canPetAnyLiving, this.list);
         if (Minecraft.getInstance().level == null || ActiveConfig.serverCopy != null) {
@@ -66,6 +66,27 @@ public class ImmersivesCustomizeScreen extends Screen {
                         (newMode) -> {
                             ImmersiveMCConfig.itemPlacementMode.set(newMode.ordinal());
                             ImmersiveMCConfig.itemPlacementMode.save();
+                            ActiveConfig.loadConfigFromFile();
+                        }
+                )
+        );
+
+        this.list.addBig(
+                new OptionInstance<>(
+                        "config.immersivemc.placement_guide_mode",
+                        guideMode -> Tooltip.create(
+                                Component.translatable("config.immersivemc.placement_guide_mode.desc",
+                                        I18n.get("config.immersivemc.placement_guide_mode." + guideMode.ordinal()))),
+                        (component, guideMode) -> Component.translatable("config.immersivemc.placement_guide_mode." + guideMode.ordinal()),
+                        new OptionInstance.LazyEnum<>(
+                                () -> Arrays.asList(PlacementGuideMode.values()),
+                                Optional::of,
+                                null
+                        ),
+                        ActiveConfig.placementGuideMode,
+                        (newMode) -> {
+                            ImmersiveMCConfig.placementGuideMode.set(newMode.ordinal());
+                            ImmersiveMCConfig.placementGuideMode.save();
                             ActiveConfig.loadConfigFromFile();
                         }
                 )
