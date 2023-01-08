@@ -55,7 +55,8 @@ public class ImmersivesCustomizeScreen extends Screen {
                 new OptionInstance<>(
                         "config.immersivemc.placement_mode",
                         mc -> placementMode -> Minecraft.getInstance().font.split(
-                                Component.translatable("config.immersivemc.placement_mode.desc"), 200),
+                                Component.translatable("config.immersivemc.placement_mode.desc",
+                                        I18n.get("config.immersivemc.placement_mode." + placementMode.ordinal()).toLowerCase()), 200),
                         (component, placementMode) -> Component.translatable("config.immersivemc.placement_mode." + placementMode.ordinal()),
                         new OptionInstance.LazyEnum<>(
                                 () -> Arrays.asList(PlacementMode.values()),
