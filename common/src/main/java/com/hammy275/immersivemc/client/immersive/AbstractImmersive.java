@@ -165,9 +165,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                     for (int i = 0; i < info.getInputSlots().length; i++) {
                         if (slotShouldRenderHelpHitbox(info, i)) {
                             AABB itemBox = info.getInputSlots()[i];
-                            AABB toShow = itemBox
-                                    .move(0, itemBox.getYsize() / 2, 0);
-                            renderItemGuide(stack, toShow, 0.2f, slotHelpBoxIsGreen(info, i));
+                            renderItemGuide(stack, itemBox, 0.2f, slotHelpBoxIsGreen(info, i));
                         }
                     }
                 }
@@ -284,6 +282,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     protected void renderItemGuide(PoseStack stack, AABB hitbox, float alpha, boolean isGreen) {
         if (hitbox != null) {
             if (ActiveConfig.placementGuideMode == PlacementGuideMode.CUBE) {
+                hitbox = hitbox
+                        .move(0, hitbox.getYsize() / 2, 0);
                 Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
                 Vec3 pos = hitbox.getCenter();
                 stack.pushPose();
