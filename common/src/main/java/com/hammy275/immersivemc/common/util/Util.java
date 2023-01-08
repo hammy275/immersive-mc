@@ -22,6 +22,18 @@ import java.util.Optional;
 
 public class Util {
 
+    public static Direction horizontalDirectionFromLook(Vec3 look) {
+        double maxLook = Math.max(
+                Math.abs(look.x),
+                Math.abs(look.z)
+        );
+        if (maxLook == Math.abs(look.x)) {
+            return look.x < 0 ? Direction.WEST : Direction.EAST;
+        } else {
+            return look.z < 0 ? Direction.NORTH : Direction.SOUTH;
+        }
+    }
+
     public static boolean isHittingImmersive(BlockHitResult result, Level level) {
         BlockPos pos = result.getBlockPos();
         BlockState state = level.getBlockState(pos);
