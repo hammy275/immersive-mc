@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
 import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
 import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.util.Util;
@@ -166,12 +167,12 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         stack.popPose();
 
         // Render item guides here instead since we're using renderInfo
-        for (int i = 0; i < renderInfo.getInputSlots().length; i++) {
-            if (slotShouldRenderHelpHitbox(tickInfo, i)) { // Use tickInfo here since it holds info about crafting
-                AABB itemBox = renderInfo.getInputSlots()[i];
-                AABB toShow = itemBox
-                        .move(0, itemBox.getYsize() / 2, 0);
-                renderItemGuide(stack, toShow, 0.2f, slotHelpBoxIsGreen(renderInfo, i));
+        if (ActiveConfig.placementGuideMode != PlacementGuideMode.OFF) {
+            for (int i = 0; i < renderInfo.getInputSlots().length; i++) {
+                if (slotShouldRenderHelpHitbox(tickInfo, i)) { // Use tickInfo here since it holds info about crafting
+                    AABB itemBox = renderInfo.getInputSlots()[i];
+                    renderItemGuide(stack, itemBox, 0.2f, slotHelpBoxIsGreen(renderInfo, i));
+                }
             }
         }
     }

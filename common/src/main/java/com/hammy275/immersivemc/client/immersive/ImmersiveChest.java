@@ -64,7 +64,8 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
             if (chest == null) continue;
             info.forward = chest.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
 
-            Vec3[] positions = get3x3HorizontalGrid(chest.getBlockPos(), spacing);
+            Vec3[] positions = get3x3HorizontalGrid(chest.getBlockPos(), spacing, info.forward,
+                    false);
             float hitboxSize = ClientConstants.itemScaleSizeChest / 3f * 1.1f;
             int startTop = 9 * info.getRowNum() + 27 * i;
             int endTop = startTop + 9;

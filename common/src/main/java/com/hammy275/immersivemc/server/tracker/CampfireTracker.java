@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.server.PlayerConfigs;
+import com.hammy275.immersivemc.server.swap.Swap;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.BlockPos;
@@ -41,10 +42,11 @@ public class CampfireTracker extends AbstractTracker {
             ItemStack toSmelt = c == 0 ? player.getItemInHand(InteractionHand.MAIN_HAND) : player.getItemInHand(InteractionHand.OFF_HAND);
             Optional<CampfireCookingRecipe> recipe =
                     player.level.getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SimpleContainer(toSmelt), player.level);
-            if (recipe.isPresent() && info.get(c) >= recipe.get().getCookingTime() / 2) { // Attempt to smelt the held controller's item if we reach cook time.
+            if (recipe.isPresent() && info.get(c) >= recipe.get().getCookingTime() / 2) { // Smelt the held controller's item if we reach cook time.
+                toSmelt.shrink(1);
                 boolean didGive = player.getInventory().add(recipe.get().getResultItem());
-                if (didGive) {
-                    toSmelt.shrink(1);
+                if (!didGive) {
+                    Swap.placeLeftovers(player, recipe.get().getResultItem());
                 }
                 cookTime.remove(player.getGameProfile().getName());
             } else if (recipe.isPresent() &&

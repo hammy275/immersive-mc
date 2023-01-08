@@ -91,7 +91,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
             }
             double xMult = 0;
             double zMult = 0;
-            if (Minecraft.getInstance().player.getDirection().getNormal().getX() != 0) {
+            if (getForwardFromPlayer(Minecraft.getInstance().player).getOpposite().getNormal().getX() != 0) {
                 zMult = 1;
             } else {
                 xMult = 1;
@@ -206,12 +206,12 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
         super.doTick(info, isInVR);
 
         // Also refresh every second in case if beacon power changes
-        if (info.lastPlayerDir != Minecraft.getInstance().player.getDirection()
+        if (info.lastPlayerDir != getForwardFromPlayer(Minecraft.getInstance().player).getOpposite()
             || Minecraft.getInstance().player.tickCount % 20 == 0) {
             setHitboxesAndPositions(info);
         }
 
-        info.lastPlayerDir = Minecraft.getInstance().player.getDirection();
+        info.lastPlayerDir = getForwardFromPlayer(Minecraft.getInstance().player).getOpposite();
     }
 
     @Override
