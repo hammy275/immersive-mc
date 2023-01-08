@@ -3,6 +3,7 @@ package net.blf02.immersivemc.client.config.screen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.immersivemc.common.config.ActiveConfig;
 import net.blf02.immersivemc.common.config.ImmersiveMCConfig;
+import net.blf02.immersivemc.common.config.PlacementGuideMode;
 import net.blf02.immersivemc.common.config.PlacementMode;
 import net.minecraft.client.CycleOption;
 import net.minecraft.client.Minecraft;
@@ -16,6 +17,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -44,7 +46,6 @@ public class ImmersivesCustomizeScreen extends Screen {
         ScreenUtils.addOption("center_brewing", ImmersiveMCConfig.autoCenterBrewing, this.list);
         ScreenUtils.addOption("center_furnace", ImmersiveMCConfig.autoCenterFurnace, this.list);
         ScreenUtils.addOption("right_click_chest", ImmersiveMCConfig.rightClickChest, this.list);
-        ScreenUtils.addOption("show_placement_guide", ImmersiveMCConfig.showPlacementGuide, this.list);
         ScreenUtils.addOption("spin_crafting_output", ImmersiveMCConfig.spinCraftingOutput, this.list);
         ScreenUtils.addOption("pet_any_living", ImmersiveMCConfig.canPetAnyLiving, this.list);
         if (Minecraft.getInstance().level == null || ActiveConfig.serverCopy != null) {
@@ -72,6 +73,26 @@ public class ImmersivesCustomizeScreen extends Screen {
                                 I18n.get("config.immersivemc.placement_mode." + optionIndex).toLowerCase()),
                         200)
         ));
+
+        this.list.addBig(CycleOption.create(
+                "config.immersivemc.placement_guide_mode",
+                () -> IntStream.rangeClosed(0, PlacementGuideMode.values().length - 1).boxed().collect(Collectors.toList()),
+                (optionIndex) -> new TranslatableComponent("config.immersivemc.placement_guide_mode." + optionIndex),
+                (ignored) -> ImmersiveMCConfig.placementGuideMode.get(),
+                (ignored, ignored2, newIndex) -> {
+                    ImmersiveMCConfig.placementGuideMode.set(
+                            (ImmersiveMCConfig.placementGuideMode.get() + newIndex) % PlacementGuideMode.values().length
+                    );
+                    ImmersiveMCConfig.placementGuideMode.save();
+                    ActiveConfig.loadConfigFromFile();
+                }
+        ).setTooltip(
+                (minecraft) -> (optionIndex) -> minecraft.font.split(
+                        new TranslatableComponent("config.immersivemc.placement_guide_mode.desc"
+                        ), 200
+                )
+                )
+        );
 
 
         if (Minecraft.getInstance().level == null || ActiveConfig.serverCopy != null) {
