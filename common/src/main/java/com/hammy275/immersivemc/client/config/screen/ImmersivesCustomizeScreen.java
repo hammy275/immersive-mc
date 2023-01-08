@@ -75,8 +75,7 @@ public class ImmersivesCustomizeScreen extends Screen {
                 new OptionInstance<>(
                         "config.immersivemc.placement_guide_mode",
                         guideMode -> Tooltip.create(
-                                Component.translatable("config.immersivemc.placement_guide_mode.desc",
-                                        I18n.get("config.immersivemc.placement_guide_mode." + guideMode.ordinal()))),
+                                Component.translatable("config.immersivemc.placement_guide_mode.desc")),
                         (component, guideMode) -> Component.translatable("config.immersivemc.placement_guide_mode." + guideMode.ordinal()),
                         new OptionInstance.LazyEnum<>(
                                 () -> Arrays.asList(PlacementGuideMode.values()),
