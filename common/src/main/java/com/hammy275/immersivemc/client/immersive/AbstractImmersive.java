@@ -161,6 +161,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         if (shouldRender(info, isInVR)) {
             try {
                 render(info, stack, isInVR);
+                // Need to end batch here so items show behind item guides
+                Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
                 if (ActiveConfig.placementGuideMode != PlacementGuideMode.OFF && !forceDisableItemGuide) {
                     // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
                     for (int i = 0; i < info.getInputSlots().length; i++) {
