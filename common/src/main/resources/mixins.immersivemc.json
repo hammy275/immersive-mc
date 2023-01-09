@@ -9,6 +9,8 @@
     "BeaconBlockEntityMixin",
     "ButtonBlockMixin",
     "ContainerOpenersCounterMixin",
+    "DoorBlockMixin",
+    "FenceGateBlockMixin",
     "LivingEntityMixin",
     "ProjectileMixin",
     "ServerPlayerGameModeMixin"

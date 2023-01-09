@@ -1,11 +1,20 @@
 package com.hammy275.immersivemc.server.tracker.vrhand;
 
 import com.hammy275.immersivemc.common.config.ServerPlayerConfig;
+import com.hammy275.immersivemc.mixin.DoorBlockMixin;
+import com.hammy275.immersivemc.mixin.FenceGateBlockMixin;
 import com.hammy275.immersivemc.server.LastTickVRData;
 import com.hammy275.immersivemc.server.data.LastTickData;
 import net.blf02.vrapi.api.data.IVRPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -19,6 +28,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DoorMoveTracker extends AbstractVRHandTracker {
 
@@ -46,7 +56,8 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
 
     @Override
     protected void runForHand(Player player, InteractionHand hand, ItemStack stackInHand, IVRPlayer currentVRData, LastTickData lastVRData) {
-        BlockState blockState = getBlockStateAtHand(player, currentVRData, hand);
+        BlockPos pos = getBlockPosAtHand(currentVRData, hand);
+        BlockState blockState = player.level.getBlockState(pos);
         Vec3 velocity = LastTickVRData.getVelocity(lastVRData.lastPlayer.getController(hand.ordinal()), currentVRData.getController(hand.ordinal()),
                 lastVRData);
         Direction pushPullMainDirection = getDirectionToMove(blockState);
@@ -54,10 +65,34 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
         boolean otherMoveCheck = blockState.getBlock() instanceof FenceGateBlock &&
                 movingInDirectionWithThreshold(pushPullMainDirection.getOpposite(), velocity, THRESHOLD);
         if (movingInDirectionWithThreshold(pushPullMainDirection, velocity, THRESHOLD) || otherMoveCheck) {
-            blockState.use(player.level, player, InteractionHand.MAIN_HAND, new BlockHitResult(
+            InteractionResult res = blockState.use(player.level, player, InteractionHand.MAIN_HAND, new BlockHitResult(
                     currentVRData.getController(hand.ordinal()).position(),
                     pushPullMainDirection, getBlockPosAtHand(currentVRData, hand), false
             ));
+
+            // Need to play the sound separately for the player opening/closing the block
+            if (res == InteractionResult.CONSUME) {
+                boolean isNowOpen = blockState.getValue(BlockStateProperties.OPEN);
+                SoundEvent sound = null;
+                if (blockState.getBlock() instanceof FenceGateBlock fence) {
+                    FenceGateBlockMixin accessor = (FenceGateBlockMixin) fence;
+                    sound = isNowOpen ? accessor.getOpenSound() : accessor.getCloseSound();
+                } else if (blockState.getBlock() instanceof DoorBlock door) {
+                    DoorBlockMixin accessor = (DoorBlockMixin) door;
+                    sound = isNowOpen ? accessor.getOpenSound() : accessor.getCloseSound();
+                }
+                if (sound != null && player instanceof ServerPlayer sPlayer) {
+                    sPlayer.connection.send(new ClientboundSoundPacket(
+                            Holder.direct(sound),
+                            SoundSource.BLOCKS,
+                            pos.getX() + 0.5,
+                            pos.getY() + 0.5,
+                            pos.getZ() + 0.5,
+                            1f, ThreadLocalRandom.current().nextFloat() * 0.1F + 0.9F,
+                            ThreadLocalRandom.current().nextLong()));
+                }
+            }
+
             cooldown.put(player.getGameProfile().getName(), 10);
         }
     }
