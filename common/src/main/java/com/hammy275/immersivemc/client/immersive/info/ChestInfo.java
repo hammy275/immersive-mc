@@ -17,7 +17,6 @@ public class ChestInfo extends AbstractBlockEntityImmersiveInfo<BlockEntity> {
     public double lastY1;
     public AABB[] openCloseHitboxes = new AABB[]{null, null};
     public Vec3[] openClosePositions = new Vec3[]{null, null};
-    public int openCloseCooldown = 0;
 
     public ChestInfo(BlockEntity tileEntity, int ticksToExist, BlockEntity other) {
         super(tileEntity, ticksToExist, 53); // Accounts for double chest
