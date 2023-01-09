@@ -25,6 +25,7 @@ public class ImmersiveMC {
     public static final String vrKeyCategory = "key.categories." + MOD_ID + ".vr";
     public static KeyMapping SUMMON_BACKPACK = null;
     public static KeyMapping OPEN_SETTINGS = null;
+    public static KeyMapping RANGED_GRAB_KEY = null;
 
     public ImmersiveMC() {
     }
