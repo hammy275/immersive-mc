@@ -18,8 +18,11 @@ public class ImmersiveMCClient {
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F23, ImmersiveMC.vrKeyCategory);
         ImmersiveMC.OPEN_SETTINGS = new KeyMapping("key." + ImmersiveMC.MOD_ID + ".config",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_COMMA, ImmersiveMC.globalKeyCategory);
+        ImmersiveMC.RANGED_GRAB_KEY = new KeyMapping("key." + ImmersiveMC.MOD_ID + ".ranged_grab",
+                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F24, ImmersiveMC.vrKeyCategory);
         KeyMappingRegistry.register(ImmersiveMC.SUMMON_BACKPACK);
         KeyMappingRegistry.register(ImmersiveMC.OPEN_SETTINGS);
+        KeyMappingRegistry.register(ImmersiveMC.RANGED_GRAB_KEY);
 
         EntityModelLayerRegistry.register(BackpackCraftingModel.LAYER_LOCATION, BackpackCraftingModel::createBodyLayer);
         EntityModelLayerRegistry.register(BackpackLowDetailModel.LAYER_LOCATION, BackpackLowDetailModel::createBodyLayer);
