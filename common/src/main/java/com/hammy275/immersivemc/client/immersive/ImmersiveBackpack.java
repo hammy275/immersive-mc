@@ -167,6 +167,9 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
         stack.popPose();
 
+        // Need to end batch here so items show behind item guides
+        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+
         // Render item guides here instead since we're using renderInfo
         if (ActiveConfig.placementGuideMode != PlacementGuideMode.OFF) {
             for (int i = 0; i < renderInfo.getInputSlots().length; i++) {
