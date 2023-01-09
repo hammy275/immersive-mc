@@ -32,9 +32,20 @@ import java.util.Objects;
 public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, ChestInfo> {
     public static final double spacing = 3d/16d;
     private final double threshold = 0.03;
+    // Intentionally stored outside infos, so a chest close (which removes the info) will still have a cooldown
+    // before you can open a chest again.
+    public int openCloseCooldown = 0;
 
     public ImmersiveChest() {
         super(4);
+    }
+
+    @Override
+    public void globalTick() {
+        super.globalTick();
+        if (openCloseCooldown > 0) {
+            openCloseCooldown--;
+        }
     }
 
     @Override
@@ -115,7 +126,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
             }
         }
 
-        if (info.openCloseCooldown <= 0 && !ActiveConfig.rightClickChest) {
+        if (openCloseCooldown <= 0 && !ActiveConfig.rightClickChest) {
             if (VRPluginVerify.clientInVR && VRPlugin.API.apiActive(Minecraft.getInstance().player)
                     && info.openCloseHitboxes != null) {
                 Vec3 current0 = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController0().position();
@@ -139,14 +150,12 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
 
                 if (cond) {
                     openChest(info);
-                    info.openCloseCooldown = 40;
+                    openCloseCooldown = 40;
                 }
 
                 info.lastY0 = current0.y;
                 info.lastY1 = current1.y;
             }
-        } else if (!ActiveConfig.rightClickChest) {
-            info.openCloseCooldown--;
         }
     }
 

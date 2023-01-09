@@ -60,6 +60,13 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         this.infos = new ArrayList<>(maxImmersives > 0 ? maxImmersives + 1 : 16);
     }
 
+    /**
+     * Tick method that will always run exactly once per client tick
+     */
+    public void globalTick() {
+
+    }
+
     public boolean hitboxesAvailable(AbstractImmersiveInfo info) {
         return true;
     }

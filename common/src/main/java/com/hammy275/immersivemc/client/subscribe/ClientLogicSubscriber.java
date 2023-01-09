@@ -149,6 +149,7 @@ public class ClientLogicSubscriber {
     }
 
     protected static <I extends AbstractImmersiveInfo> void tickInfos(AbstractImmersive<I> singleton, Player player) {
+        singleton.globalTick();
         if (singleton.getTrackedObjects().size() == 0) {
             singleton.noInfosTick(); // Run onNoInfos() function if we don't have any infos right now
         } else {
