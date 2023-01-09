@@ -1,11 +1,16 @@
 package com.hammy275.immersivemc.server.tracker.vrhand;
 
 import com.hammy275.immersivemc.common.config.ServerPlayerConfig;
+import com.hammy275.immersivemc.mixin.DoorBlockMixin;
 import com.hammy275.immersivemc.server.LastTickVRData;
 import com.hammy275.immersivemc.server.data.LastTickData;
 import net.blf02.vrapi.api.data.IVRPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -46,7 +51,8 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
 
     @Override
     protected void runForHand(Player player, InteractionHand hand, ItemStack stackInHand, IVRPlayer currentVRData, LastTickData lastVRData) {
-        BlockState blockState = getBlockStateAtHand(player, currentVRData, hand);
+        BlockPos pos = getBlockPosAtHand(currentVRData, hand);
+        BlockState blockState = player.level.getBlockState(pos);
         Vec3 velocity = LastTickVRData.getVelocity(lastVRData.lastPlayer.getController(hand.ordinal()), currentVRData.getController(hand.ordinal()),
                 lastVRData);
         Direction pushPullMainDirection = getDirectionToMove(blockState);
@@ -54,10 +60,31 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
         boolean otherMoveCheck = blockState.getBlock() instanceof FenceGateBlock &&
                 movingInDirectionWithThreshold(pushPullMainDirection.getOpposite(), velocity, THRESHOLD);
         if (movingInDirectionWithThreshold(pushPullMainDirection, velocity, THRESHOLD) || otherMoveCheck) {
-            blockState.use(player.level, player, InteractionHand.MAIN_HAND, new BlockHitResult(
+            InteractionResult res = blockState.use(player.level, player, InteractionHand.MAIN_HAND, new BlockHitResult(
                     currentVRData.getController(hand.ordinal()).position(),
                     pushPullMainDirection, getBlockPosAtHand(currentVRData, hand), false
             ));
+
+            // Play event to door opener/closer, since the use() call ignores them
+            if (res == InteractionResult.CONSUME) {
+                boolean isNowOpen = blockState.getValue(BlockStateProperties.OPEN);
+                int event = -1;
+                if (blockState.getBlock() instanceof DoorBlock door) {
+                    DoorBlockMixin accessor = (DoorBlockMixin) door;
+                    event = isNowOpen ? accessor.getOpenSound() : accessor.getCloseSound();
+                } else {
+                    event = isNowOpen ? 1008 : 1014; // Hardcoded into FenceGateBlock
+                }
+
+                if (event != -1 && player instanceof ServerPlayer sPlayer) {
+                    sPlayer.connection.send(new ClientboundLevelEventPacket(
+                            event, pos, 0, false
+                    ));
+                }
+            }
+
+
+
             cooldown.put(player.getGameProfile().getName(), 10);
         }
     }
