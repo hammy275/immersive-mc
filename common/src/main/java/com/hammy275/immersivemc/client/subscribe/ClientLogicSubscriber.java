@@ -48,9 +48,13 @@ import java.util.Optional;
 public class ClientLogicSubscriber {
 
     public static boolean backpackPressed = false;
+    private static boolean alreadyInServer = false;
 
     public static void onClientLogin(ClientLevel level) {
-        ActiveConfig.loadOffConfig(); // Load "disabled" config, so stuff is disabled if the server isn't running ImmersiveMC
+        if (!alreadyInServer) { // Only run if we're actually joining a new level, rather than changing dimensions
+            ActiveConfig.loadOffConfig(); // Load "disabled" config, so stuff is disabled if the server isn't running ImmersiveMC
+            alreadyInServer = true;
+        }
     }
 
     public static void onClientTick(Minecraft minecraft) {
@@ -145,6 +149,7 @@ public class ClientLogicSubscriber {
             singleton.getTrackedObjects().clear();
         }
         ActiveConfig.serverCopy = null; // Reset server copy of config
+        alreadyInServer = false;
 
     }
 
