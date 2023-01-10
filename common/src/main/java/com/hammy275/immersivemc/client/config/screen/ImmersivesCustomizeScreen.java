@@ -60,7 +60,7 @@ public class ImmersivesCustomizeScreen extends Screen {
                 (ignored) -> ImmersiveMCConfig.itemPlacementMode.get(),
                 (ignored, ignored2, newIndex) -> {
                     ImmersiveMCConfig.itemPlacementMode.set(
-                            (ImmersiveMCConfig.itemPlacementMode.get() + newIndex) % PlacementMode.values().length
+                            newIndex
                     );
                     ImmersiveMCConfig.itemPlacementMode.save();
                     ActiveConfig.loadConfigFromFile();
@@ -80,7 +80,7 @@ public class ImmersivesCustomizeScreen extends Screen {
                 (ignored) -> ImmersiveMCConfig.placementGuideMode.get(),
                 (ignored, ignored2, newIndex) -> {
                     ImmersiveMCConfig.placementGuideMode.set(
-                            (ImmersiveMCConfig.placementGuideMode.get() + newIndex) % PlacementGuideMode.values().length
+                            newIndex
                     );
                     ImmersiveMCConfig.placementGuideMode.save();
                     ActiveConfig.loadConfigFromFile();
