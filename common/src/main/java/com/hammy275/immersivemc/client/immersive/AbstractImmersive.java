@@ -290,7 +290,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     protected void renderItemGuide(PoseStack stack, AABB hitbox, float alpha, boolean isGreen) {
-        if (hitbox != null) {
+        if (hitbox != null && !Minecraft.getInstance().options.hideGui) {
             if (ActiveConfig.placementGuideMode == PlacementGuideMode.CUBE) {
                 hitbox = hitbox
                         .move(0, hitbox.getYsize() / 2, 0);
