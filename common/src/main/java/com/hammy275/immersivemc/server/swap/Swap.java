@@ -75,8 +75,11 @@ public class Swap {
             ItemStack shulkerItem = shulkerBox.getItem(slot).copy();
             ItemStack playerItem = player.getItemInHand(hand);
             if (playerItem.isEmpty() || shulkerItem.isEmpty() || !Util.stacksEqualBesidesCount(shulkerItem, playerItem)) {
-                player.setItemInHand(hand, shulkerItem);
-                shulkerBox.setItem(slot, playerItem);
+                if (shulkerBox.canPlaceItemThroughFace(slot, playerItem, null)) {
+                    player.setItemInHand(hand, shulkerItem);
+                    shulkerBox.setItem(slot, playerItem);
+                }
+
             } else {
                 Util.ItemStackMergeResult result = Util.mergeStacks(shulkerItem, playerItem, false);
                 player.setItemInHand(hand, result.mergedFrom);
