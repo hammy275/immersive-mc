@@ -75,7 +75,7 @@ public class ClientLogicSubscriber {
 
 
         if (ImmersiveMC.SUMMON_BACKPACK.isDown()) {
-            if (!backpackPressed) {
+            if (!backpackPressed && VRPluginVerify.clientInVR) {
                 backpackPressed = true;
                 Immersives.immersiveBackpack.doTrack();
             }
