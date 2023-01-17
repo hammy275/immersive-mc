@@ -79,7 +79,7 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
                     sound = isNowOpen ? accessor.getOpenSound() : accessor.getCloseSound();
                 } else if (blockState.getBlock() instanceof DoorBlock door) {
                     DoorBlockMixin accessor = (DoorBlockMixin) door;
-                    sound = isNowOpen ? accessor.getOpenSound() : accessor.getCloseSound();
+                    sound = isNowOpen ? accessor.openSound() : accessor.closeSound();
                 }
                 if (sound != null && player instanceof ServerPlayer sPlayer) {
                     sPlayer.connection.send(new ClientboundSoundPacket(
