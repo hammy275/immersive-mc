@@ -48,7 +48,7 @@ public class CommonSubscriber {
                             // Note that this will effectively have things that bypass shields hurt us "early",
                             // but I can't seem to work around that, since we need a damage source, and we don't
                             // know our damage source until we're hit.
-                            ((ProjectileMixin) proj).onHit(new EntityHitResult(player));
+                            ((ProjectileMixin) proj).onHitRes(new EntityHitResult(player));
                             proj.setPos(ShieldUtil.getShieldPos(hand, iHand));
                         }
                     }

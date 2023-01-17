@@ -9,5 +9,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface ProjectileMixin {
 
     @Invoker("onHit")
-    public void onHit(HitResult hitResult);
+    public void onHitRes(HitResult hitResult);
 }

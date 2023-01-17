@@ -383,10 +383,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         Matrix4f matrix4f = pose.pose();
         Matrix3f matrix3f = pose.normal();
 
-        DragonFireballRendererMixin.vertex(vertexConsumer, matrix4f, matrix3f, maxLight, 0f, 0, 0, 1);
-        DragonFireballRendererMixin.vertex(vertexConsumer, matrix4f, matrix3f, maxLight, 1f, 0, 1, 1);
-        DragonFireballRendererMixin.vertex(vertexConsumer, matrix4f, matrix3f, maxLight, 1f, 1, 1, 0);
-        DragonFireballRendererMixin.vertex(vertexConsumer, matrix4f, matrix3f, maxLight, 0f, 1, 0, 0);
+        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, maxLight, 0f, 0, 0, 1);
+        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, maxLight, 1f, 0, 1, 1);
+        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, maxLight, 1f, 1, 1, 0);
+        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, maxLight, 0f, 1, 0, 0);
 
         stack.popPose();
     }
