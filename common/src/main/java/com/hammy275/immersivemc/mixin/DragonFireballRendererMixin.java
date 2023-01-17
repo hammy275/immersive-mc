@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(DragonFireballRenderer.class)
 public interface DragonFireballRendererMixin {
     @Invoker("vertex")
-    public static void vertex(VertexConsumer vertexConsumer, Matrix4f matrix4f, Matrix3f matrix3f, int i, float f, int j, int k, int l) {
+    public static void doVertex(VertexConsumer vertexConsumer, Matrix4f matrix4f, Matrix3f matrix3f, int i, float f, int j, int k, int l) {
 
     }
 }

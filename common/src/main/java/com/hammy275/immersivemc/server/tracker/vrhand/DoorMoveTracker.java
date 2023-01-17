@@ -71,7 +71,7 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
                 int event = -1;
                 if (blockState.getBlock() instanceof DoorBlock door) {
                     DoorBlockMixin accessor = (DoorBlockMixin) door;
-                    event = isNowOpen ? accessor.getOpenSound() : accessor.getCloseSound();
+                    event = isNowOpen ? accessor.openSound() : accessor.closeSound();
                 } else {
                     event = isNowOpen ? 1008 : 1014; // Hardcoded into FenceGateBlock
                 }

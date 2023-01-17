@@ -10,5 +10,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(ButtonBlock.class)
 public interface ButtonBlockMixin {
     @Invoker("playSound")
-    public void playSound(Player player, LevelAccessor levelAccessor, BlockPos blockPos, boolean bl);
+    public void playButtonSound(Player player, LevelAccessor levelAccessor, BlockPos blockPos, boolean bl);
 }
