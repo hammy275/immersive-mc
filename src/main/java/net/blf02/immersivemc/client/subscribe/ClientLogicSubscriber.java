@@ -170,7 +170,9 @@ public class ClientLogicSubscriber {
             int i = 0;
 
             for (I info : infos) {
-                singleton.tick(info, VRPluginVerify.clientInVR);
+                if (singleton.hasValidBlock(info, Minecraft.getInstance().level)) {
+                    singleton.tick(info, VRPluginVerify.clientInVR);
+                }
                 if (info.hasHitboxes()) {
                     Tuple<Vector3d, Vector3d> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
                     Optional<Integer> closest = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
