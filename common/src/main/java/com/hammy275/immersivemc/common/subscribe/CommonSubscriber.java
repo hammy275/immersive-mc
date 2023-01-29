@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.common.subscribe;
 import com.hammy275.immersivemc.common.util.ShieldUtil;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
-import com.hammy275.immersivemc.mixin.ProjectileMixin;
+import com.hammy275.immersivemc.mixin.ProjectileAccessor;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -48,7 +48,7 @@ public class CommonSubscriber {
                             // Note that this will effectively have things that bypass shields hurt us "early",
                             // but I can't seem to work around that, since we need a damage source, and we don't
                             // know our damage source until we're hit.
-                            ((ProjectileMixin) proj).onHitRes(new EntityHitResult(player));
+                            ((ProjectileAccessor) proj).onHitRes(new EntityHitResult(player));
                             proj.setPos(ShieldUtil.getShieldPos(hand, iHand));
                         }
                     }

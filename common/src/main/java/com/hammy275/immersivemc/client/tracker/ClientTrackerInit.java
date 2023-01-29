@@ -9,5 +9,7 @@ public class ClientTrackerInit {
     public static final List<AbstractTracker> trackers = new LinkedList<>();
 
     public static final RangedGrabTrackerClient rangedGrabTracker = new RangedGrabTrackerClient();
+    public static final LastVRDataTracker lastVRDataTracker = new LastVRDataTracker();
+    public static final ThrowTracker throwTracker = new ThrowTracker();
 
 }
