@@ -20,14 +20,14 @@
     "throw_redirectors.EnderPearlRedirect",
     "throw_redirectors.SnowballRedirect",
     "throw_redirectors.ThrownPotionRedirect",
-    "throw_redirectors.TridentRedirect"
+    "throw_redirectors.TridentRedirect",
   ],
   "client": [
     "DragonFireballRendererMixin",
     "GameRendererMixin",
-    "ItemInHandRendererMixin",
     "MinecraftMixin",
     "MinecraftMixinAccessor",
-    "MultiPlayerGameModeMixin"
+    "MultiPlayerGameModeMixin",
+    "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin"
   ]
 }
