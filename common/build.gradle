@@ -25,6 +25,8 @@ dependencies {
 
     modApi "net.minecraftforge:forgeconfigapiport-fabric:4.2.6"
     modApi "curse.maven:mcvrapi-591092:4073389"
+
+    modCompileOnly "curse.maven:vivecraft-667903:4160376"
 }
 
 publishing {
