@@ -95,6 +95,11 @@ public class ClientLogicSubscriber {
             ClientVRSubscriber.immersiveTickVR(player);
         }
 
+        // Always run LastVRDataTracker tick at the end
+        if (VRPluginVerify.clientInVR) {
+            ClientTrackerInit.lastVRDataTracker.doTick(Minecraft.getInstance().player);
+        }
+
         // Get block that we're looking at
         HitResult looking = Minecraft.getInstance().hitResult;
         if (looking == null || looking.getType() != HitResult.Type.BLOCK) return;

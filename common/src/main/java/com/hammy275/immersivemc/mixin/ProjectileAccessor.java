@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(Projectile.class)
-public interface ProjectileMixin {
+public interface ProjectileAccessor {
 
     @Invoker("onHit")
     public void onHitRes(HitResult hitResult);
