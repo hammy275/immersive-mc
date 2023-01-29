@@ -38,11 +38,11 @@ public class LastClientVRData {
     }
 
     /**
-     * Gets the change in position since the last tick
-     * @return Vector3d representing x, y, and z change since the last tick
+     * Gets the change in position for velocity purposes
+     * @return Vector3d representing x, y, and z velocity
      */
-    public static Vec3 changeSinceLastTick(VRType type) {
-        IVRData last = type == VRType.HMD ? getPlayer(5).getHMD() : getPlayer(5).getController(type.index);
+    public static Vec3 changeForVelocity(VRType type) {
+        IVRData last = type == VRType.HMD ? getPlayer(2).getHMD() : getPlayer(2).getController(type.index);
         IVRData current = type == VRType.HMD ? VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD() :
                 VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(type.index);
 
