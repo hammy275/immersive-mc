@@ -7,7 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.function.Supplier;
@@ -41,9 +41,9 @@ public class ThrowPacket {
                 if (Util.isThrowableItem(itemInHand.getItem())) {
                     AboutToThrowData.aboutToThrowMap.put(player.getUUID(),
                             new AboutToThrowData.ThrowRecord(packet.velocity, packet.dir));
-                    if (itemInHand.getItem() == Items.TRIDENT) {
+                    if (itemInHand.getItem() instanceof TridentItem) {
                         // 71000 just ensures we "held right click" long enough
-                        Items.TRIDENT.releaseUsing(itemInHand, player.level, player, 71000);
+                        itemInHand.getItem().releaseUsing(itemInHand, player.level, player, 71000);
                     } else {
                         itemInHand.getItem().use(player.level, player, InteractionHand.MAIN_HAND);
                     }
