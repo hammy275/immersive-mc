@@ -11,6 +11,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.TridentItem;
+import net.minecraft.world.phys.Vec3;
 
 public class ThrowTracker extends AbstractTracker {
 
@@ -27,9 +29,12 @@ public class ThrowTracker extends AbstractTracker {
             ClientUtil.immersiveLeftClickCooldown = 2; // Prevent left clicking
         } else if (Util.isThrowableItem(mainHandItem)) {
             if (this.readyToThrow()) {
+                Vec3 throwDir = mainHandItem instanceof TridentItem ?
+                        LastClientVRData.getPlayer(0).getController(0).getLookAngle() :
+                        LastClientVRData.changeForVelocity(LastClientVRData.VRType.C0).normalize();
                 Network.INSTANCE.sendToServer(new ThrowPacket(
-                        LastClientVRData.changeSinceLastTick(LastClientVRData.VRType.C0),
-                        LastClientVRData.changeSinceLastTick(LastClientVRData.VRType.C0).normalize()));
+                        LastClientVRData.changeForVelocity(LastClientVRData.VRType.C0),
+                        throwDir));
             }
             holdTime = 0;
         }

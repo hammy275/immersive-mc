@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.RepeaterBlock;
@@ -28,7 +29,7 @@ public class Util {
         return item == Items.EXPERIENCE_BOTTLE || item == Items.EGG ||
                 item == Items.ENDER_PEARL || item == Items.SPLASH_POTION ||
                 item == Items.LINGERING_POTION || item == Items.SNOWBALL ||
-                item == Items.TRIDENT;
+                item instanceof TridentItem;
     }
 
     public static Direction horizontalDirectionFromLook(Vec3 look) {
