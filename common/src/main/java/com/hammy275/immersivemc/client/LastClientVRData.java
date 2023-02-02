@@ -11,6 +11,7 @@ import java.util.LinkedList;
 public class LastClientVRData {
 
     private static final LinkedList<IVRPlayer> lastPlayers = new LinkedList<>();
+    private static final LinkedList<Vec3> lastPositions = new LinkedList<>();
 
     /**
      * Adds new last tick entry. Shouldn't be called by anything other than LastVRDataTracker.
@@ -21,6 +22,15 @@ public class LastClientVRData {
         if (lastPlayers.size() > 5) {
             lastPlayers.removeLast();
         }
+
+        if (Minecraft.getInstance().player != null) {
+            lastPositions.addFirst(Minecraft.getInstance().player.position());
+            if (lastPositions.size() > 5) {
+                lastPositions.removeLast();
+            }
+        }
+
+
     }
 
     /**
@@ -46,7 +56,11 @@ public class LastClientVRData {
         IVRData current = type == VRType.HMD ? VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD() :
                 VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(type.index);
 
-        return current.position().subtract(last.position());
+        Vec3 lastPlayerPos = lastPositions.get(1);
+        Vec3 currentPlayerPos = Minecraft.getInstance().player.position();
+        Vec3 posDiff = currentPlayerPos.subtract(lastPlayerPos);
+
+        return current.position().subtract(last.position()).subtract(posDiff);
     }
 
     public enum VRType {
