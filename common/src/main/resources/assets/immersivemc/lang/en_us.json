@@ -70,6 +70,8 @@
   "config.immersivemc.shield.desc": "When enabled, allows VR users to hold their shields in the direction of something to block it; no need to right click!",
   "config.immersivemc.shulker": "Use Shulker Box Immersion",
   "config.immersivemc.shulker.desc": "Enables/disables the ability to use the Shulker Box immersive. You can punch the Shulker Box to cycle which items are shown!",
+  "config.immersivemc.throw": "Use Throwing [VR Only]",
+  "config.immersivemc.throw.desc": "Enables/disables the ability for VR users to throw items (Tridents, Fishing Rods, and throwables such as snowballs, eggs, ender pearls, etc.). Hold the 'break block' button, then release as you throw!",
 
   "screen.immersivemc.immersives_customize.title": "Customize Immersives",
   "config.immersivemc.center_brewing": "Center Items for Brewing Immersive",

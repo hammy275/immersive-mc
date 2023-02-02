@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.common.vr.mixin_proxy;
 
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.server.data.AboutToThrowData;
 import net.minecraft.world.entity.Entity;
@@ -57,8 +58,12 @@ public class ThrowRedirect {
                 Math.sin(mediumThrowingVelocity * Math.PI / 2 / 0.175) : Math.sin(controllerVelocity * Math.PI / 2 / 0.175);
 
         // Add an extra modifier based on how much faster we are than the throw
-        double extraMod = (controllerVelocity - mediumThrowingVelocity) / 4;
-        extraMod = Math.min(extraMod, 0.05);
+        double extraMod = 0;
+
+        if (ActiveConfig.allowThrowingBeyondMax) {
+            extraMod = (controllerVelocity - mediumThrowingVelocity) / 4;
+            extraMod = Math.min(extraMod, 0.05);
+        }
 
         return projVelocityMod + extraMod;
     }

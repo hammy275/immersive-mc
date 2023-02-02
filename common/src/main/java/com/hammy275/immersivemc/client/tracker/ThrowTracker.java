@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.tracker;
 
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.LastClientVRData;
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ThrowPacket;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
@@ -42,7 +43,7 @@ public class ThrowTracker extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        return VRPluginVerify.clientInVR;
+        return VRPluginVerify.clientInVR && ActiveConfig.useThrowing;
     }
 
     public boolean readyToThrow() {
