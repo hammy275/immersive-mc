@@ -26,7 +26,7 @@ public class ThrowTracker extends AbstractTracker {
         Item mainHandItem = Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem();
         if (Minecraft.getInstance().options.keyAttack.isDown() && Util.isThrowableItem(mainHandItem)) {
             holdTime++;
-            ClientUtil.immersiveLeftClickCooldown = 2; // Prevent left clicking
+            ClientUtil.immersiveLeftClickCooldown = 6; // Prevent left clicking
         } else if (Util.isThrowableItem(mainHandItem)) {
             if (this.readyToThrow()) {
                 Vec3 throwDir = mainHandItem instanceof TridentItem ?

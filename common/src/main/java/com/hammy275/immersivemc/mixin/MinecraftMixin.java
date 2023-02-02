@@ -29,6 +29,13 @@ public class MinecraftMixin {
         }
     }
 
+    @Inject(method="continueAttack", at=@At(value = "HEAD"), cancellable = true)
+    public void continueLeftClick(boolean bl, CallbackInfo ci) {
+        if (ClientUtil.immersiveLeftClickCooldown > 0) {
+            ci.cancel();
+        }
+    }
+
     @Inject(method="startAttack", at=@At(value = "HEAD"), cancellable = true)
     public void preLeftClick(CallbackInfoReturnable<Boolean> cir) {
         boolean doCancel = ClientLogicSubscriber.onClick(0);
@@ -36,7 +43,6 @@ public class MinecraftMixin {
             this.missTime = ClientUtil.immersiveLeftClickCooldown;
             this.player.swing(InteractionHand.MAIN_HAND);
             cir.setReturnValue(false);
-            cir.cancel();
         }
     }
 
