@@ -6,6 +6,7 @@ import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.phys.Vec3;
@@ -39,6 +40,7 @@ public class ThrowPacket {
             if (player != null) {
                 ItemStack itemInHand = player.getItemInHand(InteractionHand.MAIN_HAND);
                 if (Util.isThrowableItem(itemInHand.getItem())) {
+                    if (itemInHand.getItem() instanceof FishingRodItem && player.fishing != null) return;
                     AboutToThrowData.aboutToThrowMap.put(player.getUUID(),
                             new AboutToThrowData.ThrowRecord(packet.velocity, packet.dir));
                     if (itemInHand.getItem() instanceof TridentItem) {
