@@ -17,9 +17,10 @@
     "throw_redirectors.BottleOEnchantingRedirect",
     "throw_redirectors.EggRedirect",
     "throw_redirectors.EnderPearlRedirect",
+    "throw_redirectors.FishingHookRedirect",
     "throw_redirectors.SnowballRedirect",
     "throw_redirectors.ThrownPotionRedirect",
-    "throw_redirectors.TridentRedirect",
+    "throw_redirectors.TridentRedirect"
   ],
   "client": [
     "DragonFireballRendererMixin",
