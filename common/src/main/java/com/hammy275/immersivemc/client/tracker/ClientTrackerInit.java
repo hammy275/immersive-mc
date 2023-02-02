@@ -11,5 +11,6 @@ public class ClientTrackerInit {
     public static final RangedGrabTrackerClient rangedGrabTracker = new RangedGrabTrackerClient();
     public static final LastVRDataTracker lastVRDataTracker = new LastVRDataTracker();
     public static final ThrowTracker throwTracker = new ThrowTracker();
+    public static final FishingReelTracker fishingReelTracker = new FishingReelTracker();
 
 }
