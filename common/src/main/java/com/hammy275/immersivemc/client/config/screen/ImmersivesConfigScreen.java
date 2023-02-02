@@ -75,6 +75,7 @@ public class ImmersivesConfigScreen extends Screen {
             ScreenUtils.addOption("ranged_grab", ImmersiveMCConfig.useRangedGrab, this.list);
             ScreenUtils.addOption("repeater", ImmersiveMCConfig.useRepeaterImmersion, this.list);
             ScreenUtils.addOption("shield", ImmersiveMCConfig.immersiveShield, this.list);
+            ScreenUtils.addOption("throw", ImmersiveMCConfig.useThrowing, this.list);
         }
 
 

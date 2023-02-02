@@ -33,6 +33,8 @@ public class ActiveConfig {
     public static int rangedGrabRange = 0;
     public static boolean useBeaconImmersion = false;
     public static boolean useBarrelImmersion = false;
+    public static boolean useThrowing = false;
+    public static boolean allowThrowingBeyondMax = false;
 
     // C2S Synced values
     public static boolean crouchBypassImmersion = false;
@@ -106,6 +108,8 @@ public class ActiveConfig {
         rangedGrabRange = Math.min(buffer.readInt(), rangedGrabRange);
         useBeaconImmersion = buffer.readBoolean() && useBeaconImmersion;
         useBarrelImmersion = buffer.readBoolean() && useBarrelImmersion;
+        useThrowing = buffer.readBoolean() && useThrowing;
+        allowThrowingBeyondMax = buffer.readBoolean() && allowThrowingBeyondMax;
 
     }
 
@@ -140,6 +144,8 @@ public class ActiveConfig {
             rangedGrabRange = ImmersiveMCConfig.rangedGrabRange.get();
             useBeaconImmersion = ImmersiveMCConfig.useBeaconImmersion.get();
             useBarrelImmersion = ImmersiveMCConfig.useBarrelImmersion.get();
+            useThrowing = ImmersiveMCConfig.useThrowing.get();
+            allowThrowingBeyondMax = ImmersiveMCConfig.allowThrowingBeyondMax.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -188,6 +194,8 @@ public class ActiveConfig {
         useBeaconImmersion = false;
         crouchBypassImmersion = false;
         useBarrelImmersion = false;
+        useThrowing = false;
+        allowThrowingBeyondMax = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -237,7 +245,9 @@ public class ActiveConfig {
                 "3D resource pack compatability: " + resourcePack3dCompat + "\n" +
                 "Use beacon immersion: " + useBeaconImmersion + "\n" +
                 "Crouch bypass immersion: " + crouchBypassImmersion + "\n" +
-                "Use barrel immersion: " + useBarrelImmersion;
+                "Use barrel immersion: " + useBarrelImmersion + "\n" +
+                "Use throwing: " + useThrowing + "\n" +
+                "Allow throwing beyond max: " + allowThrowingBeyondMax;
         return stringOut;
     }
 
