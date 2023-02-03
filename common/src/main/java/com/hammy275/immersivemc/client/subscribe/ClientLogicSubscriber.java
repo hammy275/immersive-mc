@@ -10,7 +10,6 @@ import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
-<<<<<<< HEAD
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBarrel;
@@ -22,8 +21,6 @@ import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.client.immersive.info.BarrelInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.client.immersive.info.ShulkerInfo;
-import com.hammy275.immersivemc.client.immersive.*;
-import com.hammy275.immersivemc.client.immersive.info.*;
 import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
