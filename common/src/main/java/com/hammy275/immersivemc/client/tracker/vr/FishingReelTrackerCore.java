@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.tracker.vr;
 
 import com.hammy275.immersivemc.client.LastClientVRData;
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ReelFishPacket;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
@@ -19,7 +20,7 @@ public class FishingReelTrackerCore {
     }
 
     public static boolean shouldTick(Player player) {
-        return VRPlugin.API.playerInVR(player) &&
+        return ActiveConfig.useThrowing && VRPlugin.API.playerInVR(player) &&
                 player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof FishingRodItem &&
                 player.fishing != null;
     }
