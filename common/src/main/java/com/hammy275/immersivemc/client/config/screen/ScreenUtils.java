@@ -7,7 +7,21 @@ import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 public class ScreenUtils {
+
+    public static OptionInstance<Integer> createIntSlider(String titleTranslationKey,
+                                                          Function<Integer, Component> displayTextCreator,
+                                                          int minValue, int maxValue, int startingValue,
+                                                          Consumer<Integer> valueSetter) {
+        return new OptionInstance<>(titleTranslationKey, OptionInstance.noTooltip(),
+                (component, integer) -> displayTextCreator.apply(integer),
+                new OptionInstance.IntRange(minValue, maxValue),
+                startingValue, valueSetter);
+    }
+
     public static OptionInstance<Boolean> createOption(String keyName, ForgeConfigSpec.BooleanValue configEntry) {
         return OptionInstance.createBoolean(
                 "config." + ImmersiveMC.MOD_ID + "." + keyName,

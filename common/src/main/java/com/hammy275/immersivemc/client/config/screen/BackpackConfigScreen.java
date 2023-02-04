@@ -8,7 +8,6 @@ import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
@@ -58,22 +57,22 @@ public class BackpackConfigScreen extends Screen {
     protected void initOptionsList() {
         this.list.addBig(ScreenUtils.createOption("left_handed_backpack", ImmersiveMCConfig.leftHandedBackpack));
         this.list.addBig(ScreenUtils.createOption("low_detail_backpack", ImmersiveMCConfig.useLowDetailBackpack));
-        this.list.addBig(new OptionInstance<>(
-                "config.immersivemc.backpack_r", OptionInstance.noTooltip(),
-                (component, integer) -> Component.literal(I18n.get("config.immersivemc.backpack_r") + ": " + getRGB('r')),
-                new OptionInstance.IntRange(0, 255),
+        this.list.addBig(ScreenUtils.createIntSlider(
+                "config.immersivemc.backpack_r",
+                (integer) -> Component.literal(I18n.get("config.immersivemc.backpack_r") + ": " + getRGB('r')),
+                0, 255,
                 getRGB('r'), (newRVal) -> setRGB(newRVal, 'r')
         ));
-        this.list.addBig(new OptionInstance<>(
-                "config.immersivemc.backpack_g", OptionInstance.noTooltip(),
-                (component, integer) -> Component.literal(I18n.get("config.immersivemc.backpack_g") + ": " + getRGB('g')),
-                new OptionInstance.IntRange(0, 255),
+        this.list.addBig(ScreenUtils.createIntSlider(
+                "config.immersivemc.backpack_g",
+                (integer) -> Component.literal(I18n.get("config.immersivemc.backpack_g") + ": " + getRGB('g')),
+                0, 255,
                 getRGB('g'), (newRVal) -> setRGB(newRVal, 'g')
         ));
-        this.list.addBig(new OptionInstance<>(
-                "config.immersivemc.backpack_b", OptionInstance.noTooltip(),
-                (component, integer) -> Component.literal(I18n.get("config.immersivemc.backpack_b") + ": " + getRGB('b')),
-                new OptionInstance.IntRange(0, 255),
+        this.list.addBig(ScreenUtils.createIntSlider(
+                "config.immersivemc.backpack_b",
+                (integer) -> Component.literal(I18n.get("config.immersivemc.backpack_b") + ": " + getRGB('b')),
+                0, 255,
                 getRGB('b'), (newRVal) -> setRGB(newRVal, 'b')
         ));
 

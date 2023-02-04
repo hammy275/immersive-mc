@@ -95,18 +95,18 @@ public class ImmersivesCustomizeScreen extends Screen {
 
 
         if (Minecraft.getInstance().level == null || ActiveConfig.serverCopy != null) {
-            this.list.addBig(new OptionInstance<>(
-                    "config.immersivemc.ranged_grab_range", OptionInstance.noTooltip(),
-                    (component, val) -> {
+            this.list.addBig(ScreenUtils.createIntSlider(
+                    "config.immersivemc.ranged_grab_range",
+                    (val) -> {
                         if (val == -1) {
                             return Component.translatable("config.immersivemc.use_pick_range");
                         }
                         return Component.literal(I18n.get("config.immersivemc.ranged_grab_range") + ": " + val);
                     },
-                    new OptionInstance.IntRange(-1, 12),
+                    -1, 12,
                     ActiveConfig.rangedGrabRange, (newVal) -> {
-                ImmersiveMCConfig.rangedGrabRange.set(newVal);
-            }
+                        ImmersiveMCConfig.rangedGrabRange.set(newVal);
+                    }
             ));
         }
 
