@@ -94,9 +94,14 @@ public class ItemGuideCustomizeScreen extends Screen {
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
         if (ActiveConfig.placementGuideMode == PlacementGuideMode.CUBE || renderSquare) {
             stack.translate(0, 64f, 0);
+            if (renderSquare) {
+                stack.translate(0, 64f * color.alphaF(), 0);
+                stack.scale(color.alphaF(), color.alphaF(), color.alphaF());
+            }
+            float alpha = renderSquare ? 1f : color.alphaF();
             AbstractImmersive.cubeModel.render(stack,
                     buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
-                    color.redF(), color.greenF(), color.blueF(), color.alphaF(), 64f);
+                    color.redF(), color.greenF(), color.blueF(), alpha, 64f);
         } else if (ActiveConfig.placementGuideMode == PlacementGuideMode.OUTLINE) {
             LevelRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
                     renderHitbox,
