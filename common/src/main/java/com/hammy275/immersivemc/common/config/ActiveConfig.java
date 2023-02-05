@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.common.config;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
+import com.hammy275.immersivemc.common.util.RGBA;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 
@@ -51,6 +52,9 @@ public class ActiveConfig {
     public static boolean spinCraftingOutput = true;
     public static boolean rightClickInVR = false;
     public static boolean resourcePack3dCompat = false;
+    public static RGBA itemGuideColor = new RGBA(0x3300ffffL);
+    public static RGBA itemGuideSelectedColor = new RGBA(0x3300ff00L);
+    public static RGBA rangedGrabColor = new RGBA(0xff00ffffL);
 
     // For changing config values in-game
     public static FriendlyByteBuf serverCopy = null;
@@ -165,6 +169,9 @@ public class ActiveConfig {
         spinCraftingOutput = ImmersiveMCConfig.spinCraftingOutput.get();
         rightClickInVR = ImmersiveMCConfig.rightClickInVR.get();
         resourcePack3dCompat = ImmersiveMCConfig.resourcePack3dCompat.get();
+        itemGuideColor = new RGBA(ImmersiveMCConfig.itemGuideColor.get());
+        itemGuideSelectedColor = new RGBA(ImmersiveMCConfig.itemGuideSelectedColor.get());
+        rangedGrabColor = new RGBA(ImmersiveMCConfig.rangedGrabColor.get());
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
@@ -247,7 +254,10 @@ public class ActiveConfig {
                 "Crouch bypass immersion: " + crouchBypassImmersion + "\n" +
                 "Use barrel immersion: " + useBarrelImmersion + "\n" +
                 "Use throwing: " + useThrowing + "\n" +
-                "Allow throwing beyond max: " + allowThrowingBeyondMax;
+                "Allow throwing beyond max: " + allowThrowingBeyondMax + "\n" +
+                "Item Guide Color: " + itemGuideColor + "\n" +
+                "Item Guide Selected Color: " + itemGuideSelectedColor + "\n" +
+                "Ranged Grab Color: " + rangedGrabColor;
         return stringOut;
     }
 

@@ -32,6 +32,12 @@ public class ConfigScreen extends Screen {
         super.init();
 
         this.addRenderableWidget(new Button(
+                (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 32,
+                BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("config.immersivemc.customize_item_guides"),
+                (button) -> Minecraft.getInstance().setScreen(new ItemGuideCustomizeScreen(this))
+        ));
+
+        this.addRenderableWidget(new Button(
                 (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 16,
                 BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("config.immersivemc.backpack"),
                 (button) -> Minecraft.getInstance().setScreen(new BackpackConfigScreen(this))

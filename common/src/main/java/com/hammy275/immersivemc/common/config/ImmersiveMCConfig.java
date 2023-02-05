@@ -53,6 +53,9 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue spinCraftingOutput;
     public static ForgeConfigSpec.BooleanValue rightClickInVR;
     public static ForgeConfigSpec.BooleanValue resourcePack3dCompat;
+    public static ForgeConfigSpec.LongValue itemGuideColor;
+    public static ForgeConfigSpec.LongValue itemGuideSelectedColor;
+    public static ForgeConfigSpec.LongValue rangedGrabColor;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -180,6 +183,15 @@ public class ImmersiveMCConfig {
         resourcePack3dCompat = builder
                 .comment("Enables compatability for 3D resource packs like Classic 3D (16x)")
                 .define("resource_pack_3d_compat", false);
+        itemGuideColor = builder
+                .comment("Color for the item guides that help with item placement (aqua by default).")
+                .defineInRange("item_guide_color", 0x3300ffffL, 0, 0xFFFFFFFFL);
+        itemGuideSelectedColor = builder
+                .comment("Color for the item guides that help with item placement when hovered over (green by default).")
+                .defineInRange("item_guide_selected_color", 0x3300ff00L, 0, 0xFFFFFFFFL);
+        rangedGrabColor = builder
+                .comment("Color for the particles shown when grabbing items from range (aqua by default).")
+                .defineInRange("ranged_grab_color", 0xff00ffffL, 0, 0xFFFFFFFFL);
     }
 
     public static void encode(FriendlyByteBuf buffer) {
@@ -254,6 +266,9 @@ public class ImmersiveMCConfig {
         spinCraftingOutput.set(false);
         rightClickInVR.set(false);
         resourcePack3dCompat.set(false);
+        itemGuideColor.set(0x3300ffffL);
+        itemGuideSelectedColor.set(0x3300ff00L);
+        rangedGrabColor.set(0xff00ffffL);
 
     }
 

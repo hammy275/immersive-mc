@@ -50,7 +50,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected final List<I> infos;
     public final int maxImmersives;
-    protected static final Cube1x1 cubeModel = new Cube1x1(Minecraft.getInstance().getEntityModels().bakeLayer(Cube1x1.LAYER_LOCATION));
+    public static final Cube1x1 cubeModel = new Cube1x1(Minecraft.getInstance().getEntityModels().bakeLayer(Cube1x1.LAYER_LOCATION));
     protected boolean forceDisableItemGuide = false;
 
     public AbstractImmersive(int maxImmersives) {
