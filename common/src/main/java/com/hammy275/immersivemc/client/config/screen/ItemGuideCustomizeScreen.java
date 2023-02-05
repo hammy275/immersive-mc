@@ -50,10 +50,10 @@ public class ItemGuideCustomizeScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack stack, int i, int j, float f) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float f) {
         this.renderBackground(stack);
 
-        super.render(stack, i, j, f);
+        super.render(stack, mouseX, mouseY, f);
 
         drawCenteredString(stack, this.font, this.title.getString(),
                 this.width / 2, 8, 0xFFFFFF);
@@ -62,6 +62,24 @@ public class ItemGuideCustomizeScreen extends Screen {
         renderPreview(stack, ActiveConfig.itemGuideSelectedColor, 0.5f, false);
         // Render square for particle color by using our cube model lol
         renderPreview(stack, ActiveConfig.rangedGrabColor, 0.75f, true);
+
+        if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 3 / 4 - 16,
+                this.height * 1 / 4 - 16, this.width * 3 / 4 + 16, this.height * 1 / 4 + 16)) {
+            renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide.desc")),
+                    mouseX, mouseY);
+        }
+
+        if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 3 / 4 - 16,
+                this.height * 1 / 2 - 16, this.width * 3 / 4 + 16, this.height * 1 / 2 + 16)) {
+            renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide_selected.desc")),
+                    mouseX, mouseY);
+        }
+
+        if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 3 / 4 - 16,
+                this.height * 3 / 4 - 16, this.width * 3 / 4 + 16, this.height * 3 / 4 + 16)) {
+            renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.ranged_grab_color.desc")),
+                    mouseX, mouseY);
+        }
     }
 
     private void renderPreview(PoseStack stack, RGBA color, float heightMult, boolean renderSquare) {

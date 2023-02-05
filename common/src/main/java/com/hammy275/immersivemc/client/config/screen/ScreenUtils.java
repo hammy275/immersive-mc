@@ -22,4 +22,8 @@ public class ScreenUtils {
     public static void addOption(String keyName, ForgeConfigSpec.BooleanValue configEntry, OptionsList list) {
         list.addBig(createOption(keyName, configEntry));
     }
+
+    public static boolean mouseInBox(int mouseX, int mouseY, int leftX, int bottomY, int rightX, int topY) {
+        return mouseX >= leftX && mouseX <= rightX && mouseY >= bottomY && mouseY <= topY;
+    }
 }
