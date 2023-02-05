@@ -2,9 +2,8 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
-import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.CycleOption;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.ProgressOption;
@@ -72,26 +71,6 @@ public class ImmersivesCustomizeScreen extends Screen {
                                 I18n.get("config.immersivemc.placement_mode." + optionIndex).toLowerCase()),
                         200)
         ));
-
-        this.list.addBig(CycleOption.create(
-                "config.immersivemc.placement_guide_mode",
-                () -> IntStream.rangeClosed(0, PlacementGuideMode.values().length - 1).boxed().collect(Collectors.toList()),
-                (optionIndex) -> new TranslatableComponent("config.immersivemc.placement_guide_mode." + optionIndex),
-                (ignored) -> ImmersiveMCConfig.placementGuideMode.get(),
-                (ignored, ignored2, newIndex) -> {
-                    ImmersiveMCConfig.placementGuideMode.set(
-                            newIndex
-                    );
-                    ImmersiveMCConfig.placementGuideMode.save();
-                    ActiveConfig.loadConfigFromFile();
-                }
-        ).setTooltip(
-                (minecraft) -> (optionIndex) -> minecraft.font.split(
-                        new TranslatableComponent("config.immersivemc.placement_guide_mode.desc"
-                        ), 200
-                )
-                )
-        );
 
 
         if (Minecraft.getInstance().level == null || ActiveConfig.serverCopy != null) {
