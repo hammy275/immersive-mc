@@ -31,6 +31,12 @@ public class ConfigScreen extends Screen {
         ActiveConfig.loadConfigFromFile(); // Load config so we're working with our current values when changing them
         super.init();
 
+        this.addRenderableWidget(Buttons.getScreenButton(new ItemGuideCustomizeScreen(this),
+                        "config.immersivemc.customize_item_guides")
+                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                .pos((this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 64)
+                .build());
+
         this.addRenderableWidget(Buttons.getScreenButton(new BackpackConfigScreen(this),
                 "config.immersivemc.backpack")
                 .size(BUTTON_WIDTH, BUTTON_HEIGHT)
