@@ -61,19 +61,22 @@ public class ItemGuideCustomizeScreen extends Screen {
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 3 / 4 - 16,
                 this.height * 1 / 4 - 16, this.width * 3 / 4 + 16, this.height * 1 / 4 + 16)) {
-            renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide.desc")),
+            renderTooltip(stack,
+                    Minecraft.getInstance().font.split(Component.translatable("config.immersivemc.item_guide.desc"), 170),
                     mouseX, mouseY);
         }
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 3 / 4 - 16,
                 this.height * 1 / 2 - 16, this.width * 3 / 4 + 16, this.height * 1 / 2 + 16)) {
-            renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide_selected.desc")),
+            renderTooltip(stack,
+                    Minecraft.getInstance().font.split(Component.translatable("config.immersivemc.item_guide_selected.desc"), 170),
                     mouseX, mouseY);
         }
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 3 / 4 - 16,
                 this.height * 3 / 4 - 16, this.width * 3 / 4 + 16, this.height * 3 / 4 + 16)) {
-            renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.ranged_grab_color.desc")),
+            renderTooltip(stack,
+                    Minecraft.getInstance().font.split(Component.translatable("config.immersivemc.ranged_grab_color.desc"), 170),
                     mouseX, mouseY);
         }
     }
