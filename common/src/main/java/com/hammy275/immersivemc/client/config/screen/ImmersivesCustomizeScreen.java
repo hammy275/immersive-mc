@@ -2,11 +2,9 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
-import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.CycleOption;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.ProgressOption;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
@@ -74,18 +72,17 @@ public class ImmersivesCustomizeScreen extends Screen {
 
 
         if (Minecraft.getInstance().level == null || ActiveConfig.serverCopy != null) {
-            this.list.addBig(new ProgressOption(
-                    "config.immersivemc.ranged_grab_range", -1, 12, 1,
-                    (ignored) -> (double) ActiveConfig.rangedGrabRange, (ignored, newVal) -> {
-                        ImmersiveMCConfig.rangedGrabRange.set((int) (double) newVal);
-            },
-                    (ignored, ignored2) ->
-                    {
-                        if (ImmersiveMCConfig.rangedGrabRange.get() == -1) {
+            this.list.addBig(ScreenUtils.createIntSlider(
+                    "config.immersivemc.ranged_grab_range",
+                    (val) -> {
+                        if (val == -1) {
                             return new TranslatableComponent("config.immersivemc.use_pick_range");
                         }
-                        return new TextComponent(I18n.get("config.immersivemc.ranged_grab_range") + ": " + ImmersiveMCConfig.rangedGrabRange.get());
-                    }));
+                        return new TextComponent(I18n.get("config.immersivemc.ranged_grab_range") + ": " + val);
+                    },
+                    -1, 12,
+                    () -> ActiveConfig.rangedGrabRange, (newVal) -> ImmersiveMCConfig.rangedGrabRange.set(newVal)
+            ));
         }
 
 

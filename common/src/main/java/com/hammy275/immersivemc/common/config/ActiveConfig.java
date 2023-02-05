@@ -2,11 +2,8 @@ package com.hammy275.immersivemc.common.config;
 
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
-<<<<<<< HEAD
 import com.hammy275.immersivemc.ImmersiveMC;
-=======
 import com.hammy275.immersivemc.common.util.RGBA;
->>>>>>> f41936d (Colors Config Screen)
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 

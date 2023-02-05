@@ -1,14 +1,13 @@
 package com.hammy275.immersivemc.client.config.screen;
 
+import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
+import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.client.model.BackpackModel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.ProgressOption;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
@@ -59,24 +58,24 @@ public class BackpackConfigScreen extends Screen {
     protected void initOptionsList() {
         this.list.addBig(ScreenUtils.createOption("left_handed_backpack", ImmersiveMCConfig.leftHandedBackpack));
         this.list.addBig(ScreenUtils.createOption("low_detail_backpack", ImmersiveMCConfig.useLowDetailBackpack));
-        this.list.addBig(new ProgressOption(
-                "config.immersivemc.backpack_r", 0, 255, 1,
-                (ignored) -> (double) getRGB('r'), (ignored, newVal) -> setRGB(newVal, 'r'),
-                (ignored, ignored2) ->
-                        new TextComponent(I18n.get("config.immersivemc.backpack_r") + ": " + getRGB('r')
-                        )));
-        this.list.addBig(new ProgressOption(
-                "config.immersivemc.backpack_g", 0, 255, 1,
-                (ignored) -> (double) getRGB('g'), (ignored, newVal) -> setRGB(newVal, 'g'),
-                (ignored, ignored2) ->
-                        new TextComponent(I18n.get("config.immersivemc.backpack_g") + ": " + getRGB('g')
-                        )));
-        this.list.addBig(new ProgressOption(
-                "config.immersivemc.backpack_b", 0, 255, 1,
-                (ignored) -> (double) getRGB('b'), (ignored, newVal) -> setRGB(newVal, 'b'),
-                (ignored, ignored2) ->
-                        new TextComponent(I18n.get("config.immersivemc.backpack_b") + ": " + getRGB('b')
-                        )));
+        this.list.addBig(ScreenUtils.createIntSlider(
+                "config.immersivemc.backpack_r",
+                (integer) -> new TextComponent(I18n.get("config.immersivemc.backpack_r") + ": " + getRGB('r')),
+                0, 255,
+                () -> getRGB('r'), (newRVal) -> setRGB(Double.valueOf(newRVal), 'r')
+        ));
+        this.list.addBig(ScreenUtils.createIntSlider(
+                "config.immersivemc.backpack_g",
+                (integer) -> new TextComponent(I18n.get("config.immersivemc.backpack_g") + ": " + getRGB('g')),
+                0, 255,
+                () -> getRGB('g'), (newRVal) -> setRGB(Double.valueOf(newRVal), 'g')
+        ));
+        this.list.addBig(ScreenUtils.createIntSlider(
+                "config.immersivemc.backpack_b",
+                (integer) -> new TextComponent(I18n.get("config.immersivemc.backpack_b") + ": " + getRGB('b')),
+                0, 255,
+                () -> getRGB('b'), (newRVal) -> setRGB(Double.valueOf(newRVal), 'b')
+        ));
 
     }
 

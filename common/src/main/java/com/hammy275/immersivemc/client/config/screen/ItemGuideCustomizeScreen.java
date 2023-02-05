@@ -18,15 +18,12 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -65,19 +62,22 @@ public class ItemGuideCustomizeScreen extends Screen {
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 3 / 4 - 16,
                 this.height * 1 / 4 - 16, this.width * 3 / 4 + 16, this.height * 1 / 4 + 16)) {
-            renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide.desc")),
+            renderTooltip(stack,
+                    Minecraft.getInstance().font.split(new TranslatableComponent("config.immersivemc.item_guide.desc"), 170),
                     mouseX, mouseY);
         }
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 3 / 4 - 16,
                 this.height * 1 / 2 - 16, this.width * 3 / 4 + 16, this.height * 1 / 2 + 16)) {
-            renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide_selected.desc")),
+            renderTooltip(stack,
+                    Minecraft.getInstance().font.split(new TranslatableComponent("config.immersivemc.item_guide_selected.desc"), 170),
                     mouseX, mouseY);
         }
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 3 / 4 - 16,
                 this.height * 3 / 4 - 16, this.width * 3 / 4 + 16, this.height * 3 / 4 + 16)) {
-            renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.ranged_grab_color.desc")),
+            renderTooltip(stack,
+                    Minecraft.getInstance().font.split(new TranslatableComponent("config.immersivemc.ranged_grab_color.desc"), 170),
                     mouseX, mouseY);
         }
     }
@@ -150,7 +150,7 @@ public class ItemGuideCustomizeScreen extends Screen {
                 this.list.addBig(ScreenUtils.createIntSlider(
                         compKey, (value) ->
                                 new TextComponent(I18n.get(compKey) + ": " + value),
-                        0, 255, color.getColor(c),
+                        0, 255, () -> color.getColor(c),
                         (newVal) -> color.setColor(c, newVal)
                 ));
             }
