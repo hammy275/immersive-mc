@@ -175,7 +175,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
             for (int i = 0; i < renderInfo.getInputSlots().length; i++) {
                 if (slotShouldRenderHelpHitbox(tickInfo, i)) { // Use tickInfo here since it holds info about crafting
                     AABB itemBox = renderInfo.getInputSlots()[i];
-                    renderItemGuide(stack, itemBox, 0.2f, slotHelpBoxIsGreen(renderInfo, i));
+                    renderItemGuide(stack, itemBox, 0.2f, slotHelpBoxIsSelected(renderInfo, i));
                 }
             }
         }

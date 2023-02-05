@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.GrabItemPacket;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
+import com.hammy275.immersivemc.common.util.RGBA;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -79,8 +80,10 @@ public class RangedGrabTrackerClient extends AbstractTracker {
             }
 
             if (selected != null) {
+                RGBA color = ActiveConfig.rangedGrabColor;
                 Vec3 pos = selected.position().add(0, 0.2, 0);
-                selected.level.addParticle(new DustParticleOptions(new Vector3f(0, 1, 1), 1),
+                selected.level.addParticle(new DustParticleOptions(
+                        new Vector3f(color.redF(), color.greenF(), color.blueF()), color.alphaF()),
                         pos.x, pos.y, pos.z, 0.01, 0.01, 0.01);
             }
         }

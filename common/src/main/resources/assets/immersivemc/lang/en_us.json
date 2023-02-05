@@ -121,7 +121,7 @@
   "config.immersivemc.ranged_grab_r": "Ranged Grab Particle Red Value",
   "config.immersivemc.ranged_grab_g": "Ranged Grab Particle Green Value",
   "config.immersivemc.ranged_grab_b": "Ranged Grab Particle Blue Value",
-  "config.immersivemc.ranged_grab_a": "Ranged Grab Particle Alpha Value",
+  "config.immersivemc.ranged_grab_a": "Ranged Grab Particle Size",
 
   "immersivemc.immersive.etable.no_ench": "No Enchantment!",
   "immersivemc.immersive.anvil.levels_needed": "Levels Needed: %d",

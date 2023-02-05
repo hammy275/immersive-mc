@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.client.model.Cube1x1;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
+import com.hammy275.immersivemc.common.util.RGBA;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -113,7 +114,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     public void onRemove(I info) {}
 
-    protected boolean slotHelpBoxIsGreen(I info, int slotNum) {
+    protected boolean slotHelpBoxIsSelected(I info, int slotNum) {
         return info.slotHovered == slotNum;
     }
 
@@ -175,7 +176,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                     for (int i = 0; i < info.getInputSlots().length; i++) {
                         if (slotShouldRenderHelpHitbox(info, i)) {
                             AABB itemBox = info.getInputSlots()[i];
-                            renderItemGuide(stack, itemBox, 0.2f, slotHelpBoxIsGreen(info, i));
+                            renderItemGuide(stack, itemBox, 0.2f, slotHelpBoxIsSelected(info, i));
                         }
                     }
                 }
@@ -289,8 +290,9 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         renderHitbox(stack, hitbox, pos);
     }
 
-    protected void renderItemGuide(PoseStack stack, AABB hitbox, float alpha, boolean isGreen) {
+    protected void renderItemGuide(PoseStack stack, AABB hitbox, float alpha, boolean isSelected) {
         if (hitbox != null && !Minecraft.getInstance().options.hideGui) {
+            RGBA color = isSelected ? ActiveConfig.itemGuideSelectedColor : ActiveConfig.itemGuideColor;
             if (ActiveConfig.placementGuideMode == PlacementGuideMode.CUBE) {
                 hitbox = hitbox
                         .move(0, hitbox.getYsize() / 2, 0);
@@ -302,10 +304,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                         -renderInfo.getPosition().z + pos.z);
                 MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
                 cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
-                        0, 1, isGreen ? 0 : 1, alpha, (float) (hitbox.getSize() / 2f));
+                        color.redF(), color.greenF(), color.blueF(), color.alphaF(), (float) (hitbox.getSize() / 2f));
                 stack.popPose();
             } else if (ActiveConfig.placementGuideMode == PlacementGuideMode.OUTLINE) {
-                renderHitbox(stack, hitbox, hitbox.getCenter(), true, 0, 1, isGreen ? 0 : 1);
+                renderHitbox(stack, hitbox, hitbox.getCenter(), true,
+                        color.redF(), color.greenF(), color.blueF(), color.alphaF());
             }
         }
     }
@@ -319,7 +322,12 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     public static void renderHitbox(PoseStack stack, AABB hitbox, Vec3 pos, boolean alwaysRender,
-                                float red, float green, float blue) {
+                                    float red, float green, float blue) {
+        renderHitbox(stack, hitbox, pos, alwaysRender, red, green, blue, 1);
+    }
+
+    public static void renderHitbox(PoseStack stack, AABB hitbox, Vec3 pos, boolean alwaysRender,
+                                float red, float green, float blue, float alpha) {
         if ((Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() || alwaysRender) &&
                 hitbox != null && pos != null) {
             Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
@@ -331,7 +339,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
             LevelRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
                     hitbox.move(-pos.x, -pos.y, -pos.z),
-                    red, green, blue, 1);
+                    red, green, blue, alpha);
             stack.popPose();
         }
     }
