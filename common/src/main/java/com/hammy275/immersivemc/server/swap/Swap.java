@@ -85,6 +85,7 @@ public class Swap {
                 player.setItemInHand(hand, result.mergedFrom);
                 shulkerBox.setItem(slot, result.mergedInto);
             }
+            shulkerBox.setChanged();
         }
     }
 
@@ -364,6 +365,7 @@ public class Swap {
                 furnace.setItem(slot, result.mergedFrom);
             }
         }
+        furnace.setChanged();
     }
 
     public static void handleBrewingSwap(BrewingStandBlockEntity stand, Player player,
@@ -382,6 +384,7 @@ public class Swap {
             stand.setItem(slot, result.toOther);
             placeLeftovers(player, result.leftovers);
         }
+        stand.setChanged();
     }
 
     public static void handleJukebox(JukeboxBlockEntity jukebox,
@@ -395,6 +398,7 @@ public class Swap {
             player.level.levelEvent((Player)null, 1010, jukebox.getBlockPos(), Item.getId(playerItem.getItem()));
             playerItem.shrink(1);
             player.awardStat(Stats.PLAY_RECORD);
+            jukebox.setChanged();
         }
     }
 
@@ -414,6 +418,7 @@ public class Swap {
                 player.setItemInHand(hand, result.mergedFrom);
                 chest.setItem(slot, result.mergedInto);
             }
+            chest.setChanged();
         }
     }
 
@@ -430,6 +435,7 @@ public class Swap {
             player.setItemInHand(hand, result.mergedFrom);
             barrel.setItem(slot, result.mergedInto);
         }
+        barrel.setChanged();
     }
 
     public static void handleEnderChest(Player player, InteractionHand hand, int slot) {
