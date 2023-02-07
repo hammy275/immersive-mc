@@ -284,6 +284,7 @@ public class Swap {
                 furnace.setItem(slot, result.mergedFrom);
             }
         }
+        furnace.setChanged();
     }
 
     public static void handleBrewingSwap(BrewingStandTileEntity stand, PlayerEntity player,
@@ -302,6 +303,7 @@ public class Swap {
             stand.setItem(slot, result.toOther);
             placeLeftovers(player, result.leftovers);
         }
+        stand.setChanged();
     }
 
     public static void handleJukebox(JukeboxTileEntity jukebox,
@@ -316,6 +318,7 @@ public class Swap {
             playerItem.shrink(1);
             player.awardStat(Stats.PLAY_RECORD);
         }
+        jukebox.setChanged();
     }
 
     public static void handleChest(ChestTileEntity chestIn,
@@ -334,6 +337,7 @@ public class Swap {
                 player.setItemInHand(hand, result.mergedFrom);
                 chest.setItem(slot, result.mergedInto);
             }
+            chest.setChanged();
         }
     }
 
