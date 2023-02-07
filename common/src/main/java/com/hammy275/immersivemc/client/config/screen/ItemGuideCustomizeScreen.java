@@ -72,8 +72,10 @@ public class ItemGuideCustomizeScreen extends Screen {
                     mouseX, mouseY);
         }
 
+        RGBA color = ActiveConfig.rangedGrabColor;
+
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 7 / 8 - 16,
-                this.height * 3 / 4 - 16, this.width * 7 / 8 + 16, this.height * 3 / 4 + 16)) {
+                this.height * 3 / 4 - 16 + (int) (16f * color.alphaF()), this.width * 7 / 8 + 16, this.height * 3 / 4 + 16 + (int) (16f * color.alphaF()))) {
             renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.ranged_grab_color.desc")),
                     mouseX, mouseY);
         }
