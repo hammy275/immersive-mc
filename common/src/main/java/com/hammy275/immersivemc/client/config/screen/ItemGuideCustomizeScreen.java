@@ -60,20 +60,20 @@ public class ItemGuideCustomizeScreen extends Screen {
         // Render square for particle color by using our cube model lol
         renderPreview(stack, ActiveConfig.rangedGrabColor, 0.75f, true);
 
-        if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 3 / 4 - 16,
-                this.height * 1 / 4 - 16, this.width * 3 / 4 + 16, this.height * 1 / 4 + 16)) {
+        if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 7 / 8 - 16,
+                this.height * 1 / 4 - 16, this.width * 7 / 8 + 16, this.height * 1 / 4 + 16)) {
             renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide.desc")),
                     mouseX, mouseY);
         }
 
-        if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 3 / 4 - 16,
-                this.height * 1 / 2 - 16, this.width * 3 / 4 + 16, this.height * 1 / 2 + 16)) {
+        if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 7 / 8 - 16,
+                this.height * 1 / 2 - 16, this.width * 7 / 8 + 16, this.height * 1 / 2 + 16)) {
             renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide_selected.desc")),
                     mouseX, mouseY);
         }
 
-        if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 3 / 4 - 16,
-                this.height * 3 / 4 - 16, this.width * 3 / 4 + 16, this.height * 3 / 4 + 16)) {
+        if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 7 / 8 - 16,
+                this.height * 3 / 4 - 16, this.width * 7 / 8 + 16, this.height * 3 / 4 + 16)) {
             renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.ranged_grab_color.desc")),
                     mouseX, mouseY);
         }
@@ -81,7 +81,7 @@ public class ItemGuideCustomizeScreen extends Screen {
 
     private void renderPreview(PoseStack stack, RGBA color, float heightMult, boolean renderSquare) {
         stack.pushPose();
-        stack.translate(this.width * 0.75, this.height * heightMult, 0);
+        stack.translate(this.width * 0.875, this.height * heightMult, 0);
         stack.scale(0.25f, 0.25f, 0.25f);
 
         if (!renderSquare) {
@@ -114,7 +114,7 @@ public class ItemGuideCustomizeScreen extends Screen {
 
     @Override
     protected void init() {
-        this.list = new OptionsList(Minecraft.getInstance(), this.width / 2, this.height / 2,
+        this.list = new OptionsList(Minecraft.getInstance(), this.width * 3 / 4, this.height,
                 32, this.height - 32, 24);
 
 
