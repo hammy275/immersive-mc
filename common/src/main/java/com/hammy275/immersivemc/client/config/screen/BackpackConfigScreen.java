@@ -42,7 +42,7 @@ public class BackpackConfigScreen extends Screen {
 
     @Override
     protected void init() {
-        this.list = new OptionsList(Minecraft.getInstance(), this.width / 2, this.height / 2,
+        this.list = new OptionsList(Minecraft.getInstance(), this.width * 3 / 4, this.height,
                 32, this.height - 32, 24);
 
         initOptionsList();
@@ -104,8 +104,8 @@ public class BackpackConfigScreen extends Screen {
                 ActiveConfig.backpackColor & 255);
         rgb.mul(1f/255f);
 
-        float size = 128f;
-        stack.translate(this.width * 0.75, this.height / 2f - size * 1.5f, 0);
+        float size = 96f;
+        stack.translate(this.width * 0.875, this.height / 2f - size * 1.5f, 0);
         stack.scale(size, size, size);
 
         stack.mulPose(Vector3f.XN.rotationDegrees(45));
