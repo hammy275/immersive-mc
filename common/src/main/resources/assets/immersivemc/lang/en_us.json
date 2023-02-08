@@ -28,7 +28,7 @@
   "screen.immersivemc.immersives_config.subtitle": "Note: Any immersives that are disabled by server admins override your settings here!",
   "screen.immersivemc.immersives_config.cant_change": "Can't change the config right now! Wait a bit for the server's config to sync!",
   "config.immersivemc.animals": "Feed Animals Immersion [VR Only]",
-  "config.immersivemc.animals.desc": "Hold food or an item used to tame an animal in one hand, then hold both hands at the animal to tame it!",
+  "config.immersivemc.animals.desc": "Hold food or an item used to breed an animal in one hand, then hold both hands at the animal to put it in love mode!",
   "config.immersivemc.anvil": "Use Anvil Immersion",
   "config.immersivemc.anvil.desc": "Enables/disables the ability to use the anvil immersive.",
   "config.immersivemc.armor": "Use Armor Immersion [VR Only]",
