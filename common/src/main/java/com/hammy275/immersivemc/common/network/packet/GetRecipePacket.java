@@ -60,8 +60,7 @@ public class GetRecipePacket {
                         items[i] = table.getItem(i);
                     }
                     items[9] = ItemStack.EMPTY;
-                    CraftingRecipe recipe = Swap.getRecipe(sender, items);
-                    ItemStack output = recipe != null ? recipe.getResultItem() : ItemStack.EMPTY;
+                    ItemStack output = Swap.getRecipeOutput(sender, items);
                     GetStorage.getCraftingStorage(sender, packet.pos).items[9] = output;
                     Network.INSTANCE.sendToPlayer(sender,
                             new GetRecipePacket(packet.pos, output));
