@@ -151,12 +151,7 @@ public class Swap {
             storage.items[slot] = result.toOther;
             givePlayerItemSwap(result.toHand, playerItem, player, hand);
             placeLeftovers(player, result.leftovers);
-            CraftingRecipe recipe = getRecipe(player, storage.items);
-            if (recipe != null) {
-                storage.items[4] = recipe.getResultItem();
-            } else {
-                storage.items[4] = ItemStack.EMPTY;
-            }
+            storage.items[4] = getRecipeOutput(player, storage.items);
         } else {
             handleDoCraft(player, storage.items, null);
         }
@@ -243,8 +238,8 @@ public class Swap {
                     storage.items[i] = ItemStack.EMPTY;
                 }
                 ins[9] = ItemStack.EMPTY;
-                CraftingRecipe recipe = getRecipe(player, ins);
-                storage.items[9] = recipe != null ? recipe.getResultItem() : ItemStack.EMPTY;
+                ItemStack output = getRecipeOutput(player, ins);
+                storage.items[9] = output;
             } else {
                 // At crafting time, make our storage match the table contents, craft like a vanilla table,
                 // then put our storage back to empty after cloning our crafting results back over
@@ -266,8 +261,7 @@ public class Swap {
                 storage.items[slot] = result.toOther;
                 givePlayerItemSwap(result.toHand, playerItem, player, hand);
                 placeLeftovers(player, result.leftovers);
-                CraftingRecipe recipe = getRecipe(player, storage.items);
-                storage.items[9] = recipe != null ? recipe.getResultItem() : ItemStack.EMPTY;
+                storage.items[9] = getRecipeOutput(player, storage.items);
             } else {
                 handleDoCraft(player, storage.items, tablePos);
             }
@@ -275,7 +269,7 @@ public class Swap {
         }
     }
 
-    public static CraftingRecipe getRecipe(ServerPlayer player, ItemStack[] stacksIn) {
+    public static ItemStack getRecipeOutput(ServerPlayer player, ItemStack[] stacksIn) {
         int invDim = stacksIn.length == 10 ? 3 : 2; // 10 since stacksIn includes the output slot
         CraftingContainer inv = new CraftingContainer(new NullContainer(), invDim, invDim);
         for (int i = 0; i < stacksIn.length - 1; i++) {
@@ -283,7 +277,10 @@ public class Swap {
         }
         Optional<CraftingRecipe> res = player.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING,
                 inv, player.level);
-        return res.orElse(null);
+        if (res.isPresent()) {
+            return res.get().assemble(inv);
+        }
+        return ItemStack.EMPTY;
     }
 
     public static void handleDoCraft(ServerPlayer player, ItemStack[] stacksIn,
@@ -294,15 +291,14 @@ public class Swap {
         for (int i = 0; i < stacksIn.length - 1; i++) { // -1 from length since we skip the last index since it's the output
             inv.setItem(i, stacksIn[i]);
         }
-        CraftingRecipe res = getRecipe(player, stacksIn);
-        if (res != null) {
+        ItemStack stackOut = getRecipeOutput(player, stacksIn);
+        if (!stackOut.isEmpty()) {
             // Give our item to us, remove items from crafting inventory, and show new recipe
             for (int i = 0; i < stacksIn.length - 1; i++) {
                 stacksIn[i].shrink(1);
             }
-            CraftingRecipe newRecipe = getRecipe(player, stacksIn);
-            stacksIn[stacksIn.length - 1] = newRecipe != null ? newRecipe.getResultItem() : ItemStack.EMPTY;
-            ItemStack stackOut = res.assemble(inv);
+            ItemStack newOutput = getRecipeOutput(player, stacksIn);
+            stacksIn[stacksIn.length - 1] = newOutput;
             ItemStack handStack = player.getItemInHand(InteractionHand.MAIN_HAND);
             ItemStack toGive = ItemStack.EMPTY;
             if (!handStack.isEmpty() && Util.stacksEqualBesidesCount(stackOut, handStack)) {
