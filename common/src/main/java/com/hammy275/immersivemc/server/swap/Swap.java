@@ -37,11 +37,7 @@ import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.SmithingTableBlock;
-import net.minecraft.world.level.block.entity.BarrelBlockEntity;
-import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
-import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
@@ -432,6 +428,22 @@ public class Swap {
             barrel.setItem(slot, result.mergedInto);
         }
         barrel.setChanged();
+    }
+
+    public static void handleHopper(HopperBlockEntity hopper,
+                                    Player player, InteractionHand hand,
+                                    int slot) {
+        ItemStack hopperItem = hopper.getItem(slot).copy();
+        ItemStack playerItem = player.getItemInHand(hand);
+        if (playerItem.isEmpty() || hopperItem.isEmpty() || !Util.stacksEqualBesidesCount(hopperItem, playerItem)) {
+            player.setItemInHand(hand, hopperItem);
+            hopper.setItem(slot, playerItem);
+        } else {
+            Util.ItemStackMergeResult result = Util.mergeStacks(hopperItem, playerItem, false);
+            player.setItemInHand(hand, result.mergedFrom);
+            hopper.setItem(slot, result.mergedInto);
+        }
+        hopper.setChanged();
     }
 
     public static void handleEnderChest(Player player, InteractionHand hand, int slot) {

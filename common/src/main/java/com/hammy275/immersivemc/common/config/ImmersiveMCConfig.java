@@ -37,6 +37,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useBarrelImmersion;
     public static ForgeConfigSpec.BooleanValue useThrowing;
     public static ForgeConfigSpec.BooleanValue allowThrowingBeyondMax;
+    public static ForgeConfigSpec.BooleanValue useHopperImmersion;
 
     // C2S Only Sync
     public static ForgeConfigSpec.BooleanValue crouchBypassImmersion;
@@ -143,6 +144,9 @@ public class ImmersiveMCConfig {
         allowThrowingBeyondMax = builder
                 .comment("Whether VR throwing users can throw up to 5% beyond the velocity of non-VR users depending on how hard they throw")
                 .define("allow_throwing_beyond_max", true);
+        useHopperImmersion = builder
+                .comment("Whether immersives on hoppers should be allowed.")
+                .define("hopper_immersion", true);
 
         // C2S Only Sync
         crouchBypassImmersion = builder
@@ -219,7 +223,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useBeaconImmersion.get())
                 .writeBoolean(useBarrelImmersion.get())
                 .writeBoolean(useThrowing.get())
-                .writeBoolean(allowThrowingBeyondMax.get());
+                .writeBoolean(allowThrowingBeyondMax.get())
+                .writeBoolean(useHopperImmersion.get());
     }
 
     public static void resetToDefault() {
@@ -250,6 +255,7 @@ public class ImmersiveMCConfig {
         useBarrelImmersion.set(true);
         useThrowing.set(true);
         allowThrowingBeyondMax.set(true);
+        useHopperImmersion.set(true);
 
         // C2S Synced Values
         crouchBypassImmersion.set(true);

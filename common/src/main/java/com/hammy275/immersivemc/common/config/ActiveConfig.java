@@ -36,6 +36,7 @@ public class ActiveConfig {
     public static boolean useBarrelImmersion = false;
     public static boolean useThrowing = false;
     public static boolean allowThrowingBeyondMax = false;
+    public static boolean useHopperImmersion = false;
 
     // C2S Synced values
     public static boolean crouchBypassImmersion = false;
@@ -114,6 +115,7 @@ public class ActiveConfig {
         useBarrelImmersion = buffer.readBoolean() && useBarrelImmersion;
         useThrowing = buffer.readBoolean() && useThrowing;
         allowThrowingBeyondMax = buffer.readBoolean() && allowThrowingBeyondMax;
+        useHopperImmersion = buffer.readBoolean() && useHopperImmersion;
 
     }
 
@@ -150,6 +152,7 @@ public class ActiveConfig {
             useBarrelImmersion = ImmersiveMCConfig.useBarrelImmersion.get();
             useThrowing = ImmersiveMCConfig.useThrowing.get();
             allowThrowingBeyondMax = ImmersiveMCConfig.allowThrowingBeyondMax.get();
+            useHopperImmersion = ImmersiveMCConfig.useHopperImmersion.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -203,6 +206,7 @@ public class ActiveConfig {
         useBarrelImmersion = false;
         useThrowing = false;
         allowThrowingBeyondMax = false;
+        useHopperImmersion = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -257,7 +261,8 @@ public class ActiveConfig {
                 "Allow throwing beyond max: " + allowThrowingBeyondMax + "\n" +
                 "Item Guide Color: " + itemGuideColor + "\n" +
                 "Item Guide Selected Color: " + itemGuideSelectedColor + "\n" +
-                "Ranged Grab Color: " + rangedGrabColor;
+                "Ranged Grab Color: " + rangedGrabColor + "\n" +
+                "Use Hopper Immersion: " + useHopperImmersion;
         return stringOut;
     }
 
