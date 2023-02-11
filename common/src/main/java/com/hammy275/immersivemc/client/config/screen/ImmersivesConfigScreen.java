@@ -58,6 +58,7 @@ public class ImmersivesConfigScreen extends Screen {
             ScreenUtils.addOption("crafting", ImmersiveMCConfig.useCraftingImmersion, this.list);
             ScreenUtils.addOption("enchanting_table", ImmersiveMCConfig.useETableImmersion, this.list);
             ScreenUtils.addOption("furnace", ImmersiveMCConfig.useFurnaceImmersion, this.list);
+            ScreenUtils.addOption("hopper", ImmersiveMCConfig.useHopperImmersion, this.list);
             ScreenUtils.addOption("shulker", ImmersiveMCConfig.useShulkerImmersion, this.list);
         }
 
