@@ -74,6 +74,9 @@ public class SwapPacket {
                 } else if (ImmersiveCheckers.isBarrel(message.block, state, tileEnt, player.level)) {
                     Swap.handleBarrel((BarrelBlockEntity) tileEnt, player,
                             message.hand, message.slot);
+                } else if (ImmersiveCheckers.isHopper(message.block, state, tileEnt, player.level)) {
+                    Swap.handleHopper((HopperBlockEntity) tileEnt, player,
+                            message.hand, message.slot);
                 }
             }
         });
