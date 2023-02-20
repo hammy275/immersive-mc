@@ -38,7 +38,7 @@ public class CommonSubscriber {
         if (VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player)) {
             for (InteractionHand iHand : InteractionHand.values()) {
                 IVRData hand = VRPlugin.API.getVRPlayer(player).getController(iHand.ordinal());
-                AABB shieldBox = ShieldUtil.getShieldHitbox(hand, iHand);
+                AABB shieldBox = ShieldUtil.getShieldHitbox(player, hand, iHand);
                 List<Entity> ents = player.level.getEntities(player, shieldBox);
                 for (Entity e : ents) {
                     if (e instanceof Projectile proj) {
@@ -49,7 +49,7 @@ public class CommonSubscriber {
                             // but I can't seem to work around that, since we need a damage source, and we don't
                             // know our damage source until we're hit.
                             ((ProjectileAccessor) proj).onHitRes(new EntityHitResult(player));
-                            proj.setPos(ShieldUtil.getShieldPos(hand, iHand));
+                            proj.setPos(ShieldUtil.getShieldPos(player, hand, iHand));
                         }
                     }
                 }
