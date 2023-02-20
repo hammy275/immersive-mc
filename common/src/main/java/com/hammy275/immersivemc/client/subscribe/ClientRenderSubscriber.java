@@ -31,7 +31,7 @@ public class ClientRenderSubscriber {
             for (InteractionHand iHand : InteractionHand.values()) {
                 if (Minecraft.getInstance().player.getItemInHand(iHand).getUseAnimation() == UseAnim.BLOCK) {
                     IVRData hand = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(iHand.ordinal());
-                    AbstractImmersive.renderHitbox(stack, ShieldUtil.getShieldHitbox(hand, iHand),
+                    AbstractImmersive.renderHitbox(stack, ShieldUtil.getShieldHitbox(Minecraft.getInstance().player, hand, iHand),
                             hand.position(), false, 1, 1, 1);
                 }
             }

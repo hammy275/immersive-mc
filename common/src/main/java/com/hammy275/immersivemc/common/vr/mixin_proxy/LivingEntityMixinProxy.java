@@ -41,8 +41,11 @@ public class LivingEntityMixinProxy {
                 IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
                 for (InteractionHand iHand : InteractionHand.values()) {
                     if (player.getItemInHand(iHand).getUseAnimation() == UseAnim.BLOCK) {
+                        // Multiplier based on left handedness and based on which hand we're using
+                        float negMult = VRPlugin.API.isLeftHanded(player) ? -1 : 1;
+                        negMult = iHand == InteractionHand.MAIN_HAND ? negMult * -1 : negMult * 1;
                         IVRData hand = vrPlayer.getController(iHand.ordinal());
-                        float toRot = (float) (iHand == InteractionHand.MAIN_HAND ? Math.PI / -2f : Math.PI / 2f);
+                        float toRot = (float) (Math.PI / 2f * negMult);
                         Vec3 handVec = hand.getLookAngle().yRot(toRot).normalize();
                         Vec3 attackerVec = damageSource.getSourcePosition().vectorTo(player.position()).normalize();
                         double angle = Math.acos(handVec.dot(attackerVec)); // Angle in radians
