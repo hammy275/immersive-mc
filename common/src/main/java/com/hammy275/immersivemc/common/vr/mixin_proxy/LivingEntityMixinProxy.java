@@ -9,8 +9,11 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nullable;
 
 public class LivingEntityMixinProxy {
 
@@ -27,13 +30,16 @@ public class LivingEntityMixinProxy {
         return false;
     }
 
-    public static Boolean isDamageSourceBlocked(LivingEntity living, DamageSource damageSource) {
+    // null if not in VR, Empty ItemStack if not blocking, non-empty itemstack is shield to block with
+    @Nullable
+    public static ItemStack isDamageSourceBlocked(LivingEntity living, DamageSource damageSource) {
         if (living instanceof Player player &&
                 ActiveConfig.immersiveShield && VRPlugin.API.playerInVR(player) && isImmersiveBlocking(player)) {
+            // Don't block if on cooldown
             // Guaranteed to not block piercing arrows
             if (damageSource.getDirectEntity() instanceof AbstractArrow arrow) {
                 if (arrow.getPierceLevel() > 0) {
-                    return false;
+                    return ItemStack.EMPTY;
                 }
             }
 
@@ -41,6 +47,10 @@ public class LivingEntityMixinProxy {
                 IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
                 for (InteractionHand iHand : InteractionHand.values()) {
                     if (player.getItemInHand(iHand).getUseAnimation() == UseAnim.BLOCK) {
+                        // Iterate again if shield is on cooldown
+                        if (player.getCooldowns().isOnCooldown(player.getItemInHand(iHand).getItem())) {
+                            continue;
+                        }
                         // Multiplier based on left handedness and based on which hand we're using
                         float negMult = VRPlugin.API.isLeftHanded(player) ? -1 : 1;
                         negMult = iHand == InteractionHand.MAIN_HAND ? negMult * -1 : negMult * 1;
@@ -50,12 +60,12 @@ public class LivingEntityMixinProxy {
                         Vec3 attackerVec = damageSource.getSourcePosition().vectorTo(player.position()).normalize();
                         double angle = Math.acos(handVec.dot(attackerVec)); // Angle in radians
                         if (angle <= Math.PI && angle >= 2 * Math.PI / 3) { // 60 degrees in each direction from shield vec
-                            return true;
+                            return player.getItemInHand(iHand);
                         }
                     }
                 }
             }
-            return false;
+            return ItemStack.EMPTY;
         }
         return null;
     }
