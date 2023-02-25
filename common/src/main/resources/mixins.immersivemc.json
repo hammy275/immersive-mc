@@ -24,7 +24,7 @@
   ],
   "client": [
     "DragonFireballRendererMixin",
-    "GameRendererMixin",
+    "LevelRendererMixin",
     "MinecraftMixin",
     "MinecraftMixinAccessor",
     "MultiPlayerGameModeMixin",
