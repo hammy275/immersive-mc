@@ -44,7 +44,7 @@ public class HoeTracker extends AbstractVRHandTracker {
             Vec3 hit = handDataCurrent.position().add(handDataCurrent.getLookAngle().multiply(1d/3d, 1d/3d, 1d/3d));
             BlockPos pos = new BlockPos(hit);
             if (!handleTill(player, hand, pos)) {
-                handleHarvest(player, pos, player.getItemInHand(hand));
+                handleHarvest(player, pos, hand);
             }
 
         }
@@ -58,10 +58,12 @@ public class HoeTracker extends AbstractVRHandTracker {
             // Need to play sound separately since useOn code expects the client to do it
             player.level.playSound(null, pos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
         }
+        this.damageHoe(player, hand);
         return didTill;
     }
 
-    protected void handleHarvest(Player player, BlockPos pos, ItemStack hoe) {
+    protected void handleHarvest(Player player, BlockPos pos, InteractionHand hand) {
+        ItemStack hoe = player.getItemInHand(hand);
         BlockState state = player.level.getBlockState(pos);
         if (state.getBlock() == Blocks.WHEAT && state.getValue(CropBlock.AGE) == CropBlock.MAX_AGE) {
             // Can cast to ServerLevel here since trackers are only run server-side
@@ -79,7 +81,12 @@ public class HoeTracker extends AbstractVRHandTracker {
                 state = state.setValue(CropBlock.AGE, 0);
                 player.level.setBlock(pos, state, 2);
             }
+            this.damageHoe(player, hand);
         }
+    }
+
+    private void damageHoe(Player player, InteractionHand hand) {
+        player.getItemInHand(hand).hurtAndBreak(1, player, (playerCallback) -> player.broadcastBreakEvent(hand));
     }
 
 
