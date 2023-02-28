@@ -68,7 +68,7 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
 
         info.textPos = info.getPosition(1).add(0, 0.5, 0);
 
-        float hitboxSize = ClientConstants.itemScaleSizeAnvil / 2f;
+        float hitboxSize = ClientConstants.itemScaleSizeAnvil / 2.05f;
 
         info.setHitbox(0, createHitbox(left, hitboxSize));
         info.setHitbox(1, createHitbox(middle, hitboxSize));
