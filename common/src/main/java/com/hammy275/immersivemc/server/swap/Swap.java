@@ -37,7 +37,12 @@ import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.SmithingTableBlock;
-import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.block.entity.BarrelBlockEntity;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
+import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
@@ -291,7 +296,16 @@ public class Swap {
         if (!stackOut.isEmpty()) {
             // Give our item to us, remove items from crafting inventory, and show new recipe
             for (int i = 0; i < stacksIn.length - 1; i++) {
-                stacksIn[i].shrink(1);
+                if (stacksIn[i].getItem().hasCraftingRemainingItem()) {
+                    if (stacksIn[i].getCount() == 1) {
+                        stacksIn[i] = new ItemStack(stacksIn[i].getItem().getCraftingRemainingItem());
+                    } else {
+                        placeLeftovers(player, new ItemStack(stacksIn[i].getItem().getCraftingRemainingItem()));
+                    }
+
+                } else {
+                    stacksIn[i].shrink(1);
+                }
             }
             ItemStack newOutput = getRecipeOutput(player, stacksIn);
             stacksIn[stacksIn.length - 1] = newOutput;
