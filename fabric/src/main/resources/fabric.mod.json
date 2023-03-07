@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "immersivemc",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "name": "ImmersiveMC",
   "description": "Minimizes the need to interact with GUIs in Minecraft!\n\nWorks great both in and out of VR!\n\nRequires the MC VR API mod if you want to use this the best in VR!\n\nThanks to yaosiqian for Simplified Chinese translations!\n\nThanks to Yermak for the Russian translations!\n\nThanks to the Vivecraft developers for inspiration for the backpack, and to various members of the Discord for ideas!\n\nThanks to the guide from leo3418 for the Config Screen!",
   "authors": [
