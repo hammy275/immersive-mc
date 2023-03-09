@@ -35,7 +35,7 @@ public class CommonSubscriber {
     }
 
     public static void onPlayerTick(Player player) {
-        if (VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player)) {
+        if (!player.level.isClientSide && VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player)) {
             for (InteractionHand iHand : InteractionHand.values()) {
                 IVRData hand = VRPlugin.API.getVRPlayer(player).getController(iHand.ordinal());
                 AABB shieldBox = ShieldUtil.getShieldHitbox(player, hand, iHand);
