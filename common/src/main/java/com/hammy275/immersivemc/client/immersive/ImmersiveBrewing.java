@@ -109,6 +109,11 @@ public class ImmersiveBrewing extends AbstractBlockEntityImmersive<BrewingStandB
     }
 
     @Override
+    public BlockPos getLightPos(BrewingInfo info) {
+        return info.getBlockPosition().relative(info.lastDir);
+    }
+
+    @Override
     protected void render(BrewingInfo info, PoseStack stack, boolean isInVR) {
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
 
@@ -116,7 +121,7 @@ public class ImmersiveBrewing extends AbstractBlockEntityImmersive<BrewingStandB
 
         for (int i = 0; i <= 4; i++) {
             float renderSize = info.slotHovered == i ? itemSize * 1.25f : itemSize;
-            renderItem(info.items[i], stack, info.getPosition(i), renderSize, forward, info.getHitbox(i), i >= 3);
+            renderItem(info.items[i], stack, info.getPosition(i), renderSize, forward, info.getHitbox(i), i >= 3, info.light);
         }
     }
 

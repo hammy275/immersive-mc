@@ -90,6 +90,11 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
     }
 
     @Override
+    public BlockPos getLightPos(BarrelInfo info) {
+        return info.getBlockPosition().relative(info.forward);
+    }
+
+    @Override
     public boolean shouldRender(BarrelInfo info, boolean isInVR) {
         return info.readyToRender();
     }
@@ -103,7 +108,7 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
                 Direction neswDir = info.forward == Direction.UP || info.forward == Direction.DOWN ?
                         getForwardFromPlayer(Minecraft.getInstance().player) : info.forward;
                 renderItem(info.items[i], stack, info.getPosition(i),
-                        renderSize, neswDir, info.forward, info.getHitbox(i), true, -1);
+                        renderSize, neswDir, info.forward, info.getHitbox(i), true, -1, info.light);
             }
         } else {
             if (info.pullHitbox != null) {

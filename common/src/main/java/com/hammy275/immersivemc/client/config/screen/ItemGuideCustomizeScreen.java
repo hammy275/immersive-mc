@@ -107,7 +107,7 @@ public class ItemGuideCustomizeScreen extends Screen {
             float alpha = renderSquare ? 1f : color.alphaF();
             AbstractImmersive.cubeModel.render(stack,
                     buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
-                    color.redF(), color.greenF(), color.blueF(), alpha, 64f);
+                    color.redF(), color.greenF(), color.blueF(), alpha, 64f, AbstractImmersive.maxLight);
         } else if (ActiveConfig.placementGuideMode == PlacementGuideMode.OUTLINE) {
             LevelRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
                     renderHitbox,

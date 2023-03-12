@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
+import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -11,6 +12,7 @@ public abstract class AbstractImmersiveInfo {
     public int ticksActive = 0;
     public boolean initCompleted = false;
     protected AABB[] inputHitboxes = null;
+    public int light = AbstractImmersive.maxLight;
     /*
     This variable is used in ONLY two spots:
         - By BackpackInfo to determine which hitbox is hovered over for trigger presses*

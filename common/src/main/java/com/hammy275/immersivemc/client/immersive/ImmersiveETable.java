@@ -126,6 +126,11 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
     }
 
     @Override
+    public BlockPos getLightPos(EnchantingInfo info) {
+        return info.getBlockPosition().above();
+    }
+
+    @Override
     public boolean shouldRender(EnchantingInfo info, boolean isInVR) {
         return Minecraft.getInstance().player != null &&
                 Minecraft.getInstance().level != null &&
@@ -142,18 +147,18 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
                         i == 0 ? info.weakInfo : i == 1 ? info.midInfo : info.strongInfo;
                 float renderSize = info.slotHovered == i + 1 ? itemSize * 1.25f : itemSize;
                 renderItem(info.itemEnchantedCopy, stack, info.getPosition(i + 1), renderSize,
-                        getForwardFromPlayer(Minecraft.getInstance().player), info.getHitbox(i + 1), false);
+                        getForwardFromPlayer(Minecraft.getInstance().player), info.getHitbox(i + 1), false, info.light);
                 if (info.lookingAtIndex == i) {
                     if (enchInfo.isPresent()) {
                         renderText(new TextComponent(enchInfo.levelsNeeded + " (" + (i + 1) + ")"),
                                 stack,
-                                info.getPosition(i + 1).add(0, 0.33, 0));
+                                info.getPosition(i + 1).add(0, 0.33, 0), info.light);
                         renderText(enchInfo.textPreview,
                                 stack,
-                                info.getPosition(i + 1).add(0, -0.33, 0));
+                                info.getPosition(i + 1).add(0, -0.33, 0), info.light);
                     } else {
                         renderText(new TranslatableComponent("immersivemc.immersive.etable.no_ench"),
-                                stack, info.getPosition(i + 1).add(0, -0.2, 0));
+                                stack, info.getPosition(i + 1).add(0, -0.2, 0), info.light);
                     }
                 }
 
@@ -162,7 +167,7 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
         float renderSize = info.slotHovered == 0 ? itemSize * 1.25f : itemSize;
         if (info.items[0] != null && !info.items[0].isEmpty()) {
             renderItem(info.items[0], stack, info.getPosition(0), renderSize,
-                    getForwardFromPlayer(Minecraft.getInstance().player), info.getHitbox(0), false);
+                    getForwardFromPlayer(Minecraft.getInstance().player), info.getHitbox(0), false, info.light);
         } else {
             renderHitbox(stack, info.getHitbox(0), info.getPosition(0));
         }

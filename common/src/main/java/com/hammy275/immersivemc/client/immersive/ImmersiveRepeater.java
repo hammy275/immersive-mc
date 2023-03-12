@@ -88,6 +88,11 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
+    public BlockPos getLightPos(RepeaterInfo info) {
+        return info.getBlockPosition().above();
+    }
+
+    @Override
     public boolean shouldRender(RepeaterInfo info, boolean isInVR) {
         if (Minecraft.getInstance().player == null) return false;
         Level level = Minecraft.getInstance().level;

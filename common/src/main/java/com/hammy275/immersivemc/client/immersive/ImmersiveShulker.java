@@ -48,7 +48,7 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
             float renderSize = info.slotHovered == i ? itemSize * 1.25f : itemSize;
             renderItem(info.items[i], stack, info.getPosition(i), renderSize,
                     info.viewForwardDir, info.upDownRender,
-                    info.getHitbox(i), true, -1);
+                    info.getHitbox(i), true, -1, info.light);
         }
     }
 
@@ -156,6 +156,11 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
     protected void doTick(ShulkerInfo info, boolean isInVR) {
         super.doTick(info, isInVR);
         setHitboxes(info);
+    }
+
+    @Override
+    public BlockPos getLightPos(ShulkerInfo info) {
+        return info.getBlockPosition().relative(info.viewForwardDir);
     }
 
     public static void openShulkerBox(ShulkerInfo info) {

@@ -83,6 +83,11 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
     }
 
     @Override
+    public BlockPos getLightPos(CraftingInfo info) {
+        return info.getBlockPosition().above();
+    }
+
+    @Override
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
         Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), closest, hand));
     }
@@ -102,12 +107,12 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
         for (int i = 0; i < 9; i++) {
             float renderSize = info.slotHovered == i ? itemSize * 1.25f : itemSize;
             renderItem(info.items[i], stack, info.getPosition(i),
-                    renderSize, forward, Direction.UP, info.getHitbox(i), true, -1);
+                    renderSize, forward, Direction.UP, info.getHitbox(i), true, -1, info.light);
         }
         int degreesRotation = (int) (info.ticksActive % 100d * 3.6d);
         renderItem(info.outputItem, stack, info.outputPosition,
                 itemSize * 3, forward, null, info.outputHitbox, true,
-                ActiveConfig.spinCraftingOutput ? degreesRotation : -1); // * 3.6 = * 360/100
+                ActiveConfig.spinCraftingOutput ? degreesRotation : -1, info.light); // * 3.6 = * 360/100
     }
 
     @Override
