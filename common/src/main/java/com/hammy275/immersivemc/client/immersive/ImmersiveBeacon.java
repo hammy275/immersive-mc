@@ -54,7 +54,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
 
         renderItem(info.items[0], stack, info.getPosition(0), info.slotHovered == 0 ? itemSize * 1.25f : itemSize,
                 info.lastPlayerDir.getOpposite(), null, info.getHitbox(0),
-                false, -1);
+                false, -1, info.light);
         for (int i = 0; i < info.triggerBoxes.length; i++) {
             if (info.triggerBoxes[i] != null) {
                 renderHitbox(stack, info.triggerBoxes[i], info.triggerBoxes[i].getCenter());
@@ -66,7 +66,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
         for (int i = 0; i <= 4; i++) {
             if (info.triggerBoxes[i] != null) {
                 renderImage(stack, effectLocations[i], info.triggerBoxes[i].getCenter().add(0, -0.05, 0), info.lastPlayerDir,
-                        info.triggerHitboxSlotHovered == i ? effectSize * 1.25f : effectSize);
+                        info.triggerHitboxSlotHovered == i ? effectSize * 1.25f : effectSize, info.light);
             }
         }
 
@@ -74,20 +74,20 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
 
         if (info.effectSelected != -1) {
             renderImage(stack, effectLocations[info.effectSelected], info.effectSelectedDisplayPos.add(0, -0.05, 0),
-                    info.lastPlayerDir, displaySize);
+                    info.lastPlayerDir, displaySize, info.light);
         }
 
         if (info.triggerBoxes[6] != null) { // Regen and plus
             renderImage(stack, regenerationLocation, info.triggerBoxes[5].getCenter().add(0, -0.05, 0),
-                    info.lastPlayerDir, info.triggerHitboxSlotHovered == 5 ? displaySize * 1.25f : displaySize);
+                    info.lastPlayerDir, info.triggerHitboxSlotHovered == 5 ? displaySize * 1.25f : displaySize, info.light);
             renderImage(stack, addLocation, info.triggerBoxes[6].getCenter().add(0, -0.05, 0),
-                    info.lastPlayerDir, info.triggerHitboxSlotHovered == 6 ? displaySize * 1.25f : displaySize);
+                    info.lastPlayerDir, info.triggerHitboxSlotHovered == 6 ? displaySize * 1.25f : displaySize, info.light);
         }
 
         if (info.triggerBoxes[7] != null && info.isReadyForConfirmExceptPayment()) {
             if (info.isReadyForConfirm()) {
                 renderImage(stack, confirmLocation, info.triggerBoxes[7].getCenter().add(0, -0.1, 0),
-                        info.lastPlayerDir, info.triggerHitboxSlotHovered == 7 ? itemSize * 1.25f : itemSize);
+                        info.lastPlayerDir, info.triggerHitboxSlotHovered == 7 ? itemSize * 1.25f : itemSize, info.light);
             }
             double xMult = 0;
             double zMult = 0;
@@ -212,6 +212,11 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
         }
 
         info.lastPlayerDir = getForwardFromPlayer(Minecraft.getInstance().player).getOpposite();
+    }
+
+    @Override
+    public BlockPos getLightPos(BeaconInfo info) {
+        return info.getBlockPosition().above();
     }
 
     @Override

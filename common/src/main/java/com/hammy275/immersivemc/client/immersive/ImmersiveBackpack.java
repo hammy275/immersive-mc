@@ -81,6 +81,11 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         }
     }
 
+    @Override
+    public BlockPos getLightPos(BackpackInfo info) {
+        return new BlockPos(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1().position());
+    }
+
     public static void onHitboxInteract(Player player, BackpackInfo info, int slot) {
         if (slot <= 26) { // Inventory handle
             Network.INSTANCE.sendToServer(new InventorySwapPacket(slot + 9));
@@ -117,7 +122,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
             if (!item.isEmpty() && renderInfo.getPosition(i) != null) {
                 final float size =
                         renderInfo.slotHovered == i ? ClientConstants.itemScaleSizeBackpackSelected : ClientConstants.itemScaleSizeBackpack;
-                renderItem(item, stack, renderInfo.getPosition(i), size, null, renderInfo.getHitbox(i), true);
+                renderItem(item, stack, renderInfo.getPosition(i), size, null, renderInfo.getHitbox(i), true, tickInfo.light);
             }
         }
 
@@ -125,7 +130,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
             // tickInfo actually holds item information, so we use that here
             ItemStack item = i == 31 ? tickInfo.craftingOutput : tickInfo.craftingInput[i - 27];
             if (!item.isEmpty() && renderInfo.getPosition(i) != null) {
-                renderItem(item, stack, renderInfo.getPosition(i), ClientConstants.itemScaleSizeBackpack, null, renderInfo.getHitbox(i), true);
+                renderItem(item, stack, renderInfo.getPosition(i), ClientConstants.itemScaleSizeBackpack, null, renderInfo.getHitbox(i), true, tickInfo.light);
             }
         }
 
@@ -175,7 +180,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
             for (int i = 0; i < renderInfo.getInputSlots().length; i++) {
                 if (slotShouldRenderHelpHitbox(tickInfo, i)) { // Use tickInfo here since it holds info about crafting
                     AABB itemBox = renderInfo.getInputSlots()[i];
-                    renderItemGuide(stack, itemBox, 0.2f, slotHelpBoxIsSelected(renderInfo, i));
+                    renderItemGuide(stack, itemBox, 0.2f, slotHelpBoxIsSelected(renderInfo, i), tickInfo.light);
                 }
             }
         }

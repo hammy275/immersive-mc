@@ -39,10 +39,10 @@ public class Cube1x1 extends Model {
         bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
-    public void render(PoseStack stack, VertexConsumer consumer, float red, float green, float blue, float alpha, float size) {
+    public void render(PoseStack stack, VertexConsumer consumer, float red, float green, float blue, float alpha, float size, int light) {
         stack.pushPose();
         stack.scale(size * 16f, size * 16f, size * 16f);
-        renderToBuffer(stack, consumer, 15728880, OverlayTexture.NO_OVERLAY, red, green, blue, alpha);
+        renderToBuffer(stack, consumer, light, OverlayTexture.NO_OVERLAY, red, green, blue, alpha);
         stack.popPose();
     }
 }

@@ -72,6 +72,11 @@ public class ImmersiveHopper extends AbstractBlockEntityImmersive<HopperBlockEnt
     }
 
     @Override
+    public BlockPos getLightPos(HopperInfo info) {
+        return info.getBlockPosition().relative(info.lastDirectionForBoxPos);
+    }
+
+    @Override
     public HopperInfo getNewInfo(BlockEntity tileEnt) {
         return new HopperInfo((HopperBlockEntity) tileEnt);
     }
@@ -94,7 +99,7 @@ public class ImmersiveHopper extends AbstractBlockEntityImmersive<HopperBlockEnt
             Direction neswDir = info.lastDirectionForBoxPos == Direction.UP || info.lastDirectionForBoxPos == Direction.DOWN ?
                     getForwardFromPlayer(Minecraft.getInstance().player) : info.lastDirectionForBoxPos;
             renderItem(info.items[i], stack, info.getPosition(i),
-                    renderSize, neswDir, info.lastDirectionForBoxPos, info.getHitbox(i), true, -1);
+                    renderSize, neswDir, info.lastDirectionForBoxPos, info.getHitbox(i), true, -1, info.light);
         }
     }
 

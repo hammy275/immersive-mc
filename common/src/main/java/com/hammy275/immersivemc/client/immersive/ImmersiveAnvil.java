@@ -98,6 +98,11 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
     }
 
     @Override
+    public BlockPos getLightPos(AnvilInfo info) {
+        return info.getBlockPosition().above();
+    }
+
+    @Override
     public boolean shouldRender(AnvilInfo info, boolean isInVR) {
         if (Minecraft.getInstance().player == null) return false;
         Level level = Minecraft.getInstance().level;
@@ -113,14 +118,14 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
         // Render experience levels needed if we have an experience cost to show
         if (info.isReallyAnvil && info.anvilCost > 0) {
             renderText(Component.literal(I18n.get("immersivemc.immersive.anvil.levels_needed", info.anvilCost)), stack,
-                    info.textPos);
+                    info.textPos, info.light);
         }
 
         // Render the actual items
         for (int i = 0; i <= 2; i++) {
             float renderSize = info.slotHovered == i ? itemSize * 1.25f : itemSize;
             renderItem(info.items[i], stack, info.getPosition(i),
-                    renderSize, info.renderDirection, Direction.UP, info.getHitbox(i), false, -1);
+                    renderSize, info.renderDirection, Direction.UP, info.getHitbox(i), false, -1, info.light);
         }
     }
 
