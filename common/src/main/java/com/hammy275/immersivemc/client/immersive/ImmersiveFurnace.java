@@ -104,19 +104,24 @@ public class ImmersiveFurnace extends AbstractBlockEntityImmersive<BlockEntity, 
 
     }
 
+    @Override
+    public BlockPos getLightPos(ImmersiveFurnaceInfo info) {
+        return info.getBlockPosition().relative(info.getBlockEntity().getBlockState().getValue(AbstractFurnaceBlock.FACING));
+    }
+
     protected void render(ImmersiveFurnaceInfo info, PoseStack stack, boolean isInVR) {
         float size = ClientConstants.itemScaleSizeFurnace / info.getItemTransitionCountdown();
 
         // Render all of the items
 
         renderItem(info.items[0], stack, info.getPosition(0), info.slotHovered == 0 ? size * 1.25f : size,
-                info.forward, info.getHitbox(0), true);
+                info.forward, info.getHitbox(0), true, info.light);
         renderItem(info.items[1], stack, info.getPosition(1), info.slotHovered == 1 ? size * 1.25f : size,
-                info.forward, info.getHitbox(1), true);
+                info.forward, info.getHitbox(1), true, info.light);
         if (info.items[2] != null && !info.items[2].isEmpty()) {
             // If empty, we don't need to render, AND it might be null because of autoCenterFurnace
             renderItem(info.items[2], stack, info.getPosition(2), info.slotHovered == 2 ? size * 1.25f : size,
-                    info.forward, info.getHitbox(2), true);
+                    info.forward, info.getHitbox(2), true, info.light);
         }
 
     }

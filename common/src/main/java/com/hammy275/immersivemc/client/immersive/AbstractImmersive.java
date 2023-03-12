@@ -33,6 +33,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -130,6 +131,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                     Minecraft.getInstance().level)) {
                 doTick(info, isInVR);
                 info.setInputSlots();
+                info.light = getLight(getLightPos(info));
             } else {
                 info.remove();
             }
@@ -158,6 +160,18 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         info.ticksActive++;
     }
 
+    /**
+     * Gets the BlockPos used for lighting calculations. Called immediately after doTick(), so anything set
+     * up then, it will be in info to use.
+     *
+     * Note that this should not be inside another block (even the immmersive!). The best option is to set this
+     * to be one of the blocks that must be unoccupied for the immersive to render (the block above the crafting
+     * table, for example).
+     * @param info The immersive info instance.
+     * @return The BlockPos for lighting.
+     */
+    public abstract BlockPos getLightPos(I info);
+
     // Below this line are utility functions. Everything above MUST be overwritten, and have super() called!
 
     /**
@@ -176,7 +190,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                     for (int i = 0; i < info.getInputSlots().length; i++) {
                         if (slotShouldRenderHelpHitbox(info, i)) {
                             AABB itemBox = info.getInputSlots()[i];
-                            renderItemGuide(stack, itemBox, 0.2f, slotHelpBoxIsSelected(info, i));
+                            renderItemGuide(stack, itemBox, 0.2f, slotHelpBoxIsSelected(info, i), info.light);
                         }
                     }
                 }
@@ -199,8 +213,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     public void renderItem(ItemStack item, PoseStack stack, Vec3 pos, float size, Direction facing,
-                           AABB hitbox, boolean renderItemCounts) {
-        renderItem(item, stack, pos, size, facing, null, hitbox, renderItemCounts, -1);
+                           AABB hitbox, boolean renderItemCounts, int light) {
+        renderItem(item, stack, pos, size, facing, null, hitbox, renderItemCounts, -1, light);
     }
 
     /**
@@ -213,9 +227,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param upDown Direction upwards or downwards. Can be null if not facing up or down.
      * @param hitbox Hitbox for debug rendering
      * @param renderItemCounts Whether to render an item count with the item
+     * @param spinDegrees Degress to spin on x/z. Overwritten if facing is nonnull.
      */
     public void renderItem(ItemStack item, PoseStack stack, Vec3 pos, float size, Direction facing, Direction upDown,
-                           AABB hitbox, boolean renderItemCounts, int spinDegrees) {
+                           AABB hitbox, boolean renderItemCounts, int spinDegrees, int light) {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         if (item != null && item != ItemStack.EMPTY && pos != null) {
             stack.pushPose();
@@ -276,7 +291,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                     ItemTransforms.TransformType.FIXED;
 
             Minecraft.getInstance().getItemRenderer().renderStatic(item, type,
-                    15728880,
+                    light,
                     OverlayTexture.NO_OVERLAY,
                     stack, Minecraft.getInstance().renderBuffers().bufferSource(), 0);
 
@@ -284,13 +299,13 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
             if (renderItemCounts && item.getCount() > 1) {
                 this.renderText(Component.literal(String.valueOf(item.getCount())),
-                        stack, textPos, facing == null ? 0.0025f : 0.01f);
+                        stack, textPos, facing == null ? 0.0025f : 0.01f, light);
             }
         }
         renderHitbox(stack, hitbox, pos);
     }
 
-    protected void renderItemGuide(PoseStack stack, AABB hitbox, float alpha, boolean isSelected) {
+    protected void renderItemGuide(PoseStack stack, AABB hitbox, float alpha, boolean isSelected, int light) {
         if (hitbox != null && !Minecraft.getInstance().options.hideGui) {
             RGBA color = isSelected ? ActiveConfig.itemGuideSelectedColor : ActiveConfig.itemGuideColor;
             if (ActiveConfig.placementGuideMode == PlacementGuideMode.CUBE) {
@@ -304,7 +319,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                         -renderInfo.getPosition().z + pos.z);
                 MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
                 cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
-                        color.redF(), color.greenF(), color.blueF(), color.alphaF(), (float) (hitbox.getSize() / 2f));
+                        color.redF(), color.greenF(), color.blueF(), color.alphaF(), (float) (hitbox.getSize() / 2f), light);
                 stack.popPose();
             } else if (ActiveConfig.placementGuideMode == PlacementGuideMode.OUTLINE) {
                 renderHitbox(stack, hitbox, hitbox.getCenter(), true,
@@ -327,7 +342,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     public static void renderHitbox(PoseStack stack, AABB hitbox, Vec3 pos, boolean alwaysRender,
-                                float red, float green, float blue, float alpha) {
+                                    float red, float green, float blue, float alpha) {
         if ((Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() || alwaysRender) &&
                 hitbox != null && pos != null) {
             Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
@@ -344,11 +359,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         }
     }
 
-    public void renderText(Component text, PoseStack stack, Vec3 pos) {
-        renderText(text, stack, pos, 0.02f);
+    public void renderText(Component text, PoseStack stack, Vec3 pos, int light) {
+        renderText(text, stack, pos, 0.02f, light);
     }
 
-    public void renderText(Component text, PoseStack stack, Vec3 pos, float textSize) {
+    public void renderText(Component text, PoseStack stack, Vec3 pos, float textSize, int light) {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.pushPose();
         stack.translate(-renderInfo.getPosition().x + pos.x,
@@ -360,12 +375,12 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         float size = -font.width(text) / 2f;
         font.drawInBatch(text, size, 0, 0xFFFFFFFF, false,
                 stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), false,
-                0, 15728880);
+                0, light);
         stack.popPose();
     }
 
     public void renderImage(PoseStack stack, ResourceLocation imageLocation, Vec3 pos, Direction facing,
-                            float size) {
+                            float size, int light) {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.pushPose();
         stack.translate(-renderInfo.getPosition().x + pos.x,
@@ -391,10 +406,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         Matrix4f matrix4f = pose.pose();
         Matrix3f matrix3f = pose.normal();
 
-        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, maxLight, 0f, 0, 0, 1);
-        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, maxLight, 1f, 0, 1, 1);
-        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, maxLight, 1f, 1, 1, 0);
-        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, maxLight, 0f, 1, 0, 0);
+        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, light, 0f, 0, 0, 1);
+        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, light, 1f, 0, 1, 1);
+        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, light, 1f, 1, 1, 0);
+        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, light, 0f, 1, 0, 0);
 
         stack.popPose();
     }
@@ -537,6 +552,12 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 pos.add(leftOffset).add(downOffset), pos.add(downOffset), pos.add(rightOffset).add(downOffset)
         };
 
+    }
+
+    public int getLight(BlockPos pos) {
+        // TODO: Return maxLight here if full bright in ImmersiveMC settings
+        return LightTexture.pack(Minecraft.getInstance().level.getBrightness(LightLayer.BLOCK, pos),
+                Minecraft.getInstance().level.getBrightness(LightLayer.SKY, pos));
     }
 
 }

@@ -73,6 +73,11 @@ public class ImmersiveJukebox extends AbstractBlockEntityImmersive<JukeboxBlockE
     }
 
     @Override
+    public BlockPos getLightPos(JukeboxInfo info) {
+        return info.getBlockPosition().above();
+    }
+
+    @Override
     public JukeboxInfo getNewInfo(BlockEntity tileEnt) {
         return new JukeboxInfo((JukeboxBlockEntity) tileEnt, getTickTime());
     }

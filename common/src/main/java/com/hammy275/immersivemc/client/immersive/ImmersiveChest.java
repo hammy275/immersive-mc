@@ -165,6 +165,11 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     }
 
     @Override
+    public BlockPos getLightPos(ChestInfo info) {
+        return info.getBlockPosition().above();
+    }
+
+    @Override
     protected boolean slotShouldRenderHelpHitbox(ChestInfo info, int slotNum) {
         if (info.getBlockEntity() instanceof EnderChestBlockEntity) {
             return info.items[slotNum] == null || info.items[slotNum].isEmpty();
@@ -194,7 +199,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
                 boolean showCount = i >= startTop && i <= endTop;
                 float renderSize = info.slotHovered == i ? itemSize * 1.25f : itemSize;
                 renderItem(info.items[i], stack, info.getPosition(i),
-                        renderSize, forward, Direction.UP, info.getHitbox(i), showCount, -1);
+                        renderSize, forward, Direction.UP, info.getHitbox(i), showCount, -1, info.light);
             }
 
             if (info.other != null) {
@@ -204,7 +209,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
                     boolean showCount = i >= startTop && i <= endTop;
                     float renderSize = info.slotHovered == i ? itemSize * 1.25f : itemSize;
                     renderItem(info.items[i], stack, info.getPosition(i),
-                            renderSize, forward, Direction.UP, info.getHitbox(i), showCount, -1);
+                            renderSize, forward, Direction.UP, info.getHitbox(i), showCount, -1, info.light);
                 }
             }
         }
