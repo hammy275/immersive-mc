@@ -20,7 +20,7 @@ public class ClientUtil {
         double dist = Minecraft.getInstance().gameMode.getPickRange();
         Vec3 start;
         Vec3 end;
-        if (VRPluginVerify.clientInVR) {
+        if (VRPluginVerify.clientInVR()) {
             start = VRPlugin.API.getVRPlayer(player).getController0().position();
             Vec3 viewVec = VRPlugin.API.getVRPlayer(player).getController0().getLookAngle();
             end = start.add(viewVec.x * dist, viewVec.y * dist, viewVec.z * dist);

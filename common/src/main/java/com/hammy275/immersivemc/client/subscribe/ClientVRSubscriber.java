@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.client.subscribe;
 
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import dev.architectury.platform.Platform;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
@@ -28,7 +27,6 @@ public class ClientVRSubscriber {
         if (Platform.getEnv() != EnvType.CLIENT) return;
         if (Minecraft.getInstance().gameMode == null) return;
         if (!VRPlugin.API.playerInVR(player)) return;
-        VRPluginVerify.clientInVR = true;
         IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
 
         // Track things the HMD is looking at (cursor is already covered in ClientLogicSubscriber)

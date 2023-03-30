@@ -77,6 +77,8 @@
   "config.immersivemc.throw.desc": "Enables/disables the ability for VR users to throw items (Tridents, Fishing Rods, and throwables such as snowballs, eggs, ender pearls, etc.). Hold the 'break block' button, then release as you throw!",
 
   "screen.immersivemc.immersives_customize.title": "Customize Immersives",
+  "config.immersivemc.disable_vanilla_guis": "Disable Vanilla Interactions",
+  "config.immersivemc.disable_vanilla_guis.desc": "Disables the vanilla GUIs and other vanilla interactions for any immersives that can be interacted with and enabled in the ImmersiveMC settings.",
   "config.immersivemc.center_brewing": "Center Items for Brewing Immersive",
   "config.immersivemc.center_brewing.desc": "When enabled, item placements for the brewing stand are centered, rather than emulate the GUI.",
   "config.immersivemc.center_furnace": "Center Items for Furnace Immersive",

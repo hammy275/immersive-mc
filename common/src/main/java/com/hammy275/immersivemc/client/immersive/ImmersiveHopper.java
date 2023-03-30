@@ -104,7 +104,7 @@ public class ImmersiveHopper extends AbstractBlockEntityImmersive<HopperBlockEnt
     }
 
     @Override
-    protected boolean enabledInConfig() {
+    public boolean enabledInConfig() {
         return ActiveConfig.useHopperImmersion;
     }
 
@@ -116,6 +116,11 @@ public class ImmersiveHopper extends AbstractBlockEntityImmersive<HopperBlockEnt
     @Override
     public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
         return Immersives.immersiveHopper;
+    }
+
+    @Override
+    public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
+        return true;
     }
 
     @Override

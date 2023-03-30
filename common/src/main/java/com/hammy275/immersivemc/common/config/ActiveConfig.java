@@ -56,6 +56,7 @@ public class ActiveConfig {
     public static RGBA itemGuideColor = new RGBA(0x3300ffffL);
     public static RGBA itemGuideSelectedColor = new RGBA(0x3300ff00L);
     public static RGBA rangedGrabColor = new RGBA(0xff00ffffL);
+    public static boolean disableVanillaGUIs = false;
 
     // For changing config values in-game
     public static FriendlyByteBuf serverCopy = null;
@@ -175,6 +176,7 @@ public class ActiveConfig {
         itemGuideColor = new RGBA(ImmersiveMCConfig.itemGuideColor.get());
         itemGuideSelectedColor = new RGBA(ImmersiveMCConfig.itemGuideSelectedColor.get());
         rangedGrabColor = new RGBA(ImmersiveMCConfig.rangedGrabColor.get());
+        disableVanillaGUIs = ImmersiveMCConfig.disableVanillaGUIs.get();
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
@@ -262,7 +264,8 @@ public class ActiveConfig {
                 "Item Guide Color: " + itemGuideColor + "\n" +
                 "Item Guide Selected Color: " + itemGuideSelectedColor + "\n" +
                 "Ranged Grab Color: " + rangedGrabColor + "\n" +
-                "Use Hopper Immersion: " + useHopperImmersion;
+                "Use Hopper Immersion: " + useHopperImmersion + "\n" +
+                "Disable Vanilla GUIs: " + disableVanillaGUIs;
         return stringOut;
     }
 

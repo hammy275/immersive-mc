@@ -27,7 +27,7 @@ public class ClientRenderSubscriber {
         }
 
         // Draw shield hitbox(es)
-        if (VRPluginVerify.clientInVR) {
+        if (VRPluginVerify.clientInVR()) {
             for (InteractionHand iHand : InteractionHand.values()) {
                 if (Minecraft.getInstance().player.getItemInHand(iHand).getUseAnimation() == UseAnim.BLOCK) {
                     IVRData hand = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(iHand.ordinal());
@@ -43,7 +43,7 @@ public class ClientRenderSubscriber {
                                                                  PoseStack stack) {
         try {
             for (I info : singleton.getTrackedObjects()) {
-                singleton.doRender(info, stack, VRPluginVerify.clientInVR);
+                singleton.doRender(info, stack, VRPluginVerify.clientInVR());
             }
         } catch (ConcurrentModificationException ignored) {
             // Skip rendering if the list is modified mid-render

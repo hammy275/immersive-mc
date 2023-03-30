@@ -108,7 +108,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
-    protected boolean enabledInConfig() {
+    public boolean enabledInConfig() {
         return ActiveConfig.useRepeaterImmersion;
     }
 
@@ -136,6 +136,11 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     @Override
     public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
         return Immersives.immersiveRepeater;
+    }
+
+    @Override
+    public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
+        return true; // VR Only check is done before this is called
     }
 
     @Override

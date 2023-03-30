@@ -186,7 +186,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
-    protected boolean enabledInConfig() {
+    public boolean enabledInConfig() {
         return ActiveConfig.useBackpack;
     }
 
@@ -214,6 +214,11 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     @Override
     public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
         return Immersives.immersiveBackpack;
+    }
+
+    @Override
+    public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
+        return false;
     }
 
     @Override

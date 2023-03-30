@@ -127,7 +127,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
         }
 
         if (openCloseCooldown <= 0 && !ActiveConfig.rightClickChest) {
-            if (VRPluginVerify.clientInVR && VRPlugin.API.apiActive(Minecraft.getInstance().player)
+            if (VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(Minecraft.getInstance().player)
                     && info.openCloseHitboxes != null) {
                 Vec3 current0 = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController0().position();
                 Vec3 current1 = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1().position();
@@ -180,6 +180,11 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     @Override
     public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
         return Immersives.immersiveChest;
+    }
+
+    @Override
+    public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
+        return true;
     }
 
     @Override
@@ -249,7 +254,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
                         if (info.other == null) { // If our neighboring chest's info isn't tracking us
                             info.failRender = true;
                             info.other = tileEnt; // Track us
-                            this.doTick(info, VRPluginVerify.clientInVR); // Tick so we can handle the items in our other chest
+                            this.doTick(info, VRPluginVerify.clientInVR()); // Tick so we can handle the items in our other chest
                             info.failRender = false;
                         }
                         return false; // Return false so this one isn't tracked
@@ -261,13 +266,13 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     }
 
     @Override
-    protected boolean enabledInConfig() {
+    public boolean enabledInConfig() {
         return ActiveConfig.useChestImmersion;
     }
 
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
-        if (!VRPluginVerify.clientInVR && !ActiveConfig.rightClickChest) return;
+        if (!VRPluginVerify.clientInVR() && !ActiveConfig.rightClickChest) return;
         if (!((ChestInfo) info).isOpen) return;
         Network.INSTANCE.sendToServer(new SwapPacket(
                 info.getBlockPosition(), closest, hand

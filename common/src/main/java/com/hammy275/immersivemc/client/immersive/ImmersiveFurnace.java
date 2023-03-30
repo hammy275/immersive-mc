@@ -127,7 +127,7 @@ public class ImmersiveFurnace extends AbstractBlockEntityImmersive<BlockEntity, 
     }
 
     @Override
-    protected boolean enabledInConfig() {
+    public boolean enabledInConfig() {
         return ActiveConfig.useFurnaceImmersion;
     }
 
@@ -139,6 +139,11 @@ public class ImmersiveFurnace extends AbstractBlockEntityImmersive<BlockEntity, 
     @Override
     public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
         return Immersives.immersiveFurnace;
+    }
+
+    @Override
+    public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
+        return true;
     }
 
     @Override

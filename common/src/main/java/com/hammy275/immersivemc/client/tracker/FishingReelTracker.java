@@ -18,6 +18,6 @@ public class FishingReelTracker extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        return VRPluginVerify.clientInVR && FishingReelTrackerCore.shouldTick(player);
+        return VRPluginVerify.clientInVR() && FishingReelTrackerCore.shouldTick(player);
     }
 }
