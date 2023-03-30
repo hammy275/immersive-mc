@@ -5,7 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 public class ServerPlayerConfig {
 
     public static final ServerPlayerConfig EMPTY_CONFIG = new ServerPlayerConfig(false,
-            false, false, false, false, false,
+            false, false, false, false,
             false, false, false, false, 0, false);
 
     public boolean useButtons;
@@ -13,7 +13,6 @@ public class ServerPlayerConfig {
     public boolean useLevers;
     public boolean useRangedGrab;
     public boolean useDoorImmersion;
-    public boolean useHoeImmersion;
     public boolean canPet;
     public boolean useArmorImmersion;
     public boolean canFeedAnimals;
@@ -22,7 +21,7 @@ public class ServerPlayerConfig {
     public boolean crouchBypassImmersion;
 
     public ServerPlayerConfig(boolean useButtons, boolean useCampfire, boolean useLevers,
-                              boolean useRangedGrab, boolean useDoorImmersion, boolean useHoeImmersion,
+                              boolean useRangedGrab, boolean useDoorImmersion,
                               boolean canPet, boolean useArmorImmersion, boolean canFeedAnimals,
                               boolean canPetAnyLiving, int rangedGrabRange, boolean crouchBypassImmersion) {
         this.useButtons = useButtons && ActiveConfig.useButton;
@@ -30,7 +29,6 @@ public class ServerPlayerConfig {
         this.useLevers = useLevers && ActiveConfig.useLever;
         this.useRangedGrab = useRangedGrab && ActiveConfig.useRangedGrab;
         this.useDoorImmersion = useDoorImmersion && ActiveConfig.useDoorImmersion;
-        this.useHoeImmersion = useHoeImmersion && ActiveConfig.useHoeImmersion;
         this.canPet = canPet && ActiveConfig.canPet;
         this.useArmorImmersion = useArmorImmersion && ActiveConfig.useArmorImmersion;
         this.canFeedAnimals = canFeedAnimals && ActiveConfig.canFeedAnimals;
@@ -40,7 +38,7 @@ public class ServerPlayerConfig {
     }
 
     public ServerPlayerConfig(FriendlyByteBuf buffer) {
-        this(buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(),
+        this(buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(),
                 buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean(),
                 buffer.readBoolean(), buffer.readBoolean(), buffer.readInt(), buffer.readBoolean());
         buffer.release();

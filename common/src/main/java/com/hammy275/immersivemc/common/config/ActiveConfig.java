@@ -24,7 +24,6 @@ public class ActiveConfig {
     public static boolean useBackpack = false;
     public static boolean useRepeaterImmersion = false;
     public static boolean useDoorImmersion = false;
-    public static boolean useHoeImmersion = false;
     public static boolean canPet = false;
     public static boolean useArmorImmersion = false;
     public static boolean canFeedAnimals = false;
@@ -103,7 +102,6 @@ public class ActiveConfig {
         useBackpack = buffer.readBoolean() && useBackpack;
         useRepeaterImmersion = buffer.readBoolean() && useRepeaterImmersion;
         useDoorImmersion = buffer.readBoolean() && useDoorImmersion;
-        useHoeImmersion = buffer.readBoolean() && useHoeImmersion;
         canPet = buffer.readBoolean() && canPet;
         useArmorImmersion = buffer.readBoolean() && useArmorImmersion;
         canFeedAnimals = buffer.readBoolean() && canFeedAnimals;
@@ -141,7 +139,6 @@ public class ActiveConfig {
             useBackpack = ImmersiveMCConfig.useBackpack.get();
             useRepeaterImmersion = ImmersiveMCConfig.useRepeaterImmersion.get();
             useDoorImmersion = ImmersiveMCConfig.useDoorImmersion.get();
-            useHoeImmersion = ImmersiveMCConfig.useHoeImmersion.get();
             canPet = ImmersiveMCConfig.canPet.get();
             useArmorImmersion = ImmersiveMCConfig.useArmorImmersion.get();
             canFeedAnimals = ImmersiveMCConfig.canFeedAnimals.get();
@@ -195,7 +192,6 @@ public class ActiveConfig {
         useBackpack = false;
         useRepeaterImmersion = false;
         useDoorImmersion = false;
-        useHoeImmersion = false;
         canPet = false;
         useArmorImmersion = false;
         canFeedAnimals = false;
@@ -215,7 +211,7 @@ public class ActiveConfig {
     public static FriendlyByteBuf encodeServerOnlyConfig(FriendlyByteBuf buffer) {
         buffer.writeBoolean(ActiveConfig.useButton).writeBoolean(ActiveConfig.useCampfireImmersion)
                 .writeBoolean(ActiveConfig.useLever).writeBoolean(ActiveConfig.useRangedGrab)
-                .writeBoolean(ActiveConfig.useDoorImmersion).writeBoolean(ActiveConfig.useHoeImmersion)
+                .writeBoolean(ActiveConfig.useDoorImmersion)
                 .writeBoolean(ActiveConfig.canPet).writeBoolean(ActiveConfig.useArmorImmersion)
                 .writeBoolean(ActiveConfig.canFeedAnimals).writeBoolean(ActiveConfig.canPetAnyLiving)
                 .writeInt(ActiveConfig.rangedGrabRange).writeBoolean(ActiveConfig.crouchBypassImmersion);
@@ -245,7 +241,6 @@ public class ActiveConfig {
                 "Placement Guide mode: " + placementGuideMode + "\n" +
                 "Placement mode: " + placementMode + "\n" +
                 "Use door immersion: " + useDoorImmersion + "\n" +
-                "Use hoe immersion: " + useHoeImmersion + "\n" +
                 "Spin crafting output: " + spinCraftingOutput + "\n" +
                 "Can pet: " + canPet + "\n" +
                 "Use armor immersion: " + useArmorImmersion + "\n" +
