@@ -177,7 +177,7 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
     }
 
     @Override
-    protected boolean enabledInConfig() {
+    public boolean enabledInConfig() {
         return ActiveConfig.useETableImmersion;
     }
 
@@ -221,6 +221,11 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
     @Override
     public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
         return Immersives.immersiveETable;
+    }
+
+    @Override
+    public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
+        return true;
     }
 
     @Override

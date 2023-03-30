@@ -220,7 +220,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
     }
 
     @Override
-    protected boolean enabledInConfig() {
+    public boolean enabledInConfig() {
         return ActiveConfig.useBeaconImmersion;
     }
 
@@ -246,6 +246,11 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
     @Override
     public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
         return Immersives.immersiveBeacon;
+    }
+
+    @Override
+    public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
+        return true;
     }
 
     @Override

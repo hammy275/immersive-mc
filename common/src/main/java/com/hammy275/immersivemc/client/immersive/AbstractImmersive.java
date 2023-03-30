@@ -76,7 +76,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected abstract void render(I info, PoseStack stack, boolean isInVR);
 
-    protected abstract boolean enabledInConfig();
+    public abstract boolean enabledInConfig();
 
     protected abstract boolean slotShouldRenderHelpHitbox(I info, int slotNum);
 
@@ -85,6 +85,9 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     public abstract void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level);
 
     public abstract AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton();
+
+    // Whether to block a right-click if the option to block right clicks to open GUIs is enabled
+    public abstract boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info);
 
     /**
      * Initializes an `info` instance after it's constructed.
@@ -275,7 +278,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             } else if (facing == null) {
                 stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
                 stack.mulPose(Vector3f.YP.rotationDegrees(180));
-                Vec3 textMove = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR ?
+                Vec3 textMove = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() ?
                         VRPlugin.API.getRenderVRPlayer().getHMD().getLookAngle() :
                         Minecraft.getInstance().player.getLookAngle();
                 textMove = textMove.multiply(-0.05, -0.05, -0.05);
@@ -476,7 +479,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @return The forward direction of a block to use.
      */
     public Direction getForwardFromPlayer(Player player) {
-        if (VRPluginVerify.clientInVR && VRPlugin.API.playerInVR(player)) {
+        if (VRPluginVerify.clientInVR() && VRPlugin.API.playerInVR(player)) {
             return Util.horizontalDirectionFromLook(VRPlugin.API.getVRPlayer(player).getHMD().getLookAngle()).getOpposite();
         }
         return player.getDirection().getOpposite();

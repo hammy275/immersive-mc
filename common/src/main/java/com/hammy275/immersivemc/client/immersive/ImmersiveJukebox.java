@@ -9,10 +9,12 @@ import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.JukeboxInfo;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
@@ -62,13 +64,24 @@ public class ImmersiveJukebox extends AbstractBlockEntityImmersive<JukeboxBlockE
     }
 
     @Override
-    protected boolean enabledInConfig() {
+    public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
+        if (Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()) instanceof JukeboxBlockEntity) {
+            // Check hand, since client can't see record in jukebox
+            // Side effects: Mods that don't use RecordItem won't be blocked and holding a record makes it impossible
+            // to take one out.
+            return Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof RecordItem;
+        }
+        return false; // Not actually a jukebox?!
+    }
+
+    @Override
+    public boolean enabledInConfig() {
         return ActiveConfig.useJukeboxImmersion;
     }
 
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
-        if (!VRPluginVerify.clientInVR) return;
+        if (!VRPluginVerify.clientInVR()) return;
         Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), 0, hand));
     }
 

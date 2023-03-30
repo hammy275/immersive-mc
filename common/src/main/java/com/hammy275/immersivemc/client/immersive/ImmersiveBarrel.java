@@ -55,7 +55,7 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
             info.updateHitboxes = false;
         }
 
-        if (!info.isOpen && info.pullHitbox != null && VRPluginVerify.clientInVR
+        if (!info.isOpen && info.pullHitbox != null && VRPluginVerify.clientInVR()
             && VRPlugin.API.apiActive(Minecraft.getInstance().player)) {
             for (int c = 0; c <= 1; c++) {
                 Vec3 current = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(c).position();
@@ -118,7 +118,7 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
     }
 
     @Override
-    protected boolean enabledInConfig() {
+    public boolean enabledInConfig() {
         return ActiveConfig.useBarrelImmersion;
     }
 
@@ -130,6 +130,11 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
     @Override
     public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
         return Immersives.immersiveBarrel;
+    }
+
+    @Override
+    public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
+        return true;
     }
 
     protected void setHitboxes(BarrelInfo info) {

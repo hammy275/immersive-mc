@@ -65,7 +65,7 @@ public class ClientLogicSubscriber {
 
 
         if (ImmersiveMC.SUMMON_BACKPACK.isDown()) {
-            if (!backpackPressed && VRPluginVerify.clientInVR) {
+            if (!backpackPressed && VRPluginVerify.clientInVR()) {
                 backpackPressed = true;
                 Immersives.immersiveBackpack.doTrack();
             }
@@ -86,7 +86,7 @@ public class ClientLogicSubscriber {
         }
 
         // Always run LastVRDataTracker tick at the end
-        if (VRPluginVerify.clientInVR) {
+        if (VRPluginVerify.clientInVR()) {
             ClientTrackerInit.lastVRDataTracker.doTick(Minecraft.getInstance().player);
         }
 
@@ -129,6 +129,31 @@ public class ClientLogicSubscriber {
                 ClientUtil.setRightClickCooldown(cooldown);
                 return true;
             }
+
+            // Check for cancelling right click if interacting with immersive-enabled block
+            HitResult looking = Minecraft.getInstance().hitResult;
+            if (looking != null && looking.getType() == HitResult.Type.BLOCK && ActiveConfig.disableVanillaGUIs) {
+                BlockPos pos = ((BlockHitResult) looking).getBlockPos();
+                for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
+                    // Don't bother checking this immersive if not in VR and immersive is VR only. Never skip those!
+                    if (singleton.isVROnly() && !VRPluginVerify.clientInVR()) {
+                        continue;
+                    }
+                    for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
+                        if (info.getBlockPosition().equals(pos)) {
+                            // This is our looked at block, and we have an info for it!
+                            if (singleton.enabledInConfig() && singleton.shouldBlockClickIfEnabled(info)) {
+                                // Cancel right click. We can use this immersive, it's enabled, and
+                                // the immersive wants us to block it (jukebox may not want to so it can eject disc,
+                                // for example).
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+
         } else if (button == 0 &&
                 (ClientUtil.immersiveLeftClickCooldown > 0)) {
             return true;
@@ -165,7 +190,7 @@ public class ClientLogicSubscriber {
                 // Make sure we can safely use this immersion before ticking it.
                 if (singleton.shouldTrack(info.getBlockPosition(), Minecraft.getInstance().level.getBlockState(info.getBlockPosition()),
                         Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()), Minecraft.getInstance().level)) {
-                    singleton.tick(info, VRPluginVerify.clientInVR);
+                    singleton.tick(info, VRPluginVerify.clientInVR());
                 }
                 if (info.hasHitboxes()) {
                     Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
@@ -216,7 +241,7 @@ public class ClientLogicSubscriber {
             return true;
         }
 
-        boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR && VRPlugin.API.apiActive(player);
+        boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
         if (inVR) {
             for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
                 for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
@@ -279,7 +304,7 @@ public class ClientLogicSubscriber {
 
     public static int handleRightClick(Player player) {
         if (Minecraft.getInstance().gameMode == null) return 0;
-        boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR && VRPlugin.API.apiActive(player);
+        boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
         double dist = Minecraft.getInstance().gameMode.getPickRange();
         Vec3 start = player.getEyePosition(1);
         Vec3 viewVec = player.getViewVector(1);
