@@ -55,8 +55,6 @@
     "config.immersivemc.enchanting_table.desc": "Включает/выключает функцию иммерсивного взаимодействия с чародейским столом.",
     "config.immersivemc.furnace": "Иммерсивная печь",
     "config.immersivemc.furnace.desc": "Включает/выключает функцию иммерсивного взаимодействия с печью.",
-    "config.immersivemc.hoe": "Иммерсивная мотыга [только VR]",
-    "config.immersivemc.hoe.desc": "Включает/выключает возможность взмахом мотыги вспахивать землю и собирать пшеницу.",
     "config.immersivemc.hopper": "Иммерсивная воронка [только VR]",
     "config.immersivemc.hopper.desc": "Включает/выключает возможность класть и вытаскивать предметы из воронки.",
     "config.immersivemc.jukebox": "Иммерсивный проигрыватель [только VR]",
