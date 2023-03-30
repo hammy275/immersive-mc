@@ -44,8 +44,6 @@
   "config.immersivemc.enchanting_table.desc": "启用/禁用 使用沉浸式附魔台的能力。",
   "config.immersivemc.furnace": "使用沉浸式熔炉",
   "config.immersivemc.furnace.desc": "启用/禁用 使用沉浸式熔炉的能力。",
-  "config.immersivemc.hoe": "使用沉浸式锄头 [VR 独占]",
-  "config.immersivemc.hoe.desc": "启用/禁用 挥动锄头耕地和挥动锄头收割小麦的能力。",
   "config.immersivemc.jukebox": "使用沉浸式唱片机 [VR 独占]",
   "config.immersivemc.jukebox.desc": "启用/禁用 VR 玩家将唱片放入唱片机的能力。",
   "config.immersivemc.lever": "使用沉浸式拉杆 [VR 独占]",

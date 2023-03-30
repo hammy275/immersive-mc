@@ -25,7 +25,6 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useBackpack;
     public static ForgeConfigSpec.BooleanValue useRepeaterImmersion;
     public static ForgeConfigSpec.BooleanValue useDoorImmersion;
-    public static ForgeConfigSpec.BooleanValue useHoeImmersion;
     public static ForgeConfigSpec.BooleanValue canPet;
     public static ForgeConfigSpec.BooleanValue useArmorImmersion;
     public static ForgeConfigSpec.BooleanValue canFeedAnimals;
@@ -109,9 +108,6 @@ public class ImmersiveMCConfig {
         useDoorImmersion = builder
                 .comment("Whether VR users can open/close doors and fence gates using their hands")
                 .define("door_immersion", true);
-        useHoeImmersion = builder
-                .comment("Whether VR users can swing a hoe to till ground and harvest wheat")
-                .define("hoe_immersion", true);
         canPet = builder
                 .comment("Whether VR users can pet animals they've tamed (or animals that are tamed for all once tamed, like horses)")
                 .define("can_pet", true);
@@ -216,7 +212,6 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useBackpack.get())
                 .writeBoolean(useRepeaterImmersion.get())
                 .writeBoolean(useDoorImmersion.get())
-                .writeBoolean(useHoeImmersion.get())
                 .writeBoolean(canPet.get())
                 .writeBoolean(useArmorImmersion.get())
                 .writeBoolean(canFeedAnimals.get())
@@ -247,7 +242,6 @@ public class ImmersiveMCConfig {
         useBackpack.set(true);
         useRepeaterImmersion.set(true);
         useDoorImmersion.set(true);
-        useHoeImmersion.set(true);
         canPet.set(true);
         useArmorImmersion.set(true);
         canFeedAnimals.set(true);
