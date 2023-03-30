@@ -130,7 +130,7 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
     }
 
     @Override
-    protected boolean enabledInConfig() {
+    public boolean enabledInConfig() {
         return ActiveConfig.useAnvilImmersion;
     }
 
@@ -176,6 +176,11 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
     @Override
     public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
         return Immersives.immersiveAnvil;
+    }
+
+    @Override
+    public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
+        return true;
     }
 
     @Override

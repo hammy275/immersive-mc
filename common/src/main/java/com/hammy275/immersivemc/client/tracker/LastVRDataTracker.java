@@ -18,6 +18,6 @@ public class LastVRDataTracker extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        return VRPluginVerify.clientInVR;
+        return VRPluginVerify.clientInVR();
     }
 }

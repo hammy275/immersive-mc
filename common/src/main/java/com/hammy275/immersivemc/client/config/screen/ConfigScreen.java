@@ -50,7 +50,7 @@ public class ConfigScreen extends Screen {
                 .build());
 
         this.addRenderableWidget(Buttons.getScreenButton(new ImmersivesConfigScreen(this,
-                        VRPluginVerify.hasAPI ?
+                        VRPluginVerify.clientInVR() ?
                         ImmersivesConfigScreen.ScreenType.BOTH : ImmersivesConfigScreen.ScreenType.NONVR),
                 "config.immersivemc.immersives")
                 .size(BUTTON_WIDTH, BUTTON_HEIGHT)

@@ -6,7 +6,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ImmersiveMCConfig {
 
-    public static final int CONFIG_VERSION = 4; // Increment post-release whenever the config changes
+    public static final int CONFIG_VERSION = 4; // Increment post-release whenever the server+client config changes
 
     public static final ForgeConfigSpec GENERAL_SPEC;
 
@@ -57,6 +57,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.LongValue itemGuideColor;
     public static ForgeConfigSpec.LongValue itemGuideSelectedColor;
     public static ForgeConfigSpec.LongValue rangedGrabColor;
+    public static ForgeConfigSpec.BooleanValue disableVanillaGUIs;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -196,6 +197,9 @@ public class ImmersiveMCConfig {
         rangedGrabColor = builder
                 .comment("Color for the particles shown when grabbing items from range (aqua by default).")
                 .defineInRange("ranged_grab_color", 0xff00ffffL, 0, 0xFFFFFFFFL);
+        disableVanillaGUIs = builder
+                .comment("Disable vanilla GUIs when their respective immersive is enabled")
+                .define("disable_vanilla_interactions", false);
     }
 
     public static void encode(FriendlyByteBuf buffer) {
@@ -275,6 +279,7 @@ public class ImmersiveMCConfig {
         itemGuideColor.set(0x3300ffffL);
         itemGuideSelectedColor.set(0x3300ff00L);
         rangedGrabColor.set(0xff00ffffL);
+        disableVanillaGUIs.set(false);
 
     }
 
