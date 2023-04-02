@@ -44,9 +44,9 @@ public class CampfireTracker extends AbstractTracker {
                     player.level.getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SimpleContainer(toSmelt), player.level);
             if (recipe.isPresent() && info.get(c) >= recipe.get().getCookingTime() / 2) { // Smelt the held controller's item if we reach cook time.
                 toSmelt.shrink(1);
-                boolean didGive = player.getInventory().add(recipe.get().getResultItem());
+                boolean didGive = player.getInventory().add(recipe.get().getResultItem().copy());
                 if (!didGive) {
-                    Swap.placeLeftovers(player, recipe.get().getResultItem());
+                    Swap.placeLeftovers(player, recipe.get().getResultItem().copy());
                 }
                 cookTime.remove(player.getGameProfile().getName());
             } else if (recipe.isPresent() &&
