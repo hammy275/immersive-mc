@@ -2,6 +2,7 @@ modLoader = "javafml"
 loaderVersion = "[43,)"
 issueTrackerURL = "https://hammy275.com/immersivemcissues"
 license = "GNU GPLv3"
+logoFile= "immersivemc_logo.png"
 
 [[mods]]
 modId = "immersivemc"
