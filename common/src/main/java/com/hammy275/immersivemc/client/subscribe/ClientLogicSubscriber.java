@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.client.immersive.*;
 import com.hammy275.immersivemc.client.immersive.info.*;
 import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.util.Util;
@@ -16,6 +17,7 @@ import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -50,6 +52,7 @@ public class ClientLogicSubscriber {
     public static void onClientTick(Minecraft minecraft) {
         if (Minecraft.getInstance().level == null) return;
         Player player = Minecraft.getInstance().player;
+        if (player == null) return;
         if (ImmersiveMC.OPEN_SETTINGS.isDown() && Minecraft.getInstance().screen == null) {
             Minecraft.getInstance().setScreen(new ConfigScreen(null));
         }
@@ -65,9 +68,22 @@ public class ClientLogicSubscriber {
 
 
         if (ImmersiveMC.SUMMON_BACKPACK.isDown()) {
-            if (!backpackPressed && VRPluginVerify.clientInVR()) {
+            if (!backpackPressed) {
                 backpackPressed = true;
-                Immersives.immersiveBackpack.doTrack();
+                if (VRPluginVerify.hasAPI) {
+                    if (VRPlugin.API.playerInVR(player)) {
+                        if (VRPlugin.API.apiActive(player)) {
+                            Immersives.immersiveBackpack.doTrack();
+                        } else {
+                            player.sendSystemMessage(Component.translatable("message.immersivemc.no_api_server"));
+                        }
+                    } else {
+                        player.sendSystemMessage(Component.translatable("message.immersivemc.not_in_vr"));
+                    }
+                } else {
+                    player.sendSystemMessage(Component.translatable("message.immersivemc.no_api",
+                            CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString()));
+                }
             }
         } else {
             backpackPressed = false;
