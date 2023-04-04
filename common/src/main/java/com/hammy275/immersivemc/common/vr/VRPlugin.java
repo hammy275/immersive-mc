@@ -16,10 +16,10 @@ public class VRPlugin {
         String error = null;
         if (compatability == VersionInfo.TOO_NEW) {
             error = String.format("mc-vr-api version too new! Please downgrade to mc-vr-api version %s or higher, but below %s!",
-                    CommonConstants.vrAPIVersionAsString(), (CommonConstants.minimumVRAPIVersion[0] + 1) + ".0.0");
+                    CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString());
         } else if (compatability == VersionInfo.TOO_OLD) {
             error = String.format("mc-vr-api version too old! Please upgrade to mc-vr-api version %s or higher, but below %s!",
-                    CommonConstants.vrAPIVersionAsString(), (CommonConstants.minimumVRAPIVersion[0] + 1) + ".0.0");
+                    CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString());
         }
 
         if (error != null) {
