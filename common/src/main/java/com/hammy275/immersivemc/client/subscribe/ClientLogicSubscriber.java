@@ -1,6 +1,11 @@
 package com.hammy275.immersivemc.client.subscribe;
 
-import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
+import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.client.ClientUtil;
+import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
+import com.hammy275.immersivemc.client.immersive.*;
+import com.hammy275.immersivemc.client.immersive.info.*;
+import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
@@ -8,26 +13,11 @@ import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
-import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.client.ClientUtil;
-import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
-import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
-import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
-import com.hammy275.immersivemc.client.immersive.ImmersiveBarrel;
-import com.hammy275.immersivemc.client.immersive.ImmersiveChest;
-import com.hammy275.immersivemc.client.immersive.ImmersiveShulker;
-import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
-import com.hammy275.immersivemc.client.immersive.info.BarrelInfo;
-import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
-import com.hammy275.immersivemc.client.immersive.info.ShulkerInfo;
-import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -85,14 +75,17 @@ public class ClientLogicSubscriber {
                         if (VRPlugin.API.apiActive(player)) {
                             Immersives.immersiveBackpack.doTrack();
                         } else {
-                            player.sendSystemMessage(Component.translatable("message.immersivemc.no_api_server"));
+                            player.sendMessage(new TranslatableComponent("message.immersivemc.no_api_server"),
+                                    player.getUUID());
                         }
                     } else {
-                        player.sendSystemMessage(Component.translatable("message.immersivemc.not_in_vr"));
+                        player.sendMessage(new TranslatableComponent("message.immersivemc.not_in_vr"),
+                                player.getUUID());
                     }
                 } else {
-                    player.sendSystemMessage(Component.translatable("message.immersivemc.no_api",
-                            CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString()));
+                    player.sendMessage(new TranslatableComponent("message.immersivemc.no_api",
+                            CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString()),
+                            player.getUUID());
                 }
             }
         } else {
