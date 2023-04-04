@@ -9,7 +9,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(TridentItem.class)
+// Priority 2000 so Impaled mod's mixin here goes first. They only do a ModifyVariable, so we're good to go after.
+@Mixin(value = TridentItem.class, priority = 2000)
 public class TridentRedirect {
 
     @Redirect(method= "releaseUsing(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;I)V",
