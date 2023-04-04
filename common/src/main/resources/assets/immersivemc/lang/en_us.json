@@ -127,6 +127,10 @@
 
   "immersivemc.immersive.etable.no_ench": "No Enchantment!",
   "immersivemc.immersive.anvil.levels_needed": "Levels Needed: %d",
-  "immersivemc.immersive.beacon.selected": "Selected:"
+  "immersivemc.immersive.beacon.selected": "Selected:",
+
+  "message.immersivemc.no_api": "mc-vr-api could not be found! Make sure you have mc-vr-api %s or later, but no version before %s, installed!",
+  "message.immersivemc.not_in_vr": "This feature only works while in VR!",
+  "message.immersivemc.no_api_server": "mc-vr-api is not installed on the server! It must be installed to use this feature!"
 
 }

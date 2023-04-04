@@ -10,4 +10,8 @@ public class CommonConstants {
     public static String vrAPIVersionAsString() {
         return minimumVRAPIVersion[0] + "." + minimumVRAPIVersion[1] + "." + minimumVRAPIVersion[2];
     }
+
+    public static String firstNonCompatibleFutureVersionAsString() {
+        return (minimumVRAPIVersion[0] + 1) + ".0.0";
+    }
 }
