@@ -40,7 +40,7 @@ public class LeverTracker extends AbstractTracker {
         if (info.cooldown > 0) return;
         for (int c = 0; c <= 1; c++) {
             Vec3 handPos = VRPlugin.API.getVRPlayer(player).getController(c).position();
-            BlockPos handBlockPos = new BlockPos(handPos);
+            BlockPos handBlockPos = BlockPos.containing(handPos);
             BlockPos leverPos;
             BlockState state;
             if (player.level.getBlockState(handBlockPos).getBlock() == Blocks.LEVER) {

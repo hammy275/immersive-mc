@@ -27,7 +27,7 @@ public class ButtonPushTracker extends AbstractTracker {
         IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
         for (int i = 0; i <= 1; i++) {
             IVRData controller = vrPlayer.getController(i);
-            BlockPos pos = new BlockPos(controller.position());
+            BlockPos pos = BlockPos.containing(controller.position());
             BlockState state = player.level.getBlockState(pos);
             if (state.getBlock() instanceof ButtonBlock && !state.getValue(ButtonBlock.POWERED)) {
                 ButtonBlock button = (ButtonBlock) state.getBlock();

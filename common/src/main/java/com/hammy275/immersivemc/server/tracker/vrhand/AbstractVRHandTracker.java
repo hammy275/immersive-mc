@@ -43,7 +43,7 @@ public abstract class AbstractVRHandTracker {
 
     protected BlockPos getBlockPosAtHand(IVRPlayer vrPlayer, InteractionHand hand) {
         IVRData data = vrPlayer.getController(hand.ordinal());
-        return new BlockPos(data.position());
+        return BlockPos.containing(data.position());
     }
 
     protected BlockState getBlockStateAtHand(Player player, IVRPlayer vrPlayer, InteractionHand hand) {

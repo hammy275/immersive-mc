@@ -7,14 +7,14 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Wearable;
 
 public class ArmorTracker extends AbstractVRHandTracker {
     @Override
     protected boolean shouldRunForHand(Player player, InteractionHand hand, ItemStack stackInHand, IVRPlayer currentVRData, LastTickData lastVRData) {
         return player.getBoundingBox().contains(currentVRData.getController(hand.ordinal()).position()) &&
-                stackInHand.getItem() instanceof Wearable;
+                stackInHand.getItem() instanceof Equipable;
     }
 
     @Override

@@ -83,7 +83,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
     @Override
     public BlockPos getLightPos(BackpackInfo info) {
-        return new BlockPos(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1().position());
+        return BlockPos.containing(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1().position());
     }
 
     public static void onHitboxInteract(Player player, BackpackInfo info, int slot) {

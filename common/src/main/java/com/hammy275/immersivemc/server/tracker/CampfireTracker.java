@@ -44,9 +44,9 @@ public class CampfireTracker extends AbstractTracker {
                     player.level.getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SimpleContainer(toSmelt), player.level);
             if (recipe.isPresent() && info.get(c) >= recipe.get().getCookingTime() / 2) { // Smelt the held controller's item if we reach cook time.
                 toSmelt.shrink(1);
-                boolean didGive = player.getInventory().add(recipe.get().getResultItem().copy());
+                boolean didGive = player.getInventory().add(recipe.get().getResultItem(player.level.registryAccess()).copy());
                 if (!didGive) {
-                    Swap.placeLeftovers(player, recipe.get().getResultItem().copy());
+                    Swap.placeLeftovers(player, recipe.get().getResultItem(player.level.registryAccess()).copy());
                 }
                 cookTime.remove(player.getGameProfile().getName());
             } else if (recipe.isPresent() &&
@@ -71,7 +71,7 @@ public class CampfireTracker extends AbstractTracker {
         boolean offRes = false;
         for (int c = 0; c <= 1; c++) {
             IVRData controller = vrPlayer.getController(c);
-            BlockPos pos = new BlockPos(controller.position());
+            BlockPos pos = BlockPos.containing(controller.position());
             if (player.level.getBlockState(pos).getBlock() instanceof CampfireBlock ||
                     player.level.getBlockState(pos.below()).getBlock() instanceof CampfireBlock) {
                 BlockState campfire;

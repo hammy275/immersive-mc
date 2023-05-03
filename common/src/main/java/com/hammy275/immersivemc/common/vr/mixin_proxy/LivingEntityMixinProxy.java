@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -43,7 +44,7 @@ public class LivingEntityMixinProxy {
                 }
             }
 
-            if (!damageSource.isBypassArmor() && damageSource.getSourcePosition() != null) {
+            if (!damageSource.is(DamageTypeTags.BYPASSES_ARMOR) && damageSource.getSourcePosition() != null) {
                 IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
                 for (InteractionHand iHand : InteractionHand.values()) {
                     if (player.getItemInHand(iHand).getUseAnimation() == UseAnim.BLOCK) {

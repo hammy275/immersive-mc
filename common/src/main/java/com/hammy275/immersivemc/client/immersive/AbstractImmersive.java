@@ -21,7 +21,6 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,6 +28,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -291,13 +291,13 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 stack.mulPose(Axis.XP.rotationDegrees(upDownRot));
             }
 
-            ItemTransforms.TransformType type = facing == null ? ItemTransforms.TransformType.GROUND :
-                    ItemTransforms.TransformType.FIXED;
+            ItemDisplayContext type = facing == null ? ItemDisplayContext.GROUND :
+                    ItemDisplayContext.FIXED;
 
             Minecraft.getInstance().getItemRenderer().renderStatic(item, type,
                     light,
                     OverlayTexture.NO_OVERLAY,
-                    stack, Minecraft.getInstance().renderBuffers().bufferSource(), 0);
+                    stack, Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().level, 0);
 
             stack.popPose();
 
@@ -378,7 +378,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         Font font = Minecraft.getInstance().font;
         float size = -font.width(text) / 2f;
         font.drawInBatch(text, size, 0, 0xFFFFFFFF, false,
-                stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), false,
+                stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Font.DisplayMode.NORMAL,
                 0, light);
         stack.popPose();
     }

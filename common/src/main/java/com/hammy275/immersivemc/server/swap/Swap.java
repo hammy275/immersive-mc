@@ -19,30 +19,16 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AnvilMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.inventory.EnchantmentMenu;
-import net.minecraft.world.inventory.ItemCombinerMenu;
-import net.minecraft.world.inventory.SmithingMenu;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PotionItem;
-import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AnvilBlock;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.SmithingTableBlock;
-import net.minecraft.world.level.block.entity.BarrelBlockEntity;
-import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.level.block.entity.HopperBlockEntity;
-import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
-import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
@@ -279,7 +265,7 @@ public class Swap {
         Optional<CraftingRecipe> res = player.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING,
                 inv, player.level);
         if (res.isPresent()) {
-            return res.get().assemble(inv);
+            return res.get().assemble(inv, player.level.registryAccess());
         }
         return ItemStack.EMPTY;
     }
@@ -396,15 +382,11 @@ public class Swap {
     public static void handleJukebox(JukeboxBlockEntity jukebox,
                                      ServerPlayer player, InteractionHand hand) {
         ItemStack playerItem = player.getItemInHand(hand);
-        if (jukebox.getRecord() == ItemStack.EMPTY &&
-                playerItem.getItem() instanceof RecordItem) {
-            // Code from vanilla jukebox
-            ((JukeboxBlock) Blocks.JUKEBOX).setRecord(player, player.level, jukebox.getBlockPos(), jukebox.getBlockState(),
-                    playerItem);
-            player.level.levelEvent(null, 1010, jukebox.getBlockPos(), Item.getId(playerItem.getItem()));
+        if (jukebox.getFirstItem().isEmpty() &&
+                playerItem.is(ItemTags.MUSIC_DISCS)) {
+            jukebox.setFirstItem(playerItem.copyWithCount(1));
             playerItem.shrink(1);
             player.awardStat(Stats.PLAY_RECORD);
-            jukebox.setChanged();
         }
     }
 
