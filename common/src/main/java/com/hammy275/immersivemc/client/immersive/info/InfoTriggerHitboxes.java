@@ -11,4 +11,7 @@ public interface InfoTriggerHitboxes {
     public AABB getTriggerHitbox(int hitboxNum);
 
     public AABB[] getTriggerHitboxes();
+
+    // InfoTriggerHitboxes must define which controller number can interact with them
+    public int getVRControllerNum();
 }

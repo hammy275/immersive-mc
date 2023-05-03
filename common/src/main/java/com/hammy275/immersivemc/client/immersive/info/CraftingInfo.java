@@ -43,4 +43,9 @@ public class CraftingInfo extends AbstractWorldStorageInfo implements InfoTrigge
     public AABB[] getTriggerHitboxes() {
         return new AABB[]{this.outputHitbox};
     }
+
+    @Override
+    public int getVRControllerNum() {
+        return 0;
+    }
 }

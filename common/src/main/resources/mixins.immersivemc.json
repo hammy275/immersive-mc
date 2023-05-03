@@ -23,6 +23,7 @@
     "throw_redirectors.TridentRedirect"
   ],
   "client": [
+    "BackpackTrackerMixin",
     "DragonFireballRendererMixin",
     "LevelRendererMixin",
     "MinecraftMixin",

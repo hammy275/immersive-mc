@@ -57,6 +57,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.LongValue itemGuideSelectedColor;
     public static ForgeConfigSpec.LongValue rangedGrabColor;
     public static ForgeConfigSpec.BooleanValue disableVanillaGUIs;
+    public static ForgeConfigSpec.BooleanValue reachBehindBackpack;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -196,6 +197,9 @@ public class ImmersiveMCConfig {
         disableVanillaGUIs = builder
                 .comment("Disable vanilla GUIs when their respective immersive is enabled")
                 .define("disable_vanilla_interactions", false);
+        reachBehindBackpack = builder
+                .comment("Allow reaching behind you to grab your bag. Disables similar functionatliy from regular Vivecraft.")
+                .define("reach_behind_backpack", false);
     }
 
     public static void encode(FriendlyByteBuf buffer) {
@@ -274,6 +278,7 @@ public class ImmersiveMCConfig {
         itemGuideSelectedColor.set(0x3300ff00L);
         rangedGrabColor.set(0xff00ffffL);
         disableVanillaGUIs.set(false);
+        reachBehindBackpack.set(false);
 
     }
 
