@@ -16,6 +16,7 @@ public class ClientConstants {
     public static final int ticksToRenderBeacon = 60*20;
     public static final int ticksToRenderBarrel = ticksToRenderChest;
     public static final int ticksToRenderHopper = 100;
+    public static final int ticksToRenderHitboxesImmersive = Integer.MAX_VALUE;
 
     // Size of items when rendered in front of something immersive
     public static final float itemScaleSizeFurnace = 0.5f;

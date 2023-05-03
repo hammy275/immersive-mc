@@ -1,12 +1,15 @@
 package com.hammy275.immersivemc.client;
 
+import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.mixin.MinecraftMixinAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -59,6 +62,26 @@ public class ClientUtil {
             return velocity.y < 0 ? Direction.DOWN : Direction.UP;
         } else {
             return velocity.z < 0 ? Direction.NORTH : Direction.SOUTH;
+        }
+    }
+
+    public static void openBag(Player player) {
+        if (VRPluginVerify.hasAPI) {
+            if (VRPlugin.API.playerInVR(player)) {
+                if (VRPlugin.API.apiActive(player)) {
+                    Immersives.immersiveBackpack.doTrack();
+                } else {
+                    player.sendMessage(new TranslatableComponent("message.immersivemc.no_api_server"),
+                            player.getUUID());
+                }
+            } else {
+                player.sendMessage(new TranslatableComponent("message.immersivemc.not_in_vr"),
+                        player.getUUID());
+            }
+        } else {
+            player.sendMessage(new TranslatableComponent("message.immersivemc.no_api",
+                            CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString()),
+                    player.getUUID());
         }
     }
 }

@@ -58,6 +58,7 @@ public class BackpackConfigScreen extends Screen {
     protected void initOptionsList() {
         this.list.addBig(ScreenUtils.createOption("left_handed_backpack", ImmersiveMCConfig.leftHandedBackpack));
         this.list.addBig(ScreenUtils.createOption("low_detail_backpack", ImmersiveMCConfig.useLowDetailBackpack));
+        this.list.addBig(ScreenUtils.createOption("reach_behind_backpack", ImmersiveMCConfig.reachBehindBackpack));
         this.list.addBig(ScreenUtils.createIntSlider(
                 "config.immersivemc.backpack_r",
                 (integer) -> new TextComponent(I18n.get("config.immersivemc.backpack_r") + ": " + getRGB('r')),

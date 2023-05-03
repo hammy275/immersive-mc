@@ -52,6 +52,11 @@ public class BeaconInfo extends AbstractWorldStorageInfo implements InfoTriggerH
         return triggerBoxes;
     }
 
+    @Override
+    public int getVRControllerNum() {
+        return 0;
+    }
+
     public boolean isReadyForConfirmExceptPayment() {
         return effectSelected > -1;
     }
