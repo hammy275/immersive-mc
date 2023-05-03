@@ -20,6 +20,8 @@
   "config.immersivemc.left_handed_backpack.desc": "Attaches the backpack to the other side of the hand for left-handed people.",
   "config.immersivemc.low_detail_backpack": "Use Low Detail Bag",
   "config.immersivemc.low_detail_backpack.desc": "Use a lower-detailed backpack model that fits more with Minecraft's aesthetics.",
+  "config.immersivemc.reach_behind_backpack": "Reach Behind Bag",
+  "config.immersivemc.reach_behind_backpack.desc": "When enabled, move your non-primary hand behind your back and press 'break block' to grab or put away your bag! Disables similar functionality from Vivecraft while enabled.",
   "config.immersivemc.backpack_r": "Bag Red Value",
   "config.immersivemc.backpack_g": "Bag Green Value",
   "config.immersivemc.backpack_b": "Bag Blue Value",

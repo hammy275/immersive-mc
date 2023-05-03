@@ -54,6 +54,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     public final int maxImmersives;
     public static final Cube1x1 cubeModel = new Cube1x1(Minecraft.getInstance().getEntityModels().bakeLayer(Cube1x1.LAYER_LOCATION));
     protected boolean forceDisableItemGuide = false;
+    public boolean forceTickEvenIfNoTrack = false;
 
     public AbstractImmersive(int maxImmersives) {
         Immersives.IMMERSIVES.add(this);
@@ -128,10 +129,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 initInfo(info);
                 info.initCompleted = true;
             }
-            if (Minecraft.getInstance().level != null && shouldTrack(info.getBlockPosition(),
+            if (Minecraft.getInstance().level != null && (shouldTrack(info.getBlockPosition(),
                     Minecraft.getInstance().level.getBlockState(info.getBlockPosition()),
                     Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()),
-                    Minecraft.getInstance().level)) {
+                    Minecraft.getInstance().level) || forceTickEvenIfNoTrack)) {
                 doTick(info, isInVR);
                 info.setInputSlots();
                 info.light = getLight(getLightPos(info));
