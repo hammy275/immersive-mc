@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 public class VRPluginVerifyProxy {
 
     public static boolean vrAPIIInVR() {
-        return VRPlugin.API.playerInVR(Minecraft.getInstance().player);
+        return Minecraft.getInstance().player == null ||
+                VRPlugin.API.playerInVR(Minecraft.getInstance().player);
     }
 }
