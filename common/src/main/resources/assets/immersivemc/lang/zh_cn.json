@@ -12,8 +12,6 @@
   "config.immersivemc.immersives_customize": "自定义沉浸模式",
 
   "screen.immersivemc.backpack_config.title": "定制背包",
-  "config.immersivemc.left_handed_backpack": "使用左手提包",
-  "config.immersivemc.left_handed_backpack.desc": "为左撇子玩家将背包固定在另一侧的手上。",
   "config.immersivemc.low_detail_backpack": "使用低画质背包",
   "config.immersivemc.low_detail_backpack.desc": "使用更符合 Minecraft 美学的低画质的背包模型。",
   "config.immersivemc.backpack_r": "红色",
@@ -71,7 +69,7 @@
   "config.immersivemc.placement_mode.1": "放置四分之一的物品",
   "config.immersivemc.placement_mode.2": "放置一半的物品",
   "config.immersivemc.placement_mode.3": "放置全部物品",
-  "config.immersivemc.placement_mode.desc": "当右键单击或将物品放入沉浸式容器时，从你手中的物品堆中取出 %s 放入沉浸器。"
+  "config.immersivemc.placement_mode.desc": "当右键单击或将物品放入沉浸式容器时，从你手中的物品堆中取出 %s 放入沉浸器。",
 
   "immersivemc.immersive.etable.no_ench": "没有附魔！",
   "immersivemc.immersive.anvil.levels_needed": "需要的等级: %d"
