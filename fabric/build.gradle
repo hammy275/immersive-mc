@@ -39,7 +39,7 @@ dependencies {
     modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:6.0.2"
     modApi "curse.maven:mcvrapi-591092:4520381"
 
-    modApi "com.terraformersmc:modmenu:5.0.2"
+    modApi "com.terraformersmc:modmenu:6.2.2"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
