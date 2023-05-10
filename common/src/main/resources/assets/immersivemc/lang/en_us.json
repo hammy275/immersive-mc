@@ -16,8 +16,6 @@
   "config.immersivemc.open_wiki_message": "Would you like to open the ImmersiveMC wiki, copy it to your clipboard, or cancel?",
 
   "screen.immersivemc.backpack_config.title": "Bag Customization",
-  "config.immersivemc.left_handed_backpack": "Use Left Handed Bag",
-  "config.immersivemc.left_handed_backpack.desc": "Attaches the backpack to the other side of the hand for left-handed people.",
   "config.immersivemc.low_detail_backpack": "Use Low Detail Bag",
   "config.immersivemc.low_detail_backpack.desc": "Use a lower-detailed backpack model that fits more with Minecraft's aesthetics.",
   "config.immersivemc.reach_behind_backpack": "Reach Behind Bag",
