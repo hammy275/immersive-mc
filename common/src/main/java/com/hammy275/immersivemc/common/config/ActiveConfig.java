@@ -42,7 +42,6 @@ public class ActiveConfig {
 
     // Non-synced values
     public static int backpackColor = 11901820;
-    public static boolean leftHandedBackpack = false;
     public static boolean rightClickChest = false;
     public static boolean autoCenterFurnace = false;
     public static boolean autoCenterBrewing = false;
@@ -161,7 +160,6 @@ public class ActiveConfig {
 
         // Non-synced values
         backpackColor = ImmersiveMCConfig.backpackColor.get();
-        leftHandedBackpack = ImmersiveMCConfig.leftHandedBackpack.get();
         rightClickChest = ImmersiveMCConfig.rightClickChest.get();
         autoCenterFurnace = ImmersiveMCConfig.autoCenterFurnace.get();
         autoCenterBrewing = ImmersiveMCConfig.autoCenterBrewing.get();
@@ -234,7 +232,6 @@ public class ActiveConfig {
                 "Use lever: " + useLever + "\n" +
                 "Use backpack: " + useBackpack + "\n" +
                 "Backpack color: " + backpackColor + "\n" +
-                "Left handed backpack: " + leftHandedBackpack + "\n" +
                 "Use right click chest: " + rightClickChest + "\n" +
                 "Use repeater immersion: " + useRepeaterImmersion + "\n" +
                 "Auto-center furnace: " + autoCenterFurnace + "\n" +

@@ -43,7 +43,6 @@ public class ImmersiveMCConfig {
 
     //Non-synced values
     public static ForgeConfigSpec.IntValue backpackColor;
-    public static ForgeConfigSpec.BooleanValue leftHandedBackpack;
     public static ForgeConfigSpec.BooleanValue rightClickChest;
     public static ForgeConfigSpec.BooleanValue autoCenterFurnace;
     public static ForgeConfigSpec.BooleanValue autoCenterBrewing;
@@ -155,9 +154,6 @@ public class ImmersiveMCConfig {
         backpackColor = builder
                 .comment("Color for the bag as a base-10 RGB number.")
                 .defineInRange("bag_color", 11901820, 0, 0xFFFFFF);
-        leftHandedBackpack = builder
-                .comment("Puts the bag on the other side of your arm. Set to true if you're left-handed.")
-                .define("left_handed_bag", false);
         rightClickChest = builder
                 .comment("Allows for right-clicking chests to use their immersive. Works outside of VR!")
                 .define("right_click_chest", false);
@@ -264,7 +260,6 @@ public class ImmersiveMCConfig {
 
         // Non-synced defaults
         backpackColor.set(11901820);
-        leftHandedBackpack.set(false);
         rightClickChest.set(false);
         autoCenterFurnace.set(false);
         autoCenterBrewing.set(false);
