@@ -16,8 +16,6 @@
     "config.immersivemc.open_wiki_message": "Скопировать ссылку на вики ImmersiveMC или отменить?",
   
     "screen.immersivemc.backpack_config.title": "Редактирование вещмешка",
-    "config.immersivemc.left_handed_backpack": "Вещмешок для левшей",
-    "config.immersivemc.left_handed_backpack.desc": "Вещмешок с обратной стороны руки, чтобы левшам было удобнее.",
     "config.immersivemc.low_detail_backpack": "Менее детальный вещмешок",
     "config.immersivemc.low_detail_backpack.desc": "Менее детальная модель вещмешка, более подходящая ванильному Майнкрафту.",
     "config.immersivemc.backpack_r": "Красный в цвете вещмешка",

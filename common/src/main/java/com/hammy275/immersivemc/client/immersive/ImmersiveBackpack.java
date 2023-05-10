@@ -110,6 +110,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
     @Override
     protected void render(BackpackInfo tickInfo, PoseStack stack, boolean isInVR) {
+        boolean leftHanded = VRPlugin.API.isLeftHanded(Minecraft.getInstance().player);
         // Basically use a copy of the info from doTick(), except use positions from renderPlayer to have smoother backpack
         BackpackInfo renderInfo = getRenderInfo(tickInfo);
         for (int i = 0; i <= 31; i++) {
@@ -152,7 +153,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         stack.translate(0, -1.5, 0); // Move back to where we started
 
         // Basically move the model to the side of the origin
-        stack.translate(ActiveConfig.leftHandedBackpack ? -0.5 : 0.5, 0, 0);
+        stack.translate(leftHanded ? -0.5 : 0.5, 0, 0);
 
         // Render the model (finally!)
         getBackpackModel().renderToBuffer(stack,
@@ -163,7 +164,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
         // Translate and render the crafting on the side of the backpack and down a bit
         // (yes, positive y in this context moves it down lol)
-        stack.translate(ActiveConfig.leftHandedBackpack ? -0.75 : 0.75, 0.25, 0);
+        stack.translate(leftHanded ? -0.75 : 0.75, 0.25, 0);
         craftingModel.renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderType.entityCutout(BackpackCraftingModel.textureLocation)),
@@ -278,7 +279,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         info.centerTopPos = info.centerTopPos.add(info.backVec.multiply(1d/6d, 1d/6d, 1d/6d)); // Back on arm
         // Multiply massively so the < 1E-4D check from .normalize() rarely kicks in
         Vec3 rightVec = info.lookVec.multiply(1E16D, 0, 1E16D).normalize();
-        if (ActiveConfig.leftHandedBackpack) {
+        if (VRPlugin.API.isLeftHanded(Minecraft.getInstance().player)) {
             rightVec = new Vec3(rightVec.z, 0, -rightVec.x).multiply(0.25, 0, 0.25);
         } else {
             rightVec = new Vec3(-rightVec.z, 0, rightVec.x).multiply(0.25, 0, 0.25);
