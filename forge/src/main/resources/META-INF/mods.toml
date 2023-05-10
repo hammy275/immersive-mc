@@ -1,7 +1,7 @@
 modLoader = "javafml"
 loaderVersion = "[40,)"
 issueTrackerURL = "https://hammy275.com/immersivemcissues"
-license = "GNU GPLv3"
+license = "GNU LGPLv3"
 logoFile= "immersivemc_logo.png"
 
 [[mods]]
@@ -10,6 +10,7 @@ version = "${version}"
 displayName = "ImmersiveMC"
 displayURL = "https://hammy275.com/immersivemcwiki"
 authors = "hammy275"
+updateJSONURL = "https://api.modrinth.com/updates/immersivemc/forge_updates.json"
 description = '''
 Minimizes the need to interact with GUIs in Minecraft!
 
