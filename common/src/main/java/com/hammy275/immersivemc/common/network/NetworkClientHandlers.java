@@ -6,13 +6,24 @@ import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.AbstractBlockEntityImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
+import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
+import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Objects;
 
 public class NetworkClientHandlers {
+
+    public static void setBeaconData(BeaconDataPacket packet) {
+        for (BeaconInfo info : Immersives.immersiveBeacon.getTrackedObjects()) {
+            if (packet.pos.equals(info.getBlockPosition())) {
+                info.effectSelected = packet.powerIndex;
+                info.regenSelected = packet.useRegen;
+            }
+        }
+    }
 
     public static void setBackpackOutput(ItemStack output) {
         if (Immersives.immersiveBackpack.getTrackedObjects().size() > 0) {
