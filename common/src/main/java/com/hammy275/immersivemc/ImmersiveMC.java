@@ -86,6 +86,8 @@ public class ImmersiveMC {
                 ThrowPacket::decode, ThrowPacket::handle);
         Network.INSTANCE.register(ReelFishPacket.class, ReelFishPacket::encode,
                 ReelFishPacket::decode, ReelFishPacket::handle);
+        Network.INSTANCE.register(BeaconDataPacket.class, BeaconDataPacket::encode,
+                BeaconDataPacket::decode, BeaconDataPacket::handle);
 
     }
 }
