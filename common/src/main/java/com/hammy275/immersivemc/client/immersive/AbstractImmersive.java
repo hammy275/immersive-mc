@@ -135,7 +135,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                     Minecraft.getInstance().level) || forceTickEvenIfNoTrack)) {
                 doTick(info, isInVR);
                 info.setInputSlots();
-                info.light = getLight(getLightPos(info));
+                if (this.hasMultipleLightPositions(info)) {
+                    info.light = getLight(getLightPositions(info));
+                } else {
+                    info.light = getLight(getLightPos(info));
+                }
             } else {
                 info.remove();
             }
@@ -175,6 +179,26 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @return The BlockPos for lighting.
      */
     public abstract BlockPos getLightPos(I info);
+
+    /**
+     * Override to use getLightPositions instead of getLightPos
+     * @param info Info to determine if to use multiple light positions
+     * @return Whether to use getLightPositions() or getLightPos()
+     */
+    public boolean hasMultipleLightPositions(I info) {
+        return false;
+    }
+
+    /**
+     * Override to return multiple light positions instead of one for light calculations if hasMultipleLightPositions()
+     * return true.
+     *
+     * @param info Info to get positions from
+     * @return All positions for lighting
+     */
+    public BlockPos[] getLightPositions(I info) {
+        return new BlockPos[0];
+    }
 
     // Below this line are utility functions. Everything above MUST be overwritten, and have super() called!
 
@@ -562,6 +586,32 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         // TODO: Return maxLight here if full bright in ImmersiveMC settings
         return LightTexture.pack(Minecraft.getInstance().level.getBrightness(LightLayer.BLOCK, pos),
                 Minecraft.getInstance().level.getBrightness(LightLayer.SKY, pos));
+    }
+
+    public int getLight(BlockPos[] positions) {
+        int maxBlock = 0;
+        int maxSky = 0;
+        for (BlockPos pos : positions) {
+            if (pos == null) {
+                continue;
+            }
+
+            int blockLight = Minecraft.getInstance().level.getBrightness(LightLayer.BLOCK, pos);
+            if (blockLight > maxBlock) {
+                maxBlock = blockLight;
+            }
+
+            int skyLight = Minecraft.getInstance().level.getBrightness(LightLayer.SKY, pos);
+            if (skyLight > maxSky) {
+                maxSky = skyLight;
+            }
+
+            // Have max light for both, no need to continue light calculations!
+            if (maxBlock == 15 && maxSky == 15) {
+                break;
+            }
+        }
+        return LightTexture.pack(maxBlock, maxSky);
     }
 
 }
