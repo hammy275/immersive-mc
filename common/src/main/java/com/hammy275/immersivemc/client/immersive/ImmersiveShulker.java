@@ -44,11 +44,14 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
     @Override
     protected void render(ShulkerInfo info, PoseStack stack, boolean isInVR) {
         float itemSize = ClientConstants.itemScaleSizeShulker / info.getItemTransitionCountdown();
+        int minRange = info.getRowNum() * 9;
+        int maxRange = (info.getRowNum() * 9) + 8;
         for (int i = 0; i < 27; i++) {
             float renderSize = info.slotHovered == i ? itemSize * 1.25f : itemSize;
+            boolean showCount = i >= minRange && i <= maxRange;
             renderItem(info.items[i], stack, info.getPosition(i), renderSize,
                     info.viewForwardDir, info.upDownRender,
-                    info.getHitbox(i), true, -1, info.light);
+                    info.getHitbox(i), showCount, -1, info.light);
         }
     }
 
@@ -83,13 +86,25 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
         Vec3 forwardVec = new Vec3(forward.getNormal().getX(), forward.getNormal().getY(), forward.getNormal().getZ());
         Vec3[] positions;
         info.upDownRender = null;
+        Direction towardsBoxInside;
         if (forward == Direction.DOWN || forward == Direction.UP) {
             positions = get3x3VerticalGrid(info.getBlockPosition(), 0.15);
             for (int i = 0; i < positions.length; i++) {
                 positions[i] = positions[i].add(forwardVec.scale(0.25));
             }
             info.viewForwardDir = getForwardFromPlayer(Minecraft.getInstance().player);
+            towardsBoxInside = info.viewForwardDir.getOpposite();
+            // Set these so we don't create memory every tick for a new array
+            info.lightPositions[0] = shulker.getBlockPos().relative(Direction.NORTH);
+            info.lightPositions[1] = shulker.getBlockPos().relative(Direction.EAST);
+            info.lightPositions[2] = shulker.getBlockPos().relative(Direction.SOUTH);
+            info.lightPositions[3] = shulker.getBlockPos().relative(Direction.WEST);
         } else {
+            info.lightPositions[0] = shulker.getBlockPos().relative(Direction.UP);
+            info.lightPositions[1] = shulker.getBlockPos().relative(Direction.DOWN);
+            info.lightPositions[2] = shulker.getBlockPos().relative(forward.getClockWise());
+            info.lightPositions[3] = shulker.getBlockPos().relative(forward.getCounterClockWise());
+
             Direction left = forward.getCounterClockWise();
             Vec3 leftVec = new Vec3(left.getNormal().getX(), left.getNormal().getY(),
                     left.getNormal().getZ());
@@ -117,26 +132,30 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
                     positions[i] = positions[i].add(forwardVec.scale(0.25));
                 }
                 info.viewForwardDir = left;
+                towardsBoxInside = forward.getClockWise();
             } else if (min == rightDist) {
                 positions = get3x3VerticalGrid(info.getBlockPosition(), 0.15, forward.getClockWise());
                 for (int i = 0; i < positions.length; i++) {
                     positions[i] = positions[i].add(forwardVec.scale(0.25));
                 }
                 info.viewForwardDir = left.getOpposite();
-            } else if (min == topDist) {
+                towardsBoxInside = forward.getCounterClockWise();
+            } else if (min == topDist) { // On top of Shulker
                 positions = get3x3HorizontalGrid(info.getBlockPosition(), 0.15, forward, false);
                 for (int i = 0; i < positions.length; i++) {
                     positions[i] = positions[i].add(forwardVec.scale(0.25));
                 }
                 info.viewForwardDir = getForwardFromPlayer(Minecraft.getInstance().player);
                 info.upDownRender = Direction.UP;
-            } else {
+                towardsBoxInside = Direction.DOWN;
+            } else { // On bottom of shulker
                 positions = get3x3HorizontalGrid(info.getBlockPosition(), 0.15, forward, false);
                 for (int i = 0; i < positions.length; i++) {
                     positions[i] = positions[i].add(0, -1, 0).add(forwardVec.scale(0.25));
                 }
                 info.viewForwardDir = getForwardFromPlayer(Minecraft.getInstance().player);
                 info.upDownRender = Direction.DOWN;
+                towardsBoxInside = Direction.UP;
             }
         }
         for (int i = 0; i < 27; i++) {
@@ -144,8 +163,19 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
             info.setPosition(i, null);
         }
         for (int i = 0; i < 9; i++) {
-            info.setHitbox(i + info.getRowNum() * 9, createHitbox(positions[i], 0.075f));
+            Vec3 toBackDiff = Vec3.atLowerCornerOf(towardsBoxInside.getNormal()).scale(1d/3d);
+            info.setHitbox(i + info.getRowNum() * 9, createHitbox(positions[i], 0.07f));
             info.setPosition(i + info.getRowNum() * 9, positions[i]);
+
+            info.setHitbox(i + info.getNextRow(info.getRowNum()) * 9,
+                    createHitbox(positions[i].add(toBackDiff), 0.07f));
+            info.setPosition(i + info.getNextRow(info.getRowNum()) * 9,
+                    positions[i].add(toBackDiff));
+
+            info.setHitbox(i + info.getNextRow(info.getNextRow(info.getRowNum())) * 9,
+                    createHitbox(positions[i].add(toBackDiff.scale(2)), 0.07f));
+            info.setPosition(i + info.getNextRow(info.getNextRow(info.getRowNum())) * 9,
+                    positions[i].add(toBackDiff.scale(2)));
         }
     }
 
@@ -165,7 +195,25 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
 
     @Override
     public BlockPos getLightPos(ShulkerInfo info) {
-        return info.getBlockPosition().relative(info.viewForwardDir);
+        throw new UnsupportedOperationException("ShulkerInfo uses multiple light positions");
+    }
+
+    @Override
+    public boolean hasMultipleLightPositions(ShulkerInfo info) {
+        return true;
+    }
+
+    @Override
+    public BlockPos[] getLightPositions(ShulkerInfo info) {
+        return info.lightPositions;
+    }
+
+    @Override
+    protected boolean slotShouldRenderHelpHitbox(ShulkerInfo info, int slotNum) {
+        int minRange = info.getRowNum() * 9;
+        int maxRange = (info.getRowNum() * 9) + 8;
+        return super.slotShouldRenderHelpHitbox(info, slotNum)
+                && slotNum >= minRange && slotNum <= maxRange;
     }
 
     public static void openShulkerBox(ShulkerInfo info) {
@@ -180,4 +228,5 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
     public boolean hitboxesAvailable(AbstractImmersiveInfo info) {
         return ((ShulkerInfo) info).isOpen;
     }
+
 }
