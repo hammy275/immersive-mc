@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.phys.AABB;
@@ -11,6 +12,7 @@ public class ShulkerInfo extends AbstractBlockEntityImmersiveInfo<ShulkerBoxBloc
     protected int rowNum = 0;
     public Direction viewForwardDir = null;
     public Direction upDownRender = null;
+    public BlockPos[] lightPositions = new BlockPos[]{null, null, null, null};
 
     /**
      * Constructor

@@ -27,9 +27,9 @@ public class ClientConstants {
     public static final float itemScaleSizeETable = 0.42f;
     public static final float itemScaleSizeBackpack = 0.2f;
     public static final float itemScaleSizeBackpackSelected = 0.3f;
-    public static final float itemScaleSizeShulker = 0.2f;
+    public static final float itemScaleSizeShulker = 0.15f;
     public static final float itemScaleSizeBeacon = 0.42f;
-    public static final float itemScaleSizeBarrel = itemScaleSizeShulker;
+    public static final float itemScaleSizeBarrel = 0.2f;
     public static final float itemScaleSizeHopper = 0.15f;
 
     // Time to transition in ticks
