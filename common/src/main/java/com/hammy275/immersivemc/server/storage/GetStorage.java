@@ -32,6 +32,7 @@ public class GetStorage {
         return storage;
     }
 
+    // Used because we don't want to drop outputs on the ground, so we need the last input index
     public static int getLastInputIndex(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         if (ImmersiveCheckers.isCraftingTable(pos, state, tileEntity, level)) {
             return 8;
@@ -39,8 +40,10 @@ public class GetStorage {
             return 1;
         } else if (ImmersiveCheckers.isEnchantingTable(pos, state, tileEntity, level)) {
             return 0;
+        } else if (ImmersiveCheckers.isBeacon(pos, state, tileEntity, level)) {
+            return 0;
         }
-        return -1;
+        throw new RuntimeException("Last input index not defined for the block that was just broken!");
     }
 
     public static ImmersiveStorage getPlayerStorage(Player player, String playerStorageKey) {
