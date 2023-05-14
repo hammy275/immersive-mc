@@ -14,6 +14,8 @@ public class ImmersiveCheckers {
 
     public static final List<CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean>>
             CHECKERS = new LinkedList<>();
+    public static final List<CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean>>
+            WORLD_STORAGE_CHECKERS = new LinkedList<>();
 
     static {
         CHECKERS.add(ImmersiveCheckers::isAnvil);
@@ -28,6 +30,12 @@ public class ImmersiveCheckers {
         CHECKERS.add(ImmersiveCheckers::isJukebox);
         CHECKERS.add(ImmersiveCheckers::isRepeater);
         CHECKERS.add(ImmersiveCheckers::isShulkerBox);
+
+        WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isAnvil);
+        WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isBeacon);
+        WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isCraftingTable);
+        WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isEnchantingTable);
+
     }
 
     public static boolean isAnvil(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
