@@ -13,6 +13,7 @@ public class ImmersiveHitboxesInfo extends AbstractImmersiveInfo implements Info
     public static final int BACKPACK_INDEX = 0;
 
     private AABB backpackBackHitbox = null;
+    public boolean validBackpackAngle = false;
 
     public ImmersiveHitboxesInfo() {
         super(ClientConstants.ticksToRenderHitboxesImmersive);
