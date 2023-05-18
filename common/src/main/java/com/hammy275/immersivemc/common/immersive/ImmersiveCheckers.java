@@ -30,16 +30,18 @@ public class ImmersiveCheckers {
         CHECKERS.add(ImmersiveCheckers::isJukebox);
         CHECKERS.add(ImmersiveCheckers::isRepeater);
         CHECKERS.add(ImmersiveCheckers::isShulkerBox);
+        CHECKERS.add(ImmersiveCheckers::isSmithingTable);
 
         WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isAnvil);
         WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isBeacon);
         WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isCraftingTable);
         WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isEnchantingTable);
+        WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isSmithingTable);
 
     }
 
     public static boolean isAnvil(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof SmithingTableBlock;
+        return state.getBlock() instanceof AnvilBlock;
     }
 
     public static boolean isBarrel(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
@@ -87,6 +89,10 @@ public class ImmersiveCheckers {
 
     public static boolean isShulkerBox(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return tileEntity instanceof ShulkerBoxBlockEntity;
+    }
+
+    public static boolean isSmithingTable(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        return state.getBlock() instanceof SmithingTableBlock;
     }
 
 

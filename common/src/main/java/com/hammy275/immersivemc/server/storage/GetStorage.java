@@ -42,6 +42,8 @@ public class GetStorage {
             return 0;
         } else if (ImmersiveCheckers.isBeacon(pos, state, tileEntity, level)) {
             return 0;
+        } else if (ImmersiveCheckers.isSmithingTable(pos, state, tileEntity, level)) {
+            return 1;
         }
         throw new RuntimeException("Last input index not defined for the block that was just broken!");
     }
@@ -74,6 +76,8 @@ public class GetStorage {
             return getEnchantingStorage(player, pos);
         } else if (ImmersiveCheckers.isBeacon(pos, state, tileEnt, player.level)) {
             return getBeaconStorage(player, pos);
+        } else if (ImmersiveCheckers.isSmithingTable(pos, state, tileEnt, player.level)) {
+            return getSmithingTableStorage(player, pos);
         }
         return null;
     }
@@ -102,5 +106,27 @@ public class GetStorage {
 
     public static ImmersiveStorage getBeaconStorage(Player player, BlockPos pos) {
         return ImmersiveMCLevelStorage.getLevelStorage(player).getOrCreate(pos).initIfNotAlready(1);
+    }
+
+    public static ImmersiveStorage getSmithingTableStorage(Player player, BlockPos pos) {
+        ImmersiveMCLevelStorage wStorage = ImmersiveMCLevelStorage.getLevelStorage(player);
+        ImmersiveStorage storageOld = wStorage.get(pos);
+        ImmersiveStorage toRet;
+        // May be AnvilStorage from before the anvil/smithing table split (SAVE_DATA_VERSION 1 -> 2)
+        if (storageOld instanceof AnvilStorage) {
+            toRet = new ImmersiveStorage(wStorage);
+            toRet.initIfNotAlready(3);
+            for (int i = 0; i <= 2; i++) {
+                toRet.items[i] = storageOld.items[i];
+            }
+            ImmersiveMCLevelStorage.getLevelStorage(player).add(pos, toRet);
+        } else if (storageOld == null) {
+            toRet = new ImmersiveStorage(wStorage);
+            toRet.initIfNotAlready(3);
+            ImmersiveMCLevelStorage.getLevelStorage(player).add(pos, toRet);
+        } else {
+            toRet = storageOld;
+        }
+        return toRet;
     }
 }

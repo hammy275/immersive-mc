@@ -36,6 +36,7 @@ public class ActiveConfig {
     public static boolean useThrowing = false;
     public static boolean allowThrowingBeyondMax = false;
     public static boolean useHopperImmersion = false;
+    public static boolean useSmithingTableImmersion = false;
 
     // C2S Synced values
     public static boolean crouchBypassImmersion = false;
@@ -115,6 +116,7 @@ public class ActiveConfig {
         useThrowing = buffer.readBoolean() && useThrowing;
         allowThrowingBeyondMax = buffer.readBoolean() && allowThrowingBeyondMax;
         useHopperImmersion = buffer.readBoolean() && useHopperImmersion;
+        useSmithingTableImmersion = buffer.readBoolean() && useSmithingTableImmersion;
 
     }
 
@@ -124,6 +126,7 @@ public class ActiveConfig {
 
     public static void loadConfigFromFile(boolean forceLoadServerSettings) {
         // Synced values (only loaded if we're not in a server, or we are the server)
+        upgradeConfigIfNeeded(ImmersiveMCConfig.configVersion.get(), ImmersiveMCConfig.MAJOR_CONFIG_VERSION);
         if (forceLoadServerSettings || Minecraft.getInstance().level == null) {
             useAnvilImmersion = ImmersiveMCConfig.useAnvilImmersion.get();
             useBrewingImmersion = ImmersiveMCConfig.useBrewingImmersion.get();
@@ -151,6 +154,7 @@ public class ActiveConfig {
             useThrowing = ImmersiveMCConfig.useThrowing.get();
             allowThrowingBeyondMax = ImmersiveMCConfig.allowThrowingBeyondMax.get();
             useHopperImmersion = ImmersiveMCConfig.useHopperImmersion.get();
+            useSmithingTableImmersion = ImmersiveMCConfig.useSmithingTableImmersion.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -205,6 +209,7 @@ public class ActiveConfig {
         useThrowing = false;
         allowThrowingBeyondMax = false;
         useHopperImmersion = false;
+        useSmithingTableImmersion = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -260,7 +265,8 @@ public class ActiveConfig {
                 "Ranged Grab Color: " + rangedGrabColor + "\n" +
                 "Use Hopper Immersion: " + useHopperImmersion + "\n" +
                 "Disable Vanilla GUIs: " + disableVanillaGUIs + "\n" +
-                "Reach Behind Backpack: " + reachBehindBackpack;
+                "Reach Behind Backpack: " + reachBehindBackpack + "\n" +
+                "Use Smithing Table Immersion: " + useSmithingTableImmersion;
         return stringOut;
     }
 
@@ -276,6 +282,17 @@ public class ActiveConfig {
             // If we're the host of an SP game, reload config server-side. This re-syncs configs
             // with all clients connected on a LAN world.
             ActiveConfig.clientForceServerReloadForLAN = true;
+        }
+    }
+
+    public static void upgradeConfigIfNeeded(int configFileVersion, int configLatestVersion) {
+        while (configFileVersion < configLatestVersion) {
+            if (configFileVersion == 1) {
+                ImmersiveMC.LOGGER.info("Upgrading ImmersiveMC config to version 2 (set Smithing Table config value to same as anvil).");
+                ImmersiveMC.LOGGER.info("If you just installed ImmersiveMC, you can ignore the above message!");
+                ImmersiveMCConfig.useSmithingTableImmersion.set(ImmersiveMCConfig.useAnvilImmersion.get());
+            }
+            ImmersiveMCConfig.configVersion.set(++configFileVersion);
         }
     }
 }
