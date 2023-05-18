@@ -16,7 +16,6 @@ import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -277,7 +276,7 @@ public class ClientLogicSubscriber {
                 }
             } else if (tileEnt instanceof ShulkerBoxBlockEntity shulkerBox) {
                 for (ShulkerInfo info : Immersives.immersiveShulker.getTrackedObjects()) {
-                    if (info.getBlockPosition().equals(shulkerBox.getBlockPos())) {
+                    if (info.isOpen && info.getBlockPosition().equals(shulkerBox.getBlockPos())) {
                         info.nextRow();
                         Immersives.immersiveShulker.setHitboxes(info);
                         return true;
