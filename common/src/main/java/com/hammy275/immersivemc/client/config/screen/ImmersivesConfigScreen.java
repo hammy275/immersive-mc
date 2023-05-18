@@ -60,6 +60,7 @@ public class ImmersivesConfigScreen extends Screen {
             ScreenUtils.addOption("furnace", ImmersiveMCConfig.useFurnaceImmersion, this.list);
             ScreenUtils.addOption("hopper", ImmersiveMCConfig.useHopperImmersion, this.list);
             ScreenUtils.addOption("shulker", ImmersiveMCConfig.useShulkerImmersion, this.list);
+            ScreenUtils.addOption("smithing_table", ImmersiveMCConfig.useSmithingTableImmersion, this.list);
         }
 
         if (this.type.isVR()) {

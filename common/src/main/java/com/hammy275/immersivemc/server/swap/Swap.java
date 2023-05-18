@@ -19,30 +19,13 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AnvilMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.inventory.EnchantmentMenu;
-import net.minecraft.world.inventory.ItemCombinerMenu;
-import net.minecraft.world.inventory.SmithingMenu;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.PotionItem;
-import net.minecraft.world.item.RecordItem;
+import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.JukeboxBlock;
-import net.minecraft.world.level.block.SmithingTableBlock;
-import net.minecraft.world.level.block.entity.BarrelBlockEntity;
-import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.level.block.entity.HopperBlockEntity;
-import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
-import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
@@ -161,8 +144,6 @@ public class Swap {
 
     public static void anvilSwap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player,
                                  PlacementMode mode) {
-        Level level = player.level;
-        boolean isReallyAnvil = level.getBlockState(pos).getBlock() instanceof AnvilBlock;
         AnvilStorage storage = GetStorage.getAnvilStorage(player, pos);
         if (slot != 2) {
             ItemStack playerItem = player.getItemInHand(hand);
@@ -172,9 +153,9 @@ public class Swap {
             givePlayerItemSwap(result.toHand, playerItem, player, hand);
             placeLeftovers(player, result.leftovers);
             storage.items[2] = ItemStack.EMPTY; // Clear output if we change something
-            if (isReallyAnvil) storage.xpLevels = 0;
+            storage.xpLevels = 0;
             if (!storage.items[0].isEmpty() && !storage.items[1].isEmpty()) {
-                Pair<ItemStack, Integer> output = Swap.getAnvilOutput(storage.items[0], storage.items[1], isReallyAnvil, player);
+                Pair<ItemStack, Integer> output = Swap.getAnvilOutput(storage.items[0], storage.items[1], player);
                 storage.items[2] = output.getFirst();
                 storage.xpLevels = output.getSecond();
             }
@@ -185,26 +166,38 @@ public class Swap {
         storage.wStorage.setDirty();
     }
 
+    public static void smithingTableSwap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player,
+                                 PlacementMode mode) {
+        ImmersiveStorage storage = GetStorage.getSmithingTableStorage(player, pos);
+        if (slot != 2) {
+            ItemStack playerItem = player.getItemInHand(hand);
+            ItemStack anvilItem = storage.items[slot];
+            SwapResult result = getSwap(playerItem, anvilItem, mode);
+            storage.items[slot] = result.toOther;
+            givePlayerItemSwap(result.toHand, playerItem, player, hand);
+            placeLeftovers(player, result.leftovers);
+            storage.items[2] = ItemStack.EMPTY; // Clear output if we change something
+            if (!storage.items[0].isEmpty() && !storage.items[1].isEmpty()) {
+                ItemStack output = Swap.getSmithingTableOutput(storage.items[0], storage.items[1], player);
+                storage.items[2] = output;
+            }
+        } else if (!storage.items[2].isEmpty()) { // Craft our result!
+            if (!player.getItemInHand(hand).isEmpty()) return;
+            Swap.handleSmithingTableCraft(storage, pos, player, hand);
+        }
+        storage.wStorage.setDirty();
+    }
+
     public static void handleAnvilCraft(AnvilStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
         if (!player.getItemInHand(hand).isEmpty()) return;
         ItemStack[] items = storage.items;
         ItemStack left = items[0];
         ItemStack mid = items[1];
-        boolean isReallyAnvil = player.level.getBlockState(pos).getBlock() instanceof AnvilBlock;
-        boolean isSmithingTable = player.level.getBlockState(pos).getBlock() instanceof SmithingTableBlock;
-        if (!isReallyAnvil && !isSmithingTable) return; // Bail if we aren't an anvil or a smithing table!
-        Pair<ItemStack, Integer> resAndCost = Swap.getAnvilOutput(left, mid, isReallyAnvil, player);
+        Pair<ItemStack, Integer> resAndCost = Swap.getAnvilOutput(left, mid, player);
         if ((player.experienceLevel >= resAndCost.getSecond() || player.getAbilities().instabuild)
                 && !resAndCost.getFirst().isEmpty()) {
-            ItemCombinerMenu container;
-            if (isReallyAnvil) {
-                container = new AnvilMenu(-1, player.getInventory(),
-                        ContainerLevelAccess.create(player.level, pos));
-
-            } else {
-                container = new SmithingMenu(-1, player.getInventory(),
-                        ContainerLevelAccess.create(player.level, pos));
-            }
+            ItemCombinerMenu container = new AnvilMenu(-1, player.getInventory(),
+                    ContainerLevelAccess.create(player.level, pos));
                     /* Note: Since we create a fresh container here with only the output
                      (used mainly for causing the anvil to make sounds and possibly break),
                      we never subtract XP levels from it. Instead, we just subtract them
@@ -218,6 +211,23 @@ public class Swap {
             items[2] = ItemStack.EMPTY;
             storage.xpLevels = 0;
             player.setItemInHand(hand, resAndCost.getFirst());
+        }
+    }
+
+    public static void handleSmithingTableCraft(ImmersiveStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
+        if (!player.getItemInHand(hand).isEmpty()) return;
+        ItemStack[] items = storage.items;
+        ItemStack left = items[0];
+        ItemStack mid = items[1];
+        ItemStack output = Swap.getSmithingTableOutput(left, mid, player);
+        if (!output.isEmpty()) {
+            ItemCombinerMenu container = new SmithingMenu(-1, player.getInventory(),
+                    ContainerLevelAccess.create(player.level, pos));
+            container.getSlot(2).onTake(player, output);
+            left.shrink(1);
+            mid.shrink(1);
+            items[2] = ItemStack.EMPTY;
+            player.setItemInHand(hand, output);
         }
     }
 
@@ -473,22 +483,23 @@ public class Swap {
         }
     }
 
-    public static Pair<ItemStack, Integer> getAnvilOutput(ItemStack left, ItemStack mid, boolean isReallyAnvil, ServerPlayer player) {
-        ItemCombinerMenu container;
-        if (isReallyAnvil) {
-            container = new AnvilMenu(-1, player.getInventory());
-        } else {
-            container = new SmithingMenu(-1, player.getInventory());
-        }
+    public static Pair<ItemStack, Integer> getAnvilOutput(ItemStack left, ItemStack mid, ServerPlayer player) {
+        ItemCombinerMenu container = new AnvilMenu(-1, player.getInventory());
         container.setItem(0, 0, left);
         container.setItem(1, 0, mid);
         container.createResult();
         ItemStack res = container.getSlot(2).getItem();
-        int level = 0;
-        if (isReallyAnvil) {
-            level = ((AnvilMenuMixin) container).getCost().get();
-        }
+        int level = ((AnvilMenuMixin) container).getCost().get();
         return new Pair<>(res, level);
+    }
+
+    public static ItemStack getSmithingTableOutput(ItemStack left, ItemStack mid, ServerPlayer player) {
+        ItemCombinerMenu container = new SmithingMenu(-1, player.getInventory());
+        container.setItem(0, 0, left);
+        container.setItem(1, 0, mid);
+        container.createResult();
+        ItemStack res = container.getSlot(2).getItem();
+        return res;
     }
 
     /**

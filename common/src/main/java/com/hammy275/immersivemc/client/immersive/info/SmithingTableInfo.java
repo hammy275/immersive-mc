@@ -2,18 +2,15 @@ package com.hammy275.immersivemc.client.immersive.info;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.Arrays;
 
-public class AnvilInfo extends AbstractWorldStorageInfo {
+public class SmithingTableInfo extends AbstractWorldStorageInfo {
     public Direction renderDirection;
-    public Vec3 textPos = null;
     public Direction lastDir = null;
 
-    public int anvilCost = 0;
 
-    public AnvilInfo(BlockPos pos, int ticksToExist) {
+    public SmithingTableInfo(BlockPos pos, int ticksToExist) {
         super(pos, ticksToExist, 2);
     }
 

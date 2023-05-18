@@ -6,6 +6,8 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ImmersiveMCConfig {
 
+
+    public static final int MAJOR_CONFIG_VERSION = 2; // Increment whenever a change is made that requires ImmersiveMC to do config adjustments
     public static final int CONFIG_VERSION = 4; // Increment post-release whenever the server+client config changes
 
     public static final ForgeConfigSpec GENERAL_SPEC;
@@ -37,11 +39,12 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useThrowing;
     public static ForgeConfigSpec.BooleanValue allowThrowingBeyondMax;
     public static ForgeConfigSpec.BooleanValue useHopperImmersion;
+    public static ForgeConfigSpec.BooleanValue useSmithingTableImmersion;
 
     // C2S Only Sync
     public static ForgeConfigSpec.BooleanValue crouchBypassImmersion;
 
-    //Non-synced values
+    // Non-synced values
     public static ForgeConfigSpec.IntValue backpackColor;
     public static ForgeConfigSpec.BooleanValue rightClickChest;
     public static ForgeConfigSpec.BooleanValue autoCenterFurnace;
@@ -58,6 +61,12 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue disableVanillaGUIs;
     public static ForgeConfigSpec.BooleanValue reachBehindBackpack;
 
+
+
+    // Used to track config updates that require special intervention by ImmersiveMC to process (such as the anvil
+    // smithing table split requiring the moving of the anvil key to the smithing table one).
+    // Increment MAJOR_CONFIG_VERSION at the top of this file to update
+    public static ForgeConfigSpec.IntValue configVersion;
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
         setupConfig(configBuilder);
@@ -67,7 +76,7 @@ public class ImmersiveMCConfig {
     protected static void setupConfig(ForgeConfigSpec.Builder builder) {
         // Synced Values
         useAnvilImmersion = builder
-                .comment("Whether immersives on anvils and smithing tables should be allowed")
+                .comment("Whether immersives on anvils should be allowed")
                 .define("anvil_immersion", true);
         useBrewingImmersion = builder
                 .comment("Whether immersives on brewing stands should be allowed")
@@ -144,6 +153,9 @@ public class ImmersiveMCConfig {
         useHopperImmersion = builder
                 .comment("Whether immersives on hoppers should be allowed.")
                 .define("hopper_immersion", true);
+        useSmithingTableImmersion = builder
+                .comment("Whether immersives for smithing tables should be allowed.")
+                .define("smithing_table_immersion", true);
 
         // C2S Only Sync
         crouchBypassImmersion = builder
@@ -196,6 +208,17 @@ public class ImmersiveMCConfig {
         reachBehindBackpack = builder
                 .comment("Allow reaching behind you to grab your bag. Disables similar functionatliy from regular Vivecraft.")
                 .define("reach_behind_backpack", false);
+
+
+
+        // Config version (not synced!)
+        // Note: We set the default value to 1 here, meaning the first time someone launches ImmersiveMC
+        // and generates a config file, it will be "upgraded". Have to do this since version 1
+        // doesn't have a config number.
+        configVersion = builder
+                .comment("!!!!DON'T TOUCH!!!! Version number for this configuration file! Do not change! It is used by ImmersiveMC " +
+                        "to track config updates so it can automatically update your configuration files when needed!")
+                .defineInRange("config_version", 1, 1, Integer.MAX_VALUE);
     }
 
     public static void encode(FriendlyByteBuf buffer) {
@@ -223,7 +246,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useBarrelImmersion.get())
                 .writeBoolean(useThrowing.get())
                 .writeBoolean(allowThrowingBeyondMax.get())
-                .writeBoolean(useHopperImmersion.get());
+                .writeBoolean(useHopperImmersion.get())
+                .writeBoolean(useSmithingTableImmersion.get());
     }
 
     public static void resetToDefault() {
@@ -254,6 +278,7 @@ public class ImmersiveMCConfig {
         useThrowing.set(true);
         allowThrowingBeyondMax.set(true);
         useHopperImmersion.set(true);
+        useSmithingTableImmersion.set(true);
 
         // C2S Synced Values
         crouchBypassImmersion.set(true);
