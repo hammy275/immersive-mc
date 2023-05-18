@@ -276,7 +276,7 @@ public class ClientLogicSubscriber {
                 }
             } else if (tileEnt instanceof ShulkerBoxBlockEntity shulkerBox) {
                 for (ShulkerInfo info : Immersives.immersiveShulker.getTrackedObjects()) {
-                    if (info.getBlockPosition().equals(shulkerBox.getBlockPos())) {
+                    if (info.isOpen && info.getBlockPosition().equals(shulkerBox.getBlockPos())) {
                         info.nextRow();
                         Immersives.immersiveShulker.setHitboxes(info);
                         return true;
