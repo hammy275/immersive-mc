@@ -17,6 +17,7 @@ public class ClientConstants {
     public static final int ticksToRenderBarrel = ticksToRenderChest;
     public static final int ticksToRenderHopper = 100;
     public static final int ticksToRenderHitboxesImmersive = Integer.MAX_VALUE;
+    public static final int ticksToRenderSmithingTable = ticksToRenderAnvil;
 
     // Size of items when rendered in front of something immersive
     public static final float itemScaleSizeFurnace = 0.5f;
@@ -31,6 +32,7 @@ public class ClientConstants {
     public static final float itemScaleSizeBeacon = 0.42f;
     public static final float itemScaleSizeBarrel = 0.2f;
     public static final float itemScaleSizeHopper = 0.15f;
+    public static final float itemScaleSizeSmithingTable = itemScaleSizeAnvil;
 
     // Time to transition in ticks
     public static final int transitionTime = 20;
