@@ -6,6 +6,6 @@ public class VRPluginVerify {
 
     // Only checks for API if not in-world
     public static boolean clientInVR() {
-        return hasAPI && VRPluginVerifyProxy.vrAPIIInVR();
+        return hasAPI && VRPluginProxy.vrAPIIInVR();
     }
 }

@@ -1,10 +1,12 @@
 package com.hammy275.immersivemc.server.swap;
 
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.storage.AnvilStorage;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.storage.workarounds.NullContainer;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VRPluginProxy;
 import com.hammy275.immersivemc.mixin.AnvilMenuMixin;
 import com.hammy275.immersivemc.server.storage.GetStorage;
 import com.mojang.datafixers.util.Pair;
@@ -83,25 +85,28 @@ public class Swap {
             player.setItemInHand(hand, toPlayer);
             enchStorage.items[0] = toEnchant;
         } else if (player.getItemInHand(hand).isEmpty()) {
-            doEnchanting(slot, pos, player, hand);
+            boolean res = doEnchanting(slot, pos, player, hand);
+            if (res) {
+                VRPluginProxy.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
+            }
         }
         enchStorage.wStorage.setDirty();
     }
 
-    public static void doEnchanting(int slot, BlockPos pos, ServerPlayer player, InteractionHand hand) {
+    public static boolean doEnchanting(int slot, BlockPos pos, ServerPlayer player, InteractionHand hand) {
         // NOTE: slot is 1-3, depending on which enchantment the player is going for.
-        if (!player.getItemInHand(hand).isEmpty()) return;
-        if (slot < 1 || slot > 3) return;
+        if (!player.getItemInHand(hand).isEmpty()) return false;
+        if (slot < 1 || slot > 3) return false;
         ImmersiveStorage storage = GetStorage.getEnchantingStorage(player, pos);
         ItemStack toEnchantItem = storage.items[0].copy();
-        if (toEnchantItem.isEmpty()) return;
+        if (toEnchantItem.isEmpty()) return false;
         int lapisInInventory = 0;
         for (int i = 0; i < player.getInventory().items.size(); i++) {
             if (player.getInventory().getItem(i).getItem() == Items.LAPIS_LAZULI) {
                 lapisInInventory += player.getInventory().getItem(i).getCount();
             }
         }
-        if (lapisInInventory < slot && !player.getAbilities().instabuild) return;
+        if (lapisInInventory < slot && !player.getAbilities().instabuild) return false;
 
         EnchantmentMenu container = new EnchantmentMenu(-1,
                 player.getInventory(), ContainerLevelAccess.create(player.level, pos));
@@ -123,7 +128,9 @@ public class Swap {
             }
             player.setItemInHand(hand, container.getSlot(0).getItem());
             storage.items[0] = ItemStack.EMPTY;
+            return true;
         }
+        return false;
     }
 
     public static void handleBackpackCraftingSwap(int slot, InteractionHand hand, ImmersiveStorage storage,
@@ -161,7 +168,10 @@ public class Swap {
             }
         } else if (!storage.items[2].isEmpty()) { // Craft our result!
             if (!player.getItemInHand(hand).isEmpty()) return;
-            Swap.handleAnvilCraft(storage, pos, player, hand);
+            boolean res = Swap.handleAnvilCraft(storage, pos, player, hand);
+            if (res) {
+                VRPluginProxy.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
+            }
         }
         storage.wStorage.setDirty();
     }
@@ -183,13 +193,16 @@ public class Swap {
             }
         } else if (!storage.items[2].isEmpty()) { // Craft our result!
             if (!player.getItemInHand(hand).isEmpty()) return;
-            Swap.handleSmithingTableCraft(storage, pos, player, hand);
+            boolean res = Swap.handleSmithingTableCraft(storage, pos, player, hand);
+            if (res) {
+                VRPluginProxy.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
+            }
         }
         storage.wStorage.setDirty();
     }
 
-    public static void handleAnvilCraft(AnvilStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
-        if (!player.getItemInHand(hand).isEmpty()) return;
+    public static boolean handleAnvilCraft(AnvilStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
+        if (!player.getItemInHand(hand).isEmpty()) return false;
         ItemStack[] items = storage.items;
         ItemStack left = items[0];
         ItemStack mid = items[1];
@@ -211,11 +224,13 @@ public class Swap {
             items[2] = ItemStack.EMPTY;
             storage.xpLevels = 0;
             player.setItemInHand(hand, resAndCost.getFirst());
+            return true;
         }
+        return false;
     }
 
-    public static void handleSmithingTableCraft(ImmersiveStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
-        if (!player.getItemInHand(hand).isEmpty()) return;
+    public static boolean handleSmithingTableCraft(ImmersiveStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
+        if (!player.getItemInHand(hand).isEmpty()) return false;
         ItemStack[] items = storage.items;
         ItemStack left = items[0];
         ItemStack mid = items[1];
@@ -228,7 +243,9 @@ public class Swap {
             mid.shrink(1);
             items[2] = ItemStack.EMPTY;
             player.setItemInHand(hand, output);
+            return true;
         }
+        return false;
     }
 
     public static void handleCraftingSwap(ServerPlayer player, int slot, InteractionHand hand, BlockPos tablePos,
@@ -411,6 +428,7 @@ public class Swap {
             jukebox.setFirstItem(playerItem.copyWithCount(1));
             playerItem.shrink(1);
             player.awardStat(Stats.PLAY_RECORD);
+            VRPluginProxy.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
         }
     }
 

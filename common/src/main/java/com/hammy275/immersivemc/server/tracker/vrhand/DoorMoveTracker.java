@@ -1,6 +1,8 @@
 package com.hammy275.immersivemc.server.tracker.vrhand;
 
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.ServerPlayerConfig;
+import com.hammy275.immersivemc.common.vr.VRPluginProxy;
 import com.hammy275.immersivemc.mixin.DoorBlockMixin;
 import com.hammy275.immersivemc.mixin.FenceGateBlockMixin;
 import com.hammy275.immersivemc.server.LastTickVRData;
@@ -73,6 +75,7 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
 
             // Need to play the sound separately for the player opening/closing the block
             if (res == InteractionResult.CONSUME) {
+                VRPluginProxy.rumbleIfVR_P(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
                 boolean isNowOpen = blockState.getValue(BlockStateProperties.OPEN);
                 SoundEvent sound = null;
                 if (blockState.getBlock() instanceof FenceGateBlock fence) {
