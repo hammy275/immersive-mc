@@ -1,8 +1,10 @@
 package com.hammy275.immersivemc.server.tracker;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
+import com.hammy275.immersivemc.common.vr.VRPluginProxy;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.server.PlayerConfigs;
 import net.minecraft.core.BlockPos;
@@ -89,6 +91,7 @@ public class LeverTracker extends AbstractTracker {
                     LeverBlock leverBlock = (LeverBlock) Blocks.LEVER;
                     leverBlock.use(state, player.level, leverPos, player, c == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND,
                             null);
+                    VRPluginProxy.rumbleIfVR_P(player, c, CommonConstants.vibrationTimeWorldInteraction);
                 }
             }
             info.setLastPos(c, handPos);

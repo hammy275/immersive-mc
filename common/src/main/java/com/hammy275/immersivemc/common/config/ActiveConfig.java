@@ -40,6 +40,7 @@ public class ActiveConfig {
 
     // C2S Synced values
     public static boolean crouchBypassImmersion = false;
+    public static boolean doRumble = false;
 
     // Non-synced values
     public static int backpackColor = 11901820;
@@ -161,6 +162,7 @@ public class ActiveConfig {
 
         // C2S Synced values
         crouchBypassImmersion = ImmersiveMCConfig.crouchBypassImmersion.get();
+        doRumble = ImmersiveMCConfig.doRumble.get();
 
         // Non-synced values
         backpackColor = ImmersiveMCConfig.backpackColor.get();
@@ -219,7 +221,8 @@ public class ActiveConfig {
                 .writeBoolean(ActiveConfig.useDoorImmersion)
                 .writeBoolean(ActiveConfig.canPet).writeBoolean(ActiveConfig.useArmorImmersion)
                 .writeBoolean(ActiveConfig.canFeedAnimals).writeBoolean(ActiveConfig.canPetAnyLiving)
-                .writeInt(ActiveConfig.rangedGrabRange).writeBoolean(ActiveConfig.crouchBypassImmersion);
+                .writeInt(ActiveConfig.rangedGrabRange).writeBoolean(ActiveConfig.crouchBypassImmersion)
+                .writeBoolean(ActiveConfig.doRumble);
         return buffer;
     }
 
@@ -266,7 +269,8 @@ public class ActiveConfig {
                 "Use Hopper Immersion: " + useHopperImmersion + "\n" +
                 "Disable Vanilla GUIs: " + disableVanillaGUIs + "\n" +
                 "Reach Behind Backpack: " + reachBehindBackpack + "\n" +
-                "Use Smithing Table Immersion: " + useSmithingTableImmersion;
+                "Use Smithing Table Immersion: " + useSmithingTableImmersion + "\n" +
+                "Do Rumble: " + doRumble;
         return stringOut;
     }
 

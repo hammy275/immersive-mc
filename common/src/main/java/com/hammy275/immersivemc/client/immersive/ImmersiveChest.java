@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
@@ -10,6 +11,7 @@ import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
+import com.hammy275.immersivemc.common.vr.VRPluginProxy;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.hammy275.immersivemc.client.config.ClientConstants;
@@ -149,6 +151,22 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
                 }
 
                 if (cond) {
+                    if (!info.isOpen) {
+                        // Use a distance check for checking if to vibrate the other controller to hopefully filter out
+                        // actions of moving up that are for something other than the chest
+                        if (diff0 >= threshold) {
+                            VRPluginProxy.rumbleIfVR(null, 0, CommonConstants.vibrationTimeWorldInteraction);
+                            if (diff1 >= threshold / 5d && current0.distanceToSqr(current1) <= 1) {
+                                VRPluginProxy.rumbleIfVR(null, 1, CommonConstants.vibrationTimeWorldInteraction);
+                            }
+                        }
+                        if (diff1 >= threshold) {
+                            VRPluginProxy.rumbleIfVR(null, 1, CommonConstants.vibrationTimeWorldInteraction);
+                            if ((diff0 >= threshold / 5d && current0.distanceToSqr(current1) <= 1)) {
+                                VRPluginProxy.rumbleIfVR(null, 0, CommonConstants.vibrationTimeWorldInteraction);
+                            }
+                        }
+                    }
                     openChest(info);
                     openCloseCooldown = 40;
                 }

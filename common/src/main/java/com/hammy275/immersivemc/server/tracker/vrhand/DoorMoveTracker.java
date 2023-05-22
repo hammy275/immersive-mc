@@ -1,6 +1,8 @@
 package com.hammy275.immersivemc.server.tracker.vrhand;
 
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.ServerPlayerConfig;
+import com.hammy275.immersivemc.common.vr.VRPluginProxy;
 import com.hammy275.immersivemc.mixin.DoorBlockMixin;
 import com.hammy275.immersivemc.server.LastTickVRData;
 import com.hammy275.immersivemc.server.data.LastTickData;
@@ -67,6 +69,7 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
 
             // Play event to door opener/closer, since the use() call ignores them
             if (res == InteractionResult.CONSUME) {
+                VRPluginProxy.rumbleIfVR_P(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
                 boolean isNowOpen = blockState.getValue(BlockStateProperties.OPEN);
                 int event = -1;
                 if (blockState.getBlock() instanceof DoorBlock door) {
