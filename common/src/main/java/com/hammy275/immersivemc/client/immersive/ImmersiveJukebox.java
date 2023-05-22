@@ -1,12 +1,12 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.client.config.ClientConstants;
+import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.JukeboxInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.hammy275.immersivemc.client.config.ClientConstants;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.JukeboxInfo;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.client.Minecraft;

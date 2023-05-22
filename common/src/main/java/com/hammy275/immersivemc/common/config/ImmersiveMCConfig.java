@@ -43,6 +43,7 @@ public class ImmersiveMCConfig {
 
     // C2S Only Sync
     public static ForgeConfigSpec.BooleanValue crouchBypassImmersion;
+    public static ForgeConfigSpec.BooleanValue doRumble;
 
     // Non-synced values
     public static ForgeConfigSpec.IntValue backpackColor;
@@ -161,6 +162,9 @@ public class ImmersiveMCConfig {
         crouchBypassImmersion = builder
                 .comment("Allow users to crouch + right-click to bypass immersives.")
                 .define("crouch_bypass_immersion", true);
+        doRumble = builder
+                .comment("Do controller rumble for ImmersiveMC actions.")
+                .define("do_rumble", true);
 
         // Non-synced Values
         backpackColor = builder
@@ -282,6 +286,7 @@ public class ImmersiveMCConfig {
 
         // C2S Synced Values
         crouchBypassImmersion.set(true);
+        doRumble.set(true);
 
         // Non-synced defaults
         backpackColor.set(11901820);

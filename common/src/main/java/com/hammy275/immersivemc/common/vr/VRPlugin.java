@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.common.vr;
 
-import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import net.blf02.vrapi.api.IVRAPI;
 
 public class VRPlugin {
@@ -38,6 +38,10 @@ public class VRPlugin {
         } else if (incomingVersion[0] > CommonConstants.minimumVRAPIVersion[0]) {
             // Major version too high (can't depend on backwards compatability in new major versions!)
             return VersionInfo.TOO_NEW;
+        } else if (incomingVersion[0] == CommonConstants.minimumVRAPIVersion[0] // Feature may rely off of bugfix being in place
+                && incomingVersion[1] == CommonConstants.minimumVRAPIVersion[1]
+                && incomingVersion[2] < CommonConstants.minimumVRAPIVersion[2]) {
+            return VersionInfo.TOO_OLD;
         }
 
         return VersionInfo.GOOD;
