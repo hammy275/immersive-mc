@@ -5,11 +5,13 @@ import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BarrelInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
+import com.hammy275.immersivemc.common.vr.VRPluginProxy;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -80,6 +82,7 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
                     if (info.pullHitbox.contains(current) &&
                             dir == info.forward && moveAmount >= MOVE_THRESHOLD) {
                         info.placeItemCooldown = 10; // Used since barrel handle is by an item spot
+                        VRPluginProxy.rumbleIfVR(null, c, CommonConstants.vibrationTimeWorldInteraction);
                         openBarrel(info);
                     }
                 }

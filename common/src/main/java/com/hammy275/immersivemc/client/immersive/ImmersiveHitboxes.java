@@ -4,7 +4,9 @@ import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.ImmersiveHitboxesInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
+import com.hammy275.immersivemc.common.vr.VRPluginProxy;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.architectury.platform.Platform;
@@ -138,6 +140,7 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
         if (info instanceof ImmersiveHitboxesInfo hInfo) {
             if (closest == ImmersiveHitboxesInfo.BACKPACK_INDEX && hand == InteractionHand.OFF_HAND
                     && backpackCooldown <= 0 && hInfo.validBackpackAngle) {
+                VRPluginProxy.rumbleIfVR(null, 1, CommonConstants.vibrationTimePlayerActionAlert);
                 ClientUtil.openBag(player);
                 backpackCooldown = 50;
             }
