@@ -24,7 +24,7 @@ dependencies {
     modApi "dev.architectury:architectury:${rootProject.architectury_version}"
 
     modApi "net.minecraftforge:forgeconfigapiport-fabric:3.2.4"
-    modApi "curse.maven:mcvrapi-591092:4466550"
+    modApi "curse.maven:mcvrapi-591092:4548156"
 
     modCompileOnly "curse.maven:vivecraft-667903:4160371"
 }
