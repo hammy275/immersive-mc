@@ -397,6 +397,11 @@ public class Swap {
                 player.setItemInHand(hand, result.mergedInto);
                 furnace.setItem(slot, result.mergedFrom);
             }
+
+            // Experience and recipes reward
+            if (player instanceof ServerPlayer sp && furnace instanceof AbstractFurnaceBlockEntity furnaceBE) {
+                furnaceBE.awardUsedRecipesAndPopExperience(sp);
+            }
         }
         furnace.setChanged();
     }
