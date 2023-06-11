@@ -235,9 +235,9 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         if (getSingleton().infos.size() > 0) {
             BackpackInfo info = (BackpackInfo) getSingleton().infos.get(0);
             for (int i = 0; i <= 3; i++) {
-                info.craftingInput[i] = storage.items[i];
+                info.craftingInput[i] = storage.getItem(i);
             }
-            info.craftingOutput = storage.items[4];
+            info.craftingOutput = storage.getItem(4);
         }
     }
 

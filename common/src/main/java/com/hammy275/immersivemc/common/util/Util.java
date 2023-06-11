@@ -138,6 +138,7 @@ public class Util {
     }
 
     public static boolean stacksEqualBesidesCount(ItemStack a, ItemStack b) {
+        if ((a.isEmpty() && !b.isEmpty()) || (!a.isEmpty() && b.isEmpty())) return false;
         int oldCountA = a.getCount();
         int oldCountB = b.getCount();
         a.setCount(1);
@@ -194,6 +195,13 @@ public class Util {
             return num + subtract;
         }
         return num - subtract;
+    }
+
+    public static void placeLeftovers(Player player, ItemStack leftovers) {
+        if (!leftovers.isEmpty()) {
+            ItemEntity item = new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), leftovers);
+            player.level.addFreshEntity(item);
+        }
     }
 
     public static class ItemStackMergeResult {

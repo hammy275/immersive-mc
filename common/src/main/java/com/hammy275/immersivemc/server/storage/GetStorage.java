@@ -117,7 +117,7 @@ public class GetStorage {
             toRet = new ImmersiveStorage(wStorage);
             toRet.initIfNotAlready(3);
             for (int i = 0; i <= 2; i++) {
-                toRet.items[i] = storageOld.items[i];
+                toRet.getItemsRaw()[i] = storageOld.getItemsRaw()[i];
             }
             ImmersiveMCLevelStorage.getLevelStorage(player).add(pos, toRet);
         } else if (storageOld == null) {

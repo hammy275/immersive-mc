@@ -38,21 +38,12 @@ public class Swap {
     public static void beaconSwap(ServerPlayer player, InteractionHand hand, BlockPos pos) {
         if (!player.getItemInHand(hand).is(ItemTags.BEACON_PAYMENT_ITEMS) && !player.getItemInHand(hand).isEmpty()) return;
         ImmersiveStorage beaconStorage = GetStorage.getBeaconStorage(player, pos);
-        ItemStack playerItem = player.getItemInHand(hand).copy();
-        ItemStack beaconItem = beaconStorage.items[0].copy();
+        ItemStack beaconItem = beaconStorage.getItem(0);
         if (!beaconItem.isEmpty()) {
-            placeLeftovers(player, beaconItem);
-            beaconStorage.items[0] = ItemStack.EMPTY;
+            Util.placeLeftovers(player, beaconItem);
+            beaconStorage.setItem(0, ItemStack.EMPTY);
         }
-        if (!playerItem.isEmpty()) {
-            beaconStorage.items[0] = playerItem.copy();
-            beaconStorage.items[0].setCount(1);
-            playerItem.shrink(1);
-            if (playerItem.isEmpty()) {
-                playerItem = ItemStack.EMPTY;
-            }
-            player.setItemInHand(hand, playerItem);
-        }
+        beaconStorage.placeItem(player, hand, 1, 0, true);
         beaconStorage.wStorage.setDirty();
     }
 
@@ -79,11 +70,9 @@ public class Swap {
         if (player == null) return;
         ImmersiveStorage enchStorage = GetStorage.getEnchantingStorage(player, pos);
         if (slot == 0) {
-            ItemStack toEnchant = player.getItemInHand(hand).copy();
-            ItemStack toPlayer = enchStorage.items[0].copy();
+            ItemStack toEnchant = player.getItemInHand(hand);
             if (!toEnchant.isEmpty() && !toEnchant.isEnchantable()) return;
-            player.setItemInHand(hand, toPlayer);
-            enchStorage.items[0] = toEnchant;
+            enchStorage.placeItem(player, hand, 1, slot, true);
         } else if (player.getItemInHand(hand).isEmpty()) {
             boolean res = doEnchanting(slot, pos, player, hand);
             if (res) {
@@ -98,7 +87,7 @@ public class Swap {
         if (!player.getItemInHand(hand).isEmpty()) return false;
         if (slot < 1 || slot > 3) return false;
         ImmersiveStorage storage = GetStorage.getEnchantingStorage(player, pos);
-        ItemStack toEnchantItem = storage.items[0].copy();
+        ItemStack toEnchantItem = storage.getItem(0).copy();
         if (toEnchantItem.isEmpty()) return false;
         int lapisInInventory = 0;
         for (int i = 0; i < player.getInventory().items.size(); i++) {
@@ -127,7 +116,7 @@ public class Swap {
                 }
             }
             player.setItemInHand(hand, container.getSlot(0).getItem());
-            storage.items[0] = ItemStack.EMPTY;
+            storage.setItem(0, ItemStack.EMPTY);
             return true;
         }
         return false;
@@ -135,16 +124,17 @@ public class Swap {
 
     public static void handleBackpackCraftingSwap(int slot, InteractionHand hand, ImmersiveStorage storage,
                                                   ServerPlayer player, PlacementMode mode) {
+        ItemStack[] items = storage.getItemsRaw();
         if (slot < 4) {
             ItemStack playerItem = player.getItemInHand(hand);
-            ItemStack tableItem = storage.items[slot];
+            ItemStack tableItem = items[slot];
             SwapResult result = getSwap(playerItem, tableItem, mode);
-            storage.items[slot] = result.toOther;
+            items[slot] = result.toOther;
             givePlayerItemSwap(result.toHand, playerItem, player, hand);
-            placeLeftovers(player, result.leftovers);
-            storage.items[4] = getRecipeOutput(player, storage.items);
+            Util.placeLeftovers(player, result.leftovers);
+            items[4] = getRecipeOutput(player, items);
         } else {
-            handleDoCraft(player, storage.items, null);
+            handleDoCraft(player, items, null);
         }
         storage.wStorage.setDirty();
     }
@@ -153,20 +143,15 @@ public class Swap {
                                  PlacementMode mode) {
         AnvilStorage storage = GetStorage.getAnvilStorage(player, pos);
         if (slot != 2) {
-            ItemStack playerItem = player.getItemInHand(hand);
-            ItemStack anvilItem = storage.items[slot];
-            SwapResult result = getSwap(playerItem, anvilItem, mode);
-            storage.items[slot] = result.toOther;
-            givePlayerItemSwap(result.toHand, playerItem, player, hand);
-            placeLeftovers(player, result.leftovers);
-            storage.items[2] = ItemStack.EMPTY; // Clear output if we change something
+            storage.placeItem(player, hand, getPlaceAmount(player.getItemInHand(hand), mode), slot, true);
+            storage.setItem(2, ItemStack.EMPTY);
             storage.xpLevels = 0;
-            if (!storage.items[0].isEmpty() && !storage.items[1].isEmpty()) {
-                Pair<ItemStack, Integer> output = Swap.getAnvilOutput(storage.items[0], storage.items[1], player);
-                storage.items[2] = output.getFirst();
+            if (!storage.getItem(0).isEmpty() && !storage.getItem(1).isEmpty()) {
+                Pair<ItemStack, Integer> output = Swap.getAnvilOutput(storage.getItem(0), storage.getItem(1), player);
+                storage.setItem(2, output.getFirst());
                 storage.xpLevels = output.getSecond();
             }
-        } else if (!storage.items[2].isEmpty()) { // Craft our result!
+        } else if (!storage.getItem(2).isEmpty()) { // Craft our result!
             if (!player.getItemInHand(hand).isEmpty()) return;
             boolean res = Swap.handleAnvilCraft(storage, pos, player, hand);
             if (res) {
@@ -180,18 +165,14 @@ public class Swap {
                                  PlacementMode mode) {
         ImmersiveStorage storage = GetStorage.getSmithingTableStorage(player, pos);
         if (slot != 2) {
-            ItemStack playerItem = player.getItemInHand(hand);
-            ItemStack anvilItem = storage.items[slot];
-            SwapResult result = getSwap(playerItem, anvilItem, mode);
-            storage.items[slot] = result.toOther;
-            givePlayerItemSwap(result.toHand, playerItem, player, hand);
-            placeLeftovers(player, result.leftovers);
-            storage.items[2] = ItemStack.EMPTY; // Clear output if we change something
-            if (!storage.items[0].isEmpty() && !storage.items[1].isEmpty()) {
-                ItemStack output = Swap.getSmithingTableOutput(storage.items[0], storage.items[1], player);
-                storage.items[2] = output;
+            // TODO: Replace with config value for returning items
+            storage.placeItem(player, hand, getPlaceAmount(player.getItemInHand(hand), mode), slot, true);
+            storage.setItem(2, ItemStack.EMPTY);
+            if (!storage.getItem(0).isEmpty() && !storage.getItem(1).isEmpty()) {
+                ItemStack output = Swap.getSmithingTableOutput(storage.getItem(0), storage.getItem(1), player);
+                storage.setItem(2, output);
             }
-        } else if (!storage.items[2].isEmpty()) { // Craft our result!
+        } else if (!storage.getItem(2).isEmpty()) { // Craft our result!
             if (!player.getItemInHand(hand).isEmpty()) return;
             boolean res = Swap.handleSmithingTableCraft(storage, pos, player, hand);
             if (res) {
@@ -203,9 +184,8 @@ public class Swap {
 
     public static boolean handleAnvilCraft(AnvilStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
         if (!player.getItemInHand(hand).isEmpty()) return false;
-        ItemStack[] items = storage.items;
-        ItemStack left = items[0];
-        ItemStack mid = items[1];
+        ItemStack left = storage.getItem(0);
+        ItemStack mid = storage.getItem(1);
         Pair<ItemStack, Integer> resAndCost = Swap.getAnvilOutput(left, mid, player);
         if ((player.experienceLevel >= resAndCost.getSecond() || player.getAbilities().instabuild)
                 && !resAndCost.getFirst().isEmpty()) {
@@ -219,9 +199,9 @@ public class Swap {
             if (!player.getAbilities().instabuild) {
                 player.giveExperienceLevels(-resAndCost.getSecond());
             }
-            left.shrink(1);
-            mid.shrink(1);
-            items[2] = ItemStack.EMPTY;
+            storage.shrinkSlot(0, 1);
+            storage.shrinkSlot(1, 1);
+            storage.setItem(2, ItemStack.EMPTY);
             storage.xpLevels = 0;
             player.setItemInHand(hand, resAndCost.getFirst());
             return true;
@@ -231,17 +211,16 @@ public class Swap {
 
     public static boolean handleSmithingTableCraft(ImmersiveStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
         if (!player.getItemInHand(hand).isEmpty()) return false;
-        ItemStack[] items = storage.items;
-        ItemStack left = items[0];
-        ItemStack mid = items[1];
+        ItemStack left = storage.getItem(0);
+        ItemStack mid = storage.getItem(1);
         ItemStack output = Swap.getSmithingTableOutput(left, mid, player);
         if (!output.isEmpty()) {
             ItemCombinerMenu container = new SmithingMenu(-1, player.getInventory(),
                     ContainerLevelAccess.create(player.level, pos));
             container.getSlot(2).onTake(player, output);
-            left.shrink(1);
-            mid.shrink(1);
-            items[2] = ItemStack.EMPTY;
+            storage.shrinkSlot(0, 1);
+            storage.shrinkSlot(1, 1);
+            storage.setItem(2, ItemStack.EMPTY);
             player.setItemInHand(hand, output);
             return true;
         }
@@ -259,39 +238,41 @@ public class Swap {
                 SwapResult result = getSwap(playerItem, craftingItem, mode);
                 givePlayerItemSwap(result.toHand, playerItem, player, hand);
                 table.setItem(slot, result.toOther);
-                placeLeftovers(player, result.leftovers);
+                Util.placeLeftovers(player, result.leftovers);
                 ItemStack[] ins = new ItemStack[10];
                 for (int i = 0; i <= 8; i++) {
                     ins[i] = table.getItem(i);
-                    storage.items[i] = ItemStack.EMPTY;
+                    storage.getItemsRaw()[i] = ItemStack.EMPTY;
                 }
                 ins[9] = ItemStack.EMPTY;
                 ItemStack output = getRecipeOutput(player, ins);
-                storage.items[9] = output;
+                storage.getItemsRaw()[9] = output;
             } else {
                 // At crafting time, make our storage match the table contents, craft like a vanilla table,
                 // then put our storage back to empty after cloning our crafting results back over
                 for (int i = 0; i <= 8; i++) {
-                    storage.items[i] = table.getItem(i).copy();
+                    storage.getItemsRaw()[i] = table.getItem(i).copy();
                 }
-                handleDoCraft(player, storage.items, tablePos);
+                handleDoCraft(player, storage.getItemsRaw(), tablePos);
                 for (int i = 0; i <= 8; i++) {
                     // setItem here instead of using non-copies so setItem can sync stuff back
-                    table.setItem(i, storage.items[i]);
-                    storage.items[i] = ItemStack.EMPTY;
+                    table.setItem(i, storage.getItemsRaw()[i]);
+                    storage.getItemsRaw()[i] = ItemStack.EMPTY;
                 }
             }
         } else {
             if (slot < 9) {
-                ItemStack playerItem = player.getItemInHand(hand);
-                ItemStack craftingItem = storage.items[slot];
-                SwapResult result = getSwap(playerItem, craftingItem, mode);
-                storage.items[slot] = result.toOther;
-                givePlayerItemSwap(result.toHand, playerItem, player, hand);
-                placeLeftovers(player, result.leftovers);
-                storage.items[9] = getRecipeOutput(player, storage.items);
+                storage.placeItem(player, hand,
+                        getPlaceAmount(player.getItemInHand(hand), mode),
+                        slot, true);
+                storage.setItem(9, getRecipeOutput(player, storage.getItemsRaw()));
             } else {
-                handleDoCraft(player, storage.items, tablePos);
+                handleDoCraft(player, storage.getItemsRaw(), tablePos);
+                for (int i = 0; i <= 8; i++) {
+                    if (!storage.getItem(i).isEmpty()) {
+                        storage.shrinkCountsOnly(i, 1);
+                    }
+                }
             }
             storage.wStorage.setDirty();
         }
@@ -327,7 +308,7 @@ public class Swap {
                     if (stacksIn[i].getCount() == 1) {
                         stacksIn[i] = new ItemStack(stacksIn[i].getItem().getCraftingRemainingItem());
                     } else {
-                        placeLeftovers(player, new ItemStack(stacksIn[i].getItem().getCraftingRemainingItem()));
+                        Util.placeLeftovers(player, new ItemStack(stacksIn[i].getItem().getCraftingRemainingItem()));
                     }
 
                 } else {
@@ -386,7 +367,7 @@ public class Swap {
                 SwapResult result = getSwap(playerItem, furnaceItem, mode);
                 givePlayerItemSwap(result.toHand, playerItem, player, hand);
                 furnace.setItem(slot, result.toOther);
-                placeLeftovers(player, result.leftovers);
+                Util.placeLeftovers(player, result.leftovers);
             }
         } else {
             if (playerItem.isEmpty()) {
@@ -420,7 +401,7 @@ public class Swap {
             SwapResult result = getSwap(playerItem, standItem, mode);
             givePlayerItemSwap(result.toHand, playerItem, player, hand);
             stand.setItem(slot, result.toOther);
-            placeLeftovers(player, result.leftovers);
+            Util.placeLeftovers(player, result.leftovers);
         }
         stand.setChanged();
     }
@@ -525,6 +506,21 @@ public class Swap {
         return res;
     }
 
+    public static int getPlaceAmount(ItemStack handIn, PlacementMode mode) {
+        switch (mode) {
+            case PLACE_ONE:
+                return 1;
+            case PLACE_QUARTER:
+                return (int) Math.max(handIn.getCount() / 4d, 1);
+            case PLACE_HALF:
+                return (int) Math.max(handIn.getCount() / 2d, 1);
+            case PLACE_ALL:
+                return handIn.getCount();
+            default:
+                throw new IllegalArgumentException("Unhandled placement mode " + mode);
+        }
+    }
+
     /**
      * Get Swap Information.
      *
@@ -539,23 +535,7 @@ public class Swap {
      * give to the player some other way (or to alert to failing the swap entirely).
      */
     public static SwapResult getSwap(ItemStack handIn, ItemStack otherIn, PlacementMode mode) {
-        int toPlace;
-        switch (mode) {
-            case PLACE_ONE:
-                toPlace = 1;
-                break;
-            case PLACE_QUARTER:
-                toPlace = (int) Math.max(handIn.getCount() / 4d, 1);
-                break;
-            case PLACE_HALF:
-                toPlace = (int) Math.max(handIn.getCount() / 2d, 1);
-                break;
-            case PLACE_ALL:
-                toPlace = handIn.getCount();
-                break;
-            default:
-                throw new IllegalArgumentException("Unhandled placement mode " + mode);
-        }
+        int toPlace = getPlaceAmount(handIn, mode);
 
         // Swap toPlace from handIn to otherIn
         ItemStack toHand;
@@ -582,13 +562,6 @@ public class Swap {
             leftovers = otherIn.copy();
         }
         return new SwapResult(toHand, toOther, leftovers);
-    }
-
-    public static void placeLeftovers(Player player, ItemStack leftovers) {
-        if (!leftovers.isEmpty()) {
-            ItemEntity item = new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), leftovers);
-            player.level.addFreshEntity(item);
-        }
     }
 
     public static void givePlayerItemSwap(ItemStack toPlayer, ItemStack fromPlayer, Player player, InteractionHand hand) {

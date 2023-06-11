@@ -104,13 +104,13 @@ public class GetEnchantmentsPacket {
                 handleClient(message);
             } else if (NetworkUtil.safeToRun(message.pos, player)) {
                 ImmersiveStorage enchantStorage = GetStorage.getEnchantingStorage(player, message.pos);
-                if (enchantStorage.items[0] != null && !enchantStorage.items[0].isEmpty()) {
+                if (enchantStorage.getItem(0) != null && !enchantStorage.getItem(0).isEmpty()) {
                     BlockEntity tileEnt = player.level.getBlockEntity(message.pos);
                     if (tileEnt instanceof EnchantmentTableBlockEntity) {
                         EnchantmentMenu container = new EnchantmentMenu(-1,
                                 player.getInventory(), ContainerLevelAccess.create(player.level, message.pos));
                         container.setItem(1, 0, new ItemStack(Items.LAPIS_LAZULI, 64));
-                        container.setItem(0, 0, enchantStorage.items[0]);
+                        container.setItem(0, 0, enchantStorage.getItem(0));
 
                         int[] xpLevels = container.costs;
                         int[] descs = container.enchantClue;

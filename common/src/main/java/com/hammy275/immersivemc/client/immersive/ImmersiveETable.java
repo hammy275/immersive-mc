@@ -181,12 +181,12 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
     @Override
     public void processStorageFromNetwork(AbstractWorldStorageInfo infoRaw, ImmersiveStorage storage) {
         EnchantingInfo info = (EnchantingInfo) infoRaw;
-        info.items[0] = storage.items[0];
-        if (storage.items[0] != null && !storage.items[0].isEmpty()) {
-            if (storage.items[0].getItem() == Items.BOOK) {
+        info.items[0] = storage.getItem(0);
+        if (info.items[0] != null && !info.items[0].isEmpty()) {
+            if (info.items[0].getItem() == Items.BOOK) {
                 info.itemEnchantedCopy = new ItemStack(Items.ENCHANTED_BOOK);
             } else {
-                info.itemEnchantedCopy = storage.items[0].copy();
+                info.itemEnchantedCopy = info.items[0].copy();
             }
             EnchantmentHelper.setEnchantments(fakeEnch, info.itemEnchantedCopy);
         } else {

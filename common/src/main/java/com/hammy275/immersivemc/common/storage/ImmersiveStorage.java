@@ -1,10 +1,17 @@
 package com.hammy275.immersivemc.common.storage;
 
+import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Holds all info for a given block's storage.
@@ -25,7 +32,12 @@ public class ImmersiveStorage {
     /**
      * A list of items. Usually contains inputs and outputs.
      */
-    public ItemStack[] items;
+    protected ItemStack[] items;
+
+    /**
+     * Item counts from each player for each slot. Used for item returns.
+     */
+    protected List<PlayerItemCounts>[] itemCounts;
 
     public String identifier = "world";
 
@@ -42,6 +54,10 @@ public class ImmersiveStorage {
         if (items == null) {
             items = new ItemStack[numOfItems];
             Arrays.fill(items, ItemStack.EMPTY);
+            itemCounts = new LinkedList[numOfItems];
+            for (int i = 0; i < numOfItems; i++) {
+                itemCounts[i] = new LinkedList<>();
+            }
             this.wStorage.setDirty();
         }
         return this;
@@ -56,6 +72,115 @@ public class ImmersiveStorage {
         return TYPE;
     }
 
+    /**
+     * Directly set stack into slot.
+     * @param slot Slot to place into
+     * @param stack Stack to place
+     */
+    public void setItem(int slot, ItemStack stack) {
+        this.items[slot] = stack;
+        this.itemCounts[slot].clear();
+        this.wStorage.setDirty();
+    }
+
+    /**
+     * Shrink slot, adjusting the leftovers along the way.
+     * @param slot Slot to shrink from
+     * @param amount Amount to shrink by
+     */
+    public void shrinkSlot(int slot, int amount) {
+        this.items[slot].shrink(amount);
+        this.shrinkCountsOnly(slot, amount);
+        this.wStorage.setDirty();
+    }
+
+    /**
+     * Shrink a slot, but only for the itemCounts, not the actual stored items!
+     * @param slot Slot to shrink from
+     * @param amount Amount to shrink by
+     */
+    public void shrinkCountsOnly(int slot, int amount) {
+        while (amount > 0 && !this.itemCounts[slot].isEmpty()) {
+            PlayerItemCounts counts = this.itemCounts[slot].get(0);
+            int toSubtract = Math.min(amount, counts.count);
+            amount -= toSubtract;
+            counts.count -= toSubtract;
+            if (counts.count == 0) {
+                this.itemCounts[slot].remove(0);
+            }
+        }
+    }
+
+    /**
+     * Attempts to merge contents of hand into the given slot, returning any leftovers or a new handStack.
+     * @param player Player to get items from
+     * @param hand Hand to get item from
+     * @param slot Slot to merge into
+     * @param shouldReturnItems Whether player wants to have items returned to their inventory
+     *
+     */
+    public void placeItem(Player player, InteractionHand hand, int amountToPlace, int slot, boolean shouldReturnItems) {
+        ItemStack toHand;
+        ItemStack toImmersive;
+        ItemStack leftovers;
+        ItemStack handStack = player.getItemInHand(hand);
+        ItemStack immersiveStack = this.items[slot];
+        if (Util.stacksEqualBesidesCount(handStack, this.items[slot])) {
+            ItemStack handStackToPlace = handStack.copy();
+            handStackToPlace.setCount(amountToPlace);
+            Util.ItemStackMergeResult mergeResult = Util.mergeStacks(immersiveStack, handStackToPlace, false);
+            int oldImmersiveCount = immersiveStack.getCount();
+            toImmersive = immersiveStack;
+            toHand = handStack.copy();
+            toHand.shrink(amountToPlace);
+            // Add anything that wasn't transferred due to stack size back
+            toHand.grow(mergeResult.mergedFrom.getCount());
+            leftovers = ItemStack.EMPTY;
+            // Always place only in last slot. If Player A places, then Player B, then A places again, order is
+            // A-B-A, rather than all of A then B.
+            PlayerItemCounts last = this.itemCounts[slot].get(this.itemCounts[slot].size() - 1);
+            int itemsMoved = immersiveStack.getCount() - oldImmersiveCount;
+            if (shouldReturnItems && last.uuid.isPresent() && last.uuid.equals(player.getUUID())) {
+                last.count += itemsMoved;
+            } else if (shouldReturnItems) {
+                this.itemCounts[slot].add(new PlayerItemCounts(Optional.of(player.getUUID()), itemsMoved));
+            } else if (last.uuid.isEmpty()) {
+                last.count += itemsMoved;
+            } else {
+                this.itemCounts[slot].add(new PlayerItemCounts(Optional.empty(), itemsMoved));
+            }
+        } else if (handStack.isEmpty()) {
+            toHand = immersiveStack;
+            toImmersive = ItemStack.EMPTY;
+            leftovers = ItemStack.EMPTY;
+            this.itemCounts[slot].clear();
+        } else { // Slots contain different item types and hand isn't air (place new stack in and old items go somewhere)
+            toHand = handStack.copy();
+            toHand.shrink(amountToPlace);
+            toImmersive = handStack.copy();
+            toImmersive.setCount(amountToPlace);
+            leftovers = immersiveStack.copy();
+            this.itemCounts[slot].add(
+                    new PlayerItemCounts(Optional.ofNullable(shouldReturnItems ? player.getUUID() : null), amountToPlace));
+        }
+        this.items[slot] = toImmersive;
+        player.setItemInHand(hand, toHand);
+        Util.placeLeftovers(player, leftovers);
+        this.wStorage.setDirty();
+    }
+
+    public ItemStack getItem(int slot) {
+        return this.items[slot];
+    }
+
+    /**
+     * Get item array directly. Only use for immersives that don't utilize the queue.
+     * @return Items array.
+     */
+    public ItemStack[] getItemsRaw() {
+        return this.items;
+    }
+
 
     public void load(CompoundTag nbt) {
         int length = nbt.getInt("numOfItems");
@@ -67,6 +192,20 @@ public class ImmersiveStorage {
         if (this.identifier.equals("")) {
             this.identifier = "world"; // Safe default if string isn't there
         }
+        itemCounts = new LinkedList[length];
+        for (int i = 0; i < length; i++) {
+            itemCounts[i] = new LinkedList<>();
+        }
+        if (nbt.contains("itemCounts")) {
+            CompoundTag rootCounts = nbt.getCompound("itemCounts");
+            for (int i = 0; i < length; i++) {
+                CompoundTag slotTag = rootCounts.getCompound("slot" + i);
+                int numOfCounts = slotTag.getInt("numOfItems");
+                for (int j = 0; j < numOfCounts; j++) {
+                    itemCounts[i].add(PlayerItemCounts.load(slotTag.getCompound(String.valueOf(j))));
+                }
+            }
+        }
     }
 
     public CompoundTag save(CompoundTag nbt) {
@@ -75,6 +214,41 @@ public class ImmersiveStorage {
             nbt.put("item" + i, items[i].save(new CompoundTag()));
         }
         nbt.putString("identifier", identifier);
+        CompoundTag rootCounts = new CompoundTag();
+        for (int slot = 0; slot < itemCounts.length; slot++) {
+            CompoundTag countSlot = new CompoundTag();
+            countSlot.putInt("numOfItems", itemCounts[slot].size());
+            for (int countIndex = 0; countIndex < itemCounts[slot].size(); countIndex++) {
+                PlayerItemCounts count = itemCounts[slot].get(countIndex);
+                countSlot.put(String.valueOf(count), count.save());
+            }
+            rootCounts.put("slot" + slot, countSlot);
+        }
+        nbt.put("itemCounts", rootCounts);
         return nbt;
+    }
+
+    public static class PlayerItemCounts {
+        public final Optional<UUID> uuid;
+        public int count;
+
+        public PlayerItemCounts(Optional<UUID> uuid, int count) {
+            this.uuid = uuid;
+            this.count = count;
+        }
+
+        public CompoundTag save() {
+            CompoundTag nbt = new CompoundTag();
+            nbt.putString("uuid", this.uuid.isEmpty() ? "null" : this.uuid.toString());
+            nbt.putInt("count", this.count);
+            return nbt;
+        }
+
+        public static PlayerItemCounts load(CompoundTag nbt) {
+            String uuidString = nbt.getString("uuid");
+            UUID uuid = uuidString.equals("null") || uuidString.isEmpty() ? null : UUID.fromString(uuidString);
+            int count = nbt.getInt("count");
+            return new PlayerItemCounts(Optional.ofNullable(uuid), count);
+        }
     }
 }
