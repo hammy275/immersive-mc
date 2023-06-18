@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
+import com.hammy275.immersivemc.common.network.packet.ItemBackPacket;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import net.minecraft.client.Minecraft;
@@ -39,6 +40,7 @@ public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStora
         if (Minecraft.getInstance().player != null &&
                 Minecraft.getInstance().player.distanceToSqr(Vec3.atCenterOf(info.getBlockPosition())) >
                         CommonConstants.distanceSquaredToRemoveImmersive) {
+            Network.INSTANCE.sendToServer(new ItemBackPacket(info.getBlockPosition()));
             info.remove();
         }
     }

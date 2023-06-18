@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 import java.util.UUID;
 
 /**
@@ -128,8 +129,8 @@ public class ImmersiveStorage {
         if (Util.stacksEqualBesidesCount(handStack, this.items[slot])) {
             ItemStack handStackToPlace = handStack.copy();
             handStackToPlace.setCount(amountToPlace);
-            Util.ItemStackMergeResult mergeResult = Util.mergeStacks(immersiveStack, handStackToPlace, false);
             int oldImmersiveCount = immersiveStack.getCount();
+            Util.ItemStackMergeResult mergeResult = Util.mergeStacks(immersiveStack, handStackToPlace, false);
             toImmersive = immersiveStack;
             toHand = handStack.copy();
             toHand.shrink(amountToPlace);
@@ -140,7 +141,7 @@ public class ImmersiveStorage {
             // A-B-A, rather than all of A then B.
             PlayerItemCounts last = this.itemCounts[slot].get(this.itemCounts[slot].size() - 1);
             int itemsMoved = immersiveStack.getCount() - oldImmersiveCount;
-            if (shouldReturnItems && last.uuid.isPresent() && last.uuid.equals(player.getUUID())) {
+            if (shouldReturnItems && last.uuid.isPresent() && last.uuid.get().equals(player.getUUID())) {
                 last.count += itemsMoved;
             } else if (shouldReturnItems) {
                 this.itemCounts[slot].add(new PlayerItemCounts(Optional.of(player.getUUID()), itemsMoved));
@@ -179,6 +180,30 @@ public class ImmersiveStorage {
      */
     public ItemStack[] getItemsRaw() {
         return this.items;
+    }
+
+    /**
+     * Return items to player when leaving radius
+     * @param player Player to return items to
+     */
+    public void returnItems(Player player) {
+        for (int slot = 0; slot < this.itemCounts.length; slot++) {
+            Stack<Integer> countsToRemove = new Stack<>();
+            for (int countIndex = 0; countIndex < this.itemCounts[slot].size(); countIndex++) {
+                PlayerItemCounts counts = this.itemCounts[slot].get(countIndex);
+                if (counts.uuid.isPresent() && counts.uuid.get().equals(player.getUUID())) {
+                    countsToRemove.add(countIndex);
+                    ItemStack ret = this.items[slot].copy();
+                    ret.setCount(counts.count);
+                    Util.placeLeftovers(player, ret);
+                    this.items[slot].shrink(counts.count);
+                }
+            }
+            while (!countsToRemove.isEmpty()) {
+                this.itemCounts[slot].remove((int) countsToRemove.pop());
+            }
+        }
+        this.wStorage.setDirty();
     }
 
 
@@ -220,7 +245,7 @@ public class ImmersiveStorage {
             countSlot.putInt("numOfItems", itemCounts[slot].size());
             for (int countIndex = 0; countIndex < itemCounts[slot].size(); countIndex++) {
                 PlayerItemCounts count = itemCounts[slot].get(countIndex);
-                countSlot.put(String.valueOf(count), count.save());
+                countSlot.put(String.valueOf(countIndex), count.save());
             }
             rootCounts.put("slot" + slot, countSlot);
         }
@@ -239,7 +264,7 @@ public class ImmersiveStorage {
 
         public CompoundTag save() {
             CompoundTag nbt = new CompoundTag();
-            nbt.putString("uuid", this.uuid.isEmpty() ? "null" : this.uuid.toString());
+            nbt.putString("uuid", this.uuid.isEmpty() ? "null" : this.uuid.get().toString());
             nbt.putInt("count", this.count);
             return nbt;
         }

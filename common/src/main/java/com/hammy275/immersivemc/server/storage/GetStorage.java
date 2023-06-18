@@ -3,9 +3,13 @@ package com.hammy275.immersivemc.server.storage;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.storage.AnvilStorage;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
+import com.hammy275.immersivemc.server.swap.Swap;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -80,6 +84,31 @@ public class GetStorage {
             return getSmithingTableStorage(player, pos);
         }
         return null;
+    }
+
+    public static void updateStorageOutputAfterItemReturn(ServerPlayer player, BlockPos pos) {
+        ImmersiveStorage storage = getStorage(player, pos);
+        if (storage != null) {
+            BlockState state = player.level.getBlockState(pos);
+            BlockEntity tileEnt = player.level.getBlockEntity(pos);
+            if (ImmersiveCheckers.isCraftingTable(pos, state, tileEnt, player.level)) {
+                ItemStack out = Swap.getRecipeOutput(player, storage.getItemsRaw());
+                storage.setItem(9, out);
+            } else if (ImmersiveCheckers.isAnvil(pos, state, tileEnt, player.level) &&
+                storage instanceof AnvilStorage aStorage) {
+                Pair<ItemStack, Integer> out = Swap.getAnvilOutput(storage.getItem(0), storage.getItem(1), player);
+                aStorage.xpLevels = out.getSecond();
+                aStorage.setItem(2, out.getFirst());
+            } else if (ImmersiveCheckers.isSmithingTable(pos, state, tileEnt, player.level)) {
+                ItemStack out = Swap.getSmithingTableOutput(storage.getItem(0), storage.getItem(1), player);
+                storage.setItem(2, out);
+            } else if (ImmersiveCheckers.isEnchantingTable(pos, state, tileEnt, player.level)) {
+                // No-op
+            } else if (ImmersiveCheckers.isBeacon(pos, state, tileEnt, player.level)) {
+                // No-op
+            }
+        }
+
     }
 
     public static ImmersiveStorage getEnchantingStorage(Player player, BlockPos pos) {
