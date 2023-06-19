@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.storage;
 
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.server.PlayerConfigs;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -117,10 +118,10 @@ public class ImmersiveStorage {
      * @param player Player to get items from
      * @param hand Hand to get item from
      * @param slot Slot to merge into
-     * @param shouldReturnItems Whether player wants to have items returned to their inventory
      *
      */
-    public void placeItem(Player player, InteractionHand hand, int amountToPlace, int slot, boolean shouldReturnItems) {
+    public void placeItem(Player player, InteractionHand hand, int amountToPlace, int slot) {
+        boolean shouldReturnItems = PlayerConfigs.getConfig(player).returnItems;
         ItemStack toHand;
         ItemStack toImmersive;
         ItemStack leftovers;

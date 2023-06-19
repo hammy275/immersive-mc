@@ -58,7 +58,7 @@ public class Swap {
             Util.placeLeftovers(player, beaconItem);
             beaconStorage.setItem(0, ItemStack.EMPTY);
         }
-        beaconStorage.placeItem(player, hand, 1, 0, true);
+        beaconStorage.placeItem(player, hand, 1, 0);
         beaconStorage.wStorage.setDirty();
     }
 
@@ -87,7 +87,7 @@ public class Swap {
         if (slot == 0) {
             ItemStack toEnchant = player.getItemInHand(hand);
             if (!toEnchant.isEmpty() && !toEnchant.isEnchantable()) return;
-            enchStorage.placeItem(player, hand, 1, slot, true);
+            enchStorage.placeItem(player, hand, 1, slot);
         } else if (player.getItemInHand(hand).isEmpty()) {
             boolean res = doEnchanting(slot, pos, player, hand);
             if (res) {
@@ -158,7 +158,7 @@ public class Swap {
                                  PlacementMode mode) {
         AnvilStorage storage = GetStorage.getAnvilStorage(player, pos);
         if (slot != 2) {
-            storage.placeItem(player, hand, getPlaceAmount(player.getItemInHand(hand), mode), slot, true);
+            storage.placeItem(player, hand, getPlaceAmount(player.getItemInHand(hand), mode), slot);
             storage.setItem(2, ItemStack.EMPTY);
             storage.xpLevels = 0;
             if (!storage.getItem(0).isEmpty() && !storage.getItem(1).isEmpty()) {
@@ -181,7 +181,7 @@ public class Swap {
         ImmersiveStorage storage = GetStorage.getSmithingTableStorage(player, pos);
         if (slot != 2) {
             // TODO: Replace with config value for returning items
-            storage.placeItem(player, hand, getPlaceAmount(player.getItemInHand(hand), mode), slot, true);
+            storage.placeItem(player, hand, getPlaceAmount(player.getItemInHand(hand), mode), slot);
             storage.setItem(2, ItemStack.EMPTY);
             if (!storage.getItem(0).isEmpty() && !storage.getItem(1).isEmpty()) {
                 ItemStack output = Swap.getSmithingTableOutput(storage.getItem(0), storage.getItem(1), player);
@@ -279,7 +279,7 @@ public class Swap {
             if (slot < 9) {
                 storage.placeItem(player, hand,
                         getPlaceAmount(player.getItemInHand(hand), mode),
-                        slot, true);
+                        slot);
                 storage.setItem(9, getRecipeOutput(player, storage.getItemsRaw()));
             } else {
                 handleDoCraft(player, storage.getItemsRaw(), tablePos);
