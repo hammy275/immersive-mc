@@ -127,7 +127,7 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
     @Override
     public void processStorageFromNetwork(AbstractWorldStorageInfo wInfo, ImmersiveStorage storageIn) {
         AnvilInfo info = (AnvilInfo) wInfo;
-        info.items = storageIn.items;
+        info.items = storageIn.getItemsRaw();
         AnvilStorage aStorage = (AnvilStorage) storageIn;
         info.anvilCost = aStorage.xpLevels;
     }

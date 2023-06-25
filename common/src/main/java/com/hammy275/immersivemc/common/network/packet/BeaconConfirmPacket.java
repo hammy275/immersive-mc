@@ -47,9 +47,9 @@ public class BeaconConfirmPacket {
                     if (data.get(0) == 4 && message.secondaryId == -1) {
                         secondId = message.primaryId;
                     }
-                    if (!beaconStorage.items[0].isEmpty() &&
+                    if (!beaconStorage.getItem(0).isEmpty() &&
                             isValidForBeacon(data.get(0), message.primaryId, secondId)) {
-                        beaconStorage.items[0] = ItemStack.EMPTY;
+                        beaconStorage.setItem(0, ItemStack.EMPTY);
                         data.set(1, message.primaryId);
                         data.set(2, secondId);
                         beaconStorage.wStorage.setDirty();

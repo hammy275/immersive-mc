@@ -19,6 +19,7 @@ import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.common.network.packet.FetchPlayerStoragePacket;
 import com.hammy275.immersivemc.common.network.packet.InteractPacket;
 import com.hammy275.immersivemc.common.network.packet.InventorySwapPacket;
+import dev.architectury.platform.Platform;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Camera;
@@ -235,9 +236,9 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         if (getSingleton().infos.size() > 0) {
             BackpackInfo info = (BackpackInfo) getSingleton().infos.get(0);
             for (int i = 0; i <= 3; i++) {
-                info.craftingInput[i] = storage.items[i];
+                info.craftingInput[i] = storage.getItem(i);
             }
-            info.craftingOutput = storage.items[4];
+            info.craftingOutput = storage.getItem(4);
         }
     }
 
@@ -367,8 +368,11 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     private BackpackInfo getRenderInfo(BackpackInfo tickInfo) {
         BackpackInfo renderInfo = new BackpackInfo();
         renderInfo.slotHovered = tickInfo.slotHovered;
-        renderInfo.topRow = tickInfo.topRow;
-        calculatePositions(renderInfo, VRPlugin.API.getRenderVRPlayer());
+        // Use regular VR player if in a dev environment
+        IVRPlayer vrPlayer = Platform.isDevelopmentEnvironment() ?
+                VRPlugin.API.getVRPlayer(Minecraft.getInstance().player) :
+                VRPlugin.API.getRenderVRPlayer();
+        calculatePositions(renderInfo, vrPlayer);
         renderInfo.setInputSlots();
         return renderInfo;
     }

@@ -16,6 +16,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
+import dev.architectury.platform.Platform;
+import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -303,9 +305,15 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             } else if (facing == null) {
                 stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
                 stack.mulPose(Vector3f.YP.rotationDegrees(180));
-                Vec3 textMove = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() ?
-                        VRPlugin.API.getRenderVRPlayer().getHMD().getLookAngle() :
-                        Minecraft.getInstance().player.getLookAngle();
+                Vec3 textMove;
+                if (VRPluginVerify.hasAPI && VRPluginVerify.clientInVR()) {
+                    IVRPlayer textMovePlayer = Platform.isDevelopmentEnvironment() ?
+                            VRPlugin.API.getVRPlayer(Minecraft.getInstance().player) :
+                            VRPlugin.API.getRenderVRPlayer();
+                    textMove = textMovePlayer.getHMD().getLookAngle();
+                } else {
+                    textMove = Minecraft.getInstance().player.getLookAngle();
+                }
                 textMove = textMove.multiply(-0.05, -0.05, -0.05);
                 textPos = textPos.add(textMove);
             }
