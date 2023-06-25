@@ -46,7 +46,7 @@ public class ServerSubscriber {
                      i <= GetStorage.getLastInputIndex(pos, state, world.getBlockEntity(pos), world);
                      i++) {
                     Vec3 vecPos = Vec3.atCenterOf(pos);
-                    ItemStack stack = storage.items[i];
+                    ItemStack stack = storage.getItem(i);
                     if (stack != null && !stack.isEmpty()) {
                         ItemEntity itemEnt = new ItemEntity(level,
                                 vecPos.x, vecPos.y, vecPos.z, stack);

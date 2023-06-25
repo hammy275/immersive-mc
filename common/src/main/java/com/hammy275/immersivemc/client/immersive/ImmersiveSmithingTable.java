@@ -112,7 +112,7 @@ public class ImmersiveSmithingTable extends AbstractWorldStorageImmersive<Smithi
     @Override
     public void processStorageFromNetwork(AbstractWorldStorageInfo wInfo, ImmersiveStorage storageIn) {
         SmithingTableInfo info = (SmithingTableInfo) wInfo;
-        info.items = storageIn.items;
+        info.items = storageIn.getItemsRaw();
     }
 
     @Override

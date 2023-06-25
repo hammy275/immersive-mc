@@ -79,6 +79,8 @@
   "screen.immersivemc.immersives_customize.title": "Customize Immersives",
   "config.immersivemc.disable_vanilla_guis": "Disable Vanilla Interactions",
   "config.immersivemc.disable_vanilla_guis.desc": "Disables the vanilla GUIs and other vanilla interactions for any immersives that can be interacted with and enabled in the ImmersiveMC settings.",
+  "config.immersivemc.return_items": "Return Items",
+  "config.immersivemc.return_items.desc": "Returns items from immersives not used to store items when you walk far enough away.",
   "config.immersivemc.do_rumble": "Do Controller Rumble",
   "config.immersivemc.do_rumble.desc": "Do controller rumbling for ImmersiveMC actions.",
   "config.immersivemc.center_brewing": "Center Items for Brewing Immersive",
