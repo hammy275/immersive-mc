@@ -1,19 +1,18 @@
 package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive.info.CraftingInfo;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.server.storage.GetStorage;
 import com.hammy275.immersivemc.server.swap.Swap;
 import dev.architectury.networking.NetworkManager;
-import com.hammy275.immersivemc.client.immersive.info.CraftingInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingRecipe;
 
 import java.util.function.Supplier;
 
@@ -61,7 +60,7 @@ public class GetRecipePacket {
                     }
                     items[9] = ItemStack.EMPTY;
                     ItemStack output = Swap.getRecipeOutput(sender, items);
-                    GetStorage.getCraftingStorage(sender, packet.pos).items[9] = output;
+                    GetStorage.getCraftingStorage(sender, packet.pos).setItem(9, output);
                     Network.INSTANCE.sendToPlayer(sender,
                             new GetRecipePacket(packet.pos, output));
                 }

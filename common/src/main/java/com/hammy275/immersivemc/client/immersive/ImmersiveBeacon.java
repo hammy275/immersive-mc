@@ -309,7 +309,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
 
     @Override
     public void processStorageFromNetwork(AbstractWorldStorageInfo info, ImmersiveStorage storage) {
-        info.items[0] = storage.items[0];
+        info.items[0] = storage.getItem(0);
     }
 
     @Override

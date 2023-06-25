@@ -1,5 +1,7 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
+import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.packet.ItemBackPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
@@ -70,5 +72,11 @@ public abstract class AbstractWorldStorageInfo extends AbstractImmersiveInfo {
     @Override
     public BlockPos getBlockPosition() {
         return this.pos;
+    }
+
+    @Override
+    public void remove() {
+        Network.INSTANCE.sendToServer(new ItemBackPacket(this.getBlockPosition()));
+        super.remove();
     }
 }

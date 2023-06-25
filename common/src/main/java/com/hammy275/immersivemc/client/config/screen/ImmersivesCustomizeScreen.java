@@ -38,6 +38,7 @@ public class ImmersivesCustomizeScreen extends Screen {
                 32, this.height - 32, 24);
 
         ScreenUtils.addOption("disable_vanilla_guis", ImmersiveMCConfig.disableVanillaGUIs, this.list);
+        ScreenUtils.addOption("return_items", ImmersiveMCConfig.returnItems, this.list);
         ScreenUtils.addOption("do_rumble", ImmersiveMCConfig.doRumble, this.list);
         ScreenUtils.addOption("center_brewing", ImmersiveMCConfig.autoCenterBrewing, this.list);
         ScreenUtils.addOption("center_furnace", ImmersiveMCConfig.autoCenterFurnace, this.list);
