@@ -2,10 +2,10 @@ package com.hammy275.immersivemc.server.tracker;
 
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.server.PlayerConfigs;
-import com.hammy275.immersivemc.server.swap.Swap;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.BlockPos;
@@ -46,7 +46,7 @@ public class CampfireTracker extends AbstractTracker {
                 toSmelt.shrink(1);
                 boolean didGive = player.getInventory().add(recipe.get().getResultItem(player.level.registryAccess()).copy());
                 if (!didGive) {
-                    Swap.placeLeftovers(player, recipe.get().getResultItem(player.level.registryAccess()).copy());
+                    Util.placeLeftovers(player, recipe.get().getResultItem(player.level.registryAccess()).copy());
                 }
                 cookTime.remove(player.getGameProfile().getName());
             } else if (recipe.isPresent() &&

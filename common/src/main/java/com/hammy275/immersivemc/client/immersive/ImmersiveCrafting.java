@@ -138,10 +138,10 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
     @Override
     public void processStorageFromNetwork(AbstractWorldStorageInfo info, ImmersiveStorage storageIn) {
         for (int i = 0; i <= 8; i++) {
-            info.items[i] = storageIn.items[i];
+            info.items[i] = storageIn.getItem(i);
         }
         CraftingInfo cInfo = (CraftingInfo) info;
-        cInfo.outputItem = storageIn.items[9];
+        cInfo.outputItem = storageIn.getItem(9);
     }
 
     @Override
