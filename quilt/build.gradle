@@ -42,7 +42,7 @@ dependencies {
     }
 
     modApi "net.minecraftforge:forgeconfigapiport-fabric:4.2.6"
-    modApi "curse.maven:mcvrapi-591092:4457672"
+    modApi "curse.maven:mcvrapi-591092:4548160"
 
     modApi "com.terraformersmc:modmenu:5.0.2"
 
