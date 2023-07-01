@@ -68,7 +68,7 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
                       current.y - last.y,
                       current.z - last.z
                     );
-                    Vec3 playerPos = Minecraft.getInstance().player.position();
+                    Vec3 playerPos = playerPos();
                     Vec3 playerPosChange = new Vec3(
                             playerPos.x - info.lastPlayerPos.x,
                             playerPos.y - info.lastPlayerPos.y,
@@ -87,7 +87,7 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
                     }
                 }
                 info.lastControllerPos[c] = current;
-                info.lastPlayerPos = Minecraft.getInstance().player.position();
+                info.lastPlayerPos = playerPos();
             }
         }
     }

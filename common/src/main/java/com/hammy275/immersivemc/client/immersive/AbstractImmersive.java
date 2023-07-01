@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.client.model.Cube1x1;
@@ -62,6 +63,24 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         Immersives.IMMERSIVES.add(this);
         this.maxImmersives = maxImmersives;
         this.infos = new ArrayList<>(maxImmersives > 0 ? maxImmersives + 1 : 16);
+    }
+
+    /**
+     * Gets player position while accounting for partial ticks (getFrameTime())
+     * @return Player position while accounting for partial ticks
+     */
+    public Vec3 playerPos() {
+        return ClientUtil.playerPos();
+    }
+
+    /**
+     * Called just before render() for data that needs to be updated just before render time, rather than
+     * on a tick-based interval.
+     *
+     * WARNING: This is called per render-pass, and will completely mess with the player position!
+     */
+    protected void renderTick(I info, boolean isInVR) {
+
     }
 
     /**
@@ -212,6 +231,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     public void doRender(I info, PoseStack stack, boolean isInVR) {
         if (shouldRender(info, isInVR)) {
             try {
+                renderTick(info, isInVR);
                 render(info, stack, isInVR);
                 // Need to end batch here so items show behind item guides
                 Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
