@@ -1,7 +1,11 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
+import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
+import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
+import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.network.Network;
@@ -12,13 +16,9 @@ import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.server.swap.Swap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import com.hammy275.immersivemc.client.config.ClientConstants;
-import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
-import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
-import com.hammy275.immersivemc.client.model.BackpackModel;
-import com.hammy275.immersivemc.server.swap.Swap;
 import dev.architectury.platform.Platform;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
@@ -59,7 +59,6 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
     public ImmersiveBackpack() {
         super(1); // A player only has one backpack
-        forceDisableItemGuide = true;
     }
 
     @Override
@@ -68,9 +67,11 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
-    protected void doTick(BackpackInfo info, boolean isInVR) {
-        super.doTick(info, isInVR);
-        IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player);
+    protected void renderTick(BackpackInfo info, boolean isInVR) {
+        super.renderTick(info, isInVR);
+        IVRPlayer vrPlayer = Platform.isDevelopmentEnvironment() ?
+                VRPlugin.API.getVRPlayer(Minecraft.getInstance().player) :
+                VRPlugin.API.getRenderVRPlayer();
         calculatePositions(info, vrPlayer);
         Optional<Integer> hitboxIntersect = Util.getFirstIntersect(vrPlayer.getController0().position(),
                 info.getAllHitboxes());
@@ -104,39 +105,36 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     public boolean shouldRender(BackpackInfo info, boolean isInVR) {
         return Minecraft.getInstance().player != null &&
                 VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(Minecraft.getInstance().player) &&
-                VRPlugin.API.apiActive(Minecraft.getInstance().player) &&
-                info.readyToRender();
+                VRPlugin.API.apiActive(Minecraft.getInstance().player);
     }
 
     @Override
-    protected void render(BackpackInfo tickInfo, PoseStack stack, boolean isInVR) {
+    protected void render(BackpackInfo info, PoseStack stack, boolean isInVR) {
         boolean leftHanded = VRPlugin.API.isLeftHanded(Minecraft.getInstance().player);
-        // Basically use a copy of the info from doTick(), except use positions from renderPlayer to have smoother backpack
-        BackpackInfo renderInfo = getRenderInfo(tickInfo);
         for (int i = 0; i <= 31; i++) {
-            AABB hitbox = renderInfo.getHitbox(i);
-            renderHitbox(stack, hitbox, renderInfo.getPosition(i));
+            AABB hitbox = info.getHitbox(i);
+            renderHitbox(stack, hitbox, info.getPosition(i));
         }
 
         for (int i = 0; i <= 26; i++) {
             ItemStack item = Minecraft.getInstance().player.getInventory().getItem(i + 9);
-            if (!item.isEmpty() && renderInfo.getPosition(i) != null) {
+            if (!item.isEmpty() && info.getPosition(i) != null) {
                 final float size =
-                        renderInfo.slotHovered == i ? ClientConstants.itemScaleSizeBackpackSelected : ClientConstants.itemScaleSizeBackpack;
-                renderItem(item, stack, renderInfo.getPosition(i), size, null, renderInfo.getHitbox(i), true, tickInfo.light);
+                        info.slotHovered == i ? ClientConstants.itemScaleSizeBackpackSelected : ClientConstants.itemScaleSizeBackpack;
+                renderItem(item, stack, info.getPosition(i), size, null, info.getHitbox(i), true, info.light);
             }
         }
 
         for (int i = 27; i <= 31; i++) {
-            // tickInfo actually holds item information, so we use that here
-            ItemStack item = i == 31 ? tickInfo.craftingOutput : tickInfo.craftingInput[i - 27];
-            if (!item.isEmpty() && renderInfo.getPosition(i) != null) {
-                renderItem(item, stack, renderInfo.getPosition(i), ClientConstants.itemScaleSizeBackpack, null, renderInfo.getHitbox(i), true, tickInfo.light);
+            // info actually holds item information, so we use that here
+            ItemStack item = i == 31 ? info.craftingOutput : info.craftingInput[i - 27];
+            if (!item.isEmpty() && info.getPosition(i) != null) {
+                renderItem(item, stack, info.getPosition(i), ClientConstants.itemScaleSizeBackpack, null, info.getHitbox(i), true, info.light);
             }
         }
 
         stack.pushPose();
-        Vec3 pos = renderInfo.renderPos;
+        Vec3 pos = info.renderPos;
 
         Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.translate(-cameraInfo.getPosition().x + pos.x,
@@ -146,8 +144,8 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
         stack.translate(0, 1.5, 0); // Translate origin to our hand
 
-        stack.mulPose(Vector3f.YN.rotation(renderInfo.handYaw));
-        stack.mulPose(Vector3f.XN.rotation(renderInfo.handPitch));
+        stack.mulPose(Vector3f.YN.rotation(info.handYaw));
+        stack.mulPose(Vector3f.XN.rotation(info.handPitch));
         stack.mulPose(Vector3f.ZP.rotation((float) Math.PI)); // Rotate
 
         stack.translate(0, -1.5, 0); // Move back to where we started
@@ -160,7 +158,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderType.entityCutout(BackpackModel.textureLocation)),
                 15728880, OverlayTexture.NO_OVERLAY,
-                renderInfo.rgb.x(), renderInfo.rgb.y(), renderInfo.rgb.z(), 1);
+                info.rgb.x(), info.rgb.y(), info.rgb.z(), 1);
 
         // Translate and render the crafting on the side of the backpack and down a bit
         // (yes, positive y in this context moves it down lol)
@@ -176,12 +174,12 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         // Need to end batch here so items show behind item guides
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
 
-        // Render item guides here instead since we're using renderInfo
+        // Render item guides here instead since we're using info
         if (ActiveConfig.placementGuideMode != PlacementGuideMode.OFF) {
-            for (int i = 0; i < renderInfo.getInputSlots().length; i++) {
-                if (slotShouldRenderHelpHitbox(tickInfo, i)) { // Use tickInfo here since it holds info about crafting
-                    AABB itemBox = renderInfo.getInputSlots()[i];
-                    renderItemGuide(stack, itemBox, 0.2f, slotHelpBoxIsSelected(renderInfo, i), tickInfo.light);
+            for (int i = 0; i < info.getInputSlots().length; i++) {
+                if (slotShouldRenderHelpHitbox(info, i)) { // Use info here since it holds info about crafting
+                    AABB itemBox = info.getInputSlots()[i];
+                    renderItemGuide(stack, itemBox, 0.2f, slotHelpBoxIsSelected(info, i), info.light);
                 }
             }
         }
@@ -358,22 +356,5 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
         info.setPosition(31, centerCraftingPos.add(upVec.multiply(0.125, 0.125, 0.125)));
         info.setHitbox(31, createHitbox(info.getPosition(31), 0.05f));
-    }
-
-    /**
-     * Hack to create a separate info instance for our render function.
-     * @param tickInfo tickInfo from doTick()
-     * @return A BackpackInfo that's best used for rendering (so our model updates for all the frames)
-     */
-    private BackpackInfo getRenderInfo(BackpackInfo tickInfo) {
-        BackpackInfo renderInfo = new BackpackInfo();
-        renderInfo.slotHovered = tickInfo.slotHovered;
-        // Use regular VR player if in a dev environment
-        IVRPlayer vrPlayer = Platform.isDevelopmentEnvironment() ?
-                VRPlugin.API.getVRPlayer(Minecraft.getInstance().player) :
-                VRPlugin.API.getRenderVRPlayer();
-        calculatePositions(renderInfo, vrPlayer);
-        renderInfo.setInputSlots();
-        return renderInfo;
     }
 }

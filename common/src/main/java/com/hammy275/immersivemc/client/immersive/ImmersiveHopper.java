@@ -32,7 +32,7 @@ public class ImmersiveHopper extends AbstractBlockEntityImmersive<HopperBlockEnt
 
         Vec3[] positions;
 
-        if (isAboveHopper(info.getBlockPosition(), Minecraft.getInstance().player.position())) {
+        if (isAboveHopper(info.getBlockPosition(), playerPos())) {
             forward = Direction.UP;
             Vec3[] positionsRaw = get3x3HorizontalGrid(info.getBlockPosition(), ImmersiveChest.spacing,
                     forwardUnmodified, false);
@@ -63,7 +63,7 @@ public class ImmersiveHopper extends AbstractBlockEntityImmersive<HopperBlockEnt
         super.doTick(info, isInVR);
         Direction forwardForBoxPos = getForwardFromPlayer(Minecraft.getInstance().player);
         Direction forwardForBoxRot = forwardForBoxPos;
-        if (isAboveHopper(info.getBlockPosition(), Minecraft.getInstance().player.position())) {
+        if (isAboveHopper(info.getBlockPosition(), playerPos())) {
             forwardForBoxPos = Direction.UP;
         }
         if (forwardForBoxPos != info.lastDirectionForBoxPos || forwardForBoxRot != info.lastDirectionForBoxRot) {
