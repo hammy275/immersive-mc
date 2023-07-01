@@ -24,7 +24,7 @@ public class LastClientVRData {
         }
 
         if (Minecraft.getInstance().player != null) {
-            lastPositions.addFirst(Minecraft.getInstance().player.position());
+            lastPositions.addFirst(ClientUtil.playerPos());
             if (lastPositions.size() > 5) {
                 lastPositions.removeLast();
             }
@@ -57,7 +57,7 @@ public class LastClientVRData {
                 VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(type.index);
 
         Vec3 lastPlayerPos = lastPositions.get(1);
-        Vec3 currentPlayerPos = Minecraft.getInstance().player.position();
+        Vec3 currentPlayerPos = ClientUtil.playerPos();
         Vec3 posDiff = currentPlayerPos.subtract(lastPlayerPos);
 
         return current.position().subtract(last.position()).subtract(posDiff);
