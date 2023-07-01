@@ -19,6 +19,14 @@ public class ClientUtil {
 
     public static int immersiveLeftClickCooldown = 0;
 
+    /**
+     * Gets player position while accounting for partial ticks (getFrameTime())
+     * @return Player position while accounting for partial ticks
+     */
+    public static Vec3 playerPos() {
+        return Minecraft.getInstance().player.getPosition(Minecraft.getInstance().getFrameTime());
+    }
+
     public static Tuple<Vec3, Vec3> getStartAndEndOfLookTrace(Player player) {
         double dist = Minecraft.getInstance().gameMode.getPickRange();
         Vec3 start;

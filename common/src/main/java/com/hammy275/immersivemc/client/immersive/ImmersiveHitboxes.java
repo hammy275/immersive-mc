@@ -36,16 +36,17 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
     }
 
     @Override
-    protected void doTick(ImmersiveHitboxesInfo info, boolean isInVR) {
-        super.doTick(info, isInVR);
-        if (ActiveConfig.reachBehindBackpack) {
+    protected void renderTick(ImmersiveHitboxesInfo info, boolean isInVR) {
+        super.renderTick(info, isInVR);
+        if (ActiveConfig.reachBehindBackpack && VRPluginVerify.clientInVR()) {
             // centerPos is the center of the back of the player
-            Vec3 centerPos = Minecraft.getInstance().player.position().add(0, 1.0625, 0);
+            IVRData hmdData = VRPlugin.API.getRenderVRPlayer().getHMD();
+            Vec3 centerPos = hmdData.position().add(0, -0.5, 0).add(hmdData.getLookAngle().scale(-0.15));
             Vec3 headLook;
             // Even though it's VR-Only, let's try to get something for desktop testing purposes
             if (VRPluginVerify.clientInVR() && VRPlugin.API.playerInVR(Minecraft.getInstance().player)
-            && !Platform.isDevelopmentEnvironment()) {
-                headLook = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD().getLookAngle();
+                    && !Platform.isDevelopmentEnvironment()) {
+                headLook = hmdData.getLookAngle();
             } else {
                 headLook = Minecraft.getInstance().player.getLookAngle();
             }
@@ -62,17 +63,22 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
                     ));
             if (VRPluginVerify.clientInVR() && VRPlugin.API.playerInVR(Minecraft.getInstance().player)) {
                 IVRData secondaryController = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1();
-                IVRData hmd = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD();
                 if (info.getHitbox(ImmersiveHitboxesInfo.BACKPACK_INDEX)
                         .contains(secondaryController.position())) {
-                    info.validBackpackAngle = controllerOpenBagAngleCheck(hmd,
-                            secondaryController);
+                    if (Platform.isDevelopmentEnvironment()) {
+                        hmdData = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD();
+                    }
                 }
             }
         } else {
             // In case setting changes mid-game
             info.setHitbox(ImmersiveHitboxesInfo.BACKPACK_INDEX, null);
         }
+    }
+
+    @Override
+    protected void doTick(ImmersiveHitboxesInfo info, boolean isInVR) {
+        super.doTick(info, isInVR);
         if (backpackCooldown > 0) {
             backpackCooldown--;
         }
@@ -94,7 +100,7 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
                 if (backpackHitbox.contains(c1.position())) {
                     renderHitbox(stack, AABB.ofSize(c1.position(), 0.25, 0.25, 0.25),
                             c1.position(), true,
-                            info.validBackpackAngle ? 0f : 1f, info.validBackpackAngle ? 1f : 0f, 0f);
+                            0f, 1f, 0f);
                 }
             }
         }
@@ -139,7 +145,7 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
         if (info instanceof ImmersiveHitboxesInfo hInfo) {
             if (closest == ImmersiveHitboxesInfo.BACKPACK_INDEX && hand == InteractionHand.OFF_HAND
-                    && backpackCooldown <= 0 && hInfo.validBackpackAngle) {
+                    && backpackCooldown <= 0) {
                 VRPluginProxy.rumbleIfVR(null, 1, CommonConstants.vibrationTimePlayerActionAlert);
                 ClientUtil.openBag(player);
                 backpackCooldown = 50;
@@ -157,18 +163,5 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
         if (this.infos.size() == 0) {
             this.infos.add(new ImmersiveHitboxesInfo());
         }
-    }
-
-    private boolean controllerOpenBagAngleCheck(IVRData hmd, IVRData controller) {
-        // Ignore y axis here (like with the bag boxes in the first place!)
-        Vec3 handToHeadVec = controller.position().vectorTo(Minecraft.getInstance().player.getEyePosition())
-                .multiply(1, 0, 1).normalize();
-        Vec3 headVec = hmd.getLookAngle().multiply(1, 0, 1).normalize();
-
-        // Get angle from 0 to PI, where PI is completely opposite the vector and 0 is same direction as vector
-        double angle = Math.acos(headVec.dot(handToHeadVec));
-
-        // 60 degree margin, but they should be the same direction
-        return angle <= Math.PI / 3;
     }
 }
