@@ -42,6 +42,9 @@ public class ClientRenderSubscriber {
     protected static <I extends AbstractImmersiveInfo> void renderInfos(AbstractImmersive<I> singleton,
                                                                  PoseStack stack) {
         try {
+            if (singleton.isVROnly() && !VRPluginVerify.clientInVR()) {
+                return;
+            }
             for (I info : singleton.getTrackedObjects()) {
                 singleton.doRender(info, stack, VRPluginVerify.clientInVR());
             }
