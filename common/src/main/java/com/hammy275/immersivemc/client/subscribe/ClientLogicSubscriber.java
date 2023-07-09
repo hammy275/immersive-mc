@@ -177,6 +177,10 @@ public class ClientLogicSubscriber {
     }
 
     protected static <I extends AbstractImmersiveInfo> void tickInfos(AbstractImmersive<I> singleton, Player player) {
+        // Don't tick if VR only and not in VR
+        if (singleton.isVROnly() && !VRPluginVerify.clientInVR()) {
+            return;
+        }
         singleton.globalTick();
         if (singleton.getTrackedObjects().size() == 0) {
             singleton.noInfosTick(); // Run onNoInfos() function if we don't have any infos right now
