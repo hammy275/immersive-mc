@@ -47,7 +47,7 @@ public abstract class AbstractVRHandTracker {
     }
 
     protected BlockState getBlockStateAtHand(Player player, IVRPlayer vrPlayer, InteractionHand hand) {
-        return player.level.getBlockState(getBlockPosAtHand(vrPlayer, hand));
+        return player.level().getBlockState(getBlockPosAtHand(vrPlayer, hand));
     }
 
     protected Block getBlockAtHand(Player player, IVRPlayer vrPlayer, InteractionHand hand) {

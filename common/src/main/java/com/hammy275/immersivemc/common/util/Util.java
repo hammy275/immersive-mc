@@ -199,8 +199,8 @@ public class Util {
 
     public static void placeLeftovers(Player player, ItemStack leftovers) {
         if (!leftovers.isEmpty()) {
-            ItemEntity item = new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), leftovers);
-            player.level.addFreshEntity(item);
+            ItemEntity item = new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), leftovers);
+            player.level().addFreshEntity(item);
         }
     }
 

@@ -21,6 +21,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PotionItem;
@@ -59,7 +60,7 @@ public class Swap {
     }
 
     public static void shulkerBoxSwap(ServerPlayer player, int slot, InteractionHand hand, BlockPos pos) {
-        if (player.level.getBlockEntity(pos) instanceof ShulkerBoxBlockEntity shulkerBox) {
+        if (player.level().getBlockEntity(pos) instanceof ShulkerBoxBlockEntity shulkerBox) {
             ItemStack shulkerItem = shulkerBox.getItem(slot).copy();
             ItemStack playerItem = player.getItemInHand(hand);
             if (playerItem.isEmpty() || shulkerItem.isEmpty() || !Util.stacksEqualBesidesCount(shulkerItem, playerItem)) {
@@ -109,7 +110,7 @@ public class Swap {
         if (lapisInInventory < slot && !player.getAbilities().instabuild) return false;
 
         EnchantmentMenu container = new EnchantmentMenu(-1,
-                player.getInventory(), ContainerLevelAccess.create(player.level, pos));
+                player.getInventory(), ContainerLevelAccess.create(player.level(), pos));
         container.setItem(1, 0, new ItemStack(Items.LAPIS_LAZULI, 64));
         container.setItem(0, 0, toEnchantItem);
         if (container.clickMenuButton(player, slot - 1)) {
@@ -201,7 +202,7 @@ public class Swap {
         if ((player.experienceLevel >= resAndCost.getSecond() || player.getAbilities().instabuild)
                 && !resAndCost.getFirst().isEmpty()) {
             ItemCombinerMenu container = new AnvilMenu(-1, player.getInventory(),
-                    ContainerLevelAccess.create(player.level, pos));
+                    ContainerLevelAccess.create(player.level(), pos));
                     /* Note: Since we create a fresh container here with only the output
                      (used mainly for causing the anvil to make sounds and possibly break),
                      we never subtract XP levels from it. Instead, we just subtract them
@@ -227,7 +228,7 @@ public class Swap {
         ItemStack output = Swap.getSmithingTableOutput(left, mid, player);
         if (!output.isEmpty()) {
             ItemCombinerMenu container = new SmithingMenu(-1, player.getInventory(),
-                    ContainerLevelAccess.create(player.level, pos));
+                    ContainerLevelAccess.create(player.level(), pos));
             container.getSlot(2).onTake(player, output);
             storage.shrinkSlot(0, 1);
             storage.shrinkSlot(1, 1);
@@ -241,7 +242,7 @@ public class Swap {
     public static void handleCraftingSwap(ServerPlayer player, int slot, InteractionHand hand, BlockPos tablePos,
                                           PlacementMode mode) {
         ImmersiveStorage storage = GetStorage.getCraftingStorage(player, tablePos);
-        if (player.level.getBlockEntity(tablePos) instanceof Container table) { // Tinker's Construct Table
+        if (player.level().getBlockEntity(tablePos) instanceof Container table) { // Tinker's Construct Table
             ItemStack playerItem = player.getItemInHand(hand).copy();
             ItemStack craftingItem = table.getItem(slot).copy();
             if (slot < 9) {
@@ -291,14 +292,14 @@ public class Swap {
 
     public static ItemStack getRecipeOutput(ServerPlayer player, ItemStack[] stacksIn) {
         int invDim = stacksIn.length == 10 ? 3 : 2; // 10 since stacksIn includes the output slot
-        CraftingContainer inv = new CraftingContainer(new NullContainer(), invDim, invDim);
+        CraftingContainer inv = new TransientCraftingContainer(new NullContainer(), invDim, invDim);
         for (int i = 0; i < stacksIn.length - 1; i++) {
             inv.setItem(i, stacksIn[i]);
         }
         Optional<CraftingRecipe> res = player.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING,
-                inv, player.level);
+                inv, player.level());
         if (res.isPresent()) {
-            return res.get().assemble(inv, player.level.registryAccess());
+            return res.get().assemble(inv, player.level().registryAccess());
         }
         return ItemStack.EMPTY;
     }
@@ -307,7 +308,7 @@ public class Swap {
                                      BlockPos tablePos) {
         boolean isBackpack = stacksIn.length == 5;
         int invDim = isBackpack ? 2 : 3;
-        CraftingContainer inv = new CraftingContainer(new NullContainer(), invDim, invDim);
+        CraftingContainer inv = new TransientCraftingContainer(new NullContainer(), invDim, invDim);
         for (int i = 0; i < stacksIn.length - 1; i++) { // -1 from length since we skip the last index since it's the output
             inv.setItem(i, stacksIn[i]);
         }
@@ -342,11 +343,11 @@ public class Swap {
             if (!toGive.isEmpty()) {
                 BlockPos posBlock = tablePos != null ? tablePos.above() : player.blockPosition();
                 Vec3 pos = Vec3.atCenterOf(posBlock);
-                ItemEntity entOut = new ItemEntity(player.level, pos.x, pos.y, pos.z, toGive);
+                ItemEntity entOut = new ItemEntity(player.level(), pos.x, pos.y, pos.z, toGive);
                 entOut.setDeltaMovement(0, 0, 0);
-                player.level.addFreshEntity(entOut);
+                player.level().addFreshEntity(entOut);
             } else {
-                player.level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                         SoundEvents.ITEM_PICKUP, isBackpack ? SoundSource.PLAYERS : SoundSource.BLOCKS,
                         0.2f,
                         ThreadLocalRandom.current().nextFloat() -

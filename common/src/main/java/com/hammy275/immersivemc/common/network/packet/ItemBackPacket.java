@@ -30,7 +30,7 @@ public class ItemBackPacket {
     public static void handle(ItemBackPacket packet, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
-            if (NetworkUtil.safeToRun(packet.pos, player) && ImmersiveMCLevelStorage.usesWorldStorage(packet.pos, player.level)) {
+            if (NetworkUtil.safeToRun(packet.pos, player) && ImmersiveMCLevelStorage.usesWorldStorage(packet.pos, player.level())) {
                 ImmersiveStorage storage = GetStorage.getStorage(player, packet.pos);
                 if (storage != null) {
                     storage.returnItems(player);

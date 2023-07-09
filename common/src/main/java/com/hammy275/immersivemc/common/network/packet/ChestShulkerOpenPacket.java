@@ -40,7 +40,7 @@ public class ChestShulkerOpenPacket {
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player != null) {
                 if (NetworkUtil.safeToRun(message.pos, player)) {
-                    BlockEntity tileEnt = player.level.getBlockEntity(message.pos);
+                    BlockEntity tileEnt = player.level().getBlockEntity(message.pos);
                     if (tileEnt instanceof ChestBlockEntity) {
                         if (!ActiveConfig.useChestImmersion) return;
                         ChestBlockEntity chest = (ChestBlockEntity) tileEnt;

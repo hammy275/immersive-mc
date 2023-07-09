@@ -46,7 +46,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
 
     public static ImmersiveMCLevelStorage getLevelStorage(Player player) {
         if (player instanceof ServerPlayer) {
-            return getLevelStorage((ServerLevel) player.level);
+            return getLevelStorage((ServerLevel) player.level());
         }
         throw new IllegalArgumentException("Can only get storage server side!");
     }

@@ -41,18 +41,18 @@ public class CampfireTracker extends AbstractTracker {
         for (int c = 0; c <= 1; c++) {
             ItemStack toSmelt = c == 0 ? player.getItemInHand(InteractionHand.MAIN_HAND) : player.getItemInHand(InteractionHand.OFF_HAND);
             Optional<CampfireCookingRecipe> recipe =
-                    player.level.getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SimpleContainer(toSmelt), player.level);
+                    player.level().getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SimpleContainer(toSmelt), player.level());
             if (recipe.isPresent() && info.get(c) >= recipe.get().getCookingTime() / 2) { // Smelt the held controller's item if we reach cook time.
                 toSmelt.shrink(1);
-                boolean didGive = player.getInventory().add(recipe.get().getResultItem(player.level.registryAccess()).copy());
+                boolean didGive = player.getInventory().add(recipe.get().getResultItem(player.level().registryAccess()).copy());
                 if (!didGive) {
-                    Util.placeLeftovers(player, recipe.get().getResultItem(player.level.registryAccess()).copy());
+                    Util.placeLeftovers(player, recipe.get().getResultItem(player.level().registryAccess()).copy());
                 }
                 cookTime.remove(player.getGameProfile().getName());
             } else if (recipe.isPresent() &&
                     ThreadLocalRandom.current().nextInt(4) == 0) { // Not ready to smelt yet, show particle
                 Vec3 pos = VRPlugin.API.getVRPlayer(player).getController(c).position();
-                if (player.level instanceof ServerLevel serverLevel) {
+                if (player.level() instanceof ServerLevel serverLevel) {
                     serverLevel.sendParticles(ParticleTypes.SMOKE, pos.x, pos.y, pos.z,
                             1, 0.01, 0.01, 0.01, 0);
                 }
@@ -72,13 +72,13 @@ public class CampfireTracker extends AbstractTracker {
         for (int c = 0; c <= 1; c++) {
             IVRData controller = vrPlayer.getController(c);
             BlockPos pos = BlockPos.containing(controller.position());
-            if (player.level.getBlockState(pos).getBlock() instanceof CampfireBlock ||
-                    player.level.getBlockState(pos.below()).getBlock() instanceof CampfireBlock) {
+            if (player.level().getBlockState(pos).getBlock() instanceof CampfireBlock ||
+                    player.level().getBlockState(pos.below()).getBlock() instanceof CampfireBlock) {
                 BlockState campfire;
-                if (player.level.getBlockState(pos).getBlock() instanceof CampfireBlock) {
-                    campfire = player.level.getBlockState(pos);
+                if (player.level().getBlockState(pos).getBlock() instanceof CampfireBlock) {
+                    campfire = player.level().getBlockState(pos);
                 } else {
-                    campfire = player.level.getBlockState(pos.below());
+                    campfire = player.level().getBlockState(pos.below());
                 } // Get campfire state
                 if (!campfire.getValue(CampfireBlock.LIT)) continue; // Immediately continue if no campfire is lit
                 ItemStack stackNew;

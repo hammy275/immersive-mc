@@ -23,7 +23,7 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury:${rootProject.architectury_version}"
 
-    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:6.0.2"
+    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
     modApi "curse.maven:mcvrapi-591092:4548162"
 
     modCompileOnly "curse.maven:vivecraft-667903:4160376"

@@ -46,9 +46,9 @@ public class ThrowPacket {
                             new AboutToThrowData.ThrowRecord(packet.velocity, packet.dir));
                     if (itemInHand.getItem() instanceof TridentItem) {
                         // 71000 just ensures we "held right click" long enough
-                        itemInHand.getItem().releaseUsing(itemInHand, player.level, player, 71000);
+                        itemInHand.getItem().releaseUsing(itemInHand, player.level(), player, 71000);
                     } else {
-                        itemInHand.getItem().use(player.level, player, InteractionHand.MAIN_HAND);
+                        itemInHand.getItem().use(player.level(), player, InteractionHand.MAIN_HAND);
                     }
                 }
             }

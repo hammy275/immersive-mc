@@ -73,8 +73,8 @@ public class FetchInventoryPacket {
 
     public static void handleServerToClient(ServerPlayer player, BlockPos pos) {
         if (NetworkUtil.safeToRun(pos, player)) {
-            BlockEntity tileEnt = player.level.getBlockEntity(pos);
-            if (ImmersiveMCLevelStorage.usesWorldStorage(pos, player.level.getBlockState(pos), tileEnt, player.level)) {
+            BlockEntity tileEnt = player.level().getBlockEntity(pos);
+            if (ImmersiveMCLevelStorage.usesWorldStorage(pos, player.level().getBlockState(pos), tileEnt, player.level())) {
                 ImmersiveStorage storage = GetStorage.getStorage(player, pos);
                 if (storage != null) {
                     Network.INSTANCE.sendToPlayer(player,

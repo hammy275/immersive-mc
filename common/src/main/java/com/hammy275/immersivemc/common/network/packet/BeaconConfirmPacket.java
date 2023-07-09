@@ -40,7 +40,7 @@ public class BeaconConfirmPacket {
         ctx.get().queue(() -> {
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (NetworkUtil.safeToRun(message.pos, player)) {
-                if (player.level.getBlockEntity(message.pos) instanceof BeaconBlockEntity beacon) {
+                if (player.level().getBlockEntity(message.pos) instanceof BeaconBlockEntity beacon) {
                     ContainerData data = ((BeaconBlockEntityMixin) beacon).getBeaconData();
                     ImmersiveStorage beaconStorage = GetStorage.getBeaconStorage(player, message.pos);
                     int secondId = message.secondaryId;
@@ -53,7 +53,7 @@ public class BeaconConfirmPacket {
                         data.set(1, message.primaryId);
                         data.set(2, secondId);
                         beaconStorage.wStorage.setDirty();
-                        player.level.blockEntityChanged(beacon.getBlockPos());
+                        player.level().blockEntityChanged(beacon.getBlockPos());
                     }
                 }
             }

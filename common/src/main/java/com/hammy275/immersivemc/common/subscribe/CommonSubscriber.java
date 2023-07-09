@@ -35,11 +35,11 @@ public class CommonSubscriber {
     }
 
     public static void onPlayerTick(Player player) {
-        if (!player.level.isClientSide && VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player)) {
+        if (!player.level().isClientSide && VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player)) {
             for (InteractionHand iHand : InteractionHand.values()) {
                 IVRData hand = VRPlugin.API.getVRPlayer(player).getController(iHand.ordinal());
                 AABB shieldBox = ShieldUtil.getShieldHitbox(player, hand, iHand);
-                List<Entity> ents = player.level.getEntities(player, shieldBox);
+                List<Entity> ents = player.level().getEntities(player, shieldBox);
                 for (Entity e : ents) {
                     if (e instanceof Projectile proj) {
                         if (!reflected.containsKey(proj.getUUID())) {

@@ -89,7 +89,7 @@ public class ServerSubscriber {
     }
 
     public static void onPlayerTick(Player player) {
-        if (player.level.isClientSide) return;
+        if (player.level().isClientSide) return;
         for (AbstractTracker tracker : ServerTrackerInit.playerTrackers) {
             tracker.doTick(player);
         }
@@ -99,7 +99,7 @@ public class ServerSubscriber {
     }
 
     public static void onPlayerJoin(Player player) {
-        if (!player.level.isClientSide && player instanceof ServerPlayer) {
+        if (!player.level().isClientSide && player instanceof ServerPlayer) {
             ActiveConfig.loadConfigFromFile(true);
             Network.INSTANCE.sendToPlayer((ServerPlayer) player,
                     new ConfigSyncPacket());

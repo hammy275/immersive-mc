@@ -70,17 +70,17 @@ public class GetStorage {
     }
 
     public static ImmersiveStorage getStorage(Player player, BlockPos pos) {
-        BlockState state = player.level.getBlockState(pos);
-        BlockEntity tileEnt = player.level.getBlockEntity(pos);
-        if (ImmersiveCheckers.isCraftingTable(pos, state, tileEnt, player.level)) {
+        BlockState state = player.level().getBlockState(pos);
+        BlockEntity tileEnt = player.level().getBlockEntity(pos);
+        if (ImmersiveCheckers.isCraftingTable(pos, state, tileEnt, player.level())) {
             return getCraftingStorage(player, pos);
-        } else if (ImmersiveCheckers.isAnvil(pos, state, tileEnt, player.level)) {
+        } else if (ImmersiveCheckers.isAnvil(pos, state, tileEnt, player.level())) {
             return getAnvilStorage(player, pos);
-        } else if (ImmersiveCheckers.isEnchantingTable(pos, state, tileEnt, player.level)) {
+        } else if (ImmersiveCheckers.isEnchantingTable(pos, state, tileEnt, player.level())) {
             return getEnchantingStorage(player, pos);
-        } else if (ImmersiveCheckers.isBeacon(pos, state, tileEnt, player.level)) {
+        } else if (ImmersiveCheckers.isBeacon(pos, state, tileEnt, player.level())) {
             return getBeaconStorage(player, pos);
-        } else if (ImmersiveCheckers.isSmithingTable(pos, state, tileEnt, player.level)) {
+        } else if (ImmersiveCheckers.isSmithingTable(pos, state, tileEnt, player.level())) {
             return getSmithingTableStorage(player, pos);
         }
         return null;
@@ -89,22 +89,22 @@ public class GetStorage {
     public static void updateStorageOutputAfterItemReturn(ServerPlayer player, BlockPos pos) {
         ImmersiveStorage storage = getStorage(player, pos);
         if (storage != null) {
-            BlockState state = player.level.getBlockState(pos);
-            BlockEntity tileEnt = player.level.getBlockEntity(pos);
-            if (ImmersiveCheckers.isCraftingTable(pos, state, tileEnt, player.level)) {
+            BlockState state = player.level().getBlockState(pos);
+            BlockEntity tileEnt = player.level().getBlockEntity(pos);
+            if (ImmersiveCheckers.isCraftingTable(pos, state, tileEnt, player.level())) {
                 ItemStack out = Swap.getRecipeOutput(player, storage.getItemsRaw());
                 storage.setItem(9, out);
-            } else if (ImmersiveCheckers.isAnvil(pos, state, tileEnt, player.level) &&
+            } else if (ImmersiveCheckers.isAnvil(pos, state, tileEnt, player.level()) &&
                 storage instanceof AnvilStorage aStorage) {
                 Pair<ItemStack, Integer> out = Swap.getAnvilOutput(storage.getItem(0), storage.getItem(1), player);
                 aStorage.xpLevels = out.getSecond();
                 aStorage.setItem(2, out.getFirst());
-            } else if (ImmersiveCheckers.isSmithingTable(pos, state, tileEnt, player.level)) {
+            } else if (ImmersiveCheckers.isSmithingTable(pos, state, tileEnt, player.level())) {
                 ItemStack out = Swap.getSmithingTableOutput(storage.getItem(0), storage.getItem(1), player);
                 storage.setItem(2, out);
-            } else if (ImmersiveCheckers.isEnchantingTable(pos, state, tileEnt, player.level)) {
+            } else if (ImmersiveCheckers.isEnchantingTable(pos, state, tileEnt, player.level())) {
                 // No-op
-            } else if (ImmersiveCheckers.isBeacon(pos, state, tileEnt, player.level)) {
+            } else if (ImmersiveCheckers.isBeacon(pos, state, tileEnt, player.level())) {
                 // No-op
             }
         }

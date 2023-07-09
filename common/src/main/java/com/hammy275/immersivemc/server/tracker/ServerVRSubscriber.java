@@ -12,7 +12,7 @@ import net.minecraft.world.phys.Vec3;
 public class ServerVRSubscriber {
 
     public static void vrPlayerTick(Player player) {
-        if (!player.level.isClientSide && VRPlugin.API.playerInVR(player)) {
+        if (!player.level().isClientSide && VRPlugin.API.playerInVR(player)) {
             IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
             for (AbstractVRHandTracker tracker : ServerTrackerInit.vrPlayerTrackers) {
                 tracker.preTick(player);

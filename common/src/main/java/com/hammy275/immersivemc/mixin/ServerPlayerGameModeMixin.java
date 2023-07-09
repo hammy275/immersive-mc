@@ -21,7 +21,7 @@ public class ServerPlayerGameModeMixin {
     public boolean isCrouchingCondition(boolean value, ServerPlayer serverPlayer, Level level, ItemStack itemStack, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         if (!PlayerConfigs.getConfig(serverPlayer).crouchBypassImmersion) return value;
         if (blockHitResult != null) {
-            if (Util.isHittingImmersive(blockHitResult, serverPlayer.level)) {
+            if (Util.isHittingImmersive(blockHitResult, serverPlayer.level())) {
                 return false;
             }
         }

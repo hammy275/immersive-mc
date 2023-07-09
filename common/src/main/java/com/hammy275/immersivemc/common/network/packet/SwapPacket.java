@@ -49,32 +49,32 @@ public class SwapPacket {
         ctx.get().queue(() -> {
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (NetworkUtil.safeToRun(message.block, player)) {
-                BlockEntity tileEnt = player.level.getBlockEntity(message.block);
-                BlockState state = player.level.getBlockState(message.block);
-                if (ImmersiveCheckers.isFurnace(message.block, state, tileEnt, player.level)
+                BlockEntity tileEnt = player.level().getBlockEntity(message.block);
+                BlockState state = player.level().getBlockState(message.block);
+                if (ImmersiveCheckers.isFurnace(message.block, state, tileEnt, player.level())
                         && ActiveConfig.useFurnaceImmersion) {
                     Swap.handleFurnaceSwap((WorldlyContainer) tileEnt,
                             player, message.hand, message.slot, message.placementMode);
-                } else if (ImmersiveCheckers.isBrewingStand(message.block, state, tileEnt, player.level)
+                } else if (ImmersiveCheckers.isBrewingStand(message.block, state, tileEnt, player.level())
                         && ActiveConfig.useBrewingImmersion) {
                     BrewingStandBlockEntity stand = (BrewingStandBlockEntity) tileEnt;
                     Swap.handleBrewingSwap(stand, player, message.hand, message.slot, message.placementMode);
-                } else if (ImmersiveCheckers.isJukebox(message.block, state, tileEnt, player.level)
+                } else if (ImmersiveCheckers.isJukebox(message.block, state, tileEnt, player.level())
                         && ActiveConfig.useJukeboxImmersion) {
                     Swap.handleJukebox((JukeboxBlockEntity) tileEnt, player, message.hand);
-                } else if (ImmersiveCheckers.isChest(message.block, state, tileEnt, player.level)
+                } else if (ImmersiveCheckers.isChest(message.block, state, tileEnt, player.level())
                         && ActiveConfig.useChestImmersion) {
                     if (tileEnt instanceof ChestBlockEntity cbe) {
                         Swap.handleChest(cbe, player, message.hand, message.slot);
                     } else if (tileEnt instanceof EnderChestBlockEntity) {
                         Swap.handleEnderChest(player, message.hand, message.slot);
                     }
-                } else if (ImmersiveCheckers.isShulkerBox(message.block, state, tileEnt, player.level)) {
+                } else if (ImmersiveCheckers.isShulkerBox(message.block, state, tileEnt, player.level())) {
                     Swap.shulkerBoxSwap(player, message.slot, message.hand, message.block);
-                } else if (ImmersiveCheckers.isBarrel(message.block, state, tileEnt, player.level)) {
+                } else if (ImmersiveCheckers.isBarrel(message.block, state, tileEnt, player.level())) {
                     Swap.handleBarrel((BarrelBlockEntity) tileEnt, player,
                             message.hand, message.slot);
-                } else if (ImmersiveCheckers.isHopper(message.block, state, tileEnt, player.level)) {
+                } else if (ImmersiveCheckers.isHopper(message.block, state, tileEnt, player.level())) {
                     Swap.handleHopper((HopperBlockEntity) tileEnt, player,
                             message.hand, message.slot);
                 }

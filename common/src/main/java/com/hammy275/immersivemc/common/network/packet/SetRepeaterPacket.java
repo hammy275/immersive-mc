@@ -34,7 +34,7 @@ public class SetRepeaterPacket {
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (NetworkUtil.safeToRun(message.pos, player)) {
                 if (message.newDelay >= 1 && message.newDelay <= 4) {
-                    Util.setRepeater(player.level, message.pos, message.newDelay);
+                    Util.setRepeater(player.level(), message.pos, message.newDelay);
                 }
             }
         });

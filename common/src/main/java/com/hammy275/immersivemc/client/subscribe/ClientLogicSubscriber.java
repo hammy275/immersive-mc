@@ -98,8 +98,8 @@ public class ClientLogicSubscriber {
         if (looking == null || looking.getType() != HitResult.Type.BLOCK) return;
 
         BlockPos pos = ((BlockHitResult) looking).getBlockPos();
-        BlockState state = player.level.getBlockState(pos);
-        BlockEntity tileEntity = player.level.getBlockEntity(pos);
+        BlockState state = player.level().getBlockState(pos);
+        BlockEntity tileEntity = player.level().getBlockEntity(pos);
 
         possiblyTrack(pos, state, tileEntity, Minecraft.getInstance().level);
 
@@ -269,8 +269,8 @@ public class ClientLogicSubscriber {
         HitResult looking = Minecraft.getInstance().hitResult;
         if (looking != null && looking.getType() == HitResult.Type.BLOCK) {
             BlockPos pos = ((BlockHitResult) looking).getBlockPos();
-            BlockState state = player.level.getBlockState(pos);
-            BlockEntity tileEnt = player.level.getBlockEntity(pos);
+            BlockState state = player.level().getBlockState(pos);
+            BlockEntity tileEnt = player.level().getBlockEntity(pos);
 
             if (tileEnt instanceof ChestBlockEntity || tileEnt instanceof EnderChestBlockEntity) {
                 ChestInfo chestInfo = ImmersiveChest.findImmersive(tileEnt);
@@ -286,7 +286,7 @@ public class ClientLogicSubscriber {
                         return true;
                     }
                 }
-            } else if (ImmersiveCheckers.isBarrel(pos, state, tileEnt, player.level)) {
+            } else if (ImmersiveCheckers.isBarrel(pos, state, tileEnt, player.level())) {
                 BarrelInfo barrelInfo = ImmersiveBarrel.findImmersive(tileEnt);
                 if (barrelInfo != null && barrelInfo.isOpen) {
                     barrelInfo.nextRow();
@@ -366,12 +366,12 @@ public class ClientLogicSubscriber {
         if (looking == null || looking.getType() != HitResult.Type.BLOCK) return 0;
 
         BlockPos pos = ((BlockHitResult) looking).getBlockPos();
-        BlockState state = player.level.getBlockState(pos);
+        BlockState state = player.level().getBlockState(pos);
         if (ActiveConfig.rightClickChest && ActiveConfig.useChestImmersion) {
-            boolean isChest = state.getBlock() instanceof AbstractChestBlock && player.level.getBlockEntity(pos) instanceof ChestBlockEntity;
-            boolean isEnderChest = state.getBlock() instanceof EnderChestBlock && player.level.getBlockEntity(pos) instanceof EnderChestBlockEntity;
+            boolean isChest = state.getBlock() instanceof AbstractChestBlock && player.level().getBlockEntity(pos) instanceof ChestBlockEntity;
+            boolean isEnderChest = state.getBlock() instanceof EnderChestBlock && player.level().getBlockEntity(pos) instanceof EnderChestBlockEntity;
             if (isChest || isEnderChest) {
-                ChestInfo info = ImmersiveChest.findImmersive(player.level.getBlockEntity(pos));
+                ChestInfo info = ImmersiveChest.findImmersive(player.level().getBlockEntity(pos));
                 if (info != null) {
                     ImmersiveChest.openChest(info);
                     return Immersives.immersiveChest.getCooldownDesktop();
@@ -379,15 +379,15 @@ public class ClientLogicSubscriber {
             }
         }
         if (ActiveConfig.useBarrelImmersion &&
-                ImmersiveCheckers.isBarrel(pos, state, player.level.getBlockEntity(pos), player.level)) {
-            BarrelInfo info = ImmersiveBarrel.findImmersive(player.level.getBlockEntity(pos));
+                ImmersiveCheckers.isBarrel(pos, state, player.level().getBlockEntity(pos), player.level())) {
+            BarrelInfo info = ImmersiveBarrel.findImmersive(player.level().getBlockEntity(pos));
             if (info != null) {
                 ImmersiveBarrel.openBarrel(info);
                 return Immersives.immersiveBarrel.getCooldownDesktop();
             }
         }
         if (ActiveConfig.useShulkerImmersion) {
-            BlockEntity blockEnt = player.level.getBlockEntity(pos);
+            BlockEntity blockEnt = player.level().getBlockEntity(pos);
             if (blockEnt instanceof ShulkerBoxBlockEntity) {
                 for (ShulkerInfo info : Immersives.immersiveShulker.getTrackedObjects()) {
                     if (info.getBlockPosition().equals(pos)) {

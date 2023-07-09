@@ -45,14 +45,14 @@ public class LeverTracker extends AbstractTracker {
             BlockPos handBlockPos = BlockPos.containing(handPos);
             BlockPos leverPos;
             BlockState state;
-            if (player.level.getBlockState(handBlockPos).getBlock() == Blocks.LEVER) {
-                state = player.level.getBlockState(handBlockPos);
+            if (player.level().getBlockState(handBlockPos).getBlock() == Blocks.LEVER) {
+                state = player.level().getBlockState(handBlockPos);
                 leverPos = handBlockPos;
-            } else if (player.level.getBlockState(handBlockPos.below()).getBlock() == Blocks.LEVER) {
-                state = player.level.getBlockState(handBlockPos.below());
+            } else if (player.level().getBlockState(handBlockPos.below()).getBlock() == Blocks.LEVER) {
+                state = player.level().getBlockState(handBlockPos.below());
                 leverPos = handBlockPos.below();
-            } else if (player.level.getBlockState(handBlockPos.above()).getBlock() == Blocks.LEVER) {
-                state = player.level.getBlockState(handBlockPos.above());
+            } else if (player.level().getBlockState(handBlockPos.above()).getBlock() == Blocks.LEVER) {
+                state = player.level().getBlockState(handBlockPos.above());
                 leverPos = handBlockPos.above();
             } else {
                 continue;
@@ -89,7 +89,7 @@ public class LeverTracker extends AbstractTracker {
                 if (last.distanceToSqr(handPos) > 0.1*0.1) { // If our hand moved a significant amount
                     info.cooldown = 20;
                     LeverBlock leverBlock = (LeverBlock) Blocks.LEVER;
-                    leverBlock.use(state, player.level, leverPos, player, c == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND,
+                    leverBlock.use(state, player.level(), leverPos, player, c == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND,
                             null);
                     VRPluginProxy.rumbleIfVR_P(player, c, CommonConstants.vibrationTimeWorldInteraction);
                 }

@@ -74,7 +74,7 @@ public class BeaconDataPacket {
             if (player == null) { // S2C (got info from server)
                 NetworkClientHandlers.setBeaconData(packet);
             } else { // C2S (asking for info)
-                if (player.getLevel().getBlockEntity(packet.pos) instanceof BeaconBlockEntity beacon) {
+                if (player.level().getBlockEntity(packet.pos) instanceof BeaconBlockEntity beacon) {
                     Network.INSTANCE.sendToPlayer(player,
                             BeaconDataPacket.fromBeacon(beacon));
                 }

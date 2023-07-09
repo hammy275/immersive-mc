@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.components.Tooltip;
@@ -47,28 +48,28 @@ public class ItemGuideCustomizeScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float f) {
-        this.renderBackground(stack);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float f) {
+        this.renderBackground(graphics);
 
-        super.render(stack, mouseX, mouseY, f);
+        super.render(graphics, mouseX, mouseY, f);
 
-        drawCenteredString(stack, this.font, this.title.getString(),
+        graphics.drawCenteredString(this.font, this.title.getString(),
                 this.width / 2, 8, 0xFFFFFF);
 
-        renderPreview(stack, ActiveConfig.itemGuideColor, 0.25f, false);
-        renderPreview(stack, ActiveConfig.itemGuideSelectedColor, 0.5f, false);
+        renderPreview(graphics.pose(), ActiveConfig.itemGuideColor, 0.25f, false);
+        renderPreview(graphics.pose(), ActiveConfig.itemGuideSelectedColor, 0.5f, false);
         // Render square for particle color by using our cube model lol
-        renderPreview(stack, ActiveConfig.rangedGrabColor, 0.75f, true);
+        renderPreview(graphics.pose(), ActiveConfig.rangedGrabColor, 0.75f, true);
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 7 / 8 - 16,
                 this.height * 1 / 4 - 16, this.width * 7 / 8 + 16, this.height * 1 / 4 + 16)) {
-            renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide.desc")),
+            graphics.renderTooltip(this.font, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide.desc")),
                     mouseX, mouseY);
         }
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 7 / 8 - 16,
                 this.height * 1 / 2 - 16, this.width * 7 / 8 + 16, this.height * 1 / 2 + 16)) {
-            renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide_selected.desc")),
+            graphics.renderTooltip(this.font, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide_selected.desc")),
                     mouseX, mouseY);
         }
 
@@ -76,7 +77,7 @@ public class ItemGuideCustomizeScreen extends Screen {
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 7 / 8 - 16,
                 this.height * 3 / 4 - 16 + (int) (16f * color.alphaF()), this.width * 7 / 8 + 16, this.height * 3 / 4 + 16 + (int) (16f * color.alphaF()))) {
-            renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.ranged_grab_color.desc")),
+            graphics.renderTooltip(this.font, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.ranged_grab_color.desc")),
                     mouseX, mouseY);
         }
     }

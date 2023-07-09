@@ -33,7 +33,7 @@ public class ThrowRedirect {
                 Vec3 shooterVelocity = shooter.getDeltaMovement();
                 projectile.setDeltaMovement(
                         projectile.getDeltaMovement()
-                                .add(shooterVelocity.x, shooter.isOnGround() ? 0.0D : shooterVelocity.y, shooterVelocity.z)
+                                .add(shooterVelocity.x, shooter.onGround() ? 0.0D : shooterVelocity.y, shooterVelocity.z)
                 );
                 // Don't call normal shoot logic
                 return;

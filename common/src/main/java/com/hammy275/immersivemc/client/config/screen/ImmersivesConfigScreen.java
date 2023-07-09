@@ -2,8 +2,8 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
@@ -83,19 +83,19 @@ public class ImmersivesConfigScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(stack);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(graphics);
 
-        super.render(stack, mouseX, mouseY, partialTicks);
+        super.render(graphics, mouseX, mouseY, partialTicks);
 
         if (canShowConfigScreen()) {
-            drawCenteredString(stack, this.font, this.title.getString(),
+            graphics.drawCenteredString(this.font, this.title.getString(),
                     this.width / 2, 8, 0xFFFFFF);
-            drawCenteredString(stack, this.font, Component.translatable("screen.immersivemc.immersives_config.subtitle"),
+            graphics.drawCenteredString(this.font, Component.translatable("screen.immersivemc.immersives_config.subtitle"),
                     this.width / 2, 8 + this.font.lineHeight, 0xFFFFFF);
         } else {
             // This is pretty rare, only happening when we're in a world but haven't finished the S2C part of ImmersiveMC's handshake
-            drawCenteredString(stack, this.font, Component.translatable("screen.immersivemc.immersives_config.cant_change"),
+            graphics.drawCenteredString(this.font, Component.translatable("screen.immersivemc.immersives_config.cant_change"),
                     this.width / 2, this.height / 2, 0xFFFFFF);
         }
     }

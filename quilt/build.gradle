@@ -41,10 +41,10 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
     }
 
-    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:6.0.2"
+    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
     modApi "curse.maven:mcvrapi-591092:4548162"
 
-    modApi "com.terraformersmc:modmenu:6.2.2"
+    modApi "com.terraformersmc:modmenu:7.1.0"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionQuilt")) { transitive false }

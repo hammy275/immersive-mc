@@ -45,7 +45,7 @@ public class PetTracker extends AbstractVRHandTracker {
                 if (entity.getBoundingBox().inflate(0.2).contains(currentVRData.getController(hand.ordinal()).position())) {
                     if (LastTickVRData.getAllVelocity(lastVRData.lastPlayer.getController(hand.ordinal()),
                             currentVRData.getController(hand.ordinal()), lastVRData) >= THRESHOLD) {
-                        ServerLevel level = (ServerLevel) player.level;
+                        ServerLevel level = (ServerLevel) player.level();
                         Vec3 pos = currentVRData.getController(hand.ordinal()).position();
                         level.sendParticles(ParticleTypes.HEART, pos.x, pos.y, pos.z, ThreadLocalRandom.current().nextInt(5) + 1,
                                 0.25, 0.1, 0.25, 0.00001);
@@ -79,7 +79,7 @@ public class PetTracker extends AbstractVRHandTracker {
 
     protected List<LivingEntity> getPlayerPetsNearby(Player player) {
         List<LivingEntity> pets = new LinkedList<>();
-        List<Entity> ents = player.level.getEntities(player, AABB.ofSize(player.position(), 10, 10, 10));
+        List<Entity> ents = player.level().getEntities(player, AABB.ofSize(player.position(), 10, 10, 10));
         for (Entity e : ents) {
             if (PlayerConfigs.getConfig(player).canPetAnyLiving) {
                 if (e instanceof LivingEntity le) {

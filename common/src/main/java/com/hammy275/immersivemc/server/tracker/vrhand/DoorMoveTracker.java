@@ -60,7 +60,7 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
     @Override
     protected void runForHand(Player player, InteractionHand hand, ItemStack stackInHand, IVRPlayer currentVRData, LastTickData lastVRData) {
         BlockPos pos = getBlockPosAtHand(currentVRData, hand);
-        BlockState blockState = player.level.getBlockState(pos);
+        BlockState blockState = player.level().getBlockState(pos);
         Vec3 velocity = LastTickVRData.getVelocity(lastVRData.lastPlayer.getController(hand.ordinal()), currentVRData.getController(hand.ordinal()),
                 lastVRData);
         Direction pushPullMainDirection = getDirectionToMove(blockState);
@@ -68,7 +68,7 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
         boolean otherMoveCheck = blockState.getBlock() instanceof FenceGateBlock &&
                 movingInDirectionWithThreshold(pushPullMainDirection.getOpposite(), velocity, THRESHOLD);
         if (movingInDirectionWithThreshold(pushPullMainDirection, velocity, THRESHOLD) || otherMoveCheck) {
-            InteractionResult res = blockState.use(player.level, player, InteractionHand.MAIN_HAND, new BlockHitResult(
+            InteractionResult res = blockState.use(player.level(), player, InteractionHand.MAIN_HAND, new BlockHitResult(
                     currentVRData.getController(hand.ordinal()).position(),
                     pushPullMainDirection, getBlockPosAtHand(currentVRData, hand), false
             ));

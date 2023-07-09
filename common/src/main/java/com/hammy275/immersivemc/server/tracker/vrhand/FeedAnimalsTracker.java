@@ -83,7 +83,7 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
 
     public static List<Animal> getLivingNearby(Player player) {
         AABB checkArea = AABB.ofSize(player.position(), 6, 6, 6);
-        List<Entity> ents = player.level.getEntities(player, checkArea, (e) -> e instanceof Animal);
+        List<Entity> ents = player.level().getEntities(player, checkArea, (e) -> e instanceof Animal);
         List<Animal> nearby = new LinkedList<>();
         for (Entity e : ents) {
             nearby.add((Animal) e);

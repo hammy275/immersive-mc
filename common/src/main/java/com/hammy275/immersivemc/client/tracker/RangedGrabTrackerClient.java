@@ -65,7 +65,7 @@ public class RangedGrabTrackerClient extends AbstractTracker {
                     Vec3 end = start.add(viewVec.x * dist, viewVec.y * dist,
                             viewVec.z * dist);
 
-                    List<Entity> ents = player.level.getEntities(player, player.getBoundingBox().inflate(10),
+                    List<Entity> ents = player.level().getEntities(player, player.getBoundingBox().inflate(10),
                             (entity -> entity instanceof ItemEntity && Util.canPickUpItem((ItemEntity) entity, player)));
                     List<AABB> hitboxes = new LinkedList<>();
                     for (Entity ent : ents) {
@@ -82,7 +82,7 @@ public class RangedGrabTrackerClient extends AbstractTracker {
             if (selected != null) {
                 RGBA color = ActiveConfig.rangedGrabColor;
                 Vec3 pos = selected.position().add(0, 0.2, 0);
-                selected.level.addParticle(new DustParticleOptions(
+                selected.level().addParticle(new DustParticleOptions(
                         new Vector3f(color.redF(), color.greenF(), color.blueF()), color.alphaF()),
                         pos.x, pos.y, pos.z, 0.01, 0.01, 0.01);
             }

@@ -39,7 +39,7 @@ public class GrabItemPacket {
             if (!ActiveConfig.useRangedGrab) return;
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player != null) {
-                Entity ent = player.level.getEntity(packet.entityId);
+                Entity ent = player.level().getEntity(packet.entityId);
                 ServerPlayerConfig config = PlayerConfigs.getConfig(player);
                 int range;
                 if (config.rangedGrabRange == -1) {

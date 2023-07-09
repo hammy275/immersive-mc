@@ -89,17 +89,17 @@ public class InteractPacket {
                     Swap.handleBackpackCraftingSwap(message.slot - 27, message.hand, storage, player, message.placementMode);
                 }
             } else if (NetworkUtil.safeToRun(message.pos, player)) {
-                BlockState state = player.level.getBlockState(message.pos);
-                BlockEntity tileEnt = player.level.getBlockEntity(message.pos);
-                if (ImmersiveCheckers.isCraftingTable(message.pos, state, tileEnt, player.level)) {
+                BlockState state = player.level().getBlockState(message.pos);
+                BlockEntity tileEnt = player.level().getBlockEntity(message.pos);
+                if (ImmersiveCheckers.isCraftingTable(message.pos, state, tileEnt, player.level())) {
                     Swap.handleCraftingSwap(player, message.slot, message.hand, message.pos, message.placementMode);
-                } else if (ImmersiveCheckers.isAnvil(message.pos, state, tileEnt, player.level)) {
+                } else if (ImmersiveCheckers.isAnvil(message.pos, state, tileEnt, player.level())) {
                     Swap.anvilSwap(message.slot, message.hand, message.pos, player, message.placementMode);
-                } else if (ImmersiveCheckers.isEnchantingTable(message.pos, state, tileEnt, player.level)) {
+                } else if (ImmersiveCheckers.isEnchantingTable(message.pos, state, tileEnt, player.level())) {
                     Swap.enchantingTableSwap(player, message.slot, message.hand, message.pos);
-                } else if (ImmersiveCheckers.isBeacon(message.pos, state, tileEnt, player.level)) {
+                } else if (ImmersiveCheckers.isBeacon(message.pos, state, tileEnt, player.level())) {
                     Swap.beaconSwap(player, message.hand, message.pos);
-                } else if (ImmersiveCheckers.isSmithingTable(message.pos, state, tileEnt, player.level)) {
+                } else if (ImmersiveCheckers.isSmithingTable(message.pos, state, tileEnt, player.level())) {
                     Swap.smithingTableSwap(message.slot, message.hand, message.pos, player, message.placementMode);
                 }
             }

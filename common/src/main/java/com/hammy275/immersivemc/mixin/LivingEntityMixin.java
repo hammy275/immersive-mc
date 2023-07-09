@@ -27,10 +27,10 @@ public abstract class LivingEntityMixin {
                     stackSource.hurtAndBreak(1 + Mth.floor(damage), shieldHolder, (player) -> {
                         player.broadcastBreakEvent(player.getItemInHand(InteractionHand.MAIN_HAND) == stackSource ?
                                 InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
-                        if (!player.level.isClientSide) {
-                            player.level.playSound(null, player.getX(),
+                        if (!player.level().isClientSide) {
+                            player.level().playSound(null, player.getX(),
                                     player.getY(), player.getZ(), SoundEvents.SHIELD_BREAK,
-                                    SoundSource.PLAYERS, 0.8F, 0.8F + player.level.random.nextFloat() * 0.4F);
+                                    SoundSource.PLAYERS, 0.8F, 0.8F + player.level().random.nextFloat() * 0.4F);
                         }
                     });
                 }
