@@ -37,7 +37,7 @@ dependencies {
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
     modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
-    modApi "curse.maven:mcvrapi-591092:4548162"
+    modApi "curse.maven:mcvrapi-591092:4633771"
 
     modApi "com.terraformersmc:modmenu:7.1.0"
 
