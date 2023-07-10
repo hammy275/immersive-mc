@@ -47,7 +47,7 @@ public class GetStorage {
         } else if (ImmersiveCheckers.isBeacon(pos, state, tileEntity, level)) {
             return 0;
         } else if (ImmersiveCheckers.isSmithingTable(pos, state, tileEntity, level)) {
-            return 1;
+            return 2;
         }
         throw new RuntimeException("Last input index not defined for the block that was just broken!");
     }
@@ -100,8 +100,9 @@ public class GetStorage {
                 aStorage.xpLevels = out.getSecond();
                 aStorage.setItem(2, out.getFirst());
             } else if (ImmersiveCheckers.isSmithingTable(pos, state, tileEnt, player.level())) {
-                ItemStack out = Swap.getSmithingTableOutput(storage.getItem(0), storage.getItem(1), player);
-                storage.setItem(2, out);
+                ItemStack out = Swap.getSmithingTableOutput(storage.getItem(0), storage.getItem(1),
+                        storage.getItem(2), player);
+                storage.setItem(3, out);
             } else if (ImmersiveCheckers.isEnchantingTable(pos, state, tileEnt, player.level())) {
                 // No-op
             } else if (ImmersiveCheckers.isBeacon(pos, state, tileEnt, player.level())) {
@@ -144,17 +145,26 @@ public class GetStorage {
         // May be AnvilStorage from before the anvil/smithing table split (SAVE_DATA_VERSION 1 -> 2)
         if (storageOld instanceof AnvilStorage) {
             toRet = new ImmersiveStorage(wStorage);
-            toRet.initIfNotAlready(3);
+            toRet.initIfNotAlready(4);
             for (int i = 0; i <= 2; i++) {
-                toRet.getItemsRaw()[i] = storageOld.getItemsRaw()[i];
+                // Offset index by 1 because of smithing table. No need to move item counts
+                // as AnvilStorage was made into a different storage before item counts were added.
+                toRet.getItemsRaw()[i  + 1] = storageOld.getItemsRaw()[i];
             }
             ImmersiveMCLevelStorage.getLevelStorage(player).add(pos, toRet);
-        } else if (storageOld == null) {
+        } else if (storageOld == null) { // Create the storage normally if not found
             toRet = new ImmersiveStorage(wStorage);
-            toRet.initIfNotAlready(3);
+            toRet.initIfNotAlready(4);
             ImmersiveMCLevelStorage.getLevelStorage(player).add(pos, toRet);
-        } else {
+        } else { // Use the pre-existing storage
             toRet = storageOld;
+        }
+        if (toRet.getItemsRaw().length == 3) {
+            // Convert up for 1.20's smithing templates. Don't move the output, since it might be a
+            // 1.19 --> 1.20 world upgrade.
+            toRet.moveSlot(1, 2);
+            toRet.moveSlot(0, 1);
+            toRet.addSlotsToEnd(1);
         }
         return toRet;
     }

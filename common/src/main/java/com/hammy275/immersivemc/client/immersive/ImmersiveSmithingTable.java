@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
+import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.client.immersive.info.SmithingTableInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
@@ -26,6 +27,7 @@ import java.util.Objects;
 public class ImmersiveSmithingTable extends AbstractWorldStorageImmersive<SmithingTableInfo> {
 
     protected final double dist = 1d/3d;
+    protected final float extraOutputSize = 1.5f;
     public ImmersiveSmithingTable() {
         super(1);
     }
@@ -50,16 +52,19 @@ public class ImmersiveSmithingTable extends AbstractWorldStorageImmersive<Smithi
         Vec3 middle = getTopCenterOfBlock(info.getBlockPosition());
         Vec3 left = middle.add(facingOppositeNormal.multiply(dist, dist, dist));
         Vec3 right = middle.add(facingNormal.multiply(dist, dist, dist));
+        Vec3 above = middle.add(0, 0.5, 0);
 
         info.setPosition(0, left);
         info.setPosition(1, middle);
         info.setPosition(2, right);
+        info.setPosition(3, above);
 
         float hitboxSize = ClientConstants.itemScaleSizeSmithingTable / 2.05f;
 
         info.setHitbox(0, createHitbox(left, hitboxSize));
         info.setHitbox(1, createHitbox(middle, hitboxSize));
         info.setHitbox(2, createHitbox(right, hitboxSize));
+        info.setHitbox(3, createHitbox(above, hitboxSize * extraOutputSize));
 
         info.lastDir = facing;
     }
@@ -100,8 +105,12 @@ public class ImmersiveSmithingTable extends AbstractWorldStorageImmersive<Smithi
         for (int i = 0; i <= 2; i++) {
             float renderSize = info.slotHovered == i ? itemSize * 1.25f : itemSize;
             renderItem(info.items[i], stack, info.getPosition(i),
-                    renderSize, info.renderDirection, Direction.UP, info.getHitbox(i), false, -1, info.light);
+                    renderSize, info.renderDirection, Direction.UP, info.getHitbox(i), true, -1, info.light);
         }
+        int degreesRotation = (int) (info.ticksActive % 100d * 3.6d);
+        renderItem(info.items[3], stack, info.getTriggerHitbox(0).getCenter(),
+                itemSize * extraOutputSize, info.renderDirection, null, info.getTriggerHitbox(0), true,
+                ActiveConfig.spinCraftingOutput ? degreesRotation : -1, info.light);
     }
 
     @Override
@@ -159,5 +168,10 @@ public class ImmersiveSmithingTable extends AbstractWorldStorageImmersive<Smithi
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
         Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), closest, hand));
+    }
+
+    @Override
+    public void handleTriggerHitboxRightClick(InfoTriggerHitboxes info, Player player, int hitboxNum) {
+        handleRightClick((SmithingTableInfo) info, player, 3, InteractionHand.MAIN_HAND);
     }
 }

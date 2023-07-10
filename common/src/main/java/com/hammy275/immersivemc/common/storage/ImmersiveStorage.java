@@ -254,6 +254,43 @@ public class ImmersiveStorage {
         return nbt;
     }
 
+    /**
+     * Moves the slot at position oldSlot to position newSlot. Only be used for version conversion, such as the
+     * addition of smithing templates in 1.20.
+     * The old slot will be made into air and have its item counts wiped.
+     * @param oldSlot Old slot number
+     * @param newSlot New slot number
+     */
+    public void moveSlot(int oldSlot, int newSlot) {
+        this.items[newSlot] = this.items[oldSlot];
+        this.itemCounts[newSlot] = this.itemCounts[oldSlot];
+        this.items[oldSlot] = ItemStack.EMPTY;
+        this.itemCounts[oldSlot] = new LinkedList<>();
+        this.wStorage.setDirty();
+    }
+
+    /**
+     * Add slotsToAdd number of slots. Really should only be used for version conversion.
+     * @param slotsToAdd Number of slots to add. Will be added at the end of arrays.
+     */
+    public void addSlotsToEnd(int slotsToAdd) {
+        ItemStack[] oldItems = this.items;
+        List<PlayerItemCounts>[] oldItemCounts = this.itemCounts;
+        this.items = new ItemStack[oldItems.length + slotsToAdd];
+        Arrays.fill(this.items, ItemStack.EMPTY);
+        this.itemCounts = new LinkedList[oldItemCounts.length + slotsToAdd];
+        for (int i = 0; i < oldItems.length; i++) {
+            this.items[i] = oldItems[i];
+        }
+        for (int i = 0; i < oldItemCounts.length; i++) {
+            this.itemCounts[i] = oldItemCounts[i];
+        }
+        for (int i = oldItemCounts.length; i < this.itemCounts.length; i++) {
+            this.itemCounts[i] = new LinkedList<>();
+        }
+        this.wStorage.setDirty();
+    }
+
     public static class PlayerItemCounts {
         public final Optional<UUID> uuid;
         public int count;

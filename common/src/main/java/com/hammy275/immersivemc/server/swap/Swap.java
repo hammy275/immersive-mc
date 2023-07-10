@@ -176,15 +176,15 @@ public class Swap {
     public static void smithingTableSwap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player,
                                  PlacementMode mode) {
         ImmersiveStorage storage = GetStorage.getSmithingTableStorage(player, pos);
-        if (slot != 2) {
-            // TODO: Replace with config value for returning items
+        if (slot != 3) {
             storage.placeItem(player, hand, getPlaceAmount(player.getItemInHand(hand), mode), slot);
-            storage.setItem(2, ItemStack.EMPTY);
-            if (!storage.getItem(0).isEmpty() && !storage.getItem(1).isEmpty()) {
-                ItemStack output = Swap.getSmithingTableOutput(storage.getItem(0), storage.getItem(1), player);
-                storage.setItem(2, output);
+            storage.setItem(3, ItemStack.EMPTY);
+            if (!storage.getItem(0).isEmpty() && !storage.getItem(1).isEmpty() && !storage.getItem(2).isEmpty()) {
+                ItemStack output = Swap.getSmithingTableOutput(storage.getItem(0),
+                        storage.getItem(1), storage.getItem(2), player);
+                storage.setItem(3, output);
             }
-        } else if (!storage.getItem(2).isEmpty()) { // Craft our result!
+        } else if (!storage.getItem(3).isEmpty()) { // Craft our result!
             if (!player.getItemInHand(hand).isEmpty()) return;
             boolean res = Swap.handleSmithingTableCraft(storage, pos, player, hand);
             if (res) {
@@ -225,14 +225,16 @@ public class Swap {
         if (!player.getItemInHand(hand).isEmpty()) return false;
         ItemStack left = storage.getItem(0);
         ItemStack mid = storage.getItem(1);
-        ItemStack output = Swap.getSmithingTableOutput(left, mid, player);
+        ItemStack right = storage.getItem(2);
+        ItemStack output = Swap.getSmithingTableOutput(left, mid, right, player);
         if (!output.isEmpty()) {
             ItemCombinerMenu container = new SmithingMenu(-1, player.getInventory(),
                     ContainerLevelAccess.create(player.level(), pos));
-            container.getSlot(2).onTake(player, output);
+            container.getSlot(3).onTake(player, output);
             storage.shrinkSlot(0, 1);
             storage.shrinkSlot(1, 1);
-            storage.setItem(2, ItemStack.EMPTY);
+            storage.shrinkSlot(2, 1);
+            storage.setItem(3, ItemStack.EMPTY);
             player.setItemInHand(hand, output);
             return true;
         }
@@ -505,12 +507,13 @@ public class Swap {
         return new Pair<>(res, level);
     }
 
-    public static ItemStack getSmithingTableOutput(ItemStack left, ItemStack mid, ServerPlayer player) {
+    public static ItemStack getSmithingTableOutput(ItemStack left, ItemStack mid, ItemStack right, ServerPlayer player) {
         ItemCombinerMenu container = new SmithingMenu(-1, player.getInventory());
         container.setItem(0, 0, left);
         container.setItem(1, 0, mid);
+        container.setItem(2, 0, right);
         container.createResult();
-        ItemStack res = container.getSlot(2).getItem();
+        ItemStack res = container.getSlot(3).getItem();
         return res;
     }
 
