@@ -6,14 +6,15 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.TridentItem;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.vivecraft.render.VivecraftItemRendering;
 
-@Mixin(value = VivecraftItemRendering.class)
-public class VivecraftItemRenderingMixin {
+@Pseudo // Allows compiling even though targets can't be found due to being in hotswitch version
+@Mixin(targets = "org.vivecraft.client_vr.render.VivecraftItemRendering")
+public class VivecraftItemRenderingHotswitchMixin {
 
-    @Redirect(method = "applyFirstPersonItemTransforms(Lcom/mojang/blaze3d/vertex/PoseStack;Lorg/vivecraft/render/VivecraftItemRendering$VivecraftItemTransformType;ZLnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;)V",
+    @Redirect(method = "applyFirstPersonItemTransforms(Lcom/mojang/blaze3d/vertex/PoseStack;Lorg/vivecraft/client_vr/render/VivecraftItemRendering$VivecraftItemTransformType;ZLnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;)V",
     at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;isUsingItem()Z"))
     private static boolean isUsingItemRedirectPreHotswitch(AbstractClientPlayer player) {
         if (player == Minecraft.getInstance().player && player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof TridentItem
@@ -23,7 +24,7 @@ public class VivecraftItemRenderingMixin {
         return player.isUsingItem();
     }
 
-    @Redirect(method = "applyFirstPersonItemTransforms(Lcom/mojang/blaze3d/vertex/PoseStack;Lorg/vivecraft/render/VivecraftItemRendering$VivecraftItemTransformType;ZLnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;)V",
+    @Redirect(method = "applyFirstPersonItemTransforms(Lcom/mojang/blaze3d/vertex/PoseStack;Lorg/vivecraft/client_vr/render/VivecraftItemRendering$VivecraftItemTransformType;ZLnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;getUseItemRemainingTicks()I"))
     private static int getUseItemRemainingTicksPreHotswitch(AbstractClientPlayer player) {
         if (player == Minecraft.getInstance().player && player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof TridentItem
@@ -33,7 +34,7 @@ public class VivecraftItemRenderingMixin {
         return player.getUseItemRemainingTicks();
     }
 
-    @Redirect(method = "applyFirstPersonItemTransforms(Lcom/mojang/blaze3d/vertex/PoseStack;Lorg/vivecraft/render/VivecraftItemRendering$VivecraftItemTransformType;ZLnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;)V",
+    @Redirect(method = "applyFirstPersonItemTransforms(Lcom/mojang/blaze3d/vertex/PoseStack;Lorg/vivecraft/client_vr/render/VivecraftItemRendering$VivecraftItemTransformType;ZLnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;getUsedItemHand()Lnet/minecraft/world/InteractionHand;"))
     private static InteractionHand getUsedItemHandMixinPreHotswitch(AbstractClientPlayer player) {
         if (player == Minecraft.getInstance().player && player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof TridentItem

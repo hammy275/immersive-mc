@@ -1,6 +1,9 @@
 package com.hammy275.immersivemc.client.config;
 
 public class ClientConstants {
+    // Mixin Reflection Constants
+    public static final Class<?> hotswitchVivecraftItemRenderingClass;
+
 
     // How long the overlay should be displayed
     public static final int ticksToRenderFurnace = 80;
@@ -39,4 +42,16 @@ public class ClientConstants {
 
     // Amount of ticks between syncs (sync every `inventorySyncTime` ticks)
     public static final int inventorySyncTime = 2;
+
+    static {
+        hotswitchVivecraftItemRenderingClass = getClassOrNull("org.vivecraft.client_vr.render.VivecraftItemRendering");
+    }
+
+    private static Class<?> getClassOrNull(String className) {
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException ignored) {
+            return null;
+        }
+    }
 }
