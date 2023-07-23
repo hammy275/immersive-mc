@@ -14,7 +14,7 @@ import com.hammy275.immersivemc.common.network.packet.BeaconConfirmPacket;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
 import com.hammy275.immersivemc.common.network.packet.InteractPacket;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
-import com.hammy275.immersivemc.common.vr.VRPluginProxy;
+import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -274,7 +274,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
         } else if (hitboxNum == 7) {
             Network.INSTANCE.sendToServer(new BeaconConfirmPacket(info.getBlockPosition(), info.getEffectId(),
                     info.regenSelected ? Registry.MOB_EFFECT.getId(MobEffects.REGENERATION) : -1));
-            VRPluginProxy.rumbleIfVR(null, tInfo.getVRControllerNum(), CommonConstants.vibrationTimeWorldInteraction);
+            VRRumble.rumbleIfVR(null, tInfo.getVRControllerNum(), CommonConstants.vibrationTimeWorldInteraction);
         } else {
             info.regenSelected = hitboxNum == 5;
         }
