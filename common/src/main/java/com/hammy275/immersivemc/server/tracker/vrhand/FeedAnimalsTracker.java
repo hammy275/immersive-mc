@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.server.tracker.vrhand;
 
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.ServerPlayerConfig;
-import com.hammy275.immersivemc.common.vr.VRPluginProxy;
+import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.server.data.LastTickData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.world.InteractionHand;
@@ -54,7 +54,7 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
                     InteractionResult res = animal.mobInteract(player, hand);
                     if (res == InteractionResult.CONSUME || res == InteractionResult.SUCCESS) {
                         cooldown.put(player.getGameProfile().getName(), COOLDOWN_TICKS);
-                        VRPluginProxy.doubleRumbleIfVR_P(player, CommonConstants.vibrationTimePlayerActionAlert);
+                        VRRumble.doubleRumbleIfVR_P(player, CommonConstants.vibrationTimePlayerActionAlert);
                         break;
                     }
                 }
