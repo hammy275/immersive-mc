@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.common.storage.AnvilStorage;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.storage.workarounds.NullContainer;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginProxy;
+import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.mixin.AnvilMenuMixin;
 import com.hammy275.immersivemc.server.storage.GetStorage;
 import com.mojang.datafixers.util.Pair;
@@ -91,7 +91,7 @@ public class Swap {
         } else if (player.getItemInHand(hand).isEmpty()) {
             boolean res = doEnchanting(slot, pos, player, hand);
             if (res) {
-                VRPluginProxy.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
+                VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
             }
         }
         enchStorage.wStorage.setDirty();
@@ -170,7 +170,7 @@ public class Swap {
             if (!player.getItemInHand(hand).isEmpty()) return;
             boolean res = Swap.handleAnvilCraft(storage, pos, player, hand);
             if (res) {
-                VRPluginProxy.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
+                VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
             }
         }
         storage.wStorage.setDirty();
@@ -191,7 +191,7 @@ public class Swap {
             if (!player.getItemInHand(hand).isEmpty()) return;
             boolean res = Swap.handleSmithingTableCraft(storage, pos, player, hand);
             if (res) {
-                VRPluginProxy.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
+                VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
             }
         }
         storage.wStorage.setDirty();
@@ -433,7 +433,7 @@ public class Swap {
             playerItem.shrink(1);
             player.awardStat(Stats.PLAY_RECORD);
             jukebox.setChanged();
-            VRPluginProxy.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
+            VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
         }
     }
 

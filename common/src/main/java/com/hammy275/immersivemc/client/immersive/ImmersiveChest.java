@@ -11,8 +11,8 @@ import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
-import com.hammy275.immersivemc.common.vr.VRPluginProxy;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import net.minecraft.client.Minecraft;
@@ -155,15 +155,15 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
                         // Use a distance check for checking if to vibrate the other controller to hopefully filter out
                         // actions of moving up that are for something other than the chest
                         if (diff0 >= threshold) {
-                            VRPluginProxy.rumbleIfVR(null, 0, CommonConstants.vibrationTimeWorldInteraction);
+                            VRRumble.rumbleIfVR(null, 0, CommonConstants.vibrationTimeWorldInteraction);
                             if (diff1 >= threshold / 5d && current0.distanceToSqr(current1) <= 1) {
-                                VRPluginProxy.rumbleIfVR(null, 1, CommonConstants.vibrationTimeWorldInteraction);
+                                VRRumble.rumbleIfVR(null, 1, CommonConstants.vibrationTimeWorldInteraction);
                             }
                         }
                         if (diff1 >= threshold) {
-                            VRPluginProxy.rumbleIfVR(null, 1, CommonConstants.vibrationTimeWorldInteraction);
+                            VRRumble.rumbleIfVR(null, 1, CommonConstants.vibrationTimeWorldInteraction);
                             if ((diff0 >= threshold / 5d && current0.distanceToSqr(current1) <= 1)) {
-                                VRPluginProxy.rumbleIfVR(null, 0, CommonConstants.vibrationTimeWorldInteraction);
+                                VRRumble.rumbleIfVR(null, 0, CommonConstants.vibrationTimeWorldInteraction);
                             }
                         }
                     }

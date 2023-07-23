@@ -8,8 +8,8 @@ import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ThrowPacket;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginProxy;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRRumble;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -38,7 +38,7 @@ public class ThrowTracker extends AbstractTracker {
                 Network.INSTANCE.sendToServer(new ThrowPacket(
                         LastClientVRData.changeForVelocity(LastClientVRData.VRType.C0),
                         throwDir));
-                VRPluginProxy.rumbleIfVR(null, 0, CommonConstants.vibrationTimePlayerActionAlert);
+                VRRumble.rumbleIfVR(null, 0, CommonConstants.vibrationTimePlayerActionAlert);
             }
             holdTime = 0;
         }
