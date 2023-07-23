@@ -4,8 +4,8 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
-import com.hammy275.immersivemc.common.vr.VRPluginProxy;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.mixin.ButtonBlockMixin;
 import com.hammy275.immersivemc.server.PlayerConfigs;
 import net.blf02.vrapi.api.data.IVRData;
@@ -43,7 +43,7 @@ public class ButtonPushTracker extends AbstractTracker {
                 if (res != null && res.getBlockPos().equals(pos)) {
                     button.press(state, player.level(), pos);
                     ((ButtonBlockMixin) button).playButtonSound(null, player.level(), pos, true);
-                    VRPluginProxy.rumbleIfVR_P(player, i, CommonConstants.vibrationTimeWorldInteraction);
+                    VRRumble.rumbleIfVR_P(player, i, CommonConstants.vibrationTimeWorldInteraction);
                 }
             }
         }

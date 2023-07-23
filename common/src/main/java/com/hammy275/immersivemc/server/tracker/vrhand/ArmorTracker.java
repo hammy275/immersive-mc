@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.server.tracker.vrhand;
 
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.ServerPlayerConfig;
-import com.hammy275.immersivemc.common.vr.VRPluginProxy;
+import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.server.data.LastTickData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.world.InteractionHand;
@@ -52,7 +52,7 @@ public class ArmorTracker extends AbstractVRHandTracker {
             toEquip.setCount(1);
             player.getInventory().armor.set(slot.getIndex(), toEquip);
             stackInHand.shrink(1);
-            VRPluginProxy.rumbleIfVR_P(player, hand.ordinal(), CommonConstants.vibrationTimePlayerActionAlert);
+            VRRumble.rumbleIfVR_P(player, hand.ordinal(), CommonConstants.vibrationTimePlayerActionAlert);
         }
     }
 

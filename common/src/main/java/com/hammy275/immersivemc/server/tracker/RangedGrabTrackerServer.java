@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.server.tracker;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
-import com.hammy275.immersivemc.common.vr.VRPluginProxy;
+import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.server.PlayerConfigs;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.server.level.ServerPlayer;
@@ -44,7 +44,7 @@ public class RangedGrabTrackerServer extends AbstractTracker {
                 Vec3 move = info.item.getLookAngle().multiply(moveMultiplier, moveMultiplier, moveMultiplier).add(baseVelocity);
                 info.item.setDeltaMovement(move.x, move.y, move.z);
                 info.item.hurtMarked = true; // velocityChanged from MCP
-                VRPluginProxy.rumbleIfVR_P(player, 0, CommonConstants.vibrationTimeRangedGrab);
+                VRRumble.rumbleIfVR_P(player, 0, CommonConstants.vibrationTimeRangedGrab);
             }
         }
 
