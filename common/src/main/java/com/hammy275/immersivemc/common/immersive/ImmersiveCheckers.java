@@ -23,6 +23,7 @@ public class ImmersiveCheckers {
         CHECKERS.add(ImmersiveCheckers::isBeacon);
         CHECKERS.add(ImmersiveCheckers::isBrewingStand);
         CHECKERS.add(ImmersiveCheckers::isChest);
+        CHECKERS.add(ImmersiveCheckers::isChiseledBookshelf);
         CHECKERS.add(ImmersiveCheckers::isCraftingTable);
         CHECKERS.add(ImmersiveCheckers::isEnchantingTable);
         CHECKERS.add(ImmersiveCheckers::isFurnace);
@@ -58,6 +59,10 @@ public class ImmersiveCheckers {
     
     public static boolean isChest(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return tileEntity instanceof ChestBlockEntity || tileEntity instanceof EnderChestBlockEntity;
+    }
+
+    public static boolean isChiseledBookshelf(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        return state.getBlock() == Blocks.CHISELED_BOOKSHELF;
     }
 
     public static boolean isCraftingTable(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {

@@ -20,6 +20,7 @@ public class Immersives {
     public static final ImmersiveBeacon immersiveBeacon = new ImmersiveBeacon();
     public static final ImmersiveBrewing immersiveBrewing = new ImmersiveBrewing();
     public static final ImmersiveChest immersiveChest = new ImmersiveChest();
+    public static final ImmersiveChiseledBookshelf immersiveChiseledBookshelf = new ImmersiveChiseledBookshelf();
     public static final ImmersiveCrafting immersiveCrafting = new ImmersiveCrafting();
     public static final ImmersiveETable immersiveETable = new ImmersiveETable();
     public static final ImmersiveFurnace immersiveFurnace = new ImmersiveFurnace();

@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.server.storage.GetStorage;
+import com.hammy275.immersivemc.server.swap.ChiseledBookshelfSwap;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -101,6 +102,8 @@ public class InteractPacket {
                     Swap.beaconSwap(player, message.hand, message.pos);
                 } else if (ImmersiveCheckers.isSmithingTable(message.pos, state, tileEnt, player.level())) {
                     Swap.smithingTableSwap(message.slot, message.hand, message.pos, player, message.placementMode);
+                } else if (ImmersiveCheckers.isChiseledBookshelf(message.pos, state, tileEnt, player.level())) {
+                    ChiseledBookshelfSwap.swap(player, message.pos, message.slot, message.hand);
                 }
             }
         });
