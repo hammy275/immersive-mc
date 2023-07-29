@@ -37,6 +37,7 @@ public class ActiveConfig {
     public static boolean allowThrowingBeyondMax = false;
     public static boolean useHopperImmersion = false;
     public static boolean useSmithingTableImmersion = false;
+    public static boolean useChiseledBookshelfImmersion = false;
 
     // C2S Synced values
     public static boolean crouchBypassImmersion = false;
@@ -119,6 +120,7 @@ public class ActiveConfig {
         allowThrowingBeyondMax = buffer.readBoolean() && allowThrowingBeyondMax;
         useHopperImmersion = buffer.readBoolean() && useHopperImmersion;
         useSmithingTableImmersion = buffer.readBoolean() && useSmithingTableImmersion;
+        useChiseledBookshelfImmersion = buffer.readBoolean() && useChiseledBookshelfImmersion;
 
     }
 
@@ -157,6 +159,7 @@ public class ActiveConfig {
             allowThrowingBeyondMax = ImmersiveMCConfig.allowThrowingBeyondMax.get();
             useHopperImmersion = ImmersiveMCConfig.useHopperImmersion.get();
             useSmithingTableImmersion = ImmersiveMCConfig.useSmithingTableImmersion.get();
+            useChiseledBookshelfImmersion = ImmersiveMCConfig.useChiseledBookshelfImmersion.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -214,6 +217,7 @@ public class ActiveConfig {
         allowThrowingBeyondMax = false;
         useHopperImmersion = false;
         useSmithingTableImmersion = false;
+        useChiseledBookshelfImmersion = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -273,7 +277,8 @@ public class ActiveConfig {
                 "Reach Behind Backpack: " + reachBehindBackpack + "\n" +
                 "Use Smithing Table Immersion: " + useSmithingTableImmersion + "\n" +
                 "Do Rumble: " + doRumble + "\n" +
-                "Return Items: " + returnItems;
+                "Return Items: " + returnItems + "\n" +
+                "Use Chiseled Bookshelf Immersion: " + useChiseledBookshelfImmersion;
         return stringOut;
     }
 

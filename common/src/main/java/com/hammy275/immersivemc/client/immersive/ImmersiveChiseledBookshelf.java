@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.ChiseledBookshelfInfo;
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.InteractPacket;
@@ -35,7 +36,7 @@ public class ImmersiveChiseledBookshelf extends AbstractImmersive<ChiseledBooksh
 
     @Override
     public boolean shouldRender(ChiseledBookshelfInfo info, boolean isInVR) {
-        return info.readyToRender() || true; // TODO: Remove
+        return info.readyToRender();
     }
 
     @Override
@@ -47,7 +48,7 @@ public class ImmersiveChiseledBookshelf extends AbstractImmersive<ChiseledBooksh
 
     @Override
     public boolean enabledInConfig() {
-        return true; // TODO: Replace with config entry
+        return ActiveConfig.useChiseledBookshelfImmersion;
     }
 
     @Override

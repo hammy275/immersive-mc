@@ -69,6 +69,7 @@ public class ImmersivesConfigScreen extends Screen {
             ScreenUtils.addOption("backpack_button", ImmersiveMCConfig.useBackpack, this.list);
             ScreenUtils.addOption("button", ImmersiveMCConfig.useButton, this.list);
             ScreenUtils.addOption("campfire", ImmersiveMCConfig.useCampfireImmersion, this.list);
+            ScreenUtils.addOption("chiseled_bookshelf", ImmersiveMCConfig.useChiseledBookshelfImmersion, this.list);
             ScreenUtils.addOption("door", ImmersiveMCConfig.useDoorImmersion, this.list);
             ScreenUtils.addOption("jukebox", ImmersiveMCConfig.useJukeboxImmersion, this.list);
             ScreenUtils.addOption("lever", ImmersiveMCConfig.useLever, this.list);

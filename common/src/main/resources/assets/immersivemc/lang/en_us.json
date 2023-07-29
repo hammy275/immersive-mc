@@ -45,6 +45,8 @@
   "config.immersivemc.button.desc": "Enables/disables the ability for VR players to push buttons with their hand.",
   "config.immersivemc.campfire": "Use Campfire Immmersion [VR Only]",
   "config.immersivemc.campfire.desc": "Enables/disables the ability for VR players to hold food above a campfire to cook it.",
+  "config.immersivemc.chiseled_bookshelf": "Use Chiseled Bookshelf Immersion [VR Only]",
+  "config.immersivemc.chiseled_bookshelf.desc": "Enables/disables the ability for VR players to place books into/take books out of chiseled bookshelves.",
   "config.immersivemc.chest": "Use Chest Immersion",
   "config.immersivemc.chest.desc": "Enables/disables the ability for players to open/close chests without the GUI. Make sure to enable 'Right Click Chests' to use the chest outside of VR! You can punch the chest to cycle which items are on top!",
   "config.immersivemc.door": "Use Door Immersion [VR Only]",
