@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive_item;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -10,6 +11,7 @@ import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -30,6 +32,12 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         stack.translate(-cameraInfo.getPosition().x + pos.x,
                 -cameraInfo.getPosition().y + pos.y,
                 -cameraInfo.getPosition().z + pos.z);
+
+        stack.mulPose(Vector3f.XP.rotation((float) Math.toRadians(hand.getPitch())));
+        stack.mulPose(Vector3f.YN.rotation((float) Math.toRadians(hand.getYaw()) + ((float) Math.PI / 2f)));
+        stack.mulPose(Vector3f.ZP.rotation((float) Math.PI / 2f));
+
+        stack.scale(0.5f, 0.5f, 0.5f);
 
         float pageOneProgress = 0.25f;
         float pageTwoProgress = 0.75f;
