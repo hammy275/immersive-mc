@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive_item;
 
+import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.vrapi.api.data.IVRData;
@@ -8,8 +9,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.EnchantTableRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -18,6 +19,7 @@ import net.minecraft.world.phys.Vec3;
 public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo> {
 
     public static final BookModel bookModel = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
+    public static final ResourceLocation writtenBookTexture = new ResourceLocation(ImmersiveMC.MOD_ID, "written_book.png");
 
     @Override
     protected void render(WrittenBookInfo info, PoseStack stack, IVRData hand) {
@@ -40,9 +42,8 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
                 bookOpenAmount // How open the book is. A good range seems to be (0f,1.2f]
         );
         bookModel.render(stack,
-                EnchantTableRenderer.BOOK_LOCATION.buffer(
-                        Minecraft.getInstance().renderBuffers().bufferSource(), RenderType::entitySolid
-                ),
+                Minecraft.getInstance().renderBuffers().bufferSource()
+                        .getBuffer(RenderType.entitySolid(writtenBookTexture)),
                 15728880, OverlayTexture.NO_OVERLAY,
                 1, 1, 1, 1);
 
