@@ -23,6 +23,11 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     public static final BookModel bookModel = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
     public static final ResourceLocation writtenBookTexture = new ResourceLocation(ImmersiveMC.MOD_ID, "written_book.png");
 
+    /*
+     * Pitch is 0 forward, with 30 up and -30 down
+     * Yaw is just point direction
+     */
+
     @Override
     protected void render(WrittenBookInfo info, PoseStack stack, IVRData hand) {
         stack.pushPose();
@@ -33,11 +38,11 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
                 -cameraInfo.getPosition().y + pos.y,
                 -cameraInfo.getPosition().z + pos.z);
 
-        stack.mulPose(Vector3f.XP.rotation((float) Math.toRadians(hand.getPitch())));
-        stack.mulPose(Vector3f.YN.rotation((float) Math.toRadians(hand.getYaw()) + ((float) Math.PI / 2f)));
-        stack.mulPose(Vector3f.ZP.rotation((float) Math.PI / 2f));
-
         stack.scale(0.5f, 0.5f, 0.5f);
+
+        stack.mulPose(Vector3f.YN.rotationDegrees(hand.getYaw() + 90f));
+        stack.mulPose(Vector3f.ZP.rotationDegrees(90f));
+        stack.mulPose(Vector3f.ZP.rotationDegrees(hand.getPitch()));
 
         float pageOneProgress = 0.25f;
         float pageTwoProgress = 0.75f;
