@@ -5,12 +5,14 @@ import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.blf02.vrapi.api.data.IVRData;
+import net.blf02.vrapi.debug.DevModeData;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -67,7 +69,17 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
 
     @Override
     protected void tick(WrittenBookInfo info, IVRData hand) {
+        // TODO: Remove
+        DevModeData.leftRot = new Vec3(0.8, 0.2, 0).normalize();
+        // TODO: Remove End
 
+        Vec3 up = hand.getLookAngle();
+        Vector3f leftF = new Vector3f((float) up.x(), (float) up.y(), (float) up.z());
+        leftF.transform(Vector3f.YN.rotationDegrees(270));
+        Vec3 left = new Vec3(leftF.x(), leftF.y(), leftF.z());
+        Minecraft.getInstance().level.addParticle(ParticleTypes.ANGRY_VILLAGER,
+                hand.position().add(left).x, hand.position().add(left).y, hand.position().add(left).z,
+                0, 0, 0);
     }
 
     @Override
