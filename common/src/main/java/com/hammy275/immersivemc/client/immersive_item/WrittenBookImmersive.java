@@ -14,20 +14,28 @@ import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
+
 public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo> {
 
     public static final BookModel bookModel = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
     public static final ResourceLocation writtenBookTexture = new ResourceLocation(ImmersiveMC.MOD_ID, "written_book.png");
 
-    public static float scaleSize = 2f;
-    public static double halfPageWidth = scaleSize / 4d;
-    public static double pageHalfHeight = scaleSize / 4d;
+    // User Controlled (or derived from such)
+    public static final float scaleSize = 2f;
+    public static final double halfPageWidth = scaleSize / 4d;
+    public static final double pageHalfHeight = scaleSize / 4d;
+
+    // Helpful constants
+    public static float pageTilt = 10f;
 
     /*
      * Pitch is 0 forward, with 30 up and -30 down
@@ -55,7 +63,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         float bookOpenAmount = 1.1f;
 
         bookModel.setupAnim(
-                Minecraft.getInstance().player.tickCount + Minecraft.getInstance().getFrameTime(),
+                0, // Partial tick time is always 0 to have page stay in one constant spot
                 pageOneProgress, // 0-1. How far the page is in the turn. Range is [0f, 1f] with 0f being left.
                 pageTwoProgress, //0-1. How far across a different page is. Range is [0f, 1f] with 0f being left.
                 bookOpenAmount // How open the book is. A good range seems to be (0f,1.2f]
@@ -67,20 +75,26 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
                 1, 1, 1, 1);
         stack.popPose();
 
+        renderPage(stack, hand, List.of(new TextComponent(info.bookText[0])), true);
+
+        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+    }
+
+    protected void renderPage(PoseStack stack, IVRData hand, List<Component> text, boolean leftPage) {
         stack.pushPose();
 
         Vec3 up = hand.getLookAngle();
         Vec3 left = getLeftRight(hand, true);
         Vec3 right = getLeftRight(hand, false);
-        pos = hand.position().add(up.scale(pageHalfHeight)).add(left.scale(halfPageWidth))
-                .add(new Vec3(0, 0.1, 0));
+        Vec3 pos = hand.position().add(up.scale(pageHalfHeight)).add(left.scale(halfPageWidth))
+                .add(new Vec3(0, 0.25, 0));
 
-        cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.translate(-cameraInfo.getPosition().x + pos.x,
                 -cameraInfo.getPosition().y + pos.y,
                 -cameraInfo.getPosition().z + pos.z);
         stack.mulPose(Vector3f.YN.rotationDegrees(hand.getYaw() + 90f));
-        stack.mulPose(Vector3f.XP.rotationDegrees(90f));
+        stack.mulPose(Vector3f.XP.rotationDegrees(90f + (leftPage ? pageTilt : -pageTilt)));
         stack.mulPose(Vector3f.XP.rotationDegrees(hand.getPitch()));
         stack.mulPose(Vector3f.ZP.rotationDegrees(270f));
 
@@ -88,14 +102,12 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         stack.scale(textStackScaleSize, textStackScaleSize, textStackScaleSize);
 
         Font font = Minecraft.getInstance().font;
-        float size = -font.width(info.bookText[0]) / 2f;
-        font.drawInBatch(info.bookText[0], size, 0, 0xFF000000, false,
+        float size = -font.width(text.get(0)) / 2f;
+        font.drawInBatch(text.get(0), size, 0, 0xFF000000, false,
                 stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), false,
                 0, AbstractImmersive.maxLight);
 
         stack.popPose();
-
-        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
     }
 
     @Override
