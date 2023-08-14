@@ -112,7 +112,8 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         List<FormattedCharSequence> text = font.split(textRaw, 114);
         int lineNum = 0;
         for (FormattedCharSequence seq : text) {
-            font.drawInBatch(seq, -font.width(seq) / 2f, 32 + lineNum++ * 9, 0xFF000000, false,
+            // -56f is used to make the text left-aligned.
+            font.drawInBatch(seq, -56f, 32 + lineNum++ * 9, 0xFF000000, false,
                     stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(),
                     false, 0, AbstractImmersive.maxLight);
         }
