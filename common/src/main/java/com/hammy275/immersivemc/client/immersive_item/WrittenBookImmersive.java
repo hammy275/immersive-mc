@@ -36,12 +36,13 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
 
     // User Controlled (or derived from such)
     public static final float scaleSize = 2f;
-    public static final double halfPageWidth = scaleSize / 4d;
+    public static final double halfPageWidth = scaleSize * 0.3d;
     public static final double pageHalfHeight = scaleSize / 4d;
-    public static float textStackScaleSize = -scaleSize * 0.0025f;
+    public static final float textStackScaleSize = -scaleSize * 0.0025f;
+    public static final double textUpAmount = 0.2; // TODO: Derive from scaleSize
 
     // Helpful constants
-    public static final float pageTilt = 10f;
+    public static final float pageTilt = 11f;
     public static final int bookLines = 14;
     public static final int charsPerLine = 20;
 
@@ -84,6 +85,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         stack.popPose();
 
         renderPage(stack, hand, info.left, true);
+        renderPage(stack, hand, info.right, false);
 
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
     }
@@ -92,9 +94,9 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         stack.pushPose();
 
         Vec3 up = hand.getLookAngle();
-        Vec3 left = getLeftRight(hand, true);
+        Vec3 left = getLeftRight(hand, leftPage); // Should be called "right" for right page
         Vec3 pos = hand.position().add(up.scale(pageHalfHeight)).add(left.scale(halfPageWidth / 2d))
-                .add(new Vec3(0, 0.25, 0));
+                .add(new Vec3(0, textUpAmount, 0));
 
         Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.translate(-cameraInfo.getPosition().x + pos.x,
@@ -125,8 +127,13 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         // TODO: Remove End
 
         ItemStack book = info.item;
-        BookViewScreen.WrittenBookAccess access = new BookViewScreen.WrittenBookAccess(book);
-        info.left = access.getPage(0);
+        if (info.pageChanged()) {
+            BookViewScreen.WrittenBookAccess access = new BookViewScreen.WrittenBookAccess(book);
+            info.left = access.getPage(info.getLeftPageIndex());
+            info.right = access.getPage(info.getRightPageIndex());
+            info.setPageChanged(false);
+        }
+
 
         Vec3 up = hand.getLookAngle();
         Vec3 rightMove = getLeftRight(hand, false).scale(1d / (charsPerLine + 2d));
@@ -148,6 +155,6 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         Vec3 look = hand.getLookAngle();
         Vector3f leftF = new Vector3f((float) look.x(), (float) look.y(), (float) look.z());
         leftF.transform(Vector3f.YN.rotationDegrees(left ? 270 : 90));
-        return new Vec3(leftF.x(), leftF.y(), leftF.z());
+        return new Vec3(leftF.x(), Math.abs(leftF.y()), leftF.z());
     }
 }
