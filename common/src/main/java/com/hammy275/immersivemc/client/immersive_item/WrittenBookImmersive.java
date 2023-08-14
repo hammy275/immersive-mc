@@ -13,7 +13,6 @@ import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -24,6 +23,10 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
 
     public static final BookModel bookModel = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
     public static final ResourceLocation writtenBookTexture = new ResourceLocation(ImmersiveMC.MOD_ID, "written_book.png");
+
+    public static float scaleSize = 2f;
+    public static double pageWidth = scaleSize / 4d;
+    public static double pageHalfHeight = scaleSize / 4d;
 
     /*
      * Pitch is 0 forward, with 30 up and -30 down
@@ -40,14 +43,14 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
                 -cameraInfo.getPosition().y + pos.y,
                 -cameraInfo.getPosition().z + pos.z);
 
-        stack.scale(0.5f, 0.5f, 0.5f);
+        stack.scale(scaleSize, scaleSize, scaleSize);
 
         stack.mulPose(Vector3f.YN.rotationDegrees(hand.getYaw() + 90f));
         stack.mulPose(Vector3f.ZP.rotationDegrees(90f));
         stack.mulPose(Vector3f.ZP.rotationDegrees(hand.getPitch()));
 
-        float pageOneProgress = 0.25f;
-        float pageTwoProgress = 0.75f;
+        float pageOneProgress = 0.0f;
+        float pageTwoProgress = 0.0f;
         float bookOpenAmount = 1.1f;
 
         bookModel.setupAnim(
@@ -73,13 +76,13 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         DevModeData.leftRot = new Vec3(0.8, 0.2, 0).normalize();
         // TODO: Remove End
 
-        Vec3 up = hand.getLookAngle();
-        Vector3f leftF = new Vector3f((float) up.x(), (float) up.y(), (float) up.z());
-        leftF.transform(Vector3f.YN.rotationDegrees(270));
-        Vec3 left = new Vec3(leftF.x(), leftF.y(), leftF.z());
+        Vec3 up = hand.getLookAngle().scale(pageHalfHeight);
+        Vec3 left = getLeftRight(hand, true).scale(pageWidth);
+        Vec3 right = getLeftRight(hand, false);
         Minecraft.getInstance().level.addParticle(ParticleTypes.ANGRY_VILLAGER,
-                hand.position().add(left).x, hand.position().add(left).y, hand.position().add(left).z,
+                hand.position().add(left).add(up).x, hand.position().add(left).add(up).y, hand.position().add(left).add(up).z,
                 0, 0, 0);
+
     }
 
     @Override
@@ -90,5 +93,12 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     @Override
     protected WrittenBookInfo createInfo(ItemStack item, InteractionHand hand) {
         return new WrittenBookInfo(item, hand);
+    }
+
+    private Vec3 getLeftRight(IVRData hand, boolean left) {
+        Vec3 look = hand.getLookAngle();
+        Vector3f leftF = new Vector3f((float) look.x(), (float) look.y(), (float) look.z());
+        leftF.transform(Vector3f.YN.rotationDegrees(left ? 270 : 90));
+        return new Vec3(leftF.x(), leftF.y(), leftF.z());
     }
 }
