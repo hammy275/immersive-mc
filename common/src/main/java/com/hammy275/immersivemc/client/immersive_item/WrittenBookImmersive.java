@@ -35,7 +35,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     public static final ResourceLocation writtenBookTexture = new ResourceLocation(ImmersiveMC.MOD_ID, "written_book.png");
 
     // User Controlled (or derived from such)
-    public static final float scaleSize = 2f;
+    public static final float scaleSize = 1f;
     public static final double halfPageWidth = scaleSize * 0.3d;
     public static final double pageHalfHeight = scaleSize / 4d;
     public static final float textStackScaleSize = -scaleSize * 0.0025f;
@@ -96,7 +96,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         Vec3 up = hand.getLookAngle();
         Vec3 left = getLeftRight(hand, leftPage); // Should be called "right" for right page
         Vec3 pos = hand.position().add(up.scale(pageHalfHeight)).add(left.scale(halfPageWidth / 2d))
-                .add(new Vec3(0, textUpAmount, 0));
+                .add(new Vec3(0, textUpAmount * (scaleSize / 2f), 0));
 
         Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.translate(-cameraInfo.getPosition().x + pos.x,
