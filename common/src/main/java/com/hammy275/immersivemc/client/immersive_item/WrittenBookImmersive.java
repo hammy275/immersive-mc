@@ -10,13 +10,14 @@ import net.blf02.vrapi.debug.DevModeData;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -25,6 +26,10 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo> {
+    /*
+        Notes:
+        - Book is 14 lines long, with 20 characters per line
+     */
 
     public static final BookModel bookModel = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
     public static final ResourceLocation writtenBookTexture = new ResourceLocation(ImmersiveMC.MOD_ID, "written_book.png");
@@ -33,9 +38,12 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     public static final float scaleSize = 2f;
     public static final double halfPageWidth = scaleSize / 4d;
     public static final double pageHalfHeight = scaleSize / 4d;
+    public static float textStackScaleSize = -scaleSize * 0.0025f;
 
     // Helpful constants
-    public static float pageTilt = 10f;
+    public static final float pageTilt = 10f;
+    public static final int bookLines = 14;
+    public static final int charsPerLine = 20;
 
     /*
      * Pitch is 0 forward, with 30 up and -30 down
@@ -75,18 +83,17 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
                 1, 1, 1, 1);
         stack.popPose();
 
-        renderPage(stack, hand, List.of(new TextComponent(info.bookText[0])), true);
+        renderPage(stack, hand, info.left, true);
 
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
     }
 
-    protected void renderPage(PoseStack stack, IVRData hand, List<Component> text, boolean leftPage) {
+    protected void renderPage(PoseStack stack, IVRData hand, FormattedText textRaw, boolean leftPage) {
         stack.pushPose();
 
         Vec3 up = hand.getLookAngle();
         Vec3 left = getLeftRight(hand, true);
-        Vec3 right = getLeftRight(hand, false);
-        Vec3 pos = hand.position().add(up.scale(pageHalfHeight)).add(left.scale(halfPageWidth))
+        Vec3 pos = hand.position().add(up.scale(pageHalfHeight)).add(left.scale(halfPageWidth / 2d))
                 .add(new Vec3(0, 0.25, 0));
 
         Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
@@ -97,15 +104,16 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         stack.mulPose(Vector3f.XP.rotationDegrees(90f + (leftPage ? pageTilt : -pageTilt)));
         stack.mulPose(Vector3f.XP.rotationDegrees(hand.getPitch()));
         stack.mulPose(Vector3f.ZP.rotationDegrees(270f));
-
-        float textStackScaleSize = scaleSize * -0.01f;
         stack.scale(textStackScaleSize, textStackScaleSize, textStackScaleSize);
 
         Font font = Minecraft.getInstance().font;
-        float size = -font.width(text.get(0)) / 2f;
-        font.drawInBatch(text.get(0), size, 0, 0xFF000000, false,
-                stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), false,
-                0, AbstractImmersive.maxLight);
+        List<FormattedCharSequence> text = font.split(textRaw, 114);
+        int lineNum = 0;
+        for (FormattedCharSequence seq : text) {
+            font.drawInBatch(seq, -font.width(seq) / 2f, 32 + lineNum++ * 9, 0xFF000000, false,
+                    stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(),
+                    false, 0, AbstractImmersive.maxLight);
+        }
 
         stack.popPose();
     }
@@ -115,6 +123,14 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         // TODO: Remove
         DevModeData.leftRot = new Vec3(0.8, 0.2, 0).normalize();
         // TODO: Remove End
+
+        ItemStack book = info.item;
+        BookViewScreen.WrittenBookAccess access = new BookViewScreen.WrittenBookAccess(book);
+        info.left = access.getPage(0);
+
+        Vec3 up = hand.getLookAngle();
+        Vec3 rightMove = getLeftRight(hand, false).scale(1d / (charsPerLine + 2d));
+        Vec3 downMove = up.scale(-1).scale(1d / (bookLines + 2d));
 
     }
 
