@@ -6,7 +6,6 @@ import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.blf02.vrapi.api.data.IVRData;
-import net.blf02.vrapi.debug.DevModeData;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -44,7 +43,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     public static final double halfPageWidth = scaleSize * 0.3d;
     public static final double pageHalfHeight = scaleSize / 4d;
     public static final float textStackScaleSize = -scaleSize * 0.0025f;
-    public static final double textUpAmount = 0.2 * (scaleSize / 2f);
+    public static final double textUpAmount = 0.1875 * (scaleSize / 2f);
     public static final double hitboxUpAmount = textUpAmount + (scaleSize / 12f);
     public static final double hitboxMoveMinAmount = halfPageWidth;
     public static final double hitboxMoveMaxAmount = halfPageWidth + (scaleSize * 0.15d);
@@ -158,9 +157,6 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
 
     @Override
     protected void tick(WrittenBookInfo info, IVRData hand) {
-        // TODO: Remove
-        DevModeData.rightRot = new Vec3(0.8, 0.2, 0).normalize();
-        // TODO: End Remove
         ItemStack book = info.item;
         if (info.pageChanged()) {
             BookViewScreen.WrittenBookAccess access = new BookViewScreen.WrittenBookAccess(book);
@@ -206,7 +202,8 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
 
     private Vec3 getLeftRight(IVRData hand, boolean left) {
         Vec3 look = hand.getLookAngle();
-        Vector3f leftF = new Vector3f((float) look.x(), (float) look.y(), (float) look.z());
+        Vector3f leftF = new Vector3f((float) look.x(), 0, (float) look.z());
+        leftF.normalize();
         leftF.transform(Vector3f.YN.rotationDegrees(left ? 270 : 90));
         return new Vec3(leftF.x(), Math.abs(leftF.y()), leftF.z());
     }
