@@ -123,10 +123,15 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     protected void renderPage(PoseStack stack, IVRData hand, FormattedText textRaw, boolean leftPage) {
         stack.pushPose();
 
-        Vec3 up = hand.getLookAngle();
+        Vector3f awayFromBookUpF = new Vector3f(0, 1, 0);
+        awayFromBookUpF.transform(Vector3f.XN.rotationDegrees(hand.getPitch()));
+        awayFromBookUpF.transform(Vector3f.YN.rotationDegrees(hand.getYaw()));
+        Vec3 awayFromBookUp = new Vec3(awayFromBookUpF.x(), awayFromBookUpF.y(), awayFromBookUpF.z());
+
+        Vec3 pageUp = hand.getLookAngle();
         Vec3 left = getLeftRight(hand, leftPage); // Should be called "right" for right page
-        Vec3 pos = hand.position().add(up.scale(pageHalfHeight)).add(left.scale(halfPageWidth / 2d))
-                .add(new Vec3(0, textUpAmount, 0));
+        Vec3 pos = hand.position().add(pageUp.scale(pageHalfHeight)).add(left.scale(halfPageWidth / 2d))
+                .add(awayFromBookUp.scale(textUpAmount));
 
         Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.translate(-cameraInfo.getPosition().x + pos.x,
