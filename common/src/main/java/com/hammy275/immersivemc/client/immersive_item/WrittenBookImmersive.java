@@ -6,7 +6,6 @@ import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.blf02.vrapi.api.data.IVRData;
-import net.blf02.vrapi.debug.DevModeData;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -21,6 +20,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -29,19 +29,27 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     /*
         Notes:
         - Book is 14 lines long, with 20 characters per line
+        - Page turning is done using a central hitbox and edge hitboxes. Hand moves from edge to center to confirm turn.
+        If it doesn't make it to center, cancel the turn.
      */
 
     public static final BookModel bookModel = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
     public static final ResourceLocation writtenBookTexture = new ResourceLocation(ImmersiveMC.MOD_ID, "written_book.png");
 
-    // User Controlled (or derived from such)
+    // User Controlled
     public static final float scaleSize = 1f;
+
+    // Derived from user controlled
     public static final double halfPageWidth = scaleSize * 0.3d;
     public static final double pageHalfHeight = scaleSize / 4d;
     public static final float textStackScaleSize = -scaleSize * 0.0025f;
-    public static final double textUpAmount = 0.2; // TODO: Derive from scaleSize
+    public static final double textUpAmount = 0.2 * (scaleSize / 2f);
+    public static final double hitboxUpAmount = textUpAmount + (scaleSize / 12f);
+    public static final double hitboxMoveMinAmount = halfPageWidth;
+    public static final double hitboxMoveMaxAmount = halfPageWidth + (scaleSize * 0.15d);
 
     // Helpful constants
+    public static final double moveScaleForCenter = 0.15;
     public static final float pageTilt = 11f;
     public static final int bookLines = 14;
     public static final int charsPerLine = 20;
@@ -82,10 +90,31 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
                         .getBuffer(RenderType.entitySolid(writtenBookTexture)),
                 15728880, OverlayTexture.NO_OVERLAY,
                 1, 1, 1, 1);
+
         stack.popPose();
 
         renderPage(stack, hand, info.left, true);
         renderPage(stack, hand, info.right, false);
+
+        if (info.prevHitbox != null) {
+            AbstractImmersive.renderHitbox(stack, info.prevHitbox, info.prevHitbox.getCenter(),
+                    false, 1, 1, 1);
+        }
+
+        if (info.nextHitbox != null) {
+            AbstractImmersive.renderHitbox(stack, info.nextHitbox, info.nextHitbox.getCenter(),
+                    false, 1, 1, 1);
+        }
+
+        if (info.centerHitbox != null) {
+            AbstractImmersive.renderHitbox(stack, info.centerHitbox, info.centerHitbox.getCenter(),
+                    false, 1, 1, 1);
+        }
+
+        if (info.bookHitbox != null) {
+            AbstractImmersive.renderHitbox(stack, info.bookHitbox, info.bookHitbox.getCenter(),
+                    false, 0.5f, 0.5f, 0.5f);
+        }
 
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
     }
@@ -96,7 +125,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         Vec3 up = hand.getLookAngle();
         Vec3 left = getLeftRight(hand, leftPage); // Should be called "right" for right page
         Vec3 pos = hand.position().add(up.scale(pageHalfHeight)).add(left.scale(halfPageWidth / 2d))
-                .add(new Vec3(0, textUpAmount * (scaleSize / 2f), 0));
+                .add(new Vec3(0, textUpAmount, 0));
 
         Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.translate(-cameraInfo.getPosition().x + pos.x,
@@ -123,10 +152,6 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
 
     @Override
     protected void tick(WrittenBookInfo info, IVRData hand) {
-        // TODO: Remove
-        DevModeData.leftRot = new Vec3(0.8, 0.2, 0).normalize();
-        // TODO: Remove End
-
         ItemStack book = info.item;
         if (info.pageChanged()) {
             BookViewScreen.WrittenBookAccess access = new BookViewScreen.WrittenBookAccess(book);
@@ -137,8 +162,26 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
 
 
         Vec3 up = hand.getLookAngle();
-        Vec3 rightMove = getLeftRight(hand, false).scale(1d / (charsPerLine + 2d));
-        Vec3 downMove = up.scale(-1).scale(1d / (bookLines + 2d));
+        Vec3 down = up.scale(-1);
+        Vec3 left = getLeftRight(hand, true);
+        Vec3 right = getLeftRight(hand, false);
+
+        Vec3 leftUpBoxPos = hand.position().add(up.scale(pageHalfHeight)).add(left.scale(hitboxMoveMinAmount))
+                .add(new Vec3(0, hitboxUpAmount, 0));
+        Vec3 leftDownBoxPos = hand.position().add(down.scale(pageHalfHeight)).add(left.scale(hitboxMoveMaxAmount));
+        Vec3 rightUpBoxPos = hand.position().add(up.scale(pageHalfHeight)).add(right.scale(hitboxMoveMinAmount))
+                .add(new Vec3(0, hitboxUpAmount, 0));
+        Vec3 rightDownBoxPos = hand.position().add(down.scale(pageHalfHeight)).add(right.scale(hitboxMoveMaxAmount));
+        Vec3 centerUpBoxPos = hand.position().add(up.scale(pageHalfHeight)).add(left.scale(hitboxMoveMinAmount).scale(moveScaleForCenter))
+                .add(new Vec3(0, hitboxUpAmount, 0));
+        Vec3 centerDownBoxPos = hand.position().add(down.scale(pageHalfHeight)).add(left.scale(hitboxMoveMaxAmount).scale(-moveScaleForCenter));
+
+
+        info.prevHitbox = new AABB(leftDownBoxPos, leftUpBoxPos);
+        info.nextHitbox = new AABB(rightDownBoxPos, rightUpBoxPos);
+        info.centerHitbox = new AABB(centerDownBoxPos, centerUpBoxPos);
+        info.bookHitbox = new AABB(leftDownBoxPos, rightUpBoxPos);
+
 
     }
 
