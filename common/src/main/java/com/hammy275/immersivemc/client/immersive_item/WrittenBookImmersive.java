@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.blf02.vrapi.api.data.IVRData;
+import net.blf02.vrapi.debug.DevModeData;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -132,8 +133,8 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
                 -cameraInfo.getPosition().y + pos.y,
                 -cameraInfo.getPosition().z + pos.z);
         stack.mulPose(Vector3f.YN.rotationDegrees(hand.getYaw() + 90f));
+        stack.mulPose(Vector3f.ZP.rotationDegrees(hand.getPitch()));
         stack.mulPose(Vector3f.XP.rotationDegrees(90f + (leftPage ? pageTilt : -pageTilt)));
-        stack.mulPose(Vector3f.XP.rotationDegrees(hand.getPitch()));
         stack.mulPose(Vector3f.ZP.rotationDegrees(270f));
         stack.scale(textStackScaleSize, textStackScaleSize, textStackScaleSize);
 
@@ -152,6 +153,9 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
 
     @Override
     protected void tick(WrittenBookInfo info, IVRData hand) {
+        // TODO: Remove
+        DevModeData.rightRot = new Vec3(0.8, 0.2, 0).normalize();
+        // TODO: End Remove
         ItemStack book = info.item;
         if (info.pageChanged()) {
             BookViewScreen.WrittenBookAccess access = new BookViewScreen.WrittenBookAccess(book);
