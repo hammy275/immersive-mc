@@ -20,7 +20,7 @@ public abstract class AbstractItemImmersive<I extends AbstractItemInfo> {
 
     protected abstract void render(I info, PoseStack stack, IVRData hand);
 
-    protected abstract void tick(I info, IVRData hand);
+    protected abstract void tick(I info, IVRData hand, IVRData other);
 
     protected abstract boolean itemMatches(ItemStack item);
 
@@ -56,7 +56,8 @@ public abstract class AbstractItemImmersive<I extends AbstractItemInfo> {
         IVRPlayer player = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player);
 
         for (I info : infos) {
-            this.tick(info, player.getController(info.handIn.ordinal()));
+            this.tick(info, player.getController(info.handIn.ordinal()),
+                    player.getController(info.handIn == InteractionHand.MAIN_HAND ? 1 : 0));
         }
     }
 
