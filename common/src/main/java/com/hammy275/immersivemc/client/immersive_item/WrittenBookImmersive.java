@@ -43,15 +43,10 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     public static final double pageHalfHeight = scaleSize / 4d;
     public static final float textStackScaleSize = -scaleSize * 0.0025f;
     public static final double textUpAmount = 0.1875 * (scaleSize / 2f);
-    public static final double pageTurnStartDistanceSqr = pageHalfHeight * pageHalfHeight;
+    public static final double pageTurnStartDistanceSqr = (pageHalfHeight * 1.1) * (pageHalfHeight * 1.1);
     public static final double pageDontStartTurnDistanceSqr = 2.2 * 2.2 * singlePageWidth * singlePageWidth;
-    public static final double pageTurningPointMaxDistanceSqr = (singlePageWidth * singlePageWidth +
-                                                                pageHalfHeight * pageHalfHeight +
-                                                                textUpAmount * textUpAmount)
-                                                                * 1.1;
 
     // Helpful constants
-    public static final double moveScaleForCenter = 0.15;
     public static final float pageTilt = 11f;
     public static final int bookLines = 14;
     public static final int charsPerLine = 20;
@@ -145,8 +140,6 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         }
 
 
-        Vec3 up = hand.getLookAngle();
-        Vec3 down = up.scale(-1);
         Vec3 left = getLeftRight(hand, true);
         Vec3 right = getLeftRight(hand, false);
         Vec3 away = getAway(hand);
