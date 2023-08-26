@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive_item;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.blf02.vrapi.api.data.IVRData;
@@ -230,7 +231,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
 
     @Override
     public boolean isEnabled() {
-        return true; // TODO: Replace with config key reference
+        return ActiveConfig.useWrittenBookImmersion;
     }
 
     private Vec3 getLeftRight(IVRData hand, boolean left) {
