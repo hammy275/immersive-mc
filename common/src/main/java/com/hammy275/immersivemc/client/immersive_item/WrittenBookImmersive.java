@@ -226,13 +226,18 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     }
 
     @Override
-    protected boolean itemMatches(ItemStack item) {
+    public boolean itemMatches(ItemStack item) {
         return item.getItem() == Items.WRITTEN_BOOK;
     }
 
     @Override
     protected WrittenBookInfo createInfo(ItemStack item, InteractionHand hand) {
         return new WrittenBookInfo(item, hand);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; // TODO: Replace with config key reference
     }
 
     private Vec3 getLeftRight(IVRData hand, boolean left) {

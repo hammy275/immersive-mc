@@ -22,13 +22,19 @@ public abstract class AbstractItemImmersive<I extends AbstractItemInfo> {
 
     protected abstract void tick(I info, IVRData hand, IVRData other);
 
-    protected abstract boolean itemMatches(ItemStack item);
+    public abstract boolean itemMatches(ItemStack item);
 
     protected abstract I createInfo(ItemStack item, InteractionHand hand);
+
+    public abstract boolean isEnabled();
 
 
     // Only intended to be called externally
     public void registerAndTickAll(ItemStack mainStack, ItemStack offStack) {
+        if (!this.isEnabled()) {
+            infos.clear();
+            return;
+        }
         List<I> toRemove = new ArrayList<>();
         for (I info : infos) {
             ItemStack currentHandItem = info.handIn == InteractionHand.MAIN_HAND ? mainStack : offStack;
@@ -66,7 +72,7 @@ public abstract class AbstractItemImmersive<I extends AbstractItemInfo> {
                 VRPlugin.API.getVRPlayer(Minecraft.getInstance().player) :
                 VRPlugin.API.getRenderVRPlayer();
         for (I info : infos) {
-            if (!info.shouldRemove) {
+            if (!info.shouldRemove && this.isEnabled()) {
                 this.render(info, poseStack, player.getController(info.handIn.ordinal()));
             }
         }
