@@ -4,8 +4,12 @@ import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.lwjgl.system.CallbackI;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WrittenBookInfo extends AbstractItemInfo {
     private int leftPageIndex = 0;
@@ -20,6 +24,7 @@ public class WrittenBookInfo extends AbstractItemInfo {
     public PageChangeState pageChangeState = PageChangeState.NONE;
     public float leftPageTurn = 0f;
     public float rightPageTurn = 1f;
+    public List<AABB> tmpHitboxes = new ArrayList<>();
 
     private final int maxLeftPageIndex;
 

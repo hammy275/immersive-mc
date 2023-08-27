@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Vector3f;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Camera;
@@ -16,13 +17,17 @@ import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.vivecraft.utils.math.Vector3;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo> {
@@ -49,8 +54,8 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
 
     // Helpful constants
     public static final float pageTilt = 11f;
-    public static final int bookLines = 14;
-    public static final int charsPerLine = 20;
+    public static final int linesPerPage = 14;
+    public static final int pixelsPerLine = 114;
 
     /*
      * Pitch is 0 forward, with 30 up and -30 down
@@ -92,6 +97,10 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         if (info.pageChangeState == WrittenBookInfo.PageChangeState.NONE) {
             renderPage(stack, hand, info.left, true);
             renderPage(stack, hand, info.right, false);
+        }
+
+        for (AABB hbox : info.tmpHitboxes) {
+            AbstractImmersive.renderHitbox(stack, hbox, hbox.getCenter(), true, 1f, 1f, 1f);
         }
 
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
@@ -217,6 +226,51 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
                 resetTurnState(info);
             }
         }
+
+        // Place hitboxes for interacting with text
+        info.tmpHitboxes.clear();
+        setHitboxes(info, hand, other, true);
+        setHitboxes(info, hand, other, false);
+    }
+
+    private void setHitboxes(WrittenBookInfo info, IVRData hand, IVRData other, boolean isLeft) {
+        Vec3 pageUp = hand.getLookAngle();
+        Vec3 pageDown = pageUp.scale(-1);
+        Vec3 left = getLeftRight(hand, true);
+        Vec3 right = getLeftRight(hand, false);
+        Vec3 away = getAway(hand);
+
+        // Top left of text
+        Vec3 leftStartMove = isLeft ? left.scale(singlePageWidth * 0.96) : Vec3.ZERO;
+        Vec3 pos = hand.position().add(pageUp.scale(pageHalfHeight)).add(leftStartMove)
+                .add(away.scale(textUpAmount)).add(pageDown.scale(9 * Math.abs(textStackScaleSize)));
+        Font font = Minecraft.getInstance().font;
+        List<FormattedCharSequence> text = font.split(isLeft ? info.left : info.right, 114);
+        for (int lineNum = 0; lineNum < text.size(); lineNum++) {
+            // Set leftPos to be down the page to now be the center left of the line
+            Vec3 leftPos = pos.add(pageDown.scale((26 + lineNum * (Minecraft.getInstance().font.lineHeight))
+                    * Math.abs(textStackScaleSize)));
+            List<Pair<String, Style>> chars = new ArrayList<>();
+            // Iterates through each character on the line and adds it to chars
+            text.get(lineNum).accept((charIndex, style, codePoint) -> {
+                chars.add(new Pair<>(new StringBuilder().appendCodePoint(codePoint).toString(), style));
+                return true; // Return true to move to next char always
+            });
+            for (Pair<String, Style> c : chars) {
+                String str = c.getFirst();
+                Style style = c.getSecond();
+                // Move halfway into the char, make a hitbox, then move the other half for the next char
+                double halfCharWidth = (font.width(str) / 2d) * Math.abs(textStackScaleSize);
+                leftPos = leftPos.add(right.scale(halfCharWidth));
+                if (style.getClickEvent() != null || true) {
+                    // At this point, leftPos is the center of the char
+                    info.tmpHitboxes.add(AABB.ofSize(leftPos, 0.0175, 0.0175, 0.0175));
+                }
+                leftPos = leftPos.add(right.scale(halfCharWidth));
+            }
+
+        }
+
     }
 
     @Override
