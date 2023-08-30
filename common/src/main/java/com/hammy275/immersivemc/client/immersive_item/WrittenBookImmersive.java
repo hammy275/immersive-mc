@@ -15,6 +15,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -231,16 +232,37 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         setClickPositions(info, hand, other, false);
 
         // Find nearest link to click
+        info.selectedClickInfo = -1;
+        // Move pos out a bit to make easier to point at
+        double smallestDistSoFarSqr = Double.POSITIVE_INFINITY;
         for (int clickInfoIndex = 0; clickInfoIndex < info.clickInfos.size(); clickInfoIndex++) {
             WrittenBookInfo.BookClickInfo clickInfo = info.clickInfos.get(clickInfoIndex);
-            double smallestDist = Double.POSITIVE_INFINITY;
             for (Vec3 pos : clickInfo.positions) {
-                double dist = pos.distanceToSqr(other.position());
-                if (dist < textInteractDistanceSqr && dist < smallestDist) {
+                double distSqr = pos.distanceToSqr(other.position());
+                if (distSqr < textInteractDistanceSqr && distSqr < smallestDistSoFarSqr) {
                     info.selectedClickInfo = clickInfoIndex;
-                    smallestDist = dist;
+                    smallestDistSoFarSqr = distSqr;
                 }
             }
+        }
+
+        // Indicator on currently selected click info
+        if (info.selectedClickInfo > -1) {
+            WrittenBookInfo.BookClickInfo clickInfo = info.clickInfos.get(info.selectedClickInfo);
+            Vec3 particlePos;
+            if (clickInfo.positions.size() % 2 != 0) {
+                particlePos = clickInfo.positions.get(clickInfo.positions.size() / 2);
+            } else {
+                // Averages the two middle positions
+                particlePos = clickInfo.positions.get(clickInfo.positions.size() / 2)
+                        .add(clickInfo.positions.get(clickInfo.positions.size() / 2 - 1))
+                        .scale(0.5);
+            }
+            Minecraft.getInstance().player.level.addParticle(
+                    new DustParticleOptions(new Vector3f(0f, 0f, 1f), 0.2f),
+                    particlePos.x, particlePos.y, particlePos.z,
+                    0, 0, 0
+            );
         }
     }
 
@@ -267,15 +289,35 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
                 chars.add(new Pair<>(new StringBuilder().appendCodePoint(codePoint).toString(), style));
                 return true; // Return true to move to next char always
             });
+            double pixelsMoved = 0;
             for (Pair<String, Style> c : chars) {
                 String str = c.getFirst();
                 Style style = c.getSecond();
                 // Move halfway into the char, make a hitbox, then move the other half for the next char
+                pixelsMoved += font.width(str) / 2d;
                 double halfCharWidth = (font.width(str) / 2d) * Math.abs(textStackScaleSize);
                 leftPos = leftPos.add(right.scale(halfCharWidth));
                 if (style.getClickEvent() != null) {
-                    info.addClickInfo(leftPos, style);
+                    Vec3 placePos;
+                    double pixelMovedRatio = pixelsMoved / pixelsPerLine;
+                    if (pixelMovedRatio < 0.5 && isLeft || pixelMovedRatio > 0.5 && !isLeft) {
+                        if (pixelMovedRatio > 0.5) {
+                            pixelMovedRatio -= 0.5;
+                        } else {
+                            pixelMovedRatio = 0.5 - pixelMovedRatio;
+                        }
+                        placePos = leftPos.add(away.scale(textUpAmount).scale(pixelMovedRatio / 2d));
+                    } else {
+                        if (pixelMovedRatio > 0.5) {
+                            pixelMovedRatio -= 0.5;
+                        } else {
+                            pixelMovedRatio = 0.5 - pixelMovedRatio;
+                        }
+                        placePos = leftPos.add(away.scale(textUpAmount).scale(-pixelMovedRatio / 2d));
+                    }
+                    info.addClickInfo(placePos, style);
                 }
+                pixelsMoved += font.width(str) / 2d;
                 leftPos = leftPos.add(right.scale(halfCharWidth));
             }
 
