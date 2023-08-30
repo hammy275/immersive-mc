@@ -25,6 +25,7 @@
   "client": [
     "BackpackTrackerMixin",
     "DragonFireballRendererMixin",
+    "ItemInHandRendererMixin",
     "LevelRendererMixin",
     "MinecraftMixin",
     "MinecraftMixinAccessor",
