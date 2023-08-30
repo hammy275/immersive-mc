@@ -1,6 +1,8 @@
 package com.hammy275.immersivemc.client.subscribe;
 
 import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
+import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
 import com.hammy275.immersivemc.common.util.ShieldUtil;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -20,6 +22,11 @@ public class ClientRenderSubscriber {
         try {
             for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
                 renderInfos(singleton, stack);
+            }
+            if (VRPluginVerify.clientInVR()) {
+                for (AbstractItemImmersive<?> singleton : ItemImmersives.ITEM_IMMERSIVES) {
+                    singleton.renderAll(stack);
+                }
             }
         } catch (ConcurrentModificationException ignored) {
             // Skip rendering if the list is modified mid-render
