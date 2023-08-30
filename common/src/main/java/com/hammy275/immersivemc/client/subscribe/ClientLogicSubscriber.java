@@ -261,6 +261,16 @@ public class ClientLogicSubscriber {
     public static boolean handleLeftClick(Player player) {
         if (Minecraft.getInstance().player == null) return false;
 
+        boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
+        if (inVR) {
+            for (AbstractItemImmersive<?> immersive : ItemImmersives.ITEM_IMMERSIVES) {
+                boolean handledClick = immersive.attemptLeftClickAll();
+                if (handledClick) {
+                    return true;
+                }
+            }
+        }
+
         BackpackInfo backpackInfo = Immersives.immersiveBackpack.getTrackedObjects().size() > 0 ?
                 Immersives.immersiveBackpack.getTrackedObjects().get(0) : null;
         // Move to next row on left click if backpack is out
@@ -269,7 +279,6 @@ public class ClientLogicSubscriber {
             return true;
         }
 
-        boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
         if (inVR) {
             for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
                 for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {

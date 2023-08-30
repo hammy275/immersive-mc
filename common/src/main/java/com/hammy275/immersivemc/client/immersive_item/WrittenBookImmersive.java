@@ -11,13 +11,14 @@ import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.Style;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.InteractionHand;
@@ -25,7 +26,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.vivecraft.utils.math.Vector3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +51,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     public static final double textUpAmount = 0.1875 * (scaleSize / 2f);
     public static final double pageTurnStartDistanceSqr = (pageHalfHeight * 1.1) * (pageHalfHeight * 1.1);
     public static final double pageDontStartTurnDistanceSqr = 2.2 * 2.2 * singlePageWidth * singlePageWidth;
+    public static final double textInteractDistanceSqr = (textUpAmount * 1.2) * (textUpAmount * 1.2);
 
     // Helpful constants
     public static final float pageTilt = 11f;
@@ -99,10 +100,6 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
             renderPage(stack, hand, info.right, false);
         }
 
-        for (AABB hbox : info.tmpHitboxes) {
-            AbstractImmersive.renderHitbox(stack, hbox, hbox.getCenter(), true, 1f, 1f, 1f);
-        }
-
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
     }
 
@@ -146,6 +143,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
             BookViewScreen.WrittenBookAccess access = new BookViewScreen.WrittenBookAccess(book);
             info.left = access.getPage(info.getLeftPageIndex());
             info.right = access.getPage(info.getRightPageIndex());
+            info.clickInfos.clear(); // Clear all click infos due to page change changing click information
             info.setPageChanged(false);
         }
 
@@ -227,13 +225,26 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
             }
         }
 
-        // Place hitboxes for interacting with text
-        info.tmpHitboxes.clear();
-        setHitboxes(info, hand, other, true);
-        setHitboxes(info, hand, other, false);
+        // Place positions for interacting with text
+        info.clearClickInfoLists();  // Only clear the list of positions, as the same click events still exist
+        setClickPositions(info, hand, other, true);
+        setClickPositions(info, hand, other, false);
+
+        // Find nearest link to click
+        for (int clickInfoIndex = 0; clickInfoIndex < info.clickInfos.size(); clickInfoIndex++) {
+            WrittenBookInfo.BookClickInfo clickInfo = info.clickInfos.get(clickInfoIndex);
+            double smallestDist = Double.POSITIVE_INFINITY;
+            for (Vec3 pos : clickInfo.positions) {
+                double dist = pos.distanceToSqr(other.position());
+                if (dist < textInteractDistanceSqr && dist < smallestDist) {
+                    info.selectedClickInfo = clickInfoIndex;
+                    smallestDist = dist;
+                }
+            }
+        }
     }
 
-    private void setHitboxes(WrittenBookInfo info, IVRData hand, IVRData other, boolean isLeft) {
+    private void setClickPositions(WrittenBookInfo info, IVRData hand, IVRData other, boolean isLeft) {
         Vec3 pageUp = hand.getLookAngle();
         Vec3 pageDown = pageUp.scale(-1);
         Vec3 left = getLeftRight(hand, true);
@@ -262,9 +273,8 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
                 // Move halfway into the char, make a hitbox, then move the other half for the next char
                 double halfCharWidth = (font.width(str) / 2d) * Math.abs(textStackScaleSize);
                 leftPos = leftPos.add(right.scale(halfCharWidth));
-                if (style.getClickEvent() != null || true) {
-                    // At this point, leftPos is the center of the char
-                    info.tmpHitboxes.add(AABB.ofSize(leftPos, 0.0175, 0.0175, 0.0175));
+                if (style.getClickEvent() != null) {
+                    info.addClickInfo(leftPos, style);
                 }
                 leftPos = leftPos.add(right.scale(halfCharWidth));
             }
@@ -286,6 +296,39 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     @Override
     public boolean isEnabled() {
         return ActiveConfig.useWrittenBookImmersion;
+    }
+
+    @Override
+    public boolean onLeftClick(WrittenBookInfo info, IVRData hand, IVRData other) {
+        if (info.clickInfos.isEmpty()) {
+            return false;
+        }
+        if (info.selectedClickInfo > -1) {
+            WrittenBookInfo.BookClickInfo clickInfo = info.clickInfos.get(info.selectedClickInfo);
+            ClickEvent clickEvent = clickInfo.style.getClickEvent();
+            if (clickEvent != null) {
+                String eventValue = clickEvent.getValue();
+                if (clickEvent.getAction() == ClickEvent.Action.CHANGE_PAGE) {
+                    try {
+                        int newPageNum = Integer.parseInt(eventValue) - 1;
+                        info.setPage(newPageNum);
+                    } catch (Exception ignored) {}
+
+                } else {
+                    Screen tempScreen = new Screen(TextComponent.EMPTY) {
+                        @Override
+                        public Component getTitle() {
+                            return TextComponent.EMPTY;
+                        }
+                    };
+                    Minecraft.getInstance().setScreen(tempScreen);
+                    tempScreen.handleComponentClicked(clickInfo.style);
+                    Minecraft.getInstance().setScreen(null);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     private Vec3 getLeftRight(IVRData hand, boolean left) {

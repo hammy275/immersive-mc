@@ -28,6 +28,21 @@ public abstract class AbstractItemImmersive<I extends AbstractItemInfo> {
 
     public abstract boolean isEnabled();
 
+    public abstract boolean onLeftClick(I info, IVRData hand, IVRData other);
+
+    public boolean attemptLeftClickAll() {
+        IVRPlayer player = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player);
+        for (I info : this.infos) {
+
+            boolean handledClick = onLeftClick(info, player.getController(info.handIn.ordinal()),
+                    player.getController(info.handIn == InteractionHand.MAIN_HAND ? 1 : 0));
+            if (handledClick) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     // Only intended to be called externally
     public void registerAndTickAll(ItemStack mainStack, ItemStack offStack) {
