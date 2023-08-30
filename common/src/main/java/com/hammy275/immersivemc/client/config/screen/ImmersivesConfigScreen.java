@@ -78,6 +78,7 @@ public class ImmersivesConfigScreen extends Screen {
             ScreenUtils.addOption("repeater", ImmersiveMCConfig.useRepeaterImmersion, this.list);
             ScreenUtils.addOption("shield", ImmersiveMCConfig.immersiveShield, this.list);
             ScreenUtils.addOption("throw", ImmersiveMCConfig.useThrowing, this.list);
+            ScreenUtils.addOption("written_book", ImmersiveMCConfig.useWrittenBookImmersion, this.list);
         }
 
 

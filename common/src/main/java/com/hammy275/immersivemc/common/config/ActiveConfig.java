@@ -38,7 +38,7 @@ public class ActiveConfig {
     public static boolean useHopperImmersion = false;
     public static boolean useSmithingTableImmersion = false;
     public static boolean useChiseledBookshelfImmersion = false;
-
+    public static boolean useWrittenBookImmersion = false;
     // C2S Synced values
     public static boolean crouchBypassImmersion = false;
     public static boolean doRumble = false;
@@ -121,7 +121,7 @@ public class ActiveConfig {
         useHopperImmersion = buffer.readBoolean() && useHopperImmersion;
         useSmithingTableImmersion = buffer.readBoolean() && useSmithingTableImmersion;
         useChiseledBookshelfImmersion = buffer.readBoolean() && useChiseledBookshelfImmersion;
-
+        useWrittenBookImmersion = buffer.readBoolean() && useWrittenBookImmersion;
     }
 
     public static void loadConfigFromFile() {
@@ -160,6 +160,7 @@ public class ActiveConfig {
             useHopperImmersion = ImmersiveMCConfig.useHopperImmersion.get();
             useSmithingTableImmersion = ImmersiveMCConfig.useSmithingTableImmersion.get();
             useChiseledBookshelfImmersion = ImmersiveMCConfig.useChiseledBookshelfImmersion.get();
+            useWrittenBookImmersion = ImmersiveMCConfig.useWrittenBookImmersion.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -218,6 +219,7 @@ public class ActiveConfig {
         useHopperImmersion = false;
         useSmithingTableImmersion = false;
         useChiseledBookshelfImmersion = false;
+        useWrittenBookImmersion = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -278,7 +280,8 @@ public class ActiveConfig {
                 "Use Smithing Table Immersion: " + useSmithingTableImmersion + "\n" +
                 "Do Rumble: " + doRumble + "\n" +
                 "Return Items: " + returnItems + "\n" +
-                "Use Chiseled Bookshelf Immersion: " + useChiseledBookshelfImmersion;
+                "Use Chiseled Bookshelf Immersion: " + useChiseledBookshelfImmersion + "\n" +
+                "Use Written Book Immersion: " + useWrittenBookImmersion;
         return stringOut;
     }
 

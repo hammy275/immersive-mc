@@ -3,8 +3,20 @@ package com.hammy275.immersivemc.client.subscribe;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
-import com.hammy275.immersivemc.client.immersive.*;
-import com.hammy275.immersivemc.client.immersive.info.*;
+import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
+import com.hammy275.immersivemc.client.immersive.ImmersiveBarrel;
+import com.hammy275.immersivemc.client.immersive.ImmersiveChest;
+import com.hammy275.immersivemc.client.immersive.ImmersiveShulker;
+import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
+import com.hammy275.immersivemc.client.immersive.info.BarrelInfo;
+import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
+import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
+import com.hammy275.immersivemc.client.immersive.info.ShulkerInfo;
+import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
+import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
 import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
@@ -81,6 +93,14 @@ public class ClientLogicSubscriber {
         }
         for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
             tickInfos(singleton, player);
+        }
+        if (VRPluginVerify.clientInVR()) {
+            for (AbstractItemImmersive<?> singleton : ItemImmersives.ITEM_IMMERSIVES) {
+                singleton.registerAndTickAll(
+                        Minecraft.getInstance().player.getMainHandItem(),
+                        Minecraft.getInstance().player.getOffhandItem()
+                );
+            }
         }
         if (Minecraft.getInstance().gameMode == null || Minecraft.getInstance().level == null) return;
 
@@ -241,6 +261,16 @@ public class ClientLogicSubscriber {
     public static boolean handleLeftClick(Player player) {
         if (Minecraft.getInstance().player == null) return false;
 
+        boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
+        if (inVR) {
+            for (AbstractItemImmersive<?> immersive : ItemImmersives.ITEM_IMMERSIVES) {
+                boolean handledClick = immersive.attemptLeftClickAll();
+                if (handledClick) {
+                    return true;
+                }
+            }
+        }
+
         BackpackInfo backpackInfo = Immersives.immersiveBackpack.getTrackedObjects().size() > 0 ?
                 Immersives.immersiveBackpack.getTrackedObjects().get(0) : null;
         // Move to next row on left click if backpack is out
@@ -249,7 +279,6 @@ public class ClientLogicSubscriber {
             return true;
         }
 
-        boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
         if (inVR) {
             for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
                 for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {

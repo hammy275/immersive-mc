@@ -41,6 +41,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useHopperImmersion;
     public static ForgeConfigSpec.BooleanValue useSmithingTableImmersion;
     public static ForgeConfigSpec.BooleanValue useChiseledBookshelfImmersion;
+    public static ForgeConfigSpec.BooleanValue useWrittenBookImmersion;
 
     // C2S Only Sync
     public static ForgeConfigSpec.BooleanValue crouchBypassImmersion;
@@ -162,6 +163,9 @@ public class ImmersiveMCConfig {
         useChiseledBookshelfImmersion = builder
                 .comment("Whether immersives for chiseled bookshelves should be allowed.")
                 .define("chiseled_bookshelf_immersion", true);
+        useWrittenBookImmersion = builder
+                .comment("Whether immersives for written books should be allowed.")
+                .define("written_book_immersion", true);
 
         // C2S Only Sync
         crouchBypassImmersion = builder
@@ -260,7 +264,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(allowThrowingBeyondMax.get())
                 .writeBoolean(useHopperImmersion.get())
                 .writeBoolean(useSmithingTableImmersion.get())
-                .writeBoolean(useChiseledBookshelfImmersion.get());
+                .writeBoolean(useChiseledBookshelfImmersion.get())
+                .writeBoolean(useWrittenBookImmersion.get());
     }
 
     public static void resetToDefault() {
@@ -293,6 +298,7 @@ public class ImmersiveMCConfig {
         useHopperImmersion.set(true);
         useSmithingTableImmersion.set(true);
         useChiseledBookshelfImmersion.set(true);
+        useWrittenBookImmersion.set(true);
 
         // C2S Synced Values
         crouchBypassImmersion.set(true);
