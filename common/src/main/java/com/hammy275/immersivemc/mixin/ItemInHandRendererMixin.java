@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-@Mixin(value = ItemInHandRenderer.class, priority = 999) // Priority 999 to come before Vivecraft's Inject
+@Mixin(value = ItemInHandRenderer.class, priority = 998) // Priority 998 to come before Vivecraft's Inject
 public class ItemInHandRendererMixin {
 
     @ModifyVariable(method = "renderArmWithItem(Lnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/InteractionHand;FLnet/minecraft/world/item/ItemStack;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
