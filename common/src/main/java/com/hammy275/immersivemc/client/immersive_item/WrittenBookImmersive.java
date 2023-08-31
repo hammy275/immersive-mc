@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive_item;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
+import com.hammy275.immersivemc.client.workaround.ClickHandlerScreen;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
@@ -11,7 +12,6 @@ import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -19,13 +19,14 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -357,15 +358,9 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
                     } catch (Exception ignored) {}
 
                 } else {
-                    Screen tempScreen = new Screen(TextComponent.EMPTY) {
-                        @Override
-                        public Component getTitle() {
-                            return TextComponent.EMPTY;
-                        }
-                    };
+                    ClickHandlerScreen tempScreen = new ClickHandlerScreen();
                     Minecraft.getInstance().setScreen(tempScreen);
                     tempScreen.handleComponentClicked(clickInfo.style);
-                    Minecraft.getInstance().setScreen(null);
                 }
                 return true;
             }
