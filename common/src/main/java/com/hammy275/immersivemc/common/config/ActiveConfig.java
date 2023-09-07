@@ -49,7 +49,7 @@ public class ActiveConfig {
     public static boolean rightClickChest = false;
     public static boolean autoCenterFurnace = false;
     public static boolean autoCenterBrewing = false;
-    public static boolean useLowDetailBackpack = false;
+    public static BackpackMode backpackMode = BackpackMode.BUNDLE;
     public static PlacementGuideMode placementGuideMode = PlacementGuideMode.CUBE;
     public static PlacementMode placementMode = PlacementMode.PLACE_ONE;
     public static boolean spinCraftingOutput = true;
@@ -175,7 +175,7 @@ public class ActiveConfig {
         rightClickChest = ImmersiveMCConfig.rightClickChest.get();
         autoCenterFurnace = ImmersiveMCConfig.autoCenterFurnace.get();
         autoCenterBrewing = ImmersiveMCConfig.autoCenterBrewing.get();
-        useLowDetailBackpack = ImmersiveMCConfig.useLowDetailBackpack.get();
+        backpackMode = BackpackMode.values()[ImmersiveMCConfig.backpackMode.get()];
         placementGuideMode = PlacementGuideMode.values()[ImmersiveMCConfig.placementGuideMode.get()];
         placementMode = PlacementMode.fromInt(ImmersiveMCConfig.itemPlacementMode.get());
         spinCraftingOutput = ImmersiveMCConfig.spinCraftingOutput.get();
@@ -252,7 +252,7 @@ public class ActiveConfig {
                 "Use repeater immersion: " + useRepeaterImmersion + "\n" +
                 "Auto-center furnace: " + autoCenterFurnace + "\n" +
                 "Auto-center brewing: " + autoCenterBrewing + "\n" +
-                "Use low detailed bag: " + useLowDetailBackpack + "\n" +
+                "Backpack mode: " + backpackMode + "\n" +
                 "Placement Guide mode: " + placementGuideMode + "\n" +
                 "Placement mode: " + placementMode + "\n" +
                 "Use door immersion: " + useDoorImmersion + "\n" +
