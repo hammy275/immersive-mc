@@ -52,7 +52,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue rightClickChest;
     public static ForgeConfigSpec.BooleanValue autoCenterFurnace;
     public static ForgeConfigSpec.BooleanValue autoCenterBrewing;
-    public static ForgeConfigSpec.BooleanValue useLowDetailBackpack;
+    public static ForgeConfigSpec.IntValue backpackMode;
     public static ForgeConfigSpec.IntValue placementGuideMode;
     public static ForgeConfigSpec.IntValue itemPlacementMode;
     public static ForgeConfigSpec.BooleanValue spinCraftingOutput;
@@ -187,9 +187,9 @@ public class ImmersiveMCConfig {
         autoCenterBrewing = builder
                 .comment("Makes the brewing stand more centered instead of similar to the vanilla GUI")
                 .define("center_brewing", false);
-        useLowDetailBackpack = builder
-                .comment("Use lower-detailed bag")
-                .define("low_detail_bag", false);
+        backpackMode = builder
+                .comment("Which bag type to display")
+                .defineInRange("bag_mode", 0, 0, BackpackMode.values().length -1);
         placementGuideMode = builder
                 .comment("The mode for the placement guide")
                 .defineInRange("placement_guide_mode", 0, 0, PlacementGuideMode.values().length - 1);
@@ -304,7 +304,7 @@ public class ImmersiveMCConfig {
         rightClickChest.set(false);
         autoCenterFurnace.set(false);
         autoCenterBrewing.set(false);
-        useLowDetailBackpack.set(false);
+        backpackMode.set(0);
         placementGuideMode.set(0);
         itemPlacementMode.set(0);
         spinCraftingOutput.set(false);

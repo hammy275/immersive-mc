@@ -1,9 +1,6 @@
 package com.hammy275.immersivemc;
 
-import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
-import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
-import com.hammy275.immersivemc.client.model.BackpackModel;
-import com.hammy275.immersivemc.client.model.Cube1x1;
+import com.hammy275.immersivemc.client.model.*;
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
@@ -27,6 +24,7 @@ public class ImmersiveMCClient {
         EntityModelLayerRegistry.register(BackpackCraftingModel.LAYER_LOCATION, BackpackCraftingModel::createBodyLayer);
         EntityModelLayerRegistry.register(BackpackLowDetailModel.LAYER_LOCATION, BackpackLowDetailModel::createBodyLayer);
         EntityModelLayerRegistry.register(BackpackModel.LAYER_LOCATION, BackpackModel::createBodyLayer);
+        EntityModelLayerRegistry.register(BackpackBundleModel.LAYER_LOCATION, BackpackBundleModel::createBodyLayer);
         EntityModelLayerRegistry.register(Cube1x1.LAYER_LOCATION, Cube1x1::createBodyLayer);
     }
 }
