@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
+import com.hammy275.immersivemc.client.model.BackpackBundleModel;
 import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
 import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
@@ -28,6 +29,7 @@ import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -47,6 +49,8 @@ import java.util.Optional;
  * stored items in crafting and stuff).
  */
 public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
+    public static final BackpackBundleModel bundleModel =
+            new BackpackBundleModel(Minecraft.getInstance().getEntityModels().bakeLayer(BackpackBundleModel.LAYER_LOCATION));
 
     public static final BackpackModel model =
             new BackpackModel(Minecraft.getInstance().getEntityModels().bakeLayer(BackpackModel.LAYER_LOCATION));
@@ -54,6 +58,8 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
             new BackpackLowDetailModel(Minecraft.getInstance().getEntityModels().bakeLayer(BackpackLowDetailModel.LAYER_LOCATION));
     public static final BackpackCraftingModel craftingModel =
             new BackpackCraftingModel(Minecraft.getInstance().getEntityModels().bakeLayer(BackpackCraftingModel.LAYER_LOCATION));
+
+    private static final Vector3f maxColor = new Vector3f(1f, 1f, 1f);
 
     private final double spacing = 3d/8d;
 
@@ -156,7 +162,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         // Render the model (finally!)
         getBackpackModel().renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderType.entityCutout(BackpackModel.textureLocation)),
+                        .getBuffer(RenderType.entityCutout(getBackpackTexture())),
                 15728880, OverlayTexture.NO_OVERLAY,
                 info.rgb.x(), info.rgb.y(), info.rgb.z(), 1);
 
@@ -250,10 +256,47 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     public static Model getBackpackModel() {
-        if (ActiveConfig.useLowDetailBackpack) {
-            return modelLowDetail;
+        switch (ActiveConfig.backpackMode) {
+            case BUNDLE, BUNDLE_COLORABLE -> {
+                return bundleModel;
+            }
+            case ORIGINAL -> {
+                return model;
+            }
+            case ORIGINAL_LOW_DETAIL -> {
+                return modelLowDetail;
+            }
+            default -> throw new IllegalArgumentException("backpackMode set to invalid enum value!");
         }
-        return model;
+    }
+
+    public static ResourceLocation getBackpackTexture() {
+        switch (ActiveConfig.backpackMode) {
+            case BUNDLE -> {
+                return BackpackBundleModel.textureLocation;
+            }
+            case BUNDLE_COLORABLE -> {
+                return BackpackBundleModel.textureLocationColorable;
+            }
+            case ORIGINAL -> {
+                return BackpackModel.textureLocation;
+            }
+            case ORIGINAL_LOW_DETAIL -> {
+                return BackpackLowDetailModel.textureLocation;
+            }
+            default -> throw new IllegalArgumentException("backpackMode set to invalid enum value!");
+        }
+    }
+
+    public static Vector3f getBackpackColor() {
+        if (ActiveConfig.backpackMode.colorable) {
+            Vector3f rgb = new Vector3f(ActiveConfig.backpackColor >> 16, ActiveConfig.backpackColor >> 8 & 255,
+                    ActiveConfig.backpackColor & 255);
+            rgb.mul(1f/255f);
+            return rgb;
+        } else {
+            return maxColor;
+        }
     }
 
     private void calculatePositions(BackpackInfo info, IVRPlayer vrPlayer) {
@@ -268,10 +311,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         info.renderPos = info.handPos.add(0, -0.75, 0);
         info.renderPos = info.renderPos.add(info.backVec.multiply(1d/6d, 1d/6d, 1d/6d));
 
-        info.rgb = new Vector3f(ActiveConfig.backpackColor >> 16, ActiveConfig.backpackColor >> 8 & 255,
-                ActiveConfig.backpackColor & 255);
-        info.rgb.mul(1f/255f);
-
+        info.rgb = getBackpackColor();
 
         info.centerTopPos = info.handPos.add(0, -0.05, 0);
         info.centerTopPos = info.centerTopPos.add(info.backVec.multiply(1d/6d, 1d/6d, 1d/6d)); // Back on arm
@@ -316,8 +356,8 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         int midStart = 9 * info.getMidRow();
         int midEnd = midStart + 8;
 
-        Vec3 downOne = info.downVec.multiply(0.125, 0.125, 0.125);
-        Vec3 downTwo = downOne.multiply(2, 2, 2);
+        Vec3 downOne = info.downVec.scale(0.105);
+        Vec3 downTwo = downOne.scale(2);
 
         for (int i = 0; i <= 26; i++) {
             Vec3 posRaw = positions[i % 9];

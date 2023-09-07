@@ -2,11 +2,12 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
-import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.BackpackMode;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
+import net.minecraft.client.CycleOption;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
@@ -22,6 +23,8 @@ import net.minecraft.util.FormattedCharSequence;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /*
 Thanks to https://leo3418.github.io/2021/03/31/forge-mod-config-screen-1-16.html for a guide that was very
@@ -56,27 +59,50 @@ public class BackpackConfigScreen extends Screen {
     }
 
     protected void initOptionsList() {
-        this.list.addBig(ScreenUtils.createOption("low_detail_backpack", ImmersiveMCConfig.useLowDetailBackpack));
-        this.list.addBig(ScreenUtils.createOption("reach_behind_backpack", ImmersiveMCConfig.reachBehindBackpack));
-        this.list.addBig(ScreenUtils.createIntSlider(
-                "config.immersivemc.backpack_r",
-                (integer) -> new TextComponent(I18n.get("config.immersivemc.backpack_r") + ": " + getRGB('r')),
-                0, 255,
-                () -> getRGB('r'), (newRVal) -> setRGB(Double.valueOf(newRVal), 'r')
-        ));
-        this.list.addBig(ScreenUtils.createIntSlider(
-                "config.immersivemc.backpack_g",
-                (integer) -> new TextComponent(I18n.get("config.immersivemc.backpack_g") + ": " + getRGB('g')),
-                0, 255,
-                () -> getRGB('g'), (newRVal) -> setRGB(Double.valueOf(newRVal), 'g')
-        ));
-        this.list.addBig(ScreenUtils.createIntSlider(
-                "config.immersivemc.backpack_b",
-                (integer) -> new TextComponent(I18n.get("config.immersivemc.backpack_b") + ": " + getRGB('b')),
-                0, 255,
-                () -> getRGB('b'), (newRVal) -> setRGB(Double.valueOf(newRVal), 'b')
-        ));
+        this.list.addBig(CycleOption.create(
+                "config.immersivemc.backpack_mode",
+                () -> IntStream.rangeClosed(0, BackpackMode.values().length - 1).boxed().collect(Collectors.toList()),
+                (optionIndex) -> new TranslatableComponent("config.immersivemc.backpack_mode." + optionIndex),
+                (ignored) -> ImmersiveMCConfig.backpackMode.get(),
+                (ignored, ignored2, newIndex) -> {
+                    BackpackMode oldMode = ActiveConfig.backpackMode;
+                    ImmersiveMCConfig.backpackMode.set(
+                            newIndex
+                    );
+                    ImmersiveMCConfig.backpackMode.save();
+                    ActiveConfig.loadConfigFromFile();
+                    BackpackMode newMode = ActiveConfig.backpackMode;
+                    if (oldMode.colorable != newMode.colorable) {
+                        Minecraft.getInstance().setScreen(new BackpackConfigScreen(parentScreen));
+                    }
+                }
 
+        ).setTooltip(
+                (minecraft) -> (optionIndex) -> minecraft.font.split(
+                        new TranslatableComponent("config.immersivemc.backpack_mode." + optionIndex + ".desc"),
+                        200)
+        ));
+        this.list.addBig(ScreenUtils.createOption("reach_behind_backpack", ImmersiveMCConfig.reachBehindBackpack));
+        if (ActiveConfig.backpackMode.colorable) {
+            this.list.addBig(ScreenUtils.createIntSlider(
+                    "config.immersivemc.backpack_r",
+                    (integer) -> new TextComponent(I18n.get("config.immersivemc.backpack_r") + ": " + getRGB('r')),
+                    0, 255,
+                    () -> getRGB('r'), (newRVal) -> setRGB(Double.valueOf(newRVal), 'r')
+            ));
+            this.list.addBig(ScreenUtils.createIntSlider(
+                    "config.immersivemc.backpack_g",
+                    (integer) -> new TextComponent(I18n.get("config.immersivemc.backpack_g") + ": " + getRGB('g')),
+                    0, 255,
+                    () -> getRGB('g'), (newRVal) -> setRGB(Double.valueOf(newRVal), 'g')
+            ));
+            this.list.addBig(ScreenUtils.createIntSlider(
+                    "config.immersivemc.backpack_b",
+                    (integer) -> new TextComponent(I18n.get("config.immersivemc.backpack_b") + ": " + getRGB('b')),
+                    0, 255,
+                    () -> getRGB('b'), (newRVal) -> setRGB(Double.valueOf(newRVal), 'b')
+            ));
+        }
     }
 
     @Override
@@ -100,15 +126,13 @@ public class BackpackConfigScreen extends Screen {
     protected void renderBackpack(PoseStack stack) {
         stack.pushPose();
 
-        Vector3f rgb = new Vector3f(ActiveConfig.backpackColor >> 16, ActiveConfig.backpackColor >> 8 & 255,
-                ActiveConfig.backpackColor & 255);
-        rgb.mul(1f/255f);
+        Vector3f rgb = ImmersiveBackpack.getBackpackColor();
 
         float size = 96f;
         stack.translate(this.width * 0.875, this.height / 2f - size * 1.5f, 0);
-        stack.scale(size, size, size);
+        stack.scale(-size, -size, -size); // Negative multiplications here to turn it back from being inside-out
 
-        stack.mulPose(Vector3f.XN.rotationDegrees(45));
+        stack.mulPose(Vector3f.XN.rotationDegrees(205));
 
         long currentTimeMilli = Instant.now().toEpochMilli();
         long millisPerRot = 8000;
@@ -118,7 +142,7 @@ public class BackpackConfigScreen extends Screen {
 
         ImmersiveBackpack.getBackpackModel().renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderType.entityCutout(BackpackModel.textureLocation)),
+                        .getBuffer(RenderType.entityCutout(ImmersiveBackpack.getBackpackTexture())),
                 15728880, OverlayTexture.NO_OVERLAY,
                 rgb.x(),rgb.y(), rgb.z(), 1);
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
