@@ -6,6 +6,7 @@
   "refmap": "immersivemc-common-refmap.json",
   "plugin": "com.hammy275.immersivemc.MixinConfigPlugin",
   "mixins": [
+    "AbstractCauldronBlockAccessor",
     "AnvilMenuMixin",
     "BeaconBlockEntityMixin",
     "ButtonBlockMixin",
