@@ -6,6 +6,7 @@
   "refmap": "immersivemc-common-refmap.json",
   "plugin": "com.hammy275.immersivemc.MixinConfigPlugin",
   "mixins": [
+    "AbstractCauldronBlockAccessor",
     "AnvilMenuMixin",
     "BeaconBlockEntityMixin",
     "ButtonBlockMixin",
@@ -31,7 +32,7 @@
     "MinecraftMixin",
     "MinecraftMixinAccessor",
     "MultiPlayerGameModeMixin",
-    "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin",
-    "ScreenMixin"
+    "ScreenMixin",
+    "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin"
   ]
 }
