@@ -38,6 +38,7 @@ public class ActiveConfig {
     public static boolean useHopperImmersion = false;
     public static boolean useSmithingTableImmersion = false;
     public static boolean useWrittenBookImmersion = false;
+    public static boolean useCauldronImmersion = false;
 
     // C2S Synced values
     public static boolean crouchBypassImmersion = false;
@@ -121,6 +122,7 @@ public class ActiveConfig {
         useHopperImmersion = buffer.readBoolean() && useHopperImmersion;
         useSmithingTableImmersion = buffer.readBoolean() && useSmithingTableImmersion;
         useWrittenBookImmersion = buffer.readBoolean() && useWrittenBookImmersion;
+        useCauldronImmersion = buffer.readBoolean() && useCauldronImmersion;
 
     }
 
@@ -160,6 +162,7 @@ public class ActiveConfig {
             useHopperImmersion = ImmersiveMCConfig.useHopperImmersion.get();
             useSmithingTableImmersion = ImmersiveMCConfig.useSmithingTableImmersion.get();
             useWrittenBookImmersion = ImmersiveMCConfig.useWrittenBookImmersion.get();
+            useCauldronImmersion = ImmersiveMCConfig.useCauldronImmersion.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -218,6 +221,7 @@ public class ActiveConfig {
         useHopperImmersion = false;
         useSmithingTableImmersion = false;
         useWrittenBookImmersion = false;
+        useCauldronImmersion = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -228,7 +232,8 @@ public class ActiveConfig {
                 .writeBoolean(ActiveConfig.canPet).writeBoolean(ActiveConfig.useArmorImmersion)
                 .writeBoolean(ActiveConfig.canFeedAnimals).writeBoolean(ActiveConfig.canPetAnyLiving)
                 .writeInt(ActiveConfig.rangedGrabRange).writeBoolean(ActiveConfig.crouchBypassImmersion)
-                .writeBoolean(ActiveConfig.doRumble).writeBoolean(ActiveConfig.returnItems);
+                .writeBoolean(ActiveConfig.doRumble).writeBoolean(ActiveConfig.returnItems)
+                .writeBoolean(ActiveConfig.useCauldronImmersion);
         return buffer;
     }
 
@@ -278,7 +283,8 @@ public class ActiveConfig {
                 "Use Smithing Table Immersion: " + useSmithingTableImmersion + "\n" +
                 "Do Rumble: " + doRumble + "\n" +
                 "Return Items: " + returnItems + "\n" +
-                "Use Written Book Immersion: " + useWrittenBookImmersion;
+                "Use Written Book Immersion: " + useWrittenBookImmersion + "\n" +
+                "Use Cauldron Immersion: " + useCauldronImmersion;
         return stringOut;
     }
 
