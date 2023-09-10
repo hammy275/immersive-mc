@@ -21,4 +21,5 @@ public class ServerTrackerInit {
     public static final PetTracker petTracker = new PetTracker();
     public static final ArmorTracker armorTracker = new ArmorTracker();
     public static final FeedAnimalsTracker feedAnimalsTracker = new FeedAnimalsTracker();
+    public static final CauldronTracker cauldronTracker = new CauldronTracker();
 }
