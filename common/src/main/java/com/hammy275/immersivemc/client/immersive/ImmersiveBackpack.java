@@ -396,5 +396,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
         info.setPosition(31, centerCraftingPos.add(upVec.multiply(0.125, 0.125, 0.125)));
         info.setHitbox(31, createHitbox(info.getPosition(31), 0.05f));
+
+        info.setInputSlots();
     }
 }
