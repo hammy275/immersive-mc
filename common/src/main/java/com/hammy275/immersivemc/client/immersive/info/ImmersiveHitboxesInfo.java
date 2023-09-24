@@ -10,7 +10,7 @@ public class ImmersiveHitboxesInfo extends AbstractImmersiveInfo implements Info
 
     // NOTE: This class should have the regular hitboxes and trigger hitboxes share the same
     // index numbers. Have the actual immersive handle both behaviors.
-    public static final int BACKPACK_INDEX = 0;
+    public static final int BACKPACK_BACK_INDEX = 0;
 
     private AABB backpackBackHitbox = null;
 
@@ -26,10 +26,11 @@ public class ImmersiveHitboxesInfo extends AbstractImmersiveInfo implements Info
 
     @Override
     public AABB getHitbox(int slot) {
-        if (slot == BACKPACK_INDEX) {
+        if (slot == BACKPACK_BACK_INDEX) {
             return backpackBackHitbox;
         }
-        throw new IllegalArgumentException("Can only get slot 0 of ImmersiveHitboxes");
+        throw new IllegalArgumentException(String.format("ImmersiveHitboxes: " +
+                "%d out of range for %d hitboxes.", slot, getAllHitboxes().length));
     }
 
     @Override
@@ -39,7 +40,7 @@ public class ImmersiveHitboxesInfo extends AbstractImmersiveInfo implements Info
 
     @Override
     public void setHitbox(int slot, AABB hitbox) {
-        if (slot == BACKPACK_INDEX) {
+        if (slot == BACKPACK_BACK_INDEX) {
             this.backpackBackHitbox = hitbox;
         }
     }

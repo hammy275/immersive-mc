@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.BackpackMode;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
+import com.hammy275.immersivemc.common.config.ReachBehindBackpackMode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.CycleOption;
@@ -82,7 +83,24 @@ public class BackpackConfigScreen extends Screen {
                         new TranslatableComponent("config.immersivemc.backpack_mode." + optionIndex + ".desc"),
                         200)
         ));
-        this.list.addBig(ScreenUtils.createOption("reach_behind_backpack", ImmersiveMCConfig.reachBehindBackpack));
+        this.list.addBig(CycleOption.create(
+                "config.immersivemc.reach_behind_backpack_mode",
+                () -> IntStream.rangeClosed(0, ReachBehindBackpackMode.values().length - 1).boxed().collect(Collectors.toList()),
+                (optionIndex) -> new TranslatableComponent("config.immersivemc.reach_behind_backpack_mode." + optionIndex),
+                (ignored) -> ImmersiveMCConfig.reachBehindBackpackMode.get(),
+                (ignored, ignored2, newIndex) -> {
+                    ImmersiveMCConfig.reachBehindBackpackMode.set(
+                            newIndex
+                    );
+                    ImmersiveMCConfig.reachBehindBackpackMode.save();
+                    ActiveConfig.loadConfigFromFile();
+                }
+
+        ).setTooltip(
+                (minecraft) -> (optionIndex) -> minecraft.font.split(
+                        new TranslatableComponent("config.immersivemc.reach_behind_backpack_mode." + optionIndex + ".desc"),
+                        200)
+        ));
         if (ActiveConfig.backpackMode.colorable) {
             this.list.addBig(ScreenUtils.createIntSlider(
                     "config.immersivemc.backpack_r",
