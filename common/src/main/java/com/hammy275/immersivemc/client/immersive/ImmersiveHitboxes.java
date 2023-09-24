@@ -27,6 +27,7 @@ import net.minecraft.world.phys.Vec3;
 public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> {
 
     private static final double backpackHeight = 0.625;
+    private static final Vec3 DOWN = new Vec3(0, -1, 0);
     private int backpackCooldown = 0;
 
     public ImmersiveHitboxes() {
@@ -38,9 +39,11 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
     @Override
     protected void renderTick(ImmersiveHitboxesInfo info, boolean isInVR) {
         super.renderTick(info, isInVR);
-        if (ActiveConfig.reachBehindBackpack && VRPluginVerify.clientInVR()) {
+        if (ActiveConfig.reachBehindBackpackMode.usesBehindBack() && VRPluginVerify.clientInVR()) {
             // centerPos is the center of the back of the player
-            IVRData hmdData = VRPlugin.API.getRenderVRPlayer().getHMD();
+            IVRData hmdData = Platform.isDevelopmentEnvironment() ?
+                    VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD() :
+                    VRPlugin.API.getRenderVRPlayer().getHMD();
             Vec3 centerPos = hmdData.position().add(0, -0.5, 0).add(hmdData.getLookAngle().scale(-0.15));
             Vec3 headLook;
             // Even though it's VR-Only, let's try to get something for desktop testing purposes
@@ -55,24 +58,40 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
             // Back is 0.5 blocks across from center, making size 0.35 for x and z (full back has funny accidental detections).
             // We swap x and z since if we're looking along z, we want it to be big on the x axis and vice-versa
             // Add 0.2 to have some sane minimum
-            info.setHitbox(ImmersiveHitboxesInfo.BACKPACK_INDEX,
+            info.setHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX,
                     AABB.ofSize(centerPos,
                             Math.max(Math.abs(headLook.z) * 0.35, 0.2),
                             backpackHeight,
                             Math.max(Math.abs(headLook.x) * 0.35, 0.2)
                     ));
-            if (VRPluginVerify.clientInVR() && VRPlugin.API.playerInVR(Minecraft.getInstance().player)) {
-                IVRData secondaryController = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1();
-                if (info.getHitbox(ImmersiveHitboxesInfo.BACKPACK_INDEX)
-                        .contains(secondaryController.position())) {
-                    if (Platform.isDevelopmentEnvironment()) {
-                        hmdData = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD();
-                    }
-                }
-            }
         } else {
             // In case setting changes mid-game
-            info.setHitbox(ImmersiveHitboxesInfo.BACKPACK_INDEX, null);
+            info.setHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX, null);
+        }
+
+        if (ActiveConfig.reachBehindBackpackMode.usesOverShoulder() && VRPluginVerify.clientInVR()) {
+            IVRData hmdData = Platform.isDevelopmentEnvironment() ?
+                    VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD() :
+                    VRPlugin.API.getRenderVRPlayer().getHMD();
+            IVRData c1Data = Platform.isDevelopmentEnvironment() ?
+                    VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1() :
+                    VRPlugin.API.getRenderVRPlayer().getController1();
+
+            Vec3 hmdDir = hmdData.getLookAngle();
+            Vec3 hmdPos = hmdData.position();
+            Vec3 c1Dir = c1Data.getLookAngle();
+            Vec3 c1Pos = c1Data.position();
+
+            Vec3 c1ToHMDDir = c1Pos.subtract(hmdPos).normalize(); // Angle for c1 to "look at" HMD.
+
+            double angleToDown = Math.acos(DOWN.dot(c1Dir)); // Angle in radians between straight down and the controller dir
+            boolean pointingDown = angleToDown < Math.PI / 2d;
+            double c1HMDAngleDiff = Math.acos(c1ToHMDDir.dot(hmdDir));
+            boolean behindHMD = c1HMDAngleDiff > 2 * Math.PI / 3d;
+
+            if (pointingDown && behindHMD) {
+                doBagOpen(Minecraft.getInstance().player);
+            }
         }
     }
 
@@ -91,7 +110,7 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
 
     @Override
     protected void render(ImmersiveHitboxesInfo info, PoseStack stack, boolean isInVR) {
-        AABB backpackHitbox = info.getHitbox(ImmersiveHitboxesInfo.BACKPACK_INDEX);
+        AABB backpackHitbox = info.getHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX);
         if (backpackHitbox != null) {
             renderHitbox(stack, backpackHitbox, backpackHitbox.getCenter());
             if (VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(Minecraft.getInstance().player)
@@ -144,11 +163,8 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
         if (info instanceof ImmersiveHitboxesInfo hInfo) {
-            if (closest == ImmersiveHitboxesInfo.BACKPACK_INDEX && hand == InteractionHand.OFF_HAND
-                    && backpackCooldown <= 0) {
-                VRRumble.rumbleIfVR(null, 1, CommonConstants.vibrationTimePlayerActionAlert);
-                ClientUtil.openBag(player);
-                backpackCooldown = 50;
+            if (closest == ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX && hand == InteractionHand.OFF_HAND) {
+                doBagOpen(player);
             }
         }
 
@@ -160,8 +176,16 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
     }
 
     public void initImmersiveIfNeeded() {
-        if (this.infos.size() == 0) {
+        if (this.infos.isEmpty()) {
             this.infos.add(new ImmersiveHitboxesInfo());
+        }
+    }
+
+    private void doBagOpen(Player player) {
+        if (backpackCooldown <= 0) {
+            VRRumble.rumbleIfVR(null, 1, CommonConstants.vibrationTimePlayerActionAlert);
+            ClientUtil.openBag(player);
+            backpackCooldown = 50;
         }
     }
 }

@@ -5,7 +5,6 @@ import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.BackpackMode;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
-import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
@@ -25,8 +24,6 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /*
 Thanks to https://leo3418.github.io/2021/03/31/forge-mod-config-screen-1-16.html for a guide that was very
@@ -71,7 +68,6 @@ public class BackpackConfigScreen extends Screen {
                                 () -> Arrays.asList(BackpackMode.values()),
                                 Optional::of,
                                 null
-
                         ),
                         ActiveConfig.backpackMode,
                         (newMode) -> {
@@ -85,7 +81,25 @@ public class BackpackConfigScreen extends Screen {
                         }
                 )
         );
-        this.list.addBig(ScreenUtils.createOption("reach_behind_backpack", ImmersiveMCConfig.reachBehindBackpack));
+        this.list.addBig(
+                new OptionInstance<>(
+                        "config.immersivemc.reach_behind_backpack_mode",
+                        mc -> reachBehindBackpackMode -> Minecraft.getInstance().font.split(
+                                Component.translatable("config.immersivemc.reach_behind_backpack_mode." + reachBehindBackpackMode.ordinal() + ".desc"), 200),
+                        (component, reachBehindBackpackMode) -> Component.translatable("config.immersivemc.reach_behind_backpack_mode." + reachBehindBackpackMode.ordinal()),
+                        new OptionInstance.LazyEnum<>(
+                                () -> Arrays.asList(BackpackMode.values()),
+                                Optional::of,
+                                null
+                        ),
+                        ActiveConfig.reachBehindBackpackMode,
+                        (newMode) -> {
+                            ImmersiveMCConfig.reachBehindBackpackMode.set(newMode.ordinal());
+                            ImmersiveMCConfig.reachBehindBackpackMode.save();
+                            ActiveConfig.loadConfigFromFile();
+                        }
+                )
+        );
         if (ActiveConfig.backpackMode.colorable) {
             this.list.addBig(ScreenUtils.createIntSlider(
                     "config.immersivemc.backpack_r",
