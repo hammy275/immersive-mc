@@ -61,7 +61,7 @@ public class ActiveConfig {
     public static RGBA itemGuideSelectedColor = new RGBA(0x3300ff00L);
     public static RGBA rangedGrabColor = new RGBA(0xff00ffffL);
     public static boolean disableVanillaGUIs = false;
-    public static boolean reachBehindBackpack = false;
+    public static ReachBehindBackpackMode reachBehindBackpackMode = ReachBehindBackpackMode.BEHIND_BACK;
 
     // For changing config values in-game
     public static FriendlyByteBuf serverCopy = null;
@@ -189,7 +189,7 @@ public class ActiveConfig {
         itemGuideSelectedColor = new RGBA(ImmersiveMCConfig.itemGuideSelectedColor.get());
         rangedGrabColor = new RGBA(ImmersiveMCConfig.rangedGrabColor.get());
         disableVanillaGUIs = ImmersiveMCConfig.disableVanillaGUIs.get();
-        reachBehindBackpack = ImmersiveMCConfig.reachBehindBackpack.get();
+        reachBehindBackpackMode = ReachBehindBackpackMode.values()[ImmersiveMCConfig.reachBehindBackpackMode.get()];
         ImmersiveMC.LOGGER.debug("Loaded config from file: \n" + asString());
     }
 
@@ -282,13 +282,13 @@ public class ActiveConfig {
                 "Ranged Grab Color: " + rangedGrabColor + "\n" +
                 "Use Hopper Immersion: " + useHopperImmersion + "\n" +
                 "Disable Vanilla GUIs: " + disableVanillaGUIs + "\n" +
-                "Reach Behind Backpack: " + reachBehindBackpack + "\n" +
                 "Use Smithing Table Immersion: " + useSmithingTableImmersion + "\n" +
                 "Do Rumble: " + doRumble + "\n" +
                 "Return Items: " + returnItems + "\n" +
                 "Use Chiseled Bookshelf Immersion: " + useChiseledBookshelfImmersion + "\n" +
                 "Use Written Book Immersion: " + useWrittenBookImmersion + "\n" +
-                "Use Cauldron Immersion: " + useCauldronImmersion;
+                "Use Cauldron Immersion: " + useCauldronImmersion + "\n" +
+                "Reach Behind Backpack Mode: " + reachBehindBackpackMode;
         return stringOut;
     }
 
