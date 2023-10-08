@@ -2,16 +2,13 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
-import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
-import net.minecraft.client.Minecraft;
+import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 
 public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStorageInfo> extends AbstractImmersive<I> {
     public AbstractWorldStorageImmersive(int maxImmersives) {
@@ -26,7 +23,7 @@ public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStora
     public abstract int getTickTime();
 
     @Override
-    protected boolean slotShouldRenderHelpHitbox(I info, int slotNum) {
+    protected boolean inputSlotShouldRenderHelpHitbox(I info, int slotNum) {
         return info.items[slotNum] == null || info.items[slotNum].isEmpty();
     }
 
@@ -35,11 +32,6 @@ public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStora
         super.doTick(info, isInVR);
         if (info.ticksActive % ClientConstants.inventorySyncTime == 0) {
             Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
-        }
-        if (Minecraft.getInstance().player != null &&
-                Minecraft.getInstance().player.distanceToSqr(Vec3.atCenterOf(info.getBlockPosition())) >
-                        CommonConstants.distanceSquaredToRemoveImmersive) {
-            info.remove();
         }
     }
 

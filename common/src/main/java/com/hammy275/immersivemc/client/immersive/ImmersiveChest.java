@@ -188,21 +188,16 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     }
 
     @Override
-    protected boolean slotShouldRenderHelpHitbox(ChestInfo info, int slotNum) {
+    protected boolean inputSlotShouldRenderHelpHitbox(ChestInfo info, int slotNum) {
         if (info.getBlockEntity() instanceof EnderChestBlockEntity) {
             return info.items[slotNum] == null || info.items[slotNum].isEmpty();
         }
-        return super.slotShouldRenderHelpHitbox(info, slotNum);
+        return super.inputSlotShouldRenderHelpHitbox(info, slotNum);
     }
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return ImmersiveCheckers.isChest(pos, state, tileEntity, level);
-    }
-
-    @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveChest;
     }
 
     @Override
@@ -284,7 +279,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
         if (tileEnt instanceof ChestBlockEntity) {
             ChestBlockEntity other = Util.getOtherChest((ChestBlockEntity) tileEnt);
             if (other != null) { // If we have an other chest, make sure that one isn't already being tracked
-                for (AbstractImmersiveInfo aInfo : this.getSingleton().getTrackedObjects()) {
+                for (AbstractImmersiveInfo aInfo : this.getTrackedObjects()) {
                     ChestInfo info = (ChestInfo) aInfo;
                     if (info.getBlockEntity() == other) { // If the info we're looking at is our neighboring chest
                         if (info.other == null) { // If our neighboring chest's info isn't tracking us
