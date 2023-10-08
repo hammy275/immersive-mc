@@ -4,7 +4,6 @@ import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -15,8 +14,6 @@ public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStora
         super(maxImmersives);
         Immersives.WS_IMMERSIVES.add(this);
     }
-
-    public abstract void processStorageFromNetwork(AbstractWorldStorageInfo info, ImmersiveStorage storage);
 
     public abstract I getNewInfo(BlockPos pos);
 

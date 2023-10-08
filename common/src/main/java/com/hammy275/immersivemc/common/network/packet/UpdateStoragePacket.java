@@ -1,14 +1,14 @@
 package com.hammy275.immersivemc.common.network.packet;
 
-import com.hammy275.immersivemc.client.immersive.AbstractWorldStorageImmersive;
+import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.server.storage.GetStorage;
-import com.hammy275.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
+import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.function.Supplier;
@@ -42,8 +42,8 @@ public class UpdateStoragePacket {
         ctx.get().queue(() -> {
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player == null) {
-                for (AbstractWorldStorageImmersive<? extends AbstractWorldStorageInfo> immersive : Immersives.WS_IMMERSIVES) {
-                    for (AbstractWorldStorageInfo info : immersive.getTrackedObjects()) {
+                for (AbstractImmersive<? extends AbstractImmersiveInfo> immersive : Immersives.WS_IMMERSIVES) {
+                    for (AbstractImmersiveInfo info : immersive.getTrackedObjects()) {
                         if (info.getBlockPosition().equals(message.pos)) {
                             immersive.processStorageFromNetwork(info, message.storage);
                         }
