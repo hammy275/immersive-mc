@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -15,6 +16,9 @@ public class HitboxInfo implements Cloneable {
     public final double size;
     public final boolean isInput;
     public final boolean holdsItems;
+    public final Direction upDownRenderDir;
+    public final boolean itemSpins;
+    public final float itemRenderSizeMultiplier;
 
     // Calculated data
     private AABB box;
@@ -23,26 +27,42 @@ public class HitboxInfo implements Cloneable {
     // Extra data. Note that things should only be stored here after a clone() call.
     public ItemStack item = null;
 
-    public HitboxInfo(Vec3 centerOffset, double size, boolean isInput, boolean holdsItems) {
+    public HitboxInfo(Vec3 centerOffset, double size, boolean holdsItems, boolean isInput,
+                      Direction upDownRenderDir, boolean itemSpins, float itemRenderSizeMultiplier) {
         this.centerOffset = centerOffset;
         this.size = size;
-        this.isInput = isInput;
         this.holdsItems = holdsItems;
+        this.isInput = isInput;
+        this.upDownRenderDir = upDownRenderDir;
+        this.itemSpins = itemSpins;
+        this.itemRenderSizeMultiplier = itemRenderSizeMultiplier;
     }
 
     public void recalculate(Level level, BlockPos pos, HitboxPositioningMode mode) {
+        Vec3 xVec;
+        Vec3 yVec;
+        Vec3 zVec;
+        Vec3 centerPos;
         if (mode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING) {
             Direction blockFacing = level.getBlockState(pos).getValue(HorizontalDirectionalBlock.FACING);
-            Vec3 xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
-            Vec3 yVec = new Vec3(0, 1, 0);
-            Vec3 zVec = Vec3.atLowerCornerOf(blockFacing.getOpposite().getNormal());
+            xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
+            yVec = new Vec3(0, 1, 0);
+            zVec = Vec3.atLowerCornerOf(blockFacing.getOpposite().getNormal());
 
-            Vec3 centerPos = AbstractImmersive.getDirectlyInFront(blockFacing, pos)
+            centerPos = AbstractImmersive.getDirectlyInFront(blockFacing, pos)
                     .add(xVec.scale(0.5)).add(yVec.scale(0.5));
+        } else if (mode == HitboxPositioningMode.PLAYER_FACING) {
+            Direction playerFacing = Minecraft.getInstance().player.getDirection();
+            xVec = Vec3.atLowerCornerOf(playerFacing.getClockWise().getNormal());
+            yVec = Vec3.atLowerCornerOf(playerFacing.getNormal());
+            zVec = new Vec3(0, 1, 0);
 
-            this.pos = centerPos.add(xVec.scale(centerOffset.x)).add(yVec.scale(centerOffset.y)).add(zVec.scale(centerOffset.z));
-            this.box = AABB.ofSize(this.pos, size, size, size);
+            centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
+        } else {
+            throw new UnsupportedOperationException("Hitbox calculation for positioning mode " + mode + " unimplemented!");
         }
+        this.pos = centerPos.add(xVec.scale(centerOffset.x)).add(yVec.scale(centerOffset.y)).add(zVec.scale(centerOffset.z));
+        this.box = AABB.ofSize(this.pos, size, size, size);
     }
 
     public AABB getAABB() {
@@ -69,12 +89,11 @@ public class HitboxInfo implements Cloneable {
 
     @Override
     public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException ignored) {
-            // Should be unreachable, as this object implements Cloneable, so can be cloned.
-            throw new UnsupportedOperationException("Not cloneable!");
-        }
+        return cloneWithOffset(centerOffset);
+    }
 
+    public HitboxInfo cloneWithOffset(Vec3 newOffset) {
+        return new HitboxInfo(newOffset, size, holdsItems, isInput, upDownRenderDir,
+                itemSpins, itemRenderSizeMultiplier);
     }
 }
