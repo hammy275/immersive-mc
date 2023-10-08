@@ -131,7 +131,7 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
     }
 
     @Override
-    protected boolean slotShouldRenderHelpHitbox(ImmersiveHitboxesInfo info, int slotNum) {
+    protected boolean inputSlotShouldRenderHelpHitbox(ImmersiveHitboxesInfo info, int slotNum) {
         return false; // No help hitboxes
     }
 
@@ -143,11 +143,6 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
     @Override
     public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         // NO-OP. Never tracking any objects.
-    }
-
-    @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveHitboxes;
     }
 
     @Override

@@ -49,18 +49,13 @@ public class ImmersiveJukebox extends AbstractBlockEntityImmersive<JukeboxBlockE
     }
 
     @Override
-    protected boolean slotShouldRenderHelpHitbox(JukeboxInfo info, int slotNum) {
+    protected boolean inputSlotShouldRenderHelpHitbox(JukeboxInfo info, int slotNum) {
         return false;
     }
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return ImmersiveCheckers.isJukebox(pos, state, tileEntity, level);
-    }
-
-    @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveJukebox;
     }
 
     @Override

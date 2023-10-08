@@ -180,7 +180,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         // Render item guides here instead since we're using info
         if (ActiveConfig.placementGuideMode != PlacementGuideMode.OFF) {
             for (int i = 0; i < info.getInputSlots().length; i++) {
-                if (slotShouldRenderHelpHitbox(info, i)) { // Use info here since it holds info about crafting
+                if (inputSlotShouldRenderHelpHitbox(info, i)) { // Use info here since it holds info about crafting
                     AABB itemBox = info.getInputSlots()[i];
                     enqueueItemGuideRender(stack, itemBox, 0.2f, slotHelpBoxIsSelected(info, i), info.light);
                 }
@@ -194,7 +194,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
-    protected boolean slotShouldRenderHelpHitbox(BackpackInfo info, int slotNum) {
+    protected boolean inputSlotShouldRenderHelpHitbox(BackpackInfo info, int slotNum) {
         if (Minecraft.getInstance().player == null) return false;
         if (slotNum <= 26) {
             return Minecraft.getInstance().player.getInventory().getItem(slotNum + 9).isEmpty();
@@ -215,11 +215,6 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveBackpack;
-    }
-
-    @Override
     public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
         return false;
     }
@@ -234,8 +229,8 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {}
 
     public void processFromNetwork(ImmersiveStorage storage) {
-        if (getSingleton().infos.size() > 0) {
-            BackpackInfo info = (BackpackInfo) getSingleton().infos.get(0);
+        if (this.infos.size() > 0) {
+            BackpackInfo info = this.infos.get(0);
             for (int i = 0; i <= 3; i++) {
                 info.craftingInput[i] = storage.getItem(i);
             }

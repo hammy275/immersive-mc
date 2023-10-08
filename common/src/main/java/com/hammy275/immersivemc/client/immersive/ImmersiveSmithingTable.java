@@ -126,7 +126,7 @@ public class ImmersiveSmithingTable extends AbstractWorldStorageImmersive<Smithi
     }
 
     @Override
-    protected boolean slotShouldRenderHelpHitbox(SmithingTableInfo info, int slotNum) {
+    protected boolean inputSlotShouldRenderHelpHitbox(SmithingTableInfo info, int slotNum) {
         return info.items[slotNum] == null || info.items[slotNum].isEmpty();
     }
 
@@ -144,11 +144,6 @@ public class ImmersiveSmithingTable extends AbstractWorldStorageImmersive<Smithi
             }
         }
         infos.add(new SmithingTableInfo(pos, ClientConstants.ticksToRenderSmithingTable));
-    }
-
-    @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveSmithingTable;
     }
 
     @Override

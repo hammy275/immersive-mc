@@ -209,18 +209,13 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
     }
 
     @Override
-    protected boolean slotShouldRenderHelpHitbox(EnchantingInfo info, int slotNum) {
+    protected boolean inputSlotShouldRenderHelpHitbox(EnchantingInfo info, int slotNum) {
         return info.items[0] == null || info.items[0].isEmpty();
     }
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return ImmersiveCheckers.isEnchantingTable(pos, state, tileEntity, level);
-    }
-
-    @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveETable;
     }
 
     @Override
