@@ -136,11 +136,6 @@ public class ImmersiveBrewing extends AbstractBlockEntityImmersive<BrewingStandB
     }
 
     @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveBrewing;
-    }
-
-    @Override
     public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
         return true;
     }

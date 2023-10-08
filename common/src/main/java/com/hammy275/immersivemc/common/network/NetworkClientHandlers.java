@@ -2,12 +2,9 @@ package com.hammy275.immersivemc.common.network;
 
 import com.hammy275.immersivemc.client.immersive.AbstractBlockEntityImmersive;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.client.immersive.BuiltImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.client.immersive.info.AbstractBlockEntityImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
-import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
-import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
+import com.hammy275.immersivemc.client.immersive.info.*;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -53,6 +50,14 @@ public class NetworkClientHandlers {
                             for (int i = 0; i < stacks.length; i++) {
                                 info.items[i + 27] = stacks[i];
                             }
+                        }
+                    }
+                }
+            } else if (singleton instanceof BuiltImmersive builtImmersive) {
+                for (BuiltImmersiveInfo info : builtImmersive.getTrackedObjects()) {
+                    if (info.getBlockPosition().equals(pos)) {
+                        for (int i = 0; i < info.itemHitboxes.size(); i++) {
+                            info.itemHitboxes.get(i).item = stacks[i];
                         }
                     }
                 }

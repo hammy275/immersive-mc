@@ -286,11 +286,6 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
     }
 
     @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveBeacon;
-    }
-
-    @Override
     public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
         return true;
     }

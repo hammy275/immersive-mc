@@ -113,7 +113,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
-    protected boolean slotShouldRenderHelpHitbox(RepeaterInfo info, int slotNum) {
+    protected boolean inputSlotShouldRenderHelpHitbox(RepeaterInfo info, int slotNum) {
         return false;
     }
 
@@ -131,11 +131,6 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
             }
         }
         infos.add(new RepeaterInfo(pos));
-    }
-
-    @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveRepeater;
     }
 
     @Override
