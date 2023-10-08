@@ -32,6 +32,7 @@ public class ImmersiveBuilder {
     int maxImmersives = 4;
     Function<BuiltImmersiveInfo, Boolean> extraRenderReady = (info) -> true;
     RightClickHandler rightClickHandler = (a, b, c, d) -> {};
+    boolean usesWorldStorage = false;
 
     private ImmersiveBuilder(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
         this.blockChecker = blockChecker;
@@ -58,21 +59,37 @@ public class ImmersiveBuilder {
     }
 
     /**
-     * Adds an item hitbox that can be interacted with and holds items. Note that these MUST be added in slot-order.
+     * Adds a hitbox. Note that item hitboxes MUST be added in slot-order.
      * Aka, the underlying block's slot 0 should be added before its slot 1, etc.
-     * @param centerOffset Offset from the center. X controls horizontal, Y controls vertical, and Z is going into/out
-     *                     of the block. Offset 0,0,0 places the box at the center of the face that should be rendered.
-     *                     This would be the front center of the block for the furnace, for example. Offsets are based
-     *                     on the player, so for the furnace, -0.5, 0, 0 moves the box to the leftmost edge from the
-     *                     player's perspective, or the rightmost edge if one were spectating the furnace.
-     * @param size Size of the hitbox.
-     * @param isInput Whether this is an input hitbox or not. Should set holdsItems to true if this is the case.
-     * @param holdsItems Whether this hitbox holds items or not.
+     * @param hitboxInfo HitboxInfo to add. Can use HitboxInfoBuilder to make it easier to create.
      * @return Builder object.
      */
-    public ImmersiveBuilder addItemHitbox(Vec3 centerOffset, double size, boolean isInput, boolean holdsItems) {
-        assert !isInput || holdsItems; // holdsItems should be true if isInput is.
-        this.hitboxes.add(new HitboxInfo(centerOffset, size, isInput, holdsItems));
+    public ImmersiveBuilder addHitbox(HitboxInfo hitboxInfo) {
+        this.hitboxes.add(hitboxInfo);
+        return this;
+    }
+
+    /**
+     * Adds a 3x3 horizontal grid of hitboxes, such as for the crafting table. Adds the top row from left to right,
+     * then the middle row from left to right, then the bottom row from left to right.
+     * @param hitboxInfo HitboxInfo for center box. Can use HitboxInfoBuilder to make it easier to create.
+     * @param distBetweenBoxes Distance between boxes.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder add3x3HorizontalGrid(HitboxInfo hitboxInfo, double distBetweenBoxes) {
+        Vec3 left = new Vec3(-1, 0, 0).scale(distBetweenBoxes);
+        Vec3 right = new Vec3(1, 0, 0).scale(distBetweenBoxes);
+        Vec3 up = new Vec3(0, 1, 0).scale(distBetweenBoxes);
+        Vec3 down = new Vec3(0, -1, 0).scale(distBetweenBoxes);
+        addHitbox(hitboxInfo.cloneWithOffset(up.add(left)));
+        addHitbox(hitboxInfo.cloneWithOffset(up));
+        addHitbox(hitboxInfo.cloneWithOffset(up.add(right)));
+        addHitbox(hitboxInfo.cloneWithOffset(left));
+        addHitbox(hitboxInfo);
+        addHitbox(hitboxInfo.cloneWithOffset(right));
+        addHitbox(hitboxInfo.cloneWithOffset(down.add(left)));
+        addHitbox(hitboxInfo.cloneWithOffset(down));
+        addHitbox(hitboxInfo.cloneWithOffset(down.add(right)));
         return this;
     }
 
@@ -135,6 +152,16 @@ public class ImmersiveBuilder {
      */
     public ImmersiveBuilder setRightClickHandler(RightClickHandler handler) {
         this.rightClickHandler = handler;
+        return this;
+    }
+
+    /**
+     * Sets whether this immersive uses world storage.
+     * @param usesWorldStorage New state of using world storage (false by default).
+     * @return Builder object.
+     */
+    public ImmersiveBuilder setUsesWorldStorage(boolean usesWorldStorage) {
+        this.usesWorldStorage = usesWorldStorage;
         return this;
     }
 

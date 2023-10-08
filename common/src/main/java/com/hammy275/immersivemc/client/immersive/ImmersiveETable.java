@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
@@ -28,11 +27,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInfo> {
 
@@ -182,7 +177,7 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractWorldStorageInfo infoRaw, ImmersiveStorage storage) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo infoRaw, ImmersiveStorage storage) {
         EnchantingInfo info = (EnchantingInfo) infoRaw;
         info.items[0] = storage.getItem(0);
         if (info.items[0] != null && !info.items[0].isEmpty()) {
