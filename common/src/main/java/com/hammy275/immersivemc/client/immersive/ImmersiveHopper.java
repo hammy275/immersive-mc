@@ -114,11 +114,6 @@ public class ImmersiveHopper extends AbstractBlockEntityImmersive<HopperBlockEnt
     }
 
     @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveHopper;
-    }
-
-    @Override
     public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
         return true;
     }

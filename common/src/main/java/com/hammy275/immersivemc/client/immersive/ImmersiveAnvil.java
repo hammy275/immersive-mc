@@ -143,7 +143,7 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
     }
 
     @Override
-    protected boolean slotShouldRenderHelpHitbox(AnvilInfo info, int slotNum) {
+    protected boolean inputSlotShouldRenderHelpHitbox(AnvilInfo info, int slotNum) {
         return info.items[slotNum] == null || info.items[slotNum].isEmpty();
     }
 
@@ -161,11 +161,6 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
             }
         }
         infos.add(new AnvilInfo(pos, ClientConstants.ticksToRenderAnvil));
-    }
-
-    @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveAnvil;
     }
 
     @Override

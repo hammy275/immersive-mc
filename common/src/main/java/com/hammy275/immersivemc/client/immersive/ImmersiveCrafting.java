@@ -126,11 +126,6 @@ public class ImmersiveCrafting extends AbstractWorldStorageImmersive<CraftingInf
     }
 
     @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveCrafting;
-    }
-
-    @Override
     public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
         return true;
     }

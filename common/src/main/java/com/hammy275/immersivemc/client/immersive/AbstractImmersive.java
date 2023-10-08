@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
@@ -99,13 +100,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     public abstract boolean enabledInConfig();
 
-    protected abstract boolean slotShouldRenderHelpHitbox(I info, int slotNum);
+    protected abstract boolean inputSlotShouldRenderHelpHitbox(I info, int slotNum);
 
     public abstract boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level);
 
     public abstract void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level);
-
-    public abstract AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton();
 
     // Whether to block a right-click if the option to block right clicks to open GUIs is enabled
     public abstract boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info);
@@ -186,6 +185,12 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             info.changeTicksLeft(-1);
         }
         info.ticksActive++;
+
+        if (Minecraft.getInstance().player != null &&
+                Minecraft.getInstance().player.distanceToSqr(Vec3.atCenterOf(info.getBlockPosition())) >
+                        CommonConstants.distanceSquaredToRemoveImmersive) {
+            info.remove();
+        }
     }
 
     /**
@@ -235,7 +240,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 if (ActiveConfig.placementGuideMode != PlacementGuideMode.OFF && !forceDisableItemGuide) {
                     // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
                     for (int i = 0; i < info.getInputSlots().length; i++) {
-                        if (slotShouldRenderHelpHitbox(info, i)) {
+                        if (inputSlotShouldRenderHelpHitbox(info, i)) {
                             AABB itemBox = info.getInputSlots()[i];
                             enqueueItemGuideRender(stack, itemBox, 0.2f, slotHelpBoxIsSelected(info, i), info.light);
                         }
@@ -479,7 +484,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param pos BlockPos of block
      * @return Vec3 of the front-right of the block face from the block's perspective (front left from the player's)
      */
-    public Vec3 getDirectlyInFront(Direction forwardFromBlock, BlockPos pos) {
+    public static Vec3 getDirectlyInFront(Direction forwardFromBlock, BlockPos pos) {
         // This mess sets pos to always be directly in front of the face of the tile entity
         if (forwardFromBlock == Direction.SOUTH) {
             BlockPos front = pos.relative(forwardFromBlock);
