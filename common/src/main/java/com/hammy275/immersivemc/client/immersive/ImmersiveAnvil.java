@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
 import com.hammy275.immersivemc.client.immersive.info.AnvilInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
@@ -125,7 +124,7 @@ public class ImmersiveAnvil extends AbstractWorldStorageImmersive<AnvilInfo> {
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractWorldStorageInfo wInfo, ImmersiveStorage storageIn) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo wInfo, ImmersiveStorage storageIn) {
         AnvilInfo info = (AnvilInfo) wInfo;
         info.items = storageIn.getItemsRaw();
         AnvilStorage aStorage = (AnvilStorage) storageIn;
