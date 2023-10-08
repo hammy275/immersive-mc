@@ -66,11 +66,6 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
     }
 
     @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveShulker;
-    }
-
-    @Override
     public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
         return true;
     }
@@ -209,10 +204,10 @@ public class ImmersiveShulker extends AbstractBlockEntityImmersive<ShulkerBoxBlo
     }
 
     @Override
-    protected boolean slotShouldRenderHelpHitbox(ShulkerInfo info, int slotNum) {
+    protected boolean inputSlotShouldRenderHelpHitbox(ShulkerInfo info, int slotNum) {
         int minRange = info.getRowNum() * 9;
         int maxRange = (info.getRowNum() * 9) + 8;
-        return super.slotShouldRenderHelpHitbox(info, slotNum)
+        return super.inputSlotShouldRenderHelpHitbox(info, slotNum)
                 && slotNum >= minRange && slotNum <= maxRange;
     }
 

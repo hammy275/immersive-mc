@@ -6,6 +6,7 @@ public class ClientConstants {
 
 
     // How long the overlay should be displayed
+    public static final int defaultTicksToRender = 120;
     public static final int ticksToRenderFurnace = 80;
     public static final int ticksToRenderBrewing = 120;
     public static final int ticksToRenderCrafting = 120;
@@ -24,6 +25,7 @@ public class ClientConstants {
     public static final int ticksToRenderChiseledBookshelf = 300;
 
     // Size of items when rendered in front of something immersive
+    public static final float defaultItemScaleSize = 1f/3f;
     public static final float itemScaleSizeFurnace = 0.5f;
     public static final float itemScaleSizeBrewing = 1f/3f;
     public static final float itemScaleSizeCrafting = 3f/16f; // Chosen for the texture of the table itself
