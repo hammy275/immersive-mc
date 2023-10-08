@@ -131,11 +131,6 @@ public class ImmersiveBarrel extends AbstractBlockEntityImmersive<BarrelBlockEnt
     }
 
     @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveBarrel;
-    }
-
-    @Override
     public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
         return true;
     }

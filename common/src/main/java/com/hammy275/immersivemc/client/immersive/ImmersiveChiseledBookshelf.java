@@ -52,7 +52,7 @@ public class ImmersiveChiseledBookshelf extends AbstractImmersive<ChiseledBooksh
     }
 
     @Override
-    protected boolean slotShouldRenderHelpHitbox(ChiseledBookshelfInfo info, int slotNum) {
+    protected boolean inputSlotShouldRenderHelpHitbox(ChiseledBookshelfInfo info, int slotNum) {
         return false;
     }
 
@@ -70,11 +70,6 @@ public class ImmersiveChiseledBookshelf extends AbstractImmersive<ChiseledBooksh
             }
         }
         infos.add(new ChiseledBookshelfInfo(pos));
-    }
-
-    @Override
-    public AbstractImmersive<? extends AbstractImmersiveInfo> getSingleton() {
-        return Immersives.immersiveChiseledBookshelf;
     }
 
     @Override
