@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.client.immersive.info.CraftingInfo;
+import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
@@ -72,9 +72,9 @@ public class GetRecipePacket {
     }
 
     public static void handleClient(GetRecipePacket packet) {
-        for (CraftingInfo info : Immersives.immersiveCrafting.getTrackedObjects()) {
+        for (BuiltImmersiveInfo info : Immersives.immersiveCrafting.getTrackedObjects()) {
             if (info.getBlockPosition().equals(packet.pos)) {
-                info.outputItem = packet.stack;
+                info.itemHitboxes.get(9).item = packet.stack;
             }
         }
     }
