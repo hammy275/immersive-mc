@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
 import com.hammy275.immersivemc.client.immersive.info.SmithingTableInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
@@ -110,7 +109,7 @@ public class ImmersiveSmithingTable extends AbstractWorldStorageImmersive<Smithi
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractWorldStorageInfo wInfo, ImmersiveStorage storageIn) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo wInfo, ImmersiveStorage storageIn) {
         SmithingTableInfo info = (SmithingTableInfo) wInfo;
         info.items = storageIn.getItemsRaw();
     }

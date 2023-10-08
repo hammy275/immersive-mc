@@ -8,6 +8,7 @@ import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
+import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -141,6 +142,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     protected boolean slotHelpBoxIsSelected(I info, int slotNum) {
         return info.slotHovered == slotNum;
     }
+
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, ImmersiveStorage storage) {}
 
     public void tick(I info, boolean isInVR) {
         if (enabledInConfig()) {
@@ -515,7 +518,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param player Player to get forward from
      * @return The forward direction of a block to use.
      */
-    public Direction getForwardFromPlayer(Player player) {
+    public static Direction getForwardFromPlayer(Player player) {
         if (VRPluginVerify.clientInVR() && VRPlugin.API.playerInVR(player)) {
             return Util.horizontalDirectionFromLook(VRPlugin.API.getVRPlayer(player).getHMD().getLookAngle()).getOpposite();
         }

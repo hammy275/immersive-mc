@@ -1,7 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
@@ -179,7 +178,7 @@ public class ImmersiveETable extends AbstractWorldStorageImmersive<EnchantingInf
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractWorldStorageInfo infoRaw, ImmersiveStorage storage) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo infoRaw, ImmersiveStorage storage) {
         EnchantingInfo info = (EnchantingInfo) infoRaw;
         info.items[0] = storage.getItem(0);
         if (info.items[0] != null && !info.items[0].isEmpty()) {

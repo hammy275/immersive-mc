@@ -3,7 +3,6 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
@@ -303,8 +302,9 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractWorldStorageInfo info, ImmersiveStorage storage) {
-        info.items[0] = storage.getItem(0);
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, ImmersiveStorage storage) {
+        BeaconInfo beaconInfo = (BeaconInfo) info;
+        beaconInfo.items[0] = storage.getItem(0);
     }
 
     @Override
