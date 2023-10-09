@@ -4,9 +4,11 @@ import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BuiltHorizontalBlockInfo;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
+import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -101,9 +103,9 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING) {
             this.infos.add(new BuiltHorizontalBlockInfo(builder.hitboxes, pos,
                     state.getValue(HorizontalDirectionalBlock.FACING),
-                    builder.renderTime));
+                    builder.renderTime, builder.triggerHitboxControllerNum));
         } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING) {
-          this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime));
+          this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum));
         } else {
             throw new UnsupportedOperationException("Tracking for positioning mode " + builder.positioningMode + " unimplemented!");
         }
@@ -121,7 +123,19 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
 
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
-        builder.rightClickHandler.apply((BuiltImmersiveInfo) info, player, closest, hand);
+        BuiltImmersiveInfo bInfo = (BuiltImmersiveInfo) info;
+        // Regular hitboxes and trigger hitboxes are mixed together, so we need to filter out the
+        // trigger hitboxes here (unless we aren't in VR, of course).
+        if (!bInfo.hitboxes[closest].isTriggerHitbox || !VRPluginVerify.clientInVR()) {
+            builder.rightClickHandler.apply((BuiltImmersiveInfo) info, player, closest, hand);
+        }
+    }
+
+    @Override
+    public void handleTriggerHitboxRightClick(InfoTriggerHitboxes info, Player player, int hitboxNum) {
+        BuiltImmersiveInfo bInfo = (BuiltImmersiveInfo) info;
+        builder.rightClickHandler.apply(bInfo, player, bInfo.triggerToRegularHitbox.get(hitboxNum),
+                InteractionHand.values()[bInfo.getVRControllerNum()]);
     }
 
     @Override
