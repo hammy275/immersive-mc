@@ -19,6 +19,7 @@ public class HitboxInfo implements Cloneable {
     public final Direction upDownRenderDir;
     public final boolean itemSpins;
     public final float itemRenderSizeMultiplier;
+    public final boolean isTriggerHitbox;
 
     // Calculated data
     private AABB box;
@@ -28,7 +29,8 @@ public class HitboxInfo implements Cloneable {
     public ItemStack item = null;
 
     public HitboxInfo(Vec3 centerOffset, double size, boolean holdsItems, boolean isInput,
-                      Direction upDownRenderDir, boolean itemSpins, float itemRenderSizeMultiplier) {
+                      Direction upDownRenderDir, boolean itemSpins, float itemRenderSizeMultiplier,
+                      boolean isTriggerHitbox) {
         this.centerOffset = centerOffset;
         this.size = size;
         this.holdsItems = holdsItems;
@@ -36,6 +38,7 @@ public class HitboxInfo implements Cloneable {
         this.upDownRenderDir = upDownRenderDir;
         this.itemSpins = itemSpins;
         this.itemRenderSizeMultiplier = itemRenderSizeMultiplier;
+        this.isTriggerHitbox = isTriggerHitbox;
     }
 
     public void recalculate(Level level, BlockPos pos, HitboxPositioningMode mode) {
@@ -94,6 +97,6 @@ public class HitboxInfo implements Cloneable {
 
     public HitboxInfo cloneWithOffset(Vec3 newOffset) {
         return new HitboxInfo(newOffset, size, holdsItems, isInput, upDownRenderDir,
-                itemSpins, itemRenderSizeMultiplier);
+                itemSpins, itemRenderSizeMultiplier, isTriggerHitbox);
     }
 }

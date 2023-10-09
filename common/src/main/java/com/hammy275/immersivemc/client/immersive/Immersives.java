@@ -36,16 +36,17 @@ public class Immersives {
             .setRenderTime(ClientConstants.ticksToRenderCrafting)
             .setRenderSize(ClientConstants.itemScaleSizeCrafting)
             .add3x3HorizontalGrid(HitboxInfoBuilder.createItemInput(Vec3.ZERO,
-                            ClientConstants.itemScaleSizeCrafting * 4d / 3d).upDownRenderDir(Direction.UP).build(),
+                            ClientConstants.itemScaleSizeCrafting / 1.5f).upDownRenderDir(Direction.UP).build(),
                     3d / 16d)
             .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 0, 0.5),
                     ClientConstants.itemScaleSizeCrafting * 1.5d).holdsItems(true)
-                    .itemSpins(true).itemRenderSizeMultiplier(3f).build())
+                    .itemSpins(true).itemRenderSizeMultiplier(3f).triggerHitbox(true).build())
             .setPositioningMode(HitboxPositioningMode.PLAYER_FACING)
             .setMaxImmersives(1)
             .setExtraRenderReady((info) -> Minecraft.getInstance().level.getBlockState(info.getBlockPosition().above()).isAir())
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand)))
             .setUsesWorldStorage(true)
+            .setTriggerHitboxControllerNum(0)
             .build();
     public static final ImmersiveETable immersiveETable = new ImmersiveETable();
     public static final BuiltImmersive immersiveFurnace = ImmersiveBuilder.create(ImmersiveCheckers::isFurnace)
