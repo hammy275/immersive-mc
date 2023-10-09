@@ -41,6 +41,10 @@ public class HitboxInfoBuilder {
      * Multiplies item rendering size by this value.
      */
     private float itemRenderSizeMultiplier = 1f;
+    /**
+     * VR users need to press trigger (or whatever left-click is mapped to) to activate this hitbox.
+     */
+    private boolean isTriggerHitbox = false;
 
 
     private HitboxInfoBuilder(Vec3 centerOffset, double size) {
@@ -74,10 +78,15 @@ public class HitboxInfoBuilder {
         return this;
     }
 
+    public HitboxInfoBuilder triggerHitbox(boolean isTriggerHitbox) {
+        this.isTriggerHitbox = isTriggerHitbox;
+        return this;
+    }
+
     public HitboxInfo build() {
         assert !isInput || holdsItems; // If isInput, must holdsItems
         return new HitboxInfo(centerOffset, size, holdsItems, isInput, upDownRenderDir,
-                itemSpins, itemRenderSizeMultiplier);
+                itemSpins, itemRenderSizeMultiplier, isTriggerHitbox);
     }
 
     public static HitboxInfoBuilder create(Vec3 centerOffset, double size) {
