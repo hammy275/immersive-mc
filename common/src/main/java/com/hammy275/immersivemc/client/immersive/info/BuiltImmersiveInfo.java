@@ -13,16 +13,21 @@ import java.util.Map;
 /**
  * Base class for infos that Immersives constructed with the builder can use.
  */
-public class BuiltImmersiveInfo extends AbstractImmersiveInfo {
+public class BuiltImmersiveInfo extends AbstractImmersiveInfo implements InfoTriggerHitboxes {
 
     public HitboxInfo[] hitboxes;
     // Key is input slot number, value is a HitboxInfo
     public Map<Integer, HitboxInfo> inputsToHitboxes = new HashMap<>();
     // Holds all hitboxes that map to items. Subset of this.hitboxes.
     public List<HitboxInfo> itemHitboxes = new ArrayList<>();
+    public List<HitboxInfo> triggerHitboxes = new ArrayList<>();
+    // Maps triggerHitbox indices to hitboxes indices
+    public Map<Integer, Integer> triggerToRegularHitbox = new HashMap<>();
     private BlockPos pos;
+    private int triggerControllerNum;
 
-    public BuiltImmersiveInfo(List<HitboxInfo> hitboxes, BlockPos pos, int ticksToExist) {
+    public BuiltImmersiveInfo(List<HitboxInfo> hitboxes, BlockPos pos, int ticksToExist,
+                              int triggerControllerNum) {
         super(ticksToExist);
         this.hitboxes = new HitboxInfo[hitboxes.size()];
         for (int i = 0; i < hitboxes.size(); i++) {
@@ -30,8 +35,13 @@ public class BuiltImmersiveInfo extends AbstractImmersiveInfo {
             if (this.hitboxes[i].holdsItems) {
                 itemHitboxes.add(this.hitboxes[i]);
             }
+            if (this.hitboxes[i].isTriggerHitbox) {
+                triggerHitboxes.add(this.hitboxes[i]);
+                triggerToRegularHitbox.put(triggerHitboxes.size() - 1, i);
+            }
         }
         this.pos = pos;
+        this.triggerControllerNum = triggerControllerNum;
     }
 
     @Override
@@ -119,5 +129,24 @@ public class BuiltImmersiveInfo extends AbstractImmersiveInfo {
     @Override
     public BlockPos getBlockPosition() {
         return this.pos;
+    }
+
+    @Override
+    public AABB getTriggerHitbox(int hitboxNum) {
+        return this.triggerHitboxes.get(hitboxNum).getAABB();
+    }
+
+    @Override
+    public AABB[] getTriggerHitboxes() {
+        AABB[] triggerHitboxes = new AABB[this.triggerHitboxes.size()];
+        for (int i = 0; i < this.triggerHitboxes.size(); i++) {
+            triggerHitboxes[i] = this.triggerHitboxes.get(i).getAABB();
+        }
+        return triggerHitboxes;
+    }
+
+    @Override
+    public int getVRControllerNum() {
+        return this.triggerControllerNum;
     }
 }
