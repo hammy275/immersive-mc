@@ -33,6 +33,7 @@ public class ImmersiveBuilder {
     Function<BuiltImmersiveInfo, Boolean> extraRenderReady = (info) -> true;
     RightClickHandler rightClickHandler = (a, b, c, d) -> {};
     boolean usesWorldStorage = false;
+    int triggerHitboxControllerNum = 0;
 
     private ImmersiveBuilder(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
         this.blockChecker = blockChecker;
@@ -162,6 +163,17 @@ public class ImmersiveBuilder {
      */
     public ImmersiveBuilder setUsesWorldStorage(boolean usesWorldStorage) {
         this.usesWorldStorage = usesWorldStorage;
+        return this;
+    }
+
+    /**
+     * Sets the controller num that's used for checking for trigger hitboxes.
+     * @param controllerNum Controller number.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder setTriggerHitboxControllerNum(int controllerNum) {
+        assert controllerNum == 0 || controllerNum == 1;
+        this.triggerHitboxControllerNum = controllerNum;
         return this;
     }
 
