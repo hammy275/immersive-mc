@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.server.tracker;
 
-import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -16,6 +16,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CampfireCookingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -40,13 +41,13 @@ public class CampfireTracker extends AbstractTracker {
         if (info == null) return;
         for (int c = 0; c <= 1; c++) {
             ItemStack toSmelt = c == 0 ? player.getItemInHand(InteractionHand.MAIN_HAND) : player.getItemInHand(InteractionHand.OFF_HAND);
-            Optional<CampfireCookingRecipe> recipe =
+            Optional<RecipeHolder<CampfireCookingRecipe>> recipe =
                     player.level().getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SimpleContainer(toSmelt), player.level());
-            if (recipe.isPresent() && info.get(c) >= recipe.get().getCookingTime() / 2) { // Smelt the held controller's item if we reach cook time.
+            if (recipe.isPresent() && info.get(c) >= recipe.get().value().getCookingTime() / 2) { // Smelt the held controller's item if we reach cook time.
                 toSmelt.shrink(1);
-                boolean didGive = player.getInventory().add(recipe.get().getResultItem(player.level().registryAccess()).copy());
+                boolean didGive = player.getInventory().add(recipe.get().value().getResultItem(player.level().registryAccess()).copy());
                 if (!didGive) {
-                    Util.placeLeftovers(player, recipe.get().getResultItem(player.level().registryAccess()).copy());
+                    Util.placeLeftovers(player, recipe.get().value().getResultItem(player.level().registryAccess()).copy());
                 }
                 cookTime.remove(player.getGameProfile().getName());
             } else if (recipe.isPresent() &&

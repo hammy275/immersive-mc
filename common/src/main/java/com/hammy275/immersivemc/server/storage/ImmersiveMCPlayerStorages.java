@@ -14,6 +14,11 @@ import java.util.*;
  * Not using capabilities because [REDACTED]
  */
 public class ImmersiveMCPlayerStorages extends SavedData {
+    private static Factory<ImmersiveMCPlayerStorages> factory = new Factory<>(
+            ImmersiveMCPlayerStorages::create,
+            ImmersiveMCPlayerStorages::load,
+            null
+    );
 
     protected Map<UUID, List<ImmersiveStorage>> playerStorages = new HashMap<>();
 
@@ -34,7 +39,7 @@ public class ImmersiveMCPlayerStorages extends SavedData {
         if (!player.level().isClientSide) {
             ServerPlayer sPlayer = (ServerPlayer) player;
             return sPlayer.getServer().overworld().getDataStorage()
-                    .computeIfAbsent(ImmersiveMCPlayerStorages::load, ImmersiveMCPlayerStorages::create, "immersivemc_player_data");
+                    .computeIfAbsent(factory, "immersivemc_player_data");
         }
         throw new IllegalArgumentException("Can only access storage on server-side!");
     }

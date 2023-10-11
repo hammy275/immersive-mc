@@ -21,6 +21,11 @@ import java.util.Map;
  */
 public class ImmersiveMCLevelStorage extends SavedData {
 
+    private static Factory<ImmersiveMCLevelStorage> factory = new Factory<>(
+            ImmersiveMCLevelStorage::create,
+            ImmersiveMCLevelStorage::load,
+            null
+    );
     protected Map<BlockPos, ImmersiveStorage> itemInfo = new HashMap<>();
 
     private static ImmersiveMCLevelStorage create() {
@@ -41,7 +46,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
     }
 
     public static ImmersiveMCLevelStorage getLevelStorage(ServerLevel world) {
-        return world.getDataStorage().computeIfAbsent(ImmersiveMCLevelStorage::load, ImmersiveMCLevelStorage::create, "immersivemc_data");
+        return world.getDataStorage().computeIfAbsent(factory, "immersivemc_data");
     }
 
     public static ImmersiveMCLevelStorage getLevelStorage(Player player) {

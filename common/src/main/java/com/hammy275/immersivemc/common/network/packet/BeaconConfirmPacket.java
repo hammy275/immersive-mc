@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
 import com.hammy275.immersivemc.server.storage.GetStorage;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -50,8 +51,8 @@ public class BeaconConfirmPacket {
                     if (!beaconStorage.getItem(0).isEmpty() &&
                             isValidForBeacon(data.get(0), message.primaryId, secondId)) {
                         beaconStorage.setItem(0, ItemStack.EMPTY);
-                        data.set(1, message.primaryId);
-                        data.set(2, secondId);
+                        data.set(1, message.primaryId + 1);
+                        data.set(2, secondId + 1);
                         beaconStorage.wStorage.setDirty();
                         player.level().blockEntityChanged(beacon.getBlockPos());
                     }
@@ -64,8 +65,8 @@ public class BeaconConfirmPacket {
             return false;
         }
 
-        MobEffect primary = primaryId == -1 ? null : MobEffect.byId(primaryId);
-        MobEffect secondary = secondaryId == -1 ? null : MobEffect.byId(secondaryId);
+        MobEffect primary = primaryId == -1 ? null : BuiltInRegistries.MOB_EFFECT.byId(primaryId);
+        MobEffect secondary = secondaryId == -1 ? null : BuiltInRegistries.MOB_EFFECT.byId(secondaryId);
 
         if (beaconLevel == 1) {
             return primary == MobEffects.MOVEMENT_SPEED || primary == MobEffects.DIG_SPEED;

@@ -26,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
@@ -298,10 +299,10 @@ public class Swap {
         for (int i = 0; i < stacksIn.length - 1; i++) {
             inv.setItem(i, stacksIn[i]);
         }
-        Optional<CraftingRecipe> res = player.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING,
+        Optional<RecipeHolder<CraftingRecipe>> res = player.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING,
                 inv, player.level());
         if (res.isPresent()) {
-            return res.get().assemble(inv, player.level().registryAccess());
+            return res.get().value().assemble(inv, player.level().registryAccess());
         }
         return ItemStack.EMPTY;
     }
