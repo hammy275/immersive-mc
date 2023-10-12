@@ -44,7 +44,7 @@ public class ImmersiveBrewing extends AbstractBlockEntityImmersive<BrewingStandB
         }
         Direction forward = getForwardFromPlayer(Minecraft.getInstance().player);
         return info.getBlockEntity().getLevel() != null &&
-                info.getBlockEntity().getLevel().getBlockState(info.getBlockEntity().getBlockPos().relative(forward)).isAir()
+                info.getBlockEntity().getLevel().getBlockState(info.getBlockEntity().getBlockPos().relative(forward)).getMaterial().isReplaceable()
                 && info.readyToRender();
     }
 
