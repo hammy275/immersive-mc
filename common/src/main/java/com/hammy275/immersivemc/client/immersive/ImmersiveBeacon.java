@@ -131,7 +131,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
             for (int x = -1; x <= 1; x++) { // 3x3 area one block and two blocks above must all be air to look nice
                 for (int y = 1; y <= 2; y++) {
                     for (int z = -1; z <= 1; z++) {
-                        if (!Minecraft.getInstance().level.getBlockState(info.getBlockPosition().offset(x, y, z)).isAir()) {
+                        if (!Minecraft.getInstance().level.getBlockState(info.getBlockPosition().offset(x, y, z)).getMaterial().isReplaceable()) {
                             info.areaAboveIsAir = false;
                             return;
                         }
