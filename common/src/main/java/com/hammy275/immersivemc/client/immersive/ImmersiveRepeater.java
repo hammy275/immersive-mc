@@ -96,7 +96,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     public boolean shouldRender(RepeaterInfo info, boolean isInVR) {
         if (Minecraft.getInstance().player == null) return false;
         Level level = Minecraft.getInstance().level;
-        return level != null && level.getBlockState(info.getBlockPosition().above()).isAir()
+        return level != null && level.getBlockState(info.getBlockPosition().above()).canBeReplaced()
                 && info.readyToRender();
     }
 

@@ -41,7 +41,7 @@ public class ImmersiveFurnace extends AbstractBlockEntityImmersive<BlockEntity, 
     public boolean shouldRender(ImmersiveFurnaceInfo info, boolean isInVR) {
         Direction forward = info.forward;
         return forward != null && info.getBlockEntity().getLevel() != null &&
-                info.getBlockEntity().getLevel().getBlockState(info.getBlockEntity().getBlockPos().relative(forward)).isAir()
+                info.getBlockEntity().getLevel().getBlockState(info.getBlockEntity().getBlockPos().relative(forward)).canBeReplaced()
                 && info.readyToRender();
     }
 
