@@ -103,7 +103,7 @@ public class ImmersiveJukebox extends AbstractBlockEntityImmersive<JukeboxBlockE
     @Override
     public boolean shouldRender(JukeboxInfo info, boolean isInVR) {
         return info.getBlockEntity().getLevel() != null &&
-                info.getBlockEntity().getLevel().getBlockState(info.getBlockEntity().getBlockPos().relative(Direction.UP)).isAir() &&
+                info.getBlockEntity().getLevel().getBlockState(info.getBlockEntity().getBlockPos().relative(Direction.UP)).canBeReplaced() &&
                 info.readyToRender();
     }
 }

@@ -93,7 +93,7 @@ public class ImmersiveSmithingTable extends AbstractWorldStorageImmersive<Smithi
     public boolean shouldRender(SmithingTableInfo info, boolean isInVR) {
         if (Minecraft.getInstance().player == null) return false;
         Level level = Minecraft.getInstance().level;
-        return level != null && level.getBlockState(info.getBlockPosition().above()).isAir()
+        return level != null && level.getBlockState(info.getBlockPosition().above()).canBeReplaced()
                 && info.readyToRender();
 
     }
