@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -79,6 +80,8 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             facing = horizInfo.dir;
         } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING) {
             facing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
+        } else if (builder.positioningMode == HitboxPositioningMode.TOP_BLOCK_FACING) {
+            facing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
         }
         for (int i = 0; i < info.hitboxes.length; i++) {
             HitboxInfo hitbox = info.hitboxes[i];
@@ -89,6 +92,12 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
                         facing, hitbox.upDownRenderDir, hitbox.getAABB(), true, spinDegrees, info.light);
             } else {
                 renderHitbox(stack, hitbox.getAABB(), hitbox.getPos());
+            }
+            if (hitbox.textSupplier != null) {
+                Component text = hitbox.textSupplier.apply(info);
+                if (text != null) {
+                    renderText(text, stack, hitbox.getPos(), info.light);
+                }
             }
         }
 
@@ -128,11 +137,15 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING) {
             this.infos.add(new BuiltHorizontalBlockInfo(builder.hitboxes, pos,
                     state.getValue(HorizontalDirectionalBlock.FACING),
-                    builder.renderTime, builder.triggerHitboxControllerNum));
+                    builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
         } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING) {
-          this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum));
+          this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
         } else if (builder.positioningMode == HitboxPositioningMode.TOP_LITERAL) {
-          this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum));
+          this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
+        } else if (builder.positioningMode == HitboxPositioningMode.TOP_BLOCK_FACING) {
+            this.infos.add(new BuiltHorizontalBlockInfo(builder.hitboxes, pos,
+                    state.getValue(HorizontalDirectionalBlock.FACING),
+                    builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
         } else {
             throw new UnsupportedOperationException("Tracking for positioning mode " + builder.positioningMode + " unimplemented!");
         }
@@ -174,6 +187,8 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING) {
               return info.getBlockPosition().above();
             } else if (builder.positioningMode == HitboxPositioningMode.TOP_LITERAL) {
+                return info.getBlockPosition().above();
+            } else if (builder.positioningMode == HitboxPositioningMode.TOP_BLOCK_FACING) {
                 return info.getBlockPosition().above();
             } else {
                 throw new UnsupportedOperationException("Light pos for positioning mode " + builder.positioningMode + " unimplemented!");
@@ -224,6 +239,9 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         BuiltImmersiveInfo bInfo = (BuiltImmersiveInfo) info;
         for (int i = 0; i < bInfo.itemHitboxes.size(); i++) {
             bInfo.itemHitboxes.get(i).item = storage.getItem(i);
+        }
+        if (builder.extraStorageConsumer != null) {
+            builder.extraStorageConsumer.accept(storage, (BuiltImmersiveInfo) info);
         }
     }
 }
