@@ -30,7 +30,7 @@ public class ClientConstants {
     public static final float itemScaleSizeBrewing = 1f/3f;
     public static final float itemScaleSizeCrafting = 3f/16f; // Chosen for the texture of the table itself
     public static final float itemScaleSizeChest = 0.25f;
-    public static final float itemScaleSizeAnvil = itemScaleSizeBrewing;
+    public static final float itemScaleSizeAnvil = 0.3333f; // Intentionally NOT 1f/3f so item guide boxes don't overlap
     public static final float itemScaleSizeETable = 0.42f;
     public static final float itemScaleSizeBackpack = 0.2f;
     public static final float itemScaleSizeBackpackSelected = 0.3f;
