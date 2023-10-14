@@ -15,9 +15,17 @@ public class HitboxInfoBuilder {
      */
     private final Vec3 centerOffset;
     /**
-     * Size of the hitbox.
+     * Left/right size of the hitbox. See X axis for centerOffset.
      */
-    private final double size;
+    private final double sizeX;
+    /**
+     * Up/down size of the hitbox. See Y axis for centerOffset.
+     */
+    private final double sizeY;
+    /**
+     * Forward/back size of the hitbox. See Z axis for centerOffset.
+     */
+    private final double sizeZ;
 
     // -- OPTIONAL --
 
@@ -48,8 +56,14 @@ public class HitboxInfoBuilder {
 
 
     private HitboxInfoBuilder(Vec3 centerOffset, double size) {
+        this(centerOffset, size, size, size);
+    }
+
+    private HitboxInfoBuilder(Vec3 centerOffset, double sizeX, double sizeY, double sizeZ) {
         this.centerOffset = centerOffset;
-        this.size = size;
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
+        this.sizeZ = sizeZ;
     }
 
     public HitboxInfoBuilder holdsItems(boolean holdsItems) {
@@ -85,12 +99,16 @@ public class HitboxInfoBuilder {
 
     public HitboxInfo build() {
         assert !isInput || holdsItems; // If isInput, must holdsItems
-        return new HitboxInfo(centerOffset, size, holdsItems, isInput, upDownRenderDir,
+        return new HitboxInfo(centerOffset, sizeX, sizeY, sizeZ, holdsItems, isInput, upDownRenderDir,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox);
     }
 
     public static HitboxInfoBuilder create(Vec3 centerOffset, double size) {
         return new HitboxInfoBuilder(centerOffset, size);
+    }
+
+    public static HitboxInfoBuilder create(Vec3 centerOffset, double sizeX, double sizeY, double sizeZ) {
+        return new HitboxInfoBuilder(centerOffset, sizeX, sizeY, sizeZ);
     }
 
     public static HitboxInfoBuilder createItemInput(Vec3 centerOffset, double size) {
