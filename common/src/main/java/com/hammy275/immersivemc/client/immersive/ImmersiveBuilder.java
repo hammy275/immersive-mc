@@ -34,6 +34,7 @@ public class ImmersiveBuilder {
     RightClickHandler rightClickHandler = (a, b, c, d) -> {};
     boolean usesWorldStorage = false;
     int triggerHitboxControllerNum = 0;
+    boolean vrOnly = false;
 
     private ImmersiveBuilder(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
         this.blockChecker = blockChecker;
@@ -174,6 +175,16 @@ public class ImmersiveBuilder {
     public ImmersiveBuilder setTriggerHitboxControllerNum(int controllerNum) {
         assert controllerNum == 0 || controllerNum == 1;
         this.triggerHitboxControllerNum = controllerNum;
+        return this;
+    }
+
+    /**
+     * Sets whether this immersive is only for VR users.
+     * @param vrOnly Whether this immersive should now be VR only.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder setVROnly(boolean vrOnly) {
+        this.vrOnly = vrOnly;
         return this;
     }
 

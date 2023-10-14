@@ -36,6 +36,11 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     }
 
     @Override
+    public boolean isVROnly() {
+        return builder.vrOnly;
+    }
+
+    @Override
     public boolean shouldRender(BuiltImmersiveInfo info, boolean isInVR) {
         return info.readyToRender() && builder.extraRenderReady.apply(info);
     }
@@ -61,17 +66,22 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     protected void render(BuiltImmersiveInfo info, PoseStack stack, boolean isInVR) {
         float size = builder.renderSize / info.getItemTransitionCountdown();
         Direction facing = null;
-        if (info instanceof BuiltHorizontalBlockInfo horizInfo) {
+        if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING) {
+            BuiltHorizontalBlockInfo horizInfo = (BuiltHorizontalBlockInfo) info;
             facing = horizInfo.dir;
         } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING) {
             facing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
         }
-        for (int i = 0; i < info.itemHitboxes.size(); i++) {
-            HitboxInfo hitbox = info.itemHitboxes.get(i);
-            int spinDegrees = hitbox.itemSpins ? (int) (info.ticksActive % 100d * 3.6d) : -1;
-            renderItem(hitbox.item, stack, hitbox.getPos(),
-                    info.slotHovered == i ? size * 1.25f * hitbox.itemRenderSizeMultiplier : size * hitbox.itemRenderSizeMultiplier,
-                    facing, hitbox.upDownRenderDir, hitbox.getAABB(), true, spinDegrees, info.light);
+        for (int i = 0; i < info.hitboxes.length; i++) {
+            HitboxInfo hitbox = info.hitboxes[i];
+            if (hitbox.holdsItems) {
+                int spinDegrees = hitbox.itemSpins ? (int) (info.ticksActive % 100d * 3.6d) : -1;
+                renderItem(hitbox.item, stack, hitbox.getPos(),
+                        info.slotHovered == i ? size * 1.25f * hitbox.itemRenderSizeMultiplier : size * hitbox.itemRenderSizeMultiplier,
+                        facing, hitbox.upDownRenderDir, hitbox.getAABB(), true, spinDegrees, info.light);
+            } else {
+                renderHitbox(stack, hitbox.getAABB(), hitbox.getPos());
+            }
         }
 
     }
@@ -105,6 +115,8 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
                     state.getValue(HorizontalDirectionalBlock.FACING),
                     builder.renderTime, builder.triggerHitboxControllerNum));
         } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING) {
+          this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum));
+        } else if (builder.positioningMode == HitboxPositioningMode.TOP_LITERAL) {
           this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum));
         } else {
             throw new UnsupportedOperationException("Tracking for positioning mode " + builder.positioningMode + " unimplemented!");
@@ -146,6 +158,8 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
                 return info.getBlockPosition().relative(state.getValue(AbstractFurnaceBlock.FACING));
             } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING) {
               return info.getBlockPosition().above();
+            } else if (builder.positioningMode == HitboxPositioningMode.TOP_LITERAL) {
+                return info.getBlockPosition().above();
             } else {
                 throw new UnsupportedOperationException("Light pos for positioning mode " + builder.positioningMode + " unimplemented!");
             }
