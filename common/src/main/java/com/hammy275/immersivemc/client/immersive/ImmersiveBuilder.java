@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.common.immersive.CheckerFunction;
+import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.Level;
@@ -12,6 +13,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -36,7 +38,8 @@ public class ImmersiveBuilder {
     int triggerHitboxControllerNum = 0;
     boolean vrOnly = false;
     List<Vec3i> airCheckPositionOffsets = new ArrayList<>();
-
+    Class<?> extraInfoDataClazz = null;
+    BiConsumer<ImmersiveStorage, BuiltImmersiveInfo> extraStorageConsumer = null;
     private ImmersiveBuilder(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
         this.blockChecker = blockChecker;
     }
@@ -205,7 +208,33 @@ public class ImmersiveBuilder {
         return this;
     }
 
+    /**
+     * Sets a class to be attached to individual info instances to store additional data, such as the anvil's
+     * experience levels. Can be set to null (the default) to not create an extra data instance.
+     * Note that the supplied class must have a constructor with no parameters.
+     * @param clazz Class that represents extra data storage, or null to specify none.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder setExtraInfoDataClass(Class<?> clazz) {
+        this.extraInfoDataClazz = clazz;
+        return this;
+    }
+
+    /**
+     * Sets a consumer that acts after an incoming ImmersiveStorage is parsed. For example, this is used
+     * for the anvil to retrieve the level amount and store it in extra data.
+     * Note that the immersive MUST use world storage (call setUsesWorldStorage(true))
+     * @param storageConsumer New storage consumer.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder setExtraStorageConsumer(BiConsumer<ImmersiveStorage, BuiltImmersiveInfo> storageConsumer) {
+        this.extraStorageConsumer = storageConsumer;
+        return this;
+    }
+
     public BuiltImmersive build() {
+        // Only allow extraStorageConsumer if we use world storage
+        assert this.extraStorageConsumer == null || this.usesWorldStorage;
         return new BuiltImmersive(this);
     }
 

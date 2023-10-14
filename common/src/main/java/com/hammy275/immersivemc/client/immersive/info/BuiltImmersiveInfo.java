@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,9 +26,10 @@ public class BuiltImmersiveInfo extends AbstractImmersiveInfo implements InfoTri
     public Map<Integer, Integer> triggerToRegularHitbox = new HashMap<>();
     private BlockPos pos;
     private int triggerControllerNum;
+    public final Object extraData;
 
     public BuiltImmersiveInfo(List<HitboxInfo> hitboxes, BlockPos pos, int ticksToExist,
-                              int triggerControllerNum) {
+                              int triggerControllerNum, Class<?> extraDataClazz) {
         super(ticksToExist);
         this.hitboxes = new HitboxInfo[hitboxes.size()];
         for (int i = 0; i < hitboxes.size(); i++) {
@@ -42,6 +44,11 @@ public class BuiltImmersiveInfo extends AbstractImmersiveInfo implements InfoTri
         }
         this.pos = pos;
         this.triggerControllerNum = triggerControllerNum;
+        try {
+            this.extraData = extraDataClazz == null ? null : extraDataClazz.getDeclaredConstructor(null).newInstance();
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -148,5 +155,9 @@ public class BuiltImmersiveInfo extends AbstractImmersiveInfo implements InfoTri
     @Override
     public int getVRControllerNum() {
         return this.triggerControllerNum;
+    }
+
+    public Object getExtraData() {
+        return this.extraData;
     }
 }
