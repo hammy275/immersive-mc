@@ -71,7 +71,17 @@ public class Immersives {
             .build();
     public static final ImmersiveHitboxes immersiveHitboxes = new ImmersiveHitboxes();
     public static final ImmersiveHopper immersiveHopper = new ImmersiveHopper();
-    public static final ImmersiveJukebox immersiveJukebox = new ImmersiveJukebox();
+    public static final BuiltImmersive immersiveJukebox = ImmersiveBuilder.create(ImmersiveCheckers::isJukebox)
+            .setConfigChecker(() -> ActiveConfig.useJukeboxImmersion)
+            .setRenderTime(ClientConstants.ticksToHandleJukebox)
+            .addHitbox(HitboxInfoBuilder.create(Vec3.ZERO, 0.125, 0.125, 0.625).build())
+            .setPositioningMode(HitboxPositioningMode.TOP_LITERAL)
+            .setMaxImmersives(1)
+            .setExtraRenderReady((info) -> Minecraft.getInstance().level.getBlockState(info.getBlockPosition().above()).canBeReplaced())
+            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), 0, hand)))
+            .setVROnly(true)
+            .build();
+
     public static final ImmersiveRepeater immersiveRepeater = new ImmersiveRepeater();
     public static final ImmersiveShulker immersiveShulker = new ImmersiveShulker();
     public static final ImmersiveSmithingTable immersiveSmithingTable = new ImmersiveSmithingTable();
