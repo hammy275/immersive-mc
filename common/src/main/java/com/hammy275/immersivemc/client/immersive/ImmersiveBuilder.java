@@ -35,6 +35,7 @@ public class ImmersiveBuilder {
     boolean usesWorldStorage = false;
     int triggerHitboxControllerNum = 0;
     boolean vrOnly = false;
+    List<Vec3i> airCheckPositionOffsets = new ArrayList<>();
 
     private ImmersiveBuilder(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
         this.blockChecker = blockChecker;
@@ -108,6 +109,7 @@ public class ImmersiveBuilder {
     /**
      * Adds a position to be used for light calculations. If none are supplied, a light position is determined
      * by the HitboxPositioningMode of the immersive.
+     * Note: Offsets are currently literal, and are not translated in the same way hitboxes are.
      * @param lightPosOffset Offset of this block's position to add as a light source.
      * @return Builder object.
      */
@@ -185,6 +187,21 @@ public class ImmersiveBuilder {
      */
     public ImmersiveBuilder setVROnly(boolean vrOnly) {
         this.vrOnly = vrOnly;
+        return this;
+    }
+
+    /**
+     * Adds a position to be used for cancelling rendering if exposed to air. If none are supplied, a position is
+     * determined by the HitboxPositioningMode of the immersive. This is calculated identically to the light position
+     * offset.
+     * Note that internally, air is not actually checked for! Instead, it checks if the position can be replaced,
+     * such as air, water, and tall grass.
+     * Note: Offsets are currently literal, and are not translated in the same way hitboxes are.
+     * @param offset Offset of this block's position to add as an air check.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder addAirCheckPos(Vec3i offset) {
+        this.airCheckPositionOffsets.add(offset);
         return this;
     }
 
