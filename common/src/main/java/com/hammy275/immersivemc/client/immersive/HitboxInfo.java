@@ -13,7 +13,9 @@ public class HitboxInfo implements Cloneable {
 
     // Settings
     public final Vec3 centerOffset;
-    public final double size;
+    public final double sizeX;
+    public final double sizeY;
+    public final double sizeZ;
     public final boolean isInput;
     public final boolean holdsItems;
     public final Direction upDownRenderDir;
@@ -28,11 +30,14 @@ public class HitboxInfo implements Cloneable {
     // Extra data. Note that things should only be stored here after a clone() call.
     public ItemStack item = null;
 
-    public HitboxInfo(Vec3 centerOffset, double size, boolean holdsItems, boolean isInput,
+    public HitboxInfo(Vec3 centerOffset, double sizeX, double sizeY, double sizeZ,
+                      boolean holdsItems, boolean isInput,
                       Direction upDownRenderDir, boolean itemSpins, float itemRenderSizeMultiplier,
                       boolean isTriggerHitbox) {
         this.centerOffset = centerOffset;
-        this.size = size;
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
+        this.sizeZ = sizeZ;
         this.holdsItems = holdsItems;
         this.isInput = isInput;
         this.upDownRenderDir = upDownRenderDir;
@@ -42,9 +47,16 @@ public class HitboxInfo implements Cloneable {
     }
 
     public void recalculate(Level level, BlockPos pos, HitboxPositioningMode mode) {
+        // Vectors that are combined with centerOffset. May not necessarily correspond to the actual in-game axis.
+        // For example, zVec corresponds always to the in-game Y-axis for PLAYER_FACING (such as crafting tables).
         Vec3 xVec;
         Vec3 yVec;
         Vec3 zVec;
+
+        // The actual hitbox size on the in-game x, y, and z axis.
+        double actualXSize;
+        double actualYSize;
+        double actualZSize;
         Vec3 centerPos;
         if (mode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING) {
             Direction blockFacing = level.getBlockState(pos).getValue(HorizontalDirectionalBlock.FACING);
@@ -54,6 +66,13 @@ public class HitboxInfo implements Cloneable {
 
             centerPos = AbstractImmersive.getDirectlyInFront(blockFacing, pos)
                     .add(xVec.scale(0.5)).add(yVec.scale(0.5));
+
+            // If, for example, the furnace is facing the X-axis, then the size should come from sizeZ, since the
+            // Z size represents going "into"/"out of" the furnace (as the X size is for left and right on the furnace's
+            // face, and the y size is for going up or down the face).
+            actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
+            actualYSize = this.sizeY;
+            actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
         } else if (mode == HitboxPositioningMode.PLAYER_FACING) {
             Direction playerFacing = Minecraft.getInstance().player.getDirection();
             xVec = Vec3.atLowerCornerOf(playerFacing.getClockWise().getNormal());
@@ -61,11 +80,25 @@ public class HitboxInfo implements Cloneable {
             zVec = new Vec3(0, 1, 0);
 
             centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
+
+            actualXSize = playerFacing.getAxis() == Direction.Axis.X ? sizeY : sizeX;
+            actualYSize = this.sizeZ;
+            actualZSize = playerFacing.getAxis() == Direction.Axis.X ? sizeX : sizeY;
+        } else if (mode == HitboxPositioningMode.TOP_LITERAL) {
+            xVec = new Vec3(1, 0, 0);
+            yVec = new Vec3(0, 1, 0);
+            zVec = new Vec3(0, 0, 1);
+
+            centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
+
+            actualXSize = this.sizeX;
+            actualYSize = this.sizeY;
+            actualZSize = this.sizeZ;
         } else {
             throw new UnsupportedOperationException("Hitbox calculation for positioning mode " + mode + " unimplemented!");
         }
         this.pos = centerPos.add(xVec.scale(centerOffset.x)).add(yVec.scale(centerOffset.y)).add(zVec.scale(centerOffset.z));
-        this.box = AABB.ofSize(this.pos, size, size, size);
+        this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
     }
 
     public AABB getAABB() {
@@ -96,7 +129,7 @@ public class HitboxInfo implements Cloneable {
     }
 
     public HitboxInfo cloneWithOffset(Vec3 newOffset) {
-        return new HitboxInfo(newOffset, size, holdsItems, isInput, upDownRenderDir,
+        return new HitboxInfo(newOffset, sizeX, sizeY, sizeZ, holdsItems, isInput, upDownRenderDir,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox);
     }
 }
