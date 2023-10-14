@@ -401,11 +401,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         }
     }
 
-    public void renderText(Component text, PoseStack stack, Vec3 pos, int light) {
+    public static void renderText(Component text, PoseStack stack, Vec3 pos, int light) {
         renderText(text, stack, pos, 0.02f, light);
     }
 
-    public void renderText(Component text, PoseStack stack, Vec3 pos, float textSize, int light) {
+    public static void renderText(Component text, PoseStack stack, Vec3 pos, float textSize, int light) {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.pushPose();
         stack.translate(-renderInfo.getPosition().x + pos.x,

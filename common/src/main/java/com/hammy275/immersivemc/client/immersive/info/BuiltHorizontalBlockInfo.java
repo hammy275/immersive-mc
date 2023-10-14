@@ -11,8 +11,8 @@ public class BuiltHorizontalBlockInfo extends BuiltImmersiveInfo {
     public Direction dir;
 
     public BuiltHorizontalBlockInfo(List<HitboxInfo> hitboxes, BlockPos pos, Direction dir, int ticksToExist,
-                                    int triggerControllerNum) {
-        super(hitboxes, pos, ticksToExist, triggerControllerNum);
+                                    int triggerControllerNum, Class<?> extraDataClazz) {
+        super(hitboxes, pos, ticksToExist, triggerControllerNum, extraDataClazz);
         this.dir = dir;
     }
 
