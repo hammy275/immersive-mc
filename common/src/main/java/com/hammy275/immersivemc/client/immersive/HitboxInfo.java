@@ -1,13 +1,17 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.function.Function;
 
 public class HitboxInfo implements Cloneable {
 
@@ -22,6 +26,7 @@ public class HitboxInfo implements Cloneable {
     public final boolean itemSpins;
     public final float itemRenderSizeMultiplier;
     public final boolean isTriggerHitbox;
+    public final Function<BuiltImmersiveInfo, Component> textSupplier;
 
     // Calculated data
     private AABB box;
@@ -33,7 +38,7 @@ public class HitboxInfo implements Cloneable {
     public HitboxInfo(Vec3 centerOffset, double sizeX, double sizeY, double sizeZ,
                       boolean holdsItems, boolean isInput,
                       Direction upDownRenderDir, boolean itemSpins, float itemRenderSizeMultiplier,
-                      boolean isTriggerHitbox) {
+                      boolean isTriggerHitbox, Function<BuiltImmersiveInfo, Component> textSupplier) {
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -44,6 +49,7 @@ public class HitboxInfo implements Cloneable {
         this.itemSpins = itemSpins;
         this.itemRenderSizeMultiplier = itemRenderSizeMultiplier;
         this.isTriggerHitbox = isTriggerHitbox;
+        this.textSupplier = textSupplier;
     }
 
     public void recalculate(Level level, BlockPos pos, HitboxPositioningMode mode) {
@@ -94,6 +100,17 @@ public class HitboxInfo implements Cloneable {
             actualXSize = this.sizeX;
             actualYSize = this.sizeY;
             actualZSize = this.sizeZ;
+        } else if (mode == HitboxPositioningMode.TOP_BLOCK_FACING) {
+            Direction blockFacing = level.getBlockState(pos).getValue(HorizontalDirectionalBlock.FACING);
+            xVec = Vec3.atLowerCornerOf(blockFacing.getClockWise().getNormal());
+            yVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
+            zVec = new Vec3(0, 1, 0);
+
+            centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
+
+            actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeY : sizeX;
+            actualYSize = this.sizeZ;
+            actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeX : sizeY;
         } else {
             throw new UnsupportedOperationException("Hitbox calculation for positioning mode " + mode + " unimplemented!");
         }
@@ -130,6 +147,6 @@ public class HitboxInfo implements Cloneable {
 
     public HitboxInfo cloneWithOffset(Vec3 newOffset) {
         return new HitboxInfo(newOffset, sizeX, sizeY, sizeZ, holdsItems, isInput, upDownRenderDir,
-                itemSpins, itemRenderSizeMultiplier, isTriggerHitbox);
+                itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier);
     }
 }

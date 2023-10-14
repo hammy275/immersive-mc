@@ -1,7 +1,11 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.function.Function;
 
 public class HitboxInfoBuilder {
 
@@ -53,6 +57,11 @@ public class HitboxInfoBuilder {
      * VR users need to press trigger (or whatever left-click is mapped to) to activate this hitbox.
      */
     private boolean isTriggerHitbox = false;
+    /**
+     * Supplier of text to render at the position of this hitbox, or null if this never renders text.
+     * null can be returned instead of a Component to render no text.
+     */
+    private Function<BuiltImmersiveInfo, Component> textSupplier = null;
 
 
     private HitboxInfoBuilder(Vec3 centerOffset, double size) {
@@ -97,10 +106,15 @@ public class HitboxInfoBuilder {
         return this;
     }
 
+    public HitboxInfoBuilder textSupplier(Function<BuiltImmersiveInfo, Component> textSupplier) {
+        this.textSupplier = textSupplier;
+        return this;
+    }
+
     public HitboxInfo build() {
         assert !isInput || holdsItems; // If isInput, must holdsItems
         return new HitboxInfo(centerOffset, sizeX, sizeY, sizeZ, holdsItems, isInput, upDownRenderDir,
-                itemSpins, itemRenderSizeMultiplier, isTriggerHitbox);
+                itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier);
     }
 
     public static HitboxInfoBuilder create(Vec3 centerOffset, double size) {
