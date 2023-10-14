@@ -22,6 +22,10 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
 
     // TODO: Use pre-calculation so we stop depending on the builder directly.
@@ -42,7 +46,11 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
 
     @Override
     public boolean shouldRender(BuiltImmersiveInfo info, boolean isInVR) {
-        return info.readyToRender() && builder.extraRenderReady.apply(info);
+        return
+                shouldTrack(info.getBlockPosition()) && // Check that block is still there
+                        info.readyToRender() &&
+                        airCheck(info) &&
+                        builder.extraRenderReady.apply(info);
     }
 
     @Override
@@ -100,6 +108,13 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return builder.blockChecker.apply(pos, state, tileEntity, level);
+    }
+
+    private boolean shouldTrack(BlockPos pos) {
+        return shouldTrack(pos,
+                Minecraft.getInstance().level.getBlockState(pos),
+                Minecraft.getInstance().level.getBlockEntity(pos),
+                Minecraft.getInstance().level);
     }
 
     @Override
@@ -166,6 +181,27 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         } else {
             return info.getBlockPosition().offset(builder.lightPositionOffsets.get(0));
         }
+    }
+
+    protected boolean airCheck(BuiltImmersiveInfo info) {
+        List<BlockPos> positions = new ArrayList<>();
+        if (builder.airCheckPositionOffsets.isEmpty()) {
+            if (this.hasMultipleLightPositions(info)) {
+                positions.addAll(Arrays.asList(getLightPositions(info)));
+            } else {
+                positions.add(this.getLightPos(info));
+            }
+        } else {
+            for (Vec3i offset : builder.airCheckPositionOffsets) {
+                positions.add(info.getBlockPosition().offset(offset));
+            }
+        }
+        for (BlockPos pos : positions) {
+            if (!Minecraft.getInstance().level.getBlockState(pos).canBeReplaced()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

@@ -2,15 +2,12 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.BuiltHorizontalBlockInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.InteractPacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.LinkedList;
@@ -43,7 +40,6 @@ public class Immersives {
                     .itemSpins(true).itemRenderSizeMultiplier(3f).triggerHitbox(true).build())
             .setPositioningMode(HitboxPositioningMode.PLAYER_FACING)
             .setMaxImmersives(1)
-            .setExtraRenderReady((info) -> Minecraft.getInstance().level.getBlockState(info.getBlockPosition().above()).isAir())
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand)))
             .setUsesWorldStorage(true)
             .setTriggerHitboxControllerNum(0)
@@ -61,11 +57,6 @@ public class Immersives {
                     ClientConstants.itemScaleSizeFurnace / 1.5d).holdsItems(true).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_BLOCK_FACING)
             .setMaxImmersives(4)
-            .setExtraRenderReady((info) -> {
-                BuiltHorizontalBlockInfo horizInfo = (BuiltHorizontalBlockInfo) info;
-                BlockState forwardBlock = Minecraft.getInstance().level.getBlockState(info.getBlockPosition().relative(horizInfo.dir));
-                return forwardBlock.isAir();
-            })
             .setRightClickHandler((info, player, slot, hand) ->
                     Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .build();
@@ -77,7 +68,6 @@ public class Immersives {
             .addHitbox(HitboxInfoBuilder.create(Vec3.ZERO, 0.125, 0.125, 0.625).build())
             .setPositioningMode(HitboxPositioningMode.TOP_LITERAL)
             .setMaxImmersives(1)
-            .setExtraRenderReady((info) -> Minecraft.getInstance().level.getBlockState(info.getBlockPosition().above()).canBeReplaced())
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), 0, hand)))
             .setVROnly(true)
             .build();
