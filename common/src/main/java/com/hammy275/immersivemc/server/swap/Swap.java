@@ -381,19 +381,26 @@ public class Swap {
                 Util.placeLeftovers(player, result.leftovers);
             }
         } else {
+            boolean itemTaken = false;
             if (playerItem.isEmpty()) {
                 player.setItemInHand(hand, furnaceItem);
                 furnace.setItem(2, playerItem);
+                itemTaken = true;
             } else if (Util.stacksEqualBesidesCount(furnaceItem, playerItem)) {
+                int beforeGrabCount = furnace.getItem(2).getCount();
                 Util.ItemStackMergeResult result = Util.mergeStacks(playerItem, furnaceItem, false);
                 player.setItemInHand(hand, result.mergedInto);
                 furnace.setItem(slot, result.mergedFrom);
+                itemTaken = furnace.getItem(2).isEmpty() || furnace.getItem(2).getCount() < beforeGrabCount;
             }
 
-            // Experience and recipes reward
-            if (player instanceof ServerPlayer sp && furnace instanceof AbstractFurnaceBlockEntity furnaceBE) {
+            // Experience and recipes reward. Given only if at least one item was taken. This is the same as
+            // vanilla behavior.
+            if (itemTaken && player instanceof ServerPlayer sp && furnace instanceof AbstractFurnaceBlockEntity furnaceBE) {
                 furnaceBE.awardUsedRecipesAndPopExperience(sp);
             }
+
+
         }
         furnace.setChanged();
     }

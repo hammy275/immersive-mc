@@ -41,7 +41,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
      */
 
     public static final BookModel bookModel = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
-    public static final ResourceLocation writtenBookTexture = new ResourceLocation(ImmersiveMC.MOD_ID, "written_book.png");
+    public static final ResourceLocation writtenBookTexture = new ResourceLocation(ImmersiveMC.MOD_ID, "nahnotfox_written_book.png");
 
     // User Controlled
     public static final float scaleSize = 1f;
