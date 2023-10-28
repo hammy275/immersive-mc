@@ -87,15 +87,15 @@ public class ImmersiveBuilder {
         Vec3 right = new Vec3(1, 0, 0).scale(distBetweenBoxes);
         Vec3 up = new Vec3(0, 1, 0).scale(distBetweenBoxes);
         Vec3 down = new Vec3(0, -1, 0).scale(distBetweenBoxes);
-        addHitbox(hitboxInfo.cloneWithOffset(up.add(left)));
-        addHitbox(hitboxInfo.cloneWithOffset(up));
-        addHitbox(hitboxInfo.cloneWithOffset(up.add(right)));
-        addHitbox(hitboxInfo.cloneWithOffset(left));
+        addHitbox(hitboxInfo.cloneWithOffset((info) -> up.add(left)));
+        addHitbox(hitboxInfo.cloneWithOffset((info) -> up));
+        addHitbox(hitboxInfo.cloneWithOffset((info) -> up.add(right)));
+        addHitbox(hitboxInfo.cloneWithOffset((info) -> left));
         addHitbox(hitboxInfo);
-        addHitbox(hitboxInfo.cloneWithOffset(right));
-        addHitbox(hitboxInfo.cloneWithOffset(down.add(left)));
-        addHitbox(hitboxInfo.cloneWithOffset(down));
-        addHitbox(hitboxInfo.cloneWithOffset(down.add(right)));
+        addHitbox(hitboxInfo.cloneWithOffset((info) -> right));
+        addHitbox(hitboxInfo.cloneWithOffset((info) -> down.add(left)));
+        addHitbox(hitboxInfo.cloneWithOffset((info) -> down));
+        addHitbox(hitboxInfo.cloneWithOffset((info) -> down.add(right)));
         return this;
     }
 
