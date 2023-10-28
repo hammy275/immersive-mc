@@ -56,7 +56,24 @@ public class Immersives {
     public static final ImmersiveBackpack immersiveBackpack = new ImmersiveBackpack();
     public static final ImmersiveBarrel immersiveBarrel = new ImmersiveBarrel();
     public static final ImmersiveBeacon immersiveBeacon = new ImmersiveBeacon();
-    public static final ImmersiveBrewing immersiveBrewing = new ImmersiveBrewing();
+    public static final BuiltImmersive immersiveBrewing = ImmersiveBuilder.create(ImmersiveCheckers::isBrewingStand)
+            .setConfigChecker(() -> ActiveConfig.useBrewingImmersion)
+            .setRenderTime(ClientConstants.ticksToRenderBrewing)
+            .setRenderSize(ClientConstants.itemScaleSizeBrewing)
+            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(-0.25, -1d/6d, 0),
+                    ClientConstants.itemScaleSizeBrewing / 1.5).build())
+            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0, -0.25, 0),
+                    ClientConstants.itemScaleSizeBrewing / 1.5).build())
+            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0.25, -1d/6d, 0),
+                    ClientConstants.itemScaleSizeBrewing / 1.5).build())
+            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0, 0.25, 0),
+                    ClientConstants.itemScaleSizeBrewing / 1.5).build())
+            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(-0.25, 0.25, 0),
+                    ClientConstants.itemScaleSizeBrewing / 1.5).build())
+            .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
+            .setMaxImmersives(2)
+            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
+            .build();
     public static final ImmersiveChest immersiveChest = new ImmersiveChest();
     public static final ImmersiveChiseledBookshelf immersiveChiseledBookshelf = new ImmersiveChiseledBookshelf();
     public static final BuiltImmersive immersiveCrafting = ImmersiveBuilder.create(ImmersiveCheckers::isCraftingTable)
