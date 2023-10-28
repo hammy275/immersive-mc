@@ -82,6 +82,8 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             facing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
         } else if (builder.positioningMode == HitboxPositioningMode.TOP_BLOCK_FACING) {
             facing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
+        } else if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_PLAYER_FACING) {
+            facing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
         }
         for (int i = 0; i < info.hitboxes.length; i++) {
             HitboxInfo hitbox = info.hitboxes[i];
@@ -146,6 +148,8 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             this.infos.add(new BuiltHorizontalBlockInfo(builder.hitboxes, pos,
                     state.getValue(HorizontalDirectionalBlock.FACING),
                     builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
+        } else if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_PLAYER_FACING) {
+            this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
         } else {
             throw new UnsupportedOperationException("Tracking for positioning mode " + builder.positioningMode + " unimplemented!");
         }
@@ -190,6 +194,8 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
                 return info.getBlockPosition().above();
             } else if (builder.positioningMode == HitboxPositioningMode.TOP_BLOCK_FACING) {
                 return info.getBlockPosition().above();
+            } else if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_PLAYER_FACING) {
+              return info.getBlockPosition().relative(AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player));
             } else {
                 throw new UnsupportedOperationException("Light pos for positioning mode " + builder.positioningMode + " unimplemented!");
             }
