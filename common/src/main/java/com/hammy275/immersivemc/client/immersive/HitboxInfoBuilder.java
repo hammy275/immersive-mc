@@ -17,7 +17,7 @@ public class HitboxInfoBuilder {
      * on the player, so for the furnace, -0.5, 0, 0 moves the box to the leftmost edge from the
      * player's perspective, or the rightmost edge if one were spectating the furnace.
      */
-    private final Vec3 centerOffset;
+    private final Function<BuiltImmersiveInfo, Vec3> centerOffset;
     /**
      * Left/right size of the hitbox. See X axis for centerOffset.
      */
@@ -64,11 +64,11 @@ public class HitboxInfoBuilder {
     private Function<BuiltImmersiveInfo, Component> textSupplier = null;
 
 
-    private HitboxInfoBuilder(Vec3 centerOffset, double size) {
+    private HitboxInfoBuilder(Function<BuiltImmersiveInfo, Vec3> centerOffset, double size) {
         this(centerOffset, size, size, size);
     }
 
-    private HitboxInfoBuilder(Vec3 centerOffset, double sizeX, double sizeY, double sizeZ) {
+    private HitboxInfoBuilder(Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ) {
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -118,14 +118,26 @@ public class HitboxInfoBuilder {
     }
 
     public static HitboxInfoBuilder create(Vec3 centerOffset, double size) {
+        return create((info) -> centerOffset, size);
+    }
+
+    public static HitboxInfoBuilder create(Function<BuiltImmersiveInfo, Vec3> centerOffset, double size) {
         return new HitboxInfoBuilder(centerOffset, size);
     }
 
     public static HitboxInfoBuilder create(Vec3 centerOffset, double sizeX, double sizeY, double sizeZ) {
+        return create((info) -> centerOffset, sizeX, sizeY, sizeZ);
+    }
+
+    public static HitboxInfoBuilder create(Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ) {
         return new HitboxInfoBuilder(centerOffset, sizeX, sizeY, sizeZ);
     }
 
     public static HitboxInfoBuilder createItemInput(Vec3 centerOffset, double size) {
+        return createItemInput((info) -> centerOffset, size);
+    }
+
+    public static HitboxInfoBuilder createItemInput(Function<BuiltImmersiveInfo, Vec3> centerOffset, double size) {
         return create(centerOffset, size).holdsItems(true).isInput(true);
     }
 }

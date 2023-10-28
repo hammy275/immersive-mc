@@ -16,7 +16,7 @@ import java.util.function.Function;
 public class HitboxInfo implements Cloneable {
 
     // Settings
-    public final Vec3 centerOffset;
+    public final Function<BuiltImmersiveInfo, Vec3> centerOffset;
     public final double sizeX;
     public final double sizeY;
     public final double sizeZ;
@@ -31,11 +31,12 @@ public class HitboxInfo implements Cloneable {
     // Calculated data
     private AABB box;
     private Vec3 pos;
+    boolean didCalc = false; // One-time flag to make sure recalculate() is called before getting data.
 
     // Extra data. Note that things should only be stored here after a clone() call.
     public ItemStack item = null;
 
-    public HitboxInfo(Vec3 centerOffset, double sizeX, double sizeY, double sizeZ,
+    public HitboxInfo(Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
                       boolean holdsItems, boolean isInput,
                       Direction upDownRenderDir, boolean itemSpins, float itemRenderSizeMultiplier,
                       boolean isTriggerHitbox, Function<BuiltImmersiveInfo, Component> textSupplier) {
@@ -52,7 +53,15 @@ public class HitboxInfo implements Cloneable {
         this.textSupplier = textSupplier;
     }
 
-    public void recalculate(Level level, BlockPos pos, HitboxPositioningMode mode) {
+    public void recalculate(Level level, HitboxPositioningMode mode, BuiltImmersiveInfo info) {
+        didCalc = true;
+        Vec3 offset = this.centerOffset.apply(info);
+        if (offset == null) {
+            this.pos = null;
+            this.box = null;
+            return; // Bail early if we don't actually have a position to work with
+        }
+        BlockPos pos = info.getBlockPosition();
         // Vectors that are combined with centerOffset. May not necessarily correspond to the actual in-game axis.
         // For example, zVec corresponds always to the in-game Y-axis for PLAYER_FACING (such as crafting tables).
         Vec3 xVec;
@@ -126,19 +135,19 @@ public class HitboxInfo implements Cloneable {
         } else {
             throw new UnsupportedOperationException("Hitbox calculation for positioning mode " + mode + " unimplemented!");
         }
-        this.pos = centerPos.add(xVec.scale(centerOffset.x)).add(yVec.scale(centerOffset.y)).add(zVec.scale(centerOffset.z));
+        this.pos = centerPos.add(xVec.scale(offset.x)).add(yVec.scale(offset.y)).add(zVec.scale(offset.z));
         this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
     }
 
     public AABB getAABB() {
-        if (box == null) {
+        if (!didCalc) {
             throw new IllegalStateException("Should call recalculate() before getting hitbox.");
         }
         return box;
     }
 
     public Vec3 getPos() {
-        if (pos == null) {
+        if (!didCalc) {
             throw new IllegalStateException("Should call recalculate() before getting position.");
         }
         return pos;
@@ -152,12 +161,16 @@ public class HitboxInfo implements Cloneable {
         return box != null;
     }
 
+    public boolean calcDone() {
+        return didCalc;
+    }
+
     @Override
     public Object clone() {
         return cloneWithOffset(centerOffset);
     }
 
-    public HitboxInfo cloneWithOffset(Vec3 newOffset) {
+    public HitboxInfo cloneWithOffset(Function<BuiltImmersiveInfo, Vec3> newOffset) {
         return new HitboxInfo(newOffset, sizeX, sizeY, sizeZ, holdsItems, isInput, upDownRenderDir,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier);
     }
