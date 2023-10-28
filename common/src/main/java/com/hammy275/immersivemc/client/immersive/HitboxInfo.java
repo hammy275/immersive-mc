@@ -111,6 +111,18 @@ public class HitboxInfo implements Cloneable {
             actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeY : sizeX;
             actualYSize = this.sizeZ;
             actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeX : sizeY;
+        } else if (mode == HitboxPositioningMode.HORIZONTAL_PLAYER_FACING) {
+            Direction blockFacing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
+            xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
+            yVec = new Vec3(0, 1, 0);
+            zVec = Vec3.atLowerCornerOf(blockFacing.getOpposite().getNormal());
+
+            centerPos = AbstractImmersive.getDirectlyInFront(blockFacing, pos)
+                    .add(xVec.scale(0.5)).add(yVec.scale(0.5));
+
+            actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
+            actualYSize = this.sizeY;
+            actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
         } else {
             throw new UnsupportedOperationException("Hitbox calculation for positioning mode " + mode + " unimplemented!");
         }
