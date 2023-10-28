@@ -91,12 +91,13 @@ public class BuiltImmersiveInfo extends AbstractImmersiveInfo implements InfoTri
 
     @Override
     public boolean hasHitboxes() {
+        // Only need to have one hitbox to be valid.
         for (HitboxInfo hitbox : this.hitboxes) {
-            if (!hitbox.hasAABB()) {
-                return false;
+            if (hitbox.hasAABB()) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -120,17 +121,24 @@ public class BuiltImmersiveInfo extends AbstractImmersiveInfo implements InfoTri
 
     @Override
     public boolean hasPositions() {
+        // Only need to have one position to be valid.
         for (HitboxInfo hitbox : this.hitboxes) {
-            if (!hitbox.hasPos()) {
-                return false;
+            if (hitbox.hasPos()) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     @Override
     public boolean readyToRender() {
-        return hasPositions() && hasHitboxes();
+        // All hitboxes must be calculated, even if the result is null
+        for (HitboxInfo hitbox : this.hitboxes) {
+            if (!hitbox.calcDone()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

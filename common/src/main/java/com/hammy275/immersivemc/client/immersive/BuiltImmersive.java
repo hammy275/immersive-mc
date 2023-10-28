@@ -63,7 +63,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
 
         // TODO: Optionally use setHitboxes() here so we don't recalculate every tick
         for (HitboxInfo hitbox : info.hitboxes) {
-            hitbox.recalculate(Minecraft.getInstance().level, info.getBlockPosition(), builder.positioningMode);
+            hitbox.recalculate(Minecraft.getInstance().level, builder.positioningMode, info);
         }
         if (info instanceof BuiltHorizontalBlockInfo horizInfo) {
             horizInfo.dir = Minecraft.getInstance().level.getBlockState(info.getBlockPosition())
