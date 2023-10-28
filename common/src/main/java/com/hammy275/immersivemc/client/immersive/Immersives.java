@@ -9,9 +9,11 @@ import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.InteractPacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.storage.AnvilStorage;
+import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.LinkedList;
@@ -62,13 +64,13 @@ public class Immersives {
             .setRenderSize(ClientConstants.itemScaleSizeBrewing)
             .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(-0.25, -1d/6d, 0),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
-            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0, -0.25, 0),
+            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> new Vec3(0, ActiveConfig.autoCenterBrewing ? -1d/6d : -0.25, 0),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
             .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0.25, -1d/6d, 0),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
-            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0, 0.25, 0),
+            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> new Vec3(0, ActiveConfig.autoCenterBrewing ? 0.1 : 0.25, 0),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
-            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(-0.25, 0.25, 0),
+            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> ActiveConfig.autoCenterBrewing ? new Vec3(0, 0.35, 0) : new Vec3(-0.25, 0.25, 0),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
             .setMaxImmersives(2)
@@ -97,16 +99,56 @@ public class Immersives {
             .setConfigChecker(() -> ActiveConfig.useFurnaceImmersion)
             .setRenderTime(ClientConstants.ticksToRenderFurnace)
             .setRenderSize(ClientConstants.itemScaleSizeFurnace)
-            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(-0.25, 0.25, 0),
+            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> {
+                if (ActiveConfig.autoCenterFurnace) {
+                    if (info.itemHitboxes.get(2).item == null || info.itemHitboxes.get(2).item.isEmpty()) {
+                        return new Vec3(0, 0.25, 0);
+                    } else if (info.itemHitboxes.get(0).item == null || info.itemHitboxes.get(0).item.isEmpty()) {
+                        return null;
+                    } else {
+                        return new Vec3(-0.25, 0.25, 0);
+                    }
+                } else {
+                    return new Vec3(-0.25, 0.25, 0);
+                }},
                     ClientConstants.itemScaleSizeFurnace / 1.5d).build())
-            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(-0.25, -0.25, 0),
+            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> {
+                if (ActiveConfig.autoCenterFurnace) {
+                    return new Vec3(0, -0.25, 0);
+                } else {
+                    return new Vec3(-0.25, -0.25, 0);
+                }},
                     ClientConstants.itemScaleSizeFurnace / 1.5d).build())
-            .addHitbox(HitboxInfoBuilder.create(new Vec3(0.25, 0, 0),
+            .addHitbox(HitboxInfoBuilder.create((info) -> {
+                if (ActiveConfig.autoCenterFurnace) {
+                    if (info.itemHitboxes.get(2).item == null || info.itemHitboxes.get(2).item.isEmpty()) {
+                        return null;
+                    } else if (info.itemHitboxes.get(0).item == null || info.itemHitboxes.get(0).item.isEmpty()) {
+                        return new Vec3(0, 0.25, 0);
+                    } else {
+                        return new Vec3(0.25, 0.25, 0);
+                    }
+                } else {
+                    return new Vec3(0.25, 0, 0);
+                }},
                     ClientConstants.itemScaleSizeFurnace / 1.5d).holdsItems(true).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_BLOCK_FACING)
             .setMaxImmersives(4)
-            .setRightClickHandler((info, player, slot, hand) ->
-                    Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
+            .setRightClickHandler((info, player, slot, hand) -> {
+                if (ActiveConfig.autoCenterFurnace) {
+                    if (info.itemHitboxes.get(0).getPos() == null && slot == 2) {
+                        ItemStack handItem = player.getItemInHand(hand);
+                        if (!handItem.isEmpty() &&
+                                (!Util.stacksEqualBesidesCount(handItem, info.itemHitboxes.get(2).item) || handItem.getCount() == handItem.getMaxStackSize())) {
+                            // If we don't have an input slot, set to the input slot instead of output if:
+                            // Our hand is NOT empty (we have something to put in) AND
+                            // We're holding a different item than what's in the output OR what we have in our hand can't be added to
+                            slot = 0;
+                        }
+                    }
+                }
+                Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand));
+            })
             .build();
     public static final ImmersiveHitboxes immersiveHitboxes = new ImmersiveHitboxes();
     public static final ImmersiveHopper immersiveHopper = new ImmersiveHopper();
