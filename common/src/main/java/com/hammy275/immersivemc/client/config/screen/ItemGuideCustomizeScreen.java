@@ -56,10 +56,10 @@ public class ItemGuideCustomizeScreen extends Screen {
         graphics.drawCenteredString(this.font, this.title.getString(),
                 this.width / 2, 8, 0xFFFFFF);
 
-        renderPreview(graphics.pose(), ActiveConfig.itemGuideColor, 0.25f, false);
-        renderPreview(graphics.pose(), ActiveConfig.itemGuideSelectedColor, 0.5f, false);
+        renderPreview(graphics.pose(), ActiveConfig.itemGuideColor, 0.25f, false, ActiveConfig.itemGuideSize);
+        renderPreview(graphics.pose(), ActiveConfig.itemGuideSelectedColor, 0.5f, false, ActiveConfig.itemGuideSelectedSize);
         // Render square for particle color by using our cube model lol
-        renderPreview(graphics.pose(), ActiveConfig.rangedGrabColor, 0.75f, true);
+        renderPreview(graphics.pose(), ActiveConfig.rangedGrabColor, 0.75f, true, 1.0f);
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 7 / 8 - 16,
                 this.height * 1 / 4 - 16, this.width * 7 / 8 + 16, this.height * 1 / 4 + 16)) {
@@ -82,7 +82,7 @@ public class ItemGuideCustomizeScreen extends Screen {
         }
     }
 
-    private void renderPreview(PoseStack stack, RGBA color, float heightMult, boolean renderSquare) {
+    private void renderPreview(PoseStack stack, RGBA color, float heightMult, boolean renderSquare, double size) {
         stack.pushPose();
         stack.translate(this.width * 0.875, this.height * heightMult, 0);
         stack.scale(0.25f, 0.25f, 0.25f);
@@ -97,7 +97,7 @@ public class ItemGuideCustomizeScreen extends Screen {
 
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
         if (ActiveConfig.placementGuideMode == PlacementGuideMode.CUBE || renderSquare) {
-            stack.translate(0, 64f, 0);
+            stack.translate(0, 64f * size, 0);
             if (renderSquare) {
                 stack.translate(0, 64f * color.alphaF(), 0);
                 stack.scale(color.alphaF(), color.alphaF(), color.alphaF());
@@ -105,10 +105,10 @@ public class ItemGuideCustomizeScreen extends Screen {
             float alpha = renderSquare ? 1f : color.alphaF();
             AbstractImmersive.cubeModel.render(stack,
                     buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
-                    color.redF(), color.greenF(), color.blueF(), alpha, 64f, AbstractImmersive.maxLight);
+                    color.redF(), color.greenF(), color.blueF(), alpha, 64f * (float)size, AbstractImmersive.maxLight);
         } else if (ActiveConfig.placementGuideMode == PlacementGuideMode.OUTLINE) {
             LevelRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
-                    renderHitbox,
+                    AABB.ofSize(Vec3.ZERO, 128 * size, 128 * size, 128 * size),
                     color.redF(), color.greenF(), color.blueF(), color.alphaF());
         }
         buffer.endBatch();
@@ -136,8 +136,27 @@ public class ItemGuideCustomizeScreen extends Screen {
                         (newMode) -> {
                             ImmersiveMCConfig.placementGuideMode.set(newMode.ordinal());
                             ImmersiveMCConfig.placementGuideMode.save();
-                            ActiveConfig.loadConfigFromFile();
+                            // this is unneeded as it overwrites other guide values that were changed
+                            // in the same active config instance
+                            // ActiveConfig.loadConfigFromFile();
+                            ActiveConfig.placementGuideMode = newMode; // this should be used instead
                         }
+                )
+        );
+
+        String sizeKey = "config." + ImmersiveMC.MOD_ID + ".item_guide_size";
+        this.list.addBig(ScreenUtils.createIntSlider(
+                    sizeKey, (value) -> Component.literal(I18n.get(sizeKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
+                    0, 100, (int)(ActiveConfig.itemGuideSize * 100),
+                    (newVal) -> ActiveConfig.itemGuideSize = (float) newVal / 100.0f
+                )
+        );
+
+        String sizeSelectedKey = "config." + ImmersiveMC.MOD_ID + ".item_guide_selected_size";
+        this.list.addBig(ScreenUtils.createIntSlider(
+                    sizeSelectedKey, (value) -> Component.literal(I18n.get(sizeSelectedKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
+                    0, 100, (int)(ActiveConfig.itemGuideSelectedSize * 100),
+                    (newVal) -> ActiveConfig.itemGuideSelectedSize = (float) newVal / 100.0f
                 )
         );
 
@@ -167,6 +186,8 @@ public class ItemGuideCustomizeScreen extends Screen {
 
     @Override
     public void onClose() {
+        ImmersiveMCConfig.itemGuideSize.set(ActiveConfig.itemGuideSize);
+        ImmersiveMCConfig.itemGuideSelectedSize.set(ActiveConfig.itemGuideSelectedSize);
         ImmersiveMCConfig.itemGuideColor.set(ActiveConfig.itemGuideColor.toLong());
         ImmersiveMCConfig.itemGuideSelectedColor.set(ActiveConfig.itemGuideSelectedColor.toLong());
         ImmersiveMCConfig.rangedGrabColor.set(ActiveConfig.rangedGrabColor.toLong());
