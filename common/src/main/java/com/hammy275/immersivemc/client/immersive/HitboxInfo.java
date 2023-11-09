@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -62,79 +63,106 @@ public class HitboxInfo implements Cloneable {
             return; // Bail early if we don't actually have a position to work with
         }
         BlockPos pos = info.getBlockPosition();
-        // Vectors that are combined with centerOffset. May not necessarily correspond to the actual in-game axis.
-        // For example, zVec corresponds always to the in-game Y-axis for PLAYER_FACING (such as crafting tables).
-        Vec3 xVec;
-        Vec3 yVec;
-        Vec3 zVec;
-
-        // The actual hitbox size on the in-game x, y, and z axis.
-        double actualXSize;
-        double actualYSize;
-        double actualZSize;
-        Vec3 centerPos;
         if (mode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING) {
             Direction blockFacing = level.getBlockState(pos).getValue(HorizontalDirectionalBlock.FACING);
-            xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
-            yVec = new Vec3(0, 1, 0);
-            zVec = Vec3.atLowerCornerOf(blockFacing.getOpposite().getNormal());
-
-            centerPos = AbstractImmersive.getDirectlyInFront(blockFacing, pos)
-                    .add(xVec.scale(0.5)).add(yVec.scale(0.5));
-
-            // If, for example, the furnace is facing the X-axis, then the size should come from sizeZ, since the
-            // Z size represents going "into"/"out of" the furnace (as the X size is for left and right on the furnace's
-            // face, and the y size is for going up or down the face).
-            actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
-            actualYSize = this.sizeY;
-            actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
+            recalcHorizBlockFacing(blockFacing, info, offset);
         } else if (mode == HitboxPositioningMode.PLAYER_FACING) {
-            Direction playerFacing = Minecraft.getInstance().player.getDirection();
-            xVec = Vec3.atLowerCornerOf(playerFacing.getClockWise().getNormal());
-            yVec = Vec3.atLowerCornerOf(playerFacing.getNormal());
-            zVec = new Vec3(0, 1, 0);
+            Direction blockFacing = Minecraft.getInstance().player.getDirection();
+            Vec3 xVec = Vec3.atLowerCornerOf(blockFacing.getClockWise().getNormal());
+            Vec3 yVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
+            Vec3 zVec = new Vec3(0, 1, 0);
 
-            centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
+            Vec3 centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
 
-            actualXSize = playerFacing.getAxis() == Direction.Axis.X ? sizeY : sizeX;
-            actualYSize = this.sizeZ;
-            actualZSize = playerFacing.getAxis() == Direction.Axis.X ? sizeX : sizeY;
+            double actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeY : sizeX;
+            double actualYSize = this.sizeZ;
+            double actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeX : sizeY;
+
+            this.pos = centerPos.add(xVec.scale(offset.x)).add(yVec.scale(offset.y)).add(zVec.scale(offset.z));
+            this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
         } else if (mode == HitboxPositioningMode.TOP_LITERAL) {
-            xVec = new Vec3(1, 0, 0);
-            yVec = new Vec3(0, 1, 0);
-            zVec = new Vec3(0, 0, 1);
+            Vec3 xVec = new Vec3(1, 0, 0);
+            Vec3 yVec = new Vec3(0, 1, 0);
+            Vec3 zVec = new Vec3(0, 0, 1);
 
-            centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
+            Vec3 centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
 
-            actualXSize = this.sizeX;
-            actualYSize = this.sizeY;
-            actualZSize = this.sizeZ;
+            double actualXSize = this.sizeX;
+            double actualYSize = this.sizeY;
+            double actualZSize = this.sizeZ;
+
+            this.pos = centerPos.add(xVec.scale(offset.x)).add(yVec.scale(offset.y)).add(zVec.scale(offset.z));
+            this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
         } else if (mode == HitboxPositioningMode.TOP_BLOCK_FACING) {
             Direction blockFacing = level.getBlockState(pos).getValue(HorizontalDirectionalBlock.FACING);
-            xVec = Vec3.atLowerCornerOf(blockFacing.getClockWise().getNormal());
-            yVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
-            zVec = new Vec3(0, 1, 0);
-
-            centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
-
-            actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeY : sizeX;
-            actualYSize = this.sizeZ;
-            actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeX : sizeY;
+            recalcTopBottomBlockFacing(blockFacing, info, offset, false);
         } else if (mode == HitboxPositioningMode.HORIZONTAL_PLAYER_FACING) {
             Direction blockFacing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
-            xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
-            yVec = new Vec3(0, 1, 0);
-            zVec = Vec3.atLowerCornerOf(blockFacing.getOpposite().getNormal());
+            Vec3 xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
+            Vec3 yVec = new Vec3(0, 1, 0);
+            Vec3 zVec = Vec3.atLowerCornerOf(blockFacing.getOpposite().getNormal());
 
-            centerPos = AbstractImmersive.getDirectlyInFront(blockFacing, pos)
+            Vec3 centerPos = AbstractImmersive.getDirectlyInFront(blockFacing, pos)
                     .add(xVec.scale(0.5)).add(yVec.scale(0.5));
 
-            actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
-            actualYSize = this.sizeY;
-            actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
+            double actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
+            double actualYSize = this.sizeY;
+            double actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
+
+            this.pos = centerPos.add(xVec.scale(offset.x)).add(yVec.scale(offset.y)).add(zVec.scale(offset.z));
+            this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
+        } else if (mode == HitboxPositioningMode.BLOCK_FACING_NEG_X) {
+            // Delegate to other calculation modes
+            Direction blockFacing = level.getBlockState(pos).getValue(DirectionalBlock.FACING);
+            if (blockFacing.getAxis() != Direction.Axis.Y) {
+                recalcHorizBlockFacing(blockFacing, info, offset);
+            } else {
+                // Pretend the block is facing west so that way west becomes +x
+                recalcTopBottomBlockFacing(Direction.WEST, info, offset, blockFacing == Direction.DOWN);
+            }
         } else {
             throw new UnsupportedOperationException("Hitbox calculation for positioning mode " + mode + " unimplemented!");
         }
+    }
+
+    private void recalcHorizBlockFacing(Direction blockFacing, BuiltImmersiveInfo info, Vec3 offset) {
+        BlockPos pos = info.getBlockPosition();
+
+        // Vectors that are combined with centerOffset. May not necessarily correspond to the actual in-game axis.
+        // For example, zVec corresponds always to the in-game Y-axis for PLAYER_FACING (such as crafting tables).
+        Vec3 xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
+        Vec3 yVec = new Vec3(0, 1, 0);
+        Vec3 zVec = Vec3.atLowerCornerOf(blockFacing.getOpposite().getNormal());
+
+        Vec3 centerPos = AbstractImmersive.getDirectlyInFront(blockFacing, pos)
+                .add(xVec.scale(0.5)).add(yVec.scale(0.5));
+
+        // If, for example, the furnace is facing the X-axis, then the size should come from sizeZ, since the
+        // Z size represents going "into"/"out of" the furnace (as the X size is for left and right on the furnace's
+        // face, and the y size is for going up or down the face).
+        // The actual hitbox size on the in-game x, y, and z axis.
+        double actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
+        double actualYSize = this.sizeY;
+        double actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
+
+        this.pos = centerPos.add(xVec.scale(offset.x)).add(yVec.scale(offset.y)).add(zVec.scale(offset.z));
+        this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
+    }
+
+    private void recalcTopBottomBlockFacing(Direction blockFacing, BuiltImmersiveInfo info, Vec3 offset, boolean bottomOfBlock) {
+
+        BlockPos pos = info.getBlockPosition();
+
+        Vec3 xVec = Vec3.atLowerCornerOf(blockFacing.getClockWise().getNormal());
+        Vec3 yVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
+        Vec3 zVec = new Vec3(0, 1, 0);
+
+        Vec3 centerPos = Vec3.atBottomCenterOf(pos).add(0, bottomOfBlock ? 0 : 1, 0);
+
+        double actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeY : sizeX;
+        double actualYSize = this.sizeZ;
+        double actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeX : sizeY;
+
         this.pos = centerPos.add(xVec.scale(offset.x)).add(yVec.scale(offset.y)).add(zVec.scale(offset.z));
         this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
     }
