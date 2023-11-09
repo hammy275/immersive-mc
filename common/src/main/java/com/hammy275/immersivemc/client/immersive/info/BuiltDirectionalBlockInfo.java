@@ -6,12 +6,12 @@ import net.minecraft.core.Direction;
 
 import java.util.List;
 
-public class BuiltHorizontalBlockInfo extends BuiltImmersiveInfo {
+public class BuiltDirectionalBlockInfo extends BuiltImmersiveInfo {
 
     public Direction dir;
 
-    public BuiltHorizontalBlockInfo(List<HitboxInfo> hitboxes, BlockPos pos, Direction dir, int ticksToExist,
-                                    int triggerControllerNum, Class<?> extraDataClazz) {
+    public BuiltDirectionalBlockInfo(List<HitboxInfo> hitboxes, BlockPos pos, Direction dir, int ticksToExist,
+                                     int triggerControllerNum, Class<?> extraDataClazz) {
         super(hitboxes, pos, ticksToExist, triggerControllerNum, extraDataClazz);
         this.dir = dir;
     }
