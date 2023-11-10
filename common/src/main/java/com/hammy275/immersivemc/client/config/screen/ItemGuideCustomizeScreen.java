@@ -136,10 +136,9 @@ public class ItemGuideCustomizeScreen extends Screen {
                         (newMode) -> {
                             ImmersiveMCConfig.placementGuideMode.set(newMode.ordinal());
                             ImmersiveMCConfig.placementGuideMode.save();
-                            // this is unneeded as it overwrites other guide values that were changed
-                            // in the same active config instance
-                            // ActiveConfig.loadConfigFromFile();
-                            ActiveConfig.placementGuideMode = newMode; // this should be used instead
+
+                            //we don't use loadConfigFromFile here so that other guide values aren't accidentally overwritten
+                            ActiveConfig.placementGuideMode = newMode;
                         }
                 )
         );
