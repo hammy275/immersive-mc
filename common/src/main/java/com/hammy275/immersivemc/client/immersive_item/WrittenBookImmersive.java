@@ -101,8 +101,6 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
             renderPage(stack, hand, info.left, true);
             renderPage(stack, hand, info.right, false);
         }
-
-        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
     }
 
     protected void renderPage(PoseStack stack, IVRData hand, FormattedText textRaw, boolean leftPage) {
