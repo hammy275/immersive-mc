@@ -1,13 +1,12 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.ClientUtil;
+import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
-import com.hammy275.immersivemc.client.model.Cube1x1;
+import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
-import com.hammy275.immersivemc.common.util.RGBA;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -55,7 +54,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected final List<I> infos;
     public final int maxImmersives;
-    public static final Cube1x1 cubeModel = new Cube1x1(Minecraft.getInstance().getEntityModels().bakeLayer(Cube1x1.LAYER_LOCATION));
     protected boolean forceDisableItemGuide = false;
     public boolean forceTickEvenIfNoTrack = false;
 
@@ -233,14 +231,12 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             try {
                 renderTick(info, isInVR);
                 render(info, stack, isInVR);
-                // Need to end batch here so items show behind item guides
-                Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
                 if (ActiveConfig.placementGuideMode != PlacementGuideMode.OFF && !forceDisableItemGuide) {
                     // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
                     for (int i = 0; i < info.getInputSlots().length; i++) {
                         if (slotShouldRenderHelpHitbox(info, i)) {
                             AABB itemBox = info.getInputSlots()[i];
-                            renderItemGuide(stack, itemBox, 0.2f, slotHelpBoxIsSelected(info, i), info.light);
+                            enqueueItemGuideRender(stack, itemBox, 0.2f, slotHelpBoxIsSelected(info, i), info.light);
                         }
                     }
                 }
@@ -361,27 +357,9 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         renderHitbox(stack, hitbox, pos);
     }
 
-    protected void renderItemGuide(PoseStack stack, AABB hitbox, float alpha, boolean isSelected, int light) {
-        if (hitbox != null && !Minecraft.getInstance().options.hideGui) {
-            RGBA color = isSelected ? ActiveConfig.itemGuideSelectedColor : ActiveConfig.itemGuideColor;
-            if (ActiveConfig.placementGuideMode == PlacementGuideMode.CUBE) {
-                hitbox = hitbox
-                        .move(0, hitbox.getYsize() / 2, 0);
-                Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
-                Vec3 pos = hitbox.getCenter();
-                stack.pushPose();
-                stack.translate(-renderInfo.getPosition().x + pos.x,
-                        -renderInfo.getPosition().y + pos.y,
-                        -renderInfo.getPosition().z + pos.z);
-                MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-                cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
-                        color.redF(), color.greenF(), color.blueF(), color.alphaF(), (float) (hitbox.getSize() / 2f), light);
-                stack.popPose();
-            } else if (ActiveConfig.placementGuideMode == PlacementGuideMode.OUTLINE) {
-                renderHitbox(stack, hitbox, hitbox.getCenter(), true,
-                        color.redF(), color.greenF(), color.blueF(), color.alphaF());
-            }
-        }
+    protected void enqueueItemGuideRender(PoseStack stack, AABB hitbox, float alpha, boolean isSelected, int light) {
+        ClientRenderSubscriber.itemGuideRenderData.add(
+                new ClientRenderSubscriber.ItemGuideRenderData(stack, hitbox, alpha, isSelected, light));
     }
 
     protected void renderHitbox(PoseStack stack, AABB hitbox, Vec3 pos) {
