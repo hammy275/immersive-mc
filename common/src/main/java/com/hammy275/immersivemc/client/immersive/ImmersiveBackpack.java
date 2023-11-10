@@ -177,15 +177,12 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
         stack.popPose();
 
-        // Need to end batch here so items show behind item guides
-        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
-
         // Render item guides here instead since we're using info
         if (ActiveConfig.placementGuideMode != PlacementGuideMode.OFF) {
             for (int i = 0; i < info.getInputSlots().length; i++) {
                 if (slotShouldRenderHelpHitbox(info, i)) { // Use info here since it holds info about crafting
                     AABB itemBox = info.getInputSlots()[i];
-                    renderItemGuide(stack, itemBox, 0.2f, slotHelpBoxIsSelected(info, i), info.light);
+                    enqueueItemGuideRender(stack, itemBox, 0.2f, slotHelpBoxIsSelected(info, i), info.light);
                 }
             }
         }
