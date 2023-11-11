@@ -147,8 +147,7 @@ public class ItemGuideCustomizeScreen extends Screen {
         for (int i = 0; i < types.length; i++) {
             RGBA color = i == 0 ? ActiveConfig.itemGuideColor : i == 1 ? ActiveConfig.itemGuideSelectedColor : ActiveConfig.rangedGrabColor;
 
-            if(i == 0)
-            {
+            if (i == 0) {
                 String sizeKey = "config." + ImmersiveMC.MOD_ID + "." + types[i] + "_size";
                 this.list.addBig(ScreenUtils.createIntSlider(
                                 sizeKey, (value) -> Component.literal(I18n.get(sizeKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
