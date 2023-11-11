@@ -372,7 +372,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 Vec3 pos = hitbox.getCenter();
                 stack.pushPose();
                 stack.translate(-renderInfo.getPosition().x + pos.x,
-                        -renderInfo.getPosition().y + pos.y, // + (size - hitbox.getYsize()) / 2,
+                        -renderInfo.getPosition().y + pos.y,
                         -renderInfo.getPosition().z + pos.z);
                 MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
                 cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
