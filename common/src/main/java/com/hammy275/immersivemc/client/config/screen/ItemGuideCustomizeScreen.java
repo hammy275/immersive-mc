@@ -155,9 +155,7 @@ public class ItemGuideCustomizeScreen extends Screen {
                                  (newVal) -> ActiveConfig.itemGuideSize = (float) newVal / 100.0f
                         )
                 );
-            }
-            else if(i == 1)
-            {
+            } else if (i == 1) {
                 String sizeKey = "config." + ImmersiveMC.MOD_ID + "." + types[i] + "_size";
                 this.list.addBig(ScreenUtils.createIntSlider(
                                 sizeKey, (value) -> Component.literal(I18n.get(sizeKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
