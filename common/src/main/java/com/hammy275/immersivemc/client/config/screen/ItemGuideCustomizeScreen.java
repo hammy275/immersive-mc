@@ -143,24 +143,32 @@ public class ItemGuideCustomizeScreen extends Screen {
                 )
         );
 
-        String sizeKey = "config." + ImmersiveMC.MOD_ID + ".item_guide_size";
-        this.list.addBig(ScreenUtils.createIntSlider(
-                    sizeKey, (value) -> Component.literal(I18n.get(sizeKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
-                    0, 100, (int)(ActiveConfig.itemGuideSize * 100),
-                    (newVal) -> ActiveConfig.itemGuideSize = (float) newVal / 100.0f
-                )
-        );
-
-        String sizeSelectedKey = "config." + ImmersiveMC.MOD_ID + ".item_guide_selected_size";
-        this.list.addBig(ScreenUtils.createIntSlider(
-                    sizeSelectedKey, (value) -> Component.literal(I18n.get(sizeSelectedKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
-                    0, 100, (int)(ActiveConfig.itemGuideSelectedSize * 100),
-                    (newVal) -> ActiveConfig.itemGuideSelectedSize = (float) newVal / 100.0f
-                )
-        );
 
         for (int i = 0; i < types.length; i++) {
             RGBA color = i == 0 ? ActiveConfig.itemGuideColor : i == 1 ? ActiveConfig.itemGuideSelectedColor : ActiveConfig.rangedGrabColor;
+
+            if(i == 0)
+            {
+                String sizeKey = "config." + ImmersiveMC.MOD_ID + "." + types[i] + "_size";
+                this.list.addBig(ScreenUtils.createIntSlider(
+                                sizeKey, (value) -> Component.literal(I18n.get(sizeKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
+                                0, 100, (int)(ActiveConfig.itemGuideSize * 100),
+                                 (newVal) -> ActiveConfig.itemGuideSize = (float) newVal / 100.0f
+                        )
+                );
+            }
+            else if(i == 1)
+            {
+                String sizeKey = "config." + ImmersiveMC.MOD_ID + "." + types[i] + "_size";
+                this.list.addBig(ScreenUtils.createIntSlider(
+                                sizeKey, (value) -> Component.literal(I18n.get(sizeKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
+                                0, 100, (int)(ActiveConfig.itemGuideSelectedSize * 100),
+                                (newVal) -> ActiveConfig.itemGuideSelectedSize = (float) newVal / 100.0f
+                        )
+                );
+            }
+
+
             for (char c : rgba) {
                 String key = types[i];
 
