@@ -195,11 +195,32 @@ public class HitboxInfo implements Cloneable {
 
     @Override
     public Object clone() {
-        return cloneWithOffset(centerOffset);
+        return cloneWithNewOffset(centerOffset);
     }
 
-    public HitboxInfo cloneWithOffset(Function<BuiltImmersiveInfo, Vec3> newOffset) {
+    /**
+     * Clones this HitboxInfo replacing the offset with the supplied one.
+     * @param newOffset New offset for the clone.
+     * @return Clone with the offset replaced with newOffset.
+     */
+    public HitboxInfo cloneWithNewOffset(Function<BuiltImmersiveInfo, Vec3> newOffset) {
         return new HitboxInfo(newOffset, sizeX, sizeY, sizeZ, holdsItems, isInput, upDownRenderDir,
+                itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier);
+    }
+
+    /**
+     * Clones this HitboxInfo, offsetting the position by the supplied offset.
+     * @param offset Offset relative to this HitboxInfo's offset.
+     * @return HitboxInfo that is offset by offset in comparison to this HitboxInfo.
+     */
+    public HitboxInfo cloneWithAddedOffset(Vec3 offset) {
+        return new HitboxInfo((info) -> {
+            Vec3 offsetOut = centerOffset.apply(info);
+            if (offsetOut == null) {
+                return null;
+            }
+            return offsetOut.add(offset);
+        }, sizeX, sizeY, sizeZ, holdsItems, isInput, upDownRenderDir,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier);
     }
 }
