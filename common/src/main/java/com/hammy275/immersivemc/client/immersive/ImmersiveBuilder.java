@@ -14,6 +14,8 @@ import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -40,6 +42,8 @@ public class ImmersiveBuilder {
     List<Vec3i> airCheckPositionOffsets = new ArrayList<>();
     Class<?> extraInfoDataClazz = null;
     BiConsumer<ImmersiveStorage, BuiltImmersiveInfo> extraStorageConsumer = null;
+    BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotActive = (info, slotNum) -> true;
+    Consumer<BuiltImmersiveInfo> onRemove = (info) -> {};
     private ImmersiveBuilder(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
         this.blockChecker = blockChecker;
     }
@@ -229,6 +233,27 @@ public class ImmersiveBuilder {
      */
     public ImmersiveBuilder setExtraStorageConsumer(BiConsumer<ImmersiveStorage, BuiltImmersiveInfo> storageConsumer) {
         this.extraStorageConsumer = storageConsumer;
+        return this;
+    }
+
+    /**
+     * Sets a function that determines whether a given slot should be active (rendered, tickable, and reacts
+     * to click actions).
+     * @param slotActive Funcion that takes an info instance and a slot number and returns whether the slot is active.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder setSlotActiveFunction(BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotActive) {
+        this.slotActive = slotActive;
+        return this;
+    }
+
+    /**
+     * Set function to run on an info before it's removed.
+     * @param onRemove Function to run on info just before removal.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder setOnRemove(Consumer<BuiltImmersiveInfo> onRemove) {
+        this.onRemove = onRemove;
         return this;
     }
 
