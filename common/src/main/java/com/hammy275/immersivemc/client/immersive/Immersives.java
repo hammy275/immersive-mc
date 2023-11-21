@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.AnvilData;
+import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.Network;
@@ -56,7 +57,25 @@ public class Immersives {
             .setExtraInfoDataClass(AnvilData.class)
             .build();
     public static final ImmersiveBackpack immersiveBackpack = new ImmersiveBackpack();
-    public static final ImmersiveBarrel immersiveBarrel = new ImmersiveBarrel();
+    public static final BuiltImmersive immersiveBarrel = ImmersiveBuilder.create(ImmersiveCheckers::isBarrel)
+            .setConfigChecker(() -> ActiveConfig.useBarrelImmersion)
+            .setRenderTime(ClientConstants.ticksToRenderBarrel)
+            .setRenderSize(ClientConstants.itemScaleSizeBarrel)
+            .add3x3HorizontalGrid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
+            .add3x3HorizontalGrid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
+            .add3x3HorizontalGrid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
+            .setPositioningMode(HitboxPositioningMode.BLOCK_FACING_NEG_X)
+            .setMaxImmersives(4)
+            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
+            .setExtraInfoDataClass(ChestLikeData.class)
+            .setSlotActiveFunction((info, slot) -> {
+                ChestLikeData extra = (ChestLikeData) info.getExtraData();
+                return extra.isOpen && slot >= extra.currentRow * 9 && slot < (extra.currentRow + 1) * 9;
+            })
+            .setOnRemove((info) -> {
+                ((ChestLikeData) info.getExtraData()).forceClose(info.getBlockPosition());
+            })
+            .build();
     public static final ImmersiveBeacon immersiveBeacon = new ImmersiveBeacon();
     public static final BuiltImmersive immersiveBrewing = ImmersiveBuilder.create(ImmersiveCheckers::isBrewingStand)
             .setConfigChecker(() -> ActiveConfig.useBrewingImmersion)
