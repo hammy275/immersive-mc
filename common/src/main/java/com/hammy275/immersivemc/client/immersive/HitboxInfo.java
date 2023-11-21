@@ -54,12 +54,20 @@ public class HitboxInfo implements Cloneable {
         this.textSupplier = textSupplier;
     }
 
+    /**
+     * Force the position and box of this hitbox to be null.
+     */
+    public void forceNull() {
+        this.pos = null;
+        this.box = null;
+        this.didCalc = true;
+    }
+
     public void recalculate(Level level, HitboxPositioningMode mode, BuiltImmersiveInfo info) {
         didCalc = true;
         Vec3 offset = this.centerOffset.apply(info);
         if (offset == null) {
-            this.pos = null;
-            this.box = null;
+            forceNull();
             return; // Bail early if we don't actually have a position to work with
         }
         BlockPos pos = info.getBlockPosition();
@@ -169,14 +177,14 @@ public class HitboxInfo implements Cloneable {
 
     public AABB getAABB() {
         if (!didCalc) {
-            throw new IllegalStateException("Should call recalculate() before getting hitbox.");
+            throw new IllegalStateException("Should call recalculate() or forceNull() before getting hitbox.");
         }
         return box;
     }
 
     public Vec3 getPos() {
         if (!didCalc) {
-            throw new IllegalStateException("Should call recalculate() before getting position.");
+            throw new IllegalStateException("Should call recalculate() or forceNull() before getting position.");
         }
         return pos;
     }
