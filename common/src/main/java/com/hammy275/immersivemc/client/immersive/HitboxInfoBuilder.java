@@ -63,8 +63,8 @@ public class HitboxInfoBuilder {
      * Supplier of text to render at the position of this hitbox, offset by the Vec3. Null if this never renders text.
      * null can be returned instead of a Pair to render no text. The Component and Vec3 must both be non-null if a
      * non-null Pair is returned. The list itself that is returned can also be null to render no text.
-     * WARNING: The Vec3 here is a literal translation and does not go through the
-     * relative calculations that hitboxes otherwise do. TODO: Fix this.
+     * The Vec3 is run through the usual relative math in the same way the centerOffset is, but the position
+     * is offset from centerOffset.
      */
     private Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier = null;
 
