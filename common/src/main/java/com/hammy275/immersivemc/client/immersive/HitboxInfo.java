@@ -106,19 +106,7 @@ public class HitboxInfo implements Cloneable {
             recalcTopBottomBlockFacing(blockFacing, info, offset, false);
         } else if (mode == HitboxPositioningMode.HORIZONTAL_PLAYER_FACING) {
             Direction blockFacing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
-            Vec3 xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
-            Vec3 yVec = new Vec3(0, 1, 0);
-            Vec3 zVec = Vec3.atLowerCornerOf(blockFacing.getOpposite().getNormal());
-
-            Vec3 centerPos = AbstractImmersive.getDirectlyInFront(blockFacing, pos)
-                    .add(xVec.scale(0.5)).add(yVec.scale(0.5));
-
-            double actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
-            double actualYSize = this.sizeY;
-            double actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
-
-            this.pos = centerPos.add(xVec.scale(offset.x)).add(yVec.scale(offset.y)).add(zVec.scale(offset.z));
-            this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
+            recalcHorizBlockFacing(blockFacing, info, offset);
         } else if (mode == HitboxPositioningMode.BLOCK_FACING_NEG_X) {
             // Delegate to other calculation modes
             Direction blockFacing = level.getBlockState(pos).getValue(DirectionalBlock.FACING);
@@ -140,7 +128,7 @@ public class HitboxInfo implements Cloneable {
         // For example, zVec corresponds always to the in-game Y-axis for PLAYER_FACING (such as crafting tables).
         Vec3 xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
         Vec3 yVec = new Vec3(0, 1, 0);
-        Vec3 zVec = Vec3.atLowerCornerOf(blockFacing.getOpposite().getNormal());
+        Vec3 zVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
 
         Vec3 centerPos = AbstractImmersive.getDirectlyInFront(blockFacing, pos)
                 .add(xVec.scale(0.5)).add(yVec.scale(0.5));
