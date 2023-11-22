@@ -1,9 +1,9 @@
 package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.client.immersive.info.EnchantingInfo;
+import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
 import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.server.storage.GetStorage;
 import dev.architectury.networking.NetworkManager;
@@ -49,6 +49,9 @@ public class GetEnchantmentsPacket {
         this.strongXPLevels = -1;
         this.strongEnchHint = -1;
         this.strongLevelHint = -1;
+
+        // TODO: Remove this entire constructor, since C-->S no longer needed.
+        throw new RuntimeException("To be removed");
     }
 
     public GetEnchantmentsPacket(int weakXPLevels, int weakEnchHint, int weakLevelHint,
@@ -102,60 +105,69 @@ public class GetEnchantmentsPacket {
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player == null) {
                 handleClient(message);
-            } else if (NetworkUtil.safeToRun(message.pos, player)) {
-                ImmersiveStorage enchantStorage = GetStorage.getEnchantingStorage(player, message.pos);
-                if (enchantStorage.getItem(0) != null && !enchantStorage.getItem(0).isEmpty()) {
-                    BlockEntity tileEnt = player.level.getBlockEntity(message.pos);
-                    if (tileEnt instanceof EnchantmentTableBlockEntity) {
-                        EnchantmentMenu container = new EnchantmentMenu(-1,
-                                player.getInventory(), ContainerLevelAccess.create(player.level, message.pos));
-                        container.setItem(1, 0, new ItemStack(Items.LAPIS_LAZULI, 64));
-                        container.setItem(0, 0, enchantStorage.getItem(0));
-
-                        int[] xpLevels = container.costs;
-                        int[] descs = container.enchantClue;
-                        int[] enchLevels = container.levelClue;
-
-
-                        Network.INSTANCE.sendToPlayer(player,
-                                new GetEnchantmentsPacket(
-                                        xpLevels[0], descs[0], enchLevels[0],
-                                        xpLevels[1], descs[1], enchLevels[1],
-                                        xpLevels[2], descs[2], enchLevels[2],
-                                        message.pos
-                                ));
-                    }
-                }
             }
         });
-        
+    }
+
+    public static void sendEnchDataToClient(ServerPlayer player, BlockPos pos) {
+        ImmersiveStorage enchantStorage = GetStorage.getEnchantingStorage(player, pos);
+        if (enchantStorage.getItem(0) != null && !enchantStorage.getItem(0).isEmpty()) {
+            BlockEntity tileEnt = player.level.getBlockEntity(pos);
+            if (tileEnt instanceof EnchantmentTableBlockEntity) {
+                EnchantmentMenu container = new EnchantmentMenu(-1,
+                        player.getInventory(), ContainerLevelAccess.create(player.level, pos));
+                container.setItem(1, 0, new ItemStack(Items.LAPIS_LAZULI, 64));
+                container.setItem(0, 0, enchantStorage.getItem(0));
+
+                int[] xpLevels = container.costs;
+                int[] descs = container.enchantClue;
+                int[] enchLevels = container.levelClue;
+
+
+                Network.INSTANCE.sendToPlayer(player,
+                        new GetEnchantmentsPacket(
+                                xpLevels[0], descs[0], enchLevels[0],
+                                xpLevels[1], descs[1], enchLevels[1],
+                                xpLevels[2], descs[2], enchLevels[2],
+                                pos
+                        ));
+            }
+        } else {
+            Network.INSTANCE.sendToPlayer(player, new GetEnchantmentsPacket(
+                    -1, -1, -1,
+                    -1, -1, -1,
+                    -1, -1, -1,
+                    pos
+            ));
+        }
     }
 
     protected static void handleClient(GetEnchantmentsPacket message) {
-        for (EnchantingInfo info : Immersives.immersiveETable.getTrackedObjects()) {
+        for (BuiltImmersiveInfo info : Immersives.immersiveETable.getTrackedObjects()) {
             if (info.getBlockPosition().equals(message.pos)) {
                 Enchantment ench = getEnch(message.weakEnchHint);
+                EnchantingData data = (EnchantingData) info.getExtraData();
                 if (ench != null) {
-                    info.weakInfo.levelsNeeded = message.weakXPLevels;
-                    info.weakInfo.textPreview = getDesc(ench, message.weakLevelHint);
+                    data.weakData.levelsNeeded = message.weakXPLevels;
+                    data.weakData.textPreview = getDesc(ench, message.weakLevelHint);
                 } else {
-                    info.weakInfo.textPreview = null;
+                    data.weakData.textPreview = null;
                 }
 
                 ench = getEnch(message.midEnchHint);
                 if (ench != null) {
-                    info.midInfo.levelsNeeded = message.midXPLevels;
-                    info.midInfo.textPreview = getDesc(ench, message.midLevelHint);
+                    data.midData.levelsNeeded = message.midXPLevels;
+                    data.midData.textPreview = getDesc(ench, message.midLevelHint);
                 } else {
-                    info.midInfo.textPreview = null;
+                    data.midData.textPreview = null;
                 }
 
                 ench = getEnch(message.strongEnchHint);
                 if (ench != null) {
-                    info.strongInfo.levelsNeeded = message.strongXPLevels;
-                    info.strongInfo.textPreview = getDesc(ench, message.strongLevelHint);
+                    data.strongData.levelsNeeded = message.strongXPLevels;
+                    data.strongData.textPreview = getDesc(ench, message.strongLevelHint);
                 } else {
-                    info.strongInfo.textPreview = null;
+                    data.strongData.textPreview = null;
                 }
             }
         }
