@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.server.swap;
 
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.network.packet.GetEnchantmentsPacket;
 import com.hammy275.immersivemc.common.storage.AnvilStorage;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.storage.workarounds.NullContainer;
@@ -96,7 +95,6 @@ public class Swap {
             }
         }
         enchStorage.wStorage.setDirty();
-        GetEnchantmentsPacket.sendEnchDataToClient(player, pos);
     }
 
     public static boolean doEnchanting(int slot, BlockPos pos, ServerPlayer player, InteractionHand hand) {
