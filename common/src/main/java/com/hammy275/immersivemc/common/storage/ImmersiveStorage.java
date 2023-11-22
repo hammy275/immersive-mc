@@ -175,6 +175,8 @@ public class ImmersiveStorage {
         return this.items[slot];
     }
 
+    public int getNumItems() {return this.items.length;}
+
     /**
      * Get item array directly. Only use for immersives that don't utilize the queue.
      * @return Items array.
