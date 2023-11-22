@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
 import java.util.function.Function;
 
 public class HitboxInfo implements Cloneable {
@@ -27,7 +29,7 @@ public class HitboxInfo implements Cloneable {
     public final boolean itemSpins;
     public final float itemRenderSizeMultiplier;
     public final boolean isTriggerHitbox;
-    public final Function<BuiltImmersiveInfo, Component> textSupplier;
+    public final Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier;
 
     // Calculated data
     private AABB box;
@@ -40,7 +42,7 @@ public class HitboxInfo implements Cloneable {
     public HitboxInfo(Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
                       boolean holdsItems, boolean isInput,
                       Direction upDownRenderDir, boolean itemSpins, float itemRenderSizeMultiplier,
-                      boolean isTriggerHitbox, Function<BuiltImmersiveInfo, Component> textSupplier) {
+                      boolean isTriggerHitbox, Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier) {
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
