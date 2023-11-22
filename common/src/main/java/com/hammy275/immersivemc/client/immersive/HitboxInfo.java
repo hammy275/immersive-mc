@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -31,14 +32,37 @@ public class HitboxInfo implements Cloneable {
     public final boolean isTriggerHitbox;
     public final Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier;
 
-    // Calculated data
+    // Calculated data to be returned out
     private AABB box;
     private Vec3 pos;
     boolean didCalc = false; // One-time flag to make sure recalculate() is called before getting data.
+    final List<TextData> textData = new ArrayList<>();
+
+    // Calculated data used across functions internally to this class. Easier than passing parameters everywhere.
+    private Vec3 xVec;
+    private Vec3 yVec;
+    private Vec3 zVec;
+    private Vec3 centerPos;
 
     // Extra data. Note that things should only be stored here after a clone() call.
     public ItemStack item = null;
 
+    /**
+     * Constructor. See the respective functions in {@link HitboxInfoBuilder} for more information.
+     * @param centerOffset Function that takes an info instance and returns the offset from the center position for the
+     *                     location of this hitbox.
+     * @param sizeX Size of hitbox on relative X axis.
+     * @param sizeY Size of hitbox on relative Y axis.
+     * @param sizeZ Size of hitbox on relative Z axis.
+     * @param holdsItems Whether this hitbox holds items.
+     * @param isInput Whether this hitbox is an input hitbox.
+     * @param upDownRenderDir Direction for item rotation when this hitbox renders facing the sky or ground.
+     * @param itemSpins Whether the item in this hitbox should spin.
+     * @param itemRenderSizeMultiplier Multiplier to the size passed in the {@link ImmersiveBuilder} for the size the
+     *                                 item should render at.
+     * @param isTriggerHitbox Whether this hitbox is a trigger hitbox.
+     * @param textSupplier A function taking an info instance and returning a list of text components.
+     */
     public HitboxInfo(Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
                       boolean holdsItems, boolean isInput,
                       Direction upDownRenderDir, boolean itemSpins, float itemRenderSizeMultiplier,
@@ -63,10 +87,16 @@ public class HitboxInfo implements Cloneable {
         this.pos = null;
         this.box = null;
         this.didCalc = true;
+        this.textData.clear();
     }
 
+    /**
+     * Main external function call. Calculates the actual, in-world data from the relative information provided.
+     * @param level Level instance.
+     * @param mode Positioning mode. See {@link HitboxPositioningMode} for what each mode does.
+     * @param info Info instance.
+     */
     public void recalculate(Level level, HitboxPositioningMode mode, BuiltImmersiveInfo info) {
-        didCalc = true;
         Vec3 offset = this.centerOffset.apply(info);
         if (offset == null) {
             forceNull();
@@ -78,11 +108,11 @@ public class HitboxInfo implements Cloneable {
             recalcHorizBlockFacing(blockFacing, info, offset);
         } else if (mode == HitboxPositioningMode.PLAYER_FACING) {
             Direction blockFacing = Minecraft.getInstance().player.getDirection();
-            Vec3 xVec = Vec3.atLowerCornerOf(blockFacing.getClockWise().getNormal());
-            Vec3 yVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
-            Vec3 zVec = new Vec3(0, 1, 0);
+            xVec = Vec3.atLowerCornerOf(blockFacing.getClockWise().getNormal());
+            yVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
+            zVec = new Vec3(0, 1, 0);
 
-            Vec3 centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
+            centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
 
             double actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeY : sizeX;
             double actualYSize = this.sizeZ;
@@ -91,11 +121,11 @@ public class HitboxInfo implements Cloneable {
             this.pos = centerPos.add(xVec.scale(offset.x)).add(yVec.scale(offset.y)).add(zVec.scale(offset.z));
             this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
         } else if (mode == HitboxPositioningMode.TOP_LITERAL) {
-            Vec3 xVec = new Vec3(1, 0, 0);
-            Vec3 yVec = new Vec3(0, 1, 0);
-            Vec3 zVec = new Vec3(0, 0, 1);
+            xVec = new Vec3(1, 0, 0);
+            yVec = new Vec3(0, 1, 0);
+            zVec = new Vec3(0, 0, 1);
 
-            Vec3 centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
+            centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
 
             double actualXSize = this.sizeX;
             double actualYSize = this.sizeY;
@@ -121,18 +151,23 @@ public class HitboxInfo implements Cloneable {
         } else {
             throw new UnsupportedOperationException("Hitbox calculation for positioning mode " + mode + " unimplemented!");
         }
+        calcTextOffsets(info);
+        didCalc = true;
     }
 
+    /**
+     * Helper function for recalculate().
+     */
     private void recalcHorizBlockFacing(Direction blockFacing, BuiltImmersiveInfo info, Vec3 offset) {
         BlockPos pos = info.getBlockPosition();
 
         // Vectors that are combined with centerOffset. May not necessarily correspond to the actual in-game axis.
         // For example, zVec corresponds always to the in-game Y-axis for PLAYER_FACING (such as crafting tables).
-        Vec3 xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
-        Vec3 yVec = new Vec3(0, 1, 0);
-        Vec3 zVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
+        xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
+        yVec = new Vec3(0, 1, 0);
+        zVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
 
-        Vec3 centerPos = AbstractImmersive.getDirectlyInFront(blockFacing, pos)
+        centerPos = AbstractImmersive.getDirectlyInFront(blockFacing, pos)
                 .add(xVec.scale(0.5)).add(yVec.scale(0.5));
 
         // If, for example, the furnace is facing the X-axis, then the size should come from sizeZ, since the
@@ -147,15 +182,18 @@ public class HitboxInfo implements Cloneable {
         this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
     }
 
+    /**
+     * Helper function for recalculate().
+     */
     private void recalcTopBottomBlockFacing(Direction blockFacing, BuiltImmersiveInfo info, Vec3 offset, boolean bottomOfBlock) {
 
         BlockPos pos = info.getBlockPosition();
 
-        Vec3 xVec = Vec3.atLowerCornerOf(blockFacing.getClockWise().getNormal());
-        Vec3 yVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
-        Vec3 zVec = new Vec3(0, 1, 0);
+        xVec = Vec3.atLowerCornerOf(blockFacing.getClockWise().getNormal());
+        yVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
+        zVec = new Vec3(0, 1, 0);
 
-        Vec3 centerPos = Vec3.atBottomCenterOf(pos).add(0, bottomOfBlock ? 0 : 1, 0);
+        centerPos = Vec3.atBottomCenterOf(pos).add(0, bottomOfBlock ? 0 : 1, 0);
 
         double actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeY : sizeX;
         double actualYSize = this.sizeZ;
@@ -165,6 +203,29 @@ public class HitboxInfo implements Cloneable {
         this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
     }
 
+    /**
+     * Helper function for recalculate(). Calculates the textData list.
+     */
+    private void calcTextOffsets(BuiltImmersiveInfo info) {
+        if (textSupplier != null) {
+            List<Pair<Component, Vec3>> textList = textSupplier.apply(info);
+            textData.clear();
+            if (textList != null) {
+                for (Pair<Component, Vec3> pair : textList) {
+                    if (pair != null) {
+                        textData.add(new TextData(
+                                pair.getFirst(),
+                                this.pos.add(xVec.scale(pair.getSecond().x)).add(yVec.scale(pair.getSecond().y)).add(zVec.scale(pair.getSecond().z))
+                        ));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @return Literal AABB for this hitbox.
+     */
     public AABB getAABB() {
         if (!didCalc) {
             throw new IllegalStateException("Should call recalculate() or forceNull() before getting hitbox.");
@@ -172,6 +233,9 @@ public class HitboxInfo implements Cloneable {
         return box;
     }
 
+    /**
+     * @return Literal position for this hitbox.
+     */
     public Vec3 getPos() {
         if (!didCalc) {
             throw new IllegalStateException("Should call recalculate() or forceNull() before getting position.");
@@ -179,18 +243,34 @@ public class HitboxInfo implements Cloneable {
         return pos;
     }
 
+    /**
+     * @return Whether this has its calculated position.
+     */
     public boolean hasPos() {
         return pos != null;
     }
 
+    /**
+     * @return Whether this has its calculated hitbox.
+     */
     public boolean hasAABB() {
         return box != null;
     }
 
+    public List<TextData> getTextData() {
+        return this.textData;
+    }
+
+    /**
+     * @return Whether the relative to literal calculation has been performed at least one.
+     */
     public boolean calcDone() {
         return didCalc;
     }
 
+    /**
+     * @return A clone of this info instance.
+     */
     @Override
     public Object clone() {
         return cloneWithNewOffset(centerOffset);
