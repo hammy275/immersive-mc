@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.server.swap;
 
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.network.packet.GetEnchantmentsPacket;
 import com.hammy275.immersivemc.common.storage.AnvilStorage;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.storage.workarounds.NullContainer;
@@ -22,18 +21,18 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.TransientCraftingContainer;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.PotionItem;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.inventory.ItemCombinerMenu;
 import net.minecraft.world.inventory.SmithingMenu;
+import net.minecraft.world.inventory.TransientCraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
@@ -93,7 +92,6 @@ public class Swap {
             }
         }
         enchStorage.wStorage.setDirty();
-        GetEnchantmentsPacket.sendEnchDataToClient(player, pos);
     }
 
     public static boolean doEnchanting(int slot, BlockPos pos, ServerPlayer player, InteractionHand hand) {

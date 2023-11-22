@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.common.network.packet;
 
+import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
@@ -79,6 +80,9 @@ public class FetchInventoryPacket {
                 if (storage != null) {
                     Network.INSTANCE.sendToPlayer(player,
                             new UpdateStoragePacket(pos, storage, storage.getType()));
+                }
+                if (ImmersiveCheckers.isEnchantingTable(pos, player.level().getBlockState(pos), tileEnt, player.level())) {
+                    GetEnchantmentsPacket.sendEnchDataToClient(player, pos);
                 }
             } else if (tileEnt != null) {
                 Container inv;
