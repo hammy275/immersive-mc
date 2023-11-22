@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.AnvilData;
 import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
+import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.Network;
@@ -11,6 +12,7 @@ import com.hammy275.immersivemc.common.network.packet.InteractPacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.storage.AnvilStorage;
 import com.hammy275.immersivemc.common.util.Util;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -19,6 +21,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,7 +47,7 @@ public class Immersives {
                     .textSupplier((info) -> {
                         AnvilData data = (AnvilData) info.getExtraData();
                         if (data.anvilCost == 0) return null;
-                        return Component.literal(I18n.get("immersivemc.immersive.anvil.levels_needed", data.anvilCost));
+                        return List.of(new Pair<>(Component.literal(I18n.get("immersivemc.immersive.anvil.levels_needed", data.anvilCost)), Vec3.ZERO));
                     })
                     .build())
             .setExtraStorageConsumer((storage, info) -> {
@@ -115,7 +118,6 @@ public class Immersives {
             .setUsesWorldStorage(true)
             .setTriggerHitboxControllerNum(0)
             .build();
-    //public static final ImmersiveETable immersiveETable = new ImmersiveETable();
     public static final BuiltImmersive immersiveETable = ImmersiveBuilder.create(ImmersiveCheckers::isEnchantingTable)
             .setConfigChecker(() -> ActiveConfig.useETableImmersion)
             .setRenderTime(ClientConstants.ticksToRenderETable)
@@ -124,19 +126,59 @@ public class Immersives {
             .addHitbox(HitboxInfoBuilder.create((info) -> {
                 int yOffset = info.ticksActive % ClientConstants.eTableYOffsets.size();
                 return new Vec3(-0.5, 1.25, -0.5).add(0, ClientConstants.eTableYOffsets.get(yOffset), 0);
-            }, ClientConstants.itemScaleSizeETable).holdsItems(true).build())
+            }, ClientConstants.itemScaleSizeETable).holdsItems(true).textSupplier((info) -> {
+                EnchantingData.ETableData data = ((EnchantingData) info.getExtraData()).weakData;
+                List<Pair<Component, Vec3>> texts = new ArrayList<>();
+                if (info.slotHovered != 1) {
+                    return null;
+                }
+                if (data.isPresent()) {
+                    texts.add(new Pair<>(Component.literal(data.levelsNeeded + " (" + 1 + ")"), new Vec3(0, 0.33, 0)));
+                    texts.add(new Pair<>(data.textPreview, new Vec3(0, -0.33, 0)));
+                } else if (info.itemHitboxes.get(0).item != null && !info.itemHitboxes.get(0).item.isEmpty()) {
+                    texts.add(new Pair<>(Component.translatable("immersivemc.immersive.etable.no_ench"), new Vec3(0, -0.33, 0)));
+                }
+                return texts;
+            }).build())
             .addHitbox(HitboxInfoBuilder.create((info) -> {
                 int yOffset = (info.ticksActive + 7) % ClientConstants.eTableYOffsets.size();
                 return new Vec3(0, 1.25, -0.5).add(0, ClientConstants.eTableYOffsets.get(yOffset), 0);
-            }, ClientConstants.itemScaleSizeETable).holdsItems(true).build())
+            }, ClientConstants.itemScaleSizeETable).holdsItems(true).textSupplier((info) -> {
+                EnchantingData.ETableData data = ((EnchantingData) info.getExtraData()).midData;
+                List<Pair<Component, Vec3>> texts = new ArrayList<>();
+                if (info.slotHovered != 2) {
+                    return null;
+                }
+                if (data.isPresent()) {
+                    texts.add(new Pair<>(Component.literal(data.levelsNeeded + " (" + 1 + ")"), new Vec3(0, 0.33, 0)));
+                    texts.add(new Pair<>(data.textPreview, new Vec3(0, -0.33, 0)));
+                } else if (info.itemHitboxes.get(0).item != null && !info.itemHitboxes.get(0).item.isEmpty()) {
+                    texts.add(new Pair<>(Component.translatable("immersivemc.immersive.etable.no_ench"), new Vec3(0, -0.33, 0)));
+                }
+                return texts;
+            }).build())
             .addHitbox(HitboxInfoBuilder.create((info) -> {
                 int yOffset = (info.ticksActive + 14) % ClientConstants.eTableYOffsets.size();
                 return new Vec3(0.5, 1.25, -0.5).add(0, ClientConstants.eTableYOffsets.get(yOffset), 0);
-            }, ClientConstants.itemScaleSizeETable).holdsItems(true).build())
+            }, ClientConstants.itemScaleSizeETable).holdsItems(true).textSupplier((info) -> {
+                EnchantingData.ETableData data = ((EnchantingData) info.getExtraData()).strongData;
+                List<Pair<Component, Vec3>> texts = new ArrayList<>();
+                if (info.slotHovered != 3) {
+                    return null;
+                }
+                if (data.isPresent()) {
+                    texts.add(new Pair<>(Component.literal(data.levelsNeeded + " (" + 1 + ")"), new Vec3(0, 0.33, 0)));
+                    texts.add(new Pair<>(data.textPreview, new Vec3(0, -0.33, 0)));
+                } else if (info.itemHitboxes.get(0).item != null && !info.itemHitboxes.get(0).item.isEmpty()) {
+                    texts.add(new Pair<>(Component.translatable("immersivemc.immersive.etable.no_ench"), new Vec3(0, -0.33, 0)));
+                }
+                return texts;
+            }).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
             .setMaxImmersives(1)
             .setUsesWorldStorage(true)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand)))
+            .setExtraInfoDataClass(EnchantingData.class)
             .setExtraStorageConsumer((storage, info) -> {
                 ItemStack item = info.itemHitboxes.get(0).item;
                 if (item != null && !item.isEmpty()) {
@@ -146,7 +188,6 @@ public class Immersives {
                         item = item.copy();
                     }
                     EnchantmentHelper.setEnchantments(ClientConstants.fakeEnch, item);
-
                 } else {
                     item = ItemStack.EMPTY;
                 }
