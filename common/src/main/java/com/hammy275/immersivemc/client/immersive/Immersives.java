@@ -15,6 +15,8 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.LinkedList;
@@ -112,7 +114,46 @@ public class Immersives {
             .setUsesWorldStorage(true)
             .setTriggerHitboxControllerNum(0)
             .build();
-    public static final ImmersiveETable immersiveETable = new ImmersiveETable();
+    //public static final ImmersiveETable immersiveETable = new ImmersiveETable();
+    public static final BuiltImmersive immersiveETable = ImmersiveBuilder.create(ImmersiveCheckers::isEnchantingTable)
+            .setConfigChecker(() -> ActiveConfig.useETableImmersion)
+            .setRenderTime(ClientConstants.ticksToRenderETable)
+            .setRenderSize(ClientConstants.itemScaleSizeETable)
+            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0, 0.75, -0.5), ClientConstants.itemScaleSizeETable).build())
+            .addHitbox(HitboxInfoBuilder.create((info) -> {
+                int yOffset = info.ticksActive % ClientConstants.eTableYOffsets.size();
+                return new Vec3(-0.5, 1.25, -0.5).add(0, ClientConstants.eTableYOffsets.get(yOffset), 0);
+            }, ClientConstants.itemScaleSizeETable).holdsItems(true).build())
+            .addHitbox(HitboxInfoBuilder.create((info) -> {
+                int yOffset = (info.ticksActive + 7) % ClientConstants.eTableYOffsets.size();
+                return new Vec3(0, 1.25, -0.5).add(0, ClientConstants.eTableYOffsets.get(yOffset), 0);
+            }, ClientConstants.itemScaleSizeETable).holdsItems(true).build())
+            .addHitbox(HitboxInfoBuilder.create((info) -> {
+                int yOffset = (info.ticksActive + 14) % ClientConstants.eTableYOffsets.size();
+                return new Vec3(0.5, 1.25, -0.5).add(0, ClientConstants.eTableYOffsets.get(yOffset), 0);
+            }, ClientConstants.itemScaleSizeETable).holdsItems(true).build())
+            .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
+            .setMaxImmersives(1)
+            .setUsesWorldStorage(true)
+            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand)))
+            .setExtraStorageConsumer((storage, info) -> {
+                ItemStack item = info.itemHitboxes.get(0).item;
+                if (item != null && !item.isEmpty()) {
+                    if (item.getItem() == Items.BOOK) {
+                        item = new ItemStack(Items.ENCHANTED_BOOK);
+                    } else {
+                        item = item.copy();
+                    }
+                    EnchantmentHelper.setEnchantments(ClientConstants.fakeEnch, item);
+
+                } else {
+                    item = ItemStack.EMPTY;
+                }
+                for (int i = 1; i <= 3; i++) {
+                    info.itemHitboxes.get(i).item = item;
+                }
+            })
+            .build();
     public static final BuiltImmersive immersiveFurnace = ImmersiveBuilder.create(ImmersiveCheckers::isFurnace)
             .setConfigChecker(() -> ActiveConfig.useFurnaceImmersion)
             .setRenderTime(ClientConstants.ticksToRenderFurnace)
