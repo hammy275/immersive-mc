@@ -1,10 +1,12 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
 import java.util.function.Function;
 
 public class HitboxInfoBuilder {
@@ -58,10 +60,13 @@ public class HitboxInfoBuilder {
      */
     private boolean isTriggerHitbox = false;
     /**
-     * Supplier of text to render at the position of this hitbox, or null if this never renders text.
-     * null can be returned instead of a Component to render no text.
+     * Supplier of text to render at the position of this hitbox, offset by the Vec3. Null if this never renders text.
+     * null can be returned instead of a Pair to render no text. The Component and Vec3 must both be non-null if a
+     * non-null Pair is returned. The list itself that is returned can also be null to render no text.
+     * WARNING: The Vec3 here is a literal translation and does not go through the
+     * relative calculations that hitboxes otherwise do. TODO: Fix this.
      */
-    private Function<BuiltImmersiveInfo, Component> textSupplier = null;
+    private Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier = null;
 
 
     private HitboxInfoBuilder(Function<BuiltImmersiveInfo, Vec3> centerOffset, double size) {
@@ -106,7 +111,7 @@ public class HitboxInfoBuilder {
         return this;
     }
 
-    public HitboxInfoBuilder textSupplier(Function<BuiltImmersiveInfo, Component> textSupplier) {
+    public HitboxInfoBuilder textSupplier(Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier) {
         this.textSupplier = textSupplier;
         return this;
     }
