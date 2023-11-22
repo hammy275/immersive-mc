@@ -10,6 +10,7 @@ import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -117,9 +119,14 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
                 renderHitbox(stack, hitbox.getAABB(), hitbox.getPos());
             }
             if (hitbox.textSupplier != null) {
-                Component text = hitbox.textSupplier.apply(info);
-                if (text != null) {
-                    renderText(text, stack, hitbox.getPos(), info.light);
+                List<Pair<Component, Vec3>> textAndOffsetList = hitbox.textSupplier.apply(info);
+                if (textAndOffsetList != null) {
+                    for (Pair<Component, Vec3> textAndOffset : textAndOffsetList) {
+                        if (textAndOffset != null) {
+                            // TODO: Relative translation for offset instead of literal
+                            renderText(textAndOffset.getFirst(), stack, hitbox.getPos().add(textAndOffset.getSecond()), info.light);
+                        }
+                    }
                 }
             }
         }
