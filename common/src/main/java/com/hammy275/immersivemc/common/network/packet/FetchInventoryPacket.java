@@ -1,11 +1,13 @@
 package com.hammy275.immersivemc.common.network.packet;
 
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
+import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
+import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.server.storage.GetStorage;
 import com.hammy275.immersivemc.server.storage.ImmersiveMCLevelStorage;
+import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,7 +15,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
-import dev.architectury.networking.NetworkManager;
 
 import java.util.function.Supplier;
 
@@ -79,6 +80,9 @@ public class FetchInventoryPacket {
                 if (storage != null) {
                     Network.INSTANCE.sendToPlayer(player,
                             new UpdateStoragePacket(pos, storage, storage.getType()));
+                }
+                if (ImmersiveCheckers.isEnchantingTable(pos, player.level().getBlockState(pos), tileEnt, player.level())) {
+                    GetEnchantmentsPacket.sendEnchDataToClient(player, pos);
                 }
             } else if (tileEnt != null) {
                 Container inv;
