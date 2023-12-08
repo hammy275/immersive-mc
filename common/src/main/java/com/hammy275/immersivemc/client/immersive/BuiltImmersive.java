@@ -178,7 +178,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
 
     @Override
     public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
-        return true;
+        return builder.blockRightClickWhenGUIClickDisabled;
     }
 
     @Override
