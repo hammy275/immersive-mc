@@ -44,6 +44,7 @@ public class ImmersiveBuilder {
     BiConsumer<ImmersiveStorage, BuiltImmersiveInfo> extraStorageConsumer = null;
     BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotActive = (info, slotNum) -> true;
     Consumer<BuiltImmersiveInfo> onRemove = (info) -> {};
+    boolean blockRightClickWhenGUIClickDisabled = true;
     private ImmersiveBuilder(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
         this.blockChecker = blockChecker;
     }
@@ -254,6 +255,17 @@ public class ImmersiveBuilder {
      */
     public ImmersiveBuilder setOnRemove(Consumer<BuiltImmersiveInfo> onRemove) {
         this.onRemove = onRemove;
+        return this;
+    }
+
+    /**
+     * Set whether to block right-click interactions on this immersive when the option to disable
+     * vanilla GUIs is enabled.
+     * @param doBlock Whether to block as described above.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder setBlockRightClickWhenGUIClickDisabled(boolean doBlock) {
+        this.blockRightClickWhenGUIClickDisabled = doBlock;
         return this;
     }
 
