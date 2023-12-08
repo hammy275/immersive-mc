@@ -176,7 +176,7 @@ public class HitboxInfo implements Cloneable {
         // The actual hitbox size on the in-game x, y, and z axis.
         double actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
         double actualYSize = this.sizeY;
-        double actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
+        double actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeX : sizeZ;
 
         this.pos = centerPos.add(xVec.scale(offset.x)).add(yVec.scale(offset.y)).add(zVec.scale(offset.z));
         this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
