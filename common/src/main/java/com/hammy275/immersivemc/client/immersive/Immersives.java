@@ -101,7 +101,21 @@ public class Immersives {
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .build();
     public static final ImmersiveChest immersiveChest = new ImmersiveChest();
-    public static final ImmersiveChiseledBookshelf immersiveChiseledBookshelf = new ImmersiveChiseledBookshelf();
+    public static final BuiltImmersive immersiveChiseledBookshelf = ImmersiveBuilder.create(ImmersiveCheckers::isChiseledBookshelf)
+            .setConfigChecker(() -> ActiveConfig.useChiseledBookshelfImmersion)
+            .setRenderTime(ClientConstants.ticksToRenderChiseledBookshelf)
+            .setBlockRightClickWhenGUIClickDisabled(false)
+            .addHitbox(HitboxInfoBuilder.create(new Vec3(-0.3125, 0.25, 0), 0.375, 0.5, 0.25).build())
+            .addHitbox(HitboxInfoBuilder.create(new Vec3(0.03125, 0.25, 0), 0.3125, 0.5, 0.25).build())
+            .addHitbox(HitboxInfoBuilder.create(new Vec3(0.34375, 0.25, 0), 0.3125, 0.5, 0.25).build())
+            .addHitbox(HitboxInfoBuilder.create(new Vec3(-0.3125, -0.25, 0), 0.375, 0.5, 0.25).build())
+            .addHitbox(HitboxInfoBuilder.create(new Vec3(0.03125, -0.25, 0), 0.3125, 0.5, 0.25).build())
+            .addHitbox(HitboxInfoBuilder.create(new Vec3(0.34375, -0.25, 0), 0.3125, 0.5, 0.25).build())
+            .setPositioningMode(HitboxPositioningMode.HORIZONTAL_BLOCK_FACING)
+            .setMaxImmersives(1)
+            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand)))
+            .setVROnly(true)
+            .build();
     public static final BuiltImmersive immersiveCrafting = ImmersiveBuilder.create(ImmersiveCheckers::isCraftingTable)
             .setConfigChecker(() -> ActiveConfig.useCraftingImmersion)
             .setRenderTime(ClientConstants.ticksToRenderCrafting)
