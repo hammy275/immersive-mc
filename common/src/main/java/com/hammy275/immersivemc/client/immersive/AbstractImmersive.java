@@ -628,4 +628,22 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         return LightTexture.pack(maxBlock, maxSky);
     }
 
+    /**
+     * Same as getForwardFromPlayer, but can return the block facing up or down, alongside any of the four
+     * directions of N/E/S/W.
+     * @param player Player.
+     * @param pos Position of block.
+     * @return Any Direction, representing what direction the block should be facing based on the player's position.
+     */
+    public static Direction getForwardFromPlayerUpAndDown(Player player, BlockPos pos) {
+        Vec3 playerPos = player.position();
+        if (playerPos.y >= pos.getY() + 0.625) {
+            return Direction.UP;
+        } else if (playerPos.y <= pos.getY() - 0.625) {
+            return Direction.DOWN;
+        } else {
+            return getForwardFromPlayer(player);
+        }
+    }
+
 }
