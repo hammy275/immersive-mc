@@ -26,7 +26,6 @@ public class HitboxInfo implements Cloneable {
     public final double sizeZ;
     public final boolean isInput;
     public final boolean holdsItems;
-    public final Direction upDownRenderDir;
     public final boolean itemSpins;
     public final float itemRenderSizeMultiplier;
     public final boolean isTriggerHitbox;
@@ -37,6 +36,7 @@ public class HitboxInfo implements Cloneable {
     private Vec3 pos;
     boolean didCalc = false; // One-time flag to make sure recalculate() is called before getting data.
     final List<TextData> textData = new ArrayList<>();
+    private Direction upDownRenderDir = null;
 
     // Calculated data used across functions internally to this class. Easier than passing parameters everywhere.
     private Vec3 xVec;
@@ -56,7 +56,6 @@ public class HitboxInfo implements Cloneable {
      * @param sizeZ Size of hitbox on relative Z axis.
      * @param holdsItems Whether this hitbox holds items.
      * @param isInput Whether this hitbox is an input hitbox.
-     * @param upDownRenderDir Direction for item rotation when this hitbox renders facing the sky or ground.
      * @param itemSpins Whether the item in this hitbox should spin.
      * @param itemRenderSizeMultiplier Multiplier to the size passed in the {@link ImmersiveBuilder} for the size the
      *                                 item should render at.
@@ -64,8 +63,7 @@ public class HitboxInfo implements Cloneable {
      * @param textSupplier A function taking an info instance and returning a list of text components.
      */
     public HitboxInfo(Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
-                      boolean holdsItems, boolean isInput,
-                      Direction upDownRenderDir, boolean itemSpins, float itemRenderSizeMultiplier,
+                      boolean holdsItems, boolean isInput, boolean itemSpins, float itemRenderSizeMultiplier,
                       boolean isTriggerHitbox, Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier) {
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
@@ -73,7 +71,6 @@ public class HitboxInfo implements Cloneable {
         this.sizeZ = sizeZ;
         this.holdsItems = holdsItems;
         this.isInput = isInput;
-        this.upDownRenderDir = upDownRenderDir;
         this.itemSpins = itemSpins;
         this.itemRenderSizeMultiplier = itemRenderSizeMultiplier;
         this.isTriggerHitbox = isTriggerHitbox;
@@ -88,6 +85,7 @@ public class HitboxInfo implements Cloneable {
         this.box = null;
         this.didCalc = true;
         this.textData.clear();
+        this.upDownRenderDir = null;
     }
 
     /**
@@ -106,20 +104,10 @@ public class HitboxInfo implements Cloneable {
         if (mode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING) {
             Direction blockFacing = level.getBlockState(pos).getValue(HorizontalDirectionalBlock.FACING);
             recalcHorizBlockFacing(blockFacing, info, offset);
-        } else if (mode == HitboxPositioningMode.PLAYER_FACING) {
-            Direction blockFacing = Minecraft.getInstance().player.getDirection();
-            xVec = Vec3.atLowerCornerOf(blockFacing.getClockWise().getNormal());
-            yVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
-            zVec = new Vec3(0, 1, 0);
-
-            centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
-
-            double actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeY : sizeX;
-            double actualYSize = this.sizeZ;
-            double actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeX : sizeY;
-
-            this.pos = centerPos.add(xVec.scale(offset.x)).add(yVec.scale(offset.y)).add(zVec.scale(offset.z));
-            this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
+            upDownRenderDir = null;
+        } else if (mode == HitboxPositioningMode.TOP_PLAYER_FACING) {
+            recalcTopPlayerFacing(Minecraft.getInstance().player.getDirection(), info, offset);
+            upDownRenderDir = Direction.UP;
         } else if (mode == HitboxPositioningMode.TOP_LITERAL) {
             xVec = new Vec3(1, 0, 0);
             yVec = new Vec3(0, 1, 0);
@@ -133,20 +121,35 @@ public class HitboxInfo implements Cloneable {
 
             this.pos = centerPos.add(xVec.scale(offset.x)).add(yVec.scale(offset.y)).add(zVec.scale(offset.z));
             this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
+            upDownRenderDir = Direction.UP;
         } else if (mode == HitboxPositioningMode.TOP_BLOCK_FACING) {
             Direction blockFacing = level.getBlockState(pos).getValue(HorizontalDirectionalBlock.FACING);
             recalcTopBottomBlockFacing(blockFacing, info, offset, false);
+            upDownRenderDir = Direction.UP;
         } else if (mode == HitboxPositioningMode.HORIZONTAL_PLAYER_FACING) {
             Direction blockFacing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
             recalcHorizBlockFacing(blockFacing, info, offset);
+            upDownRenderDir = null;
         } else if (mode == HitboxPositioningMode.BLOCK_FACING_NEG_X) {
             // Delegate to other calculation modes
             Direction blockFacing = level.getBlockState(pos).getValue(DirectionalBlock.FACING);
             if (blockFacing.getAxis() != Direction.Axis.Y) {
                 recalcHorizBlockFacing(blockFacing, info, offset);
+                upDownRenderDir = null;
             } else {
                 // Pretend the block is facing west so that way west becomes +x
                 recalcTopBottomBlockFacing(Direction.WEST, info, offset, blockFacing == Direction.DOWN);
+                upDownRenderDir = blockFacing;
+            }
+        } else if (mode == HitboxPositioningMode.PLAYER_FACING_NO_DOWN) {
+            Direction playerFacing = AbstractImmersive.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition());
+            if (playerFacing == Direction.UP) {
+                recalcTopPlayerFacing(Minecraft.getInstance().player.getDirection(), info, offset);
+                upDownRenderDir = Direction.UP;
+            } else {
+                Direction blockFacing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
+                recalcHorizBlockFacing(blockFacing, info, offset);
+                upDownRenderDir = null;
             }
         } else {
             throw new UnsupportedOperationException("Hitbox calculation for positioning mode " + mode + " unimplemented!");
@@ -203,6 +206,22 @@ public class HitboxInfo implements Cloneable {
         this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
     }
 
+    private void recalcTopPlayerFacing(Direction blockFacing, BuiltImmersiveInfo info, Vec3 offset) {
+        BlockPos pos = info.getBlockPosition();
+        xVec = Vec3.atLowerCornerOf(blockFacing.getClockWise().getNormal());
+        yVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
+        zVec = new Vec3(0, 1, 0);
+
+        centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
+
+        double actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeY : sizeX;
+        double actualYSize = this.sizeZ;
+        double actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeX : sizeY;
+
+        this.pos = centerPos.add(xVec.scale(offset.x)).add(yVec.scale(offset.y)).add(zVec.scale(offset.z));
+        this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
+    }
+
     /**
      * Helper function for recalculate(). Calculates the textData list.
      */
@@ -241,6 +260,13 @@ public class HitboxInfo implements Cloneable {
             throw new IllegalStateException("Should call recalculate() or forceNull() before getting position.");
         }
         return pos;
+    }
+
+    public Direction getUpDownRenderDir() {
+        if (!didCalc) {
+            throw new IllegalStateException("Should call recalculate() or forceNull() before getting upDownRenderDir.");
+        }
+        return upDownRenderDir;
     }
 
     /**
@@ -282,7 +308,7 @@ public class HitboxInfo implements Cloneable {
      * @return Clone with the offset replaced with newOffset.
      */
     public HitboxInfo cloneWithNewOffset(Function<BuiltImmersiveInfo, Vec3> newOffset) {
-        return new HitboxInfo(newOffset, sizeX, sizeY, sizeZ, holdsItems, isInput, upDownRenderDir,
+        return new HitboxInfo(newOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier);
     }
 
@@ -298,7 +324,7 @@ public class HitboxInfo implements Cloneable {
                 return null;
             }
             return offsetOut.add(offset);
-        }, sizeX, sizeY, sizeZ, holdsItems, isInput, upDownRenderDir,
+        }, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier);
     }
 }

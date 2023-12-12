@@ -44,10 +44,6 @@ public class HitboxInfoBuilder {
      */
     private boolean isInput = false;
     /**
-     * Forces item to be rendered facing up or down. Set to null to not do anything.
-     */
-    private Direction upDownRenderDir = null;
-    /**
      * Makes item rendering spin.
      */
     private boolean itemSpins = false;
@@ -90,12 +86,6 @@ public class HitboxInfoBuilder {
         return this;
     }
 
-    public HitboxInfoBuilder upDownRenderDir(Direction dir) {
-        assert dir == null || dir == Direction.UP || dir == Direction.DOWN;
-        this.upDownRenderDir = dir;
-        return this;
-    }
-
     public HitboxInfoBuilder itemSpins(boolean spins) {
         this.itemSpins = spins;
         return this;
@@ -118,7 +108,7 @@ public class HitboxInfoBuilder {
 
     public HitboxInfo build() {
         assert !isInput || holdsItems; // If isInput, must holdsItems
-        return new HitboxInfo(centerOffset, sizeX, sizeY, sizeZ, holdsItems, isInput, upDownRenderDir,
+        return new HitboxInfo(centerOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier);
     }
 
