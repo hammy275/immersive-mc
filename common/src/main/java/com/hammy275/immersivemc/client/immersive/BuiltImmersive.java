@@ -78,8 +78,8 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             horizInfo.dir = Minecraft.getInstance().level.getBlockState(info.getBlockPosition())
                     .getValue(HorizontalDirectionalBlock.FACING);
         } else if (builder.positioningMode == HitboxPositioningMode.BLOCK_FACING_NEG_X) {
-            BuiltDirectionalBlockInfo facingINfo = (BuiltDirectionalBlockInfo) info;
-            facingINfo.dir = Minecraft.getInstance().level.getBlockState(info.getBlockPosition())
+            BuiltDirectionalBlockInfo facingInfo = (BuiltDirectionalBlockInfo) info;
+            facingInfo.dir = Minecraft.getInstance().level.getBlockState(info.getBlockPosition())
                     .getValue(BlockStateProperties.FACING);
         }
     }
@@ -91,7 +91,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING) {
             BuiltDirectionalBlockInfo horizInfo = (BuiltDirectionalBlockInfo) info;
             facing = horizInfo.dir;
-        } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING) {
+        } else if (builder.positioningMode == HitboxPositioningMode.TOP_PLAYER_FACING) {
             facing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
         } else if (builder.positioningMode == HitboxPositioningMode.TOP_BLOCK_FACING) {
             facing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
@@ -104,6 +104,8 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             } else {
                 facing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
             }
+        } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING_NO_DOWN) {
+            facing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
         }
         for (int i = 0; i < info.hitboxes.length; i++) {
             HitboxInfo hitbox = info.hitboxes[i];
@@ -111,7 +113,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
                 int spinDegrees = hitbox.itemSpins ? (int) (info.ticksActive % 100d * 3.6d) : -1;
                 renderItem(hitbox.item, stack, hitbox.getPos(),
                         info.slotHovered == i ? size * 1.25f * hitbox.itemRenderSizeMultiplier : size * hitbox.itemRenderSizeMultiplier,
-                        facing, hitbox.upDownRenderDir, hitbox.getAABB(), true, spinDegrees, info.light);
+                        facing, hitbox.getUpDownRenderDir(), hitbox.getAABB(), true, spinDegrees, info.light);
             } else {
                 renderHitbox(stack, hitbox.getAABB(), hitbox.getPos());
             }
@@ -157,7 +159,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             this.infos.add(new BuiltDirectionalBlockInfo(builder.hitboxes, pos,
                     state.getValue(HorizontalDirectionalBlock.FACING),
                     builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
-        } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING) {
+        } else if (builder.positioningMode == HitboxPositioningMode.TOP_PLAYER_FACING) {
           this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
         } else if (builder.positioningMode == HitboxPositioningMode.TOP_LITERAL) {
           this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
@@ -171,6 +173,8 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             this.infos.add(new BuiltDirectionalBlockInfo(builder.hitboxes, pos,
                     state.getValue(BlockStateProperties.FACING),
                     builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
+        } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING_NO_DOWN) {
+            this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
         } else {
             throw new UnsupportedOperationException("Tracking for positioning mode " + builder.positioningMode + " unimplemented!");
         }
@@ -209,7 +213,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING) {
                 BuiltDirectionalBlockInfo horizInfo = (BuiltDirectionalBlockInfo) info;
                 return info.getBlockPosition().relative(horizInfo.dir);
-            } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING) {
+            } else if (builder.positioningMode == HitboxPositioningMode.TOP_PLAYER_FACING) {
               return info.getBlockPosition().above();
             } else if (builder.positioningMode == HitboxPositioningMode.TOP_LITERAL) {
                 return info.getBlockPosition().above();
@@ -220,6 +224,8 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             } else if (builder.positioningMode == HitboxPositioningMode.BLOCK_FACING_NEG_X) {
                 BuiltDirectionalBlockInfo dirInfo = (BuiltDirectionalBlockInfo) info;
                 return info.getBlockPosition().relative(dirInfo.dir);
+            } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING_NO_DOWN) {
+                return info.getBlockPosition().relative(getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition()));
             } else {
                 throw new UnsupportedOperationException("Light pos for positioning mode " + builder.positioningMode + " unimplemented!");
             }

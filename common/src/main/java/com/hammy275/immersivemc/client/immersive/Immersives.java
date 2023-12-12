@@ -13,6 +13,7 @@ import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.storage.AnvilStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -38,11 +39,11 @@ public class Immersives {
             .setRenderTime(ClientConstants.ticksToRenderAnvil)
             .setRenderSize(ClientConstants.itemScaleSizeAnvil)
             .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0, -1d/3d, 0), // When you place an anvil, the anvil's look direction is rotated 90 degrees.
-                    ClientConstants.itemScaleSizeAnvil).upDownRenderDir(Direction.UP).build())
+                    ClientConstants.itemScaleSizeAnvil).build())
             .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0d, 0, 0),
-                    ClientConstants.itemScaleSizeAnvil).upDownRenderDir(Direction.UP).build())
+                    ClientConstants.itemScaleSizeAnvil).build())
             .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 1d/3d, 0),
-                    ClientConstants.itemScaleSizeAnvil).holdsItems(true).upDownRenderDir(Direction.UP).build())
+                    ClientConstants.itemScaleSizeAnvil).holdsItems(true).build())
             .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 0, 0.5), 0)
                     .textSupplier((info) -> {
                         AnvilData data = (AnvilData) info.getExtraData();
@@ -106,12 +107,12 @@ public class Immersives {
             .setRenderTime(ClientConstants.ticksToRenderCrafting)
             .setRenderSize(ClientConstants.itemScaleSizeCrafting)
             .add3x3HorizontalGrid(HitboxInfoBuilder.createItemInput(Vec3.ZERO,
-                            ClientConstants.itemScaleSizeCrafting / 1.5f).upDownRenderDir(Direction.UP).build(),
+                            ClientConstants.itemScaleSizeCrafting / 1.5f).build(),
                     3d / 16d)
             .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 0, 0.5),
                     ClientConstants.itemScaleSizeCrafting * 1.5d).holdsItems(true)
                     .itemSpins(true).itemRenderSizeMultiplier(3f).triggerHitbox(true).build())
-            .setPositioningMode(HitboxPositioningMode.PLAYER_FACING)
+            .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
             .setMaxImmersives(1)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand)))
             .setUsesWorldStorage(true)
@@ -251,7 +252,42 @@ public class Immersives {
             })
             .build();
     public static final ImmersiveHitboxes immersiveHitboxes = new ImmersiveHitboxes();
-    public static final ImmersiveHopper immersiveHopper = new ImmersiveHopper();
+    public static final BuiltImmersive immersiveHopper = ImmersiveBuilder.create(ImmersiveCheckers::isHopper)
+            .setConfigChecker(() -> ActiveConfig.useHopperImmersion)
+            .setRenderTime(ClientConstants.ticksToRenderHopper)
+            .setRenderSize(ClientConstants.itemScaleSizeHopper)
+            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> {
+                Direction forward = AbstractImmersive.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition());
+                if (forward == Direction.UP) {
+                    return new Vec3(0, 3d/16d, 0);
+                } else {
+                    return new Vec3(ClientConstants.itemScaleSizeHopper * -2.2d, 0.375, 0);
+                }
+            }, ClientConstants.itemScaleSizeHopper).build())
+            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> {
+                Direction forward = AbstractImmersive.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition());
+                return new Vec3(ClientConstants.itemScaleSizeHopper * -1.1d, forward == Direction.UP ? 0 : 0.375, 0);
+            }, ClientConstants.itemScaleSizeHopper).build())
+            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> {
+                Direction forward = AbstractImmersive.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition());
+                return new Vec3(0, forward == Direction.UP ? 0 : 0.375, 0);
+            }, ClientConstants.itemScaleSizeHopper).build())
+            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> {
+                Direction forward = AbstractImmersive.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition());
+                return new Vec3(ClientConstants.itemScaleSizeHopper * 1.1d, forward == Direction.UP ? 0 : 0.375, 0);
+            }, ClientConstants.itemScaleSizeHopper).build())
+            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> {
+                Direction forward = AbstractImmersive.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition());
+                if (forward == Direction.UP) {
+                    return new Vec3(0, -3d/16d, 0);
+                } else {
+                    return new Vec3(ClientConstants.itemScaleSizeHopper * 2.2d, 0.375, 0);
+                }
+            }, ClientConstants.itemScaleSizeHopper).build())
+            .setPositioningMode(HitboxPositioningMode.PLAYER_FACING_NO_DOWN)
+            .setMaxImmersives(2)
+            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
+            .build();
     public static final BuiltImmersive immersiveJukebox = ImmersiveBuilder.create(ImmersiveCheckers::isJukebox)
             .setConfigChecker(() -> ActiveConfig.useJukeboxImmersion)
             .setRenderTime(ClientConstants.ticksToHandleJukebox)
