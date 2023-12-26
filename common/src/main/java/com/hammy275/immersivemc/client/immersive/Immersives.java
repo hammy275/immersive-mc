@@ -67,9 +67,9 @@ public class Immersives {
             .setConfigChecker(() -> ActiveConfig.useBarrelImmersion)
             .setRenderTime(ClientConstants.ticksToRenderBarrel)
             .setRenderSize(ClientConstants.itemScaleSizeBarrel)
-            .add3x3HorizontalGrid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
-            .add3x3HorizontalGrid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
-            .add3x3HorizontalGrid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
+            .add3x3Grid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
+            .add3x3Grid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
+            .add3x3Grid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
             .setPositioningMode(HitboxPositioningMode.BLOCK_FACING_NEG_X)
             .setMaxImmersives(4)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
@@ -106,7 +106,7 @@ public class Immersives {
             .setConfigChecker(() -> ActiveConfig.useCraftingImmersion)
             .setRenderTime(ClientConstants.ticksToRenderCrafting)
             .setRenderSize(ClientConstants.itemScaleSizeCrafting)
-            .add3x3HorizontalGrid(HitboxInfoBuilder.createItemInput(Vec3.ZERO,
+            .add3x3Grid(HitboxInfoBuilder.createItemInput(Vec3.ZERO,
                             ClientConstants.itemScaleSizeCrafting / 1.5f).build(),
                     3d / 16d)
             .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 0, 0.5),
@@ -299,7 +299,34 @@ public class Immersives {
             .build();
 
     public static final ImmersiveRepeater immersiveRepeater = new ImmersiveRepeater();
-    public static final ImmersiveShulker immersiveShulker = new ImmersiveShulker();
+    public static final BuiltImmersive immersiveShulker = ImmersiveBuilder.create(ImmersiveCheckers::isShulkerBox)
+            .setConfigChecker(() -> ActiveConfig.useShulkerImmersion)
+            .setRenderTime(ClientConstants.ticksToRenderShulker)
+            .setRenderSize(ClientConstants.itemScaleSizeShulker)
+            .add3x3Grid(HitboxInfoBuilder.createItemInput((info) -> {
+                ChestLikeData extra = (ChestLikeData) info.getExtraData();
+                return new Vec3(0, 0, -1d/3d * extra.offsetIn(0));
+            }, 0.14f).build(), 0.15)
+            .add3x3Grid(HitboxInfoBuilder.createItemInput((info) -> {
+                ChestLikeData extra = (ChestLikeData) info.getExtraData();
+                return new Vec3(0, 0, -1d/3d * extra.offsetIn(1));
+            }, 0.14f).build(), 0.15)
+            .add3x3Grid(HitboxInfoBuilder.createItemInput((info) -> {
+                ChestLikeData extra = (ChestLikeData) info.getExtraData();
+                return new Vec3(0, 0, -1d/3d * extra.offsetIn(2));
+            }, 0.14f).build(), 0.15)
+            .setPositioningMode(HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING)
+            .setMaxImmersives(4)
+            .setRightClickHandler(((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand))))
+            .setExtraInfoDataClass(ChestLikeData.class)
+            .setSlotActiveFunction((info, slot) -> ((ChestLikeData) info.getExtraData()).isOpen)
+            .setOnRemove((info) -> ((ChestLikeData) info.getExtraData()).forceClose(info.getBlockPosition()))
+            .setShouldRenderItemGuideFunction((info, slot) -> {
+                ChestLikeData extra = (ChestLikeData) info.getExtraData();
+                return slot >= extra.currentRow * 9 && slot < (extra.currentRow + 1) * 9;
+            })
+            .build();
+
     public static final ImmersiveSmithingTable immersiveSmithingTable = new ImmersiveSmithingTable();
 
 }
