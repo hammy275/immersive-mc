@@ -45,6 +45,7 @@ public class ImmersiveBuilder {
     BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotActive = (info, slotNum) -> true;
     Consumer<BuiltImmersiveInfo> onRemove = (info) -> {};
     boolean blockRightClickWhenGUIClickDisabled = true;
+    BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
     private ImmersiveBuilder(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
         this.blockChecker = blockChecker;
     }
@@ -81,13 +82,13 @@ public class ImmersiveBuilder {
     }
 
     /**
-     * Adds a 3x3 horizontal grid of hitboxes, such as for the crafting table. Adds the top row from left to right,
+     * Adds a 3x3 grid of hitboxes, such as for the crafting table. Adds the top row from left to right,
      * then the middle row from left to right, then the bottom row from left to right.
      * @param hitboxInfo HitboxInfo for center box. Can use HitboxInfoBuilder to make it easier to create.
      * @param distBetweenBoxes Distance between boxes.
      * @return Builder object.
      */
-    public ImmersiveBuilder add3x3HorizontalGrid(HitboxInfo hitboxInfo, double distBetweenBoxes) {
+    public ImmersiveBuilder add3x3Grid(HitboxInfo hitboxInfo, double distBetweenBoxes) {
         Vec3 left = new Vec3(-1, 0, 0).scale(distBetweenBoxes);
         Vec3 right = new Vec3(1, 0, 0).scale(distBetweenBoxes);
         Vec3 up = new Vec3(0, 1, 0).scale(distBetweenBoxes);
@@ -266,6 +267,17 @@ public class ImmersiveBuilder {
      */
     public ImmersiveBuilder setBlockRightClickWhenGUIClickDisabled(boolean doBlock) {
         this.blockRightClickWhenGUIClickDisabled = doBlock;
+        return this;
+    }
+
+    /**
+     * Set whether the item guide for this slot should be active. This result is &&'d with the built-in checker,
+     * which is simply if the slot holds items but currently isn't holding one.
+     * @param itemGuideActive Function that returns whether the given slot is active given the info.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder setShouldRenderItemGuideFunction(BiFunction<BuiltImmersiveInfo, Integer, Boolean> itemGuideActive) {
+        this.slotRendersItemGuide = itemGuideActive;
         return this;
     }
 
