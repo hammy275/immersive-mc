@@ -38,6 +38,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -628,21 +629,60 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         return LightTexture.pack(maxBlock, maxSky);
     }
 
+    public static Direction getForwardFromPlayerUpAndDown(Player player, BlockPos pos) {
+        return getForwardFromPlayerUpAndDownFilterBlockFacing(player, pos, false);
+    }
+
     /**
      * Same as getForwardFromPlayer, but can return the block facing up or down, alongside any of the four
      * directions of N/E/S/W.
      * @param player Player.
      * @param pos Position of block.
+     * @param filterOnBlockFacing If true, the axis of the block's DirectionalBlock.FACING will not be returned from
+     *                            this function. The block should have this property if this is true, of course!
      * @return Any Direction, representing what direction the block should be facing based on the player's position.
      */
-    public static Direction getForwardFromPlayerUpAndDown(Player player, BlockPos pos) {
+    public static Direction getForwardFromPlayerUpAndDownFilterBlockFacing(Player player, BlockPos pos, boolean filterOnBlockFacing) {
+        Direction.Axis filter = filterOnBlockFacing ? player.level().getBlockState(pos).getValue(DirectionalBlock.FACING).getAxis() : null;
         Vec3 playerPos = player.position();
-        if (playerPos.y >= pos.getY() + 0.625) {
+        if (playerPos.y >= pos.getY() + 0.625 && filter != Direction.Axis.Y) {
             return Direction.UP;
-        } else if (playerPos.y <= pos.getY() - 0.625) {
+        } else if (playerPos.y <= pos.getY() - 0.625 && filter != Direction.Axis.Y) {
             return Direction.DOWN;
         } else {
-            return getForwardFromPlayer(player);
+            Direction forward = getForwardFromPlayer(player);
+            if (forward.getAxis() != filter) {
+                return forward;
+            } else {
+                // We filter on non-Y axis, and getForwardFromPlayer was on our filter. Find the closest and get it.
+                Direction blockFacing = player.level().getBlockState(pos).getValue(DirectionalBlock.FACING);
+                Vec3 blockCenter = Vec3.atCenterOf(pos);
+                Direction blockLeftDir = blockFacing.getCounterClockWise();
+                Vec3 blockLeftVec = new Vec3(blockLeftDir.getNormal().getX(), blockLeftDir.getNormal().getY(), blockLeftDir.getNormal().getZ());
+                Vec3 counterClockwisePos = blockCenter.add(blockLeftVec.scale(0.5));
+                Vec3 clockwisePos = blockCenter.add(blockLeftVec.scale(-0.5));
+                Vec3 upPos = blockCenter.add(0, 0.5, 0);
+                Vec3 downPos = blockCenter.add(0, -0.5, 0);
+
+                double counterClockwiseDist = counterClockwisePos.distanceToSqr(playerPos);
+                double clockwiseDist = clockwisePos.distanceToSqr(playerPos);
+                double upDist = upPos.distanceToSqr(playerPos);
+                double downDist = downPos.distanceToSqr(playerPos);
+
+                double min = Math.min(counterClockwiseDist, clockwiseDist);
+                min = Math.min(min, upDist);
+                min = Math.min(min, downDist);
+
+                if (min == counterClockwiseDist) {
+                    return forward.getCounterClockWise();
+                } else if (min == clockwiseDist) {
+                    return forward.getClockWise();
+                } else if (min == upDist) {
+                    return Direction.UP;
+                } else {
+                    return Direction.DOWN;
+                }
+            }
         }
     }
 

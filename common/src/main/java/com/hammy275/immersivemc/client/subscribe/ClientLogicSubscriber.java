@@ -6,7 +6,6 @@ import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
 import com.hammy275.immersivemc.client.immersive.ImmersiveChest;
-import com.hammy275.immersivemc.client.immersive.ImmersiveShulker;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
@@ -14,7 +13,6 @@ import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
-import com.hammy275.immersivemc.client.immersive.info.ShulkerInfo;
 import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
 import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
 import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
@@ -307,13 +305,12 @@ public class ClientLogicSubscriber {
                     chestInfo.nextRow();
                     return true;
                 }
-            } else if (tileEnt instanceof ShulkerBoxBlockEntity shulkerBox) {
-                for (ShulkerInfo info : Immersives.immersiveShulker.getTrackedObjects()) {
-                    if (info.isOpen && info.getBlockPosition().equals(shulkerBox.getBlockPos())) {
-                        info.nextRow();
-                        Immersives.immersiveShulker.setHitboxes(info);
-                        return true;
-                    }
+            } else if (ImmersiveCheckers.isShulkerBox(pos, state, tileEnt, player.level())) {
+                BuiltImmersiveInfo info = Immersives.immersiveShulker.findImmersive(pos);
+                ChestLikeData data = (ChestLikeData) info.getExtraData();
+                if (info != null && data.isOpen) {
+                    data.nextRow();
+                    return true;
                 }
             } else if (ImmersiveCheckers.isBarrel(pos, state, tileEnt, player.level)) {
                 BuiltImmersiveInfo info = Immersives.immersiveBarrel.findImmersive(pos);
@@ -419,9 +416,9 @@ public class ClientLogicSubscriber {
         if (ActiveConfig.useShulkerImmersion) {
             BlockEntity blockEnt = player.level.getBlockEntity(pos);
             if (blockEnt instanceof ShulkerBoxBlockEntity) {
-                for (ShulkerInfo info : Immersives.immersiveShulker.getTrackedObjects()) {
+                for (BuiltImmersiveInfo info : Immersives.immersiveShulker.getTrackedObjects()) {
                     if (info.getBlockPosition().equals(pos)) {
-                        ImmersiveShulker.openShulkerBox(info);
+                        ((ChestLikeData) info.getExtraData()).toggleOpen(info.getBlockPosition());
                         return Immersives.immersiveShulker.getCooldownDesktop();
                     }
                 }
