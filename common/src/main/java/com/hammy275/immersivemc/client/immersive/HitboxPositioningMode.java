@@ -7,5 +7,6 @@ public enum HitboxPositioningMode {
     TOP_BLOCK_FACING, // Top of block face, oriented on block facing direction, excluding up and down face. Items face to player when rendering.
     HORIZONTAL_PLAYER_FACING, // Face that faces the player, excluding up and down face.
     BLOCK_FACING_NEG_X, // Same as HORIZONTAL_BLOCK_FACING, but negative X in-world corresponds to +x during translation if the block faces up or down
-    PLAYER_FACING_NO_DOWN // Combination of HORIZONTAL_PLAYER_FACING and TOP_PLAYER_FACING
+    PLAYER_FACING_NO_DOWN, // Combination of HORIZONTAL_PLAYER_FACING and TOP_PLAYER_FACING
+    PLAYER_FACING_FILTER_BLOCK_FACING // Effectively PLAYER_FACING (assuming it were to exist) except the axis the block is facing is ignored. If the block is facing down, PLAYER_FACING NESW only.
 }

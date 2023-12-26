@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.client.immersive.info.BuiltDirectionalBlockInfo;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
@@ -149,6 +150,16 @@ public class HitboxInfo implements Cloneable {
             } else {
                 Direction blockFacing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
                 recalcHorizBlockFacing(blockFacing, info, offset);
+                upDownRenderDir = null;
+            }
+        } else if (mode == HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING) {
+            BuiltDirectionalBlockInfo dirInfo = (BuiltDirectionalBlockInfo) info;
+            Direction dir = dirInfo.dir;
+            if (dir.getAxis() == Direction.Axis.Y) {
+                recalcTopBottomBlockFacing(AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player),
+                        info, offset, dir == Direction.DOWN);
+            } else {
+                recalcHorizBlockFacing(dir, info, offset);
                 upDownRenderDir = null;
             }
         } else {

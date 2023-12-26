@@ -44,4 +44,23 @@ public class ChestLikeData {
             currentRow = MIN_ROW;
         }
     }
+
+    private int getNextRow(int current) {
+        int newRow = current + 1;
+        if (newRow > MAX_ROW) {
+            newRow = 0;
+        }
+        return newRow;
+    }
+
+    public int offsetIn(int rowCheck) {
+        // Gets the number of rows needed until rowCheck is the active row.
+        int offset = 0;
+        int current = currentRow;
+        while (current != rowCheck) {
+            current = getNextRow(current);
+            offset++;
+        }
+        return offset;
+    }
 }
