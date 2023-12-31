@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 
@@ -63,6 +62,11 @@ public class HitboxInfoBuilder {
      * is offset from centerOffset.
      */
     private Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier = null;
+    /**
+     * For hitboxes containing an item, this forces the item to render facing UP, DOWN, or null instead of
+     * the default for the given HiboxPositioningMode.
+     */
+    private ForcedUpDownRenderDir forcedUpDown = ForcedUpDownRenderDir.NOT_FORCED;
 
 
     private HitboxInfoBuilder(Function<BuiltImmersiveInfo, Vec3> centerOffset, double size) {
@@ -106,10 +110,16 @@ public class HitboxInfoBuilder {
         return this;
     }
 
+    public HitboxInfoBuilder forceUpDownRenderDir(ForcedUpDownRenderDir forcedDir) {
+        this.forcedUpDown = forcedDir;
+        return this;
+    }
+
     public HitboxInfo build() {
         assert !isInput || holdsItems; // If isInput, must holdsItems
         return new HitboxInfo(centerOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
-                itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier);
+                itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
+                forcedUpDown);
     }
 
     public static HitboxInfoBuilder create(Vec3 centerOffset, double size) {
