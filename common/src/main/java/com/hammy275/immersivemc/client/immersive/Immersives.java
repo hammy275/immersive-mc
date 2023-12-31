@@ -126,7 +126,8 @@ public class Immersives {
                     3d / 16d)
             .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 0, 0.5),
                     ClientConstants.itemScaleSizeCrafting * 1.5d).holdsItems(true)
-                    .itemSpins(true).itemRenderSizeMultiplier(3f).triggerHitbox(true).build())
+                    .itemSpins(true).itemRenderSizeMultiplier(3f).triggerHitbox(true)
+                    .forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
             .setMaxImmersives(1)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand)))
@@ -342,6 +343,19 @@ public class Immersives {
             })
             .build();
 
-    public static final ImmersiveSmithingTable immersiveSmithingTable = new ImmersiveSmithingTable();
+    public static final BuiltImmersive immersiveSmithingTable = ImmersiveBuilder.create(ImmersiveCheckers::isSmithingTable)
+            .setConfigChecker(() -> ActiveConfig.useSmithingTableImmersion)
+            .setRenderTime(ClientConstants.ticksToRenderSmithingTable)
+            .setRenderSize(ClientConstants.itemScaleSizeSmithingTable)
+            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(-1d/3d, 0, 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
+            .addHitbox(HitboxInfoBuilder.createItemInput(Vec3.ZERO, ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
+            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(1d/3d, 0, 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
+            .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 0, 0.5), ClientConstants.itemScaleSizeSmithingTable / 1.025).holdsItems(true).triggerHitbox(true).itemSpins(true).itemRenderSizeMultiplier(1.5f).forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
+            .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
+            .setMaxImmersives(1)
+            .setRightClickHandler(((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand))))
+            .setUsesWorldStorage(true)
+            .setTriggerHitboxControllerNum(0)
+            .build();
 
 }
