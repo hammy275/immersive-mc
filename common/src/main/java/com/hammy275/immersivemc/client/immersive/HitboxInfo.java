@@ -31,6 +31,7 @@ public class HitboxInfo implements Cloneable {
     public final float itemRenderSizeMultiplier;
     public final boolean isTriggerHitbox;
     public final Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier;
+    public final ForcedUpDownRenderDir forcedUpDownRenderDir;
 
     // Calculated data to be returned out
     private AABB box;
@@ -62,10 +63,12 @@ public class HitboxInfo implements Cloneable {
      *                                 item should render at.
      * @param isTriggerHitbox Whether this hitbox is a trigger hitbox.
      * @param textSupplier A function taking an info instance and returning a list of text components.
+     * @param forcedUpDownDir An override for upDownRenderDir to use instead of automatically determining it.
      */
     public HitboxInfo(Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
                       boolean holdsItems, boolean isInput, boolean itemSpins, float itemRenderSizeMultiplier,
-                      boolean isTriggerHitbox, Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier) {
+                      boolean isTriggerHitbox, Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier,
+                      ForcedUpDownRenderDir forcedUpDownDir) {
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -76,6 +79,7 @@ public class HitboxInfo implements Cloneable {
         this.itemRenderSizeMultiplier = itemRenderSizeMultiplier;
         this.isTriggerHitbox = isTriggerHitbox;
         this.textSupplier = textSupplier;
+        this.forcedUpDownRenderDir = forcedUpDownDir;
     }
 
     /**
@@ -166,6 +170,9 @@ public class HitboxInfo implements Cloneable {
             throw new UnsupportedOperationException("Hitbox calculation for positioning mode " + mode + " unimplemented!");
         }
         calcTextOffsets(info);
+        if (forcedUpDownRenderDir != ForcedUpDownRenderDir.NOT_FORCED) {
+            upDownRenderDir = forcedUpDownRenderDir.direction;
+        }
         didCalc = true;
     }
 
@@ -320,7 +327,8 @@ public class HitboxInfo implements Cloneable {
      */
     public HitboxInfo cloneWithNewOffset(Function<BuiltImmersiveInfo, Vec3> newOffset) {
         return new HitboxInfo(newOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
-                itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier);
+                itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
+                forcedUpDownRenderDir);
     }
 
     /**
@@ -336,6 +344,7 @@ public class HitboxInfo implements Cloneable {
             }
             return offsetOut.add(offset);
         }, sizeX, sizeY, sizeZ, holdsItems, isInput,
-                itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier);
+                itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
+                forcedUpDownRenderDir);
     }
 }
