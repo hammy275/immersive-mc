@@ -21,7 +21,10 @@ import java.util.function.Supplier;
 
 public class ImmersiveBuilder {
 
-    // NOTE: Variables aren't prefixed with any visibility so they're package-private
+    // NOTE: Variables aren't prefixed with any visibility, so they're package-private
+
+    public static final BiFunction<BuiltImmersiveInfo, Integer, Boolean> SLOT_ALWAYS_ACTIVE = (info, slotNum) -> true;
+
 
     // -- Required --
     final CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker;
@@ -42,7 +45,7 @@ public class ImmersiveBuilder {
     List<Vec3i> airCheckPositionOffsets = new ArrayList<>();
     Class<?> extraInfoDataClazz = null;
     BiConsumer<ImmersiveStorage, BuiltImmersiveInfo> extraStorageConsumer = null;
-    BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotActive = (info, slotNum) -> true;
+    BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotActive = SLOT_ALWAYS_ACTIVE;
     Consumer<BuiltImmersiveInfo> onRemove = (info) -> {};
     boolean blockRightClickWhenGUIClickDisabled = true;
     BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
