@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.immersive.info;
 
 import com.hammy275.immersivemc.client.immersive.HitboxInfo;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -27,6 +28,7 @@ public class BuiltImmersiveInfo extends AbstractImmersiveInfo implements InfoTri
     private BlockPos pos;
     private int triggerControllerNum;
     public final Object extraData;
+    public Direction immersiveDir = null; // Stores the direction the immersive is facing (towards the player, for example)
 
     public BuiltImmersiveInfo(List<HitboxInfo> hitboxes, BlockPos pos, int ticksToExist,
                               int triggerControllerNum, Class<?> extraDataClazz) {
