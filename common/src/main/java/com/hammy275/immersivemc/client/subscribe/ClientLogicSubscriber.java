@@ -307,17 +307,22 @@ public class ClientLogicSubscriber {
                 }
             } else if (ImmersiveCheckers.isShulkerBox(pos, state, tileEnt, player.level())) {
                 BuiltImmersiveInfo info = Immersives.immersiveShulker.findImmersive(pos);
-                ChestLikeData data = (ChestLikeData) info.getExtraData();
-                if (info != null && data.isOpen) {
-                    data.nextRow();
-                    return true;
+                if (info != null) {
+                    ChestLikeData data = (ChestLikeData) info.getExtraData();
+                    if (data.isOpen) {
+                        data.nextRow();
+                        return true;
+                    }
+
                 }
             } else if (ImmersiveCheckers.isBarrel(pos, state, tileEnt, player.level)) {
                 BuiltImmersiveInfo info = Immersives.immersiveBarrel.findImmersive(pos);
-                ChestLikeData data = (ChestLikeData) info.getExtraData();
-                if (info != null && data.isOpen) {
-                    data.nextRow();
-                    return true;
+                if (info != null) {
+                    ChestLikeData data = (ChestLikeData) info.getExtraData();
+                    if (data.isOpen) {
+                        data.nextRow();
+                        return true;
+                    }
                 }
             }
         } else if (backpackInfo != null) {
