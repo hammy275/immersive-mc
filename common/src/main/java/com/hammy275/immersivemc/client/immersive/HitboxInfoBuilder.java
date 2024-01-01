@@ -68,16 +68,29 @@ public class HitboxInfoBuilder {
      */
     private ForcedUpDownRenderDir forcedUpDown = ForcedUpDownRenderDir.NOT_FORCED;
 
+    // Automatically determined
+    private final boolean constantOffset;
 
-    private HitboxInfoBuilder(Function<BuiltImmersiveInfo, Vec3> centerOffset, double size) {
-        this(centerOffset, size, size, size);
+
+    private HitboxInfoBuilder(Function<BuiltImmersiveInfo, Vec3> centerOffset, double size, boolean constantOffset) {
+        this(centerOffset, size, size, size, constantOffset);
     }
 
-    private HitboxInfoBuilder(Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ) {
+    private HitboxInfoBuilder(Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
+                              boolean constantOffset) {
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.sizeZ = sizeZ;
+        this.constantOffset = constantOffset;
+    }
+
+    private HitboxInfoBuilder(Vec3 centerOffset, double size) {
+        this((info) -> centerOffset, size, true);
+    }
+
+    private HitboxInfoBuilder(Vec3 centerOffset, double sizeX, double sizeY, double sizeZ) {
+        this((info) -> centerOffset, sizeX, sizeY, sizeZ, true);
     }
 
     public HitboxInfoBuilder holdsItems(boolean holdsItems) {
@@ -119,30 +132,30 @@ public class HitboxInfoBuilder {
         assert !isInput || holdsItems; // If isInput, must holdsItems
         return new HitboxInfo(centerOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
-                forcedUpDown);
+                forcedUpDown, constantOffset);
     }
 
     public static HitboxInfoBuilder create(Vec3 centerOffset, double size) {
-        return create((info) -> centerOffset, size);
-    }
-
-    public static HitboxInfoBuilder create(Function<BuiltImmersiveInfo, Vec3> centerOffset, double size) {
         return new HitboxInfoBuilder(centerOffset, size);
     }
 
-    public static HitboxInfoBuilder create(Vec3 centerOffset, double sizeX, double sizeY, double sizeZ) {
-        return create((info) -> centerOffset, sizeX, sizeY, sizeZ);
+    public static HitboxInfoBuilder create(Function<BuiltImmersiveInfo, Vec3> centerOffset, double size) {
+        return new HitboxInfoBuilder(centerOffset, size, false);
     }
 
-    public static HitboxInfoBuilder create(Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ) {
+    public static HitboxInfoBuilder create(Vec3 centerOffset, double sizeX, double sizeY, double sizeZ) {
         return new HitboxInfoBuilder(centerOffset, sizeX, sizeY, sizeZ);
     }
 
+    public static HitboxInfoBuilder create(Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ) {
+        return new HitboxInfoBuilder(centerOffset, sizeX, sizeY, sizeZ, false);
+    }
+
     public static HitboxInfoBuilder createItemInput(Vec3 centerOffset, double size) {
-        return createItemInput((info) -> centerOffset, size);
+        return new HitboxInfoBuilder(centerOffset, size).holdsItems(true).isInput(true);
     }
 
     public static HitboxInfoBuilder createItemInput(Function<BuiltImmersiveInfo, Vec3> centerOffset, double size) {
-        return create(centerOffset, size).holdsItems(true).isInput(true);
+        return new HitboxInfoBuilder(centerOffset, size, false).holdsItems(true).isInput(true);
     }
 }
