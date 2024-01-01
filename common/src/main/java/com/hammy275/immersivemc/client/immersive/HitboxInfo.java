@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.client.immersive.info.BuiltDirectionalBlockInfo;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
@@ -32,12 +31,14 @@ public class HitboxInfo implements Cloneable {
     public final boolean isTriggerHitbox;
     public final Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier;
     public final ForcedUpDownRenderDir forcedUpDownRenderDir;
+    // Not directly configured by programmers. This is whether the offset from centerOffset returns a constant value.
+    public final boolean constantOffset;
 
     // Calculated data to be returned out
     private AABB box;
     private Vec3 pos;
-    boolean didCalc = false; // One-time flag to make sure recalculate() is called before getting data.
-    final List<TextData> textData = new ArrayList<>();
+    private boolean didCalc = false; // One-time flag to make sure recalculate() is called before getting data.
+    private final List<TextData> textData = new ArrayList<>();
     private Direction upDownRenderDir = null;
 
     // Calculated data used across functions internally to this class. Easier than passing parameters everywhere.
@@ -64,11 +65,12 @@ public class HitboxInfo implements Cloneable {
      * @param isTriggerHitbox Whether this hitbox is a trigger hitbox.
      * @param textSupplier A function taking an info instance and returning a list of text components.
      * @param forcedUpDownDir An override for upDownRenderDir to use instead of automatically determining it.
+     * @param constantOffset Whether centerOffset's return value is constant.
      */
     public HitboxInfo(Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
                       boolean holdsItems, boolean isInput, boolean itemSpins, float itemRenderSizeMultiplier,
                       boolean isTriggerHitbox, Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier,
-                      ForcedUpDownRenderDir forcedUpDownDir) {
+                      ForcedUpDownRenderDir forcedUpDownDir, boolean constantOffset) {
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -80,6 +82,7 @@ public class HitboxInfo implements Cloneable {
         this.isTriggerHitbox = isTriggerHitbox;
         this.textSupplier = textSupplier;
         this.forcedUpDownRenderDir = forcedUpDownDir;
+        this.constantOffset = constantOffset;
     }
 
     /**
@@ -157,8 +160,7 @@ public class HitboxInfo implements Cloneable {
                 upDownRenderDir = null;
             }
         } else if (mode == HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING) {
-            BuiltDirectionalBlockInfo dirInfo = (BuiltDirectionalBlockInfo) info;
-            Direction dir = dirInfo.dir;
+            Direction dir = info.immersiveDir;
             if (dir.getAxis() == Direction.Axis.Y) {
                 recalcTopBottomBlockFacing(AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player),
                         info, offset, dir == Direction.DOWN);
@@ -328,7 +330,7 @@ public class HitboxInfo implements Cloneable {
     public HitboxInfo cloneWithNewOffset(Function<BuiltImmersiveInfo, Vec3> newOffset) {
         return new HitboxInfo(newOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
-                forcedUpDownRenderDir);
+                forcedUpDownRenderDir, constantOffset);
     }
 
     /**
@@ -345,6 +347,6 @@ public class HitboxInfo implements Cloneable {
             return offsetOut.add(offset);
         }, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
-                forcedUpDownRenderDir);
+                forcedUpDownRenderDir, constantOffset);
     }
 }
