@@ -28,7 +28,6 @@ import java.util.Objects;
 
 public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
 
-    // TODO: Use pre-calculation so we stop depending on the builder directly.
     protected final ImmersiveBuilder builder;
 
     public BuiltImmersive(ImmersiveBuilder builder) {
@@ -182,7 +181,6 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
 
     @Override
     protected void initInfo(BuiltImmersiveInfo info) {
-        // TODO
     }
 
     @Override
