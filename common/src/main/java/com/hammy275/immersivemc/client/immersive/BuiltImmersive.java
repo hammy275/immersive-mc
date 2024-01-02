@@ -295,4 +295,8 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         }
         return null;
     }
+
+    public ImmersiveBuilder getBuilderClone() {
+        return builder.clone();
+    }
 }
