@@ -77,6 +77,10 @@ public class SwapPacket {
                 } else if (ImmersiveCheckers.isHopper(message.block, state, tileEnt, player.level())) {
                     Swap.handleHopper((HopperBlockEntity) tileEnt, player,
                             message.hand, message.slot);
+                } else if (ImmersiveCheckers.isIronFurnacesFurnace(message.block, state, tileEnt, player.level())
+                        && ActiveConfig.useIronFurnacesFurnaceImmersion) {
+                    Swap.handleFurnaceSwap((WorldlyContainer) tileEnt,
+                            player, message.hand, message.slot, message.placementMode);
                 }
             }
         });

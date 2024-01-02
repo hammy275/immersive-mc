@@ -40,6 +40,7 @@ public class ActiveConfig {
     public static boolean useChiseledBookshelfImmersion = false;
     public static boolean useWrittenBookImmersion = false;
     public static boolean useCauldronImmersion = false;
+    public static boolean useIronFurnacesFurnaceImmersion = false;
 
     // C2S Synced values
     public static boolean crouchBypassImmersion = false;
@@ -125,6 +126,7 @@ public class ActiveConfig {
         useChiseledBookshelfImmersion = buffer.readBoolean() && useChiseledBookshelfImmersion;
         useWrittenBookImmersion = buffer.readBoolean() && useWrittenBookImmersion;
         useCauldronImmersion = buffer.readBoolean() && useCauldronImmersion;
+        useIronFurnacesFurnaceImmersion = buffer.readBoolean() && useIronFurnacesFurnaceImmersion;
     }
 
     public static void loadConfigFromFile() {
@@ -165,6 +167,7 @@ public class ActiveConfig {
             useChiseledBookshelfImmersion = ImmersiveMCConfig.useChiseledBookshelfImmersion.get();
             useWrittenBookImmersion = ImmersiveMCConfig.useWrittenBookImmersion.get();
             useCauldronImmersion = ImmersiveMCConfig.useCauldronImmersion.get();
+            useIronFurnacesFurnaceImmersion = ImmersiveMCConfig.useIronFurnacesFurnaceImmersion.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -225,6 +228,7 @@ public class ActiveConfig {
         useChiseledBookshelfImmersion = false;
         useWrittenBookImmersion = false;
         useCauldronImmersion = false;
+        useIronFurnacesFurnaceImmersion = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -288,7 +292,8 @@ public class ActiveConfig {
                 "Use Chiseled Bookshelf Immersion: " + useChiseledBookshelfImmersion + "\n" +
                 "Use Written Book Immersion: " + useWrittenBookImmersion + "\n" +
                 "Use Cauldron Immersion: " + useCauldronImmersion + "\n" +
-                "Reach Behind Backpack Mode: " + reachBehindBackpackMode;
+                "Reach Behind Backpack Mode: " + reachBehindBackpackMode + "\n" +
+                "Use Iron Furnaces Furnace Immersion: " + useIronFurnacesFurnaceImmersion;
         return stringOut;
     }
 
