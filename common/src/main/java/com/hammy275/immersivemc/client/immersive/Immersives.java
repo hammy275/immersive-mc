@@ -358,4 +358,9 @@ public class Immersives {
             .setTriggerHitboxControllerNum(0)
             .build();
 
+
+    public static final BuiltImmersive immersiveIronFurnacesFurnace = immersiveFurnace.getBuilderClone()
+            .setBlockChecker(ImmersiveCheckers::isIronFurnacesFurnace)
+            .setConfigChecker(() -> ActiveConfig.useIronFurnacesFurnaceImmersion)
+            .build();
 }

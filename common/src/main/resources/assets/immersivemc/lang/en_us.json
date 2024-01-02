@@ -75,6 +75,8 @@
   "config.immersivemc.furnace.desc": "Enables/disables the ability to use the furnace immersive.",
   "config.immersivemc.hopper": "Use Hopper Immersion",
   "config.immersivemc.hopper.desc": "Enables/disables the ability for players to put items into and take items out of hoppers.",
+  "config.immersivemc.iron_furnaces_furnace": "Use Iron Furnaces' Furnace Immersion",
+  "config.immersivemc.iron_furnaces_furnace.desc": "Enables/disables the ability to use the Iron Furnaces' furnace immersive.",
   "config.immersivemc.jukebox": "Use Jukebox Immersion [VR Only]",
   "config.immersivemc.jukebox.desc": "Enables/disables the ability for VR players to physically put discs in the jukebox.",
   "config.immersivemc.lever": "Use Lever Immersion [VR Only]",
