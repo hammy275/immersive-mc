@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import dev.architectury.platform.Platform;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.network.chat.Component;
@@ -33,6 +34,12 @@ public class ScreenUtils {
                     ActiveConfig.loadConfigFromFile();
                 }
         );
+    }
+
+    public static void addOptionIfModLoaded(String modId, String keyName, ForgeConfigSpec.BooleanValue configEntry, OptionsList list) {
+        if (Platform.isModLoaded(modId)) {
+            addOption(keyName, configEntry, list);
+        }
     }
 
     public static void addOption(String keyName, ForgeConfigSpec.BooleanValue configEntry, OptionsList list) {
