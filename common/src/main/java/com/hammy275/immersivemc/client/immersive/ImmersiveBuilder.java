@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class ImmersiveBuilder {
+public class ImmersiveBuilder implements Cloneable {
 
     // NOTE: Variables aren't prefixed with any visibility, so they're package-private
 
@@ -27,7 +27,7 @@ public class ImmersiveBuilder {
 
 
     // -- Required --
-    final CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker;
+    CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker;
 
     // -- Optional --
     Supplier<Boolean> enabledInConfigSupplier = () -> true;
@@ -52,6 +52,18 @@ public class ImmersiveBuilder {
     private ImmersiveBuilder(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
         this.blockChecker = blockChecker;
     }
+
+    /**
+     * Sets the function that checks if the block matches for this immersive. Useful when an immersive is a clone of
+     * another.
+     * @param blockChecker New block checking function.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder setBlockChecker(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
+        this.blockChecker = blockChecker;
+        return this;
+    }
+
 
     /**
      * Sets the amount of time for the immersive to render.
@@ -292,5 +304,14 @@ public class ImmersiveBuilder {
 
     public static ImmersiveBuilder create(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
         return new ImmersiveBuilder(blockChecker);
+    }
+
+    @Override
+    public ImmersiveBuilder clone() {
+        try {
+            return (ImmersiveBuilder) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

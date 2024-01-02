@@ -59,6 +59,7 @@ public class ImmersivesConfigScreen extends Screen {
             ScreenUtils.addOption("enchanting_table", ImmersiveMCConfig.useETableImmersion, this.list);
             ScreenUtils.addOption("furnace", ImmersiveMCConfig.useFurnaceImmersion, this.list);
             ScreenUtils.addOption("hopper", ImmersiveMCConfig.useHopperImmersion, this.list);
+            ScreenUtils.addOptionIfModLoaded("ironfurnaces", "iron_furnaces_furnace", ImmersiveMCConfig.useIronFurnacesFurnaceImmersion, this.list);
             ScreenUtils.addOption("shulker", ImmersiveMCConfig.useShulkerImmersion, this.list);
             ScreenUtils.addOption("smithing_table", ImmersiveMCConfig.useSmithingTableImmersion, this.list);
         }

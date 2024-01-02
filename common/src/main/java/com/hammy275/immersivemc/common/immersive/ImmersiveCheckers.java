@@ -40,6 +40,8 @@ public class ImmersiveCheckers {
 
     }
 
+    // Vanilla
+
     public static boolean isAnvil(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return state.getBlock() instanceof AnvilBlock;
     }
@@ -71,8 +73,7 @@ public class ImmersiveCheckers {
     }
 
     public static boolean isFurnace(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return tileEntity instanceof AbstractFurnaceBlockEntity ||
-                IronFurnaces.ironFurnaceTileBase.isInstance(tileEntity);
+        return tileEntity instanceof AbstractFurnaceBlockEntity;
     }
 
     public static boolean isHopper(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
@@ -95,5 +96,10 @@ public class ImmersiveCheckers {
         return state.getBlock() instanceof SmithingTableBlock;
     }
 
+    // IronFurnaces
+
+    public static boolean isIronFurnacesFurnace(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        return IronFurnaces.ironFurnaceTileBase.isInstance(tileEntity);
+    }
 
 }
