@@ -42,6 +42,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useSmithingTableImmersion;
     public static ForgeConfigSpec.BooleanValue useWrittenBookImmersion;
     public static ForgeConfigSpec.BooleanValue useCauldronImmersion;
+    public static ForgeConfigSpec.BooleanValue useIronFurnacesFurnaceImmersion;
 
     // C2S Only Sync
     public static ForgeConfigSpec.BooleanValue crouchBypassImmersion;
@@ -166,6 +167,9 @@ public class ImmersiveMCConfig {
         useCauldronImmersion = builder
                 .comment("Whether immersives for cauldrons should be allowed.")
                 .define("cauldron_immersion", true);
+        useIronFurnacesFurnaceImmersion = builder
+                .comment("Whether immersives for furnaces from Iron Furnaces should be allowed.")
+                .define("iron_furnaces_furnace_immersion", true);
 
         // C2S Only Sync
         crouchBypassImmersion = builder
@@ -266,7 +270,8 @@ public class ImmersiveMCConfig {
                 .writeBoolean(useHopperImmersion.get())
                 .writeBoolean(useSmithingTableImmersion.get())
                 .writeBoolean(useWrittenBookImmersion.get())
-                .writeBoolean(useCauldronImmersion.get());
+                .writeBoolean(useCauldronImmersion.get())
+                .writeBoolean(useIronFurnacesFurnaceImmersion.get());
     }
 
     public static void resetToDefault() {
@@ -300,6 +305,7 @@ public class ImmersiveMCConfig {
         useSmithingTableImmersion.set(true);
         useWrittenBookImmersion.set(true);
         useCauldronImmersion.set(true);
+        useIronFurnacesFurnaceImmersion.set(true);
 
         // C2S Synced Values
         crouchBypassImmersion.set(true);
