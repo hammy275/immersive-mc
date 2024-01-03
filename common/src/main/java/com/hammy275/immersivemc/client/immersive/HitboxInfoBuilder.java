@@ -67,6 +67,10 @@ public class HitboxInfoBuilder {
      * the default for the given HiboxPositioningMode.
      */
     private ForcedUpDownRenderDir forcedUpDown = ForcedUpDownRenderDir.NOT_FORCED;
+    /**
+     * If true, this hitbox is offset for 3D Resource Pack compatibility.
+     */
+    private boolean needs3dCompat = false;
 
     // Automatically determined
     private final boolean constantOffset;
@@ -128,11 +132,16 @@ public class HitboxInfoBuilder {
         return this;
     }
 
+    public HitboxInfoBuilder needs3DResourcePackCompat(boolean needs3dCompat) {
+        this.needs3dCompat = needs3dCompat;
+        return this;
+    }
+
     public HitboxInfo build() {
         assert !isInput || holdsItems; // If isInput, must holdsItems
         return new HitboxInfo(centerOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
-                forcedUpDown, constantOffset);
+                forcedUpDown, constantOffset, needs3dCompat);
     }
 
     public static HitboxInfoBuilder create(Vec3 centerOffset, double size) {
