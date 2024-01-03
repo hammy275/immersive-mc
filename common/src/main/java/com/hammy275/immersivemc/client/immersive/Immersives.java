@@ -107,7 +107,7 @@ public class Immersives {
             .setRenderTime(ClientConstants.ticksToRenderCrafting)
             .setRenderSize(ClientConstants.itemScaleSizeCrafting)
             .add3x3Grid(HitboxInfoBuilder.createItemInput(Vec3.ZERO,
-                            ClientConstants.itemScaleSizeCrafting / 1.5f).build(),
+                            ClientConstants.itemScaleSizeCrafting / 1.5f).needs3DResourcePackCompat(true).build(),
                     3d / 16d)
             .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 0, 0.5),
                     ClientConstants.itemScaleSizeCrafting * 1.5d).holdsItems(true)
@@ -213,14 +213,14 @@ public class Immersives {
                 } else {
                     return new Vec3(-0.25, 0.25, 0);
                 }},
-                    ClientConstants.itemScaleSizeFurnace / 1.5d).build())
+                    ClientConstants.itemScaleSizeFurnace / 1.5d).needs3DResourcePackCompat(true).build())
             .addHitbox(HitboxInfoBuilder.createItemInput((info) -> {
                 if (ActiveConfig.autoCenterFurnace) {
                     return new Vec3(0, -0.25, 0);
                 } else {
                     return new Vec3(-0.25, -0.25, 0);
                 }},
-                    ClientConstants.itemScaleSizeFurnace / 1.5d).build())
+                    ClientConstants.itemScaleSizeFurnace / 1.5d).needs3DResourcePackCompat(true).build())
             .addHitbox(HitboxInfoBuilder.create((info) -> {
                 if (ActiveConfig.autoCenterFurnace) {
                     if (info.itemHitboxes.get(2).item == null || info.itemHitboxes.get(2).item.isEmpty()) {
@@ -233,7 +233,7 @@ public class Immersives {
                 } else {
                     return new Vec3(0.25, 0, 0);
                 }},
-                    ClientConstants.itemScaleSizeFurnace / 1.5d).holdsItems(true).build())
+                    ClientConstants.itemScaleSizeFurnace / 1.5d).holdsItems(true).needs3DResourcePackCompat(true).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_BLOCK_FACING)
             .setMaxImmersives(4)
             .setRightClickHandler((info, player, slot, hand) -> {
