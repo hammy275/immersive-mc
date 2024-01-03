@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -33,6 +34,7 @@ public class HitboxInfo implements Cloneable {
     public final ForcedUpDownRenderDir forcedUpDownRenderDir;
     // Not directly configured by programmers. This is whether the offset from centerOffset returns a constant value.
     public final boolean constantOffset;
+    public final boolean needs3dCompat;
 
     // Calculated data to be returned out
     private AABB box;
@@ -66,11 +68,12 @@ public class HitboxInfo implements Cloneable {
      * @param textSupplier A function taking an info instance and returning a list of text components.
      * @param forcedUpDownDir An override for upDownRenderDir to use instead of automatically determining it.
      * @param constantOffset Whether centerOffset's return value is constant.
+     * @param needs3dCompat Whether the offset should be moved by a need for compatibility with 3D resource packs.
      */
     public HitboxInfo(Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
                       boolean holdsItems, boolean isInput, boolean itemSpins, float itemRenderSizeMultiplier,
                       boolean isTriggerHitbox, Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier,
-                      ForcedUpDownRenderDir forcedUpDownDir, boolean constantOffset) {
+                      ForcedUpDownRenderDir forcedUpDownDir, boolean constantOffset, boolean needs3dCompat) {
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -83,6 +86,7 @@ public class HitboxInfo implements Cloneable {
         this.textSupplier = textSupplier;
         this.forcedUpDownRenderDir = forcedUpDownDir;
         this.constantOffset = constantOffset;
+        this.needs3dCompat = needs3dCompat;
     }
 
     /**
@@ -107,6 +111,12 @@ public class HitboxInfo implements Cloneable {
         if (offset == null) {
             forceNull();
             return; // Bail early if we don't actually have a position to work with
+        }
+        // Offset a bit if we have 3D resource pack compat enabled and this hitbox declares wanting it.
+        // TODO: Reset immersives when this option changes so changes are reflected instantly instead of only
+        // TODO: on new immersives
+        if (ActiveConfig.resourcePack3dCompat && needs3dCompat) {
+            offset = offset.add(0, 0, 1d/16d);
         }
         BlockPos pos = info.getBlockPosition();
         if (mode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING) {
@@ -330,7 +340,7 @@ public class HitboxInfo implements Cloneable {
     public HitboxInfo cloneWithNewOffset(Function<BuiltImmersiveInfo, Vec3> newOffset) {
         return new HitboxInfo(newOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
-                forcedUpDownRenderDir, constantOffset);
+                forcedUpDownRenderDir, constantOffset, needs3dCompat);
     }
 
     /**
@@ -347,6 +357,6 @@ public class HitboxInfo implements Cloneable {
             return offsetOut.add(offset);
         }, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
-                forcedUpDownRenderDir, constantOffset);
+                forcedUpDownRenderDir, constantOffset, needs3dCompat);
     }
 }
