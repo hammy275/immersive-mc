@@ -26,14 +26,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraft.world.level.block.entity.BarrelBlockEntity;
-import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.level.block.entity.HopperBlockEntity;
-import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
-import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
@@ -293,9 +288,10 @@ public class Swap {
             inv.setItem(i, stacksIn[i]);
         }
 
-        Optional<CraftingRecipe> res = player.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, inv, player.level());
+        Optional<RecipeHolder<CraftingRecipe>> res = player.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING,
+                inv, player.level());
         if (res.isPresent()) {
-            return res.get().assemble(inv, player.level().registryAccess());
+            return res.get().value().assemble(inv, player.level().registryAccess());
         }
         return ItemStack.EMPTY;
     }
