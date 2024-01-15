@@ -524,7 +524,7 @@ public class Swap {
         container.setItem(0, 0, left);
         container.setItem(1, 0, mid);
         container.createResult();
-        ItemStack res = container.getSlot(container.getResultSlot()).getItem();
+        ItemStack res = container.getSlot(2).getItem();
         return res;
     }
 
