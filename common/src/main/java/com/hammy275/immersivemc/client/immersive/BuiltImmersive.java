@@ -240,7 +240,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             }
         }
         for (BlockPos pos : positions) {
-            if (!Minecraft.getInstance().level.getBlockState(pos).canBeReplaced()) {
+            if (!Minecraft.getInstance().level.getBlockState(pos).getMaterial().isReplaceable()) {
                 return false;
             }
         }
