@@ -77,8 +77,10 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         for (int i = 0; i < info.hitboxes.length; i++) {
             HitboxInfo hitbox = info.hitboxes[i];
             // Update hitbox if its offset isn't constant, the current direction isn't the same as the last,
-            // if it hasn't been calculated yet, or if slots can change whether they're active.
-            if (!hitbox.constantOffset || currentDir != info.immersiveDir || !hitbox.calcDone() || builder.slotActive != ImmersiveBuilder.SLOT_ALWAYS_ACTIVE) {
+            // if it hasn't been calculated yet, if slots can change whether they're active, or if they need
+            // to detect VR hand movements.
+            if (!hitbox.constantOffset || currentDir != info.immersiveDir || !hitbox.calcDone() || builder.slotActive != ImmersiveBuilder.SLOT_ALWAYS_ACTIVE
+                || hitbox.vrMovementInfo != null) {
                 if (builder.slotActive.apply(info, i)) {
                     hitbox.recalculate(Minecraft.getInstance().level, builder.positioningMode, info);
                 } else {

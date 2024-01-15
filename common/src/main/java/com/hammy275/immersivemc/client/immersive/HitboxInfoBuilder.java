@@ -71,6 +71,12 @@ public class HitboxInfoBuilder {
      * If true, this hitbox is offset for 3D Resource Pack compatibility.
      */
     private boolean needs3dCompat = false;
+    /**
+     * If not null, the relative axis (any axis if null) and thresholds that causes the action callback to be performed.
+     * There can be multiple thresholds in case a positive and negative one are wanted, and the controller mode should
+     * be the wanted controller, both controllers, or either controller.
+     */
+    private HitboxVRMovementInfo vrMovementInfo = null;
 
     // Automatically determined
     private final boolean constantOffset;
@@ -137,11 +143,28 @@ public class HitboxInfoBuilder {
         return this;
     }
 
+    public HitboxInfoBuilder setVRMovementInfo(HitboxVRMovementInfo vrMovementInfo) {
+        assert vrMovementInfo.thresholds().length > 0;
+        for (double threshold : vrMovementInfo.thresholds()) {
+            assert threshold != 0;
+        }
+        if (vrMovementInfo.controllerMode() == null) {
+            assert vrMovementInfo.thresholds().length == 1; // Only one threshold if axis doesn't matter.
+        } else { // No more than 2 thresholds, and one threshold is positive and one negative.
+            assert vrMovementInfo.thresholds().length == 1 ||
+                    (vrMovementInfo.thresholds().length == 2 &&
+                            Math.min(vrMovementInfo.thresholds()[0], vrMovementInfo.thresholds()[1]) < 0
+                            && Math.max(vrMovementInfo.thresholds()[0], vrMovementInfo.thresholds()[1]) > 0);
+        }
+        this.vrMovementInfo = vrMovementInfo;
+        return this;
+    }
+
     public HitboxInfo build() {
         assert !isInput || holdsItems; // If isInput, must holdsItems
         return new HitboxInfo(centerOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
-                forcedUpDown, constantOffset, needs3dCompat);
+                forcedUpDown, constantOffset, needs3dCompat, vrMovementInfo);
     }
 
     public static HitboxInfoBuilder create(Vec3 centerOffset, double size) {
