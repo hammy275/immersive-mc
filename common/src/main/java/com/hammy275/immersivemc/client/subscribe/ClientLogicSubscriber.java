@@ -305,7 +305,7 @@ public class ClientLogicSubscriber {
                     chestInfo.nextRow();
                     return true;
                 }
-            } else if (ImmersiveCheckers.isShulkerBox(pos, state, tileEnt, player.level())) {
+            } else if (ImmersiveCheckers.isShulkerBox(pos, state, tileEnt, player.level)) {
                 BuiltImmersiveInfo info = Immersives.immersiveShulker.findImmersive(pos);
                 if (info != null) {
                     ChestLikeData data = (ChestLikeData) info.getExtraData();

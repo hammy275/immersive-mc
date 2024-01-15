@@ -643,7 +643,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @return Any Direction, representing what direction the block should be facing based on the player's position.
      */
     public static Direction getForwardFromPlayerUpAndDownFilterBlockFacing(Player player, BlockPos pos, boolean filterOnBlockFacing) {
-        Direction.Axis filter = filterOnBlockFacing ? player.level().getBlockState(pos).getValue(DirectionalBlock.FACING).getAxis() : null;
+        Direction.Axis filter = filterOnBlockFacing ? player.level.getBlockState(pos).getValue(DirectionalBlock.FACING).getAxis() : null;
         Vec3 playerPos = player.position();
         if (playerPos.y >= pos.getY() + 0.625 && filter != Direction.Axis.Y) {
             return Direction.UP;
@@ -655,7 +655,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 return forward;
             } else {
                 // We filter on non-Y axis, and getForwardFromPlayer was on our filter. Find the closest and get it.
-                Direction blockFacing = player.level().getBlockState(pos).getValue(DirectionalBlock.FACING);
+                Direction blockFacing = player.level.getBlockState(pos).getValue(DirectionalBlock.FACING);
                 Vec3 blockCenter = Vec3.atCenterOf(pos);
                 Direction blockLeftDir = blockFacing.getCounterClockWise();
                 Vec3 blockLeftVec = new Vec3(blockLeftDir.getNormal().getX(), blockLeftDir.getNormal().getY(), blockLeftDir.getNormal().getZ());
