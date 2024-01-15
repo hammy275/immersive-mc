@@ -70,13 +70,25 @@ public class Immersives {
             .add3x3Grid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
             .add3x3Grid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
             .add3x3Grid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
+            .addHitbox(HitboxInfoBuilder.create(new Vec3(0.25, 1d/16d, 0.15), 0.35, 0.35, 0.5)
+                    .setVRMovementInfo(new HitboxVRMovementInfo(Direction.Axis.Z, new double[]{0.05},
+                            HitboxVRMovementInfo.ControllerMode.EITHER, (info) -> {
+                        ChestLikeData extra = (ChestLikeData) info.getExtraData();
+                        extra.toggleOpen(info.getBlockPosition());
+                    }))
+                    .build())
             .setPositioningMode(HitboxPositioningMode.BLOCK_FACING_NEG_X)
             .setMaxImmersives(4)
-            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
+            .setRightClickHandler((info, player, slot, hand) -> {
+                if (slot < 27) {
+                    Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand));
+                }
+            })
             .setExtraInfoDataClass(ChestLikeData.class)
             .setSlotActiveFunction((info, slot) -> {
                 ChestLikeData extra = (ChestLikeData) info.getExtraData();
-                return extra.isOpen && slot >= extra.currentRow * 9 && slot < (extra.currentRow + 1) * 9;
+                return (slot < 27 && extra.isOpen && slot >= extra.currentRow * 9 && slot < (extra.currentRow + 1) * 9)
+                        || (slot == 27 && !extra.isOpen);
             })
             .setOnRemove((info) -> {
                 ((ChestLikeData) info.getExtraData()).forceClose(info.getBlockPosition());
