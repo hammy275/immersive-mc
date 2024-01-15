@@ -34,6 +34,14 @@ public class LastClientVRData {
     }
 
     /**
+     * @param ticksAgo Ticks ago to check back.
+     * @return Whether we have data ticksAgo ticks back.
+     */
+    public static boolean hasPlayerTicksAgo(int ticksAgo) {
+        return lastPlayers.size() >= ticksAgo;
+    }
+
+    /**
      * Get IVRPlayer from some ticks ago.
      * @param ticksAgo Ticks ago to retrieve. 0 retrieves the current tick and >5 throws as we only keep the past 5 ticks.
      * @return The IVRPlayer for ticksAgo ticks ago.
@@ -45,6 +53,13 @@ public class LastClientVRData {
             return VRPlugin.API.getVRPlayer(Minecraft.getInstance().player); // If ticksAgo == 0, use current tick
         }
         return lastPlayers.get(ticksAgo - 1);
+    }
+
+    /**
+     * @return Whether changeForVelocity can be run.
+     */
+    public static boolean canGetVelocityChange() {
+        return hasPlayerTicksAgo(2);
     }
 
     /**
