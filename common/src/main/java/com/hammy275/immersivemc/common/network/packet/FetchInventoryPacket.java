@@ -81,7 +81,7 @@ public class FetchInventoryPacket {
                     Network.INSTANCE.sendToPlayer(player,
                             new UpdateStoragePacket(pos, storage, storage.getType()));
                 }
-                if (ImmersiveCheckers.isEnchantingTable(pos, player.level().getBlockState(pos), tileEnt, player.level())) {
+                if (ImmersiveCheckers.isEnchantingTable(pos, player.level.getBlockState(pos), tileEnt, player.level)) {
                     GetEnchantmentsPacket.sendEnchDataToClient(player, pos);
                 }
             } else if (tileEnt != null) {

@@ -258,7 +258,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             return lightPositions;
         } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING) {
             BlockPos[] lightPositions = new BlockPos[4];
-            Direction.Axis ignored = Minecraft.getInstance().player.level().getBlockState(info.getBlockPosition()).getValue(DirectionalBlock.FACING).getAxis();
+            Direction.Axis ignored = Minecraft.getInstance().player.level.getBlockState(info.getBlockPosition()).getValue(DirectionalBlock.FACING).getAxis();
             int i = 0;
             for (Direction dir : Direction.values()) {
                 if (dir.getAxis() != ignored) {
