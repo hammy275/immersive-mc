@@ -1,7 +1,10 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.client.LastClientVRData;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.vr.VRPlugin;
+import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -35,6 +38,7 @@ public class HitboxInfo implements Cloneable {
     // Not directly configured by programmers. This is whether the offset from centerOffset returns a constant value.
     public final boolean constantOffset;
     public final boolean needs3dCompat;
+    public final HitboxVRMovementInfo vrMovementInfo;
 
     // Calculated data to be returned out
     private AABB box;
@@ -69,11 +73,13 @@ public class HitboxInfo implements Cloneable {
      * @param forcedUpDownDir An override for upDownRenderDir to use instead of automatically determining it.
      * @param constantOffset Whether centerOffset's return value is constant.
      * @param needs3dCompat Whether the offset should be moved by a need for compatibility with 3D resource packs.
+     * @param vrMovementInfo Hitbox VR movement info to recognize hand gestures and perform some action.
      */
     public HitboxInfo(Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
                       boolean holdsItems, boolean isInput, boolean itemSpins, float itemRenderSizeMultiplier,
                       boolean isTriggerHitbox, Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier,
-                      ForcedUpDownRenderDir forcedUpDownDir, boolean constantOffset, boolean needs3dCompat) {
+                      ForcedUpDownRenderDir forcedUpDownDir, boolean constantOffset, boolean needs3dCompat,
+                      HitboxVRMovementInfo vrMovementInfo) {
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -87,6 +93,7 @@ public class HitboxInfo implements Cloneable {
         this.forcedUpDownRenderDir = forcedUpDownDir;
         this.constantOffset = constantOffset;
         this.needs3dCompat = needs3dCompat;
+        this.vrMovementInfo = vrMovementInfo;
     }
 
     /**
@@ -155,8 +162,8 @@ public class HitboxInfo implements Cloneable {
                 recalcHorizBlockFacing(blockFacing, info, offset);
                 upDownRenderDir = null;
             } else {
-                // Pretend the block is facing west so that way west becomes +x
-                recalcTopBottomBlockFacing(Direction.WEST, info, offset, blockFacing == Direction.DOWN);
+                // Pretend the block is facing south so that way west becomes +x
+                recalcTopBottomBlockFacing(Direction.SOUTH, info, offset, blockFacing == Direction.DOWN);
                 upDownRenderDir = blockFacing;
             }
         } else if (mode == HitboxPositioningMode.PLAYER_FACING_NO_DOWN) {
@@ -184,6 +191,48 @@ public class HitboxInfo implements Cloneable {
         calcTextOffsets(info);
         if (forcedUpDownRenderDir != ForcedUpDownRenderDir.NOT_FORCED) {
             upDownRenderDir = forcedUpDownRenderDir.direction;
+        }
+        // Detect VR hand movements and run callback
+        if (vrMovementInfo != null && VRPluginVerify.clientInVR()) {
+            boolean[] passed = {false, false};
+            for (int c = 0; c <= 1; c++) {
+                if (!LastClientVRData.canGetVelocityChange()) continue;
+                if (!box.contains(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(c).position())) continue;
+                Vec3 velocity = LastClientVRData.changeForVelocity(c == 0 ? LastClientVRData.VRType.C0 : LastClientVRData.VRType.C1);
+                if (vrMovementInfo.relativeAxis() == null) {
+                    passed[c] = velocity.lengthSqr() >= vrMovementInfo.thresholds()[0] * vrMovementInfo.thresholds()[0];
+                } else {
+                    double posThreshold;
+                    double negThreshold;
+                    if (vrMovementInfo.thresholds().length == 2) {
+                        posThreshold = Math.max(vrMovementInfo.thresholds()[0], vrMovementInfo.thresholds()[1]);
+                        negThreshold = Math.min(vrMovementInfo.thresholds()[0], vrMovementInfo.thresholds()[1]);
+                    } else {
+                        posThreshold = Math.max(vrMovementInfo.thresholds()[0], 0);
+                        negThreshold = Math.min(vrMovementInfo.thresholds()[0], 0);
+                    }
+                    // We have a relative axis. Let's "mask out" the other axes, then do our threshold check.
+                    Vec3 velocityMask = vrMovementInfo.relativeAxis() == Direction.Axis.X ? xVec :
+                            vrMovementInfo.relativeAxis() == Direction.Axis.Y ? yVec : zVec;
+                    if (posThreshold != 0) {
+                        passed[c] = velocity.multiply(velocityMask).lengthSqr() >= posThreshold * posThreshold;
+                    }
+                    if (negThreshold != 0) {
+                        passed[c] = passed[c] || velocity.multiply(velocityMask).lengthSqr() <= negThreshold * negThreshold;
+                    }
+                }
+            }
+            boolean passedOverall;
+            switch (vrMovementInfo.controllerMode()) {
+                case C0 -> passedOverall = passed[0];
+                case C1 -> passedOverall = passed[1];
+                case EITHER -> passedOverall = passed[0] || passed[1];
+                case BOTH -> passedOverall = passed[0] && passed[1];
+                default -> throw new IllegalArgumentException("Invalid controllerMOde for HitboxVRMovementInfo.");
+            }
+            if (passedOverall) {
+                vrMovementInfo.action().accept(info);
+            }
         }
         didCalc = true;
     }
@@ -340,7 +389,7 @@ public class HitboxInfo implements Cloneable {
     public HitboxInfo cloneWithNewOffset(Function<BuiltImmersiveInfo, Vec3> newOffset) {
         return new HitboxInfo(newOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
-                forcedUpDownRenderDir, constantOffset, needs3dCompat);
+                forcedUpDownRenderDir, constantOffset, needs3dCompat, vrMovementInfo);
     }
 
     /**
@@ -357,6 +406,6 @@ public class HitboxInfo implements Cloneable {
             return offsetOut.add(offset);
         }, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
-                forcedUpDownRenderDir, constantOffset, needs3dCompat);
+                forcedUpDownRenderDir, constantOffset, needs3dCompat, vrMovementInfo);
     }
 }
