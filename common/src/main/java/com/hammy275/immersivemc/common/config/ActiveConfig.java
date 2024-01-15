@@ -124,11 +124,7 @@ public class ActiveConfig {
         useSmithingTableImmersion = buffer.readBoolean() && useSmithingTableImmersion;
         useWrittenBookImmersion = buffer.readBoolean() && useWrittenBookImmersion;
         useCauldronImmersion = buffer.readBoolean() && useCauldronImmersion;
-<<<<<<< HEAD
-
-=======
         useIronFurnacesFurnaceImmersion = buffer.readBoolean() && useIronFurnacesFurnaceImmersion;
->>>>>>> ab8f9fc (Iron Furnaces Compat Proper Declarative)
     }
 
     public static void loadConfigFromFile() {
