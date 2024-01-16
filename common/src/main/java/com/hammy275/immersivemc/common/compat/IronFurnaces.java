@@ -8,4 +8,5 @@ public class IronFurnaces {
             CompatUtils.getClazz("ironfurnaces.tileentity.furnaces.BlockIronFurnaceTileBase");
 
 
+
 }

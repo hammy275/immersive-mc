@@ -361,4 +361,11 @@ public class Immersives {
             .setBlockChecker(ImmersiveCheckers::isIronFurnacesFurnace)
             .setConfigChecker(() -> ActiveConfig.useIronFurnacesFurnaceImmersion)
             .build();
+
+    public static final BuiltImmersive immersiveTinkersConstructCraftingStation = immersiveCrafting.getBuilderClone()
+            .setBlockChecker(ImmersiveCheckers::isTinkersConstructCraftingStation)
+            .setConfigChecker(() -> ActiveConfig.useTinkersConstructCraftingStationImmersion)
+            .setUsesWorldStorage(false)
+            .modifyHitboxes(0, 8, (hitbox) -> hitbox.renderItem(false).build())
+            .build();
 }

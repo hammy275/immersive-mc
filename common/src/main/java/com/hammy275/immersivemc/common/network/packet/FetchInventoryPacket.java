@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.server.storage.GetStorage;
 import com.hammy275.immersivemc.server.storage.ImmersiveMCLevelStorage;
+import com.hammy275.immersivemc.server.swap.Swap;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -93,9 +94,17 @@ public class FetchInventoryPacket {
                 } else {
                     return;
                 }
-                ItemStack[] stacks = new ItemStack[inv.getContainerSize()];
+                int extra = 0;
+                boolean isTCCraftingStation = ImmersiveCheckers.isTinkersConstructCraftingStation(pos, player.level.getBlockState(pos), tileEnt, player.level);
+                if (isTCCraftingStation) {
+                    extra = 1;
+                }
+                ItemStack[] stacks = new ItemStack[inv.getContainerSize() + extra];
                 for (int i = 0; i < inv.getContainerSize(); i++) {
                     stacks[i] = inv.getItem(i);
+                }
+                if (isTCCraftingStation) {
+                    stacks[9] = Swap.getRecipeOutput(player, stacks);
                 }
                 Network.INSTANCE.sendToPlayer(player,
                         new FetchInventoryPacket(stacks, pos));

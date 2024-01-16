@@ -40,6 +40,7 @@ public class ActiveConfig {
     public static boolean useWrittenBookImmersion = false;
     public static boolean useCauldronImmersion = false;
     public static boolean useIronFurnacesFurnaceImmersion = false;
+    public static boolean useTinkersConstructCraftingStationImmersion = false;
 
     // C2S Synced values
     public static boolean crouchBypassImmersion = false;
@@ -125,6 +126,7 @@ public class ActiveConfig {
         useWrittenBookImmersion = buffer.readBoolean() && useWrittenBookImmersion;
         useCauldronImmersion = buffer.readBoolean() && useCauldronImmersion;
         useIronFurnacesFurnaceImmersion = buffer.readBoolean() && useIronFurnacesFurnaceImmersion;
+        useTinkersConstructCraftingStationImmersion = buffer.readBoolean() && useTinkersConstructCraftingStationImmersion;
     }
 
     public static void loadConfigFromFile() {
@@ -165,6 +167,7 @@ public class ActiveConfig {
             useWrittenBookImmersion = ImmersiveMCConfig.useWrittenBookImmersion.get();
             useCauldronImmersion = ImmersiveMCConfig.useCauldronImmersion.get();
             useIronFurnacesFurnaceImmersion = ImmersiveMCConfig.useIronFurnacesFurnaceImmersion.get();
+            useTinkersConstructCraftingStationImmersion = ImmersiveMCConfig.useTinkersConstructCraftingStationImmersion.get();
         } else {
             ImmersiveMC.LOGGER.debug("Not re-loading immersive options since we're in a world!");
         }
@@ -225,6 +228,7 @@ public class ActiveConfig {
         useWrittenBookImmersion = false;
         useCauldronImmersion = false;
         useIronFurnacesFurnaceImmersion = false;
+        useTinkersConstructCraftingStationImmersion = false;
         ImmersiveMC.LOGGER.debug("Loaded 'disabled' config: \n" + asString());
     }
 
@@ -288,7 +292,8 @@ public class ActiveConfig {
                 "Use Written Book Immersion: " + useWrittenBookImmersion + "\n" +
                 "Use Cauldron Immersion: " + useCauldronImmersion + "\n" +
                 "Reach Behind Backpack Mode: " + reachBehindBackpackMode + "\n" +
-                "Use Iron Furnaces Furnace Immersion: " + useIronFurnacesFurnaceImmersion;
+                "Use Iron Furnaces Furnace Immersion: " + useIronFurnacesFurnaceImmersion + "\n" +
+                "Use Tinkers' Construct Crafting Station Immersion: " + useTinkersConstructCraftingStationImmersion;
         return stringOut;
     }
 
