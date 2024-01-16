@@ -24,6 +24,8 @@ import java.util.function.Function;
 public class HitboxInfo implements Cloneable {
 
     // Settings
+    private final HitboxInfoBuilder usedBuilder;
+
     public final Function<BuiltImmersiveInfo, Vec3> centerOffset;
     public final double sizeX;
     public final double sizeY;
@@ -39,6 +41,8 @@ public class HitboxInfo implements Cloneable {
     public final boolean constantOffset;
     public final boolean needs3dCompat;
     public final HitboxVRMovementInfo vrMovementInfo;
+    public final boolean renderItem;
+    public final boolean renderItemCount;
 
     // Calculated data to be returned out
     private AABB box;
@@ -58,6 +62,7 @@ public class HitboxInfo implements Cloneable {
 
     /**
      * Constructor. See the respective functions in {@link HitboxInfoBuilder} for more information.
+     * @param usedBuilder The builder used to create this HitboxInfo. Only used to allow cloning this hitbox.
      * @param centerOffset Function that takes an info instance and returns the offset from the center position for the
      *                     location of this hitbox.
      * @param sizeX Size of hitbox on relative X axis.
@@ -74,12 +79,16 @@ public class HitboxInfo implements Cloneable {
      * @param constantOffset Whether centerOffset's return value is constant.
      * @param needs3dCompat Whether the offset should be moved by a need for compatibility with 3D resource packs.
      * @param vrMovementInfo Hitbox VR movement info to recognize hand gestures and perform some action.
+     * @param renderItem Whether to render the item in this hitbox if it can contain one.
+     * @param renderItemCount Whether to render the item count in this hitbox if it can contain an item.
      */
-    public HitboxInfo(Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
+    public HitboxInfo(HitboxInfoBuilder usedBuilder,
+                      Function<BuiltImmersiveInfo, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
                       boolean holdsItems, boolean isInput, boolean itemSpins, float itemRenderSizeMultiplier,
                       boolean isTriggerHitbox, Function<BuiltImmersiveInfo, List<Pair<Component, Vec3>>> textSupplier,
                       ForcedUpDownRenderDir forcedUpDownDir, boolean constantOffset, boolean needs3dCompat,
-                      HitboxVRMovementInfo vrMovementInfo) {
+                      HitboxVRMovementInfo vrMovementInfo, boolean renderItem, boolean renderItemCount) {
+        this.usedBuilder = usedBuilder;
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -94,6 +103,8 @@ public class HitboxInfo implements Cloneable {
         this.constantOffset = constantOffset;
         this.needs3dCompat = needs3dCompat;
         this.vrMovementInfo = vrMovementInfo;
+        this.renderItem = renderItem;
+        this.renderItemCount = renderItemCount;
     }
 
     /**
@@ -387,9 +398,7 @@ public class HitboxInfo implements Cloneable {
      * @return Clone with the offset replaced with newOffset.
      */
     public HitboxInfo cloneWithNewOffset(Function<BuiltImmersiveInfo, Vec3> newOffset) {
-        return new HitboxInfo(newOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
-                itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
-                forcedUpDownRenderDir, constantOffset, needs3dCompat, vrMovementInfo);
+        return getBuilderClone().setCenterOffset(newOffset).build();
     }
 
     /**
@@ -398,14 +407,16 @@ public class HitboxInfo implements Cloneable {
      * @return HitboxInfo that is offset by offset in comparison to this HitboxInfo.
      */
     public HitboxInfo cloneWithAddedOffset(Vec3 offset) {
-        return new HitboxInfo((info) -> {
+        return getBuilderClone().setCenterOffset((info) -> {
             Vec3 offsetOut = centerOffset.apply(info);
             if (offsetOut == null) {
                 return null;
             }
             return offsetOut.add(offset);
-        }, sizeX, sizeY, sizeZ, holdsItems, isInput,
-                itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
-                forcedUpDownRenderDir, constantOffset, needs3dCompat, vrMovementInfo);
+        }).build();
+    }
+
+    public HitboxInfoBuilder getBuilderClone() {
+        return usedBuilder.clone();
     }
 }
