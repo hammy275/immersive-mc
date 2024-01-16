@@ -17,6 +17,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -48,7 +50,7 @@ public class Immersives {
                     .textSupplier((info) -> {
                         AnvilData data = (AnvilData) info.getExtraData();
                         if (data.anvilCost == 0) return null;
-                        return List.of(new Pair<>(Component.literal(I18n.get("immersivemc.immersive.anvil.levels_needed", data.anvilCost)), Vec3.ZERO));
+                        return List.of(new Pair<>(new TextComponent(I18n.get("immersivemc.immersive.anvil.levels_needed", data.anvilCost)), Vec3.ZERO));
                     })
                     .build())
             .setExtraStorageConsumer((storage, info) -> {
@@ -146,10 +148,10 @@ public class Immersives {
                     return null;
                 }
                 if (data.isPresent()) {
-                    texts.add(new Pair<>(Component.literal(data.levelsNeeded + " (" + 1 + ")"), new Vec3(0, 0.33, 0)));
+                    texts.add(new Pair<>(new TextComponent(data.levelsNeeded + " (" + 1 + ")"), new Vec3(0, 0.33, 0)));
                     texts.add(new Pair<>(data.textPreview, new Vec3(0, -0.33, 0)));
                 } else if (info.itemHitboxes.get(0).item != null && !info.itemHitboxes.get(0).item.isEmpty()) {
-                    texts.add(new Pair<>(Component.translatable("immersivemc.immersive.etable.no_ench"), new Vec3(0, -0.33, 0)));
+                    texts.add(new Pair<>(new TranslatableComponent("immersivemc.immersive.etable.no_ench"), new Vec3(0, -0.33, 0)));
                 }
                 return texts;
             }).build())
@@ -163,10 +165,10 @@ public class Immersives {
                     return null;
                 }
                 if (data.isPresent()) {
-                    texts.add(new Pair<>(Component.literal(data.levelsNeeded + " (" + 1 + ")"), new Vec3(0, 0.33, 0)));
+                    texts.add(new Pair<>(new TextComponent(data.levelsNeeded + " (" + 1 + ")"), new Vec3(0, 0.33, 0)));
                     texts.add(new Pair<>(data.textPreview, new Vec3(0, -0.33, 0)));
                 } else if (info.itemHitboxes.get(0).item != null && !info.itemHitboxes.get(0).item.isEmpty()) {
-                    texts.add(new Pair<>(Component.translatable("immersivemc.immersive.etable.no_ench"), new Vec3(0, -0.33, 0)));
+                    texts.add(new Pair<>(new TranslatableComponent("immersivemc.immersive.etable.no_ench"), new Vec3(0, -0.33, 0)));
                 }
                 return texts;
             }).build())
@@ -180,10 +182,10 @@ public class Immersives {
                     return null;
                 }
                 if (data.isPresent()) {
-                    texts.add(new Pair<>(Component.literal(data.levelsNeeded + " (" + 1 + ")"), new Vec3(0, 0.33, 0)));
+                    texts.add(new Pair<>(new TextComponent(data.levelsNeeded + " (" + 1 + ")"), new Vec3(0, 0.33, 0)));
                     texts.add(new Pair<>(data.textPreview, new Vec3(0, -0.33, 0)));
                 } else if (info.itemHitboxes.get(0).item != null && !info.itemHitboxes.get(0).item.isEmpty()) {
-                    texts.add(new Pair<>(Component.translatable("immersivemc.immersive.etable.no_ench"), new Vec3(0, -0.33, 0)));
+                    texts.add(new Pair<>(new TranslatableComponent("immersivemc.immersive.etable.no_ench"), new Vec3(0, -0.33, 0)));
                 }
                 return texts;
             }).build())

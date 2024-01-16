@@ -2,13 +2,9 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-<<<<<<< HEAD
 import net.minecraft.client.CycleOption;
 import net.minecraft.client.ProgressOption;
-=======
 import dev.architectury.platform.Platform;
-import net.minecraft.client.OptionInstance;
->>>>>>> da8ec7b (Iron Furnaces Compat Proper Declarative)
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
