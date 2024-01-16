@@ -37,6 +37,8 @@ dependencies {
     modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
     modApi "curse.maven:mcvrapi-591092:4548164"
     modApi "curse.maven:ironfurnaces-237664:4796731"
+    modApi "curse.maven:mantle-74924:4509007" // Tinkers' Construct Dep.
+    modApi "curse.maven:tinkersconstruct-74072:4509008"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }

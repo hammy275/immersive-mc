@@ -100,11 +100,11 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         float size = builder.renderSize / info.getItemTransitionCountdown();
         for (int i = 0; i < info.hitboxes.length; i++) {
             HitboxInfo hitbox = info.hitboxes[i];
-            if (hitbox.holdsItems) {
+            if (hitbox.holdsItems && hitbox.renderItem) {
                 int spinDegrees = hitbox.itemSpins ? (int) (info.ticksActive % 100d * 3.6d) : -1;
                 renderItem(hitbox.item, stack, hitbox.getPos(),
                         info.slotHovered == i ? size * 1.25f * hitbox.itemRenderSizeMultiplier : size * hitbox.itemRenderSizeMultiplier,
-                        info.immersiveDir, hitbox.getUpDownRenderDir(), hitbox.getAABB(), true, spinDegrees, info.light);
+                        info.immersiveDir, hitbox.getUpDownRenderDir(), hitbox.getAABB(), hitbox.renderItemCount, spinDegrees, info.light);
             } else {
                 renderHitbox(stack, hitbox.getAABB(), hitbox.getPos());
             }
