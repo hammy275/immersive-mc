@@ -69,6 +69,8 @@
   "config.immersivemc.door.desc": "Enables/disables the opening and closing of doors and fence gates using hand motions.",
   "config.immersivemc.crafting": "Use Crafting Immersion",
   "config.immersivemc.crafting.desc": "Enables/disables the placing of items physically on the crafting table.",
+  "config.immersivemc.tinkers_construct_crafting_station": "Use Tinkers' Construct Crafting Station Immersion",
+  "config.immersivemc.tinkers_construct_crafting_station.desc": "Enables/disables the ability to use the Tinkers' Construct Crafting Station immersives.",
   "config.immersivemc.enchanting_table": "Use Enchanting Table Immersion",
   "config.immersivemc.enchanting_table.desc": "Enables/disables the ability to use the enchanting table immersive.",
   "config.immersivemc.furnace": "Use Furnace Immersion",

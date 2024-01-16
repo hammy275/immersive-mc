@@ -8,7 +8,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 import java.util.function.Function;
 
-public class HitboxInfoBuilder {
+public class HitboxInfoBuilder implements Cloneable {
 
     // -- REQUIRED --
     /**
@@ -18,7 +18,7 @@ public class HitboxInfoBuilder {
      * on the player, so for the furnace, -0.5, 0, 0 moves the box to the leftmost edge from the
      * player's perspective, or the rightmost edge if one were spectating the furnace.
      */
-    private final Function<BuiltImmersiveInfo, Vec3> centerOffset;
+    private Function<BuiltImmersiveInfo, Vec3> centerOffset;
     /**
      * Left/right size of the hitbox. See X axis for centerOffset.
      */
@@ -77,6 +77,14 @@ public class HitboxInfoBuilder {
      * be the wanted controller, both controllers, or either controller.
      */
     private HitboxVRMovementInfo vrMovementInfo = null;
+    /**
+     * Whether to render the item for this hitbox if it can contain items.
+     */
+    private boolean renderItem = true;
+    /**
+     * Whether to render the item count for this hitbox if it can contain items.
+     */
+    private boolean renderItemCount = true;
 
     // Automatically determined
     private final boolean constantOffset;
@@ -101,6 +109,16 @@ public class HitboxInfoBuilder {
 
     private HitboxInfoBuilder(Vec3 centerOffset, double sizeX, double sizeY, double sizeZ) {
         this((info) -> centerOffset, sizeX, sizeY, sizeZ, true);
+    }
+
+    public HitboxInfoBuilder setCenterOffset(Function<BuiltImmersiveInfo, Vec3> newOffset) {
+        this.centerOffset = newOffset;
+        return this;
+    }
+
+    public HitboxInfoBuilder setCenterOffset(Vec3 newOffset) {
+        this.centerOffset = (info) -> newOffset;
+        return this;
     }
 
     public HitboxInfoBuilder holdsItems(boolean holdsItems) {
@@ -160,11 +178,21 @@ public class HitboxInfoBuilder {
         return this;
     }
 
+    public HitboxInfoBuilder renderItem(boolean renderItem) {
+        this.renderItem = renderItem;
+        return this;
+    }
+
+    public HitboxInfoBuilder renderItemCount(boolean renderItemCount) {
+        this.renderItemCount = renderItemCount;
+        return this;
+    }
+
     public HitboxInfo build() {
         assert !isInput || holdsItems; // If isInput, must holdsItems
-        return new HitboxInfo(centerOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
+        return new HitboxInfo(this, centerOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
-                forcedUpDown, constantOffset, needs3dCompat, vrMovementInfo);
+                forcedUpDown, constantOffset, needs3dCompat, vrMovementInfo, renderItem, renderItemCount);
     }
 
     public static HitboxInfoBuilder create(Vec3 centerOffset, double size) {
@@ -189,5 +217,14 @@ public class HitboxInfoBuilder {
 
     public static HitboxInfoBuilder createItemInput(Function<BuiltImmersiveInfo, Vec3> centerOffset, double size) {
         return new HitboxInfoBuilder(centerOffset, size, false).holdsItems(true).isInput(true);
+    }
+
+    @Override
+    public HitboxInfoBuilder clone() {
+        try {
+            return (HitboxInfoBuilder) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -56,6 +56,7 @@ public class ImmersivesConfigScreen extends Screen {
             ScreenUtils.addOption("brewing", ImmersiveMCConfig.useBrewingImmersion, this.list);
             ScreenUtils.addOption("chest", ImmersiveMCConfig.useChestImmersion, this.list);
             ScreenUtils.addOption("crafting", ImmersiveMCConfig.useCraftingImmersion, this.list);
+            ScreenUtils.addOptionIfModLoaded("tconstruct", "tinkers_construct_crafting_station", ImmersiveMCConfig.useTinkersConstructCraftingStationImmersion, this.list);
             ScreenUtils.addOption("enchanting_table", ImmersiveMCConfig.useETableImmersion, this.list);
             ScreenUtils.addOption("furnace", ImmersiveMCConfig.useFurnaceImmersion, this.list);
             ScreenUtils.addOption("hopper", ImmersiveMCConfig.useHopperImmersion, this.list);
