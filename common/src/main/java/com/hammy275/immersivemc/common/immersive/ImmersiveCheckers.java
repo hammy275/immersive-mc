@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.immersive;
 
 import com.hammy275.immersivemc.common.compat.IronFurnaces;
+import com.hammy275.immersivemc.common.compat.TinkersConstruct;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -31,6 +32,7 @@ public class ImmersiveCheckers {
         CHECKERS.add(ImmersiveCheckers::isRepeater);
         CHECKERS.add(ImmersiveCheckers::isShulkerBox);
         CHECKERS.add(ImmersiveCheckers::isSmithingTable);
+        CHECKERS.add(ImmersiveCheckers::isTinkersConstructCraftingStation);
 
         WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isAnvil);
         WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isBeacon);
@@ -63,9 +65,7 @@ public class ImmersiveCheckers {
     }
 
     public static boolean isCraftingTable(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return state.getBlock() == Blocks.CRAFTING_TABLE ||
-                (tileEntity != null &&
-                        tileEntity.getClass().getName().equals("slimeknights.tconstruct.tables.block.entity.table.CraftingStationBlockEntity"));
+        return state.getBlock() == Blocks.CRAFTING_TABLE;
     }
 
     public static boolean isEnchantingTable(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
@@ -100,6 +100,11 @@ public class ImmersiveCheckers {
 
     public static boolean isIronFurnacesFurnace(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return IronFurnaces.ironFurnaceTileBase.isInstance(tileEntity);
+    }
+
+    // Tinkers' Construct
+    public static boolean isTinkersConstructCraftingStation(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        return TinkersConstruct.craftingStation.isInstance(tileEntity);
     }
 
 }

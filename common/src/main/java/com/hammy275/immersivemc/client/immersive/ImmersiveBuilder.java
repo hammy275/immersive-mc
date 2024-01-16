@@ -296,6 +296,44 @@ public class ImmersiveBuilder implements Cloneable {
         return this;
     }
 
+    /**
+     * Overwrites hitbox at index with a new hitbox. Useful when cloning.
+     * @param index Index to overwrite.
+     * @param hitboxInfo New hitbox information.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder overwriteHitbox(int index, HitboxInfo hitboxInfo) {
+        this.hitboxes.set(index, hitboxInfo);
+        return this;
+    }
+
+    /**
+     * Modify a hitbox.
+     * @param index Index of hitbox to modify.
+     * @param modifier A function that takes the old hitbox as a builder and returns new hitbox info.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder modifyHitbox(int index, Function<HitboxInfoBuilder, HitboxInfo> modifier) {
+        return modifyHitboxes(index, index, modifier);
+    }
+
+    /**
+     * Modify a range of hitboxes, inclusive for both ends.
+     * @param startIndex Starting index of range of hitboxes to modify inclusive.
+     * @param endIndex Ending index of range of hitboxes to modify inclusive.
+     * @param modifier A function that takes the old hitbox as a builder and returns new hitbox info.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder modifyHitboxes(int startIndex, int endIndex, Function<HitboxInfoBuilder, HitboxInfo> modifier) {
+        if (startIndex < 0 || endIndex < 0 || startIndex > endIndex || endIndex >= hitboxes.size()) {
+            throw new IllegalArgumentException("Invalid starting and ending index. Keep them in range of the hitboxes, and make sure startIndex < endIndex.");
+        }
+        for (int i = startIndex; i <= endIndex; i++) {
+            overwriteHitbox(i, modifier.apply(hitboxes.get(i).getBuilderClone()));
+        }
+        return this;
+    }
+
     public BuiltImmersive build() {
         // Only allow extraStorageConsumer if we use world storage
         assert this.extraStorageConsumer == null || this.usesWorldStorage;
@@ -309,7 +347,11 @@ public class ImmersiveBuilder implements Cloneable {
     @Override
     public ImmersiveBuilder clone() {
         try {
-            return (ImmersiveBuilder) super.clone();
+            ImmersiveBuilder clone = (ImmersiveBuilder) super.clone();
+            clone.hitboxes = new ArrayList<>(hitboxes);
+            clone.lightPositionOffsets = new ArrayList<>(lightPositionOffsets);
+            clone.airCheckPositionOffsets = new ArrayList<>(airCheckPositionOffsets);
+            return clone;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
