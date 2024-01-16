@@ -29,6 +29,7 @@ public class ImmersiveCheckers {
         CHECKERS.add(ImmersiveCheckers::isEnchantingTable);
         CHECKERS.add(ImmersiveCheckers::isFurnace);
         CHECKERS.add(ImmersiveCheckers::isHopper);
+        CHECKERS.add(ImmersiveCheckers::isIronFurnacesFurnace);
         CHECKERS.add(ImmersiveCheckers::isJukebox);
         CHECKERS.add(ImmersiveCheckers::isRepeater);
         CHECKERS.add(ImmersiveCheckers::isShulkerBox);
