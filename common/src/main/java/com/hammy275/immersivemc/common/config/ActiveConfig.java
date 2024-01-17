@@ -58,6 +58,8 @@ public class ActiveConfig {
     public static boolean spinCraftingOutput = true;
     public static boolean rightClickInVR = false;
     public static boolean resourcePack3dCompat = false;
+    public static double itemGuideSize = 1.0;
+    public static double itemGuideSelectedSize = 1.0;
     public static RGBA itemGuideColor = new RGBA(0x3300ffffL);
     public static RGBA itemGuideSelectedColor = new RGBA(0x3300ff00L);
     public static RGBA rangedGrabColor = new RGBA(0xff00ffffL);
@@ -188,6 +190,8 @@ public class ActiveConfig {
         spinCraftingOutput = ImmersiveMCConfig.spinCraftingOutput.get();
         rightClickInVR = ImmersiveMCConfig.rightClickInVR.get();
         resourcePack3dCompat = ImmersiveMCConfig.resourcePack3dCompat.get();
+        itemGuideSize = ImmersiveMCConfig.itemGuideSize.get();
+        itemGuideSelectedSize = ImmersiveMCConfig.itemGuideSelectedSize.get();
         itemGuideColor = new RGBA(ImmersiveMCConfig.itemGuideColor.get());
         itemGuideSelectedColor = new RGBA(ImmersiveMCConfig.itemGuideSelectedColor.get());
         rangedGrabColor = new RGBA(ImmersiveMCConfig.rangedGrabColor.get());
@@ -281,6 +285,8 @@ public class ActiveConfig {
                 "Use barrel immersion: " + useBarrelImmersion + "\n" +
                 "Use throwing: " + useThrowing + "\n" +
                 "Allow throwing beyond max: " + allowThrowingBeyondMax + "\n" +
+                "Item Guide Size: " + itemGuideSize + '\n' +
+                "Hovered Over Item Guide Size: " + itemGuideSelectedSize + '\n' +
                 "Item Guide Color: " + itemGuideColor + "\n" +
                 "Item Guide Selected Color: " + itemGuideSelectedColor + "\n" +
                 "Ranged Grab Color: " + rangedGrabColor + "\n" +

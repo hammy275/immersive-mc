@@ -61,6 +61,8 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue spinCraftingOutput;
     public static ForgeConfigSpec.BooleanValue rightClickInVR;
     public static ForgeConfigSpec.BooleanValue resourcePack3dCompat;
+    public static ForgeConfigSpec.DoubleValue itemGuideSize;
+    public static ForgeConfigSpec.DoubleValue itemGuideSelectedSize;
     public static ForgeConfigSpec.LongValue itemGuideColor;
     public static ForgeConfigSpec.LongValue itemGuideSelectedColor;
     public static ForgeConfigSpec.LongValue rangedGrabColor;
@@ -217,6 +219,12 @@ public class ImmersiveMCConfig {
         resourcePack3dCompat = builder
                 .comment("Enables compatability for 3D resource packs like Classic 3D (16x)")
                 .define("resource_pack_3d_compat", false);
+        itemGuideSize = builder
+                .comment("The size of item guides that aren't selected by the player")
+                .defineInRange("item_guide_size", 1.0, 0.0, 1.0);
+        itemGuideSelectedSize = builder
+                .comment("The size of item guides that are selected by the player")
+                .defineInRange("item_guide_selected_size", 1.0, 0.0, 1.0);
         itemGuideColor = builder
                 .comment("Color for the item guides that help with item placement (aqua by default).")
                 .defineInRange("item_guide_color", 0x3300ffffL, 0, 0xFFFFFFFFL);
@@ -329,6 +337,8 @@ public class ImmersiveMCConfig {
         spinCraftingOutput.set(false);
         rightClickInVR.set(false);
         resourcePack3dCompat.set(false);
+        itemGuideSize.set(1.0);
+        itemGuideSelectedSize.set(1.0);
         itemGuideColor.set(0x3300ffffL);
         itemGuideSelectedColor.set(0x3300ff00L);
         rangedGrabColor.set(0xff00ffffL);
