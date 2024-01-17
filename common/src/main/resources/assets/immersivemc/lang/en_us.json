@@ -138,6 +138,8 @@
   "config.immersivemc.placement_guide_mode.2": "No Placement Guides",
   "config.immersivemc.placement_guide_mode.desc": "This setting controls what is shown for item slots in immersives that currently don't have any items.",
   "config.immersivemc.item_guide.desc": "This cube is shown in immersives in places where items can be placed but no item has been placed there.",
+  "config.immersivemc.item_guide_size": "Item Guide Size",
+  "config.immersivemc.item_guide_selected_size": "Hovered Over Item Guide Size",
   "config.immersivemc.item_guide_r": "Item Guide Red Value",
   "config.immersivemc.item_guide_g": "Item Guide Green Value",
   "config.immersivemc.item_guide_b": "Item Guide Blue Value",
