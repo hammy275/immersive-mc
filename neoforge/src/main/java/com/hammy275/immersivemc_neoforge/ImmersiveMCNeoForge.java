@@ -8,6 +8,7 @@ import net.neoforged.fml.IExtensionPoint;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
 import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.fml.loading.FMLEnvironment;
 
@@ -20,11 +21,8 @@ public class ImmersiveMCNeoForge {
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ClientSetup.doClientSetup();
         }
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((event) -> {
-            ForgeConfigRegistry.INSTANCE.register(ImmersiveMC.MOD_ID, ModConfig.Type.COMMON, ImmersiveMCConfig.GENERAL_SPEC,
-                    "immersive_mc.toml");
-        });
+        // Need to specify that it's a FMLConstructModEvent since the type of event determines when this is called
+        FMLJavaModLoadingContext.get().getModEventBus().addListener((FMLConstructModEvent event) -> ForgeConfigRegistry.INSTANCE.register(ImmersiveMC.MOD_ID, ModConfig.Type.COMMON, ImmersiveMCConfig.GENERAL_SPEC,
+                "immersive_mc.toml"));
     }
-
-
 }
