@@ -41,7 +41,7 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
     }
 
-    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
+    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:20.4.3"
     modApi "curse.maven:mcvrapi-591092:4633771"
 
     modApi "com.terraformersmc:modmenu:8.0.0"

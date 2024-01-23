@@ -118,8 +118,8 @@ public class ItemGuideCustomizeScreen extends Screen {
 
     @Override
     protected void init() {
-        this.list = new OptionsList(Minecraft.getInstance(), this.width * 3 / 4, this.height,
-                32, this.height - 32, 24);
+        this.list = new OptionsList(Minecraft.getInstance(),
+                this.width * 3 / 4, this.height - 64, 32, 24);
 
 
         this.list.addBig(

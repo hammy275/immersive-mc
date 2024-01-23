@@ -420,9 +420,9 @@ public class Swap {
     public static void handleJukebox(JukeboxBlockEntity jukebox,
                                      ServerPlayer player, InteractionHand hand) {
         ItemStack playerItem = player.getItemInHand(hand);
-        if (jukebox.getFirstItem().isEmpty() &&
+        if (jukebox.getTheItem().isEmpty() &&
                 playerItem.is(ItemTags.MUSIC_DISCS)) {
-            jukebox.setFirstItem(playerItem.copyWithCount(1));
+            jukebox.setTheItem(playerItem.copyWithCount(1));
             playerItem.shrink(1);
             player.awardStat(Stats.PLAY_RECORD);
             VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);

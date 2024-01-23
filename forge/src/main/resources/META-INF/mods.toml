@@ -49,6 +49,6 @@ side = "BOTH"
 [[dependencies.immersivemc]]
 modId = "architectury"
 mandatory = true
-versionRange = "[10.0.11,)"
+versionRange = "[11.0.11,)"
 ordering = "AFTER"
 side = "BOTH"

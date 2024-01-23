@@ -34,8 +34,8 @@ public class ImmersivesCustomizeScreen extends Screen {
     protected void init() {
         super.init();
 
-        this.list = new OptionsList(Minecraft.getInstance(), this.width, this.height,
-                32, this.height - 32, 24);
+        this.list = new OptionsList(Minecraft.getInstance(),
+                this.width, this.height - 64, 32, 24);
 
         ScreenUtils.addOption("disable_vanilla_guis", ImmersiveMCConfig.disableVanillaGUIs, this.list);
         ScreenUtils.addOption("return_items", ImmersiveMCConfig.returnItems, this.list);

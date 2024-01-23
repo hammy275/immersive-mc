@@ -40,8 +40,8 @@ public class ImmersivesConfigScreen extends Screen {
     }
 
     protected void initNotInWorld() {
-        this.list = new OptionsList(Minecraft.getInstance(), this.width, this.height,
-                32, this.height - 32, 24);
+        this.list = new OptionsList(Minecraft.getInstance(),
+                this.width, this.height - 64, 32, 24);
 
         initOptionsList();
 
