@@ -17,7 +17,7 @@ public class MultiPlayerGameModeMixin {
             at=@At("STORE"), index = 9, ordinal = 1)
     // Matches bl2
     public boolean isCrouchingCondition(boolean value) {
-        if (!ActiveConfig.crouchBypassImmersion) return value;
+        if (!ActiveConfig.ACTIVE.crouchBypassImmersion) return value;
         HitResult rawResult = Minecraft.getInstance().hitResult;
         if (rawResult != null && rawResult instanceof BlockHitResult result) {
             if (Util.isHittingImmersive(result, Minecraft.getInstance().level)) {

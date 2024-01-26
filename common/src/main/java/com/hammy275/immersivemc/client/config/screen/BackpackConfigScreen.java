@@ -23,6 +23,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -66,14 +67,12 @@ public class BackpackConfigScreen extends Screen {
                 (optionIndex) -> new TranslatableComponent("config.immersivemc.backpack_mode." + optionIndex),
                 (ignored) -> ImmersiveMCConfig.backpackMode.get(),
                 (ignored, ignored2, newIndex) -> {
-                    BackpackMode oldMode = ActiveConfig.backpackMode;
-                    ImmersiveMCConfig.backpackMode.set(
-                            newIndex
-                    );
-                    ImmersiveMCConfig.backpackMode.save();
-                    ActiveConfig.loadConfigFromFile();
-                    BackpackMode newMode = ActiveConfig.backpackMode;
-                    if (oldMode.colorable != newMode.colorable) {
+                    BackpackMode oldMode = ActiveConfig.FILE.backpackMode;
+                    ImmersiveMCConfig.backpackMode.set(newIndex);
+                    ActiveConfig.FILE.backpackMode = BackpackMode.values()[newIndex];
+                    // Also set ACTIVE mode since that's what getBackpackModel() looks at in renderBackpack()
+                    ActiveConfig.ACTIVE.backpackMode = BackpackMode.values()[newIndex];
+                    if (oldMode.colorable != BackpackMode.values()[newIndex].colorable) {
                         Minecraft.getInstance().setScreen(new BackpackConfigScreen(parentScreen));
                     }
                 }
@@ -93,7 +92,7 @@ public class BackpackConfigScreen extends Screen {
                             newIndex
                     );
                     ImmersiveMCConfig.reachBehindBackpackMode.save();
-                    ActiveConfig.loadConfigFromFile();
+                    ActiveConfig.FILE.reachBehindBackpackMode = ReachBehindBackpackMode.values()[newIndex];
                 }
 
         ).setTooltip(
@@ -101,7 +100,7 @@ public class BackpackConfigScreen extends Screen {
                         new TranslatableComponent("config.immersivemc.reach_behind_backpack_mode." + optionIndex + ".desc"),
                         200)
         ));
-        if (ActiveConfig.backpackMode.colorable) {
+        if (ActiveConfig.FILE.backpackMode.colorable) {
             this.list.addBig(ScreenUtils.createIntSlider(
                     "config.immersivemc.backpack_r",
                     (integer) -> new TextComponent(I18n.get("config.immersivemc.backpack_r") + ": " + getRGB('r')),
@@ -170,19 +169,16 @@ public class BackpackConfigScreen extends Screen {
 
     @Override
     public void onClose() {
-        ImmersiveMCConfig.backpackColor.set(ActiveConfig.backpackColor);
-        ImmersiveMCConfig.backpackColor.save();
         Minecraft.getInstance().setScreen(parentScreen);
-        ActiveConfig.loadConfigFromFile();
     }
 
     protected int getRGB(char type) {
         if (type == 'r') {
-            return ActiveConfig.backpackColor >> 16;
+            return ActiveConfig.FILE.backpackColor >> 16;
         } else if (type == 'g') {
-            return ActiveConfig.backpackColor >> 8 & 255;
+            return ActiveConfig.FILE.backpackColor >> 8 & 255;
         } else {
-            return ActiveConfig.backpackColor & 255;
+            return ActiveConfig.FILE.backpackColor & 255;
         }
     }
 
@@ -195,6 +191,10 @@ public class BackpackConfigScreen extends Screen {
         } else {
             rgb = new Vec3i(rgb.getX(), rgb.getY(), newVal);
         }
-        ActiveConfig.backpackColor = (rgb.getX() << 16) + (rgb.getY() << 8) + (rgb.getZ());
+        int newColor = (rgb.getX() << 16) + (rgb.getY() << 8) + (rgb.getZ());
+        ImmersiveMCConfig.backpackColor.set(newColor);
+        ActiveConfig.FILE.backpackColor = newColor;
+        // Also set ACTIVE mode since that's what getBackpackModel() looks at in renderBackpack()
+        ActiveConfig.ACTIVE.backpackColor = newColor;
     }
 }

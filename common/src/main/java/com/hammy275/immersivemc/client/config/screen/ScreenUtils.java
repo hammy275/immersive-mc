@@ -34,9 +34,9 @@ public class ScreenUtils {
                 (unused) -> configEntry.get(),
                 (unused, unused2, newVal) -> {
                     configEntry.set(newVal);
-                    configEntry.save();
-                    ActiveConfig.loadConfigFromFile();
-                });
+                    ActiveConfig.FILE.loadFromFile();
+                }
+        );
     }
 
     public static void addOptionIfModLoaded(String modId, String keyName, ForgeConfigSpec.BooleanValue configEntry, OptionsList list) {

@@ -1,10 +1,10 @@
 package com.hammy275.immersivemc.server.tracker;
 
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.server.LastTickVRData;
-import com.hammy275.immersivemc.server.tracker.vrhand.AbstractVRHandTracker;
-import com.hammy275.immersivemc.server.PlayerConfigs;
 import com.hammy275.immersivemc.server.data.LastTickData;
+import com.hammy275.immersivemc.server.tracker.vrhand.AbstractVRHandTracker;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -17,7 +17,7 @@ public class ServerVRSubscriber {
             for (AbstractVRHandTracker tracker : ServerTrackerInit.vrPlayerTrackers) {
                 tracker.preTick(player);
                 if (LastTickVRData.lastTickVRData.get(player.getGameProfile().getName()) != null
-                && tracker.isEnabledInConfig(PlayerConfigs.getConfig(player))) {
+                && tracker.isEnabledInConfig(ActiveConfig.getConfigForPlayer(player))) {
                     tracker.tick(player, vrPlayer, LastTickVRData.lastTickVRData.get(player.getGameProfile().getName()));
                 }
             }

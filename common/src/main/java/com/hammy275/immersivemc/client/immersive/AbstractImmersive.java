@@ -241,7 +241,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             try {
                 renderTick(info, isInVR);
                 render(info, stack, isInVR);
-                if (ActiveConfig.placementGuideMode != PlacementGuideMode.OFF && !forceDisableItemGuide) {
+                if (ActiveConfig.ACTIVE.placementGuideMode != PlacementGuideMode.OFF && !forceDisableItemGuide) {
                     // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
                     for (int i = 0; i < info.getInputSlots().length; i++) {
                         if (inputSlotShouldRenderHelpHitbox(info, i)) {
@@ -628,6 +628,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             }
         }
         return LightTexture.pack(maxBlock, maxSky);
+    }
+
+    public void clearImmersives() {
+        this.infos.clear();
     }
 
     public static Direction getForwardFromPlayerUpAndDown(Player player, BlockPos pos) {

@@ -1,14 +1,8 @@
 package com.hammy275.immersivemc.common.config;
 
-import com.hammy275.immersivemc.common.network.Network;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ImmersiveMCConfig {
-
-
-    public static final int MAJOR_CONFIG_VERSION = 2; // Increment whenever a change is made that requires ImmersiveMC to do config adjustments
-    public static final int CONFIG_VERSION = 4; // Increment post-release whenever the server+client config changes
 
     public static final ForgeConfigSpec GENERAL_SPEC;
 
@@ -252,39 +246,6 @@ public class ImmersiveMCConfig {
                 .comment("!!!!DON'T TOUCH!!!! Version number for this configuration file! Do not change! It is used by ImmersiveMC " +
                         "to track config updates so it can automatically update your configuration files when needed!")
                 .defineInRange("config_version", 1, 1, Integer.MAX_VALUE);
-    }
-
-    public static void encode(FriendlyByteBuf buffer) {
-        buffer.writeInt(Network.PROTOCOL_VERSION).writeInt(CONFIG_VERSION)
-                .writeBoolean(useAnvilImmersion.get())
-                .writeBoolean(useBrewingImmersion.get())
-                .writeBoolean(useChestImmersion.get()).writeBoolean(useCraftingImmersion.get())
-                .writeBoolean(useFurnaceImmersion.get()).writeBoolean(useJukeboxImmersion.get())
-                .writeBoolean(useRangedGrab.get())
-                .writeBoolean(useButton.get())
-                .writeBoolean(useETableImmersion.get())
-                .writeBoolean(useCampfireImmersion.get())
-                .writeBoolean(useLever.get())
-                .writeBoolean(useBackpack.get())
-                .writeBoolean(useRepeaterImmersion.get())
-                .writeBoolean(useDoorImmersion.get())
-                .writeBoolean(canPet.get())
-                .writeBoolean(useArmorImmersion.get())
-                .writeBoolean(canFeedAnimals.get())
-                .writeBoolean(useShulkerImmersion.get())
-                .writeBoolean(canPetAnyLiving.get())
-                .writeBoolean(immersiveShield.get())
-                .writeInt(rangedGrabRange.get())
-                .writeBoolean(useBeaconImmersion.get())
-                .writeBoolean(useBarrelImmersion.get())
-                .writeBoolean(useThrowing.get())
-                .writeBoolean(allowThrowingBeyondMax.get())
-                .writeBoolean(useHopperImmersion.get())
-                .writeBoolean(useSmithingTableImmersion.get())
-                .writeBoolean(useWrittenBookImmersion.get())
-                .writeBoolean(useCauldronImmersion.get())
-                .writeBoolean(useIronFurnacesFurnaceImmersion.get())
-                .writeBoolean(useTinkersConstructCraftingStationImmersion.get());
     }
 
     public static void resetToDefault() {

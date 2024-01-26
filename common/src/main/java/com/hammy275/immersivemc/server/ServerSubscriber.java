@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.server;
 
-import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.CheckerFunction;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
@@ -78,14 +77,6 @@ public class ServerSubscriber {
         for (AbstractTracker tracker : ServerTrackerInit.globalTrackers) {
             tracker.doTick(null);
         }
-
-        if (ActiveConfig.clientForceServerReloadForLAN) {
-            ImmersiveMC.LOGGER.debug("Force-reloading config due to singleplayer config change!");
-            ActiveConfig.loadConfigFromFile(true);
-            ImmersiveMC.LOGGER.debug("Sending new config to all players.");
-            Network.INSTANCE.sendToPlayers(server.getPlayerList().getPlayers(), new ConfigSyncPacket());
-            ActiveConfig.clientForceServerReloadForLAN = false;
-        }
     }
 
     public static void onPlayerTick(Player player) {
@@ -99,12 +90,9 @@ public class ServerSubscriber {
     }
 
     public static void onPlayerJoin(Player player) {
-        if (!player.level.isClientSide && player instanceof ServerPlayer) {
-            ActiveConfig.loadConfigFromFile(true);
-            Network.INSTANCE.sendToPlayer((ServerPlayer) player,
-                    new ConfigSyncPacket());
+        if (player instanceof ServerPlayer serverPlayer) {
+            Network.INSTANCE.sendToPlayer(serverPlayer,
+                    new ConfigSyncPacket(ActiveConfig.FILE));
         }
-
-
     }
 }
