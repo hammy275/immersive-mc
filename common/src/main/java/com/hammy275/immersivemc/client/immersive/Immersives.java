@@ -35,7 +35,7 @@ public class Immersives {
             new LinkedList<>();
 
     public static final BuiltImmersive immersiveAnvil = ImmersiveBuilder.create(ImmersiveCheckers::isAnvil)
-            .setConfigChecker(() -> ActiveConfig.useAnvilImmersion)
+            .setConfigChecker(() -> ActiveConfig.ACTIVE.useAnvilImmersion)
             .setRenderTime(ClientConstants.ticksToRenderAnvil)
             .setRenderSize(ClientConstants.itemScaleSizeAnvil)
             .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0, -1d/3d, 0), // When you place an anvil, the anvil's look direction is rotated 90 degrees.
@@ -64,7 +64,7 @@ public class Immersives {
             .build();
     public static final ImmersiveBackpack immersiveBackpack = new ImmersiveBackpack();
     public static final BuiltImmersive immersiveBarrel = ImmersiveBuilder.create(ImmersiveCheckers::isBarrel)
-            .setConfigChecker(() -> ActiveConfig.useBarrelImmersion)
+            .setConfigChecker(() -> ActiveConfig.ACTIVE.useBarrelImmersion)
             .setRenderTime(ClientConstants.ticksToRenderBarrel)
             .setRenderSize(ClientConstants.itemScaleSizeBarrel)
             .add3x3Grid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
@@ -96,18 +96,18 @@ public class Immersives {
             .build();
     public static final ImmersiveBeacon immersiveBeacon = new ImmersiveBeacon();
     public static final BuiltImmersive immersiveBrewing = ImmersiveBuilder.create(ImmersiveCheckers::isBrewingStand)
-            .setConfigChecker(() -> ActiveConfig.useBrewingImmersion)
+            .setConfigChecker(() -> ActiveConfig.ACTIVE.useBrewingImmersion)
             .setRenderTime(ClientConstants.ticksToRenderBrewing)
             .setRenderSize(ClientConstants.itemScaleSizeBrewing)
             .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(-0.25, -1d/6d, 0),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
-            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> new Vec3(0, ActiveConfig.autoCenterBrewing ? -1d/6d : -0.25, 0),
+            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> new Vec3(0, ActiveConfig.ACTIVE.autoCenterBrewing ? -1d/6d : -0.25, 0),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
             .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0.25, -1d/6d, 0),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
-            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> new Vec3(0, ActiveConfig.autoCenterBrewing ? 0.1 : 0.25, 0),
+            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> new Vec3(0, ActiveConfig.ACTIVE.autoCenterBrewing ? 0.1 : 0.25, 0),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
-            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> ActiveConfig.autoCenterBrewing ? new Vec3(0, 0.35, 0) : new Vec3(-0.25, 0.25, 0),
+            .addHitbox(HitboxInfoBuilder.createItemInput((info) -> ActiveConfig.ACTIVE.autoCenterBrewing ? new Vec3(0, 0.35, 0) : new Vec3(-0.25, 0.25, 0),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
             .setMaxImmersives(2)
@@ -115,7 +115,7 @@ public class Immersives {
             .build();
     public static final ImmersiveChest immersiveChest = new ImmersiveChest();
     public static final BuiltImmersive immersiveCrafting = ImmersiveBuilder.create(ImmersiveCheckers::isCraftingTable)
-            .setConfigChecker(() -> ActiveConfig.useCraftingImmersion)
+            .setConfigChecker(() -> ActiveConfig.ACTIVE.useCraftingImmersion)
             .setRenderTime(ClientConstants.ticksToRenderCrafting)
             .setRenderSize(ClientConstants.itemScaleSizeCrafting)
             .add3x3Grid(HitboxInfoBuilder.createItemInput(Vec3.ZERO,
@@ -132,7 +132,7 @@ public class Immersives {
             .setTriggerHitboxControllerNum(0)
             .build();
     public static final BuiltImmersive immersiveETable = ImmersiveBuilder.create(ImmersiveCheckers::isEnchantingTable)
-            .setConfigChecker(() -> ActiveConfig.useETableImmersion)
+            .setConfigChecker(() -> ActiveConfig.ACTIVE.useETableImmersion)
             .setRenderTime(ClientConstants.ticksToRenderETable)
             .setRenderSize(ClientConstants.itemScaleSizeETable)
             .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0, 0.75, -0.5), ClientConstants.itemScaleSizeETable).build())
@@ -210,11 +210,11 @@ public class Immersives {
             })
             .build();
     public static final BuiltImmersive immersiveFurnace = ImmersiveBuilder.create(ImmersiveCheckers::isFurnace)
-            .setConfigChecker(() -> ActiveConfig.useFurnaceImmersion)
+            .setConfigChecker(() -> ActiveConfig.ACTIVE.useFurnaceImmersion)
             .setRenderTime(ClientConstants.ticksToRenderFurnace)
             .setRenderSize(ClientConstants.itemScaleSizeFurnace)
             .addHitbox(HitboxInfoBuilder.createItemInput((info) -> {
-                if (ActiveConfig.autoCenterFurnace) {
+                if (ActiveConfig.ACTIVE.autoCenterFurnace) {
                     if (info.itemHitboxes.get(2).item == null || info.itemHitboxes.get(2).item.isEmpty()) {
                         return new Vec3(0, 0.25, 0);
                     } else if (info.itemHitboxes.get(0).item == null || info.itemHitboxes.get(0).item.isEmpty()) {
@@ -227,14 +227,14 @@ public class Immersives {
                 }},
                     ClientConstants.itemScaleSizeFurnace / 1.5d).needs3DResourcePackCompat(true).build())
             .addHitbox(HitboxInfoBuilder.createItemInput((info) -> {
-                if (ActiveConfig.autoCenterFurnace) {
+                if (ActiveConfig.ACTIVE.autoCenterFurnace) {
                     return new Vec3(0, -0.25, 0);
                 } else {
                     return new Vec3(-0.25, -0.25, 0);
                 }},
                     ClientConstants.itemScaleSizeFurnace / 1.5d).needs3DResourcePackCompat(true).build())
             .addHitbox(HitboxInfoBuilder.create((info) -> {
-                if (ActiveConfig.autoCenterFurnace) {
+                if (ActiveConfig.ACTIVE.autoCenterFurnace) {
                     if (info.itemHitboxes.get(2).item == null || info.itemHitboxes.get(2).item.isEmpty()) {
                         return null;
                     } else if (info.itemHitboxes.get(0).item == null || info.itemHitboxes.get(0).item.isEmpty()) {
@@ -249,7 +249,7 @@ public class Immersives {
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_BLOCK_FACING)
             .setMaxImmersives(4)
             .setRightClickHandler((info, player, slot, hand) -> {
-                if (ActiveConfig.autoCenterFurnace) {
+                if (ActiveConfig.ACTIVE.autoCenterFurnace) {
                     if (info.itemHitboxes.get(0).getPos() == null && slot == 2) {
                         ItemStack handItem = player.getItemInHand(hand);
                         if (!handItem.isEmpty() &&
@@ -266,7 +266,7 @@ public class Immersives {
             .build();
     public static final ImmersiveHitboxes immersiveHitboxes = new ImmersiveHitboxes();
     public static final BuiltImmersive immersiveHopper = ImmersiveBuilder.create(ImmersiveCheckers::isHopper)
-            .setConfigChecker(() -> ActiveConfig.useHopperImmersion)
+            .setConfigChecker(() -> ActiveConfig.ACTIVE.useHopperImmersion)
             .setRenderTime(ClientConstants.ticksToRenderHopper)
             .setRenderSize(ClientConstants.itemScaleSizeHopper)
             .addHitbox(HitboxInfoBuilder.createItemInput((info) -> {
@@ -302,7 +302,7 @@ public class Immersives {
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .build();
     public static final BuiltImmersive immersiveJukebox = ImmersiveBuilder.create(ImmersiveCheckers::isJukebox)
-            .setConfigChecker(() -> ActiveConfig.useJukeboxImmersion)
+            .setConfigChecker(() -> ActiveConfig.ACTIVE.useJukeboxImmersion)
             .setRenderTime(ClientConstants.ticksToHandleJukebox)
             .addHitbox(HitboxInfoBuilder.create(Vec3.ZERO, 0.125, 0.125, 0.625).build())
             .setPositioningMode(HitboxPositioningMode.TOP_LITERAL)
@@ -313,7 +313,7 @@ public class Immersives {
 
     public static final ImmersiveRepeater immersiveRepeater = new ImmersiveRepeater();
     public static final BuiltImmersive immersiveShulker = ImmersiveBuilder.create(ImmersiveCheckers::isShulkerBox)
-            .setConfigChecker(() -> ActiveConfig.useShulkerImmersion)
+            .setConfigChecker(() -> ActiveConfig.ACTIVE.useShulkerImmersion)
             .setRenderTime(ClientConstants.ticksToRenderShulker)
             .setRenderSize(ClientConstants.itemScaleSizeShulker)
             .add3x3Grid(HitboxInfoBuilder.createItemInput((info) -> {
@@ -341,7 +341,7 @@ public class Immersives {
             .build();
 
     public static final BuiltImmersive immersiveSmithingTable = ImmersiveBuilder.create(ImmersiveCheckers::isSmithingTable)
-            .setConfigChecker(() -> ActiveConfig.useSmithingTableImmersion)
+            .setConfigChecker(() -> ActiveConfig.ACTIVE.useSmithingTableImmersion)
             .setRenderTime(ClientConstants.ticksToRenderSmithingTable)
             .setRenderSize(ClientConstants.itemScaleSizeSmithingTable)
             .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(-1d/3d, 0, 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
@@ -357,12 +357,12 @@ public class Immersives {
 
     public static final BuiltImmersive immersiveIronFurnacesFurnace = immersiveFurnace.getBuilderClone()
             .setBlockChecker(ImmersiveCheckers::isIronFurnacesFurnace)
-            .setConfigChecker(() -> ActiveConfig.useIronFurnacesFurnaceImmersion)
+            .setConfigChecker(() -> ActiveConfig.ACTIVE.useIronFurnacesFurnaceImmersion)
             .build();
 
     public static final BuiltImmersive immersiveTinkersConstructCraftingStation = immersiveCrafting.getBuilderClone()
             .setBlockChecker(ImmersiveCheckers::isTinkersConstructCraftingStation)
-            .setConfigChecker(() -> ActiveConfig.useTinkersConstructCraftingStationImmersion)
+            .setConfigChecker(() -> ActiveConfig.ACTIVE.useTinkersConstructCraftingStationImmersion)
             .setUsesWorldStorage(false)
             .modifyHitboxes(0, 8, (hitbox) -> hitbox.renderItem(false).build())
             .build();

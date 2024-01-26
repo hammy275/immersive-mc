@@ -1,7 +1,11 @@
 package com.hammy275.immersivemc.client.config.screen;
 
+import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
+import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.Util;
@@ -28,7 +32,7 @@ public class ConfigScreen extends Screen {
 
     @Override
     protected void init() {
-        ActiveConfig.loadConfigFromFile(); // Load config so we're working with our current values when changing them
+        ActiveConfig.loadActive(); // Load config so we're working with our current values when changing them
         super.init();
 
         this.addRenderableWidget(new Button(
@@ -82,9 +86,10 @@ public class ConfigScreen extends Screen {
                 BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("config.immersivemc.reset"),
                 (button) -> {
                     ImmersiveMCConfig.resetToDefault();
-                    ActiveConfig.loadConfigFromFile();
-                }
-        ));
+                    ActiveConfig.loadActive();
+                    button.active = false;
+                }));
+
     }
 
     @Override
@@ -99,7 +104,16 @@ public class ConfigScreen extends Screen {
 
     @Override
     public void onClose() {
-        ActiveConfig.loadConfigFromFile();
+        ActiveConfig.FILE.loadFromFile();
+        ActiveConfig.loadActive();
+        // Clear all immersives in-case we disabled one
+        for (AbstractImmersive<?> immersive : Immersives.IMMERSIVES) {
+            immersive.clearImmersives();
+        }
+        // Let server know of our new config state
+        if (Minecraft.getInstance().level != null) {
+            Network.INSTANCE.sendToServer(new ConfigSyncPacket(ActiveConfig.FILE));
+        }
         Minecraft.getInstance().setScreen(lastScreen);
     }
 }

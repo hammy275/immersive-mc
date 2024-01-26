@@ -20,7 +20,7 @@ public class FishingReelTrackerCore {
     }
 
     public static boolean shouldTick(Player player) {
-        return ActiveConfig.useThrowing && VRPlugin.API.playerInVR(player) &&
+        return ActiveConfig.ACTIVE.useThrowing && VRPlugin.API.playerInVR(player) &&
                 player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof FishingRodItem &&
                 player.fishing != null;
     }

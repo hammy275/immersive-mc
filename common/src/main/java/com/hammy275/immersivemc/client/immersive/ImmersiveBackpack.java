@@ -178,7 +178,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         stack.popPose();
 
         // Render item guides here instead since we're using info
-        if (ActiveConfig.placementGuideMode != PlacementGuideMode.OFF) {
+        if (ActiveConfig.ACTIVE.placementGuideMode != PlacementGuideMode.OFF) {
             for (int i = 0; i < info.getInputSlots().length; i++) {
                 if (inputSlotShouldRenderHelpHitbox(info, i)) { // Use info here since it holds info about crafting
                     AABB itemBox = info.getInputSlots()[i];
@@ -190,7 +190,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
     @Override
     public boolean enabledInConfig() {
-        return ActiveConfig.useBackpack;
+        return ActiveConfig.ACTIVE.useBackpack;
     }
 
     @Override
@@ -248,7 +248,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     public static Model getBackpackModel() {
-        switch (ActiveConfig.backpackMode) {
+        switch (ActiveConfig.ACTIVE.backpackMode) {
             case BUNDLE, BUNDLE_COLORABLE -> {
                 return bundleModel;
             }
@@ -263,7 +263,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     public static ResourceLocation getBackpackTexture() {
-        switch (ActiveConfig.backpackMode) {
+        switch (ActiveConfig.ACTIVE.backpackMode) {
             case BUNDLE -> {
                 return BackpackBundleModel.textureLocation;
             }
@@ -281,9 +281,9 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     public static Vector3f getBackpackColor() {
-        if (ActiveConfig.backpackMode.colorable) {
-            Vector3f rgb = new Vector3f(ActiveConfig.backpackColor >> 16, ActiveConfig.backpackColor >> 8 & 255,
-                    ActiveConfig.backpackColor & 255);
+        if (ActiveConfig.ACTIVE.backpackMode.colorable) {
+            Vector3f rgb = new Vector3f(ActiveConfig.ACTIVE.backpackColor >> 16, ActiveConfig.ACTIVE.backpackColor >> 8 & 255,
+                    ActiveConfig.ACTIVE.backpackColor & 255);
             rgb.mul(1f/255f);
             return rgb;
         } else {

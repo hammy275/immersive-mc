@@ -47,9 +47,7 @@ public class ImmersivesCustomizeScreen extends Screen {
         ScreenUtils.addOption("right_click_chest", ImmersiveMCConfig.rightClickChest, this.list);
         ScreenUtils.addOption("spin_crafting_output", ImmersiveMCConfig.spinCraftingOutput, this.list);
         ScreenUtils.addOption("pet_any_living", ImmersiveMCConfig.canPetAnyLiving, this.list);
-        if (Minecraft.getInstance().level == null || ActiveConfig.serverCopy != null) {
-            ScreenUtils.addOption("right_click_in_vr", ImmersiveMCConfig.rightClickInVR, this.list);
-        }
+        ScreenUtils.addOption("right_click_in_vr", ImmersiveMCConfig.rightClickInVR, this.list);
         ScreenUtils.addOption("3d_compat", ImmersiveMCConfig.resourcePack3dCompat, this.list);
         ScreenUtils.addOption("crouch_bypass_immersion", ImmersiveMCConfig.crouchBypassImmersion, this.list);
 
@@ -66,30 +64,27 @@ public class ImmersivesCustomizeScreen extends Screen {
                                 null
 
                         ),
-                        ActiveConfig.placementMode,
+                        ActiveConfig.FILE.placementMode,
                         (newMode) -> {
                             ImmersiveMCConfig.itemPlacementMode.set(newMode.ordinal());
-                            ImmersiveMCConfig.itemPlacementMode.save();
-                            ActiveConfig.loadConfigFromFile();
+                            ActiveConfig.loadActive();
                         }
                 )
         );
 
-        if (Minecraft.getInstance().level == null || ActiveConfig.serverCopy != null) {
-            this.list.addBig(ScreenUtils.createIntSlider(
-                    "config.immersivemc.ranged_grab_range",
-                    (val) -> {
-                        if (val == -1) {
-                            return Component.translatable("config.immersivemc.use_pick_range");
-                        }
-                        return Component.literal(I18n.get("config.immersivemc.ranged_grab_range") + ": " + val);
-                    },
-                    -1, 12,
-                    ActiveConfig.rangedGrabRange, (newVal) -> {
-                        ImmersiveMCConfig.rangedGrabRange.set(newVal);
+        this.list.addBig(ScreenUtils.createIntSlider(
+                "config.immersivemc.ranged_grab_range",
+                (val) -> {
+                    if (val == -1) {
+                        return Component.translatable("config.immersivemc.use_pick_range");
                     }
-            ));
-        }
+                    return Component.literal(I18n.get("config.immersivemc.ranged_grab_range") + ": " + val);
+                },
+                -1, 12,
+                ActiveConfig.FILE.rangedGrabRange, (newVal) -> {
+                    ImmersiveMCConfig.rangedGrabRange.set(newVal);
+                    ActiveConfig.FILE.loadFromFile();
+                }));
 
 
         this.addRenderableWidget(this.list);
@@ -118,12 +113,5 @@ public class ImmersivesCustomizeScreen extends Screen {
     @Override
     public void onClose() {
         Minecraft.getInstance().setScreen(lastScreen);
-        ImmersiveMCConfig.rangedGrabRange.save();
-        ActiveConfig.loadConfigFromFile();
-        if (Minecraft.getInstance().level != null) {
-            ActiveConfig.reloadAfterServer();
-        } else {
-            ActiveConfig.loadConfigFromFile();
-        }
     }
 }

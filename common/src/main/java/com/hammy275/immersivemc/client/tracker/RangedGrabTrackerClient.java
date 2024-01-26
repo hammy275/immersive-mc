@@ -45,8 +45,8 @@ public class RangedGrabTrackerClient extends AbstractTracker {
         IVRData controller = vrPlayer.getController0();
 
         if (cooldown <= 0) {
-            double dist = ActiveConfig.rangedGrabRange == -1 ?
-                    Minecraft.getInstance().gameMode.getPickRange() : ActiveConfig.rangedGrabRange;
+            double dist = ActiveConfig.ACTIVE.rangedGrabRange == -1 ?
+                    Minecraft.getInstance().gameMode.getPickRange() : ActiveConfig.ACTIVE.rangedGrabRange;
 
             if (last != null) {
                 if (Minecraft.getInstance().options.keyAttack.isDown() ||
@@ -80,7 +80,7 @@ public class RangedGrabTrackerClient extends AbstractTracker {
             }
 
             if (selected != null) {
-                RGBA color = ActiveConfig.rangedGrabColor;
+                RGBA color = ActiveConfig.ACTIVE.rangedGrabColor;
                 Vec3 pos = selected.position().add(0, 0.2, 0);
                 selected.level.addParticle(new DustParticleOptions(
                         new Vector3f(color.redF(), color.greenF(), color.blueF()), color.alphaF()),
@@ -94,6 +94,6 @@ public class RangedGrabTrackerClient extends AbstractTracker {
     @Override
     protected boolean shouldTick(Player player) {
         return VRPluginVerify.clientInVR() && Minecraft.getInstance().gameMode != null
-                && ActiveConfig.useRangedGrab && VRPlugin.API.apiActive(player);
+                && ActiveConfig.ACTIVE.useRangedGrab && VRPlugin.API.apiActive(player);
     }
 }

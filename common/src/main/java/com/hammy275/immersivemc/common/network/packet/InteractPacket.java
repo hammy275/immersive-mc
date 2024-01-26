@@ -92,8 +92,8 @@ public class InteractPacket {
             } else if (NetworkUtil.safeToRun(message.pos, player)) {
                 BlockState state = player.level.getBlockState(message.pos);
                 BlockEntity tileEnt = player.level.getBlockEntity(message.pos);
-                if ((ImmersiveCheckers.isCraftingTable(message.pos, state, tileEnt, player.level) && ActiveConfig.useCraftingImmersion) ||
-                        (ImmersiveCheckers.isTinkersConstructCraftingStation(message.pos, state, tileEnt, player.level) && ActiveConfig.useTinkersConstructCraftingStationImmersion)) {
+                if ((ImmersiveCheckers.isCraftingTable(message.pos, state, tileEnt, player.level) && ActiveConfig.FILE.useCraftingImmersion) ||
+                        (ImmersiveCheckers.isTinkersConstructCraftingStation(message.pos, state, tileEnt, player.level) && ActiveConfig.FILE.useTinkersConstructCraftingStationImmersion)) {
                     Swap.handleCraftingSwap(player, message.slot, message.hand, message.pos, message.placementMode);
                 } else if (ImmersiveCheckers.isAnvil(message.pos, state, tileEnt, player.level)) {
                     Swap.anvilSwap(message.slot, message.hand, message.pos, player, message.placementMode);

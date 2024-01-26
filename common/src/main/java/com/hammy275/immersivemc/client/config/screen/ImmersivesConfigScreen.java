@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.client.config.screen;
 
-import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -33,22 +32,18 @@ public class ImmersivesConfigScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        if (canShowConfigScreen()) {
-            initNotInWorld();
-        }
-        this.addRenderableWidget(new Button(
-                (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("gui.done"),
-                (button) -> this.onClose()));
-    }
 
-    protected void initNotInWorld() {
         this.list = new OptionsList(Minecraft.getInstance(), this.width, this.height,
                 32, this.height - 32, 24);
 
         initOptionsList();
 
         this.addRenderableWidget(this.list);
+
+        this.addRenderableWidget(new Button(
+                (this.width - BUTTON_WIDTH) / 2, this.height - 26,
+                BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("gui.done"),
+                (button) -> this.onClose()));
     }
 
     protected void initOptionsList() {
@@ -95,20 +90,14 @@ public class ImmersivesConfigScreen extends Screen {
 
         super.render(stack, mouseX, mouseY, partialTicks);
 
-        if (canShowConfigScreen()) {
-            drawCenteredString(stack, this.font, this.title.getString(),
-                    this.width / 2, 8, 0xFFFFFF);
-            drawCenteredString(stack, this.font, Component.translatable("screen.immersivemc.immersives_config.subtitle"),
-                    this.width / 2, 8 + this.font.lineHeight, 0xFFFFFF);
-        } else {
-            // This is pretty rare, only happening when we're in a world but haven't finished the S2C part of ImmersiveMC's handshake
-            drawCenteredString(stack, this.font, Component.translatable("screen.immersivemc.immersives_config.cant_change"),
-                    this.width / 2, this.height / 2, 0xFFFFFF);
-        }
+        drawCenteredString(stack, this.font, this.title.getString(),
+                this.width / 2, 8, 0xFFFFFF);
+        drawCenteredString(stack, this.font, Component.translatable("screen.immersivemc.immersives_config.subtitle"),
+                this.width / 2, 8 + this.font.lineHeight, 0xFFFFFF);
 
-        if (this.list != null) {  // Could be null if we're in a world
+        if (this.list != null) {  // Could be null if we're waiting on init(), I believe
             List<FormattedCharSequence> list = OptionsSubScreen.tooltipAt(this.list, mouseX, mouseY);
-            if (list != null) {
+            if (!list.isEmpty()) {
                 this.renderTooltip(stack, list, mouseX, mouseY);
             }
         }
@@ -117,13 +106,6 @@ public class ImmersivesConfigScreen extends Screen {
     @Override
     public void onClose() {
         Minecraft.getInstance().setScreen(lastScreen);
-        ActiveConfig.loadConfigFromFile();
-        ActiveConfig.reloadAfterServer();
-    }
-
-    public boolean canShowConfigScreen() {
-        return Minecraft.getInstance().level == null ||
-                ActiveConfig.serverCopy != null;
     }
 
     public enum ScreenType {

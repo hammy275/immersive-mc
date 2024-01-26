@@ -109,7 +109,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
 
     @Override
     public boolean enabledInConfig() {
-        return ActiveConfig.useRepeaterImmersion;
+        return ActiveConfig.ACTIVE.useRepeaterImmersion;
     }
 
     @Override
