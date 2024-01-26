@@ -5,7 +5,6 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
-import com.hammy275.immersivemc.server.PlayerConfigs;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.BlockPos;
@@ -62,10 +61,10 @@ public class CampfireTracker extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        if (!ActiveConfig.useCampfireImmersion) return false;
+        if (!ActiveConfig.FILE.useCampfireImmersion) return false;
         if (!VRPluginVerify.hasAPI) return false;
         if (!VRPlugin.API.playerInVR(player)) return false;
-        if (!PlayerConfigs.getConfig(player).useCampfire) return false;
+        if (!ActiveConfig.getConfigForPlayer(player).useCampfireImmersion) return false;
         IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
         boolean mainRes = false;
         boolean offRes = false;

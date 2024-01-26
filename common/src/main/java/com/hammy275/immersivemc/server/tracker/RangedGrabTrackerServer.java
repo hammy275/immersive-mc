@@ -4,7 +4,6 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.vr.VRRumble;
-import com.hammy275.immersivemc.server.PlayerConfigs;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -33,7 +32,7 @@ public class RangedGrabTrackerServer extends AbstractTracker {
             if (info.item == null || !info.item.isAlive() || info.tickTime <= 0) {
                 toRemove.add(info);
             } else {
-                if (!PlayerConfigs.getConfig(info.player).useRangedGrab) return;
+                if (!ActiveConfig.getConfigForPlayer(info.player).useRangedGrab) return;
                 info.tickTime--;
                 info.item.setPickUpDelay(0);
                 Vec3 baseVelocity = new Vec3(0, 0, 0);
@@ -55,7 +54,7 @@ public class RangedGrabTrackerServer extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        return ActiveConfig.useRangedGrab && infos.size() > 0;
+        return ActiveConfig.FILE.useRangedGrab && infos.size() > 0;
     }
 
     public static class RangedGrabInfo {
