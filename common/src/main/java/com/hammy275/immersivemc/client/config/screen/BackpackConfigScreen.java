@@ -70,12 +70,13 @@ public class BackpackConfigScreen extends Screen {
                                 Optional::of,
                                 null
                         ),
-                        ActiveConfig.backpackMode,
+                        ActiveConfig.FILE.backpackMode,
                         (newMode) -> {
-                            BackpackMode oldMode = ActiveConfig.backpackMode;
+                            BackpackMode oldMode = ActiveConfig.FILE.backpackMode;
                             ImmersiveMCConfig.backpackMode.set(newMode.ordinal());
-                            ImmersiveMCConfig.backpackMode.save();
-                            ActiveConfig.loadConfigFromFile();
+                            ActiveConfig.FILE.backpackMode = newMode;
+                            // Also set ACTIVE mode since that's what getBackpackModel() looks at in renderBackpack()
+                            ActiveConfig.ACTIVE.backpackMode = newMode;
                             if (oldMode.colorable != newMode.colorable) {
                                 Minecraft.getInstance().setScreen(new BackpackConfigScreen(parentScreen));
                             }
@@ -93,15 +94,14 @@ public class BackpackConfigScreen extends Screen {
                                 Optional::of,
                                 null
                         ),
-                        ActiveConfig.reachBehindBackpackMode,
+                        ActiveConfig.FILE.reachBehindBackpackMode,
                         (newMode) -> {
                             ImmersiveMCConfig.reachBehindBackpackMode.set(newMode.ordinal());
-                            ImmersiveMCConfig.reachBehindBackpackMode.save();
-                            ActiveConfig.loadConfigFromFile();
+                            ActiveConfig.FILE.reachBehindBackpackMode = newMode;
                         }
                 )
         );
-        if (ActiveConfig.backpackMode.colorable) {
+        if (ActiveConfig.FILE.backpackMode.colorable) {
             this.list.addBig(ScreenUtils.createIntSlider(
                     "config.immersivemc.backpack_r",
                     (integer) -> Component.literal(I18n.get("config.immersivemc.backpack_r") + ": " + getRGB('r')),
@@ -165,19 +165,16 @@ public class BackpackConfigScreen extends Screen {
 
     @Override
     public void onClose() {
-        ImmersiveMCConfig.backpackColor.set(ActiveConfig.backpackColor);
-        ImmersiveMCConfig.backpackColor.save();
         Minecraft.getInstance().setScreen(parentScreen);
-        ActiveConfig.loadConfigFromFile();
     }
 
     protected int getRGB(char type) {
         if (type == 'r') {
-            return ActiveConfig.backpackColor >> 16;
+            return ActiveConfig.FILE.backpackColor >> 16;
         } else if (type == 'g') {
-            return ActiveConfig.backpackColor >> 8 & 255;
+            return ActiveConfig.FILE.backpackColor >> 8 & 255;
         } else {
-            return ActiveConfig.backpackColor & 255;
+            return ActiveConfig.FILE.backpackColor & 255;
         }
     }
 
@@ -190,6 +187,10 @@ public class BackpackConfigScreen extends Screen {
         } else {
             rgb = new Vec3i(rgb.getX(), rgb.getY(), newVal);
         }
-        ActiveConfig.backpackColor = (rgb.getX() << 16) + (rgb.getY() << 8) + (rgb.getZ());
+        int newColor = (rgb.getX() << 16) + (rgb.getY() << 8) + (rgb.getZ());
+        ImmersiveMCConfig.backpackColor.set(newColor);
+        ActiveConfig.FILE.backpackColor = newColor;
+        // Also set ACTIVE mode since that's what getBackpackModel() looks at in renderBackpack()
+        ActiveConfig.ACTIVE.backpackColor = newColor;
     }
 }

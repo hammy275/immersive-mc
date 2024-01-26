@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.server.tracker.vrhand;
 
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
-import com.hammy275.immersivemc.common.config.ServerPlayerConfig;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.server.data.LastTickData;
 import net.blf02.vrapi.api.data.IVRPlayer;
@@ -57,7 +57,7 @@ public class ArmorTracker extends AbstractVRHandTracker {
     }
 
     @Override
-    public boolean isEnabledInConfig(ServerPlayerConfig config) {
+    public boolean isEnabledInConfig(ActiveConfig config) {
         return config.useArmorImmersion;
     }
 }
