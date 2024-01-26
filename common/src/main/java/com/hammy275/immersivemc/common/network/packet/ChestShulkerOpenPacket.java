@@ -42,7 +42,7 @@ public class ChestShulkerOpenPacket {
                 if (NetworkUtil.safeToRun(message.pos, player)) {
                     BlockEntity tileEnt = player.level.getBlockEntity(message.pos);
                     if (tileEnt instanceof ChestBlockEntity) {
-                        if (!ActiveConfig.useChestImmersion) return;
+                        if (!ActiveConfig.FILE.useChestImmersion) return;
                         ChestBlockEntity chest = (ChestBlockEntity) tileEnt;
                         ChestBlockEntity other = Util.getOtherChest(chest);
                         if (message.isOpen) {
@@ -62,7 +62,7 @@ public class ChestShulkerOpenPacket {
                             }
                         }
                     } else if (tileEnt instanceof EnderChestBlockEntity) {
-                        if (!ActiveConfig.useChestImmersion) return;
+                        if (!ActiveConfig.FILE.useChestImmersion) return;
                         EnderChestBlockEntity chest = (EnderChestBlockEntity) tileEnt;
                         if (message.isOpen) {
                             chest.startOpen(player);
@@ -73,13 +73,14 @@ public class ChestShulkerOpenPacket {
                             changeChestCount(chest.getBlockPos(), -1);
                         }
                     } else if (tileEnt instanceof ShulkerBoxBlockEntity shulkerBox) {
-                        if (!ActiveConfig.useShulkerImmersion) return;
+                        if (!ActiveConfig.FILE.useShulkerImmersion) return;
                         if (message.isOpen) {
                             shulkerBox.startOpen(player);
                         } else {
                             shulkerBox.stopOpen(player);
                         }
                     } else if (tileEnt instanceof BarrelBlockEntity barrel) {
+                        if (!ActiveConfig.FILE.useBarrelImmersion) return;
                         if (message.isOpen) {
                             barrel.startOpen(player);
                             changeChestCount(barrel.getBlockPos(), 1);

@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.server.tracker.vrhand;
 
-import com.hammy275.immersivemc.common.config.ServerPlayerConfig;
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.mixin.AbstractCauldronBlockAccessor;
 import com.hammy275.immersivemc.server.data.LastTickData;
 import net.blf02.vrapi.api.data.IVRData;
@@ -85,7 +85,7 @@ public class CauldronTracker extends AbstractVRHandTracker {
     }
 
     @Override
-    public boolean isEnabledInConfig(ServerPlayerConfig config) {
+    public boolean isEnabledInConfig(ActiveConfig config) {
         return config.useCauldronImmersion;
     }
 

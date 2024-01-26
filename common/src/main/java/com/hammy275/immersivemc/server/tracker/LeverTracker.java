@@ -6,7 +6,6 @@ import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
-import com.hammy275.immersivemc.server.PlayerConfigs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -100,9 +99,9 @@ public class LeverTracker extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        return ActiveConfig.useLever &&
+        return ActiveConfig.FILE.useLever &&
                 VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player)
-                && PlayerConfigs.getConfig(player).useLevers;
+                && ActiveConfig.getConfigForPlayer(player).useLever;
     }
 
     public static class LeverInfo {

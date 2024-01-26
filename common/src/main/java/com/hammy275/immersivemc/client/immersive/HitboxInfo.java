@@ -131,9 +131,7 @@ public class HitboxInfo implements Cloneable {
             return; // Bail early if we don't actually have a position to work with
         }
         // Offset a bit if we have 3D resource pack compat enabled and this hitbox declares wanting it.
-        // TODO: Reset immersives when this option changes so changes are reflected instantly instead of only
-        // TODO: on new immersives
-        if (ActiveConfig.resourcePack3dCompat && needs3dCompat) {
+        if (ActiveConfig.ACTIVE.resourcePack3dCompat && needs3dCompat) {
             offset = offset.add(0, 0, 1d/16d);
         }
         BlockPos pos = info.getBlockPosition();

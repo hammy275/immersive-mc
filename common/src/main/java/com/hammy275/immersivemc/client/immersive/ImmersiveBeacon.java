@@ -262,7 +262,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
 
     @Override
     public boolean enabledInConfig() {
-        return ActiveConfig.useBeaconImmersion;
+        return ActiveConfig.ACTIVE.useBeaconImmersion;
     }
 
     @Override

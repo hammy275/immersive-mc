@@ -46,7 +46,7 @@ public class ThrowTracker extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        return VRPluginVerify.clientInVR() && ActiveConfig.useThrowing;
+        return VRPluginVerify.clientInVR() && ActiveConfig.ACTIVE.useThrowing;
     }
 
     public boolean readyToThrow() {

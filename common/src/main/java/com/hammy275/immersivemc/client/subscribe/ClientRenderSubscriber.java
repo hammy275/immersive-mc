@@ -85,9 +85,9 @@ public class ClientRenderSubscriber {
 
     private static void renderItemGuide(PoseStack stack, AABB hitbox, float alpha, boolean isSelected, int light) {
         if (hitbox != null && !Minecraft.getInstance().options.hideGui) {
-            RGBA color = isSelected ? ActiveConfig.itemGuideSelectedColor : ActiveConfig.itemGuideColor;
-            float size = (float) hitbox.getSize() * (isSelected ? (float) ActiveConfig.itemGuideSelectedSize : (float) ActiveConfig.itemGuideSize);
-            if (ActiveConfig.placementGuideMode == PlacementGuideMode.CUBE) {
+            RGBA color = isSelected ? ActiveConfig.ACTIVE.itemGuideSelectedColor : ActiveConfig.ACTIVE.itemGuideColor;
+            float size = (float) hitbox.getSize() * (isSelected ? (float) ActiveConfig.ACTIVE.itemGuideSelectedSize : (float) ActiveConfig.ACTIVE.itemGuideSize);
+            if (ActiveConfig.ACTIVE.placementGuideMode == PlacementGuideMode.CUBE) {
                 hitbox = hitbox
                         .move(0, hitbox.getYsize() / 2, 0);
                 Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
@@ -100,7 +100,7 @@ public class ClientRenderSubscriber {
                 cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
                         color.redF(), color.greenF(), color.blueF(), color.alphaF(), size / 2, light);
                 stack.popPose();
-            } else if (ActiveConfig.placementGuideMode == PlacementGuideMode.OUTLINE) {
+            } else if (ActiveConfig.ACTIVE.placementGuideMode == PlacementGuideMode.OUTLINE) {
                 AbstractImmersive.renderHitbox(stack, AABB.ofSize(hitbox.getCenter(), size, size, size), hitbox.getCenter(), true,
                         color.redF(), color.greenF(), color.blueF(), color.alphaF());
             }

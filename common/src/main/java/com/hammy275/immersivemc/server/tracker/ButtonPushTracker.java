@@ -7,7 +7,6 @@ import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.mixin.ButtonBlockMixin;
-import com.hammy275.immersivemc.server.PlayerConfigs;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.BlockPos;
@@ -51,8 +50,8 @@ public class ButtonPushTracker extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        return ActiveConfig.useButton &&
+        return ActiveConfig.FILE.useButton &&
                 VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player) && VRPlugin.API.apiActive(player)
-                && PlayerConfigs.getConfig(player).useButtons;
+                && ActiveConfig.getConfigForPlayer(player).useButton;
     }
 }
