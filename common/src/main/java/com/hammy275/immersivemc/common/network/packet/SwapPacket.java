@@ -52,33 +52,36 @@ public class SwapPacket {
                 BlockEntity tileEnt = player.level().getBlockEntity(message.block);
                 BlockState state = player.level().getBlockState(message.block);
                 if (ImmersiveCheckers.isFurnace(message.block, state, tileEnt, player.level())
-                        && ActiveConfig.useFurnaceImmersion) {
+                        && ActiveConfig.FILE.useFurnaceImmersion) {
                     Swap.handleFurnaceSwap((WorldlyContainer) tileEnt,
                             player, message.hand, message.slot, message.placementMode);
                 } else if (ImmersiveCheckers.isBrewingStand(message.block, state, tileEnt, player.level())
-                        && ActiveConfig.useBrewingImmersion) {
+                        && ActiveConfig.FILE.useBrewingImmersion) {
                     BrewingStandBlockEntity stand = (BrewingStandBlockEntity) tileEnt;
                     Swap.handleBrewingSwap(stand, player, message.hand, message.slot, message.placementMode);
                 } else if (ImmersiveCheckers.isJukebox(message.block, state, tileEnt, player.level())
-                        && ActiveConfig.useJukeboxImmersion) {
+                        && ActiveConfig.FILE.useJukeboxImmersion) {
                     Swap.handleJukebox((JukeboxBlockEntity) tileEnt, player, message.hand);
                 } else if (ImmersiveCheckers.isChest(message.block, state, tileEnt, player.level())
-                        && ActiveConfig.useChestImmersion) {
+                        && ActiveConfig.FILE.useChestImmersion) {
                     if (tileEnt instanceof ChestBlockEntity cbe) {
                         Swap.handleChest(cbe, player, message.hand, message.slot);
                     } else if (tileEnt instanceof EnderChestBlockEntity) {
                         Swap.handleEnderChest(player, message.hand, message.slot);
                     }
-                } else if (ImmersiveCheckers.isShulkerBox(message.block, state, tileEnt, player.level())) {
+                } else if (ImmersiveCheckers.isShulkerBox(message.block, state, tileEnt, player.level())
+                        && ActiveConfig.FILE.useShulkerImmersion) {
                     Swap.shulkerBoxSwap(player, message.slot, message.hand, message.block);
-                } else if (ImmersiveCheckers.isBarrel(message.block, state, tileEnt, player.level())) {
+                } else if (ImmersiveCheckers.isBarrel(message.block, state, tileEnt, player.level())
+                        && ActiveConfig.FILE.useBarrelImmersion) {
                     Swap.handleBarrel((BarrelBlockEntity) tileEnt, player,
                             message.hand, message.slot);
-                } else if (ImmersiveCheckers.isHopper(message.block, state, tileEnt, player.level())) {
+                } else if (ImmersiveCheckers.isHopper(message.block, state, tileEnt, player.level())
+                        && ActiveConfig.FILE.useHopperImmersion) {
                     Swap.handleHopper((HopperBlockEntity) tileEnt, player,
                             message.hand, message.slot);
                 } else if (ImmersiveCheckers.isIronFurnacesFurnace(message.block, state, tileEnt, player.level())
-                        && ActiveConfig.useIronFurnacesFurnaceImmersion) {
+                        && ActiveConfig.FILE.useIronFurnacesFurnaceImmersion) {
                     Swap.handleFurnaceSwap((WorldlyContainer) tileEnt,
                             player, message.hand, message.slot, message.placementMode);
                 }

@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.common.storage;
 
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.server.PlayerConfigs;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -121,7 +121,7 @@ public class ImmersiveStorage {
      *
      */
     public void placeItem(Player player, InteractionHand hand, int amountToPlace, int slot) {
-        boolean shouldReturnItems = PlayerConfigs.getConfig(player).returnItems;
+        boolean shouldReturnItems = ActiveConfig.getConfigForPlayer(player).returnItems;
         ItemStack toHand;
         ItemStack toImmersive;
         ItemStack leftovers;
