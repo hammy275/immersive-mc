@@ -3,16 +3,15 @@ package com.hammy275.immersivemc.common.vr;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.DoubleControllerVibrate;
-import com.hammy275.immersivemc.server.PlayerConfigs;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 public class VRRumble {
     private static boolean rumbleInVRConfigCheck(ServerPlayer player) {
         if (player == null) {
-            return ActiveConfig.doRumble;
+            return ActiveConfig.FILE.doRumble;
         } else {
-            return PlayerConfigs.getConfig(player).doRumble;
+            return ActiveConfig.getConfigForPlayer(player).doRumble;
         }
     }
 

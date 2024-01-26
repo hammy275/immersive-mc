@@ -30,8 +30,7 @@ public class ScreenUtils {
                 configEntry.get(),
                 (newVal) -> {
                     configEntry.set(newVal);
-                    configEntry.save();
-                    ActiveConfig.loadConfigFromFile();
+                    ActiveConfig.FILE.loadFromFile();
                 }
         );
     }

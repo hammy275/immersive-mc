@@ -1,8 +1,7 @@
 package com.hammy275.immersivemc.server.tracker.vrhand;
 
-import com.hammy275.immersivemc.common.config.ServerPlayerConfig;
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.server.LastTickVRData;
-import com.hammy275.immersivemc.server.PlayerConfigs;
 import com.hammy275.immersivemc.server.data.LastTickData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.particles.ParticleTypes;
@@ -73,7 +72,7 @@ public class PetTracker extends AbstractVRHandTracker {
     }
 
     @Override
-    public boolean isEnabledInConfig(ServerPlayerConfig config) {
+    public boolean isEnabledInConfig(ActiveConfig config) {
         return config.canPet;
     }
 
@@ -81,7 +80,7 @@ public class PetTracker extends AbstractVRHandTracker {
         List<LivingEntity> pets = new LinkedList<>();
         List<Entity> ents = player.level().getEntities(player, AABB.ofSize(player.position(), 10, 10, 10));
         for (Entity e : ents) {
-            if (PlayerConfigs.getConfig(player).canPetAnyLiving) {
+            if (ActiveConfig.getConfigForPlayer(player).canPetAnyLiving) {
                 if (e instanceof LivingEntity le) {
                     pets.add(le);
                 }

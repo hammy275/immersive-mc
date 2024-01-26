@@ -52,7 +52,7 @@ public class ClientLogicSubscriber {
 
     public static void onClientLogin(ClientLevel level) {
         if (!alreadyInServer) { // Only run if we're actually joining a new level, rather than changing dimensions
-            ActiveConfig.loadOffConfig(); // Load "disabled" config, so stuff is disabled if the server isn't running ImmersiveMC
+            ActiveConfig.ACTIVE = (ActiveConfig) ActiveConfig.DISABLED.clone(); // Load "disabled" config, so stuff is disabled if the server isn't running ImmersiveMC
             alreadyInServer = true;
         }
     }
@@ -153,7 +153,7 @@ public class ClientLogicSubscriber {
 
             // Check for cancelling right click if interacting with immersive-enabled block
             HitResult looking = Minecraft.getInstance().hitResult;
-            if (looking != null && looking.getType() == HitResult.Type.BLOCK && ActiveConfig.disableVanillaGUIs) {
+            if (looking != null && looking.getType() == HitResult.Type.BLOCK && ActiveConfig.ACTIVE.disableVanillaGUIs) {
                 BlockPos pos = ((BlockHitResult) looking).getBlockPos();
                 for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
                     // Don't bother checking this immersive if not in VR and immersive is VR only. Never skip those!
@@ -189,7 +189,7 @@ public class ClientLogicSubscriber {
         for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
             singleton.getTrackedObjects().clear();
         }
-        ActiveConfig.serverCopy = null; // Reset server copy of config
+        ActiveConfig.FROM_SERVER = (ActiveConfig) ActiveConfig.DISABLED.clone();
         alreadyInServer = false;
 
     }
@@ -352,7 +352,7 @@ public class ClientLogicSubscriber {
                 viewVec.z * dist);
 
         HitResult looking = Minecraft.getInstance().hitResult;
-        if (ActiveConfig.crouchBypassImmersion &&
+        if (ActiveConfig.ACTIVE.crouchBypassImmersion &&
                 looking != null && looking.getType() == HitResult.Type.BLOCK &&
                 Minecraft.getInstance().player.isSecondaryUseActive()) {
             if (Util.isHittingImmersive((BlockHitResult) looking, Minecraft.getInstance().level)) {
@@ -361,7 +361,7 @@ public class ClientLogicSubscriber {
 
         }
 
-        if (!inVR || ActiveConfig.rightClickInVR) { // Don't handle right clicks for VR players, they have hands (unless they config to!)!
+        if (!inVR || ActiveConfig.ACTIVE.rightClickInVR) { // Don't handle right clicks for VR players, they have hands (unless they config to!)!
             for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
                 if (singleton.isVROnly() && !inVR) continue;
                 for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
@@ -399,7 +399,7 @@ public class ClientLogicSubscriber {
 
         BlockPos pos = ((BlockHitResult) looking).getBlockPos();
         BlockState state = player.level().getBlockState(pos);
-        if (ActiveConfig.rightClickChest && ActiveConfig.useChestImmersion) {
+        if (ActiveConfig.ACTIVE.rightClickChest && ActiveConfig.ACTIVE.useChestImmersion) {
             boolean isChest = state.getBlock() instanceof AbstractChestBlock && player.level().getBlockEntity(pos) instanceof ChestBlockEntity;
             boolean isEnderChest = state.getBlock() instanceof EnderChestBlock && player.level().getBlockEntity(pos) instanceof EnderChestBlockEntity;
             if (isChest || isEnderChest) {
@@ -410,7 +410,7 @@ public class ClientLogicSubscriber {
                 }
             }
         }
-        if (ActiveConfig.useBarrelImmersion &&
+        if (ActiveConfig.ACTIVE.useBarrelImmersion &&
                 ImmersiveCheckers.isBarrel(pos, state, player.level().getBlockEntity(pos), player.level())) {
             BuiltImmersiveInfo info = Immersives.immersiveBarrel.findImmersive(pos);
             if (info != null) {
@@ -418,7 +418,7 @@ public class ClientLogicSubscriber {
                 return Immersives.immersiveBarrel.getCooldownDesktop();
             }
         }
-        if (ActiveConfig.useShulkerImmersion) {
+        if (ActiveConfig.ACTIVE.useShulkerImmersion) {
             BlockEntity blockEnt = player.level().getBlockEntity(pos);
             if (blockEnt instanceof ShulkerBoxBlockEntity) {
                 for (BuiltImmersiveInfo info : Immersives.immersiveShulker.getTrackedObjects()) {
