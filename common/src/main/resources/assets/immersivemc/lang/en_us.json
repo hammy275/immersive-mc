@@ -14,6 +14,8 @@
   "config.immersivemc.immersives_customize": "Customize Immersives",
   "config.immersivemc.customize_item_guides": "Customize Item Guides",
   "config.immersivemc.open_wiki_message": "Would you like to open the ImmersiveMC wiki, copy it to your clipboard, or cancel?",
+  "config.immersivemc.disable_outside_vr": "Disable ImmersiveMC Unless in VR",
+  "config.immersivemc.disable_outside_vr.desc": "Disables all of ImmersiveMC unless you're in VR.",
 
   "screen.immersivemc.backpack_config.title": "Bag Customization",
   "config.immersivemc.backpack_mode": "Bag Type",
