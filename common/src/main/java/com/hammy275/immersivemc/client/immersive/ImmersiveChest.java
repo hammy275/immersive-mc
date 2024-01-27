@@ -133,7 +133,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
             }
         }
 
-        if (openCloseCooldown <= 0 && !ActiveConfig.ACTIVE.rightClickChest) {
+        if (openCloseCooldown <= 0 && !ActiveConfig.active().rightClickChest) {
             if (VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(Minecraft.getInstance().player)
                     && info.openCloseHitboxes != null) {
                 Vec3 current0 = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController0().position();
@@ -298,12 +298,12 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
 
     @Override
     public boolean enabledInConfig() {
-        return ActiveConfig.ACTIVE.useChestImmersion;
+        return ActiveConfig.active().useChestImmersion;
     }
 
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
-        if (!VRPluginVerify.clientInVR() && !ActiveConfig.ACTIVE.rightClickChest) return;
+        if (!VRPluginVerify.clientInVR() && !ActiveConfig.active().rightClickChest) return;
         if (!((ChestInfo) info).isOpen) return;
         Network.INSTANCE.sendToServer(new SwapPacket(
                 info.getBlockPosition(), closest, hand
