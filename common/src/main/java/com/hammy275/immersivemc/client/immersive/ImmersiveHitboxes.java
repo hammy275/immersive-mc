@@ -39,7 +39,7 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
     @Override
     protected void renderTick(ImmersiveHitboxesInfo info, boolean isInVR) {
         super.renderTick(info, isInVR);
-        if (ActiveConfig.ACTIVE.reachBehindBackpackMode.usesBehindBack() && VRPluginVerify.clientInVR()) {
+        if (ActiveConfig.active().reachBehindBackpackMode.usesBehindBack() && VRPluginVerify.clientInVR()) {
             // centerPos is the center of the back of the player
             IVRData hmdData = Platform.isDevelopmentEnvironment() ?
                     VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD() :
@@ -69,7 +69,7 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
             info.setHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX, null);
         }
 
-        if (ActiveConfig.ACTIVE.reachBehindBackpackMode.usesOverShoulder() && VRPluginVerify.clientInVR()) {
+        if (ActiveConfig.active().reachBehindBackpackMode.usesOverShoulder() && VRPluginVerify.clientInVR()) {
             IVRData hmdData = Platform.isDevelopmentEnvironment() ?
                     VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD() :
                     VRPlugin.API.getRenderVRPlayer().getHMD();

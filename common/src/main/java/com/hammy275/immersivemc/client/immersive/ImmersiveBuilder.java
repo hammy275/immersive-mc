@@ -144,7 +144,7 @@ public class ImmersiveBuilder implements Cloneable {
 
     /**
      * Sets a function used to retrieve the config value for whether this immerisve is enabled.
-     * @param checker Checker to retrieve config value. Something such as () -> ActiveConfig.ACTIVE.myConfigValue works here.
+     * @param checker Checker to retrieve config value. Something such as () -> ActiveConfig.active().myConfigValue works here.
      * @return Builder object.
      */
     public ImmersiveBuilder setConfigChecker(Supplier<Boolean> checker) {
