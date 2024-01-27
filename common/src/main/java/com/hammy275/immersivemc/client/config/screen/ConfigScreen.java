@@ -24,7 +24,7 @@ public class ConfigScreen extends Screen {
 
     protected final Screen lastScreen;
 
-    protected static int BUTTON_WIDTH = 160;
+    protected static int BUTTON_WIDTH = 200;
     protected static int BUTTON_HEIGHT = 20;
 
     protected static final String WIKI_URL = "https://hammy275.com/immersivemcwiki";
@@ -42,19 +42,19 @@ public class ConfigScreen extends Screen {
         this.addRenderableWidget(Buttons.getScreenButton(new ItemGuideCustomizeScreen(this),
                         "config.immersivemc.customize_item_guides")
                 .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-                .pos((this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 64)
+                .pos((this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 72)
                 .build());
 
         this.addRenderableWidget(Buttons.getScreenButton(new BackpackConfigScreen(this),
                 "config.immersivemc.backpack")
                 .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-                .pos((this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 32)
+                .pos((this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 40)
                 .build());
 
         this.addRenderableWidget(Buttons.getScreenButton(new ImmersivesCustomizeScreen(this),
                 "config.immersivemc.immersives_customize")
                 .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-                .pos((this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT)
+                .pos((this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 8)
                 .build());
 
         this.addRenderableWidget(Buttons.getScreenButton(new ImmersivesConfigScreen(this,
@@ -62,7 +62,7 @@ public class ConfigScreen extends Screen {
                         ImmersivesConfigScreen.ScreenType.BOTH : ImmersivesConfigScreen.ScreenType.NONVR),
                 "config.immersivemc.immersives")
                 .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-                .pos((this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT + 32)
+                .pos((this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT + 24)
                 .build());
 
         this.addRenderableWidget(Buttons.getScreenButton(new ConfirmLinkScreen((clickedYes) -> {
@@ -76,13 +76,13 @@ public class ConfigScreen extends Screen {
                 CommonComponents.GUI_CANCEL,
                 true), "config.immersivemc.wiki_button")
                 .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-                .pos((this.width - BUTTON_WIDTH) / 2, this.height - BUTTON_HEIGHT - 26 - 16)
+                .pos((this.width - BUTTON_WIDTH) / 2, this.height - 40 - BUTTON_HEIGHT * 2)
                 .build());
 
         this.addRenderableWidget(Button.builder(Component.translatable("gui.done"),
                 (button) -> this.onClose())
                 .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-                .pos((this.width - BUTTON_WIDTH) / 2 - (BUTTON_WIDTH / 2) - 8, this.height - 26)
+                .pos((this.width - BUTTON_WIDTH) / 2, this.height - 26)
                 .build());
 
         this.addRenderableWidget(Button.builder(Component.translatable("config.immersivemc.reset"),
@@ -92,8 +92,11 @@ public class ConfigScreen extends Screen {
                     button.active = false;
                 })
                 .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-                .pos((this.width - BUTTON_WIDTH) / 2 + (BUTTON_WIDTH / 2) + 8, this.height - 26)
+                .pos((this.width - BUTTON_WIDTH) / 2 + (BUTTON_WIDTH / 2) + 8, this.height - 32 - BUTTON_HEIGHT)
                 .build());
+
+        this.addRenderableWidget(ScreenUtils.createOption("disable_outside_vr", ImmersiveMCConfig.disableOutsideVR)
+                .createButton(Minecraft.getInstance().options, (this.width - BUTTON_WIDTH) / 2 - (BUTTON_WIDTH / 2) - 8, this.height - 32 - BUTTON_HEIGHT, BUTTON_WIDTH));
 
     }
 
@@ -119,7 +122,7 @@ public class ConfigScreen extends Screen {
             // If host of a LAN server or playing in singleplayer, have server and client reload config, and send
             // new config state to other players
             ActiveConfig.FILE.loadFromFile(); // Load config for server-side
-            ActiveConfig.ACTIVE.loadFromFile(); // Load config for client-side. Okay to do, since in this case, the client and server are the same config
+            ActiveConfig.active().loadFromFile(); // Load config for client-side. Okay to do, since in this case, the client and server are the same config
 
             // Propagate config to other players on the server
             IntegratedServer server = Minecraft.getInstance().getSingleplayerServer();
