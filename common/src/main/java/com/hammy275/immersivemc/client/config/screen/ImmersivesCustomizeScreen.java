@@ -60,10 +60,9 @@ public class ImmersivesCustomizeScreen extends Screen {
                     ImmersiveMCConfig.itemPlacementMode.set(
                             newIndex
                     );
-                    ActiveConfig.loadActive();
+                    ActiveConfig.FILE.loadFromFile();
                 }
-
-        ).setTooltip(
+                ).setTooltip(
                 (minecraft) -> (optionIndex) -> minecraft.font.split(
                         new TranslatableComponent("config.immersivemc.placement_mode.desc",
                                 I18n.get("config.immersivemc.placement_mode." + optionIndex).toLowerCase()),
