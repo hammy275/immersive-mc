@@ -133,6 +133,10 @@ public final class ActiveConfig implements Cloneable {
         return player.level.isClientSide ? ActiveConfig.ACTIVE : getConfigForPlayer(player);
     }
 
+    public static void propagateIfLANHost() {
+
+    }
+
     /**
      * Merges this config with the config provided.
      * This will only update values that both the client and server get a say in (Synced values). For example, both the
