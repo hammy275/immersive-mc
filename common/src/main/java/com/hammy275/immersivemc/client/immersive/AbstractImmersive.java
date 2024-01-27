@@ -241,7 +241,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             try {
                 renderTick(info, isInVR);
                 render(info, stack, isInVR);
-                if (ActiveConfig.ACTIVE.placementGuideMode != PlacementGuideMode.OFF && !forceDisableItemGuide) {
+                if (ActiveConfig.active().placementGuideMode != PlacementGuideMode.OFF && !forceDisableItemGuide) {
                     // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
                     for (int i = 0; i < info.getInputSlots().length; i++) {
                         if (inputSlotShouldRenderHelpHitbox(info, i)) {

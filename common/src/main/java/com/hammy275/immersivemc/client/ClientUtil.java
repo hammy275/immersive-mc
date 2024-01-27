@@ -54,7 +54,7 @@ public class ClientUtil {
 
     public static PlacementMode getPlacementModeIndirect(boolean leftClickAlreadyDoesSomething) {
         return Minecraft.getInstance().options.keyAttack.isDown() &&
-                !leftClickAlreadyDoesSomething ? PlacementMode.PLACE_ALL : ActiveConfig.ACTIVE.placementMode;
+                !leftClickAlreadyDoesSomething ? PlacementMode.PLACE_ALL : ActiveConfig.active().placementMode;
     }
 
     /**
