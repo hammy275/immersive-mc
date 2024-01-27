@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.config;
 
 import com.hammy275.immersivemc.common.util.RGBA;
+import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 
@@ -18,7 +19,7 @@ public final class ActiveConfig implements Cloneable {
     // The settings from the server. Only used by the client.
     public static ActiveConfig FROM_SERVER = (ActiveConfig) DISABLED.clone();
     // The settings to actually use in-game. Only used by the client.
-    public static ActiveConfig ACTIVE = new ActiveConfig();
+    private static ActiveConfig ACTIVE = new ActiveConfig();
     // The settings to actually use in-game for each player. Only used by the server.
     private static final Map<UUID, ActiveConfig> CLIENTS = new HashMap<>();
 
@@ -63,6 +64,7 @@ public final class ActiveConfig implements Cloneable {
     public boolean crouchBypassImmersion = false;
     public boolean doRumble = false;
     public boolean returnItems = false;
+    public boolean disableOutsideVR = false;
 
     // Non-synced values
     public int backpackColor = 11901820;
@@ -105,7 +107,21 @@ public final class ActiveConfig implements Cloneable {
      * @return Config for player, or a disabled config if the player does not have a config.
      */
     public static ActiveConfig getConfigForPlayer(Player player) {
+        // TODO: Handle case if player is outside of VR, has VR-only ImmersiveMC,
+        // TODO: and is trying to do something with ImmersiveMC that's purely server-driven.
         return CLIENTS.getOrDefault(player.getUUID(), DISABLED);
+    }
+
+    /**
+     * Get the ActiveConfig for the client. For client only!
+     * @return Config for the local player, or a disabled config if not in VR and the setting to disable ImmersiveMC
+     * outside VR is enabled.
+     */
+    public static ActiveConfig active() {
+        if (FILE.disableOutsideVR && !VRPluginVerify.clientInVR()) {
+            return DISABLED;
+        }
+        return ACTIVE;
     }
 
     /**
@@ -122,19 +138,28 @@ public final class ActiveConfig implements Cloneable {
     }
 
     /**
-     * Set ACTIVE config to be the merge of the FILE config and the FROM_SERVER config if connected to a server.
+     * Set ACTIVE config to be the merge of the FILE config and the FROM_SERVER config if connected to a server, or to
+     * the disabled config if outside of VR and the setting to only use ImmersiveMC in VR is set.
+     * Should only be called by the client.
      */
     public static void loadActive() {
-        ACTIVE = ((ActiveConfig) FILE.clone());
-        ACTIVE.mergeWithOther(FROM_SERVER);
+        if (DISABLED.disableOutsideVR && !VRPluginVerify.clientInVR()) {
+            ACTIVE = (ActiveConfig) DISABLED.clone();
+        } else {
+            ACTIVE = ((ActiveConfig) FILE.clone());
+            ACTIVE.mergeWithOther(FROM_SERVER);
+        }
+    }
+
+    /**
+     * Loads DISABLED config into the ACTIVE slot.
+     */
+    public static void loadDisabled() {
+        ACTIVE = (ActiveConfig) DISABLED.clone();
     }
 
     public static ActiveConfig getActiveConfigCommon(Player player) {
-        return player.level.isClientSide ? ActiveConfig.ACTIVE : getConfigForPlayer(player);
-    }
-
-    public static void propagateIfLANHost() {
-
+        return player.level.isClientSide ? active() : getConfigForPlayer(player);
     }
 
     /**
@@ -222,6 +247,7 @@ public final class ActiveConfig implements Cloneable {
         crouchBypassImmersion = ImmersiveMCConfig.crouchBypassImmersion.get();
         doRumble = ImmersiveMCConfig.doRumble.get();
         returnItems = ImmersiveMCConfig.returnItems.get();
+        disableOutsideVR = ImmersiveMCConfig.disableOutsideVR.get();
 
         // Not synced values
         backpackColor = ImmersiveMCConfig.backpackColor.get();
@@ -291,7 +317,7 @@ public final class ActiveConfig implements Cloneable {
         int hashFromBuffer = buffer.readInt();
         if (hashFromBuffer != fieldsHash) {
             // Version mismatch, load disabled.
-            ActiveConfig.ACTIVE = (ActiveConfig) ActiveConfig.DISABLED.clone();
+            ACTIVE = (ActiveConfig) ActiveConfig.DISABLED.clone();
             return;
         }
 
@@ -373,7 +399,8 @@ public final class ActiveConfig implements Cloneable {
                 "Use Cauldron Immersion: " + useCauldronImmersion + "\n" +
                 "Reach Behind Backpack Mode: " + reachBehindBackpackMode + "\n" +
                 "Use Iron Furnaces Furnace Immersion: " + useIronFurnacesFurnaceImmersion + "\n" +
-                "Use Tinkers' Construct Crafting Station Immersion: " + useTinkersConstructCraftingStationImmersion;
+                "Use Tinkers' Construct Crafting Station Immersion: " + useTinkersConstructCraftingStationImmersion + "\n" +
+                "Disable ImmersiveMC When not in VR: " + disableOutsideVR;
         return stringOut;
     }
 

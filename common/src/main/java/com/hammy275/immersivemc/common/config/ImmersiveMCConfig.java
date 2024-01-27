@@ -43,6 +43,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue crouchBypassImmersion;
     public static ForgeConfigSpec.BooleanValue doRumble;
     public static ForgeConfigSpec.BooleanValue returnItems;
+    public static ForgeConfigSpec.BooleanValue disableOutsideVR;
 
     // Non-synced values
     public static ForgeConfigSpec.IntValue backpackColor;
@@ -181,6 +182,9 @@ public class ImmersiveMCConfig {
         returnItems = builder
                 .comment("Return items to oneself when walking away from immersives that items tend to not be stored in.")
                 .define("return_items", true);
+        disableOutsideVR = builder
+                .comment("Disables all of ImmersiveMC when not in VR.")
+                .define("disable_outside_vr", false);
 
         // Non-synced Values
         backpackColor = builder
@@ -286,6 +290,7 @@ public class ImmersiveMCConfig {
         crouchBypassImmersion.set(true);
         doRumble.set(true);
         returnItems.set(true);
+        disableOutsideVR.set(false);
 
         // Non-synced defaults
         backpackColor.set(11901820);
