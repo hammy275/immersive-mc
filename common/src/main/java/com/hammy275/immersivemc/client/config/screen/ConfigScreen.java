@@ -13,8 +13,12 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+
+import java.util.List;
 
 public class ConfigScreen extends Screen {
 
@@ -111,8 +115,22 @@ public class ConfigScreen extends Screen {
         for (AbstractImmersive<?> immersive : Immersives.IMMERSIVES) {
             immersive.clearImmersives();
         }
-        // Let server know of our new config state
-        if (Minecraft.getInstance().level != null) {
+        if (Minecraft.getInstance().hasSingleplayerServer()) {
+            // If host of a LAN server or playing in singleplayer, have server and client reload config, and send
+            // new config state to other players
+            ActiveConfig.FILE.loadFromFile(); // Load config for server-side
+            ActiveConfig.ACTIVE.loadFromFile(); // Load config for client-side. Okay to do, since in this case, the client and server are the same config
+
+            // Propagate config to other players on the server
+            IntegratedServer server = Minecraft.getInstance().getSingleplayerServer();
+            if (server != null && server.isPublished()) {
+                List<ServerPlayer> allButHost = server.getPlayerList().getPlayers().stream()
+                        .filter((player) -> !player.getUUID().equals(Minecraft.getInstance().player.getUUID()))
+                        .toList();
+                Network.INSTANCE.sendToPlayers(allButHost, new ConfigSyncPacket(ActiveConfig.FILE));
+            }
+        } else if (Minecraft.getInstance().level != null) {
+            // Let server know of our new config state
             Network.INSTANCE.sendToServer(new ConfigSyncPacket(ActiveConfig.FILE));
         }
         Minecraft.getInstance().setScreen(lastScreen);
