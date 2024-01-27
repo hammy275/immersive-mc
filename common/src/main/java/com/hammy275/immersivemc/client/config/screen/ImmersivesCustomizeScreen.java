@@ -65,7 +65,7 @@ public class ImmersivesCustomizeScreen extends Screen {
                         ActiveConfig.FILE.placementMode,
                         (newMode) -> {
                             ImmersiveMCConfig.itemPlacementMode.set(newMode.ordinal());
-                            ActiveConfig.loadActive();
+                            ActiveConfig.FILE.loadFromFile();
                         }
                 )
         );
