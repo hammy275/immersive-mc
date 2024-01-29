@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.common.network.packet;
 
+import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.common.util.Util;
@@ -41,6 +42,7 @@ public class ChestShulkerOpenPacket {
             if (player != null) {
                 if (NetworkUtil.safeToRun(message.pos, player)) {
                     BlockEntity tileEnt = player.level.getBlockEntity(message.pos);
+                    boolean maybeMarkOpen = true;
                     if (tileEnt instanceof ChestBlockEntity) {
                         if (!ActiveConfig.FILE.useChestImmersion) return;
                         ChestBlockEntity chest = (ChestBlockEntity) tileEnt;
@@ -72,6 +74,7 @@ public class ChestShulkerOpenPacket {
                             chest.stopOpen(player);
                             changeChestCount(chest.getBlockPos(), -1);
                         }
+                        maybeMarkOpen = false; // Never bother to attempt to mark ender chests as opened for Lootr
                     } else if (tileEnt instanceof ShulkerBoxBlockEntity shulkerBox) {
                         if (!ActiveConfig.FILE.useShulkerImmersion) return;
                         if (message.isOpen) {
@@ -89,6 +92,11 @@ public class ChestShulkerOpenPacket {
                             barrel.stopOpen(player);
                             changeChestCount(barrel.getBlockPos(), -1);
                         }
+                    } else {
+                        maybeMarkOpen = false;
+                    }
+                    if (maybeMarkOpen) {
+                        Lootr.lootrImpl.markOpener(player, message.pos);
                     }
                 }
             }
