@@ -7,12 +7,7 @@ import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
 import com.hammy275.immersivemc.client.immersive.ImmersiveChest;
 import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
-import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
-import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
-import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
+import com.hammy275.immersivemc.client.immersive.info.*;
 import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
 import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
 import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
@@ -22,6 +17,7 @@ import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.server.ChestToOpenCount;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -204,6 +200,8 @@ public class ClientLogicSubscriber {
         }
         ActiveConfig.FROM_SERVER = (ActiveConfig) ActiveConfig.DISABLED.clone();
         alreadyInServer = false;
+        // Cleared so leaving and re-joining a singleplayer world doesn't keep the lid open
+        ChestToOpenCount.chestImmersiveOpenCount.clear();
 
     }
 

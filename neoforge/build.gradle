@@ -42,6 +42,8 @@ dependencies {
     modApi "fuzs.forgeconfigapiport:forgeconfigapiport-neoforge:20.4.3"
     modApi "curse.maven:mcvrapi-591092:5032472"
 
+    modApi "curse.maven:lootr-361276:5044725"
+
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive = false }
 }
