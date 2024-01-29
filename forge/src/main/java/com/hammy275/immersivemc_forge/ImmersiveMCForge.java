@@ -1,7 +1,9 @@
 package com.hammy275.immersivemc_forge;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
+import dev.architectury.platform.Platform;
 import dev.architectury.platform.forge.EventBuses;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.IExtensionPoint;
@@ -24,6 +26,9 @@ public class ImmersiveMCForge {
         }
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ImmersiveMCConfig.GENERAL_SPEC,
                 "immersive_mc.toml");
+        if (Platform.isModLoaded("lootr")) {
+            Lootr.lootrImpl = new LootrCompatImpl();
+        }
     }
 
 

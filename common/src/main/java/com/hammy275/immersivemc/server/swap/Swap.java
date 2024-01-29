@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.server.swap;
 
+import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.storage.AnvilStorage;
@@ -437,9 +438,12 @@ public class Swap {
     }
 
     public static void handleChest(ChestBlockEntity chestIn,
-                                   Player player, InteractionHand hand,
+                                   ServerPlayer player, InteractionHand hand,
                                    int slot) {
-        ChestBlockEntity chest = slot > 26 ? Util.getOtherChest(chestIn) : chestIn;
+        chestIn = slot > 26 ? Util.getOtherChest(chestIn) : chestIn;
+        if (chestIn == null) return;
+        Container lootrChest = Lootr.lootrImpl.getContainer(player, chestIn.getBlockPos());
+        Container chest = lootrChest != null ? lootrChest : chestIn;
         if (chest != null) {
             slot = slot % 27;
             ItemStack chestItem = chest.getItem(slot).copy();

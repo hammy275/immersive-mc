@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
+import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
@@ -338,6 +339,8 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
         Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(info.getBlockPosition(), info.isOpen));
         if (!info.isOpen) {
             info.remove(); // Remove immersive if we're closing the chest
+        } else {
+            Lootr.lootrImpl.markOpener(Minecraft.getInstance().player, info.getBlockPosition());
         }
     }
 
