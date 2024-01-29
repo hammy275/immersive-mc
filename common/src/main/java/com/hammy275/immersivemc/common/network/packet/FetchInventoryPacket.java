@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.common.network.packet;
 
+import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
@@ -87,7 +88,10 @@ public class FetchInventoryPacket {
                 }
             } else if (tileEnt != null) {
                 Container inv;
-                if (tileEnt instanceof Container) {
+                Container lootrInv = Lootr.lootrImpl.getContainer(player, pos);
+                if (lootrInv != null) {
+                    inv = lootrInv;
+                } else if (tileEnt instanceof Container) {
                     inv = (Container) tileEnt;
                 } else if (tileEnt instanceof EnderChestBlockEntity) {
                     inv = player.getEnderChestInventory();

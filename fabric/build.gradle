@@ -38,6 +38,8 @@ dependencies {
 
     modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
     modApi "curse.maven:mcvrapi-591092:4633771"
+    modApi "curse.maven:lootr-615106:4608507"
+    modApi "curse.maven:clothconfigapi-348521:4973440" // lootr dependency
 
     modApi "com.terraformersmc:modmenu:7.1.0"
 
