@@ -137,7 +137,7 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return false; // No blocks need to be tracked
+        return true; // Prevents info instances from being removed. Okay to do since trackObject() is a no-op.
     }
 
     @Override
