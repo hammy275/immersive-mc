@@ -230,6 +230,8 @@ public class ClientLogicSubscriber {
                         Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()), Minecraft.getInstance().level)
                     || singleton.forceTickEvenIfNoTrack) {
                     singleton.tick(info, VRPluginVerify.clientInVR());
+                } else {
+                    info.remove();
                 }
                 if (info.hasHitboxes()) {
                     Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
