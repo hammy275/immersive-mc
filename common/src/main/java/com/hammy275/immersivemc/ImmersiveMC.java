@@ -56,8 +56,6 @@ public class ImmersiveMC {
     protected static void serverSetup() {
         Network.INSTANCE.register(SwapPacket.class, SwapPacket::encode,
                 SwapPacket::decode, SwapPacket::handle);
-        Network.INSTANCE.register(ImmersiveBreakPacket.class, ImmersiveBreakPacket::encode,
-                ImmersiveBreakPacket::decode, ImmersiveBreakPacket::handle);
         Network.INSTANCE.register(FetchInventoryPacket.class, FetchInventoryPacket::encode,
                 FetchInventoryPacket::decode, FetchInventoryPacket::handle);
         Network.INSTANCE.register(ChestShulkerOpenPacket.class, ChestShulkerOpenPacket::encode,
