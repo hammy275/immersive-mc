@@ -1,11 +1,8 @@
 package com.hammy275.immersivemc.server;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.immersive.CheckerFunction;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
-import com.hammy275.immersivemc.common.network.packet.ImmersiveBreakPacket;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -23,20 +20,15 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class ServerSubscriber {
 
     public static EventResult blockBreak(Level level, BlockPos pos, BlockState state, ServerPlayer player, @Nullable IntValue xp) {
         if (level.isClientSide) return EventResult.pass(); // Only run server-side
         ServerLevel world = (ServerLevel) level;
-        boolean sendBreakPacket = false;
 
         if (ImmersiveMCLevelStorage.usesWorldStorage(pos, state, world.getBlockEntity(pos), world)) {
             ImmersiveStorage storage = ImmersiveMCLevelStorage.getLevelStorage(world).remove(pos);
@@ -53,21 +45,6 @@ public class ServerSubscriber {
                     }
                 }
             }
-        }
-
-        for (CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> checker : ImmersiveCheckers.CHECKERS) {
-            if (checker.apply(pos, level.getBlockState(pos),
-                    level.getBlockEntity(pos), level)) {
-                sendBreakPacket = true;
-                break;
-            }
-        }
-
-        if (sendBreakPacket) {
-            AABB nearbyBox = AABB.ofSize(Vec3.atCenterOf(pos), 20, 20, 20);
-            List<ServerPlayer> nearby = level.getEntitiesOfClass(ServerPlayer.class, nearbyBox);
-            Network.INSTANCE.sendToPlayers(nearby, new ImmersiveBreakPacket(pos));
-            ChestToOpenCount.chestImmersiveOpenCount.remove(pos);
         }
 
         return EventResult.pass();
