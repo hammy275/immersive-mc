@@ -10,9 +10,7 @@ import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.util.RGBA;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import net.minecraft.client.CycleOption;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -25,8 +23,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.time.Instant;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class ItemGuideCustomizeScreen extends Screen {
 
@@ -122,25 +118,18 @@ public class ItemGuideCustomizeScreen extends Screen {
                 32, this.height - 32, 24);
 
 
-        this.list.addBig(CycleOption.create(
-                        "config.immersivemc.placement_guide_mode",
-                        () -> IntStream.rangeClosed(0, PlacementGuideMode.values().length - 1).boxed().collect(Collectors.toList()),
-                        (optionIndex) -> new TranslatableComponent("config.immersivemc.placement_guide_mode." + optionIndex),
-                        (ignored) -> ImmersiveMCConfig.placementGuideMode.get(),
-                        (ignored, ignored2, newIndex) -> {
-                            ImmersiveMCConfig.placementGuideMode.set(newIndex);
-
-                            // We don't use loadConfigFromFile here so that other guide values aren't accidentally overwritten
-                            ActiveConfig.FILE.placementGuideMode = PlacementGuideMode.values()[newIndex];
-                        }
-                ).setTooltip(
-                        (minecraft) -> (optionIndex) -> minecraft.font.split(
-                                new TranslatableComponent("config.immersivemc.placement_guide_mode.desc"
-                                ), 200
-                        )
-                )
-        );
-
+        this.list.addBig(
+            ScreenUtils.createEnumOption(PlacementGuideMode.class,
+                    "config.immersivemc.placement_guide_mode",
+                    (guideMode) -> new TranslatableComponent("config.immersivemc.placement_guide_mode." + guideMode.ordinal()),
+                    (guideMode -> new TranslatableComponent("config.immersivemc.placement_guide_mode.desc")),
+                    () -> ActiveConfig.FILE.placementGuideMode,
+                    (newModeIndex, newMode) -> {
+                        ImmersiveMCConfig.placementGuideMode.set(newModeIndex);
+                        // We don't use loadConfigFromFile here so that other guide values aren't accidentally overwritten
+                        ActiveConfig.FILE.placementGuideMode = newMode;
+                    }
+        ));
 
         for (int i = 0; i < types.length; i++) {
             RGBA color = i == 0 ? ActiveConfig.FILE.itemGuideColor : i == 1 ? ActiveConfig.FILE.itemGuideSelectedColor : ActiveConfig.FILE.rangedGrabColor;
@@ -148,7 +137,7 @@ public class ItemGuideCustomizeScreen extends Screen {
             if (i == 0) {
                 String sizeKey = "config." + ImmersiveMC.MOD_ID + "." + types[i] + "_size";
                 this.list.addBig(ScreenUtils.createIntSlider(
-                                sizeKey, (value) -> new TextComponent(I18n.get(sizeKey) + ": " + String.format("%.02f", (float) value / 100.0d)),
+                                sizeKey, (value) -> new TextComponent(I18n.get(sizeKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
                                 0, 100, () -> (int)(ActiveConfig.FILE.itemGuideSize * 100),
                                  (newVal) -> {
                                      ImmersiveMCConfig.itemGuideSize.set(newVal / 100.0d);
@@ -194,11 +183,11 @@ public class ItemGuideCustomizeScreen extends Screen {
         }
 
         this.addRenderableWidget(this.list);
-        this.addRenderableWidget(new Button(
+        this.addRenderableWidget(ScreenUtils.createDoneButton(
                 (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("gui.done"),
-                (button) -> this.onClose()));
-
+                BUTTON_WIDTH, BUTTON_HEIGHT,
+                this
+        ));
     }
 
     @Override

@@ -2,10 +2,9 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
+import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.CycleOption;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -15,8 +14,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class ImmersivesCustomizeScreen extends Screen {
 
@@ -51,23 +48,18 @@ public class ImmersivesCustomizeScreen extends Screen {
         ScreenUtils.addOption("3d_compat", ImmersiveMCConfig.resourcePack3dCompat, this.list);
         ScreenUtils.addOption("crouch_bypass_immersion", ImmersiveMCConfig.crouchBypassImmersion, this.list);
 
-        this.list.addBig(CycleOption.create(
-                "config.immersivemc.placement_mode",
-                () -> IntStream.rangeClosed(0, 3).boxed().collect(Collectors.toList()),
-                (optionIndex) -> new TranslatableComponent("config.immersivemc.placement_mode." + optionIndex),
-                (ignored) -> ImmersiveMCConfig.itemPlacementMode.get(),
-                (ignored, ignored2, newIndex) -> {
-                    ImmersiveMCConfig.itemPlacementMode.set(
-                            newIndex
-                    );
-                    ActiveConfig.FILE.loadFromFile();
-                }
-                ).setTooltip(
-                (minecraft) -> (optionIndex) -> minecraft.font.split(
-                        new TranslatableComponent("config.immersivemc.placement_mode.desc",
-                                I18n.get("config.immersivemc.placement_mode." + optionIndex).toLowerCase()),
-                        200)
-        ));
+        this.list.addBig(
+            ScreenUtils.createEnumOption(PlacementMode.class,
+                    "config.immersivemc.placement_mode",
+                    (placementMode) -> new TranslatableComponent("config.immersivemc.placement_mode." + placementMode.ordinal()),
+                    (placementMode) -> new TranslatableComponent("config.immersivemc.placement_mode.desc",
+                            I18n.get("config.immersivemc.placement_mode." + placementMode.ordinal()).toLowerCase()),
+                    () -> ActiveConfig.FILE.placementMode,
+                    (newModeIndex, newMode) -> {
+                        ImmersiveMCConfig.itemPlacementMode.set(newMode.ordinal());
+                        ActiveConfig.FILE.loadFromFile();
+                    }
+            ));
 
         this.list.addBig(ScreenUtils.createIntSlider(
                 "config.immersivemc.ranged_grab_range",
@@ -86,10 +78,11 @@ public class ImmersivesCustomizeScreen extends Screen {
 
         this.addRenderableWidget(this.list);
 
-        this.addRenderableWidget(new Button(
+        this.addRenderableWidget(ScreenUtils.createDoneButton(
                 (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("gui.done"),
-                (button) -> this.onClose()));
+                BUTTON_WIDTH, BUTTON_HEIGHT,
+                this
+        ));
     }
 
     @Override

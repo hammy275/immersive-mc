@@ -10,7 +10,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.CycleOption;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -23,10 +22,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /*
 Thanks to https://leo3418.github.io/2021/03/31/forge-mod-config-screen-1-16.html for a guide that was very
@@ -54,52 +50,45 @@ public class BackpackConfigScreen extends Screen {
 
         this.addRenderableWidget(this.list);
 
-        this.addRenderableWidget(new Button(
+        this.addRenderableWidget(ScreenUtils.createDoneButton(
                 (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("gui.done"),
-                (button) -> this.onClose()));
+                BUTTON_WIDTH, BUTTON_HEIGHT,
+                this
+        ));
     }
 
     protected void initOptionsList() {
-        this.list.addBig(CycleOption.create(
-                "config.immersivemc.backpack_mode",
-                () -> IntStream.rangeClosed(0, BackpackMode.values().length - 1).boxed().collect(Collectors.toList()),
-                (optionIndex) -> new TranslatableComponent("config.immersivemc.backpack_mode." + optionIndex),
-                (ignored) -> ImmersiveMCConfig.backpackMode.get(),
-                (ignored, ignored2, newIndex) -> {
-                    BackpackMode oldMode = ActiveConfig.FILE.backpackMode;
-                    ImmersiveMCConfig.backpackMode.set(newIndex);
-                    ActiveConfig.FILE.backpackMode = BackpackMode.values()[newIndex];
-                    // Also set ACTIVE mode since that's what getBackpackModel() looks at in renderBackpack()
-                    ActiveConfig.active().backpackMode = BackpackMode.values()[newIndex];
-                    if (oldMode.colorable != BackpackMode.values()[newIndex].colorable) {
-                        Minecraft.getInstance().setScreen(new BackpackConfigScreen(parentScreen));
+
+        this.list.addBig(
+            ScreenUtils.createEnumOption(BackpackMode.class,
+                    "config.immersivemc.backpack_mode",
+                    (backpackMode) -> new TranslatableComponent("config.immersivemc.backpack_mode." + backpackMode.ordinal()),
+                    (backpackMode) -> new TranslatableComponent("config.immersivemc.backpack_mode." + backpackMode.ordinal() + ".desc"),
+                    () -> ActiveConfig.FILE.backpackMode,
+                    (newModeIndex, newMode) -> {
+                        BackpackMode oldMode = ActiveConfig.FILE.backpackMode;
+                        ImmersiveMCConfig.backpackMode.set(newMode.ordinal());
+                        ActiveConfig.FILE.backpackMode = newMode;
+                        // Also set ACTIVE mode since that's what getBackpackModel() looks at in renderBackpack()
+                        ActiveConfig.active().backpackMode = newMode;
+                        if (oldMode.colorable != newMode.colorable) {
+                            Minecraft.getInstance().setScreen(new BackpackConfigScreen(parentScreen));
+                        }
                     }
-                }
-
-        ).setTooltip(
-                (minecraft) -> (optionIndex) -> minecraft.font.split(
-                        new TranslatableComponent("config.immersivemc.backpack_mode." + optionIndex + ".desc"),
-                        200)
         ));
-        this.list.addBig(CycleOption.create(
-                "config.immersivemc.reach_behind_backpack_mode",
-                () -> IntStream.rangeClosed(0, ReachBehindBackpackMode.values().length - 1).boxed().collect(Collectors.toList()),
-                (optionIndex) -> new TranslatableComponent("config.immersivemc.reach_behind_backpack_mode." + optionIndex),
-                (ignored) -> ImmersiveMCConfig.reachBehindBackpackMode.get(),
-                (ignored, ignored2, newIndex) -> {
-                    ImmersiveMCConfig.reachBehindBackpackMode.set(
-                            newIndex
-                    );
-                    ImmersiveMCConfig.reachBehindBackpackMode.save();
-                    ActiveConfig.FILE.reachBehindBackpackMode = ReachBehindBackpackMode.values()[newIndex];
-                }
 
-        ).setTooltip(
-                (minecraft) -> (optionIndex) -> minecraft.font.split(
-                        new TranslatableComponent("config.immersivemc.reach_behind_backpack_mode." + optionIndex + ".desc"),
-                        200)
-        ));
+        this.list.addBig(
+            ScreenUtils.createEnumOption(ReachBehindBackpackMode.class,
+                    "config.immersivemc.reach_behind_backpack_mode",
+                    (reachBehindBackpackMode) -> new TranslatableComponent("config.immersivemc.reach_behind_backpack_mode." + reachBehindBackpackMode.ordinal()),
+                    (reachBehindBackpackMode) -> new TranslatableComponent("config.immersivemc.reach_behind_backpack_mode." + reachBehindBackpackMode.ordinal() + ".desc"),
+                    () -> ActiveConfig.FILE.reachBehindBackpackMode,
+                    (newModeIndex, newMode) -> {
+                        ImmersiveMCConfig.reachBehindBackpackMode.set(newMode.ordinal());
+                        ActiveConfig.FILE.reachBehindBackpackMode = newMode;
+                    }
+            ));
+
         if (ActiveConfig.FILE.backpackMode.colorable) {
             this.list.addBig(ScreenUtils.createIntSlider(
                     "config.immersivemc.backpack_r",

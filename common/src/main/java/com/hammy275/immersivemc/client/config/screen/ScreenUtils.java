@@ -2,17 +2,23 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import net.minecraft.client.CycleOption;
-import net.minecraft.client.ProgressOption;
 import dev.architectury.platform.Platform;
+import net.minecraft.client.CycleOption;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.ProgressOption;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ScreenUtils {
 
@@ -37,6 +43,34 @@ public class ScreenUtils {
                     ActiveConfig.FILE.loadFromFile();
                 }
         );
+    }
+
+    public static <E extends Enum<E>> CycleOption<Integer> createEnumOption(Class<E> enumClass, String titleTranslationKey,
+                                                                         Function<E, Component> displayTextCreator,
+                                                                         Function<E, Component> tooltipTextCreator,
+                                                                         Supplier<E> valueGetter,
+                                                                         BiConsumer<Integer, E> valueSetter) {
+        return CycleOption.create(
+                titleTranslationKey,
+                () -> IntStream.rangeClosed(0, enumClass.getEnumConstants().length - 1).boxed().collect(Collectors.toList()),
+                (optionIndex) -> displayTextCreator.apply(enumClass.getEnumConstants()[optionIndex]),
+                (ignored) -> valueGetter.get().ordinal(),
+                (ignored, ignored2, newIndex) -> valueSetter.accept(newIndex, enumClass.getEnumConstants()[newIndex])
+        ).setTooltip(
+                (minecraft) -> optionIndex -> minecraft.font.split(tooltipTextCreator.apply(enumClass.getEnumConstants()[optionIndex]), 200)
+        );
+    }
+
+    public static Button createScreenButton(int x, int y, int width, int height, String translationString, Screen screen) {
+        return createButton(x, y, width, height, translationString, (button) -> Minecraft.getInstance().setScreen(screen));
+    }
+
+    public static Button createDoneButton(int x, int y, int width, int height, Screen currentScreen) {
+        return createButton(x, y, width, height, "gui.done", (button) -> currentScreen.onClose());
+    }
+
+    public static Button createButton(int x, int y, int width, int height, String translationString, Consumer<Button> clickHandler) {
+        return new Button(x, y, width, height, new TranslatableComponent(translationString), clickHandler::accept);
     }
 
     public static void addOptionIfModLoaded(String modId, String keyName, ForgeConfigSpec.BooleanValue configEntry, OptionsList list) {
