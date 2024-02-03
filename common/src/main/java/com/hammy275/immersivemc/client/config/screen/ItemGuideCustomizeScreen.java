@@ -11,8 +11,6 @@ import com.hammy275.immersivemc.common.util.RGBA;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.OptionInstance;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -24,8 +22,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Optional;
 
 public class ItemGuideCustomizeScreen extends Screen {
 
@@ -122,26 +118,17 @@ public class ItemGuideCustomizeScreen extends Screen {
 
 
         this.list.addBig(
-                new OptionInstance<>(
-                        "config.immersivemc.placement_guide_mode",
-                        mc -> guideMode -> mc.font.split(
-                                Component.translatable("config.immersivemc.placement_guide_mode.desc"), 200),
-                        (component, guideMode) -> Component.translatable("config.immersivemc.placement_guide_mode." + guideMode.ordinal()),
-                        new OptionInstance.LazyEnum<>(
-                                () -> Arrays.asList(PlacementGuideMode.values()),
-                                Optional::of,
-                                null
-                        ),
-                        ActiveConfig.FILE.placementGuideMode,
-                        (newMode) -> {
-                            ImmersiveMCConfig.placementGuideMode.set(newMode.ordinal());
-
-                            // We don't use loadConfigFromFile here so that other guide values aren't accidentally overwritten
-                            ActiveConfig.FILE.placementGuideMode = newMode;
-                        }
-                )
-        );
-
+            ScreenUtils.createEnumOption(PlacementGuideMode.class,
+                    "config.immersivemc.placement_guide_mode",
+                    (guideMode) -> Component.translatable("config.immersivemc.placement_guide_mode." + guideMode.ordinal()),
+                    (guideMode -> Component.translatable("config.immersivemc.placement_guide_mode.desc")),
+                    () -> ActiveConfig.FILE.placementGuideMode,
+                    (newModeIndex, newMode) -> {
+                        ImmersiveMCConfig.placementGuideMode.set(newModeIndex);
+                        // We don't use loadConfigFromFile here so that other guide values aren't accidentally overwritten
+                        ActiveConfig.FILE.placementGuideMode = newMode;
+                    }
+        ));
 
         for (int i = 0; i < types.length; i++) {
             RGBA color = i == 0 ? ActiveConfig.FILE.itemGuideColor : i == 1 ? ActiveConfig.FILE.itemGuideSelectedColor : ActiveConfig.FILE.rangedGrabColor;
@@ -150,7 +137,7 @@ public class ItemGuideCustomizeScreen extends Screen {
                 String sizeKey = "config." + ImmersiveMC.MOD_ID + "." + types[i] + "_size";
                 this.list.addBig(ScreenUtils.createIntSlider(
                                 sizeKey, (value) -> Component.literal(I18n.get(sizeKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
-                                0, 100, (int)(ActiveConfig.FILE.itemGuideSize * 100),
+                                0, 100, () -> (int)(ActiveConfig.FILE.itemGuideSize * 100),
                                  (newVal) -> {
                                      ImmersiveMCConfig.itemGuideSize.set(newVal / 100.0d);
                                      ActiveConfig.FILE.itemGuideSize = newVal / 100.0d;
@@ -161,7 +148,7 @@ public class ItemGuideCustomizeScreen extends Screen {
                 String sizeKey = "config." + ImmersiveMC.MOD_ID + "." + types[i] + "_size";
                 this.list.addBig(ScreenUtils.createIntSlider(
                                 sizeKey, (value) -> Component.literal(I18n.get(sizeKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
-                                0, 100, (int)(ActiveConfig.FILE.itemGuideSelectedSize * 100),
+                                0, 100, () -> (int)(ActiveConfig.FILE.itemGuideSelectedSize * 100),
                                 (newVal) -> {
                                     ImmersiveMCConfig.itemGuideSelectedSize.set(newVal / 100.0d);
                                     ActiveConfig.FILE.itemGuideSelectedSize = newVal / 100.0d;
@@ -179,7 +166,7 @@ public class ItemGuideCustomizeScreen extends Screen {
                 this.list.addBig(ScreenUtils.createIntSlider(
                         compKey, (value) ->
                                 Component.literal(I18n.get(compKey) + ": " + value),
-                        0, 255, color.getColor(c),
+                        0, 255, () -> color.getColor(c),
                         (newVal) -> {
                             color.setColor(c, newVal);
                             if (finalI == 0) {
@@ -195,10 +182,11 @@ public class ItemGuideCustomizeScreen extends Screen {
         }
 
         this.addRenderableWidget(this.list);
-        this.addRenderableWidget(new Button(
+        this.addRenderableWidget(ScreenUtils.createDoneButton(
                 (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("gui.done"),
-                (button) -> this.onClose()));
+                BUTTON_WIDTH, BUTTON_HEIGHT,
+                this
+        ));
 
     }
 

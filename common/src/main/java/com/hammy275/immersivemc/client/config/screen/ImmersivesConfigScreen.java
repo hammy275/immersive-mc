@@ -3,7 +3,6 @@ package com.hammy275.immersivemc.client.config.screen;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -40,10 +39,11 @@ public class ImmersivesConfigScreen extends Screen {
 
         this.addRenderableWidget(this.list);
 
-        this.addRenderableWidget(new Button(
+        this.addRenderableWidget(ScreenUtils.createDoneButton(
                 (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("gui.done"),
-                (button) -> this.onClose()));
+                BUTTON_WIDTH, BUTTON_HEIGHT,
+                this
+        ));
     }
 
     protected void initOptionsList() {
