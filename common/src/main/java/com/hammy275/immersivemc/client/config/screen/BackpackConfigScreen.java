@@ -9,10 +9,7 @@ import com.hammy275.immersivemc.common.config.ReachBehindBackpackMode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.OptionInstance;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -22,8 +19,6 @@ import net.minecraft.network.chat.Component;
 import org.joml.Vector3f;
 
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Optional;
 
 /*
 Thanks to https://leo3418.github.io/2021/03/31/forge-mod-config-screen-1-16.html for a guide that was very
@@ -51,74 +46,63 @@ public class BackpackConfigScreen extends Screen {
 
         this.addRenderableWidget(this.list);
 
-        this.addRenderableWidget(Button.builder(Component.translatable("gui.done"),
-                        (button) -> this.onClose())
-                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-                .pos((this.width - BUTTON_WIDTH) / 2, this.height - 26)
-                .build());
+        this.addRenderableWidget(ScreenUtils.createDoneButton(
+                (this.width - BUTTON_WIDTH) / 2, this.height - 26,
+                BUTTON_WIDTH, BUTTON_HEIGHT,
+                this
+        ));
     }
 
     protected void initOptionsList() {
+
         this.list.addBig(
-                new OptionInstance<>(
-                        "config.immersivemc.backpack_mode",
-                        backpackMode -> Tooltip.create(
-                                Component.translatable("config.immersivemc.backpack_mode." + backpackMode.ordinal() + ".desc")),
-                        (component, backpackMode) -> Component.translatable("config.immersivemc.backpack_mode." + backpackMode.ordinal()),
-                        new OptionInstance.LazyEnum<>(
-                                () -> Arrays.asList(BackpackMode.values()),
-                                Optional::of,
-                                null
-                        ),
-                        ActiveConfig.FILE.backpackMode,
-                        (newMode) -> {
-                            BackpackMode oldMode = ActiveConfig.FILE.backpackMode;
-                            ImmersiveMCConfig.backpackMode.set(newMode.ordinal());
-                            ActiveConfig.FILE.backpackMode = newMode;
-                            // Also set ACTIVE mode since that's what getBackpackModel() looks at in renderBackpack()
-                            ActiveConfig.active().backpackMode = newMode;
-                            if (oldMode.colorable != newMode.colorable) {
-                                Minecraft.getInstance().setScreen(new BackpackConfigScreen(parentScreen));
-                            }
+            ScreenUtils.createEnumOption(BackpackMode.class,
+                    "config.immersivemc.backpack_mode",
+                    (backpackMode) -> Component.translatable("config.immersivemc.backpack_mode." + backpackMode.ordinal()),
+                    (backpackMode) -> Component.translatable("config.immersivemc.backpack_mode." + backpackMode.ordinal() + ".desc"),
+                    () -> ActiveConfig.FILE.backpackMode,
+                    (newModeIndex, newMode) -> {
+                        BackpackMode oldMode = ActiveConfig.FILE.backpackMode;
+                        ImmersiveMCConfig.backpackMode.set(newMode.ordinal());
+                        ActiveConfig.FILE.backpackMode = newMode;
+                        // Also set ACTIVE mode since that's what getBackpackModel() looks at in renderBackpack()
+                        ActiveConfig.active().backpackMode = newMode;
+                        if (oldMode.colorable != newMode.colorable) {
+                            Minecraft.getInstance().setScreen(new BackpackConfigScreen(parentScreen));
                         }
-                )
-        );
+                    }
+        ));
+
         this.list.addBig(
-                new OptionInstance<>(
-                        "config.immersivemc.reach_behind_backpack_mode",
-                        reachBehindBackpackMode -> Tooltip.create(
-                                Component.translatable("config.immersivemc.reach_behind_backpack_mode." + reachBehindBackpackMode.ordinal() + ".desc")),
-                        (component, reachBehindBackpackMode) -> Component.translatable("config.immersivemc.reach_behind_backpack_mode." + reachBehindBackpackMode.ordinal()),
-                        new OptionInstance.LazyEnum<>(
-                                () -> Arrays.asList(ReachBehindBackpackMode.values()),
-                                Optional::of,
-                                null
-                        ),
-                        ActiveConfig.FILE.reachBehindBackpackMode,
-                        (newMode) -> {
-                            ImmersiveMCConfig.reachBehindBackpackMode.set(newMode.ordinal());
-                            ActiveConfig.FILE.reachBehindBackpackMode = newMode;
-                        }
-                )
-        );
+            ScreenUtils.createEnumOption(ReachBehindBackpackMode.class,
+                    "config.immersivemc.reach_behind_backpack_mode",
+                    (reachBehindBackpackMode) -> Component.translatable("config.immersivemc.reach_behind_backpack_mode." + reachBehindBackpackMode.ordinal()),
+                    (reachBehindBackpackMode) -> Component.translatable("config.immersivemc.reach_behind_backpack_mode." + reachBehindBackpackMode.ordinal() + ".desc"),
+                    () -> ActiveConfig.FILE.reachBehindBackpackMode,
+                    (newModeIndex, newMode) -> {
+                        ImmersiveMCConfig.reachBehindBackpackMode.set(newMode.ordinal());
+                        ActiveConfig.FILE.reachBehindBackpackMode = newMode;
+                    }
+            ));
+
         if (ActiveConfig.FILE.backpackMode.colorable) {
             this.list.addBig(ScreenUtils.createIntSlider(
                     "config.immersivemc.backpack_r",
                     (integer) -> Component.literal(I18n.get("config.immersivemc.backpack_r") + ": " + getRGB('r')),
                     0, 255,
-                    getRGB('r'), (newRVal) -> setRGB(newRVal, 'r')
+                    () -> getRGB('r'), (newRVal) -> setRGB(newRVal, 'r')
             ));
             this.list.addBig(ScreenUtils.createIntSlider(
                     "config.immersivemc.backpack_g",
                     (integer) -> Component.literal(I18n.get("config.immersivemc.backpack_g") + ": " + getRGB('g')),
                     0, 255,
-                    getRGB('g'), (newRVal) -> setRGB(newRVal, 'g')
+                    () -> getRGB('g'), (newRVal) -> setRGB(newRVal, 'g')
             ));
             this.list.addBig(ScreenUtils.createIntSlider(
                     "config.immersivemc.backpack_b",
                     (integer) -> Component.literal(I18n.get("config.immersivemc.backpack_b") + ": " + getRGB('b')),
                     0, 255,
-                    getRGB('b'), (newRVal) -> setRGB(newRVal, 'b')
+                    () -> getRGB('b'), (newRVal) -> setRGB(newRVal, 'b')
             ));
         }
     }
