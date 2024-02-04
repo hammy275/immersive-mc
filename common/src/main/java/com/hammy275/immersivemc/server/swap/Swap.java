@@ -201,10 +201,11 @@ public class Swap {
             if (!player.getAbilities().instabuild) {
                 player.giveExperienceLevels(-resAndCost.getSecond());
             }
-            storage.shrinkSlot(0, 1);
-            storage.shrinkSlot(1, 1);
-            storage.setItem(2, ItemStack.EMPTY);
-            storage.xpLevels = 0;
+            storage.setItem(0, container.getSlot(0).getItem().copy());
+            storage.setItem(1, container.getSlot(1).getItem().copy());
+            Pair<ItemStack, Integer> output = Swap.getAnvilOutput(storage.getItem(0), storage.getItem(1), player);
+            storage.setItem(2, output.getFirst());
+            storage.xpLevels = output.getSecond();
             player.setItemInHand(hand, resAndCost.getFirst());
             return true;
         }
