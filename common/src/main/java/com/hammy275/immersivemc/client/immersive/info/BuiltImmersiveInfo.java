@@ -155,11 +155,15 @@ public class BuiltImmersiveInfo extends AbstractImmersiveInfo implements InfoTri
 
     @Override
     public AABB[] getTriggerHitboxes() {
-        AABB[] triggerHitboxes = new AABB[this.triggerHitboxes.size()];
-        for (int i = 0; i < this.triggerHitboxes.size(); i++) {
-            triggerHitboxes[i] = this.triggerHitboxes.get(i).getAABB();
+        if (hasHitboxes()) {
+            AABB[] triggerHitboxes = new AABB[this.triggerHitboxes.size()];
+            for (int i = 0; i < this.triggerHitboxes.size(); i++) {
+                triggerHitboxes[i] = this.triggerHitboxes.get(i).getAABB();
+            }
+            return triggerHitboxes;
+        } else {
+            return new AABB[0];
         }
-        return triggerHitboxes;
     }
 
     @Override
