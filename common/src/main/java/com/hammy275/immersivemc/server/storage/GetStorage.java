@@ -39,7 +39,7 @@ public class GetStorage {
 
     // Used because we don't want to drop outputs on the ground, so we need the last input index
     public static int getLastInputIndex(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        if (ImmersiveCheckers.isCraftingTable(pos, state, tileEntity, level)) {
+        if (ImmersiveHandlers.craftingHandler.isValidBlock(pos, state, tileEntity, level)) {
             return 8;
         } else if (ImmersiveHandlers.anvilHandler.isValidBlock(pos, state, tileEntity, level)) {
             return 1;
@@ -73,7 +73,7 @@ public class GetStorage {
     public static ImmersiveStorage getStorage(Player player, BlockPos pos) {
         BlockState state = player.level().getBlockState(pos);
         BlockEntity tileEnt = player.level().getBlockEntity(pos);
-        if (ImmersiveCheckers.isCraftingTable(pos, state, tileEnt, player.level())) {
+        if (ImmersiveHandlers.craftingHandler.isValidBlock(pos, state, tileEnt, player.level())) {
             return getCraftingStorage(player, pos);
         } else if (ImmersiveHandlers.anvilHandler.isValidBlock(pos, state, tileEnt, player.level())) {
             return getAnvilStorage(player, pos);
@@ -92,7 +92,7 @@ public class GetStorage {
         if (storage != null) {
             BlockState state = player.level().getBlockState(pos);
             BlockEntity tileEnt = player.level().getBlockEntity(pos);
-            if (ImmersiveCheckers.isCraftingTable(pos, state, tileEnt, player.level())) {
+            if (ImmersiveHandlers.craftingHandler.isValidBlock(pos, state, tileEnt, player.level())) {
                 ItemStack out = Swap.getRecipeOutput(player, storage.getItemsRaw());
                 storage.setItem(9, out);
             } else if (ImmersiveHandlers.anvilHandler.isValidBlock(pos, state, tileEnt, player.level()) &&

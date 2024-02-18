@@ -208,57 +208,6 @@ public class Swap {
         return false;
     }
 
-    public static void handleCraftingSwap(ServerPlayer player, int slot, InteractionHand hand, BlockPos tablePos,
-                                          PlacementMode mode) {
-        ImmersiveStorage storage = GetStorage.getCraftingStorage(player, tablePos);
-        if (player.level().getBlockEntity(tablePos) instanceof Container table) { // Tinker's Construct Table
-            ItemStack playerItem = player.getItemInHand(hand).copy();
-            ItemStack craftingItem = table.getItem(slot).copy();
-            if (slot < 9) {
-                // Only set the output item into our storage since everything else is rendered by TC
-                SwapResult result = getSwap(playerItem, craftingItem, mode);
-                givePlayerItemSwap(result.toHand, playerItem, player, hand);
-                table.setItem(slot, result.toOther);
-                Util.placeLeftovers(player, result.leftovers);
-                ItemStack[] ins = new ItemStack[10];
-                for (int i = 0; i <= 8; i++) {
-                    ins[i] = table.getItem(i);
-                    storage.getItemsRaw()[i] = ItemStack.EMPTY;
-                }
-                ins[9] = ItemStack.EMPTY;
-                ItemStack output = getRecipeOutput(player, ins);
-                storage.getItemsRaw()[9] = output;
-            } else {
-                // At crafting time, make our storage match the table contents, craft like a vanilla table,
-                // then put our storage back to empty after cloning our crafting results back over
-                for (int i = 0; i <= 8; i++) {
-                    storage.getItemsRaw()[i] = table.getItem(i).copy();
-                }
-                handleDoCraft(player, storage.getItemsRaw(), tablePos);
-                for (int i = 0; i <= 8; i++) {
-                    // setItem here instead of using non-copies so setItem can sync stuff back
-                    table.setItem(i, storage.getItemsRaw()[i]);
-                    storage.getItemsRaw()[i] = ItemStack.EMPTY;
-                }
-            }
-        } else {
-            if (slot < 9) {
-                storage.placeItem(player, hand,
-                        getPlaceAmount(player.getItemInHand(hand), mode),
-                        slot);
-                storage.setItem(9, getRecipeOutput(player, storage.getItemsRaw()));
-            } else {
-                handleDoCraft(player, storage.getItemsRaw(), tablePos);
-                for (int i = 0; i <= 8; i++) {
-                    if (!storage.getItem(i).isEmpty()) {
-                        storage.shrinkCountsOnly(i, 1);
-                    }
-                }
-            }
-            storage.wStorage.setDirty();
-        }
-    }
-
     public static ItemStack getRecipeOutput(ServerPlayer player, ItemStack[] stacksIn) {
         int invDim = stacksIn.length == 10 ? 3 : 2; // 10 since stacksIn includes the output slot
         CraftingContainer inv = new TransientCraftingContainer(new NullContainer(), invDim, invDim);

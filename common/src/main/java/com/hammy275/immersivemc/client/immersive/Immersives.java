@@ -130,7 +130,7 @@ public class Immersives {
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand)))
             .setVROnly(true)
             .build();
-    public static final BuiltImmersive immersiveCrafting = ImmersiveBuilder.create(ImmersiveCheckers::isCraftingTable)
+    public static final BuiltImmersive immersiveCrafting = ImmersiveBuilder.create(ImmersiveHandlers.craftingHandler)
             .setConfigChecker(() -> ActiveConfig.active().useCraftingImmersion)
             .setRenderTime(ClientConstants.ticksToRenderCrafting)
             .setRenderSize(ClientConstants.itemScaleSizeCrafting)
@@ -143,7 +143,7 @@ public class Immersives {
                     .forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
             .setMaxImmersives(1)
-            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand)))
+            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .setUsesWorldStorage(true)
             .setTriggerHitboxControllerNum(0)
             .build();

@@ -10,11 +10,13 @@ public class ImmersiveHandlers {
 
     public static final ImmersiveHandler anvilHandler = new AnvilHandler();
     public static final ImmersiveHandler brewingStandHandler = new BrewingStandHandler();
+    public static final ImmersiveHandler craftingHandler = new CraftingHandler();
     public static final ImmersiveHandler furnaceHandler = new FurnaceHandler();
 
     static {
         HANDLERS.add(anvilHandler);
         HANDLERS.add(brewingStandHandler);
+        HANDLERS.add(craftingHandler);
         HANDLERS.add(furnaceHandler);
     }
 }
