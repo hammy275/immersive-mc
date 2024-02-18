@@ -27,7 +27,6 @@ public class ImmersiveCheckers {
         CHECKERS.add(ImmersiveCheckers::isChiseledBookshelf);
         CHECKERS.add(ImmersiveCheckers::isCraftingTable);
         CHECKERS.add(ImmersiveCheckers::isEnchantingTable);
-        CHECKERS.add(ImmersiveCheckers::isFurnace);
         CHECKERS.add(ImmersiveCheckers::isHopper);
         CHECKERS.add(ImmersiveCheckers::isIronFurnacesFurnace);
         CHECKERS.add(ImmersiveCheckers::isJukebox);
@@ -42,6 +41,12 @@ public class ImmersiveCheckers {
         WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isEnchantingTable);
         WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isSmithingTable);
 
+        for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
+            CHECKERS.add(handler::isValidBlock);
+            if (handler.usesWorldStorage()) {
+                WORLD_STORAGE_CHECKERS.add(handler::isValidBlock);
+            }
+        }
     }
 
     // Vanilla

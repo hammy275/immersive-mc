@@ -4,6 +4,8 @@ import com.hammy275.immersivemc.client.SafeClientUtil;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
+import com.hammy275.immersivemc.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.common.immersive.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.server.swap.Swap;
 import dev.architectury.networking.NetworkManager;
@@ -11,7 +13,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -51,11 +52,12 @@ public class SwapPacket {
             if (NetworkUtil.safeToRun(message.block, player)) {
                 BlockEntity tileEnt = player.level().getBlockEntity(message.block);
                 BlockState state = player.level().getBlockState(message.block);
-                if (ImmersiveCheckers.isFurnace(message.block, state, tileEnt, player.level())
-                        && ActiveConfig.FILE.useFurnaceImmersion) {
-                    Swap.handleFurnaceSwap((WorldlyContainer) tileEnt,
-                            player, message.hand, message.slot, message.placementMode);
-                } else if (ImmersiveCheckers.isBrewingStand(message.block, state, tileEnt, player.level())
+                for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
+                    if (handler.enabledInServerConfig() && handler.isValidBlock(message.block, state, tileEnt, player.level())) {
+                        handler.swap(message.slot, message.hand, message.block, player, message.placementMode);
+                    }
+                }
+                if (ImmersiveCheckers.isBrewingStand(message.block, state, tileEnt, player.level())
                         && ActiveConfig.FILE.useBrewingImmersion) {
                     BrewingStandBlockEntity stand = (BrewingStandBlockEntity) tileEnt;
                     Swap.handleBrewingSwap(stand, player, message.hand, message.slot, message.placementMode);
@@ -82,8 +84,7 @@ public class SwapPacket {
                             message.hand, message.slot);
                 } else if (ImmersiveCheckers.isIronFurnacesFurnace(message.block, state, tileEnt, player.level())
                         && ActiveConfig.FILE.useIronFurnacesFurnaceImmersion) {
-                    Swap.handleFurnaceSwap((WorldlyContainer) tileEnt,
-                            player, message.hand, message.slot, message.placementMode);
+                    ImmersiveHandlers.furnaceHandler.swap(message.slot, message.hand, message.block, player, message.placementMode);
                 }
             }
         });

@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.common.immersive.CheckerFunction;
+import com.hammy275.immersivemc.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -342,6 +343,10 @@ public class ImmersiveBuilder implements Cloneable {
 
     public static ImmersiveBuilder create(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
         return new ImmersiveBuilder(blockChecker);
+    }
+
+    public static ImmersiveBuilder create(ImmersiveHandler handler) {
+        return new ImmersiveBuilder(handler::isValidBlock);
     }
 
     @Override

@@ -4,6 +4,8 @@ import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
+import com.hammy275.immersivemc.common.immersive.HandlerStorage;
+import com.hammy275.immersivemc.common.immersive.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
@@ -286,6 +288,19 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         if (builder.extraStorageConsumer != null) {
             builder.extraStorageConsumer.accept(storage, (BuiltImmersiveInfo) info);
         }
+    }
+
+    @Override
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, HandlerStorage storage) {
+        BuiltImmersiveInfo bInfo = (BuiltImmersiveInfo) info;
+        ListOfItemsStorage itemsStorage = (ListOfItemsStorage) storage;
+        for (int i = 0; i < itemsStorage.getItems().size(); i++) {
+            bInfo.itemHitboxes.get(i).item = itemsStorage.getItems().get(i);
+        }
+        // TODO: Handle extraStorageConsumer
+        /*if (builder.extraStorageConsumer != null) {
+            builder.extraStorageConsumer.accept(storage, (BuiltImmersiveInfo) info);
+        }*/
     }
 
     public BuiltImmersiveInfo findImmersive(BlockPos pos) {

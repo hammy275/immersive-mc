@@ -19,7 +19,6 @@ import net.minecraft.stats.Stats;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -363,41 +362,6 @@ public class Swap {
             player.getInventory().setItem(slot, res.mergedInto);
         }
 
-    }
-    public static void handleFurnaceSwap(WorldlyContainer furnace, Player player,
-                                         InteractionHand hand, int slot, PlacementMode mode) {
-        ItemStack furnaceItem = furnace.getItem(slot).copy();
-        ItemStack playerItem = player.getItemInHand(hand).copy();
-        if (slot != 2) {
-            if (slot != 1 || furnace.canPlaceItem(1, playerItem) || playerItem.isEmpty()) {
-                SwapResult result = getSwap(playerItem, furnaceItem, mode);
-                givePlayerItemSwap(result.toHand, playerItem, player, hand);
-                furnace.setItem(slot, result.toOther);
-                Util.placeLeftovers(player, result.leftovers);
-            }
-        } else {
-            boolean itemTaken = false;
-            if (playerItem.isEmpty()) {
-                player.setItemInHand(hand, furnaceItem);
-                furnace.setItem(2, playerItem);
-                itemTaken = true;
-            } else if (Util.stacksEqualBesidesCount(furnaceItem, playerItem)) {
-                int beforeGrabCount = furnace.getItem(2).getCount();
-                Util.ItemStackMergeResult result = Util.mergeStacks(playerItem, furnaceItem, false);
-                player.setItemInHand(hand, result.mergedInto);
-                furnace.setItem(slot, result.mergedFrom);
-                itemTaken = furnace.getItem(2).isEmpty() || furnace.getItem(2).getCount() < beforeGrabCount;
-            }
-
-            // Experience and recipes reward. Given only if at least one item was taken. This is the same as
-            // vanilla behavior.
-            if (itemTaken && player instanceof ServerPlayer sp && furnace instanceof AbstractFurnaceBlockEntity furnaceBE) {
-                furnaceBE.awardUsedRecipesAndPopExperience(sp);
-            }
-
-
-        }
-        furnace.setChanged();
     }
 
     public static void handleBrewingSwap(BrewingStandBlockEntity stand, Player player,

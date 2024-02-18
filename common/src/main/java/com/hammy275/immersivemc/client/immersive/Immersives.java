@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
+import com.hammy275.immersivemc.common.immersive.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.InteractPacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
@@ -224,7 +225,7 @@ public class Immersives {
                 }
             })
             .build();
-    public static final BuiltImmersive immersiveFurnace = ImmersiveBuilder.create(ImmersiveCheckers::isFurnace)
+    public static final BuiltImmersive immersiveFurnace = ImmersiveBuilder.create(ImmersiveHandlers.furnaceHandler)
             .setConfigChecker(() -> ActiveConfig.active().useFurnaceImmersion)
             .setRenderTime(ClientConstants.ticksToRenderFurnace)
             .setRenderSize(ClientConstants.itemScaleSizeFurnace)

@@ -8,6 +8,7 @@ import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
+import com.hammy275.immersivemc.common.immersive.HandlerStorage;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
@@ -144,6 +145,9 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     public void processStorageFromNetwork(AbstractImmersiveInfo info, ImmersiveStorage storage) {}
+
+    // TODO: Make abstract once everything has moved to this
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, HandlerStorage storage) {}
 
     public void tick(I info, boolean isInVR) {
         if (enabledInConfig()) {
