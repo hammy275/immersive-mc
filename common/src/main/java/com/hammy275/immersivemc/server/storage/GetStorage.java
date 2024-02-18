@@ -45,7 +45,7 @@ public class GetStorage {
             return 1;
         } else if (ImmersiveCheckers.isEnchantingTable(pos, state, tileEntity, level)) {
             return 0;
-        } else if (ImmersiveCheckers.isBeacon(pos, state, tileEntity, level)) {
+        } else if (ImmersiveHandlers.beaconHandler.isValidBlock(pos, state, tileEntity, level)) {
             return 0;
         } else if (ImmersiveCheckers.isSmithingTable(pos, state, tileEntity, level)) {
             return 2;
@@ -79,7 +79,7 @@ public class GetStorage {
             return getAnvilStorage(player, pos);
         } else if (ImmersiveCheckers.isEnchantingTable(pos, state, tileEnt, player.level())) {
             return getEnchantingStorage(player, pos);
-        } else if (ImmersiveCheckers.isBeacon(pos, state, tileEnt, player.level())) {
+        } else if (ImmersiveHandlers.beaconHandler.isValidBlock(pos, state, tileEnt, player.level())) {
             return getBeaconStorage(player, pos);
         } else if (ImmersiveCheckers.isSmithingTable(pos, state, tileEnt, player.level())) {
             return getSmithingTableStorage(player, pos);
@@ -106,7 +106,7 @@ public class GetStorage {
                 storage.setItem(3, out);
             } else if (ImmersiveCheckers.isEnchantingTable(pos, state, tileEnt, player.level())) {
                 // No-op
-            } else if (ImmersiveCheckers.isBeacon(pos, state, tileEnt, player.level())) {
+            } else if (ImmersiveHandlers.beaconHandler.isValidBlock(pos, state, tileEnt, player.level())) {
                 // No-op
             }
         }

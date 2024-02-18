@@ -35,18 +35,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Swap {
 
-    public static void beaconSwap(ServerPlayer player, InteractionHand hand, BlockPos pos) {
-        if (!player.getItemInHand(hand).is(ItemTags.BEACON_PAYMENT_ITEMS) && !player.getItemInHand(hand).isEmpty()) return;
-        ImmersiveStorage beaconStorage = GetStorage.getBeaconStorage(player, pos);
-        ItemStack beaconItem = beaconStorage.getItem(0);
-        if (!beaconItem.isEmpty()) {
-            Util.placeLeftovers(player, beaconItem);
-            beaconStorage.setItem(0, ItemStack.EMPTY);
-        }
-        beaconStorage.placeItem(player, hand, 1, 0);
-        beaconStorage.wStorage.setDirty();
-    }
-
     public static void shulkerBoxSwap(ServerPlayer player, int slot, InteractionHand hand, BlockPos pos) {
         if (player.level().getBlockEntity(pos) instanceof ShulkerBoxBlockEntity shulkerBox) {
             ItemStack shulkerItem = shulkerBox.getItem(slot).copy();
