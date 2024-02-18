@@ -96,7 +96,7 @@ public class Immersives {
             })
             .build();
     public static final ImmersiveBeacon immersiveBeacon = new ImmersiveBeacon();
-    public static final BuiltImmersive immersiveBrewing = ImmersiveBuilder.create(ImmersiveCheckers::isBrewingStand)
+    public static final BuiltImmersive immersiveBrewing = ImmersiveBuilder.create(ImmersiveHandlers.brewingStandHandler)
             .setConfigChecker(() -> ActiveConfig.active().useBrewingImmersion)
             .setRenderTime(ClientConstants.ticksToRenderBrewing)
             .setRenderSize(ClientConstants.itemScaleSizeBrewing)

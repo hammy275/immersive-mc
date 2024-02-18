@@ -17,18 +17,10 @@ import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class FurnaceHandler implements ImmersiveHandler {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        List<ItemStack> items = new ArrayList<>();
-        Container furnace = (AbstractFurnaceBlockEntity) player.level().getBlockEntity(pos);
-        for (int i = 0; i <= 2; i++) {
-            items.add(furnace.getItem(i));
-        }
-        return new ListOfItemsStorage(items, 3);
+        return HandlerUtil.makeInventoryContentsFromContainer(player, (Container) player.level().getBlockEntity(pos), 3);
     }
 
     @Override

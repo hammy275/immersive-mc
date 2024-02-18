@@ -57,11 +57,7 @@ public class SwapPacket {
                         handler.swap(message.slot, message.hand, message.block, player, message.placementMode);
                     }
                 }
-                if (ImmersiveCheckers.isBrewingStand(message.block, state, tileEnt, player.level())
-                        && ActiveConfig.FILE.useBrewingImmersion) {
-                    BrewingStandBlockEntity stand = (BrewingStandBlockEntity) tileEnt;
-                    Swap.handleBrewingSwap(stand, player, message.hand, message.slot, message.placementMode);
-                } else if (ImmersiveCheckers.isJukebox(message.block, state, tileEnt, player.level())
+                if (ImmersiveCheckers.isJukebox(message.block, state, tileEnt, player.level())
                         && ActiveConfig.FILE.useJukeboxImmersion) {
                     Swap.handleJukebox((JukeboxBlockEntity) tileEnt, player, message.hand);
                 } else if (ImmersiveCheckers.isChest(message.block, state, tileEnt, player.level())

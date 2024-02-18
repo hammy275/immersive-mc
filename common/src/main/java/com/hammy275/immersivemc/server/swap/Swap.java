@@ -24,7 +24,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -340,25 +339,6 @@ public class Swap {
             player.getInventory().setItem(slot, res.mergedInto);
         }
 
-    }
-
-    public static void handleBrewingSwap(BrewingStandBlockEntity stand, Player player,
-                                         InteractionHand hand, int slot, PlacementMode mode) {
-        ItemStack standItem = stand.getItem(slot).copy();
-        ItemStack playerItem = player.getItemInHand(hand).copy();
-        if (slot < 3) { // Potions
-            if (!stand.canPlaceItem(slot, playerItem) && playerItem != ItemStack.EMPTY
-            && !(standItem.getItem() instanceof PotionItem)) return;
-            player.setItemInHand(hand, standItem);
-            stand.setItem(slot, playerItem);
-        } else { // Ingredient and Fuel
-            if (!stand.canPlaceItem(slot, playerItem) && playerItem != ItemStack.EMPTY) return;
-            SwapResult result = getSwap(playerItem, standItem, mode);
-            givePlayerItemSwap(result.toHand, playerItem, player, hand);
-            stand.setItem(slot, result.toOther);
-            Util.placeLeftovers(player, result.leftovers);
-        }
-        stand.setChanged();
     }
 
     public static void handleJukebox(JukeboxBlockEntity jukebox,
