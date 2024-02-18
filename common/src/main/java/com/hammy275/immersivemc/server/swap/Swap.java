@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.server.swap;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.storage.AnvilStorage;
+import com.hammy275.immersivemc.common.storage.AnvilWorldStorage;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.storage.workarounds.NullContainer;
 import com.hammy275.immersivemc.common.util.Util;
@@ -140,28 +140,6 @@ public class Swap {
         storage.wStorage.setDirty();
     }
 
-    public static void anvilSwap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player,
-                                 PlacementMode mode) {
-        AnvilStorage storage = GetStorage.getAnvilStorage(player, pos);
-        if (slot != 2) {
-            storage.placeItem(player, hand, getPlaceAmount(player.getItemInHand(hand), mode), slot);
-            storage.setItem(2, ItemStack.EMPTY);
-            storage.xpLevels = 0;
-            if (!storage.getItem(0).isEmpty() && !storage.getItem(1).isEmpty()) {
-                Pair<ItemStack, Integer> output = Swap.getAnvilOutput(storage.getItem(0), storage.getItem(1), player);
-                storage.setItem(2, output.getFirst());
-                storage.xpLevels = output.getSecond();
-            }
-        } else if (!storage.getItem(2).isEmpty()) { // Craft our result!
-            if (!player.getItemInHand(hand).isEmpty()) return;
-            boolean res = Swap.handleAnvilCraft(storage, pos, player, hand);
-            if (res) {
-                VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
-            }
-        }
-        storage.wStorage.setDirty();
-    }
-
     public static void smithingTableSwap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player,
                                  PlacementMode mode) {
         ImmersiveStorage storage = GetStorage.getSmithingTableStorage(player, pos);
@@ -183,7 +161,7 @@ public class Swap {
         storage.wStorage.setDirty();
     }
 
-    public static boolean handleAnvilCraft(AnvilStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
+    public static boolean handleAnvilCraft(AnvilWorldStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
         if (!player.getItemInHand(hand).isEmpty()) return false;
         ItemStack left = storage.getItem(0);
         ItemStack mid = storage.getItem(1);

@@ -7,9 +7,12 @@ public class ImmersiveHandlers {
 
     public static final List<ImmersiveHandler> HANDLERS = new ArrayList<>();
 
+
+    public static final ImmersiveHandler anvilHandler = new AnvilHandler();
     public static final ImmersiveHandler furnaceHandler = new FurnaceHandler();
 
     static {
+        HANDLERS.add(anvilHandler);
         HANDLERS.add(furnaceHandler);
     }
 }

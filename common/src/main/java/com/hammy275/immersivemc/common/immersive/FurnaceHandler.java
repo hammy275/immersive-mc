@@ -33,7 +33,7 @@ public class FurnaceHandler implements ImmersiveHandler {
 
     @Override
     public HandlerStorage getEmptyHandler() {
-        return new ListOfItemsStorage("furnace");
+        return new ListOfItemsStorage();
     }
 
     @Override

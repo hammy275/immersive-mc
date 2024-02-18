@@ -1,7 +1,8 @@
 package com.hammy275.immersivemc.server.storage;
 
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
-import com.hammy275.immersivemc.common.storage.AnvilStorage;
+import com.hammy275.immersivemc.common.immersive.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.storage.AnvilWorldStorage;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.server.swap.Swap;
 import com.mojang.datafixers.util.Pair;
@@ -25,8 +26,8 @@ public class GetStorage {
         if (storageType.equals(ImmersiveStorage.TYPE)) {
             storage = new ImmersiveStorage(wStorage);
             storage.load(nbt);
-        } else if (storageType.equals(AnvilStorage.TYPE)) {
-            storage = new AnvilStorage(wStorage);
+        } else if (storageType.equals(AnvilWorldStorage.TYPE)) {
+            storage = new AnvilWorldStorage(wStorage);
             storage.load(nbt);
         }
 
@@ -40,7 +41,7 @@ public class GetStorage {
     public static int getLastInputIndex(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         if (ImmersiveCheckers.isCraftingTable(pos, state, tileEntity, level)) {
             return 8;
-        } else if (ImmersiveCheckers.isAnvil(pos, state, tileEntity, level)) {
+        } else if (ImmersiveHandlers.anvilHandler.isValidBlock(pos, state, tileEntity, level)) {
             return 1;
         } else if (ImmersiveCheckers.isEnchantingTable(pos, state, tileEntity, level)) {
             return 0;
@@ -74,7 +75,7 @@ public class GetStorage {
         BlockEntity tileEnt = player.level().getBlockEntity(pos);
         if (ImmersiveCheckers.isCraftingTable(pos, state, tileEnt, player.level())) {
             return getCraftingStorage(player, pos);
-        } else if (ImmersiveCheckers.isAnvil(pos, state, tileEnt, player.level())) {
+        } else if (ImmersiveHandlers.anvilHandler.isValidBlock(pos, state, tileEnt, player.level())) {
             return getAnvilStorage(player, pos);
         } else if (ImmersiveCheckers.isEnchantingTable(pos, state, tileEnt, player.level())) {
             return getEnchantingStorage(player, pos);
@@ -94,8 +95,8 @@ public class GetStorage {
             if (ImmersiveCheckers.isCraftingTable(pos, state, tileEnt, player.level())) {
                 ItemStack out = Swap.getRecipeOutput(player, storage.getItemsRaw());
                 storage.setItem(9, out);
-            } else if (ImmersiveCheckers.isAnvil(pos, state, tileEnt, player.level()) &&
-                storage instanceof AnvilStorage aStorage) {
+            } else if (ImmersiveHandlers.anvilHandler.isValidBlock(pos, state, tileEnt, player.level()) &&
+                storage instanceof AnvilWorldStorage aStorage) {
                 Pair<ItemStack, Integer> out = Swap.getAnvilOutput(storage.getItem(0), storage.getItem(1), player);
                 aStorage.xpLevels = out.getSecond();
                 aStorage.setItem(2, out.getFirst());
@@ -116,16 +117,16 @@ public class GetStorage {
         return ImmersiveMCLevelStorage.getLevelStorage(player).getOrCreate(pos).initIfNotAlready(1);
     }
 
-    public static AnvilStorage getAnvilStorage(Player player, BlockPos pos) {
+    public static AnvilWorldStorage getAnvilStorage(Player player, BlockPos pos) {
         ImmersiveMCLevelStorage wStorage = ImmersiveMCLevelStorage.getLevelStorage(player);
         ImmersiveStorage storageOld = wStorage.get(pos);
-        AnvilStorage storage;
-        if (!(storageOld instanceof AnvilStorage)) {
-            storage = new AnvilStorage(wStorage);
+        AnvilWorldStorage storage;
+        if (!(storageOld instanceof AnvilWorldStorage)) {
+            storage = new AnvilWorldStorage(wStorage);
             storage.initIfNotAlready(3);
             ImmersiveMCLevelStorage.getLevelStorage(player).add(pos, storage);
         } else {
-            storage = (AnvilStorage) storageOld;
+            storage = (AnvilWorldStorage) storageOld;
         }
         return storage;
     }
@@ -143,7 +144,7 @@ public class GetStorage {
         ImmersiveStorage storageOld = wStorage.get(pos);
         ImmersiveStorage toRet;
         // May be AnvilStorage from before the anvil/smithing table split (SAVE_DATA_VERSION 1 -> 2)
-        if (storageOld instanceof AnvilStorage) {
+        if (storageOld instanceof AnvilWorldStorage) {
             toRet = new ImmersiveStorage(wStorage);
             toRet.initIfNotAlready(4);
             for (int i = 0; i <= 2; i++) {

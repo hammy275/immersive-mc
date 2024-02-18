@@ -17,7 +17,7 @@ public class ListOfItemsStorage implements HandlerStorage {
         }
     }
 
-    public ListOfItemsStorage(String id) {
+    public ListOfItemsStorage() {
         this(Collections.emptyList(), 0);
     }
 

@@ -19,7 +19,6 @@ public class ImmersiveCheckers {
             WORLD_STORAGE_CHECKERS = new LinkedList<>();
 
     static {
-        CHECKERS.add(ImmersiveCheckers::isAnvil);
         CHECKERS.add(ImmersiveCheckers::isBarrel);
         CHECKERS.add(ImmersiveCheckers::isBeacon);
         CHECKERS.add(ImmersiveCheckers::isBrewingStand);
@@ -35,7 +34,6 @@ public class ImmersiveCheckers {
         CHECKERS.add(ImmersiveCheckers::isSmithingTable);
         CHECKERS.add(ImmersiveCheckers::isTinkersConstructCraftingStation);
 
-        WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isAnvil);
         WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isBeacon);
         WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isCraftingTable);
         WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isEnchantingTable);
@@ -50,10 +48,6 @@ public class ImmersiveCheckers {
     }
 
     // Vanilla
-
-    public static boolean isAnvil(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return state.getBlock() instanceof AnvilBlock;
-    }
 
     public static boolean isBarrel(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return tileEntity instanceof BarrelBlockEntity;
@@ -81,10 +75,6 @@ public class ImmersiveCheckers {
 
     public static boolean isEnchantingTable(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return state.getBlock() instanceof EnchantmentTableBlock;
-    }
-
-    public static boolean isFurnace(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return tileEntity instanceof AbstractFurnaceBlockEntity;
     }
 
     public static boolean isHopper(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {

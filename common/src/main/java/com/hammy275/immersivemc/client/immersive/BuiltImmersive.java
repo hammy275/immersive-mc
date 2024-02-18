@@ -285,9 +285,6 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         for (int i = 0; i < storage.getNumItems(); i++) {
             bInfo.itemHitboxes.get(i).item = storage.getItem(i);
         }
-        if (builder.extraStorageConsumer != null) {
-            builder.extraStorageConsumer.accept(storage, (BuiltImmersiveInfo) info);
-        }
     }
 
     @Override
@@ -297,10 +294,9 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         for (int i = 0; i < itemsStorage.getItems().size(); i++) {
             bInfo.itemHitboxes.get(i).item = itemsStorage.getItems().get(i);
         }
-        // TODO: Handle extraStorageConsumer
-        /*if (builder.extraStorageConsumer != null) {
+        if (builder.extraStorageConsumer != null) {
             builder.extraStorageConsumer.accept(storage, (BuiltImmersiveInfo) info);
-        }*/
+        }
     }
 
     public BuiltImmersiveInfo findImmersive(BlockPos pos) {

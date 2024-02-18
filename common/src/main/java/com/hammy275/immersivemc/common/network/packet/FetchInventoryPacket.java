@@ -67,7 +67,7 @@ public class FetchInventoryPacket {
             id = buffer.readResourceLocation();
             if (id.getPath().equals("generic")) {
                 // TODO: Remove. Used to support ItemStack arrays as we move to the new system
-                storage = new ListOfItemsStorage("generic");
+                storage = new ListOfItemsStorage();
                 storage.decode(buffer);
             } else {
                 for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {

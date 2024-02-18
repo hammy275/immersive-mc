@@ -96,8 +96,6 @@ public class InteractPacket {
                 if ((ImmersiveCheckers.isCraftingTable(message.pos, state, tileEnt, player.level()) && ActiveConfig.FILE.useCraftingImmersion) ||
                         (ImmersiveCheckers.isTinkersConstructCraftingStation(message.pos, state, tileEnt, player.level()) && ActiveConfig.FILE.useTinkersConstructCraftingStationImmersion)) {
                     Swap.handleCraftingSwap(player, message.slot, message.hand, message.pos, message.placementMode);
-                } else if (ImmersiveCheckers.isAnvil(message.pos, state, tileEnt, player.level())) {
-                    Swap.anvilSwap(message.slot, message.hand, message.pos, player, message.placementMode);
                 } else if (ImmersiveCheckers.isEnchantingTable(message.pos, state, tileEnt, player.level())) {
                     Swap.enchantingTableSwap(player, message.slot, message.hand, message.pos);
                 } else if (ImmersiveCheckers.isBeacon(message.pos, state, tileEnt, player.level())) {

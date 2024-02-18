@@ -3,8 +3,8 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.common.immersive.CheckerFunction;
+import com.hammy275.immersivemc.common.immersive.HandlerStorage;
 import com.hammy275.immersivemc.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.Level;
@@ -14,11 +14,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 public class ImmersiveBuilder implements Cloneable {
 
@@ -45,7 +41,7 @@ public class ImmersiveBuilder implements Cloneable {
     boolean vrOnly = false;
     List<Vec3i> airCheckPositionOffsets = new ArrayList<>();
     Class<?> extraInfoDataClazz = null;
-    BiConsumer<ImmersiveStorage, BuiltImmersiveInfo> extraStorageConsumer = null;
+    BiConsumer<HandlerStorage, BuiltImmersiveInfo> extraStorageConsumer = null;
     BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotActive = SLOT_ALWAYS_ACTIVE;
     Consumer<BuiltImmersiveInfo> onRemove = (info) -> {};
     boolean blockRightClickWhenGUIClickDisabled = true;
@@ -243,13 +239,12 @@ public class ImmersiveBuilder implements Cloneable {
     }
 
     /**
-     * Sets a consumer that acts after an incoming ImmersiveStorage is parsed. For example, this is used
+     * Sets a consumer that acts after an incoming HandlerStorage is parsed. For example, this is used
      * for the anvil to retrieve the level amount and store it in extra data.
-     * Note that the immersive MUST use world storage (call setUsesWorldStorage(true))
      * @param storageConsumer New storage consumer.
      * @return Builder object.
      */
-    public ImmersiveBuilder setExtraStorageConsumer(BiConsumer<ImmersiveStorage, BuiltImmersiveInfo> storageConsumer) {
+    public ImmersiveBuilder setExtraStorageConsumer(BiConsumer<HandlerStorage, BuiltImmersiveInfo> storageConsumer) {
         this.extraStorageConsumer = storageConsumer;
         return this;
     }
