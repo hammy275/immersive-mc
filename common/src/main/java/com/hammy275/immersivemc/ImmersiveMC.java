@@ -64,8 +64,6 @@ public class ImmersiveMC {
                 GrabItemPacket::decode, GrabItemPacket::handle);
         Network.INSTANCE.register(ConfigSyncPacket.class, ConfigSyncPacket::encode,
                 ConfigSyncPacket::decode, ConfigSyncPacket::handle);
-        Network.INSTANCE.register(GetEnchantmentsPacket.class, GetEnchantmentsPacket::encode,
-                GetEnchantmentsPacket::decode, GetEnchantmentsPacket::handle);
         Network.INSTANCE.register(InventorySwapPacket.class, InventorySwapPacket::encode,
                 InventorySwapPacket::decode, InventorySwapPacket::handle);
         Network.INSTANCE.register(SetRepeaterPacket.class, SetRepeaterPacket::encode,

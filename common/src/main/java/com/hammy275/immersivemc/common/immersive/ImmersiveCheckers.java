@@ -22,7 +22,6 @@ public class ImmersiveCheckers {
         CHECKERS.add(ImmersiveCheckers::isBarrel);
         CHECKERS.add(ImmersiveCheckers::isChest);
         CHECKERS.add(ImmersiveCheckers::isChiseledBookshelf);
-        CHECKERS.add(ImmersiveCheckers::isEnchantingTable);
         CHECKERS.add(ImmersiveCheckers::isHopper);
         CHECKERS.add(ImmersiveCheckers::isIronFurnacesFurnace);
         CHECKERS.add(ImmersiveCheckers::isJukebox);
@@ -31,7 +30,6 @@ public class ImmersiveCheckers {
         CHECKERS.add(ImmersiveCheckers::isSmithingTable);
         CHECKERS.add(ImmersiveCheckers::isTinkersConstructCraftingStation);
 
-        WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isEnchantingTable);
         WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isSmithingTable);
 
         for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
@@ -54,10 +52,6 @@ public class ImmersiveCheckers {
 
     public static boolean isChiseledBookshelf(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return state.getBlock() == Blocks.CHISELED_BOOKSHELF;
-    }
-
-    public static boolean isEnchantingTable(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return state.getBlock() instanceof EnchantmentTableBlock;
     }
 
     public static boolean isHopper(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {

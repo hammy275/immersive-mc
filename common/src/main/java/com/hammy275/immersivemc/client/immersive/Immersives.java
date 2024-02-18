@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.AnvilStorage;
+import com.hammy275.immersivemc.common.immersive.ETableStorage;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
@@ -147,7 +148,7 @@ public class Immersives {
             .setUsesWorldStorage(true)
             .setTriggerHitboxControllerNum(0)
             .build();
-    public static final BuiltImmersive immersiveETable = ImmersiveBuilder.create(ImmersiveCheckers::isEnchantingTable)
+    public static final BuiltImmersive immersiveETable = ImmersiveBuilder.create(ImmersiveHandlers.enchantingTableHandler)
             .setConfigChecker(() -> ActiveConfig.active().useETableImmersion)
             .setRenderTime(ClientConstants.ticksToRenderETable)
             .setRenderSize(ClientConstants.itemScaleSizeETable)
@@ -206,21 +207,23 @@ public class Immersives {
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
             .setMaxImmersives(1)
             .setUsesWorldStorage(true)
-            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand)))
+            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .setExtraInfoDataClass(EnchantingData.class)
-            .setExtraStorageConsumer((storage, info) -> {
-                ItemStack item = info.itemHitboxes.get(0).item;
-                if (item != null && !item.isEmpty()) {
-                    if (item.getItem() == Items.BOOK) {
-                        item = new ItemStack(Items.ENCHANTED_BOOK);
-                    } else {
-                        item = item.copy();
-                    }
-                    EnchantmentHelper.setEnchantments(ClientConstants.fakeEnch, item);
-                } else {
-                    item = ItemStack.EMPTY;
-                }
+            .setExtraStorageConsumer((storageIn, info) -> {
+                EnchantingData extraData = (EnchantingData) info.getExtraData();
+                ETableStorage storage = (ETableStorage) storageIn;
+                extraData.weakData.set(storage.xpLevels[0], storage.enchantHints[0], storage.levelHints[0]);
+                extraData.midData.set(storage.xpLevels[1], storage.enchantHints[1], storage.levelHints[1]);
+                extraData.strongData.set(storage.xpLevels[2], storage.enchantHints[2], storage.levelHints[2]);
                 for (int i = 1; i <= 3; i++) {
+                    EnchantingData.ETableData data = i == 1 ? extraData.weakData : i == 2 ? extraData.midData : extraData.strongData;
+                    ItemStack item = info.itemHitboxes.get(0).item;
+                    if (item != null && !item.isEmpty()) {
+                        item = item.is(Items.BOOK) ? new ItemStack(Items.ENCHANTED_BOOK) : item.copy();
+                        if (data.isPresent()) {
+                            EnchantmentHelper.setEnchantments(ClientConstants.fakeEnch, item);
+                        }
+                    }
                     info.itemHitboxes.get(i).item = item;
                 }
             })

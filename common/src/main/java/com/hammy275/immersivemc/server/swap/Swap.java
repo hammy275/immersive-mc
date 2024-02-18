@@ -54,22 +54,6 @@ public class Swap {
         }
     }
 
-    public static void enchantingTableSwap(ServerPlayer player, int slot, InteractionHand hand, BlockPos pos) {
-        if (player == null) return;
-        ImmersiveStorage enchStorage = GetStorage.getEnchantingStorage(player, pos);
-        if (slot == 0) {
-            ItemStack toEnchant = player.getItemInHand(hand);
-            if (!toEnchant.isEmpty() && !toEnchant.isEnchantable()) return;
-            enchStorage.placeItem(player, hand, 1, slot);
-        } else if (player.getItemInHand(hand).isEmpty()) {
-            boolean res = doEnchanting(slot, pos, player, hand);
-            if (res) {
-                VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
-            }
-        }
-        enchStorage.wStorage.setDirty();
-    }
-
     public static boolean doEnchanting(int slot, BlockPos pos, ServerPlayer player, InteractionHand hand) {
         // NOTE: slot is 1-3, depending on which enchantment the player is going for.
         if (!player.getItemInHand(hand).isEmpty()) return false;

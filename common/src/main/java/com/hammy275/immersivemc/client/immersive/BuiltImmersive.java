@@ -290,9 +290,10 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     @Override
     public void processStorageFromNetwork(AbstractImmersiveInfo info, HandlerStorage storage) {
         BuiltImmersiveInfo bInfo = (BuiltImmersiveInfo) info;
-        ListOfItemsStorage itemsStorage = (ListOfItemsStorage) storage;
-        for (int i = 0; i < itemsStorage.getItems().size(); i++) {
-            bInfo.itemHitboxes.get(i).item = itemsStorage.getItems().get(i);
+        if (storage instanceof ListOfItemsStorage itemsStorage) {
+            for (int i = 0; i < itemsStorage.getItems().size(); i++) {
+                bInfo.itemHitboxes.get(i).item = itemsStorage.getItems().get(i);
+            }
         }
         if (builder.extraStorageConsumer != null) {
             builder.extraStorageConsumer.accept(storage, (BuiltImmersiveInfo) info);

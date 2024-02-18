@@ -92,9 +92,7 @@ public class InteractPacket {
             } else if (NetworkUtil.safeToRun(message.pos, player)) {
                 BlockState state = player.level().getBlockState(message.pos);
                 BlockEntity tileEnt = player.level().getBlockEntity(message.pos);
-                if (ImmersiveCheckers.isEnchantingTable(message.pos, state, tileEnt, player.level())) {
-                    Swap.enchantingTableSwap(player, message.slot, message.hand, message.pos);
-                } else if (ImmersiveCheckers.isSmithingTable(message.pos, state, tileEnt, player.level())) {
+                if (ImmersiveCheckers.isSmithingTable(message.pos, state, tileEnt, player.level())) {
                     Swap.smithingTableSwap(message.slot, message.hand, message.pos, player, message.placementMode);
                 } else if (ImmersiveCheckers.isChiseledBookshelf(message.pos, state, tileEnt, player.level())) {
                     ChiseledBookshelfSwap.swap(player, message.pos, message.slot, message.hand);
