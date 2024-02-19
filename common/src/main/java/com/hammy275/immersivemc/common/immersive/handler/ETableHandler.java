@@ -29,7 +29,7 @@ import java.util.Arrays;
 public class ETableHandler implements ImmersiveHandler {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        ImmersiveStorage immersiveStorage = GetStorage.getCraftingStorage(player, pos);
+        ImmersiveStorage immersiveStorage = GetStorage.getEnchantingStorage(player, pos);
         ETableStorage storage = new ETableStorage(Arrays.asList(immersiveStorage.getItemsRaw()));
 
         if (immersiveStorage.getItem(0) != null && !immersiveStorage.getItem(0).isEmpty()) {

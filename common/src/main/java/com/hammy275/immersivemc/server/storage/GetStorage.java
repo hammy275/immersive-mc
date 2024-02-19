@@ -47,7 +47,7 @@ public class GetStorage {
             return 0;
         } else if (ImmersiveHandlers.beaconHandler.isValidBlock(pos, state, tileEntity, level)) {
             return 0;
-        } else if (ImmersiveCheckers.isSmithingTable(pos, state, tileEntity, level)) {
+        } else if (ImmersiveHandlers.smithingTableHandler.isValidBlock(pos, state, tileEntity, level)) {
             return 2;
         }
         throw new RuntimeException("Last input index not defined for the block that was just broken!");
@@ -81,7 +81,7 @@ public class GetStorage {
             return getEnchantingStorage(player, pos);
         } else if (ImmersiveHandlers.beaconHandler.isValidBlock(pos, state, tileEnt, player.level())) {
             return getBeaconStorage(player, pos);
-        } else if (ImmersiveCheckers.isSmithingTable(pos, state, tileEnt, player.level())) {
+        } else if (ImmersiveHandlers.smithingTableHandler.isValidBlock(pos, state, tileEnt, player.level())) {
             return getSmithingTableStorage(player, pos);
         }
         return null;
@@ -100,7 +100,7 @@ public class GetStorage {
                 Pair<ItemStack, Integer> out = Swap.getAnvilOutput(storage.getItem(0), storage.getItem(1), player);
                 aStorage.xpLevels = out.getSecond();
                 aStorage.setItem(2, out.getFirst());
-            } else if (ImmersiveCheckers.isSmithingTable(pos, state, tileEnt, player.level())) {
+            } else if (ImmersiveHandlers.smithingTableHandler.isValidBlock(pos, state, tileEnt, player.level())) {
                 ItemStack out = Swap.getSmithingTableOutput(storage.getItem(0), storage.getItem(1),
                         storage.getItem(2), player);
                 storage.setItem(3, out);

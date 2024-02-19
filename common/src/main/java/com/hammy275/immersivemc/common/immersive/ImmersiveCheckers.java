@@ -29,10 +29,7 @@ public class ImmersiveCheckers {
         CHECKERS.add(ImmersiveCheckers::isJukebox);
         CHECKERS.add(ImmersiveCheckers::isRepeater);
         CHECKERS.add(ImmersiveCheckers::isShulkerBox);
-        CHECKERS.add(ImmersiveCheckers::isSmithingTable);
         CHECKERS.add(ImmersiveCheckers::isTinkersConstructCraftingStation);
-
-        WORLD_STORAGE_CHECKERS.add(ImmersiveCheckers::isSmithingTable);
 
         for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
             CHECKERS.add(handler::isValidBlock);
@@ -70,10 +67,6 @@ public class ImmersiveCheckers {
 
     public static boolean isShulkerBox(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return tileEntity instanceof ShulkerBoxBlockEntity;
-    }
-
-    public static boolean isSmithingTable(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return state.getBlock() instanceof SmithingTableBlock;
     }
 
     // IronFurnaces

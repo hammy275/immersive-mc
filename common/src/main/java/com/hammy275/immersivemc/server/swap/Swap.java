@@ -111,27 +111,6 @@ public class Swap {
         storage.wStorage.setDirty();
     }
 
-    public static void smithingTableSwap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player,
-                                 PlacementMode mode) {
-        ImmersiveStorage storage = GetStorage.getSmithingTableStorage(player, pos);
-        if (slot != 3) {
-            storage.placeItem(player, hand, getPlaceAmount(player.getItemInHand(hand), mode), slot);
-            storage.setItem(3, ItemStack.EMPTY);
-            if (!storage.getItem(0).isEmpty() && !storage.getItem(1).isEmpty() && !storage.getItem(2).isEmpty()) {
-                ItemStack output = Swap.getSmithingTableOutput(storage.getItem(0),
-                        storage.getItem(1), storage.getItem(2), player);
-                storage.setItem(3, output);
-            }
-        } else if (!storage.getItem(3).isEmpty()) { // Craft our result!
-            if (!player.getItemInHand(hand).isEmpty()) return;
-            boolean res = Swap.handleSmithingTableCraft(storage, pos, player, hand);
-            if (res) {
-                VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
-            }
-        }
-        storage.wStorage.setDirty();
-    }
-
     public static boolean handleAnvilCraft(AnvilWorldStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
         if (!player.getItemInHand(hand).isEmpty()) return false;
         ItemStack left = storage.getItem(0);
