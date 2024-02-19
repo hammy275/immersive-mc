@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.common.immersive;
+package com.hammy275.immersivemc.common.immersive.handler;
 
 import java.util.ArrayList;
 import java.util.List;

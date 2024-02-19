@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
-import com.hammy275.immersivemc.common.immersive.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.server.storage.GetStorage;

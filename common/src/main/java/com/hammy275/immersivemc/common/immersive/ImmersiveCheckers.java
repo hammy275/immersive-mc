@@ -2,6 +2,8 @@ package com.hammy275.immersivemc.common.immersive;
 
 import com.hammy275.immersivemc.common.compat.IronFurnaces;
 import com.hammy275.immersivemc.common.compat.TinkersConstruct;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;

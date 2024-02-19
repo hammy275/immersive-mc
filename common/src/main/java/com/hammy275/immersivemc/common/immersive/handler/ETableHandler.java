@@ -1,9 +1,11 @@
-package com.hammy275.immersivemc.common.immersive;
+package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
+import com.hammy275.immersivemc.common.immersive.storage.ETableStorage;
+import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.server.storage.GetStorage;

@@ -1,8 +1,10 @@
-package com.hammy275.immersivemc.common.immersive;
+package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
+import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
+import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;

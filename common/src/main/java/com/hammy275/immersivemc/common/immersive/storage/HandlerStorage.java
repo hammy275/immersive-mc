@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.common.immersive;
+package com.hammy275.immersivemc.common.immersive.storage;
 
 import net.minecraft.network.FriendlyByteBuf;
 

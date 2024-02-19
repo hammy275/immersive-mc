@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.server.storage;
 
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
-import com.hammy275.immersivemc.common.immersive.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.storage.AnvilWorldStorage;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.server.swap.Swap;
