@@ -11,6 +11,7 @@ public class ImmersiveHandlers {
     public static final ImmersiveHandler anvilHandler = new AnvilHandler();
     public static final ImmersiveHandler beaconHandler = new BeaconHandler();
     public static final ImmersiveHandler brewingStandHandler = new BrewingStandHandler();
+    public static final ImmersiveHandler chiseledBookshelfHandler = new ChiseledBookshelfHandler();
     public static final ImmersiveHandler craftingHandler = new CraftingHandler();
     public static final ImmersiveHandler enchantingTableHandler = new ETableHandler();
     public static final ImmersiveHandler furnaceHandler = new FurnaceHandler();
@@ -20,6 +21,7 @@ public class ImmersiveHandlers {
         HANDLERS.add(anvilHandler);
         HANDLERS.add(beaconHandler);
         HANDLERS.add(brewingStandHandler);
+        HANDLERS.add(chiseledBookshelfHandler);
         HANDLERS.add(craftingHandler);
         HANDLERS.add(enchantingTableHandler);
         HANDLERS.add(furnaceHandler);

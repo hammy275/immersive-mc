@@ -6,12 +6,11 @@ import com.hammy275.immersivemc.client.immersive.info.AnvilData;
 import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.immersive.storage.AnvilStorage;
-import com.hammy275.immersivemc.common.immersive.storage.ETableStorage;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.immersive.storage.AnvilStorage;
+import com.hammy275.immersivemc.common.immersive.storage.ETableStorage;
 import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.InteractPacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.mojang.datafixers.util.Pair;
@@ -116,7 +115,7 @@ public class Immersives {
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .build();
     public static final ImmersiveChest immersiveChest = new ImmersiveChest();
-    public static final BuiltImmersive immersiveChiseledBookshelf = ImmersiveBuilder.create(ImmersiveCheckers::isChiseledBookshelf)
+    public static final BuiltImmersive immersiveChiseledBookshelf = ImmersiveBuilder.create(ImmersiveHandlers.chiseledBookshelfHandler)
             .setConfigChecker(() -> ActiveConfig.active().useChiseledBookshelfImmersion)
             .setRenderTime(ClientConstants.ticksToRenderChiseledBookshelf)
             .setBlockRightClickWhenGUIClickDisabled(false)
@@ -128,7 +127,7 @@ public class Immersives {
             .addHitbox(HitboxInfoBuilder.create(new Vec3(0.34375, -0.25, 0), 0.3125, 0.5, 0.25).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_BLOCK_FACING)
             .setMaxImmersives(1)
-            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand)))
+            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .setVROnly(true)
             .build();
     public static final BuiltImmersive immersiveCrafting = ImmersiveBuilder.create(ImmersiveHandlers.craftingHandler)
