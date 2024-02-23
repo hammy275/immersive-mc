@@ -31,25 +31,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Swap {
 
-    public static void shulkerBoxSwap(ServerPlayer player, int slot, InteractionHand hand, BlockPos pos) {
-        if (player.level().getBlockEntity(pos) instanceof ShulkerBoxBlockEntity shulkerBox) {
-            ItemStack shulkerItem = shulkerBox.getItem(slot).copy();
-            ItemStack playerItem = player.getItemInHand(hand);
-            if (playerItem.isEmpty() || shulkerItem.isEmpty() || !Util.stacksEqualBesidesCount(shulkerItem, playerItem)) {
-                if (shulkerBox.canPlaceItemThroughFace(slot, playerItem, null)) {
-                    player.setItemInHand(hand, shulkerItem);
-                    shulkerBox.setItem(slot, playerItem);
-                }
-
-            } else {
-                Util.ItemStackMergeResult result = Util.mergeStacks(shulkerItem, playerItem, false);
-                player.setItemInHand(hand, result.mergedFrom);
-                shulkerBox.setItem(slot, result.mergedInto);
-            }
-            shulkerBox.setChanged();
-        }
-    }
-
     public static boolean doEnchanting(int slot, BlockPos pos, ServerPlayer player, InteractionHand hand) {
         // NOTE: slot is 1-3, depending on which enchantment the player is going for.
         if (!player.getItemInHand(hand).isEmpty()) return false;
@@ -258,38 +239,6 @@ public class Swap {
             }
             chest.setChanged();
         }
-    }
-
-    public static void handleBarrel(BarrelBlockEntity barrel,
-                                    Player player, InteractionHand hand,
-                                    int slot) {
-        ItemStack barrelItem = barrel.getItem(slot).copy();
-        ItemStack playerItem = player.getItemInHand(hand);
-        if (playerItem.isEmpty() || barrelItem.isEmpty() || !Util.stacksEqualBesidesCount(barrelItem, playerItem)) {
-            player.setItemInHand(hand, barrelItem);
-            barrel.setItem(slot, playerItem);
-        } else {
-            Util.ItemStackMergeResult result = Util.mergeStacks(barrelItem, playerItem, false);
-            player.setItemInHand(hand, result.mergedFrom);
-            barrel.setItem(slot, result.mergedInto);
-        }
-        barrel.setChanged();
-    }
-
-    public static void handleHopper(HopperBlockEntity hopper,
-                                    Player player, InteractionHand hand,
-                                    int slot) {
-        ItemStack hopperItem = hopper.getItem(slot).copy();
-        ItemStack playerItem = player.getItemInHand(hand);
-        if (playerItem.isEmpty() || hopperItem.isEmpty() || !Util.stacksEqualBesidesCount(hopperItem, playerItem)) {
-            player.setItemInHand(hand, hopperItem);
-            hopper.setItem(slot, playerItem);
-        } else {
-            Util.ItemStackMergeResult result = Util.mergeStacks(hopperItem, playerItem, false);
-            player.setItemInHand(hand, result.mergedFrom);
-            hopper.setItem(slot, result.mergedInto);
-        }
-        hopper.setChanged();
     }
 
     public static void handleEnderChest(Player player, InteractionHand hand, int slot) {

@@ -64,17 +64,6 @@ public class SwapPacket {
                     } else if (tileEnt instanceof EnderChestBlockEntity) {
                         Swap.handleEnderChest(player, message.hand, message.slot);
                     }
-                } else if (ImmersiveCheckers.isShulkerBox(message.block, state, tileEnt, player.level())
-                        && ActiveConfig.FILE.useShulkerImmersion) {
-                    Swap.shulkerBoxSwap(player, message.slot, message.hand, message.block);
-                } else if (ImmersiveCheckers.isBarrel(message.block, state, tileEnt, player.level())
-                        && ActiveConfig.FILE.useBarrelImmersion) {
-                    Swap.handleBarrel((BarrelBlockEntity) tileEnt, player,
-                            message.hand, message.slot);
-                } else if (ImmersiveCheckers.isHopper(message.block, state, tileEnt, player.level())
-                        && ActiveConfig.FILE.useHopperImmersion) {
-                    Swap.handleHopper((HopperBlockEntity) tileEnt, player,
-                            message.hand, message.slot);
                 } else if (ImmersiveCheckers.isIronFurnacesFurnace(message.block, state, tileEnt, player.level())
                         && ActiveConfig.FILE.useIronFurnacesFurnaceImmersion) {
                     ImmersiveHandlers.furnaceHandler.swap(message.slot, message.hand, message.block, player, message.placementMode);

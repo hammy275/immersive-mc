@@ -64,7 +64,7 @@ public class Immersives {
             .setExtraInfoDataClass(AnvilData.class)
             .build();
     public static final ImmersiveBackpack immersiveBackpack = new ImmersiveBackpack();
-    public static final BuiltImmersive immersiveBarrel = ImmersiveBuilder.create(ImmersiveCheckers::isBarrel)
+    public static final BuiltImmersive immersiveBarrel = ImmersiveBuilder.create(ImmersiveHandlers.barrelHandler)
             .setConfigChecker(() -> ActiveConfig.active().useBarrelImmersion)
             .setRenderTime(ClientConstants.ticksToRenderBarrel)
             .setRenderSize(ClientConstants.itemScaleSizeBarrel)
@@ -283,7 +283,7 @@ public class Immersives {
             })
             .build();
     public static final ImmersiveHitboxes immersiveHitboxes = new ImmersiveHitboxes();
-    public static final BuiltImmersive immersiveHopper = ImmersiveBuilder.create(ImmersiveCheckers::isHopper)
+    public static final BuiltImmersive immersiveHopper = ImmersiveBuilder.create(ImmersiveHandlers.hopperHandler)
             .setConfigChecker(() -> ActiveConfig.active().useHopperImmersion)
             .setRenderTime(ClientConstants.ticksToRenderHopper)
             .setRenderSize(ClientConstants.itemScaleSizeHopper)
@@ -330,7 +330,7 @@ public class Immersives {
             .build();
 
     public static final ImmersiveRepeater immersiveRepeater = new ImmersiveRepeater();
-    public static final BuiltImmersive immersiveShulker = ImmersiveBuilder.create(ImmersiveCheckers::isShulkerBox)
+    public static final BuiltImmersive immersiveShulker = ImmersiveBuilder.create(ImmersiveHandlers.shulkerBoxHandler)
             .setConfigChecker(() -> ActiveConfig.active().useShulkerImmersion)
             .setRenderTime(ClientConstants.ticksToRenderShulker)
             .setRenderSize(ClientConstants.itemScaleSizeShulker)
