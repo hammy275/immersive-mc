@@ -70,8 +70,6 @@ public class ImmersiveMC {
                 SetRepeaterPacket::decode, SetRepeaterPacket::handle);
         Network.INSTANCE.register(InteractPacket.class, InteractPacket::encode,
                 InteractPacket::decode, InteractPacket::handle);
-        Network.INSTANCE.register(UpdateStoragePacket.class, UpdateStoragePacket::encode,
-                UpdateStoragePacket::decode, UpdateStoragePacket::handle);
         Network.INSTANCE.register(FetchPlayerStoragePacket.class, FetchPlayerStoragePacket::encode,
                 FetchPlayerStoragePacket::decode, FetchPlayerStoragePacket::handle);
         Network.INSTANCE.register(GetRecipePacket.class, GetRecipePacket::encode,
