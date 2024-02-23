@@ -233,7 +233,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         List<BlockPos> positions = new ArrayList<>();
         if (builder.airCheckPositionOffsets.isEmpty()) {
             if (info.immersiveDir == null) {
-                return false;
+                return true;
             }
             positions.add(info.getBlockPosition().relative(info.immersiveDir));
         } else {

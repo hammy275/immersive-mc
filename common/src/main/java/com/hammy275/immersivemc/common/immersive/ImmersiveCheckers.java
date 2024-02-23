@@ -25,7 +25,6 @@ public class ImmersiveCheckers {
         CHECKERS.add(ImmersiveCheckers::isChest);
         CHECKERS.add(ImmersiveCheckers::isHopper);
         CHECKERS.add(ImmersiveCheckers::isIronFurnacesFurnace);
-        CHECKERS.add(ImmersiveCheckers::isJukebox);
         CHECKERS.add(ImmersiveCheckers::isRepeater);
         CHECKERS.add(ImmersiveCheckers::isShulkerBox);
         CHECKERS.add(ImmersiveCheckers::isTinkersConstructCraftingStation);
@@ -50,10 +49,6 @@ public class ImmersiveCheckers {
 
     public static boolean isHopper(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return tileEntity instanceof HopperBlockEntity;
-    }
-
-    public static boolean isJukebox(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return tileEntity instanceof JukeboxBlockEntity;
     }
 
     public static boolean isRepeater(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {

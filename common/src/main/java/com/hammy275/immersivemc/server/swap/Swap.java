@@ -1,13 +1,11 @@
 package com.hammy275.immersivemc.server.swap;
 
 import com.hammy275.immersivemc.common.compat.Lootr;
-import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.storage.AnvilWorldStorage;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.storage.workarounds.NullContainer;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.mixin.AnvilMenuMixin;
 import com.hammy275.immersivemc.server.storage.GetStorage;
 import com.mojang.datafixers.util.Pair;
@@ -15,8 +13,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.stats.Stats;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -239,18 +235,6 @@ public class Swap {
             player.getInventory().setItem(slot, res.mergedInto);
         }
 
-    }
-
-    public static void handleJukebox(JukeboxBlockEntity jukebox,
-                                     ServerPlayer player, InteractionHand hand) {
-        ItemStack playerItem = player.getItemInHand(hand);
-        if (jukebox.getTheItem().isEmpty() &&
-                playerItem.is(ItemTags.MUSIC_DISCS)) {
-            jukebox.setTheItem(playerItem.copyWithCount(1));
-            playerItem.shrink(1);
-            player.awardStat(Stats.PLAY_RECORD);
-            VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
-        }
     }
 
     public static void handleChest(ChestBlockEntity chestIn,

@@ -15,6 +15,7 @@ public class ImmersiveHandlers {
     public static final ImmersiveHandler craftingHandler = new CraftingHandler();
     public static final ImmersiveHandler enchantingTableHandler = new ETableHandler();
     public static final ImmersiveHandler furnaceHandler = new FurnaceHandler();
+    public static final ImmersiveHandler jukeboxHandler = new JukeboxHandler();
     public static final ImmersiveHandler smithingTableHandler = new SmithingTableHandler();
 
     static {
@@ -25,6 +26,7 @@ public class ImmersiveHandlers {
         HANDLERS.add(craftingHandler);
         HANDLERS.add(enchantingTableHandler);
         HANDLERS.add(furnaceHandler);
+        HANDLERS.add(jukeboxHandler);
         HANDLERS.add(smithingTableHandler);
     }
 }

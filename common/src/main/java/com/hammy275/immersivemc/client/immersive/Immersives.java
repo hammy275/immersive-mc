@@ -319,7 +319,7 @@ public class Immersives {
             .setMaxImmersives(2)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .build();
-    public static final BuiltImmersive immersiveJukebox = ImmersiveBuilder.create(ImmersiveCheckers::isJukebox)
+    public static final BuiltImmersive immersiveJukebox = ImmersiveBuilder.create(ImmersiveHandlers.jukeboxHandler)
             .setConfigChecker(() -> ActiveConfig.active().useJukeboxImmersion)
             .setRenderTime(ClientConstants.ticksToHandleJukebox)
             .addHitbox(HitboxInfoBuilder.create(Vec3.ZERO, 0.125, 0.125, 0.625).build())

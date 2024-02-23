@@ -57,10 +57,7 @@ public class SwapPacket {
                         handler.swap(message.slot, message.hand, message.block, player, message.placementMode);
                     }
                 }
-                if (ImmersiveCheckers.isJukebox(message.block, state, tileEnt, player.level())
-                        && ActiveConfig.FILE.useJukeboxImmersion) {
-                    Swap.handleJukebox((JukeboxBlockEntity) tileEnt, player, message.hand);
-                } else if (ImmersiveCheckers.isChest(message.block, state, tileEnt, player.level())
+                if (ImmersiveCheckers.isChest(message.block, state, tileEnt, player.level())
                         && ActiveConfig.FILE.useChestImmersion) {
                     if (tileEnt instanceof ChestBlockEntity cbe) {
                         Swap.handleChest(cbe, player, message.hand, message.slot);
