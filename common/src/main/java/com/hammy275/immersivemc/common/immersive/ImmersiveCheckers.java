@@ -21,7 +21,6 @@ public class ImmersiveCheckers {
             WORLD_STORAGE_CHECKERS = new LinkedList<>();
 
     static {
-        CHECKERS.add(ImmersiveCheckers::isChest);
         CHECKERS.add(ImmersiveCheckers::isIronFurnacesFurnace);
         CHECKERS.add(ImmersiveCheckers::isRepeater);
         CHECKERS.add(ImmersiveCheckers::isTinkersConstructCraftingStation);
@@ -35,10 +34,6 @@ public class ImmersiveCheckers {
     }
 
     // Vanilla
-    
-    public static boolean isChest(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return tileEntity instanceof ChestBlockEntity || tileEntity instanceof EnderChestBlockEntity;
-    }
 
     public static boolean isRepeater(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         return state.getBlock() instanceof RepeaterBlock;

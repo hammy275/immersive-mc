@@ -7,13 +7,12 @@ import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
-import com.hammy275.immersivemc.server.swap.Swap;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.function.Supplier;
@@ -57,14 +56,7 @@ public class SwapPacket {
                         handler.swap(message.slot, message.hand, message.block, player, message.placementMode);
                     }
                 }
-                if (ImmersiveCheckers.isChest(message.block, state, tileEnt, player.level())
-                        && ActiveConfig.FILE.useChestImmersion) {
-                    if (tileEnt instanceof ChestBlockEntity cbe) {
-                        Swap.handleChest(cbe, player, message.hand, message.slot);
-                    } else if (tileEnt instanceof EnderChestBlockEntity) {
-                        Swap.handleEnderChest(player, message.hand, message.slot);
-                    }
-                } else if (ImmersiveCheckers.isIronFurnacesFurnace(message.block, state, tileEnt, player.level())
+                if (ImmersiveCheckers.isIronFurnacesFurnace(message.block, state, tileEnt, player.level())
                         && ActiveConfig.FILE.useIronFurnacesFurnaceImmersion) {
                     ImmersiveHandlers.furnaceHandler.swap(message.slot, message.hand, message.block, player, message.placementMode);
                 }

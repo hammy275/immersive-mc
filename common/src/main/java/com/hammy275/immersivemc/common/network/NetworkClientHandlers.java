@@ -74,6 +74,8 @@ public class NetworkClientHandlers {
                 for (AbstractImmersiveInfo info : immersive.getTrackedObjects()) {
                     if (info.getBlockPosition().equals(pos)) {
                         immersive.processStorageFromNetwork(info, storage);
+                    } else if (info instanceof ChestInfo cInfo && cInfo.other != null && cInfo.other.getBlockPos().equals(pos)) {
+                        Immersives.immersiveChest.processOtherStorageFromNetwork(info, storage);
                     }
                 }
             }
