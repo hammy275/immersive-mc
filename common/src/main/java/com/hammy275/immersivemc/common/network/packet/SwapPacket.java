@@ -1,9 +1,7 @@
 package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.client.SafeClientUtil;
-import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
@@ -54,11 +52,8 @@ public class SwapPacket {
                 for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
                     if (handler.enabledInServerConfig() && handler.isValidBlock(message.block, state, tileEnt, player.level())) {
                         handler.swap(message.slot, message.hand, message.block, player, message.placementMode);
+                        break;
                     }
-                }
-                if (ImmersiveCheckers.isIronFurnacesFurnace(message.block, state, tileEnt, player.level())
-                        && ActiveConfig.FILE.useIronFurnacesFurnaceImmersion) {
-                    ImmersiveHandlers.furnaceHandler.swap(message.slot, message.hand, message.block, player, message.placementMode);
                 }
             }
         });

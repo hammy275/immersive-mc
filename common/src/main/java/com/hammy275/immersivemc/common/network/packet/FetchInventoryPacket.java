@@ -1,8 +1,6 @@
 package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.common.compat.Lootr;
-import com.hammy275.immersivemc.common.immersive.*;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
@@ -13,7 +11,6 @@ import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.server.storage.GetStorage;
 import com.hammy275.immersivemc.server.storage.ImmersiveMCLevelStorage;
-import com.hammy275.immersivemc.server.swap.Swap;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -22,7 +19,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -119,29 +115,10 @@ public class FetchInventoryPacket {
                     Network.INSTANCE.sendToPlayer(player,
                             new UpdateStoragePacket(pos, storage, storage.getType()));
                 }
-            } else if (tileEnt != null) {
-                Container inv;
-                Container lootrInv = Lootr.lootrImpl.getContainer(player, pos);
-                if (lootrInv != null) {
-                    inv = lootrInv;
-                } else if (tileEnt instanceof Container) {
-                    inv = (Container) tileEnt;
-                } else if (tileEnt instanceof EnderChestBlockEntity) {
-                    inv = player.getEnderChestInventory();
-                } else {
-                    return;
-                }
-                int extra = 0;
-                boolean isTCCraftingStation = ImmersiveCheckers.isTinkersConstructCraftingStation(pos, player.level().getBlockState(pos), tileEnt, player.level());
-                if (isTCCraftingStation) {
-                    extra = 1;
-                }
-                ItemStack[] stacks = new ItemStack[inv.getContainerSize() + extra];
+            } else if (tileEnt instanceof Container inv) {
+                ItemStack[] stacks = new ItemStack[inv.getContainerSize()];
                 for (int i = 0; i < inv.getContainerSize(); i++) {
                     stacks[i] = inv.getItem(i);
-                }
-                if (isTCCraftingStation) {
-                    stacks[9] = Swap.getRecipeOutput(player, stacks);
                 }
                 Network.INSTANCE.sendToPlayer(player,
                         new FetchInventoryPacket(stacks, pos));

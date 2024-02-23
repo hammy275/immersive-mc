@@ -6,7 +6,6 @@ import com.hammy275.immersivemc.client.immersive.info.AnvilData;
 import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.ETableStorage;
@@ -375,12 +374,12 @@ public class Immersives {
 
 
     public static final BuiltImmersive immersiveIronFurnacesFurnace = immersiveFurnace.getBuilderClone()
-            .setBlockChecker(ImmersiveCheckers::isIronFurnacesFurnace)
+            .setBlockChecker(ImmersiveHandlers.ironFurnacesFurnaceHandler::isValidBlock)
             .setConfigChecker(() -> ActiveConfig.active().useIronFurnacesFurnaceImmersion)
             .build();
 
     public static final BuiltImmersive immersiveTinkersConstructCraftingStation = immersiveCrafting.getBuilderClone()
-            .setBlockChecker(ImmersiveCheckers::isTinkersConstructCraftingStation)
+            .setBlockChecker(ImmersiveHandlers.tcCraftingStationHandler::isValidBlock)
             .setConfigChecker(() -> ActiveConfig.active().useTinkersConstructCraftingStationImmersion)
             .setUsesWorldStorage(false)
             .modifyHitboxes(0, 8, (hitbox) -> hitbox.renderItem(false).build())
