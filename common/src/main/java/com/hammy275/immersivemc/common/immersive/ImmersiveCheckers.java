@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.common.immersive;
 
-import com.hammy275.immersivemc.common.compat.IronFurnaces;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import net.minecraft.core.BlockPos;
@@ -14,10 +13,8 @@ import java.util.List;
 
 public class ImmersiveCheckers {
 
-    public static final List<CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean>>
-            CHECKERS = new LinkedList<>();
-    public static final List<CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean>>
-            WORLD_STORAGE_CHECKERS = new LinkedList<>();
+    public static final List<CheckerFunction> CHECKERS = new LinkedList<>();
+    public static final List<CheckerFunction> WORLD_STORAGE_CHECKERS = new LinkedList<>();
 
     static {
         CHECKERS.add(ImmersiveCheckers::isRepeater);

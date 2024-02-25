@@ -3,13 +3,9 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.common.immersive.CheckerFunction;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
-import net.minecraft.core.BlockPos;
+import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import net.minecraft.core.Vec3i;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -24,7 +20,7 @@ public class ImmersiveBuilder implements Cloneable {
 
 
     // -- Required --
-    CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker;
+    CheckerFunction blockChecker;
 
     // -- Optional --
     Supplier<Boolean> enabledInConfigSupplier = () -> true;
@@ -46,7 +42,7 @@ public class ImmersiveBuilder implements Cloneable {
     Consumer<BuiltImmersiveInfo> onRemove = (info) -> {};
     boolean blockRightClickWhenGUIClickDisabled = true;
     BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
-    private ImmersiveBuilder(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
+    private ImmersiveBuilder(CheckerFunction blockChecker) {
         this.blockChecker = blockChecker;
     }
 
@@ -56,7 +52,7 @@ public class ImmersiveBuilder implements Cloneable {
      * @param blockChecker New block checking function.
      * @return Builder object.
      */
-    public ImmersiveBuilder setBlockChecker(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
+    public ImmersiveBuilder setBlockChecker(CheckerFunction blockChecker) {
         this.blockChecker = blockChecker;
         return this;
     }
@@ -336,7 +332,7 @@ public class ImmersiveBuilder implements Cloneable {
         return new BuiltImmersive(this);
     }
 
-    public static ImmersiveBuilder create(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
+    public static ImmersiveBuilder create(CheckerFunction blockChecker) {
         return new ImmersiveBuilder(blockChecker);
     }
 
