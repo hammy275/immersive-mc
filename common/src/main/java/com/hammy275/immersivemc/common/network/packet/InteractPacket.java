@@ -1,21 +1,15 @@
 package com.hammy275.immersivemc.common.network.packet;
 
-import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.client.SafeClientUtil;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.network.NetworkUtil;
+import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.server.storage.GetStorage;
-import com.hammy275.immersivemc.server.swap.ChiseledBookshelfSwap;
 import com.hammy275.immersivemc.server.swap.Swap;
+import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import dev.architectury.networking.NetworkManager;
 
 import java.util.function.Supplier;
 
@@ -89,23 +83,6 @@ public class InteractPacket {
                     ImmersiveStorage storage = GetStorage.getPlayerStorage(player, "backpack");
                     // -27 below since 0-26 are inventory slots
                     Swap.handleBackpackCraftingSwap(message.slot - 27, message.hand, storage, player, message.placementMode);
-                }
-            } else if (NetworkUtil.safeToRun(message.pos, player)) {
-                BlockState state = player.level().getBlockState(message.pos);
-                BlockEntity tileEnt = player.level().getBlockEntity(message.pos);
-                if ((ImmersiveCheckers.isCraftingTable(message.pos, state, tileEnt, player.level()) && ActiveConfig.FILE.useCraftingImmersion) ||
-                        (ImmersiveCheckers.isTinkersConstructCraftingStation(message.pos, state, tileEnt, player.level()) && ActiveConfig.FILE.useTinkersConstructCraftingStationImmersion)) {
-                    Swap.handleCraftingSwap(player, message.slot, message.hand, message.pos, message.placementMode);
-                } else if (ImmersiveCheckers.isAnvil(message.pos, state, tileEnt, player.level())) {
-                    Swap.anvilSwap(message.slot, message.hand, message.pos, player, message.placementMode);
-                } else if (ImmersiveCheckers.isEnchantingTable(message.pos, state, tileEnt, player.level())) {
-                    Swap.enchantingTableSwap(player, message.slot, message.hand, message.pos);
-                } else if (ImmersiveCheckers.isBeacon(message.pos, state, tileEnt, player.level())) {
-                    Swap.beaconSwap(player, message.hand, message.pos);
-                } else if (ImmersiveCheckers.isSmithingTable(message.pos, state, tileEnt, player.level())) {
-                    Swap.smithingTableSwap(message.slot, message.hand, message.pos, player, message.placementMode);
-                } else if (ImmersiveCheckers.isChiseledBookshelf(message.pos, state, tileEnt, player.level())) {
-                    ChiseledBookshelfSwap.swap(player, message.pos, message.slot, message.hand);
                 }
             }
         });

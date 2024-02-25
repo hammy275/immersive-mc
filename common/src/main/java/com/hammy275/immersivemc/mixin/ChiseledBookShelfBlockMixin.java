@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.mixin;
 
-import com.hammy275.immersivemc.server.swap.ChiseledBookshelfSwap;
+import com.hammy275.immersivemc.common.immersive.handler.ChiseledBookshelfHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Inventory;
@@ -40,7 +40,7 @@ public abstract class ChiseledBookShelfBlockMixin {
     target = "Lnet/minecraft/world/level/block/ChiseledBookShelfBlock;getRelativeHitCoordinatesForBlockFace(Lnet/minecraft/world/phys/BlockHitResult;Lnet/minecraft/core/Direction;)Ljava/util/Optional;")
     )
     private Optional<Vec2> getRelativeHitCoordOverride(BlockHitResult blockHitResult, Direction direction) {
-        if (ChiseledBookshelfSwap.bookshelfBlockSlotOverride != -1) {
+        if (ChiseledBookshelfHandler.bookshelfBlockSlotOverride != -1) {
             return Optional.of(new Vec2(1, 1)); // Return something to bypass Optional.isEmpty()
         } else {
             return getRelativeHitCoordinatesForBlockFace(blockHitResult, direction);
@@ -52,8 +52,8 @@ public abstract class ChiseledBookShelfBlockMixin {
                     target = "Lnet/minecraft/world/level/block/ChiseledBookShelfBlock;getHitSlot(Lnet/minecraft/world/phys/Vec2;)I")
     )
     private int getHitSlotOverride(Vec2 vec2) {
-        if (ChiseledBookshelfSwap.bookshelfBlockSlotOverride != -1) {
-            return ChiseledBookshelfSwap.bookshelfBlockSlotOverride;
+        if (ChiseledBookshelfHandler.bookshelfBlockSlotOverride != -1) {
+            return ChiseledBookshelfHandler.bookshelfBlockSlotOverride;
         } else {
             return getHitSlot(vec2);
         }
@@ -64,8 +64,8 @@ public abstract class ChiseledBookShelfBlockMixin {
                     target = "Lnet/minecraft/world/level/block/ChiseledBookShelfBlock;addBook(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/block/entity/ChiseledBookShelfBlockEntity;Lnet/minecraft/world/item/ItemStack;I)V")
     )
     private void addBookOverride(Level level, BlockPos blockPos, Player player, ChiseledBookShelfBlockEntity chiseledBookShelfBlockEntity, ItemStack itemStack, int i) {
-        if (ChiseledBookshelfSwap.bookshelfBlockHandOverride != null) {
-            addBook(level, blockPos, player, chiseledBookShelfBlockEntity, player.getItemInHand(ChiseledBookshelfSwap.bookshelfBlockHandOverride), i);
+        if (ChiseledBookshelfHandler.bookshelfBlockHandOverride != null) {
+            addBook(level, blockPos, player, chiseledBookShelfBlockEntity, player.getItemInHand(ChiseledBookshelfHandler.bookshelfBlockHandOverride), i);
         } else {
             addBook(level, blockPos, player, chiseledBookShelfBlockEntity, itemStack, i);
         }
@@ -76,8 +76,8 @@ public abstract class ChiseledBookShelfBlockMixin {
                     target = "Lnet/minecraft/world/entity/player/Inventory;add(Lnet/minecraft/world/item/ItemStack;)Z")
     )
     private static boolean removeBlockInvAddOverride(Inventory inventory, ItemStack itemStack, Level level, BlockPos blockPos, Player player, ChiseledBookShelfBlockEntity chiseledBookShelfBlockEntity, int i) {
-        if (ChiseledBookshelfSwap.bookshelfBlockHandOverride != null && player.getItemInHand(ChiseledBookshelfSwap.bookshelfBlockHandOverride).isEmpty()) {
-            player.setItemInHand(ChiseledBookshelfSwap.bookshelfBlockHandOverride, itemStack);
+        if (ChiseledBookshelfHandler.bookshelfBlockHandOverride != null && player.getItemInHand(ChiseledBookshelfHandler.bookshelfBlockHandOverride).isEmpty()) {
+            player.setItemInHand(ChiseledBookshelfHandler.bookshelfBlockHandOverride, itemStack);
             return true;
         } else {
             return inventory.add(itemStack);

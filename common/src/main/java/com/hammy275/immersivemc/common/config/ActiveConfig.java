@@ -240,6 +240,7 @@ public final class ActiveConfig implements Cloneable {
         allowThrowingBeyondMax = ImmersiveMCConfig.allowThrowingBeyondMax.get();
         useHopperImmersion = ImmersiveMCConfig.useHopperImmersion.get();
         useSmithingTableImmersion = ImmersiveMCConfig.useSmithingTableImmersion.get();
+        useChiseledBookshelfImmersion = ImmersiveMCConfig.useChiseledBookshelfImmersion.get();
         useWrittenBookImmersion = ImmersiveMCConfig.useWrittenBookImmersion.get();
         useCauldronImmersion = ImmersiveMCConfig.useCauldronImmersion.get();
         useIronFurnacesFurnaceImmersion = ImmersiveMCConfig.useIronFurnacesFurnaceImmersion.get();
