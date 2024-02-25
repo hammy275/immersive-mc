@@ -1,6 +1,8 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 public class EnchantingData {
 
@@ -14,6 +16,16 @@ public class EnchantingData {
 
         public boolean isPresent() {
             return this.textPreview != null;
+        }
+
+        public void set(int xpLevels, int enchHint, int levelHint) {
+            Enchantment ench = Enchantment.byId(enchHint);
+            if (ench != null) {
+                this.levelsNeeded = xpLevels;
+                this.textPreview = new TextComponent(ench.getFullname(levelHint).getString() + "...?");
+            } else {
+                this.textPreview = null;
+            }
         }
     }
 }
