@@ -2,20 +2,22 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.common.compat.Lootr;
+import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
+import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
+import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
+import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
-import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
-import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
-import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -184,6 +186,24 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     }
 
     @Override
+    public void processStorageFromNetwork(AbstractImmersiveInfo infoIn, HandlerStorage storageIn) {
+        ChestInfo info = (ChestInfo) infoIn;
+        ListOfItemsStorage storage = (ListOfItemsStorage) storageIn;
+        for (int i = 0; i < storage.getItems().size(); i++) {
+            info.items[i] = storage.getItems().get(i);
+        }
+    }
+
+    // Used for processing info.other's item contents
+    public void processOtherStorageFromNetwork(AbstractImmersiveInfo infoIn, HandlerStorage storageIn) {
+        ChestInfo info = (ChestInfo) infoIn;
+        ListOfItemsStorage storage = (ListOfItemsStorage) storageIn;
+        for (int i = 0; i < storage.getItems().size(); i++) {
+            info.items[i + 27] = storage.getItems().get(i);
+        }
+    }
+
+    @Override
     public BlockPos getLightPos(ChestInfo info) {
         return info.getBlockPosition().above();
     }
@@ -198,7 +218,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return ImmersiveCheckers.isChest(pos, state, tileEntity, level);
+        return ImmersiveHandlers.chestHandler.isValidBlock(pos, state, tileEntity, level);
     }
 
     @Override

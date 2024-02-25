@@ -7,12 +7,13 @@ import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
+import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.BeaconConfirmPacket;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
-import com.hammy275.immersivemc.common.network.packet.InteractPacket;
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
+import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -281,7 +282,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return ImmersiveCheckers.isBeacon(pos, state, tileEntity, level);
+        return ImmersiveHandlers.beaconHandler.isValidBlock(pos, state, tileEntity, level);
     }
 
     @Override
@@ -298,13 +299,14 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
 
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
-        Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), closest, hand));
+        Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), closest, hand));
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, ImmersiveStorage storage) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, HandlerStorage storage) {
         BeaconInfo beaconInfo = (BeaconInfo) info;
-        beaconInfo.items[0] = storage.getItem(0);
+        ListOfItemsStorage items = (ListOfItemsStorage) storage;
+        beaconInfo.items[0] = items.getItems().get(0);
     }
 
     @Override
