@@ -6,11 +6,11 @@ import com.hammy275.immersivemc.client.immersive.info.AnvilData;
 import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.immersive.storage.AnvilStorage;
+import com.hammy275.immersivemc.common.immersive.storage.ETableStorage;
 import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.InteractPacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
-import com.hammy275.immersivemc.common.storage.AnvilStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
@@ -34,7 +34,7 @@ public class Immersives {
     public static final List<AbstractImmersive<? extends AbstractImmersiveInfo>> WS_IMMERSIVES =
             new LinkedList<>();
 
-    public static final BuiltImmersive immersiveAnvil = ImmersiveBuilder.create(ImmersiveCheckers::isAnvil)
+    public static final BuiltImmersive immersiveAnvil = ImmersiveBuilder.create(ImmersiveHandlers.anvilHandler)
             .setConfigChecker(() -> ActiveConfig.active().useAnvilImmersion)
             .setRenderTime(ClientConstants.ticksToRenderAnvil)
             .setRenderSize(ClientConstants.itemScaleSizeAnvil)
@@ -58,12 +58,12 @@ public class Immersives {
             })
             .setPositioningMode(HitboxPositioningMode.TOP_BLOCK_FACING)
             .setMaxImmersives(1)
-            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand)))
+            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .setUsesWorldStorage(true)
             .setExtraInfoDataClass(AnvilData.class)
             .build();
     public static final ImmersiveBackpack immersiveBackpack = new ImmersiveBackpack();
-    public static final BuiltImmersive immersiveBarrel = ImmersiveBuilder.create(ImmersiveCheckers::isBarrel)
+    public static final BuiltImmersive immersiveBarrel = ImmersiveBuilder.create(ImmersiveHandlers.barrelHandler)
             .setConfigChecker(() -> ActiveConfig.active().useBarrelImmersion)
             .setRenderTime(ClientConstants.ticksToRenderBarrel)
             .setRenderSize(ClientConstants.itemScaleSizeBarrel)
@@ -95,7 +95,7 @@ public class Immersives {
             })
             .build();
     public static final ImmersiveBeacon immersiveBeacon = new ImmersiveBeacon();
-    public static final BuiltImmersive immersiveBrewing = ImmersiveBuilder.create(ImmersiveCheckers::isBrewingStand)
+    public static final BuiltImmersive immersiveBrewing = ImmersiveBuilder.create(ImmersiveHandlers.brewingStandHandler)
             .setConfigChecker(() -> ActiveConfig.active().useBrewingImmersion)
             .setRenderTime(ClientConstants.ticksToRenderBrewing)
             .setRenderSize(ClientConstants.itemScaleSizeBrewing)
@@ -114,7 +114,7 @@ public class Immersives {
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .build();
     public static final ImmersiveChest immersiveChest = new ImmersiveChest();
-    public static final BuiltImmersive immersiveChiseledBookshelf = ImmersiveBuilder.create(ImmersiveCheckers::isChiseledBookshelf)
+    public static final BuiltImmersive immersiveChiseledBookshelf = ImmersiveBuilder.create(ImmersiveHandlers.chiseledBookshelfHandler)
             .setConfigChecker(() -> ActiveConfig.active().useChiseledBookshelfImmersion)
             .setRenderTime(ClientConstants.ticksToRenderChiseledBookshelf)
             .setBlockRightClickWhenGUIClickDisabled(false)
@@ -126,10 +126,10 @@ public class Immersives {
             .addHitbox(HitboxInfoBuilder.create(new Vec3(0.34375, -0.25, 0), 0.3125, 0.5, 0.25).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_BLOCK_FACING)
             .setMaxImmersives(1)
-            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand)))
+            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .setVROnly(true)
             .build();
-    public static final BuiltImmersive immersiveCrafting = ImmersiveBuilder.create(ImmersiveCheckers::isCraftingTable)
+    public static final BuiltImmersive immersiveCrafting = ImmersiveBuilder.create(ImmersiveHandlers.craftingHandler)
             .setConfigChecker(() -> ActiveConfig.active().useCraftingImmersion)
             .setRenderTime(ClientConstants.ticksToRenderCrafting)
             .setRenderSize(ClientConstants.itemScaleSizeCrafting)
@@ -142,11 +142,11 @@ public class Immersives {
                     .forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
             .setMaxImmersives(1)
-            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand)))
+            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .setUsesWorldStorage(true)
             .setTriggerHitboxControllerNum(0)
             .build();
-    public static final BuiltImmersive immersiveETable = ImmersiveBuilder.create(ImmersiveCheckers::isEnchantingTable)
+    public static final BuiltImmersive immersiveETable = ImmersiveBuilder.create(ImmersiveHandlers.enchantingTableHandler)
             .setConfigChecker(() -> ActiveConfig.active().useETableImmersion)
             .setRenderTime(ClientConstants.ticksToRenderETable)
             .setRenderSize(ClientConstants.itemScaleSizeETable)
@@ -205,26 +205,28 @@ public class Immersives {
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
             .setMaxImmersives(1)
             .setUsesWorldStorage(true)
-            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand)))
+            .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .setExtraInfoDataClass(EnchantingData.class)
-            .setExtraStorageConsumer((storage, info) -> {
-                ItemStack item = info.itemHitboxes.get(0).item;
-                if (item != null && !item.isEmpty()) {
-                    if (item.getItem() == Items.BOOK) {
-                        item = new ItemStack(Items.ENCHANTED_BOOK);
-                    } else {
-                        item = item.copy();
-                    }
-                    EnchantmentHelper.setEnchantments(ClientConstants.fakeEnch, item);
-                } else {
-                    item = ItemStack.EMPTY;
-                }
+            .setExtraStorageConsumer((storageIn, info) -> {
+                EnchantingData extraData = (EnchantingData) info.getExtraData();
+                ETableStorage storage = (ETableStorage) storageIn;
+                extraData.weakData.set(storage.xpLevels[0], storage.enchantHints[0], storage.levelHints[0]);
+                extraData.midData.set(storage.xpLevels[1], storage.enchantHints[1], storage.levelHints[1]);
+                extraData.strongData.set(storage.xpLevels[2], storage.enchantHints[2], storage.levelHints[2]);
                 for (int i = 1; i <= 3; i++) {
+                    EnchantingData.ETableData data = i == 1 ? extraData.weakData : i == 2 ? extraData.midData : extraData.strongData;
+                    ItemStack item = info.itemHitboxes.get(0).item;
+                    if (item != null && !item.isEmpty()) {
+                        item = item.is(Items.BOOK) ? new ItemStack(Items.ENCHANTED_BOOK) : item.copy();
+                        if (data.isPresent()) {
+                            EnchantmentHelper.setEnchantments(ClientConstants.fakeEnch, item);
+                        }
+                    }
                     info.itemHitboxes.get(i).item = item;
                 }
             })
             .build();
-    public static final BuiltImmersive immersiveFurnace = ImmersiveBuilder.create(ImmersiveCheckers::isFurnace)
+    public static final BuiltImmersive immersiveFurnace = ImmersiveBuilder.create(ImmersiveHandlers.furnaceHandler)
             .setConfigChecker(() -> ActiveConfig.active().useFurnaceImmersion)
             .setRenderTime(ClientConstants.ticksToRenderFurnace)
             .setRenderSize(ClientConstants.itemScaleSizeFurnace)
@@ -280,7 +282,7 @@ public class Immersives {
             })
             .build();
     public static final ImmersiveHitboxes immersiveHitboxes = new ImmersiveHitboxes();
-    public static final BuiltImmersive immersiveHopper = ImmersiveBuilder.create(ImmersiveCheckers::isHopper)
+    public static final BuiltImmersive immersiveHopper = ImmersiveBuilder.create(ImmersiveHandlers.hopperHandler)
             .setConfigChecker(() -> ActiveConfig.active().useHopperImmersion)
             .setRenderTime(ClientConstants.ticksToRenderHopper)
             .setRenderSize(ClientConstants.itemScaleSizeHopper)
@@ -316,7 +318,7 @@ public class Immersives {
             .setMaxImmersives(2)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .build();
-    public static final BuiltImmersive immersiveJukebox = ImmersiveBuilder.create(ImmersiveCheckers::isJukebox)
+    public static final BuiltImmersive immersiveJukebox = ImmersiveBuilder.create(ImmersiveHandlers.jukeboxHandler)
             .setConfigChecker(() -> ActiveConfig.active().useJukeboxImmersion)
             .setRenderTime(ClientConstants.ticksToHandleJukebox)
             .addHitbox(HitboxInfoBuilder.create(Vec3.ZERO, 0.125, 0.125, 0.625).build())
@@ -327,7 +329,7 @@ public class Immersives {
             .build();
 
     public static final ImmersiveRepeater immersiveRepeater = new ImmersiveRepeater();
-    public static final BuiltImmersive immersiveShulker = ImmersiveBuilder.create(ImmersiveCheckers::isShulkerBox)
+    public static final BuiltImmersive immersiveShulker = ImmersiveBuilder.create(ImmersiveHandlers.shulkerBoxHandler)
             .setConfigChecker(() -> ActiveConfig.active().useShulkerImmersion)
             .setRenderTime(ClientConstants.ticksToRenderShulker)
             .setRenderSize(ClientConstants.itemScaleSizeShulker)
@@ -355,7 +357,7 @@ public class Immersives {
             })
             .build();
 
-    public static final BuiltImmersive immersiveSmithingTable = ImmersiveBuilder.create(ImmersiveCheckers::isSmithingTable)
+    public static final BuiltImmersive immersiveSmithingTable = ImmersiveBuilder.create(ImmersiveHandlers.smithingTableHandler)
             .setConfigChecker(() -> ActiveConfig.active().useSmithingTableImmersion)
             .setRenderTime(ClientConstants.ticksToRenderSmithingTable)
             .setRenderSize(ClientConstants.itemScaleSizeSmithingTable)
@@ -365,19 +367,19 @@ public class Immersives {
             .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 0, 0.5), ClientConstants.itemScaleSizeSmithingTable / 1.025).holdsItems(true).triggerHitbox(true).itemSpins(true).itemRenderSizeMultiplier(1.5f).forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
             .setMaxImmersives(1)
-            .setRightClickHandler(((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new InteractPacket(info.getBlockPosition(), slot, hand))))
+            .setRightClickHandler(((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand))))
             .setUsesWorldStorage(true)
             .setTriggerHitboxControllerNum(0)
             .build();
 
 
     public static final BuiltImmersive immersiveIronFurnacesFurnace = immersiveFurnace.getBuilderClone()
-            .setBlockChecker(ImmersiveCheckers::isIronFurnacesFurnace)
+            .setBlockChecker(ImmersiveHandlers.ironFurnacesFurnaceHandler::isValidBlock)
             .setConfigChecker(() -> ActiveConfig.active().useIronFurnacesFurnaceImmersion)
             .build();
 
     public static final BuiltImmersive immersiveTinkersConstructCraftingStation = immersiveCrafting.getBuilderClone()
-            .setBlockChecker(ImmersiveCheckers::isTinkersConstructCraftingStation)
+            .setBlockChecker(ImmersiveHandlers.tcCraftingStationHandler::isValidBlock)
             .setConfigChecker(() -> ActiveConfig.active().useTinkersConstructCraftingStationImmersion)
             .setUsesWorldStorage(false)
             .modifyHitboxes(0, 8, (hitbox) -> hitbox.renderItem(false).build())

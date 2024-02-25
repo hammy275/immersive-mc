@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.ImmersiveHitboxesInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
+import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
@@ -163,6 +164,11 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
             }
         }
 
+    }
+
+    @Override
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, HandlerStorage storage) {
+        // Intentional NO-OP
     }
 
     @Override
