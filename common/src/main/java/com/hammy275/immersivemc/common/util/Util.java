@@ -45,7 +45,7 @@ public class Util {
         BlockPos pos = result.getBlockPos();
         BlockState state = level.getBlockState(pos);
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        for (CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> checker : ImmersiveCheckers.CHECKERS) {
+        for (CheckerFunction checker : ImmersiveCheckers.CHECKERS) {
             if (checker.apply(pos, state, blockEntity, level)) {
                 return true; // "I'm totally not crouching" if SHIFT+Right-clicking an immersive
             }

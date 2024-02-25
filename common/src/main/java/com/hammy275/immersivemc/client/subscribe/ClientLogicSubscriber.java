@@ -12,7 +12,7 @@ import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
 import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
 import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
@@ -318,7 +318,7 @@ public class ClientLogicSubscriber {
                     chestInfo.nextRow();
                     return true;
                 }
-            } else if (ImmersiveCheckers.isShulkerBox(pos, state, tileEnt, player.level)) {
+            } else if (ImmersiveHandlers.shulkerBoxHandler.isValidBlock(pos, state, tileEnt, player.level)) {
                 BuiltImmersiveInfo info = Immersives.immersiveShulker.findImmersive(pos);
                 if (info != null) {
                     ChestLikeData data = (ChestLikeData) info.getExtraData();
@@ -328,7 +328,7 @@ public class ClientLogicSubscriber {
                     }
 
                 }
-            } else if (ImmersiveCheckers.isBarrel(pos, state, tileEnt, player.level)) {
+            } else if (ImmersiveHandlers.barrelHandler.isValidBlock(pos, state, tileEnt, player.level)) {
                 BuiltImmersiveInfo info = Immersives.immersiveBarrel.findImmersive(pos);
                 if (info != null) {
                     ChestLikeData data = (ChestLikeData) info.getExtraData();
@@ -424,7 +424,7 @@ public class ClientLogicSubscriber {
             }
         }
         if (ActiveConfig.active().useBarrelImmersion &&
-                ImmersiveCheckers.isBarrel(pos, state, player.level.getBlockEntity(pos), player.level)) {
+                ImmersiveHandlers.barrelHandler.isValidBlock(pos, state, player.level.getBlockEntity(pos), player.level)) {
             BuiltImmersiveInfo info = Immersives.immersiveBarrel.findImmersive(pos);
             if (info != null) {
                 ((ChestLikeData) info.getExtraData()).toggleOpen(pos);
