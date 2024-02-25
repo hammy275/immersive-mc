@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
+import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.hammy275.immersivemc.client.config.ClientConstants;
@@ -141,5 +142,10 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
         // NOOP. Handled in doTick().
+    }
+
+    @Override
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, HandlerStorage storage) {
+        // Intentional NO-OP
     }
 }

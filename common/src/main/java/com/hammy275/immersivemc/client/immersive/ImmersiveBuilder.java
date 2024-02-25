@@ -3,21 +3,14 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.common.immersive.CheckerFunction;
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
-import net.minecraft.core.BlockPos;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
+import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import net.minecraft.core.Vec3i;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 public class ImmersiveBuilder implements Cloneable {
 
@@ -27,7 +20,7 @@ public class ImmersiveBuilder implements Cloneable {
 
 
     // -- Required --
-    CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker;
+    CheckerFunction blockChecker;
 
     // -- Optional --
     Supplier<Boolean> enabledInConfigSupplier = () -> true;
@@ -44,12 +37,12 @@ public class ImmersiveBuilder implements Cloneable {
     boolean vrOnly = false;
     List<Vec3i> airCheckPositionOffsets = new ArrayList<>();
     Class<?> extraInfoDataClazz = null;
-    BiConsumer<ImmersiveStorage, BuiltImmersiveInfo> extraStorageConsumer = null;
+    BiConsumer<HandlerStorage, BuiltImmersiveInfo> extraStorageConsumer = null;
     BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotActive = SLOT_ALWAYS_ACTIVE;
     Consumer<BuiltImmersiveInfo> onRemove = (info) -> {};
     boolean blockRightClickWhenGUIClickDisabled = true;
     BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
-    private ImmersiveBuilder(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
+    private ImmersiveBuilder(CheckerFunction blockChecker) {
         this.blockChecker = blockChecker;
     }
 
@@ -59,7 +52,7 @@ public class ImmersiveBuilder implements Cloneable {
      * @param blockChecker New block checking function.
      * @return Builder object.
      */
-    public ImmersiveBuilder setBlockChecker(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
+    public ImmersiveBuilder setBlockChecker(CheckerFunction blockChecker) {
         this.blockChecker = blockChecker;
         return this;
     }
@@ -242,13 +235,12 @@ public class ImmersiveBuilder implements Cloneable {
     }
 
     /**
-     * Sets a consumer that acts after an incoming ImmersiveStorage is parsed. For example, this is used
+     * Sets a consumer that acts after an incoming HandlerStorage is parsed. For example, this is used
      * for the anvil to retrieve the level amount and store it in extra data.
-     * Note that the immersive MUST use world storage (call setUsesWorldStorage(true))
      * @param storageConsumer New storage consumer.
      * @return Builder object.
      */
-    public ImmersiveBuilder setExtraStorageConsumer(BiConsumer<ImmersiveStorage, BuiltImmersiveInfo> storageConsumer) {
+    public ImmersiveBuilder setExtraStorageConsumer(BiConsumer<HandlerStorage, BuiltImmersiveInfo> storageConsumer) {
         this.extraStorageConsumer = storageConsumer;
         return this;
     }
@@ -340,8 +332,12 @@ public class ImmersiveBuilder implements Cloneable {
         return new BuiltImmersive(this);
     }
 
-    public static ImmersiveBuilder create(CheckerFunction<BlockPos, BlockState, BlockEntity, Level, Boolean> blockChecker) {
+    public static ImmersiveBuilder create(CheckerFunction blockChecker) {
         return new ImmersiveBuilder(blockChecker);
+    }
+
+    public static ImmersiveBuilder create(ImmersiveHandler handler) {
+        return new ImmersiveBuilder(handler::isValidBlock);
     }
 
     @Override
