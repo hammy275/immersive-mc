@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.server.storage.GetStorage;
@@ -52,7 +52,7 @@ public class GetRecipePacket {
                 handleClient(packet);
             } else if (NetworkUtil.safeToRun(packet.pos, sender)) {
                 if (sender.level().getBlockEntity(packet.pos) instanceof Container table
-                && ImmersiveCheckers.isCraftingTable(packet.pos, sender.level().getBlockState(packet.pos),
+                && ImmersiveHandlers.craftingHandler.isValidBlock(packet.pos, sender.level().getBlockState(packet.pos),
                         sender.level().getBlockEntity(packet.pos), sender.level())) {
                     ItemStack[] items = new ItemStack[10];
                     for (int i = 0; i <= 8; i++) {

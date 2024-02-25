@@ -4,9 +4,10 @@ import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
+import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
+import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -231,7 +232,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         List<BlockPos> positions = new ArrayList<>();
         if (builder.airCheckPositionOffsets.isEmpty()) {
             if (info.immersiveDir == null) {
-                return false;
+                return true;
             }
             positions.add(info.getBlockPosition().relative(info.immersiveDir));
         } else {
@@ -278,10 +279,12 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, ImmersiveStorage storage) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, HandlerStorage storage) {
         BuiltImmersiveInfo bInfo = (BuiltImmersiveInfo) info;
-        for (int i = 0; i < storage.getNumItems(); i++) {
-            bInfo.itemHitboxes.get(i).item = storage.getItem(i);
+        if (storage instanceof ListOfItemsStorage itemsStorage) {
+            for (int i = 0; i < itemsStorage.getItems().size(); i++) {
+                bInfo.itemHitboxes.get(i).item = itemsStorage.getItems().get(i);
+            }
         }
         if (builder.extraStorageConsumer != null) {
             builder.extraStorageConsumer.accept(storage, (BuiltImmersiveInfo) info);
