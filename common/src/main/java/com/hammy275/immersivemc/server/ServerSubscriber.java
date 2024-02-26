@@ -1,8 +1,6 @@
 package com.hammy275.immersivemc.server;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
@@ -12,7 +10,6 @@ import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import com.hammy275.immersivemc.server.storage.GetStorage;
 import com.hammy275.immersivemc.server.storage.ImmersiveMCLevelStorage;
 import com.hammy275.immersivemc.server.tracker.ServerTrackerInit;
-import com.hammy275.immersivemc.server.tracker.ServerVRSubscriber;
 import dev.architectury.event.EventResult;
 import dev.architectury.utils.value.IntValue;
 import net.minecraft.core.BlockPos;
@@ -75,13 +72,7 @@ public class ServerSubscriber {
         // Get looking at immersive
         HitResult hit = player.pick(20, 0, false);
         if (hit instanceof BlockHitResult blockHit && blockHit.getType() != HitResult.Type.MISS) {
-            BlockPos pos = blockHit.getBlockPos();
-            for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
-                if (handler.isValidBlock(pos, player.level().getBlockState(pos), player.level().getBlockEntity(pos), player.level())) {
-                    TrackedImmersives.trackImmersive(player, handler, pos);
-                    return;
-                }
-            }
+            TrackedImmersives.maybeTrackImmersive(player, blockHit.getBlockPos());
         }
     }
 

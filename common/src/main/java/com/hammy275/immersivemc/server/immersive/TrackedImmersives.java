@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.server.immersive;
 
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
@@ -27,7 +28,16 @@ public class TrackedImmersives {
         });
     }
 
-    public static void trackImmersive(ServerPlayer player, ImmersiveHandler handler, BlockPos pos) {
+    public static void maybeTrackImmersive(ServerPlayer player, BlockPos pos) {
+        for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
+            if (handler.isValidBlock(pos, player.level().getBlockState(pos), player.level().getBlockEntity(pos), player.level())) {
+                trackImmersive(player, handler, pos);
+                return;
+            }
+        }
+    }
+
+    private static void trackImmersive(ServerPlayer player, ImmersiveHandler handler, BlockPos pos) {
         for (TrackedImmersiveData data : TRACKED_IMMERSIVES) {
             if (data.getPos().equals(pos)) {
                 return;
