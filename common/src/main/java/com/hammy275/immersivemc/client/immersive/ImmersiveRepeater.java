@@ -31,7 +31,7 @@ import java.util.Optional;
 public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
 
     public ImmersiveRepeater() {
-        super(2); // You really only interact with one repeater at a time, so 2 at most makes sense
+        super(-1);
     }
 
     @Override

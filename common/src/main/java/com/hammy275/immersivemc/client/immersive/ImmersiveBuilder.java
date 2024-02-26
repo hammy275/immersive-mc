@@ -28,7 +28,7 @@ public class ImmersiveBuilder implements Cloneable {
     List<HitboxInfo> hitboxes = new ArrayList<>();
     List<Vec3i> lightPositionOffsets = new ArrayList<>();
     HitboxPositioningMode positioningMode = HitboxPositioningMode.HORIZONTAL_BLOCK_FACING;
-    int maxImmersives = 4;
+    int maxImmersives = -1;
     Function<BuiltImmersiveInfo, Boolean> extraRenderReady = (info) -> true;
     RightClickHandler rightClickHandler = (a, b, c, d) -> {};
     boolean usesWorldStorage = false;

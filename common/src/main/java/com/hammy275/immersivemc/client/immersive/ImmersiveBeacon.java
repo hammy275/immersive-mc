@@ -52,7 +52,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
     private static final ResourceLocation addLocation = new ResourceLocation(ImmersiveMC.MOD_ID, "add.png");
 
     public ImmersiveBeacon() {
-        super(1);
+        super(-1);
     }
 
     @Override

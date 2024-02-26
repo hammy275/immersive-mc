@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.server.immersive;
 
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.minecraft.core.BlockPos;
@@ -11,7 +12,7 @@ import java.util.UUID;
 
 public class TrackedImmersiveData {
 
-    public static final double maxDist = 16;
+    public static final double maxDist = CommonConstants.distanceToRemoveImmersive;
 
     public final UUID playerUUID;
     private final BlockPos pos;

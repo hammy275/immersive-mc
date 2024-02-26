@@ -45,7 +45,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     public int openCloseCooldown = 0;
 
     public ImmersiveChest() {
-        super(4);
+        super(-1);
     }
 
     @Override
