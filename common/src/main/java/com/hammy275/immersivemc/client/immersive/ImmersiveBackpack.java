@@ -9,6 +9,7 @@ import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
 import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.FetchPlayerStoragePacket;
@@ -39,6 +40,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.Optional;
@@ -88,6 +90,11 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         } else {
             info.slotHovered = -1;
         }
+    }
+
+    @Override
+    public @Nullable ImmersiveHandler getHandler() {
+        return null;
     }
 
     @Override

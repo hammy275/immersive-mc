@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
-import com.hammy275.immersivemc.common.immersive.CheckerFunction;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import net.minecraft.core.Vec3i;
@@ -20,7 +19,7 @@ public class ImmersiveBuilder implements Cloneable {
 
 
     // -- Required --
-    CheckerFunction blockChecker;
+    ImmersiveHandler handler;
 
     // -- Optional --
     Supplier<Boolean> enabledInConfigSupplier = () -> true;
@@ -42,18 +41,17 @@ public class ImmersiveBuilder implements Cloneable {
     Consumer<BuiltImmersiveInfo> onRemove = (info) -> {};
     boolean blockRightClickWhenGUIClickDisabled = true;
     BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
-    private ImmersiveBuilder(CheckerFunction blockChecker) {
-        this.blockChecker = blockChecker;
+    private ImmersiveBuilder(ImmersiveHandler handler) {
+        this.handler = handler;
     }
 
     /**
-     * Sets the function that checks if the block matches for this immersive. Useful when an immersive is a clone of
-     * another.
-     * @param blockChecker New block checking function.
+     * Sets the immersive handler for this immersive.
+     * @param handler New handler for this immersive.
      * @return Builder object.
      */
-    public ImmersiveBuilder setBlockChecker(CheckerFunction blockChecker) {
-        this.blockChecker = blockChecker;
+    public ImmersiveBuilder setHandler(ImmersiveHandler handler) {
+        this.handler = handler;
         return this;
     }
 
@@ -332,12 +330,8 @@ public class ImmersiveBuilder implements Cloneable {
         return new BuiltImmersive(this);
     }
 
-    public static ImmersiveBuilder create(CheckerFunction blockChecker) {
-        return new ImmersiveBuilder(blockChecker);
-    }
-
     public static ImmersiveBuilder create(ImmersiveHandler handler) {
-        return new ImmersiveBuilder(handler::isValidBlock);
+        return new ImmersiveBuilder(handler);
     }
 
     @Override

@@ -134,19 +134,9 @@ public class ClientLogicSubscriber {
 
     public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         for (AbstractImmersive<? extends AbstractImmersiveInfo> immersive : Immersives.IMMERSIVES) {
-            if (immersive.shouldTrack(pos, state, tileEntity, level)) {
+            if (immersive.shouldTrack(pos, state, tileEntity, level) && immersive.clientAuthoritative()) {
                 immersive.trackObject(pos, state, tileEntity, level);
             }
-        }
-
-        // Extra special tracker additions
-        BlockPos belowPos = pos.below();
-        BlockState belowState = level.getBlockState(belowPos);
-        BlockEntity belowEntity = level.getBlockEntity(belowPos);
-        if (Immersives.immersiveETable.shouldTrack(belowPos, belowState, belowEntity, level)) {
-            Immersives.immersiveETable.trackObject(belowPos, belowState, belowEntity, level);
-        } else if (Immersives.immersiveCrafting.shouldTrack(belowPos, belowState, belowEntity, level)) {
-            Immersives.immersiveCrafting.trackObject(belowPos, belowState, belowEntity, level);
         }
     }
 

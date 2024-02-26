@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Arrays;
 
-public class SmithingTableHandler implements ImmersiveHandler {
+public class SmithingTableHandler extends WorldStorageHandler {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         ImmersiveStorage immersiveStorage = GetStorage.getSmithingTableStorage(player, pos);
@@ -52,7 +52,7 @@ public class SmithingTableHandler implements ImmersiveHandler {
                 VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
             }
         }
-        storage.wStorage.setDirty();
+        storage.setDirty();
     }
 
     @Override
@@ -73,5 +73,10 @@ public class SmithingTableHandler implements ImmersiveHandler {
     @Override
     public ResourceLocation getID() {
         return new ResourceLocation(ImmersiveMC.MOD_ID, "smithing_table");
+    }
+
+    @Override
+    public ImmersiveStorage getStorage(ServerPlayer player, BlockPos pos) {
+        return GetStorage.getSmithingTableStorage(player, pos);
     }
 }

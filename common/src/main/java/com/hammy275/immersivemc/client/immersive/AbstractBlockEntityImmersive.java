@@ -1,9 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractBlockEntityImmersiveInfo;
-import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.Level;
@@ -38,17 +35,6 @@ public abstract class AbstractBlockEntityImmersive<T extends BlockEntity, I exte
             // Should be implemented on sub-class
             throw new IllegalArgumentException("Can't check input slot has item for non-Container's!");
         }
-    }
-
-    @Override
-    protected void doTick(I info, boolean isInVR) {
-        super.doTick(info, isInVR);
-        if (info.getBlockEntity() instanceof Container) {
-            if (info.ticksActive % ClientConstants.inventorySyncTime == 0) {
-                Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
-            }
-        }
-
     }
 
     // EVERYTHING ABOVE MUST BE OVERRIDEN, AND HAVE SUPER() CALLED IF APPLICABLE!

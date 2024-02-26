@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TCCraftingStationHandler implements ImmersiveHandler {
+public class TCCraftingStationHandler extends ContainerHandler {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         List<ItemStack> items = new ArrayList<>();

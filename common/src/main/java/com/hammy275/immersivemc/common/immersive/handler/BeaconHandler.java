@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Arrays;
 
-public class BeaconHandler implements ImmersiveHandler {
+public class BeaconHandler extends WorldStorageHandler {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         ImmersiveStorage immersiveStorage = GetStorage.getBeaconStorage(player, pos);
@@ -43,7 +43,7 @@ public class BeaconHandler implements ImmersiveHandler {
             beaconStorage.setItem(0, ItemStack.EMPTY);
         }
         beaconStorage.placeItem(player, hand, 1, 0);
-        beaconStorage.wStorage.setDirty();
+        beaconStorage.setDirty();
     }
 
     @Override
@@ -64,5 +64,10 @@ public class BeaconHandler implements ImmersiveHandler {
     @Override
     public ResourceLocation getID() {
         return new ResourceLocation(ImmersiveMC.MOD_ID, "beacon");
+    }
+
+    @Override
+    public ImmersiveStorage getStorage(ServerPlayer player, BlockPos pos) {
+        return GetStorage.getBeaconStorage(player, pos);
     }
 }

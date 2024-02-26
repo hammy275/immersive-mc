@@ -45,6 +45,16 @@ public class JukeboxHandler implements ImmersiveHandler {
     }
 
     @Override
+    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
+        return false; // Jukebox has no items to sync to the client
+    }
+
+    @Override
+    public void clearDirtyForClientSync(ServerPlayer player, BlockPos pos) {
+        // No-op. Jukebox doesn't have data to sync to the client.
+    }
+
+    @Override
     public boolean usesWorldStorage() {
         return false;
     }

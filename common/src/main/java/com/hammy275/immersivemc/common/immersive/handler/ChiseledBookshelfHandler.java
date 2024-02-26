@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.ChiseledBookShelfBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class ChiseledBookshelfHandler implements ImmersiveHandler {
+public class ChiseledBookshelfHandler extends ContainerHandler {
     // Used for ChiseledBookShelfBlock to mixin for our redirection
     public static int bookshelfBlockSlotOverride = -1;
     public static InteractionHand bookshelfBlockHandOverride = null;

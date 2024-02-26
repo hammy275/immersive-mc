@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Arrays;
 
-public class ETableHandler implements ImmersiveHandler {
+public class ETableHandler extends WorldStorageHandler {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         ImmersiveStorage immersiveStorage = GetStorage.getEnchantingStorage(player, pos);
@@ -68,7 +68,7 @@ public class ETableHandler implements ImmersiveHandler {
                 VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
             }
         }
-        enchStorage.wStorage.setDirty();
+        enchStorage.setDirty();
     }
 
     @Override
@@ -89,5 +89,10 @@ public class ETableHandler implements ImmersiveHandler {
     @Override
     public ResourceLocation getID() {
         return new ResourceLocation(ImmersiveMC.MOD_ID, "enchanting_table");
+    }
+
+    @Override
+    public ImmersiveStorage getStorage(ServerPlayer player, BlockPos pos) {
+        return GetStorage.getEnchantingStorage(player, pos);
     }
 }

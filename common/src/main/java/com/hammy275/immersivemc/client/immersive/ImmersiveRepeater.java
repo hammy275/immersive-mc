@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.block.RepeaterBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -35,6 +37,16 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     @Override
     public boolean isVROnly() {
         return true;
+    }
+
+    @Override
+    public boolean clientAuthoritative() {
+        return true; // Doesn't require swap or items, so the client can just detect it and send repeater updates when needed.
+    }
+
+    @Override
+    public @Nullable ImmersiveHandler getHandler() {
+        return null;
     }
 
     @Override

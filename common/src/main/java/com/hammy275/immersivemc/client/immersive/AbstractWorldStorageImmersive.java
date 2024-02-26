@@ -1,9 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
-import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -22,14 +19,6 @@ public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStora
     @Override
     protected boolean inputSlotShouldRenderHelpHitbox(I info, int slotNum) {
         return info.items[slotNum] == null || info.items[slotNum].isEmpty();
-    }
-
-    @Override
-    protected void doTick(I info, boolean isInVR) {
-        super.doTick(info, isInVR);
-        if (info.ticksActive % ClientConstants.inventorySyncTime == 0) {
-            Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
-        }
     }
 
     @Override

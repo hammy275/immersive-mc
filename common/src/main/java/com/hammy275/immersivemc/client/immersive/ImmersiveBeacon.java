@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
@@ -52,6 +53,11 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
 
     public ImmersiveBeacon() {
         super(1);
+    }
+
+    @Override
+    public ImmersiveHandler getHandler() {
+        return ImmersiveHandlers.beaconHandler;
     }
 
     @Override

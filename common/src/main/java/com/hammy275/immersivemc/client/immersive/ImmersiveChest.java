@@ -6,12 +6,12 @@ import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
-import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
@@ -57,22 +57,17 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     }
 
     @Override
+    public ImmersiveHandler getHandler() {
+        return ImmersiveHandlers.chestHandler;
+    }
+
+    @Override
     protected void doTick(ChestInfo info, boolean isInVR) {
         if (!chestsValid(info)) {
             info.remove();
             return;
         }
         super.doTick(info, isInVR);
-
-        // super.tick() does this for the main regular chest. This does it for the other chest, and for ender chests
-        // (which don't implement Container)
-        if (info.ticksActive % ClientConstants.inventorySyncTime == 0) {
-            if (info.other != null) {
-                Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.other.getBlockPos()));
-            } else if (info.getBlockEntity() instanceof EnderChestBlockEntity) {
-                Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
-            }
-        }
 
         BlockEntity[] chests = new BlockEntity[]{info.getBlockEntity(), info.other};
         for (int i = 0; i <= 1; i++) {

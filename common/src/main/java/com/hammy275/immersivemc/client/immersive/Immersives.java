@@ -374,12 +374,12 @@ public class Immersives {
 
 
     public static final BuiltImmersive immersiveIronFurnacesFurnace = immersiveFurnace.getBuilderClone()
-            .setBlockChecker(ImmersiveHandlers.ironFurnacesFurnaceHandler::isValidBlock)
+            .setHandler(ImmersiveHandlers.ironFurnacesFurnaceHandler)
             .setConfigChecker(() -> ActiveConfig.active().useIronFurnacesFurnaceImmersion)
             .build();
 
     public static final BuiltImmersive immersiveTinkersConstructCraftingStation = immersiveCrafting.getBuilderClone()
-            .setBlockChecker(ImmersiveHandlers.tcCraftingStationHandler::isValidBlock)
+            .setHandler(ImmersiveHandlers.tcCraftingStationHandler)
             .setConfigChecker(() -> ActiveConfig.active().useTinkersConstructCraftingStationImmersion)
             .setUsesWorldStorage(false)
             .modifyHitboxes(0, 8, (hitbox) -> hitbox.renderItem(false).build())

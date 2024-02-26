@@ -8,6 +8,7 @@ import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
@@ -41,6 +42,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
@@ -89,6 +91,30 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      */
     public void globalTick() {
 
+    }
+
+    /**
+     * @return Whether this immersive should have tracking initiated by the client. If true, no data should ever be
+     * sent from the server to the client for this immersive.
+     */
+    public boolean clientAuthoritative() {
+        return false;
+    }
+
+    /**
+     * @return ImmersiveHandler that this immersive uses. Can return null if this
+     * immersive doesn't receive item data from the server through FetchInventoryPacket.
+     */
+    @Nullable
+    public abstract ImmersiveHandler getHandler();
+
+    public boolean hasInfo(BlockPos pos) {
+        for (I info : this.infos) {
+            if (info.getBlockPosition().equals(pos)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean hitboxesAvailable(AbstractImmersiveInfo info) {

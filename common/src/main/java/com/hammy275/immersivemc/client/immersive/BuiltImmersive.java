@@ -1,13 +1,11 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
-import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -45,6 +43,11 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     }
 
     @Override
+    public ImmersiveHandler getHandler() {
+        return builder.handler;
+    }
+
+    @Override
     public boolean shouldRender(BuiltImmersiveInfo info, boolean isInVR) {
         return
                 shouldTrack(info.getBlockPosition()) && // Check that block is still there
@@ -57,9 +60,6 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     protected void doTick(BuiltImmersiveInfo info, boolean isInVR) {
         super.doTick(info, isInVR);
 
-        if (!info.itemHitboxes.isEmpty() && info.ticksActive % ClientConstants.inventorySyncTime == 0) {
-            Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
-        }
         Direction currentDir;
         switch (builder.positioningMode) {
             case HORIZONTAL_BLOCK_FACING, BLOCK_FACING_NEG_X ->
@@ -129,7 +129,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return builder.blockChecker.apply(pos, state, tileEntity, level);
+        return builder.handler.isValidBlock(pos, state, tileEntity, level);
     }
 
     private boolean shouldTrack(BlockPos pos) {
