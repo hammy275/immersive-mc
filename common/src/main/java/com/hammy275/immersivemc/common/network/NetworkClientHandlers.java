@@ -39,7 +39,8 @@ public class NetworkClientHandlers {
         Level level = Minecraft.getInstance().player.level();
         for (AbstractImmersive<?> immersive : Immersives.IMMERSIVES) {
             for (AbstractImmersiveInfo info : immersive.getTrackedObjects()) {
-                if (info.getBlockPosition().equals(pos) && immersive.hasInfo(pos)) {
+                if (info.getBlockPosition().equals(pos) && immersive.hasInfo(pos) &&
+                    immersive.shouldTrack(pos, level.getBlockState(pos), level.getBlockEntity(pos), level)) {
                     immersive.processStorageFromNetwork(info, storage);
                     return;
                 } else if (info instanceof ChestInfo cInfo && cInfo.other != null && cInfo.other.getBlockPos().equals(pos)) {

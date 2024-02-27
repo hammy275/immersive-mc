@@ -46,6 +46,10 @@ public class TrackedImmersiveData {
         return this.pos;
     }
 
+    public Level getLevel() {
+        return this.level;
+    }
+
     private boolean blockMatches() {
         return handler.isValidBlock(pos, level.getBlockState(pos), level.getBlockEntity(pos), level);
     }

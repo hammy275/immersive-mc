@@ -8,6 +8,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class TrackedImmersives {
@@ -16,8 +17,15 @@ public class TrackedImmersives {
 
     public static void tick(MinecraftServer server) {
         // Remove for all logged out players or invalid states (blocks no longer match or player too far away)
-        TRACKED_IMMERSIVES.removeIf((data) -> server.getPlayerList().getPlayer(data.playerUUID) == null ||
-                                    !data.validForPlayer(server.getPlayerList().getPlayer(data.playerUUID)));
+        Iterator<TrackedImmersiveData> dataIterator = TRACKED_IMMERSIVES.iterator();
+        while (dataIterator.hasNext()) {
+            TrackedImmersiveData data = dataIterator.next();
+            ServerPlayer player = server.getPlayerList().getPlayer(data.playerUUID);
+            if (player == null || !data.validForPlayer(player)) {
+                dataIterator.remove();
+                DirtyTracker.unmarkDirty(data.getLevel(), data.getPos());
+            }
+        }
 
         // Sync all immersives for all players if inventory contents have changed
         TRACKED_IMMERSIVES.forEach((data) -> {
