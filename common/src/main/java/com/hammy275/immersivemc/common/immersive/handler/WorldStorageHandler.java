@@ -16,5 +16,10 @@ public abstract class WorldStorageHandler implements ImmersiveHandler {
         getStorage(player, pos).setNoLongerDirtyForClientSync();
     }
 
+    @Override
+    public void stopDirtyTracking(ServerPlayer player, BlockPos pos) {
+        // NO-OP. WorldStorages easily track this already on their own.
+    }
+
     public abstract ImmersiveStorage getStorage(ServerPlayer player, BlockPos pos);
 }

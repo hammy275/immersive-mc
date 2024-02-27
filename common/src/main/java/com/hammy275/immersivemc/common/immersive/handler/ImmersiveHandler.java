@@ -52,6 +52,15 @@ public interface ImmersiveHandler {
     void clearDirtyForClientSync(ServerPlayer player, BlockPos pos);
 
     /**
+     * When called, this handler no longer needs to track whether the given position is dirty or not. This happens if
+     * the block is broken or set to a different block type than this handler supports. This is mainly useful when
+     * a block can't track the dirty state on its own (such as for vanilla blocks).
+     * @param player Player that no longer requires dirty tracking.
+     * @param pos Block position that no longer requires dirty tracking
+     */
+    void stopDirtyTracking(ServerPlayer player, BlockPos pos);
+
+    /**
      * @return Whether this immersive uses ImmersiveMC's World Storage system.
      */
     boolean usesWorldStorage();
