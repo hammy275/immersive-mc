@@ -25,8 +25,8 @@ public class ShulkerBoxHandler extends ChestLikeHandler {
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useShulkerImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useShulkerImmersion;
     }
 
     @Override

@@ -31,8 +31,8 @@ public class ChestHandler extends ChestLikeHandler {
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useChestImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useChestImmersion;
     }
 
     @Override

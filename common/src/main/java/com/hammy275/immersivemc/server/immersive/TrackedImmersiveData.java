@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.server.immersive;
 
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
@@ -39,7 +40,9 @@ public class TrackedImmersiveData {
     }
 
     public boolean validForPlayer(ServerPlayer player) {
-        return blockMatches() && player.distanceToSqr(Vec3.atCenterOf(pos)) <= maxDist*maxDist;
+        return blockMatches() &&
+                player.distanceToSqr(Vec3.atCenterOf(pos)) <= maxDist*maxDist &&
+                this.handler.enabledInConfig(ActiveConfig.getConfigForPlayer(player));
     }
 
     public BlockPos getPos() {

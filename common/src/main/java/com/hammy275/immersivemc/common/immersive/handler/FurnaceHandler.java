@@ -76,8 +76,8 @@ public class FurnaceHandler extends ContainerHandler {
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useFurnaceImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useFurnaceImmersion;
     }
 
     @Override

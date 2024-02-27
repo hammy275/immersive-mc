@@ -61,8 +61,8 @@ public class BrewingStandHandler extends ContainerHandler {
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useBrewingImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useBrewingImmersion;
     }
 
     @Override

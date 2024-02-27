@@ -57,8 +57,8 @@ public class BeaconHandler extends WorldStorageHandler {
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useBeaconImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useBeaconImmersion;
     }
 
     @Override

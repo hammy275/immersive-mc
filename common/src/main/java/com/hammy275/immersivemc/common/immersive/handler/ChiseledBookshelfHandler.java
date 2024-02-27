@@ -54,8 +54,8 @@ public class ChiseledBookshelfHandler extends ContainerHandler {
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useChiseledBookshelfImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useChiseledBookshelfImmersion;
     }
 
     @Override

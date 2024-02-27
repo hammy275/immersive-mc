@@ -16,8 +16,8 @@ public class HopperHandler extends ChestLikeHandler {
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useHopperImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useHopperImmersion;
     }
 
     @Override

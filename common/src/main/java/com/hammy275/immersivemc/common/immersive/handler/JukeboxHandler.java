@@ -70,8 +70,8 @@ public class JukeboxHandler implements ImmersiveHandler {
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useJukeboxImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useJukeboxImmersion;
     }
 
     @Override

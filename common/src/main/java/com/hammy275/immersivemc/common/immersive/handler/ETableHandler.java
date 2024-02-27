@@ -82,8 +82,8 @@ public class ETableHandler extends WorldStorageHandler {
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useETableImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useETableImmersion;
     }
 
     @Override

@@ -16,8 +16,8 @@ public class BarrelHandler extends ChestLikeHandler {
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useBarrelImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useBarrelImmersion;
     }
 
     @Override

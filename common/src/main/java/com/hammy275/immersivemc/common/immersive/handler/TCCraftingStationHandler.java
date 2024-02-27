@@ -86,8 +86,8 @@ public class TCCraftingStationHandler extends ContainerHandler {
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useTinkersConstructCraftingStationImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useTinkersConstructCraftingStationImmersion;
     }
 
     @Override

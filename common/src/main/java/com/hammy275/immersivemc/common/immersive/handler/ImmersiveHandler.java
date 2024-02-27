@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import net.minecraft.core.BlockPos;
@@ -75,9 +76,9 @@ public interface ImmersiveHandler {
     boolean isValidBlock(BlockPos pos, BlockState state, BlockEntity blockEntity, Level level);
 
     /**
-     * @return Whether the immersive this handler handles is enabled in the server's config.
+     * @return Whether the immersive this handler handles is enabled in the supplied config.
      */
-    boolean enabledInServerConfig();
+    boolean enabledInConfig(ActiveConfig config);
 
     /**
      * @return A unique ID to identify this handler over the network.

@@ -66,8 +66,8 @@ public class SmithingTableHandler extends WorldStorageHandler {
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useSmithingTableImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useSmithingTableImmersion;
     }
 
     @Override

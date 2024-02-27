@@ -61,8 +61,8 @@ public class CraftingHandler extends WorldStorageHandler {
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useCraftingImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useCraftingImmersion;
     }
 
     @Override
