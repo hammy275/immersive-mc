@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import com.hammy275.immersivemc.server.storage.GetStorage;
 import com.hammy275.immersivemc.server.storage.ImmersiveMCLevelStorage;
@@ -57,6 +58,7 @@ public class ServerSubscriber {
             tracker.doTick(null);
         }
         TrackedImmersives.tick(server);
+        DirtyTracker.unmarkAllDirty();
     }
 
     public static void onPlayerTick(Player playerIn) {

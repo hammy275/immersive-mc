@@ -29,4 +29,9 @@ public class DirtyTracker {
             positions.remove(pos);
         }
     }
+
+    public static void unmarkAllDirty() {
+        // Only clear values, since we'll likely use the keys next tick.
+        dirtyPositions.forEach((key, value) -> value.clear());
+    }
 }

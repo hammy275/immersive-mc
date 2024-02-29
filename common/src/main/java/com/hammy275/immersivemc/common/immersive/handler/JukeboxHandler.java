@@ -55,11 +55,6 @@ public class JukeboxHandler implements ImmersiveHandler {
     }
 
     @Override
-    public void stopDirtyTracking(ServerPlayer player, BlockPos pos) {
-        // No-op. Jukebox doesn't have data to sync to the client.
-    }
-
-    @Override
     public boolean usesWorldStorage() {
         return false;
     }
