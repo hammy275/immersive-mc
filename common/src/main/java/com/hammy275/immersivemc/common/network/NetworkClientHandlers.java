@@ -6,11 +6,12 @@ import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -34,24 +35,26 @@ public class NetworkClientHandlers {
         }
     }
 
-    public static void handleReceiveInvData(HandlerStorage storage, BlockPos pos, ResourceLocation id) {
+    public static void handleReceiveInvData(HandlerStorage storage, BlockPos pos, ImmersiveHandler handler) {
         Objects.requireNonNull(storage);
         Level level = Minecraft.getInstance().player.level();
-        for (AbstractImmersive<?> immersive : Immersives.IMMERSIVES) {
-            for (AbstractImmersiveInfo info : immersive.getTrackedObjects()) {
-                if (info.getBlockPosition().equals(pos) && immersive.hasInfo(pos) &&
-                    immersive.shouldTrack(pos, level.getBlockState(pos), level.getBlockEntity(pos), level)) {
-                    immersive.processStorageFromNetwork(info, storage);
-                    return;
-                } else if (info instanceof ChestInfo cInfo && cInfo.other != null && cInfo.other.getBlockPos().equals(pos)) {
-                    Immersives.immersiveChest.processOtherStorageFromNetwork(info, storage);
+        // Special hardcode for the other chest of a large chest
+        if (handler == ImmersiveHandlers.chestHandler) {
+            for (ChestInfo cInfo : Immersives.immersiveChest.getTrackedObjects()) {
+                if (cInfo.other != null && cInfo.other.getBlockPos().equals(pos)) {
+                    Immersives.immersiveChest.processOtherStorageFromNetwork(cInfo, storage);
                     return;
                 }
             }
-            if (immersive.getHandler() != null && immersive.getHandler().getID().equals(id) &&
-                    immersive.shouldTrack(pos, level.getBlockState(pos), level.getBlockEntity(pos), level)) {
-                immersive.trackObject(pos, level.getBlockState(pos), level.getBlockEntity(pos), level);
-                return;
+        }
+        // Search all immersives for the matching handler. If found and the block is the state we expect, create or refresh
+        // the info and process storage on it.
+        for (AbstractImmersive<?> immersive : Immersives.IMMERSIVES) {
+            if (immersive.getHandler() == handler && immersive.shouldTrack(pos, level.getBlockState(pos), level.getBlockEntity(pos), level)) {
+                AbstractImmersiveInfo info = immersive.refreshOrTrackObject(pos, level.getBlockState(pos), level.getBlockEntity(pos), level);
+                if (info != null) {
+                    immersive.processStorageFromNetwork(info, storage);
+                }
             }
         }
     }

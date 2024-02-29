@@ -140,41 +140,41 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     }
 
     @Override
-    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+    public BuiltImmersiveInfo refreshOrTrackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         for (BuiltImmersiveInfo info : getTrackedObjects()) {
             if (info.getBlockPosition().equals(pos)) {
                 info.setTicksLeft(builder.renderTime);
-                return;
+                return info;
             }
         }
+        BuiltImmersiveInfo info;
         if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING) {
-            BuiltImmersiveInfo info = new BuiltImmersiveInfo(builder.hitboxes, pos,
+            info = new BuiltImmersiveInfo(builder.hitboxes, pos,
                     builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
             info.immersiveDir = state.getValue(HorizontalDirectionalBlock.FACING);
-            this.infos.add(info);
         } else if (builder.positioningMode == HitboxPositioningMode.TOP_PLAYER_FACING) {
-          this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
+          info = new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
         } else if (builder.positioningMode == HitboxPositioningMode.TOP_LITERAL) {
-          this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
+          info = new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
         } else if (builder.positioningMode == HitboxPositioningMode.TOP_BLOCK_FACING) {
-            BuiltImmersiveInfo info = new BuiltImmersiveInfo(builder.hitboxes, pos,
+            info = new BuiltImmersiveInfo(builder.hitboxes, pos,
                     builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
             info.immersiveDir = state.getValue(HorizontalDirectionalBlock.FACING);
-            this.infos.add(info);
         } else if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_PLAYER_FACING) {
-            this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
+            info = new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
         } else if (builder.positioningMode == HitboxPositioningMode.BLOCK_FACING_NEG_X) {
-            BuiltImmersiveInfo info = new BuiltImmersiveInfo(builder.hitboxes, pos,
+            info = new BuiltImmersiveInfo(builder.hitboxes, pos,
                     builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
             info.immersiveDir = state.getValue(BlockStateProperties.FACING);
-            this.infos.add(info);
         } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING_NO_DOWN) {
-            this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
+            info = new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
         } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING) {
-            this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
+            info = new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
         } else {
             throw new UnsupportedOperationException("Tracking for positioning mode " + builder.positioningMode + " unimplemented!");
         }
+        this.infos.add(info);
+        return info;
     }
 
     @Override

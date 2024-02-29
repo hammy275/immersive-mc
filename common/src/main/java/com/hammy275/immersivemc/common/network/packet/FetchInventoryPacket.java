@@ -53,7 +53,7 @@ public class FetchInventoryPacket {
         ctx.get().queue(() -> {
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player == null) {
-                NetworkClientHandlers.handleReceiveInvData(message.storage, message.pos, message.handler.getID());
+                NetworkClientHandlers.handleReceiveInvData(message.storage, message.pos, message.handler);
             }
         });
         

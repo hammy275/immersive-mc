@@ -136,14 +136,16 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
-    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+    public RepeaterInfo refreshOrTrackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         for (RepeaterInfo info : getTrackedObjects()) {
             if (info.getBlockPosition().equals(pos)) {
                 info.setTicksLeft(ClientConstants.ticksToRenderRepeater);
-                return;
+                return info;
             }
         }
-        infos.add(new RepeaterInfo(pos));
+        RepeaterInfo newInfo = new RepeaterInfo(pos);
+        infos.add(newInfo);
+        return newInfo;
     }
 
     @Override

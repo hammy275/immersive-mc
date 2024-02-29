@@ -48,13 +48,18 @@ public abstract class AbstractBlockEntityImmersive<T extends BlockEntity, I exte
         return true;
     }
 
-    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEnt, Level level) {
+    public I refreshOrTrackObject(BlockPos pos, BlockState state, BlockEntity tileEnt, Level level) {
         for (I info : getTrackedObjects()) {
             if (info.getBlockEntity() == tileEnt) {
                 info.setTicksLeft(getTickTime());
-                return;
+                return info;
             }
         }
-        if (reallyShouldTrack(tileEnt)) infos.add(getNewInfo(tileEnt));
+        if (reallyShouldTrack(tileEnt)) {
+            I newInfo = getNewInfo(tileEnt);
+            infos.add(newInfo);
+            return newInfo;
+        }
+        return null;
     }
 }

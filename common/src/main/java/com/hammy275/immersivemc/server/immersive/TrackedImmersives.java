@@ -17,7 +17,6 @@ import java.util.List;
 public class TrackedImmersives {
 
     public static final List<TrackedImmersiveData> TRACKED_IMMERSIVES = new ArrayList<>();
-    private static final int trackAllNearbyRange = 6;
 
     public static void tick(MinecraftServer server) {
         // Remove for all logged out players or invalid states (blocks no longer match or player too far away)

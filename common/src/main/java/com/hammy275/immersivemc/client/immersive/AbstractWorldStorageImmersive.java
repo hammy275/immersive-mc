@@ -26,13 +26,15 @@ public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStora
         return info.readyToRender();
     }
 
-    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+    public I refreshOrTrackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         for (I info : getTrackedObjects()) {
             if (info.getBlockPosition().equals(pos)) {
                 info.setTicksLeft(getTickTime());
-                return;
+                return info;
             }
         }
-        infos.add(getNewInfo(pos));
+        I newInfo = getNewInfo(pos);
+        infos.add(newInfo);
+        return newInfo;
     }
 }

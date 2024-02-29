@@ -149,8 +149,9 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
     }
 
     @Override
-    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        // NO-OP. Never tracking any objects.
+    public ImmersiveHitboxesInfo refreshOrTrackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+        // Return null. Never tracking any objects.
+        return null;
     }
 
     @Override

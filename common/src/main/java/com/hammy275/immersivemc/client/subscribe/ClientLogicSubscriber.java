@@ -135,7 +135,7 @@ public class ClientLogicSubscriber {
     public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         for (AbstractImmersive<? extends AbstractImmersiveInfo> immersive : Immersives.IMMERSIVES) {
             if (immersive.shouldTrack(pos, state, tileEntity, level) && immersive.clientAuthoritative()) {
-                immersive.trackObject(pos, state, tileEntity, level);
+                immersive.refreshOrTrackObject(pos, state, tileEntity, level);
             }
         }
     }

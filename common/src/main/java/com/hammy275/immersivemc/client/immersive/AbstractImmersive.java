@@ -134,7 +134,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     public abstract boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level);
 
-    public abstract void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level);
+    @Nullable
+    public abstract I refreshOrTrackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level);
 
     // Whether to block a right-click if the option to block right clicks to open GUIs is enabled
     public abstract boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info);
