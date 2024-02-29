@@ -4,6 +4,8 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
+import com.hammy275.immersivemc.server.storage.GetStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,6 +28,13 @@ public class TrackedImmersives {
             if (player == null || !data.validForPlayer(player)) {
                 dataIterator.remove();
                 DirtyTracker.unmarkDirty(data.getLevel(), data.getPos());
+                if (data.getHandler().usesWorldStorage() && player != null) {
+                    ImmersiveStorage storage = GetStorage.getStorageIfExists(player, data.getPos());
+                    if (storage != null) {
+                        storage.returnItems(player);
+                        GetStorage.updateStorageOutputAfterItemReturn(player, data.getPos(), storage);
+                    }
+                }
             }
         }
 

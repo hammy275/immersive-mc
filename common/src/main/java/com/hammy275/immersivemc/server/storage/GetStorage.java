@@ -84,11 +84,18 @@ public class GetStorage {
         return null;
     }
 
-    public static void updateStorageOutputAfterItemReturn(ServerPlayer player, BlockPos pos) {
-        ImmersiveStorage storage = getStorage(player, pos);
+    /**
+     * Get storage at position only if it already exists. Returns null if one isn't there.
+     * @param player Player that is getting storage.
+     * @param pos Position to get at
+     * @return The storage there, or null if none are there.
+     */
+    public static ImmersiveStorage getStorageIfExists(Player player, BlockPos pos) {
+        return ImmersiveMCLevelStorage.getLevelStorage(player).get(pos);
+    }
+
+    public static void updateStorageOutputAfterItemReturn(ServerPlayer player, BlockPos pos, ImmersiveStorage storage) {
         if (storage != null) {
-            BlockState state = player.level().getBlockState(pos);
-            BlockEntity tileEnt = player.level().getBlockEntity(pos);
             if (ImmersiveHandlers.craftingHandler.isValidBlock(pos, player.level())) {
                 ItemStack out = Swap.getRecipeOutput(player, storage.getItemsRaw());
                 storage.setItem(9, out);
