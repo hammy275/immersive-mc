@@ -56,8 +56,8 @@ public class CraftingHandler extends WorldStorageHandler {
     }
 
     @Override
-    public boolean isValidBlock(BlockPos pos, BlockState state, BlockEntity blockEntity, Level level) {
-        return state.getBlock() == Blocks.CRAFTING_TABLE;
+    public boolean isValidBlock(BlockPos pos, Level level) {
+        return level.getBlockState(pos).getBlock() == Blocks.CRAFTING_TABLE;
     }
 
     @Override

@@ -213,7 +213,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return ImmersiveHandlers.chestHandler.isValidBlock(pos, state, tileEntity, level);
+        return ImmersiveHandlers.chestHandler.isValidBlock(pos, level);
     }
 
     @Override

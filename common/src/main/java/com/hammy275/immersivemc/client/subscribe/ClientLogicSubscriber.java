@@ -308,7 +308,7 @@ public class ClientLogicSubscriber {
                     chestInfo.nextRow();
                     return true;
                 }
-            } else if (ImmersiveHandlers.shulkerBoxHandler.isValidBlock(pos, state, tileEnt, player.level())) {
+            } else if (ImmersiveHandlers.shulkerBoxHandler.isValidBlock(pos, player.level())) {
                 BuiltImmersiveInfo info = Immersives.immersiveShulker.findImmersive(pos);
                 if (info != null) {
                     ChestLikeData data = (ChestLikeData) info.getExtraData();
@@ -318,7 +318,7 @@ public class ClientLogicSubscriber {
                     }
 
                 }
-            } else if (ImmersiveHandlers.barrelHandler.isValidBlock(pos, state, tileEnt, player.level())) {
+            } else if (ImmersiveHandlers.barrelHandler.isValidBlock(pos, player.level())) {
                 BuiltImmersiveInfo info = Immersives.immersiveBarrel.findImmersive(pos);
                 if (info != null) {
                     ChestLikeData data = (ChestLikeData) info.getExtraData();
@@ -414,7 +414,7 @@ public class ClientLogicSubscriber {
             }
         }
         if (ActiveConfig.active().useBarrelImmersion &&
-                ImmersiveHandlers.barrelHandler.isValidBlock(pos, state, player.level().getBlockEntity(pos), player.level())) {
+                ImmersiveHandlers.barrelHandler.isValidBlock(pos, player.level())) {
             BuiltImmersiveInfo info = Immersives.immersiveBarrel.findImmersive(pos);
             if (info != null) {
                 ((ChestLikeData) info.getExtraData()).toggleOpen(pos);

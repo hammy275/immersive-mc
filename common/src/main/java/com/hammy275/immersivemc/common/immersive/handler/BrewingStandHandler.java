@@ -56,8 +56,8 @@ public class BrewingStandHandler extends ContainerHandler {
     }
 
     @Override
-    public boolean isValidBlock(BlockPos pos, BlockState state, BlockEntity blockEntity, Level level) {
-        return blockEntity instanceof BrewingStandBlockEntity;
+    public boolean isValidBlock(BlockPos pos, Level level) {
+        return level.getBlockEntity(pos) instanceof BrewingStandBlockEntity;
     }
 
     @Override

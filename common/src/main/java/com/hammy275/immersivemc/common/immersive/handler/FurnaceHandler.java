@@ -71,8 +71,8 @@ public class FurnaceHandler extends ContainerHandler {
     }
 
     @Override
-    public boolean isValidBlock(BlockPos pos, BlockState state, BlockEntity blockEntity, Level level) {
-        return blockEntity instanceof AbstractFurnaceBlockEntity;
+    public boolean isValidBlock(BlockPos pos, Level level) {
+        return level.getBlockEntity(pos) instanceof AbstractFurnaceBlockEntity;
     }
 
     @Override

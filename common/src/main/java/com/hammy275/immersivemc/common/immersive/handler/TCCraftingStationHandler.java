@@ -17,8 +17,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,8 +79,8 @@ public class TCCraftingStationHandler extends ContainerHandler {
     }
 
     @Override
-    public boolean isValidBlock(BlockPos pos, BlockState state, BlockEntity blockEntity, Level level) {
-        return TinkersConstruct.craftingStation.isInstance(blockEntity);
+    public boolean isValidBlock(BlockPos pos, Level level) {
+        return TinkersConstruct.craftingStation.isInstance(level.getBlockEntity(pos));
     }
 
     @Override

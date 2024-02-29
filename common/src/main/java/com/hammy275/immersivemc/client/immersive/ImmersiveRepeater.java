@@ -132,7 +132,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return ImmersiveCheckers.isRepeater(pos, state, tileEntity, level);
+        return ImmersiveCheckers.isRepeater(pos, level);
     }
 
     @Override

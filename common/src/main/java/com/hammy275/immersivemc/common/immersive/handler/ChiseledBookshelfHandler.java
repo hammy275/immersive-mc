@@ -49,8 +49,8 @@ public class ChiseledBookshelfHandler extends ContainerHandler {
     }
 
     @Override
-    public boolean isValidBlock(BlockPos pos, BlockState state, BlockEntity blockEntity, Level level) {
-        return state.getBlock() == Blocks.CHISELED_BOOKSHELF;
+    public boolean isValidBlock(BlockPos pos, Level level) {
+        return level.getBlockState(pos).getBlock() == Blocks.CHISELED_BOOKSHELF;
     }
 
     @Override

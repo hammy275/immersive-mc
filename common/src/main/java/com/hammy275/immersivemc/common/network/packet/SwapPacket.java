@@ -51,7 +51,7 @@ public class SwapPacket {
                 BlockEntity tileEnt = player.level().getBlockEntity(message.block);
                 BlockState state = player.level().getBlockState(message.block);
                 for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
-                    if (handler.enabledInConfig(ActiveConfig.FILE) && handler.isValidBlock(message.block, state, tileEnt, player.level())) {
+                    if (handler.enabledInConfig(ActiveConfig.FILE) && handler.isValidBlock(message.block, player.level())) {
                         handler.swap(message.slot, message.hand, message.block, player, message.placementMode);
                         break;
                     }

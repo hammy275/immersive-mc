@@ -52,8 +52,8 @@ public class BeaconHandler extends WorldStorageHandler {
     }
 
     @Override
-    public boolean isValidBlock(BlockPos pos, BlockState state, BlockEntity blockEntity, Level level) {
-        return blockEntity instanceof BeaconBlockEntity;
+    public boolean isValidBlock(BlockPos pos, Level level) {
+        return level.getBlockEntity(pos) instanceof BeaconBlockEntity;
     }
 
     @Override

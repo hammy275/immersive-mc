@@ -12,7 +12,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 public class ChestHandler extends ChestLikeHandler {
     @Override
@@ -26,7 +25,8 @@ public class ChestHandler extends ChestLikeHandler {
     }
 
     @Override
-    public boolean isValidBlock(BlockPos pos, BlockState state, BlockEntity blockEntity, Level level) {
+    public boolean isValidBlock(BlockPos pos, Level level) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         return blockEntity instanceof ChestBlockEntity || blockEntity instanceof EnderChestBlockEntity;
     }
 

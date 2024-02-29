@@ -129,7 +129,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return builder.handler.isValidBlock(pos, state, tileEntity, level);
+        return builder.handler.isValidBlock(pos, level);
     }
 
     private boolean shouldTrack(BlockPos pos) {

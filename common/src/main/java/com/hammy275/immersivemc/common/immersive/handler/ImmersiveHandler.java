@@ -8,8 +8,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 public interface ImmersiveHandler {
 
@@ -59,12 +57,10 @@ public interface ImmersiveHandler {
 
     /**
      * @param pos Position to check.
-     * @param state BlockState to check.
-     * @param blockEntity BlockEntity to check.
      * @param level The level being checked in.
      * @return Whether the supplied block matches what this handler handles.
      */
-    boolean isValidBlock(BlockPos pos, BlockState state, BlockEntity blockEntity, Level level);
+    boolean isValidBlock(BlockPos pos, Level level);
 
     /**
      * @return Whether the immersive this handler handles is enabled in the supplied config.

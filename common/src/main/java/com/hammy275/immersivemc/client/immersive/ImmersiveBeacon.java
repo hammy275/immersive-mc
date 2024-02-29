@@ -288,7 +288,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return ImmersiveHandlers.beaconHandler.isValidBlock(pos, state, tileEntity, level);
+        return ImmersiveHandlers.beaconHandler.isValidBlock(pos, level);
     }
 
     @Override

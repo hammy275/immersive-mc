@@ -61,8 +61,8 @@ public class SmithingTableHandler extends WorldStorageHandler {
     }
 
     @Override
-    public boolean isValidBlock(BlockPos pos, BlockState state, BlockEntity blockEntity, Level level) {
-        return state.getBlock() instanceof SmithingTableBlock;
+    public boolean isValidBlock(BlockPos pos, Level level) {
+        return level.getBlockState(pos).getBlock() instanceof SmithingTableBlock;
     }
 
     @Override

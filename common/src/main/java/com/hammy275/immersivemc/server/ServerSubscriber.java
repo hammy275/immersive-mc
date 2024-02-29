@@ -83,7 +83,5 @@ public class ServerSubscriber {
             Network.INSTANCE.sendToPlayer(serverPlayer,
                     new ConfigSyncPacket(ActiveConfig.FILE));
         }
-
-
     }
 }
