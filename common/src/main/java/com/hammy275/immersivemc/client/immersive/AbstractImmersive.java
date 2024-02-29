@@ -35,12 +35,15 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
@@ -266,7 +269,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             try {
                 renderTick(info, isInVR);
                 render(info, stack, isInVR);
-                if (ActiveConfig.active().placementGuideMode != PlacementGuideMode.OFF && !forceDisableItemGuide) {
+                if (ActiveConfig.active().placementGuideMode != PlacementGuideMode.OFF && !forceDisableItemGuide
+                    && nearbyItemGuideRenderCheck(info)) {
                     // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
                     for (int i = 0; i < info.getInputSlots().length; i++) {
                         if (inputSlotShouldRenderHelpHitbox(info, i)) {
@@ -280,6 +284,20 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             // in case if the other thread modifies things while we render
 
         }
+    }
+
+    private boolean nearbyItemGuideRenderCheck(I info) {
+        HitResult hit = Minecraft.getInstance().hitResult;
+        Player player = Minecraft.getInstance().player;
+        boolean inVR = VRPluginVerify.clientInVR();
+        Vec3 vrHitStart = inVR ? VRPlugin.API.getVRPlayer(player).getHMD().position() : null;
+        Vec3 vrLook = inVR ? VRPlugin.API.getVRPlayer(player).getHMD().getLookAngle() : null;
+        Vec3 vrHitEnd = inVR ? vrHitStart.add(vrLook.scale(Minecraft.getInstance().gameMode.getPickRange())) : null;
+        HitResult vrHit = inVR ? player.level().clip(new ClipContext(vrHitStart, vrHitEnd, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player)) : null;
+        return (hit != null && hit.getType() == HitResult.Type.BLOCK &&
+                ((BlockHitResult) hit).getBlockPos().equals(info.getBlockPosition()))
+                || playerPos().distanceTo(Vec3.atCenterOf(info.getBlockPosition())) <= 4
+                || (vrHit != null && vrHit.getType() == HitResult.Type.BLOCK && ((BlockHitResult) vrHit).getBlockPos().equals(info.getBlockPosition()));
     }
 
     public List<I> getTrackedObjects() {
