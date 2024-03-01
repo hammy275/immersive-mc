@@ -23,6 +23,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractChestBlock;
 import net.minecraft.world.level.block.Block;
@@ -63,7 +64,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
 
     @Override
     protected void doTick(ChestInfo info, boolean isInVR) {
-        if (!chestsValid(info)) {
+        if (!chestsValid(info) && !info.migrateToValidChest(Minecraft.getInstance().level)) {
             info.remove();
             return;
         }
@@ -204,7 +205,24 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
 
     @Override
     public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return ImmersiveHandlers.chestHandler.isValidBlock(pos, level);
+        // shouldTrack() is called to check for validity. If this is happening, and we're in an invalid state,
+        // let's attempt to migrate to maybe end up in a valid state. Note that this only handles if the main chest
+        // is broken. ImmersiveChest#doTick() handles if the other chest is broken.
+        boolean res = ImmersiveHandlers.chestHandler.isValidBlock(pos, level);
+        if (res) {
+            return true;
+        }
+        ChestInfo info = null;
+        for (ChestInfo i : this.getTrackedObjects()) {
+            if (i.getBlockPosition().equals(pos) || (i.otherPos != null && i.otherPos.equals(pos))) {
+                info = i;
+                break;
+            }
+        }
+        if (info == null) {
+            return false;
+        }
+        return info.migrateToValidChest(Minecraft.getInstance().level);
     }
 
     @Override
@@ -277,7 +295,6 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
         } catch (NullPointerException e) {
             return false;
         }
-
     }
 
     @Override
@@ -292,6 +309,12 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
                         if (info.other == null) { // If our neighboring chest's info isn't tracking us
                             info.failRender = true;
                             info.other = tileEnt; // Track us
+                            info.otherPos = tileEnt.getBlockPos();
+                            // Fill other chest contents with empty items. Technically causes a desync if the placed
+                            // chest is non-empty, but that shouldn't happen outside of command blocks.
+                            for (int i = 27; i < info.items.length; i++) {
+                                info.items[i] = ItemStack.EMPTY;
+                            }
                             this.doTick(info, VRPluginVerify.clientInVR()); // Tick so we can handle the items in our other chest
                             info.failRender = false;
                         }
