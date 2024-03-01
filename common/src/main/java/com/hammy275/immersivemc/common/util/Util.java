@@ -11,7 +11,6 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.RepeaterBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -43,10 +42,8 @@ public class Util {
 
     public static boolean isHittingImmersive(BlockHitResult result, Level level) {
         BlockPos pos = result.getBlockPos();
-        BlockState state = level.getBlockState(pos);
-        BlockEntity blockEntity = level.getBlockEntity(pos);
         for (CheckerFunction checker : ImmersiveCheckers.CHECKERS) {
-            if (checker.apply(pos, state, blockEntity, level)) {
+            if (checker.apply(pos, level)) {
                 return true; // "I'm totally not crouching" if SHIFT+Right-clicking an immersive
             }
         }

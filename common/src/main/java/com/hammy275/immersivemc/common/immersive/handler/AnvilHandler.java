@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.storage.AnvilWorldStorage;
+import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.server.storage.GetStorage;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -18,12 +19,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AnvilBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Arrays;
 
-public class AnvilHandler implements ImmersiveHandler {
+public class AnvilHandler extends WorldStorageHandler {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         AnvilWorldStorage worldStorage = GetStorage.getAnvilStorage(player, pos);
@@ -54,7 +53,7 @@ public class AnvilHandler implements ImmersiveHandler {
                 VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
             }
         }
-        storage.wStorage.setDirty();
+        storage.setDirty();
     }
 
     @Override
@@ -63,17 +62,22 @@ public class AnvilHandler implements ImmersiveHandler {
     }
 
     @Override
-    public boolean isValidBlock(BlockPos pos, BlockState state, BlockEntity blockEntity, Level level) {
-        return state.getBlock() instanceof AnvilBlock;
+    public boolean isValidBlock(BlockPos pos, Level level) {
+        return level.getBlockState(pos).getBlock() instanceof AnvilBlock;
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useAnvilImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useAnvilImmersion;
     }
 
     @Override
     public ResourceLocation getID() {
         return new ResourceLocation(ImmersiveMC.MOD_ID, "anvil");
+    }
+
+    @Override
+    public ImmersiveStorage getStorage(ServerPlayer player, BlockPos pos) {
+        return GetStorage.getAnvilStorage(player, pos);
     }
 }

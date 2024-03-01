@@ -48,18 +48,28 @@ public class JukeboxHandler implements ImmersiveHandler {
     }
 
     @Override
+    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
+        return false; // Jukebox doesn't have data to sync to the client.
+    }
+
+    @Override
+    public void clearDirtyForClientSync(ServerPlayer player, BlockPos pos) {
+        // No-op. Jukebox doesn't have data to sync to the client.
+    }
+
+    @Override
     public boolean usesWorldStorage() {
         return false;
     }
 
     @Override
-    public boolean isValidBlock(BlockPos pos, BlockState state, BlockEntity blockEntity, Level level) {
-        return blockEntity instanceof JukeboxBlockEntity;
+    public boolean isValidBlock(BlockPos pos, Level level) {
+        return level.getBlockEntity(pos) instanceof JukeboxBlockEntity;
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useJukeboxImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useJukeboxImmersion;
     }
 
     @Override
