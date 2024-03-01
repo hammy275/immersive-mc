@@ -9,6 +9,7 @@ import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
 import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.FetchPlayerStoragePacket;
@@ -35,10 +36,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -87,6 +87,11 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         } else {
             info.slotHovered = -1;
         }
+    }
+
+    @Override
+    public @Nullable ImmersiveHandler getHandler() {
+        return null;
     }
 
     @Override
@@ -206,13 +211,13 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
-    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+    public boolean shouldTrack(BlockPos pos, Level level) {
         return true;
     }
 
     @Override
-    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-
+    public BackpackInfo refreshOrTrackObject(BlockPos pos, Level level) {
+        return null;
     }
 
     @Override

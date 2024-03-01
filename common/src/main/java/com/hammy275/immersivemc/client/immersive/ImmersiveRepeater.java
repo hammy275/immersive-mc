@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.RepeaterInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.SetRepeaterPacket;
@@ -19,9 +20,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.RepeaterBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -29,12 +30,22 @@ import java.util.Optional;
 public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
 
     public ImmersiveRepeater() {
-        super(2); // You really only interact with one repeater at a time, so 2 at most makes sense
+        super(-1);
     }
 
     @Override
     public boolean isVROnly() {
         return true;
+    }
+
+    @Override
+    public boolean clientAuthoritative() {
+        return true; // Doesn't require swap or items, so the client can just detect it and send repeater updates when needed.
+    }
+
+    @Override
+    public @Nullable ImmersiveHandler getHandler() {
+        return null;
     }
 
     @Override
@@ -119,19 +130,21 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
-    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return ImmersiveCheckers.isRepeater(pos, state, tileEntity, level);
+    public boolean shouldTrack(BlockPos pos, Level level) {
+        return ImmersiveCheckers.isRepeater(pos, level);
     }
 
     @Override
-    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+    public RepeaterInfo refreshOrTrackObject(BlockPos pos, Level level) {
         for (RepeaterInfo info : getTrackedObjects()) {
             if (info.getBlockPosition().equals(pos)) {
                 info.setTicksLeft(ClientConstants.ticksToRenderRepeater);
-                return;
+                return info;
             }
         }
-        infos.add(new RepeaterInfo(pos));
+        RepeaterInfo newInfo = new RepeaterInfo(pos);
+        infos.add(newInfo);
+        return newInfo;
     }
 
     @Override

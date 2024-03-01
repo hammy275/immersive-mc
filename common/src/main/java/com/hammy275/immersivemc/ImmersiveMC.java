@@ -84,8 +84,6 @@ public class ImmersiveMC {
                 BeaconDataPacket::decode, BeaconDataPacket::handle);
         Network.INSTANCE.register(DoubleControllerVibrate.class, DoubleControllerVibrate::encode,
                 DoubleControllerVibrate::decode, DoubleControllerVibrate::handle);
-        Network.INSTANCE.register(ItemBackPacket.class, ItemBackPacket::encode,
-                ItemBackPacket::decode, ItemBackPacket::handle);
 
     }
 }
