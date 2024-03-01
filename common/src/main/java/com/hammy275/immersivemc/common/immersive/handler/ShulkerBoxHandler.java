@@ -20,13 +20,13 @@ public class ShulkerBoxHandler extends ChestLikeHandler {
     }
 
     @Override
-    public boolean isValidBlock(BlockPos pos, BlockState state, BlockEntity blockEntity, Level level) {
-        return blockEntity instanceof ShulkerBoxBlockEntity;
+    public boolean isValidBlock(BlockPos pos, Level level) {
+        return level.getBlockEntity(pos) instanceof ShulkerBoxBlockEntity;
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useShulkerImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useShulkerImmersion;
     }
 
     @Override

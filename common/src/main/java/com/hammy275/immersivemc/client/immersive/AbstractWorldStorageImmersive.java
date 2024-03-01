@@ -1,13 +1,8 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
-import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStorageInfo> extends AbstractImmersive<I> {
     public AbstractWorldStorageImmersive(int maxImmersives) {
@@ -25,25 +20,19 @@ public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStora
     }
 
     @Override
-    protected void doTick(I info, boolean isInVR) {
-        super.doTick(info, isInVR);
-        if (info.ticksActive % ClientConstants.inventorySyncTime == 0) {
-            Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
-        }
-    }
-
-    @Override
     public boolean shouldRender(I info, boolean isInVR) {
         return info.readyToRender();
     }
 
-    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+    public I refreshOrTrackObject(BlockPos pos, Level level) {
         for (I info : getTrackedObjects()) {
             if (info.getBlockPosition().equals(pos)) {
                 info.setTicksLeft(getTickTime());
-                return;
+                return info;
             }
         }
-        infos.add(getNewInfo(pos));
+        I newInfo = getNewInfo(pos);
+        infos.add(newInfo);
+        return newInfo;
     }
 }

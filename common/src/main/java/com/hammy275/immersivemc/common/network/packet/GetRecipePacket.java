@@ -52,8 +52,7 @@ public class GetRecipePacket {
                 handleClient(packet);
             } else if (NetworkUtil.safeToRun(packet.pos, sender)) {
                 if (sender.level().getBlockEntity(packet.pos) instanceof Container table
-                && ImmersiveHandlers.craftingHandler.isValidBlock(packet.pos, sender.level().getBlockState(packet.pos),
-                        sender.level().getBlockEntity(packet.pos), sender.level())) {
+                && ImmersiveHandlers.craftingHandler.isValidBlock(packet.pos, sender.level())) {
                     ItemStack[] items = new ItemStack[10];
                     for (int i = 0; i <= 8; i++) {
                         items[i] = table.getItem(i);

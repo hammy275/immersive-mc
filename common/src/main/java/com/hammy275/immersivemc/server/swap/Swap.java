@@ -85,7 +85,7 @@ public class Swap {
         } else {
             handleDoCraft(player, items, null);
         }
-        storage.wStorage.setDirty();
+        storage.setDirty();
     }
 
     public static boolean handleAnvilCraft(AnvilWorldStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {

@@ -1,12 +1,10 @@
 package com.hammy275.immersivemc.common.vr;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.server.level.ServerPlayer;
 
 public class VRPluginProxy {
 
-    public static boolean vrAPIIInVR() {
-        return Minecraft.getInstance().player == null ||
-                VRPlugin.API.playerInVR(Minecraft.getInstance().player);
+    public static boolean vrAPIIInVR(ServerPlayer player) {
+        return player == null || VRPlugin.API.playerInVR(player);
     }
-
 }

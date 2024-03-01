@@ -6,12 +6,12 @@ import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
-import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
@@ -23,6 +23,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractChestBlock;
 import net.minecraft.world.level.block.Block;
@@ -31,7 +32,6 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -45,7 +45,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     public int openCloseCooldown = 0;
 
     public ImmersiveChest() {
-        super(4);
+        super(-1);
     }
 
     @Override
@@ -57,22 +57,17 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     }
 
     @Override
+    public ImmersiveHandler getHandler() {
+        return ImmersiveHandlers.chestHandler;
+    }
+
+    @Override
     protected void doTick(ChestInfo info, boolean isInVR) {
-        if (!chestsValid(info)) {
+        if (!chestsValid(info) && !info.migrateToValidChest(Minecraft.getInstance().level)) {
             info.remove();
             return;
         }
         super.doTick(info, isInVR);
-
-        // super.tick() does this for the main regular chest. This does it for the other chest, and for ender chests
-        // (which don't implement Container)
-        if (info.ticksActive % ClientConstants.inventorySyncTime == 0) {
-            if (info.other != null) {
-                Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.other.getBlockPos()));
-            } else if (info.getBlockEntity() instanceof EnderChestBlockEntity) {
-                Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
-            }
-        }
 
         BlockEntity[] chests = new BlockEntity[]{info.getBlockEntity(), info.other};
         for (int i = 0; i <= 1; i++) {
@@ -194,15 +189,6 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
         }
     }
 
-    // Used for processing info.other's item contents
-    public void processOtherStorageFromNetwork(AbstractImmersiveInfo infoIn, HandlerStorage storageIn) {
-        ChestInfo info = (ChestInfo) infoIn;
-        ListOfItemsStorage storage = (ListOfItemsStorage) storageIn;
-        for (int i = 0; i < storage.getItems().size(); i++) {
-            info.items[i + 27] = storage.getItems().get(i);
-        }
-    }
-
     @Override
     public BlockPos getLightPos(ChestInfo info) {
         return info.getBlockPosition().above();
@@ -217,8 +203,25 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     }
 
     @Override
-    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return ImmersiveHandlers.chestHandler.isValidBlock(pos, state, tileEntity, level);
+    public boolean shouldTrack(BlockPos pos, Level level) {
+        // shouldTrack() is called to check for validity. If this is happening, and we're in an invalid state,
+        // let's attempt to migrate to maybe end up in a valid state. Note that this only handles if the main chest
+        // is broken. ImmersiveChest#doTick() handles if the other chest is broken.
+        boolean res = ImmersiveHandlers.chestHandler.isValidBlock(pos, level);
+        if (res) {
+            return true;
+        }
+        ChestInfo info = null;
+        for (ChestInfo i : this.getTrackedObjects()) {
+            if (i.getBlockPosition().equals(pos) || (i.otherPos != null && i.otherPos.equals(pos))) {
+                info = i;
+                break;
+            }
+        }
+        if (info == null) {
+            return false;
+        }
+        return info.migrateToValidChest(Minecraft.getInstance().level);
     }
 
     @Override
@@ -291,7 +294,6 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
         } catch (NullPointerException e) {
             return false;
         }
-
     }
 
     @Override
@@ -306,6 +308,12 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
                         if (info.other == null) { // If our neighboring chest's info isn't tracking us
                             info.failRender = true;
                             info.other = tileEnt; // Track us
+                            info.otherPos = tileEnt.getBlockPos();
+                            // Fill other chest contents with empty items. Technically causes a desync if the placed
+                            // chest is non-empty, but that shouldn't happen outside of command blocks.
+                            for (int i = 27; i < info.items.length; i++) {
+                                info.items[i] = ItemStack.EMPTY;
+                            }
                             this.doTick(info, VRPluginVerify.clientInVR()); // Tick so we can handle the items in our other chest
                             info.failRender = false;
                         }
@@ -357,9 +365,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     public static void openChest(ChestInfo info) {
         info.isOpen = !info.isOpen;
         Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(info.getBlockPosition(), info.isOpen));
-        if (!info.isOpen) {
-            info.remove(); // Remove immersive if we're closing the chest
-        } else {
+        if (info.isOpen) {
             Lootr.lootrImpl.markOpener(Minecraft.getInstance().player, info.getBlockPosition());
         }
     }

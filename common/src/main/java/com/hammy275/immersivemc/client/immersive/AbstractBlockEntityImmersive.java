@@ -1,14 +1,10 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractBlockEntityImmersiveInfo;
-import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractBlockEntityImmersive<T extends BlockEntity, I extends AbstractBlockEntityImmersiveInfo<T>>
     extends AbstractImmersive<I> {
@@ -40,17 +36,6 @@ public abstract class AbstractBlockEntityImmersive<T extends BlockEntity, I exte
         }
     }
 
-    @Override
-    protected void doTick(I info, boolean isInVR) {
-        super.doTick(info, isInVR);
-        if (info.getBlockEntity() instanceof Container) {
-            if (info.ticksActive % ClientConstants.inventorySyncTime == 0) {
-                Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
-            }
-        }
-
-    }
-
     // EVERYTHING ABOVE MUST BE OVERRIDEN, AND HAVE SUPER() CALLED IF APPLICABLE!
 
     /**
@@ -62,13 +47,20 @@ public abstract class AbstractBlockEntityImmersive<T extends BlockEntity, I exte
         return true;
     }
 
-    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEnt, Level level) {
+    @Override
+    public I refreshOrTrackObject(BlockPos pos, Level level) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         for (I info : getTrackedObjects()) {
-            if (info.getBlockEntity() == tileEnt) {
+            if (info.getBlockEntity() == blockEntity) {
                 info.setTicksLeft(getTickTime());
-                return;
+                return info;
             }
         }
-        if (reallyShouldTrack(tileEnt)) infos.add(getNewInfo(tileEnt));
+        if (reallyShouldTrack(blockEntity)) {
+            I newInfo = getNewInfo(blockEntity);
+            infos.add(newInfo);
+            return newInfo;
+        }
+        return null;
     }
 }
