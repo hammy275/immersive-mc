@@ -33,7 +33,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
 
     public static boolean usesWorldStorage(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         for (CheckerFunction checker : ImmersiveCheckers.WORLD_STORAGE_CHECKERS) {
-            if (checker.apply(pos, state, tileEntity, level)) {
+            if (checker.apply(pos, level)) {
                 return true;
             }
         }

@@ -14,6 +14,7 @@
     "ChiseledBookShelfBlockMixin",
     "ContainerOpenersCounterMixin",
     "DoorBlockMixin",
+    "LevelMixin",
     "LivingEntityMixin",
     "ProjectileAccessor",
     "ServerPlayerGameModeMixin",

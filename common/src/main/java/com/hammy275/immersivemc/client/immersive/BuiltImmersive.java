@@ -1,13 +1,11 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
-import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -19,7 +17,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
@@ -45,6 +42,11 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     }
 
     @Override
+    public ImmersiveHandler getHandler() {
+        return builder.handler;
+    }
+
+    @Override
     public boolean shouldRender(BuiltImmersiveInfo info, boolean isInVR) {
         return
                 shouldTrack(info.getBlockPosition()) && // Check that block is still there
@@ -57,9 +59,6 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     protected void doTick(BuiltImmersiveInfo info, boolean isInVR) {
         super.doTick(info, isInVR);
 
-        if (!info.itemHitboxes.isEmpty() && info.ticksActive % ClientConstants.inventorySyncTime == 0) {
-            Network.INSTANCE.sendToServer(new FetchInventoryPacket(info.getBlockPosition()));
-        }
         Direction currentDir;
         switch (builder.positioningMode) {
             case HORIZONTAL_BLOCK_FACING, BLOCK_FACING_NEG_X ->
@@ -128,53 +127,51 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     }
 
     @Override
-    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return builder.blockChecker.apply(pos, state, tileEntity, level);
+    public boolean shouldTrack(BlockPos pos, Level level) {
+        return builder.handler.isValidBlock(pos, level);
     }
 
     private boolean shouldTrack(BlockPos pos) {
-        return shouldTrack(pos,
-                Minecraft.getInstance().level.getBlockState(pos),
-                Minecraft.getInstance().level.getBlockEntity(pos),
-                Minecraft.getInstance().level);
+        return shouldTrack(pos, Minecraft.getInstance().level);
     }
 
     @Override
-    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+    public BuiltImmersiveInfo refreshOrTrackObject(BlockPos pos, Level level) {
+        BlockState state = level.getBlockState(pos);
         for (BuiltImmersiveInfo info : getTrackedObjects()) {
             if (info.getBlockPosition().equals(pos)) {
                 info.setTicksLeft(builder.renderTime);
-                return;
+                return info;
             }
         }
+        BuiltImmersiveInfo info;
         if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING) {
-            BuiltImmersiveInfo info = new BuiltImmersiveInfo(builder.hitboxes, pos,
+            info = new BuiltImmersiveInfo(builder.hitboxes, pos,
                     builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
             info.immersiveDir = state.getValue(HorizontalDirectionalBlock.FACING);
-            this.infos.add(info);
         } else if (builder.positioningMode == HitboxPositioningMode.TOP_PLAYER_FACING) {
-          this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
+          info = new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
         } else if (builder.positioningMode == HitboxPositioningMode.TOP_LITERAL) {
-          this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
+          info = new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
         } else if (builder.positioningMode == HitboxPositioningMode.TOP_BLOCK_FACING) {
-            BuiltImmersiveInfo info = new BuiltImmersiveInfo(builder.hitboxes, pos,
+            info = new BuiltImmersiveInfo(builder.hitboxes, pos,
                     builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
             info.immersiveDir = state.getValue(HorizontalDirectionalBlock.FACING);
-            this.infos.add(info);
         } else if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_PLAYER_FACING) {
-            this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
+            info = new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
         } else if (builder.positioningMode == HitboxPositioningMode.BLOCK_FACING_NEG_X) {
-            BuiltImmersiveInfo info = new BuiltImmersiveInfo(builder.hitboxes, pos,
+            info = new BuiltImmersiveInfo(builder.hitboxes, pos,
                     builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
             info.immersiveDir = state.getValue(BlockStateProperties.FACING);
-            this.infos.add(info);
         } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING_NO_DOWN) {
-            this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
+            info = new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
         } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING) {
-            this.infos.add(new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz));
+            info = new BuiltImmersiveInfo(builder.hitboxes, pos, builder.renderTime, builder.triggerHitboxControllerNum, builder.extraInfoDataClazz);
         } else {
             throw new UnsupportedOperationException("Tracking for positioning mode " + builder.positioningMode + " unimplemented!");
         }
+        this.infos.add(info);
+        return info;
     }
 
     @Override

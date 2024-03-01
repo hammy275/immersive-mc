@@ -2,8 +2,9 @@ package com.hammy275.immersivemc.common.config;
 
 public class CommonConstants {
 
-    public static final int distanceToRemoveImmersive = 12; // Distance to stop tracking immersives from
+    public static final int distanceToRemoveImmersive = 16; // Distance to stop tracking immersives from
     public static final int distanceSquaredToRemoveImmersive = distanceToRemoveImmersive * distanceToRemoveImmersive;
+    public static final int registerImmersivePickRange = distanceToRemoveImmersive - 1;
 
     public static final int[] minimumVRAPIVersion = new int[]{3, 0, 3};
 

@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.ImmersiveHitboxesInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -17,10 +18,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Used for hitboxes attached to the player
@@ -97,6 +97,11 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
     }
 
     @Override
+    public @Nullable ImmersiveHandler getHandler() {
+        return null;
+    }
+
+    @Override
     protected void doTick(ImmersiveHitboxesInfo info, boolean isInVR) {
         super.doTick(info, isInVR);
         if (backpackCooldown > 0) {
@@ -137,13 +142,14 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
     }
 
     @Override
-    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+    public boolean shouldTrack(BlockPos pos, Level level) {
         return true; // Prevents info instances from being removed. Okay to do since trackObject() is a no-op.
     }
 
     @Override
-    public void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        // NO-OP. Never tracking any objects.
+    public ImmersiveHitboxesInfo refreshOrTrackObject(BlockPos pos, Level level) {
+        // Return null. Never tracking any objects.
+        return null;
     }
 
     @Override

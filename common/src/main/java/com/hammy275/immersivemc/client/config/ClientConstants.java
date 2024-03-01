@@ -14,23 +14,23 @@ public class ClientConstants {
 
 
     // How long the overlay should be displayed
-    public static final int defaultTicksToRender = 120;
-    public static final int ticksToRenderFurnace = 80;
-    public static final int ticksToRenderBrewing = 120;
-    public static final int ticksToRenderCrafting = 120;
-    public static final int ticksToHandleJukebox = 100;
+    public static final int defaultTicksToRender = Integer.MAX_VALUE;
+    public static final int ticksToRenderFurnace = Integer.MAX_VALUE;
+    public static final int ticksToRenderBrewing = Integer.MAX_VALUE;
+    public static final int ticksToRenderCrafting = Integer.MAX_VALUE;
+    public static final int ticksToHandleJukebox = Integer.MAX_VALUE;
     public static final int ticksToRenderChest = Integer.MAX_VALUE; // You manually close a chest
-    public static final int ticksToRenderAnvil = 120;
-    public static final int ticksToRenderETable = 60*20; // 1 min
+    public static final int ticksToRenderAnvil = Integer.MAX_VALUE;
+    public static final int ticksToRenderETable = Integer.MAX_VALUE; // 1 min
     public static final int ticksToRenderBackpack = Integer.MAX_VALUE; // You dismiss the backpack manually
-    public static final int ticksToRenderRepeater = 80; // We're always pointing at one, so we don't need it much longer after that
-    public static final int ticksToRenderShulker = 300;
-    public static final int ticksToRenderBeacon = 60*20;
+    public static final int ticksToRenderRepeater = Integer.MAX_VALUE; // We're always pointing at one, so we don't need it much longer after that
+    public static final int ticksToRenderShulker = Integer.MAX_VALUE;
+    public static final int ticksToRenderBeacon = Integer.MAX_VALUE;
     public static final int ticksToRenderBarrel = ticksToRenderChest;
-    public static final int ticksToRenderHopper = 100;
+    public static final int ticksToRenderHopper = Integer.MAX_VALUE;
     public static final int ticksToRenderHitboxesImmersive = Integer.MAX_VALUE;
     public static final int ticksToRenderSmithingTable = ticksToRenderAnvil;
-    public static final int ticksToRenderChiseledBookshelf = 300;
+    public static final int ticksToRenderChiseledBookshelf = Integer.MAX_VALUE;
 
     // Size of items when rendered in front of something immersive
     public static final float defaultItemScaleSize = 1f/3f;
@@ -51,8 +51,6 @@ public class ClientConstants {
     // Time to transition in ticks
     public static final int transitionTime = 20;
 
-    // Amount of ticks between syncs (sync every `inventorySyncTime` ticks)
-    public static final int inventorySyncTime = 2;
 
     // Enchanting table y offsets for item animations and a map storing enchantments for fake items to have glimmer
     public static final List<Float> eTableYOffsets = new ArrayList<>();

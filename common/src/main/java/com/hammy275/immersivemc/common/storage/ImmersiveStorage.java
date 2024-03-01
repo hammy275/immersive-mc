@@ -24,7 +24,7 @@ public class ImmersiveStorage {
      * Instance of WorldStorage. Will always exist server-side and NEVER exist client-side.
      * Do not use this in a constructor! Clients also use the constructor!
      */
-    public final SavedData wStorage;
+    private final SavedData wStorage;
 
     /**
      * A unique String representing the type of storage this is. Used in WorldStorage when saving/loading NBT.
@@ -42,9 +42,29 @@ public class ImmersiveStorage {
     protected List<PlayerItemCounts>[] itemCounts;
 
     public String identifier = "world";
+    /**
+     * Whether this storage has changed since the last sync to the client.
+     */
+    private boolean isDirtyForClientSync = false;
 
     public ImmersiveStorage(SavedData storage) {
         this.wStorage = storage;
+    }
+
+    /**
+     * Sets this immersive as dirty.
+     */
+    public void setDirty() {
+        this.wStorage.setDirty();
+        this.isDirtyForClientSync = true;
+    }
+
+    public boolean isDirtyForClientSync() {
+        return this.isDirtyForClientSync;
+    }
+
+    public void setNoLongerDirtyForClientSync() {
+        this.isDirtyForClientSync = false;
     }
 
     /**
@@ -60,7 +80,7 @@ public class ImmersiveStorage {
             for (int i = 0; i < numOfItems; i++) {
                 itemCounts[i] = new LinkedList<>();
             }
-            this.wStorage.setDirty();
+            this.setDirty();
         }
         return this;
     }
@@ -82,7 +102,7 @@ public class ImmersiveStorage {
     public void setItem(int slot, ItemStack stack) {
         this.items[slot] = stack;
         this.itemCounts[slot].clear();
-        this.wStorage.setDirty();
+        this.setDirty();
     }
 
     /**
@@ -93,7 +113,7 @@ public class ImmersiveStorage {
     public void shrinkSlot(int slot, int amount) {
         this.items[slot].shrink(amount);
         this.shrinkCountsOnly(slot, amount);
-        this.wStorage.setDirty();
+        this.setDirty();
     }
 
     /**
@@ -168,7 +188,7 @@ public class ImmersiveStorage {
         this.items[slot] = toImmersive;
         player.setItemInHand(hand, toHand);
         Util.placeLeftovers(player, leftovers);
-        this.wStorage.setDirty();
+        this.setDirty();
     }
 
     public ItemStack getItem(int slot) {
@@ -206,7 +226,7 @@ public class ImmersiveStorage {
                 this.itemCounts[slot].remove((int) countsToRemove.pop());
             }
         }
-        this.wStorage.setDirty();
+        this.setDirty();
     }
 
 
@@ -268,7 +288,7 @@ public class ImmersiveStorage {
         this.itemCounts[newSlot] = this.itemCounts[oldSlot];
         this.items[oldSlot] = ItemStack.EMPTY;
         this.itemCounts[oldSlot] = new LinkedList<>();
-        this.wStorage.setDirty();
+        this.setDirty();
     }
 
     /**
@@ -290,7 +310,7 @@ public class ImmersiveStorage {
         for (int i = oldItemCounts.length; i < this.itemCounts.length; i++) {
             this.itemCounts[i] = new LinkedList<>();
         }
-        this.wStorage.setDirty();
+        this.setDirty();
     }
 
     public static class PlayerItemCounts {

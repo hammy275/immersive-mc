@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
@@ -27,8 +28,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -51,7 +50,12 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
     private static final ResourceLocation addLocation = new ResourceLocation(ImmersiveMC.MOD_ID, "add.png");
 
     public ImmersiveBeacon() {
-        super(1);
+        super(-1);
+    }
+
+    @Override
+    public ImmersiveHandler getHandler() {
+        return ImmersiveHandlers.beaconHandler;
     }
 
     @Override
@@ -281,8 +285,8 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
     }
 
     @Override
-    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        return ImmersiveHandlers.beaconHandler.isValidBlock(pos, state, tileEntity, level);
+    public boolean shouldTrack(BlockPos pos, Level level) {
+        return ImmersiveHandlers.beaconHandler.isValidBlock(pos, level);
     }
 
     @Override

@@ -134,19 +134,9 @@ public class ClientLogicSubscriber {
 
     public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         for (AbstractImmersive<? extends AbstractImmersiveInfo> immersive : Immersives.IMMERSIVES) {
-            if (immersive.shouldTrack(pos, state, tileEntity, level)) {
-                immersive.trackObject(pos, state, tileEntity, level);
+            if (immersive.shouldTrack(pos, level) && immersive.clientAuthoritative()) {
+                immersive.refreshOrTrackObject(pos, level);
             }
-        }
-
-        // Extra special tracker additions
-        BlockPos belowPos = pos.below();
-        BlockState belowState = level.getBlockState(belowPos);
-        BlockEntity belowEntity = level.getBlockEntity(belowPos);
-        if (Immersives.immersiveETable.shouldTrack(belowPos, belowState, belowEntity, level)) {
-            Immersives.immersiveETable.trackObject(belowPos, belowState, belowEntity, level);
-        } else if (Immersives.immersiveCrafting.shouldTrack(belowPos, belowState, belowEntity, level)) {
-            Immersives.immersiveCrafting.trackObject(belowPos, belowState, belowEntity, level);
         }
     }
 
@@ -224,8 +214,7 @@ public class ClientLogicSubscriber {
 
             for (I info : infos) {
                 // Make sure we can safely use this immersion before ticking it.
-                if (singleton.shouldTrack(info.getBlockPosition(), Minecraft.getInstance().level.getBlockState(info.getBlockPosition()),
-                        Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()), Minecraft.getInstance().level)
+                if (singleton.shouldTrack(info.getBlockPosition(), Minecraft.getInstance().level)
                     || singleton.forceTickEvenIfNoTrack) {
                     singleton.tick(info, VRPluginVerify.clientInVR());
                 } else {
@@ -318,7 +307,7 @@ public class ClientLogicSubscriber {
                     chestInfo.nextRow();
                     return true;
                 }
-            } else if (ImmersiveHandlers.shulkerBoxHandler.isValidBlock(pos, state, tileEnt, player.level())) {
+            } else if (ImmersiveHandlers.shulkerBoxHandler.isValidBlock(pos, player.level())) {
                 BuiltImmersiveInfo info = Immersives.immersiveShulker.findImmersive(pos);
                 if (info != null) {
                     ChestLikeData data = (ChestLikeData) info.getExtraData();
@@ -328,7 +317,7 @@ public class ClientLogicSubscriber {
                     }
 
                 }
-            } else if (ImmersiveHandlers.barrelHandler.isValidBlock(pos, state, tileEnt, player.level())) {
+            } else if (ImmersiveHandlers.barrelHandler.isValidBlock(pos, player.level())) {
                 BuiltImmersiveInfo info = Immersives.immersiveBarrel.findImmersive(pos);
                 if (info != null) {
                     ChestLikeData data = (ChestLikeData) info.getExtraData();
@@ -424,7 +413,7 @@ public class ClientLogicSubscriber {
             }
         }
         if (ActiveConfig.active().useBarrelImmersion &&
-                ImmersiveHandlers.barrelHandler.isValidBlock(pos, state, player.level().getBlockEntity(pos), player.level())) {
+                ImmersiveHandlers.barrelHandler.isValidBlock(pos, player.level())) {
             BuiltImmersiveInfo info = Immersives.immersiveBarrel.findImmersive(pos);
             if (info != null) {
                 ((ChestLikeData) info.getExtraData()).toggleOpen(pos);

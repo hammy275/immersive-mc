@@ -8,6 +8,7 @@ import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
@@ -34,13 +35,15 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.DirectionalBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
@@ -91,6 +94,30 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     }
 
+    /**
+     * @return Whether this immersive should have tracking initiated by the client. If true, no data should ever be
+     * sent from the server to the client for this immersive.
+     */
+    public boolean clientAuthoritative() {
+        return false;
+    }
+
+    /**
+     * @return ImmersiveHandler that this immersive uses. Can return null if this
+     * immersive doesn't receive item data from the server through FetchInventoryPacket.
+     */
+    @Nullable
+    public abstract ImmersiveHandler getHandler();
+
+    public boolean hasInfo(BlockPos pos) {
+        for (I info : this.infos) {
+            if (info.getBlockPosition().equals(pos)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean hitboxesAvailable(AbstractImmersiveInfo info) {
         return true;
     }
@@ -103,9 +130,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected abstract boolean inputSlotShouldRenderHelpHitbox(I info, int slotNum);
 
-    public abstract boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level);
+    public abstract boolean shouldTrack(BlockPos pos, Level level);
 
-    public abstract void trackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level);
+    @Nullable
+    public abstract I refreshOrTrackObject(BlockPos pos, Level level);
 
     // Whether to block a right-click if the option to block right clicks to open GUIs is enabled
     public abstract boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info);
@@ -152,8 +180,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 info.initCompleted = true;
             }
             if (Minecraft.getInstance().level != null && (shouldTrack(info.getBlockPosition(),
-                    Minecraft.getInstance().level.getBlockState(info.getBlockPosition()),
-                    Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()),
                     Minecraft.getInstance().level) || forceTickEvenIfNoTrack)) {
                 doTick(info, isInVR);
                 info.setInputSlots();
@@ -240,7 +266,8 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             try {
                 renderTick(info, isInVR);
                 render(info, stack, isInVR);
-                if (ActiveConfig.active().placementGuideMode != PlacementGuideMode.OFF && !forceDisableItemGuide) {
+                if (ActiveConfig.active().placementGuideMode != PlacementGuideMode.OFF && !forceDisableItemGuide
+                    && nearbyItemGuideRenderCheck(info)) {
                     // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
                     for (int i = 0; i < info.getInputSlots().length; i++) {
                         if (inputSlotShouldRenderHelpHitbox(info, i)) {
@@ -254,6 +281,20 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
             // in case if the other thread modifies things while we render
 
         }
+    }
+
+    private boolean nearbyItemGuideRenderCheck(I info) {
+        HitResult hit = Minecraft.getInstance().hitResult;
+        Player player = Minecraft.getInstance().player;
+        boolean inVR = VRPluginVerify.clientInVR();
+        Vec3 vrHitStart = inVR ? VRPlugin.API.getVRPlayer(player).getHMD().position() : null;
+        Vec3 vrLook = inVR ? VRPlugin.API.getVRPlayer(player).getHMD().getLookAngle() : null;
+        Vec3 vrHitEnd = inVR ? vrHitStart.add(vrLook.scale(Minecraft.getInstance().gameMode.getPickRange())) : null;
+        HitResult vrHit = inVR ? player.level().clip(new ClipContext(vrHitStart, vrHitEnd, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player)) : null;
+        return (hit != null && hit.getType() == HitResult.Type.BLOCK &&
+                ((BlockHitResult) hit).getBlockPos().equals(info.getBlockPosition()))
+                || playerPos().distanceTo(Vec3.atCenterOf(info.getBlockPosition())) <= 4
+                || (vrHit != null && vrHit.getType() == HitResult.Type.BLOCK && ((BlockHitResult) vrHit).getBlockPos().equals(info.getBlockPosition()));
     }
 
     public List<I> getTrackedObjects() {

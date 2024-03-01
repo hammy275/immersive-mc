@@ -57,7 +57,6 @@ public class Immersives {
                 data.anvilCost = aStorage.xpLevels;
             })
             .setPositioningMode(HitboxPositioningMode.TOP_BLOCK_FACING)
-            .setMaxImmersives(1)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .setUsesWorldStorage(true)
             .setExtraInfoDataClass(AnvilData.class)
@@ -78,7 +77,6 @@ public class Immersives {
                     }))
                     .build())
             .setPositioningMode(HitboxPositioningMode.BLOCK_FACING_NEG_X)
-            .setMaxImmersives(4)
             .setRightClickHandler((info, player, slot, hand) -> {
                 if (slot < 27) {
                     Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand));
@@ -110,7 +108,6 @@ public class Immersives {
             .addHitbox(HitboxInfoBuilder.createItemInput((info) -> ActiveConfig.active().autoCenterBrewing ? new Vec3(0, 0.35, 0) : new Vec3(-0.25, 0.25, 0),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
-            .setMaxImmersives(2)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .build();
     public static final ImmersiveChest immersiveChest = new ImmersiveChest();
@@ -125,7 +122,6 @@ public class Immersives {
             .addHitbox(HitboxInfoBuilder.create(new Vec3(0.03125, -0.25, 0), 0.3125, 0.5, 0.25).build())
             .addHitbox(HitboxInfoBuilder.create(new Vec3(0.34375, -0.25, 0), 0.3125, 0.5, 0.25).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_BLOCK_FACING)
-            .setMaxImmersives(1)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .setVROnly(true)
             .build();
@@ -141,7 +137,6 @@ public class Immersives {
                     .itemSpins(true).itemRenderSizeMultiplier(3f).triggerHitbox(true)
                     .forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
-            .setMaxImmersives(1)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .setUsesWorldStorage(true)
             .setTriggerHitboxControllerNum(0)
@@ -203,7 +198,6 @@ public class Immersives {
                 return texts;
             }).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
-            .setMaxImmersives(1)
             .setUsesWorldStorage(true)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .setExtraInfoDataClass(EnchantingData.class)
@@ -264,7 +258,6 @@ public class Immersives {
                 }},
                     ClientConstants.itemScaleSizeFurnace / 1.5d).holdsItems(true).needs3DResourcePackCompat(true).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_BLOCK_FACING)
-            .setMaxImmersives(4)
             .setRightClickHandler((info, player, slot, hand) -> {
                 if (ActiveConfig.active().autoCenterFurnace) {
                     if (info.itemHitboxes.get(0).getPos() == null && slot == 2) {
@@ -315,7 +308,6 @@ public class Immersives {
                 }
             }, ClientConstants.itemScaleSizeHopper).build())
             .setPositioningMode(HitboxPositioningMode.PLAYER_FACING_NO_DOWN)
-            .setMaxImmersives(2)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .build();
     public static final BuiltImmersive immersiveJukebox = ImmersiveBuilder.create(ImmersiveHandlers.jukeboxHandler)
@@ -323,7 +315,6 @@ public class Immersives {
             .setRenderTime(ClientConstants.ticksToHandleJukebox)
             .addHitbox(HitboxInfoBuilder.create(Vec3.ZERO, 0.125, 0.125, 0.625).build())
             .setPositioningMode(HitboxPositioningMode.TOP_LITERAL)
-            .setMaxImmersives(1)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), 0, hand)))
             .setVROnly(true)
             .build();
@@ -346,7 +337,6 @@ public class Immersives {
                 return new Vec3(0, 0, -1d/3d * extra.offsetIn(2));
             }, 0.14f).build(), 0.15)
             .setPositioningMode(HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING)
-            .setMaxImmersives(4)
             .setRightClickHandler(((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand))))
             .setExtraInfoDataClass(ChestLikeData.class)
             .setSlotActiveFunction((info, slot) -> ((ChestLikeData) info.getExtraData()).isOpen)
@@ -366,7 +356,6 @@ public class Immersives {
             .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(1d/3d, 0, 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
             .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 0, 0.5), ClientConstants.itemScaleSizeSmithingTable / 1.025).holdsItems(true).triggerHitbox(true).itemSpins(true).itemRenderSizeMultiplier(1.5f).forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
-            .setMaxImmersives(1)
             .setRightClickHandler(((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand))))
             .setUsesWorldStorage(true)
             .setTriggerHitboxControllerNum(0)
@@ -374,12 +363,12 @@ public class Immersives {
 
 
     public static final BuiltImmersive immersiveIronFurnacesFurnace = immersiveFurnace.getBuilderClone()
-            .setBlockChecker(ImmersiveHandlers.ironFurnacesFurnaceHandler::isValidBlock)
+            .setHandler(ImmersiveHandlers.ironFurnacesFurnaceHandler)
             .setConfigChecker(() -> ActiveConfig.active().useIronFurnacesFurnaceImmersion)
             .build();
 
     public static final BuiltImmersive immersiveTinkersConstructCraftingStation = immersiveCrafting.getBuilderClone()
-            .setBlockChecker(ImmersiveHandlers.tcCraftingStationHandler::isValidBlock)
+            .setHandler(ImmersiveHandlers.tcCraftingStationHandler)
             .setConfigChecker(() -> ActiveConfig.active().useTinkersConstructCraftingStationImmersion)
             .setUsesWorldStorage(false)
             .modifyHitboxes(0, 8, (hitbox) -> hitbox.renderItem(false).build())
