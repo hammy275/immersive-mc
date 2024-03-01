@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.ChiseledBookShelfBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class ChiseledBookshelfHandler implements ImmersiveHandler {
+public class ChiseledBookshelfHandler extends ContainerHandler {
     // Used for ChiseledBookShelfBlock to mixin for our redirection
     public static int bookshelfBlockSlotOverride = -1;
     public static InteractionHand bookshelfBlockHandOverride = null;
@@ -49,13 +49,13 @@ public class ChiseledBookshelfHandler implements ImmersiveHandler {
     }
 
     @Override
-    public boolean isValidBlock(BlockPos pos, BlockState state, BlockEntity blockEntity, Level level) {
-        return state.getBlock() == Blocks.CHISELED_BOOKSHELF;
+    public boolean isValidBlock(BlockPos pos, Level level) {
+        return level.getBlockState(pos).getBlock() == Blocks.CHISELED_BOOKSHELF;
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useChiseledBookshelfImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useChiseledBookshelfImmersion;
     }
 
     @Override

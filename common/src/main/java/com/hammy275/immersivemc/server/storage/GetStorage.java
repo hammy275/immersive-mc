@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.server.storage;
 
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.storage.AnvilWorldStorage;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
@@ -39,15 +38,15 @@ public class GetStorage {
 
     // Used because we don't want to drop outputs on the ground, so we need the last input index
     public static int getLastInputIndex(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        if (ImmersiveHandlers.craftingHandler.isValidBlock(pos, state, tileEntity, level)) {
+        if (ImmersiveHandlers.craftingHandler.isValidBlock(pos, level)) {
             return 8;
-        } else if (ImmersiveHandlers.anvilHandler.isValidBlock(pos, state, tileEntity, level)) {
+        } else if (ImmersiveHandlers.anvilHandler.isValidBlock(pos, level)) {
             return 1;
-        } else if (ImmersiveHandlers.enchantingTableHandler.isValidBlock(pos, state, tileEntity, level)) {
+        } else if (ImmersiveHandlers.enchantingTableHandler.isValidBlock(pos, level)) {
             return 0;
-        } else if (ImmersiveHandlers.beaconHandler.isValidBlock(pos, state, tileEntity, level)) {
+        } else if (ImmersiveHandlers.beaconHandler.isValidBlock(pos, level)) {
             return 0;
-        } else if (ImmersiveHandlers.smithingTableHandler.isValidBlock(pos, state, tileEntity, level)) {
+        } else if (ImmersiveHandlers.smithingTableHandler.isValidBlock(pos, level)) {
             return 2;
         }
         throw new RuntimeException("Last input index not defined for the block that was just broken!");
@@ -71,42 +70,47 @@ public class GetStorage {
     }
 
     public static ImmersiveStorage getStorage(Player player, BlockPos pos) {
-        BlockState state = player.level().getBlockState(pos);
-        BlockEntity tileEnt = player.level().getBlockEntity(pos);
-        if (ImmersiveHandlers.craftingHandler.isValidBlock(pos, state, tileEnt, player.level())) {
+        if (ImmersiveHandlers.craftingHandler.isValidBlock(pos, player.level())) {
             return getCraftingStorage(player, pos);
-        } else if (ImmersiveHandlers.anvilHandler.isValidBlock(pos, state, tileEnt, player.level())) {
+        } else if (ImmersiveHandlers.anvilHandler.isValidBlock(pos, player.level())) {
             return getAnvilStorage(player, pos);
-        } else if (ImmersiveHandlers.enchantingTableHandler.isValidBlock(pos, state, tileEnt, player.level())) {
+        } else if (ImmersiveHandlers.enchantingTableHandler.isValidBlock(pos, player.level())) {
             return getEnchantingStorage(player, pos);
-        } else if (ImmersiveHandlers.beaconHandler.isValidBlock(pos, state, tileEnt, player.level())) {
+        } else if (ImmersiveHandlers.beaconHandler.isValidBlock(pos, player.level())) {
             return getBeaconStorage(player, pos);
-        } else if (ImmersiveHandlers.smithingTableHandler.isValidBlock(pos, state, tileEnt, player.level())) {
+        } else if (ImmersiveHandlers.smithingTableHandler.isValidBlock(pos, player.level())) {
             return getSmithingTableStorage(player, pos);
         }
         return null;
     }
 
-    public static void updateStorageOutputAfterItemReturn(ServerPlayer player, BlockPos pos) {
-        ImmersiveStorage storage = getStorage(player, pos);
+    /**
+     * Get storage at position only if it already exists. Returns null if one isn't there.
+     * @param player Player that is getting storage.
+     * @param pos Position to get at
+     * @return The storage there, or null if none are there.
+     */
+    public static ImmersiveStorage getStorageIfExists(Player player, BlockPos pos) {
+        return ImmersiveMCLevelStorage.getLevelStorage(player).get(pos);
+    }
+
+    public static void updateStorageOutputAfterItemReturn(ServerPlayer player, BlockPos pos, ImmersiveStorage storage) {
         if (storage != null) {
-            BlockState state = player.level().getBlockState(pos);
-            BlockEntity tileEnt = player.level().getBlockEntity(pos);
-            if (ImmersiveHandlers.craftingHandler.isValidBlock(pos, state, tileEnt, player.level())) {
+            if (ImmersiveHandlers.craftingHandler.isValidBlock(pos, player.level())) {
                 ItemStack out = Swap.getRecipeOutput(player, storage.getItemsRaw());
                 storage.setItem(9, out);
-            } else if (ImmersiveHandlers.anvilHandler.isValidBlock(pos, state, tileEnt, player.level()) &&
+            } else if (ImmersiveHandlers.anvilHandler.isValidBlock(pos, player.level()) &&
                 storage instanceof AnvilWorldStorage aStorage) {
                 Pair<ItemStack, Integer> out = Swap.getAnvilOutput(storage.getItem(0), storage.getItem(1), player);
                 aStorage.xpLevels = out.getSecond();
                 aStorage.setItem(2, out.getFirst());
-            } else if (ImmersiveHandlers.smithingTableHandler.isValidBlock(pos, state, tileEnt, player.level())) {
+            } else if (ImmersiveHandlers.smithingTableHandler.isValidBlock(pos, player.level())) {
                 ItemStack out = Swap.getSmithingTableOutput(storage.getItem(0), storage.getItem(1),
                         storage.getItem(2), player);
                 storage.setItem(3, out);
-            } else if (ImmersiveHandlers.enchantingTableHandler.isValidBlock(pos, state, tileEnt, player.level())) {
+            } else if (ImmersiveHandlers.enchantingTableHandler.isValidBlock(pos, player.level())) {
                 // No-op
-            } else if (ImmersiveHandlers.beaconHandler.isValidBlock(pos, state, tileEnt, player.level())) {
+            } else if (ImmersiveHandlers.beaconHandler.isValidBlock(pos, player.level())) {
                 // No-op
             }
         }

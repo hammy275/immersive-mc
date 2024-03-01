@@ -11,7 +11,7 @@ public abstract class AbstractBlockEntityImmersiveInfo<T extends BlockEntity> ex
     protected Vec3[] positions;
     public ItemStack[] items;
     public final int maxSlotIndex;
-    protected final BlockPos pos;
+    protected BlockPos pos;
 
     /**
      * Constructor

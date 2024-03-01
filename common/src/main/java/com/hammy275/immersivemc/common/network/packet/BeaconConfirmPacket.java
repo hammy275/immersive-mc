@@ -53,7 +53,7 @@ public class BeaconConfirmPacket {
                         beaconStorage.setItem(0, ItemStack.EMPTY);
                         data.set(1, message.primaryId + 1);
                         data.set(2, secondId + 1);
-                        beaconStorage.wStorage.setDirty();
+                        beaconStorage.setDirty();
                         player.level().blockEntityChanged(beacon.getBlockPos());
                     }
                 }

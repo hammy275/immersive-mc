@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ChestLikeHandler implements ImmersiveHandler {
+public abstract class ChestLikeHandler extends ContainerHandler {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         List<ItemStack> items = new ArrayList<>();
