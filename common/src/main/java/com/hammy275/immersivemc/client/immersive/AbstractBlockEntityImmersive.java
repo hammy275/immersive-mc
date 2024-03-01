@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractBlockEntityImmersive<T extends BlockEntity, I extends AbstractBlockEntityImmersiveInfo<T>>
     extends AbstractImmersive<I> {
@@ -48,15 +47,17 @@ public abstract class AbstractBlockEntityImmersive<T extends BlockEntity, I exte
         return true;
     }
 
-    public I refreshOrTrackObject(BlockPos pos, BlockState state, BlockEntity tileEnt, Level level) {
+    @Override
+    public I refreshOrTrackObject(BlockPos pos, Level level) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         for (I info : getTrackedObjects()) {
-            if (info.getBlockEntity() == tileEnt) {
+            if (info.getBlockEntity() == blockEntity) {
                 info.setTicksLeft(getTickTime());
                 return info;
             }
         }
-        if (reallyShouldTrack(tileEnt)) {
-            I newInfo = getNewInfo(tileEnt);
+        if (reallyShouldTrack(blockEntity)) {
+            I newInfo = getNewInfo(blockEntity);
             infos.add(newInfo);
             return newInfo;
         }

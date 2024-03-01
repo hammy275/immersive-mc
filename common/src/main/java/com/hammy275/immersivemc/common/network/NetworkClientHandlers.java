@@ -39,8 +39,8 @@ public class NetworkClientHandlers {
         // Search all immersives for the matching handler. If found and the block is the state we expect, create or refresh
         // the info and process storage on it.
         for (AbstractImmersive<?> immersive : Immersives.IMMERSIVES) {
-            if (immersive.getHandler() == handler && immersive.shouldTrack(pos, level.getBlockState(pos), level.getBlockEntity(pos), level)) {
-                AbstractImmersiveInfo info = immersive.refreshOrTrackObject(pos, level.getBlockState(pos), level.getBlockEntity(pos), level);
+            if (immersive.getHandler() == handler && immersive.shouldTrack(pos, level)) {
+                AbstractImmersiveInfo info = immersive.refreshOrTrackObject(pos, level);
                 if (info != null) {
                     immersive.processStorageFromNetwork(info, storage);
                 }

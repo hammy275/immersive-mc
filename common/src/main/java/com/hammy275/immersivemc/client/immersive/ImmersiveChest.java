@@ -32,7 +32,6 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -204,7 +203,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     }
 
     @Override
-    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+    public boolean shouldTrack(BlockPos pos, Level level) {
         // shouldTrack() is called to check for validity. If this is happening, and we're in an invalid state,
         // let's attempt to migrate to maybe end up in a valid state. Note that this only handles if the main chest
         // is broken. ImmersiveChest#doTick() handles if the other chest is broken.

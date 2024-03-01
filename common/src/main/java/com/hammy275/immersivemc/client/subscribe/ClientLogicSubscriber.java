@@ -134,8 +134,8 @@ public class ClientLogicSubscriber {
 
     public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         for (AbstractImmersive<? extends AbstractImmersiveInfo> immersive : Immersives.IMMERSIVES) {
-            if (immersive.shouldTrack(pos, state, tileEntity, level) && immersive.clientAuthoritative()) {
-                immersive.refreshOrTrackObject(pos, state, tileEntity, level);
+            if (immersive.shouldTrack(pos, level) && immersive.clientAuthoritative()) {
+                immersive.refreshOrTrackObject(pos, level);
             }
         }
     }
@@ -214,8 +214,7 @@ public class ClientLogicSubscriber {
 
             for (I info : infos) {
                 // Make sure we can safely use this immersion before ticking it.
-                if (singleton.shouldTrack(info.getBlockPosition(), Minecraft.getInstance().level.getBlockState(info.getBlockPosition()),
-                        Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()), Minecraft.getInstance().level)
+                if (singleton.shouldTrack(info.getBlockPosition(), Minecraft.getInstance().level)
                     || singleton.forceTickEvenIfNoTrack) {
                     singleton.tick(info, VRPluginVerify.clientInVR());
                 } else {

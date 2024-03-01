@@ -39,8 +39,6 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.DirectionalBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -132,10 +130,10 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
 
     protected abstract boolean inputSlotShouldRenderHelpHitbox(I info, int slotNum);
 
-    public abstract boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level);
+    public abstract boolean shouldTrack(BlockPos pos, Level level);
 
     @Nullable
-    public abstract I refreshOrTrackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level);
+    public abstract I refreshOrTrackObject(BlockPos pos, Level level);
 
     // Whether to block a right-click if the option to block right clicks to open GUIs is enabled
     public abstract boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info);
@@ -182,8 +180,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                 info.initCompleted = true;
             }
             if (Minecraft.getInstance().level != null && (shouldTrack(info.getBlockPosition(),
-                    Minecraft.getInstance().level.getBlockState(info.getBlockPosition()),
-                    Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()),
                     Minecraft.getInstance().level) || forceTickEvenIfNoTrack)) {
                 doTick(info, isInVR);
                 info.setInputSlots();

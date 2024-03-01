@@ -3,8 +3,6 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.client.immersive.info.AbstractWorldStorageInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStorageInfo> extends AbstractImmersive<I> {
     public AbstractWorldStorageImmersive(int maxImmersives) {
@@ -26,7 +24,7 @@ public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStora
         return info.readyToRender();
     }
 
-    public I refreshOrTrackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+    public I refreshOrTrackObject(BlockPos pos, Level level) {
         for (I info : getTrackedObjects()) {
             if (info.getBlockPosition().equals(pos)) {
                 info.setTicksLeft(getTickTime());

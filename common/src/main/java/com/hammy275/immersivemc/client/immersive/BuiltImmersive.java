@@ -17,7 +17,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
@@ -128,19 +127,17 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     }
 
     @Override
-    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+    public boolean shouldTrack(BlockPos pos, Level level) {
         return builder.handler.isValidBlock(pos, level);
     }
 
     private boolean shouldTrack(BlockPos pos) {
-        return shouldTrack(pos,
-                Minecraft.getInstance().level.getBlockState(pos),
-                Minecraft.getInstance().level.getBlockEntity(pos),
-                Minecraft.getInstance().level);
+        return shouldTrack(pos, Minecraft.getInstance().level);
     }
 
     @Override
-    public BuiltImmersiveInfo refreshOrTrackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+    public BuiltImmersiveInfo refreshOrTrackObject(BlockPos pos, Level level) {
+        BlockState state = level.getBlockState(pos);
         for (BuiltImmersiveInfo info : getTrackedObjects()) {
             if (info.getBlockPosition().equals(pos)) {
                 info.setTicksLeft(builder.renderTime);

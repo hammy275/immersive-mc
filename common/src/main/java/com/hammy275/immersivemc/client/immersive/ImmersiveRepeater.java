@@ -20,7 +20,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.RepeaterBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -131,12 +130,12 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
-    public boolean shouldTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+    public boolean shouldTrack(BlockPos pos, Level level) {
         return ImmersiveCheckers.isRepeater(pos, level);
     }
 
     @Override
-    public RepeaterInfo refreshOrTrackObject(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
+    public RepeaterInfo refreshOrTrackObject(BlockPos pos, Level level) {
         for (RepeaterInfo info : getTrackedObjects()) {
             if (info.getBlockPosition().equals(pos)) {
                 info.setTicksLeft(ClientConstants.ticksToRenderRepeater);
