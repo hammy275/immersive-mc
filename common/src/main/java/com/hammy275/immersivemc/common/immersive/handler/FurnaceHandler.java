@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class FurnaceHandler implements ImmersiveHandler {
+public class FurnaceHandler extends ContainerHandler {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         return HandlerUtil.makeInventoryContentsFromContainer(player, (Container) player.level.getBlockEntity(pos), 3);
@@ -71,13 +71,13 @@ public class FurnaceHandler implements ImmersiveHandler {
     }
 
     @Override
-    public boolean isValidBlock(BlockPos pos, BlockState state, BlockEntity blockEntity, Level level) {
-        return blockEntity instanceof AbstractFurnaceBlockEntity;
+    public boolean isValidBlock(BlockPos pos, Level level) {
+        return level.getBlockEntity(pos) instanceof AbstractFurnaceBlockEntity;
     }
 
     @Override
-    public boolean enabledInServerConfig() {
-        return ActiveConfig.FILE.useFurnaceImmersion;
+    public boolean enabledInConfig(ActiveConfig config) {
+        return config.useFurnaceImmersion;
     }
 
     @Override

@@ -5,12 +5,13 @@ import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
-import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 import java.util.Objects;
 
@@ -32,14 +33,16 @@ public class NetworkClientHandlers {
         }
     }
 
-    public static void handleReceiveInvData(HandlerStorage storage, BlockPos pos, ResourceLocation id) {
+    public static void handleReceiveInvData(HandlerStorage storage, BlockPos pos, ImmersiveHandler handler) {
         Objects.requireNonNull(storage);
+        Level level = Minecraft.getInstance().player.level;
+        // Search all immersives for the matching handler. If found and the block is the state we expect, create or refresh
+        // the info and process storage on it.
         for (AbstractImmersive<?> immersive : Immersives.IMMERSIVES) {
-            for (AbstractImmersiveInfo info : immersive.getTrackedObjects()) {
-                if (info.getBlockPosition().equals(pos)) {
+            if (immersive.getHandler() == handler && immersive.shouldTrack(pos, level)) {
+                AbstractImmersiveInfo info = immersive.refreshOrTrackObject(pos, level);
+                if (info != null) {
                     immersive.processStorageFromNetwork(info, storage);
-                } else if (info instanceof ChestInfo cInfo && cInfo.other != null && cInfo.other.getBlockPos().equals(pos)) {
-                    Immersives.immersiveChest.processOtherStorageFromNetwork(info, storage);
                 }
             }
         }
