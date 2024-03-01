@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.common.config;
 import com.hammy275.immersivemc.common.util.RGBA;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import java.lang.reflect.Field;
@@ -107,9 +108,12 @@ public final class ActiveConfig implements Cloneable {
      * @return Config for player, or a disabled config if the player does not have a config.
      */
     public static ActiveConfig getConfigForPlayer(Player player) {
-        // TODO: Handle case if player is outside of VR, has VR-only ImmersiveMC,
-        // TODO: and is trying to do something with ImmersiveMC that's purely server-driven.
-        return CLIENTS.getOrDefault(player.getUUID(), DISABLED);
+        ActiveConfig config = CLIENTS.getOrDefault(player.getUUID(), DISABLED);
+        // If not in VR and user wants ImmersiveMC disabled outside VR, return DISABLED config.
+        if (config.disableOutsideVR && !VRPluginVerify.playerInVR((ServerPlayer) player)) {
+            return DISABLED;
+        }
+        return config;
     }
 
     /**

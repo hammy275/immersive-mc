@@ -13,6 +13,7 @@
     "ButtonBlockMixin",
     "ContainerOpenersCounterMixin",
     "DoorBlockMixin",
+    "LevelMixin",
     "LivingEntityMixin",
     "ProjectileAccessor",
     "ServerPlayerGameModeMixin",

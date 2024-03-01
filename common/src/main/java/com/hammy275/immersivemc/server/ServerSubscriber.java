@@ -1,15 +1,17 @@
 package com.hammy275.immersivemc.server;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.server.immersive.DirtyTracker;
+import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import com.hammy275.immersivemc.server.storage.GetStorage;
 import com.hammy275.immersivemc.server.storage.ImmersiveMCLevelStorage;
 import com.hammy275.immersivemc.server.tracker.ServerTrackerInit;
-import com.hammy275.immersivemc.server.tracker.ServerVRSubscriber;
 import dev.architectury.event.EventResult;
 import dev.architectury.utils.value.IntValue;
 import net.minecraft.core.BlockPos;
@@ -21,6 +23,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,15 +58,24 @@ public class ServerSubscriber {
         for (AbstractTracker tracker : ServerTrackerInit.globalTrackers) {
             tracker.doTick(null);
         }
+        TrackedImmersives.tick(server);
+        DirtyTracker.unmarkAllDirty();
     }
 
-    public static void onPlayerTick(Player player) {
-        if (player.level.isClientSide) return;
+    public static void onPlayerTick(Player playerIn) {
+        if (playerIn.level.isClientSide) return;
+        ServerPlayer player = (ServerPlayer) playerIn;
         for (AbstractTracker tracker : ServerTrackerInit.playerTrackers) {
             tracker.doTick(player);
         }
         if (VRPluginVerify.hasAPI) {
             ServerVRSubscriber.vrPlayerTick(player);
+        }
+
+        // Get looking at immersive
+        HitResult hit = player.pick(CommonConstants.registerImmersivePickRange, 0, false);
+        if (hit instanceof BlockHitResult blockHit && blockHit.getType() != HitResult.Type.MISS) {
+            TrackedImmersives.maybeTrackImmersive(player, blockHit.getBlockPos());
         }
     }
 
