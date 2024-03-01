@@ -189,15 +189,6 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
         }
     }
 
-    // Used for processing info.other's item contents
-    public void processOtherStorageFromNetwork(AbstractImmersiveInfo infoIn, HandlerStorage storageIn) {
-        ChestInfo info = (ChestInfo) infoIn;
-        ListOfItemsStorage storage = (ListOfItemsStorage) storageIn;
-        for (int i = 0; i < storage.getItems().size(); i++) {
-            info.items[i + 27] = storage.getItems().get(i);
-        }
-    }
-
     @Override
     public BlockPos getLightPos(ChestInfo info) {
         return info.getBlockPosition().above();
@@ -352,9 +343,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     public static void openChest(ChestInfo info) {
         info.isOpen = !info.isOpen;
         Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(info.getBlockPosition(), info.isOpen));
-        if (!info.isOpen) {
-            info.remove(); // Remove immersive if we're closing the chest
-        } else {
+        if (info.isOpen) {
             Lootr.lootrImpl.markOpener(Minecraft.getInstance().player, info.getBlockPosition());
         }
     }

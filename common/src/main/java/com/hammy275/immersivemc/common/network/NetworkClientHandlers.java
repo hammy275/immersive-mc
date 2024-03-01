@@ -5,9 +5,7 @@ import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
-import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
 import net.minecraft.client.Minecraft;
@@ -38,15 +36,6 @@ public class NetworkClientHandlers {
     public static void handleReceiveInvData(HandlerStorage storage, BlockPos pos, ImmersiveHandler handler) {
         Objects.requireNonNull(storage);
         Level level = Minecraft.getInstance().player.level();
-        // Special hardcode for the other chest of a large chest
-        if (handler == ImmersiveHandlers.chestHandler) {
-            for (ChestInfo cInfo : Immersives.immersiveChest.getTrackedObjects()) {
-                if (cInfo.other != null && cInfo.other.getBlockPos().equals(pos)) {
-                    Immersives.immersiveChest.processOtherStorageFromNetwork(cInfo, storage);
-                    return;
-                }
-            }
-        }
         // Search all immersives for the matching handler. If found and the block is the state we expect, create or refresh
         // the info and process storage on it.
         for (AbstractImmersive<?> immersive : Immersives.IMMERSIVES) {
