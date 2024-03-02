@@ -56,6 +56,10 @@ public class TrackedImmersives {
         }
     }
 
+    public static void clearForPlayer(ServerPlayer player) {
+        TRACKED_IMMERSIVES.removeIf((data) -> data.playerUUID.equals(player.getUUID()));
+    }
+
     private static void trackImmersive(ServerPlayer player, ImmersiveHandler handler, BlockPos pos) {
         for (TrackedImmersiveData data : TRACKED_IMMERSIVES) {
             if (data.getPos().equals(pos)) {
