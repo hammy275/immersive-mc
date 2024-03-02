@@ -3,8 +3,8 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
-import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
 import com.hammy275.immersivemc.client.model.BackpackBundleModel;
+import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
 import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
 import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
@@ -91,13 +91,25 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     }
 
     @Override
+    protected void doTick(BackpackInfo info, boolean isInVR) {
+        super.doTick(info, isInVR);
+        info.light = getLight(getLightPos(info));
+    }
+
+    @Override
     public @Nullable ImmersiveHandler getHandler() {
         return null;
     }
 
     @Override
     public BlockPos getLightPos(BackpackInfo info) {
-        return BlockPos.containing(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1().position());
+        // Light position is bag position if not in light-blocking block, or HMD position if it is in one.
+        BlockPos c1 = BlockPos.containing(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1().position());
+        if (!Minecraft.getInstance().level.getBlockState(c1).canOcclude()) {
+            return c1;
+        } else {
+            return BlockPos.containing(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD().position());
+        }
     }
 
     public static void onHitboxInteract(Player player, BackpackInfo info, int slot) {
@@ -118,7 +130,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     public boolean shouldRender(BackpackInfo info, boolean isInVR) {
         return Minecraft.getInstance().player != null &&
                 VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(Minecraft.getInstance().player) &&
-                VRPlugin.API.apiActive(Minecraft.getInstance().player);
+                VRPlugin.API.apiActive(Minecraft.getInstance().player) && info.light >= 0;
     }
 
     @Override
@@ -170,7 +182,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         getBackpackModel().renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderType.entityCutout(getBackpackTexture())),
-                15728880, OverlayTexture.NO_OVERLAY,
+                info.light, OverlayTexture.NO_OVERLAY,
                 info.rgb.x(), info.rgb.y(), info.rgb.z(), 1);
 
         // Translate and render the crafting on the side of the backpack and down a bit
@@ -179,7 +191,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         craftingModel.renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderType.entityCutout(BackpackCraftingModel.textureLocation)),
-                15728880, OverlayTexture.NO_OVERLAY,
+                info.light, OverlayTexture.NO_OVERLAY,
                 1, 1, 1, 1);
 
         stack.popPose();
