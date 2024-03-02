@@ -3,6 +3,8 @@ package com.hammy275.immersivemc.common.network.packet;
 import dev.architectury.networking.NetworkManager;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
+import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -56,6 +58,7 @@ public class ConfigSyncPacket {
             } else { // Get config from client
                 message.config.mergeWithOther(ActiveConfig.FILE);
                 ActiveConfig.registerPlayerConfig(ctx.get().getPlayer(), message.config);
+                TrackedImmersives.clearForPlayer(player);
             }
         });
         
