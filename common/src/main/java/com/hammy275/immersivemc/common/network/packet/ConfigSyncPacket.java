@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -56,6 +57,7 @@ public class ConfigSyncPacket {
             } else { // C2S sending us a config
                 message.config.mergeWithOther(ActiveConfig.FILE);
                 ActiveConfig.registerPlayerConfig(ctx.get().getPlayer(), message.config);
+                TrackedImmersives.clearForPlayer(player);
             }
         });
         

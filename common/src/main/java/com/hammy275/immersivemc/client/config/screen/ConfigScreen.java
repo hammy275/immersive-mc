@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -139,6 +140,7 @@ public class ConfigScreen extends Screen {
                         .toList();
                 Network.INSTANCE.sendToPlayers(allButHost, new ConfigSyncPacket(ActiveConfig.FILE));
             }
+            TrackedImmersives.clearForPlayer(Minecraft.getInstance().getSingleplayerServer().getPlayerList().getPlayer(Minecraft.getInstance().player.getUUID()));
         } else if (Minecraft.getInstance().level != null) {
             // Let server know of our new config state
             Network.INSTANCE.sendToServer(new ConfigSyncPacket(ActiveConfig.FILE));
