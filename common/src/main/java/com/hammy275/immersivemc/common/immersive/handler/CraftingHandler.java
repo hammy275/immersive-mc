@@ -11,11 +11,10 @@ import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.CraftingTableBlock;
 
 import java.util.Arrays;
 
@@ -57,7 +56,8 @@ public class CraftingHandler extends WorldStorageHandler {
 
     @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
-        return level.getBlockState(pos).getBlock() == Blocks.CRAFTING_TABLE;
+        return level.getBlockState(pos).getBlock() instanceof CraftingTableBlock &&
+                !(level.getBlockEntity(pos) instanceof Container); // Don't handle mods that add storage to crafting tables
     }
 
     @Override
