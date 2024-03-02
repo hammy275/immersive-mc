@@ -30,6 +30,7 @@ public class BackpackInfo extends AbstractImmersiveInfo {
     public int topRow = 0;
     public ItemStack[] craftingInput = new ItemStack[]{ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
     public ItemStack craftingOutput = ItemStack.EMPTY;
+    public int light = -1;
 
     public BackpackInfo() {
         super(ClientConstants.ticksToRenderBackpack);
