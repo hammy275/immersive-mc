@@ -40,6 +40,8 @@ dependencies {
     modApi "curse.maven:mcvrapi-591092:4791175"
 
     modApi "com.terraformersmc:modmenu:9.0.0"
+    modApi "curse.maven:lootr-615106:5124828"
+    modApi "curse.maven:clothconfigapi-348521:4973455" // lootr dependency
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
