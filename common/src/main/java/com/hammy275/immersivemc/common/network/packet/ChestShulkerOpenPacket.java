@@ -92,6 +92,8 @@ public class ChestShulkerOpenPacket {
                             barrel.stopOpen(player);
                             changeChestCount(barrel.getBlockPos(), -1);
                         }
+                    } else if (Lootr.lootrImpl.openLootrBarrel(message.pos, player, message.isOpen) || Lootr.lootrImpl.openLootrShulkerBox(message.pos, player, message.isOpen)) {
+                        // Intentional NO-OP. All the useful work is done in the if statement itself.
                     } else {
                         maybeMarkOpen = false;
                     }
@@ -104,7 +106,7 @@ public class ChestShulkerOpenPacket {
         
     }
 
-    protected static void changeChestCount(BlockPos pos, int amount) {
+    public static void changeChestCount(BlockPos pos, int amount) {
         Integer currentVal = ChestToOpenCount.chestImmersiveOpenCount.get(pos);
         int newVal;
         if (currentVal == null || currentVal == 0) {
