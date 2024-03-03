@@ -32,6 +32,17 @@ public abstract class ChestLikeHandler extends ContainerHandler {
     }
 
     @Override
+    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
+        if (Lootr.lootrImpl.isLootrContainer(pos, player.level)) {
+            // Combine old ImmersiveMC "send data every-other tick" with if it's open, since contents can only
+            // change if it's opened by the player.
+            return Lootr.lootrImpl.isOpen(pos, player) && player.tickCount % 2 == 0;
+        } else {
+            return super.isDirtyForClientSync(player, pos);
+        }
+    }
+
+    @Override
     public HandlerStorage getEmptyHandler() {
         return new ListOfItemsStorage();
     }
@@ -43,6 +54,10 @@ public abstract class ChestLikeHandler extends ContainerHandler {
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
         Container container = (Container) player.level.getBlockEntity(pos);
+        Container lootrInv = Lootr.lootrImpl.getContainer(player, pos);
+        if (lootrInv != null) {
+            container = lootrInv;
+        }
         ItemStack containerItem = container.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand);
         if (!canPlaceItem(playerItem)) {

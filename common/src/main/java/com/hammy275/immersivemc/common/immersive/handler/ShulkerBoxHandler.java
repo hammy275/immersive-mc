@@ -8,9 +8,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 public class ShulkerBoxHandler extends ChestLikeHandler {
 
@@ -21,7 +18,7 @@ public class ShulkerBoxHandler extends ChestLikeHandler {
 
     @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
-        return level.getBlockEntity(pos) instanceof ShulkerBoxBlockEntity;
+        return level.getBlockState(pos).getBlock() instanceof ShulkerBoxBlock;
     }
 
     @Override
