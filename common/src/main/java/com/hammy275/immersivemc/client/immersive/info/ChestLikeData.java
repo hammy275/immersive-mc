@@ -1,7 +1,9 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
+import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 
 public class ChestLikeData {
@@ -37,6 +39,9 @@ public class ChestLikeData {
 
     private void sendOpenPacket(BlockPos pos) {
         Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(pos, isOpen));
+        if (isOpen) {
+            Lootr.lootrImpl.markOpener(Minecraft.getInstance().player, pos);
+        }
     }
 
     public void nextRow() {
