@@ -31,7 +31,6 @@ import net.minecraft.world.level.block.EnderChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
-import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -420,14 +419,12 @@ public class ClientLogicSubscriber {
                 return Immersives.immersiveBarrel.getCooldownDesktop();
             }
         }
-        if (ActiveConfig.active().useShulkerImmersion) {
-            BlockEntity blockEnt = player.level.getBlockEntity(pos);
-            if (blockEnt instanceof ShulkerBoxBlockEntity) {
-                for (BuiltImmersiveInfo info : Immersives.immersiveShulker.getTrackedObjects()) {
-                    if (info.getBlockPosition().equals(pos)) {
-                        ((ChestLikeData) info.getExtraData()).toggleOpen(info.getBlockPosition());
-                        return Immersives.immersiveShulker.getCooldownDesktop();
-                    }
+        if (ActiveConfig.active().useShulkerImmersion &&
+                ImmersiveHandlers.shulkerBoxHandler.isValidBlock(pos, player.level)) {
+            for (BuiltImmersiveInfo info : Immersives.immersiveShulker.getTrackedObjects()) {
+                if (info.getBlockPosition().equals(pos)) {
+                    ((ChestLikeData) info.getExtraData()).toggleOpen(info.getBlockPosition());
+                    return Immersives.immersiveShulker.getCooldownDesktop();
                 }
             }
         }
