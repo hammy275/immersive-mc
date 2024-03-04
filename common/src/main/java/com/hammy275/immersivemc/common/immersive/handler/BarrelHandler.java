@@ -5,12 +5,12 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BarrelBlockEntity;
+import net.minecraft.world.level.block.BarrelBlock;
 
 public class BarrelHandler extends ChestLikeHandler {
     @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
-        return level.getBlockEntity(pos) instanceof BarrelBlockEntity;
+        return level.getBlockState(pos).getBlock() instanceof BarrelBlock;
     }
 
     @Override
