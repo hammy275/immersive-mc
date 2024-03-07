@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.mixin;
 
-import com.hammy275.immersivemc.server.ChestToOpenCount;
+import com.hammy275.immersivemc.server.ChestToOpenSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
@@ -15,6 +15,6 @@ public class ContainerOpenersCounterMixin {
     @ModifyVariable(method = "recheckOpeners(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V",
     at = @At("STORE"), index = 4, ordinal = 0)
     public int openCountI(int originalI, Level level, BlockPos blockPos, BlockState blockState) {
-        return originalI + ChestToOpenCount.chestImmersiveOpenCount.getOrDefault(blockPos, 0);
+        return originalI + ChestToOpenSet.getOpenCount(blockPos, level);
     }
 }
