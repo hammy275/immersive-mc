@@ -85,4 +85,11 @@ public class ServerSubscriber {
                     new ConfigSyncPacket(ActiveConfig.FILE));
         }
     }
+
+    public static void onPlayerLeave(Player playerIn) {
+        if (playerIn instanceof ServerPlayer player) {
+            TrackedImmersives.clearForPlayer(player);
+            ChestToOpenSet.clearForPlayer(player);
+        }
+    }
 }
