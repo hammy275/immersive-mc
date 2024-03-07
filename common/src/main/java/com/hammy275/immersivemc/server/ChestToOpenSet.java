@@ -34,6 +34,17 @@ public class ChestToOpenSet {
         chestImmersiveOpenSet.clear();
     }
 
+    public static void clearForPlayer(Player player) {
+        List<PosLevel> toRemove = new ArrayList<>();
+        chestImmersiveOpenSet.forEach((posLevel, set) -> {
+            set.remove(player.getUUID());
+            if (set.isEmpty()) {
+                toRemove.add(posLevel);
+            }
+        });
+        toRemove.forEach(chestImmersiveOpenSet.keySet()::remove);
+    }
+
     private static Set<UUID> getOpenSet(Level level, BlockPos pos, boolean createIfNotPresent) {
         Set<UUID> set = chestImmersiveOpenSet.get(new PosLevel(pos, level));
         if (createIfNotPresent && set == null) {
