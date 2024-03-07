@@ -44,6 +44,7 @@ public class ImmersiveMC {
         TickEvent.SERVER_POST.register(ServerSubscriber::onServerTick);
         TickEvent.PLAYER_POST.register(ServerSubscriber::onPlayerTick);
         PlayerEvent.PLAYER_JOIN.register(ServerSubscriber::onPlayerJoin);
+        PlayerEvent.PLAYER_QUIT.register(ServerSubscriber::onPlayerLeave);
         TickEvent.PLAYER_POST.register(CommonSubscriber::onPlayerTick);
         TickEvent.SERVER_POST.register(CommonSubscriber::globalTick);
 
