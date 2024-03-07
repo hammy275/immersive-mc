@@ -17,7 +17,7 @@ import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
-import com.hammy275.immersivemc.server.ChestToOpenCount;
+import com.hammy275.immersivemc.server.ChestToOpenSet;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -190,7 +190,7 @@ public class ClientLogicSubscriber {
         ActiveConfig.FROM_SERVER = (ActiveConfig) ActiveConfig.DISABLED.clone();
         alreadyInServer = false;
         // Cleared so leaving and re-joining a singleplayer world doesn't keep the lid open
-        ChestToOpenCount.chestImmersiveOpenCount.clear();
+        ChestToOpenSet.clear();
 
     }
 
