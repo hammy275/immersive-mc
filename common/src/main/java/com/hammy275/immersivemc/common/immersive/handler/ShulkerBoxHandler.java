@@ -4,10 +4,13 @@ import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 
 public class ShulkerBoxHandler extends ChestLikeHandler {
 
@@ -24,6 +27,15 @@ public class ShulkerBoxHandler extends ChestLikeHandler {
     @Override
     public boolean enabledInConfig(ActiveConfig config) {
         return config.useShulkerImmersion;
+    }
+
+    @Override
+    public void onStopTracking(ServerPlayer player, BlockPos pos) {
+        super.onStopTracking(player, pos);
+        BlockEntity shulkerBox = player.level().getBlockEntity(pos);
+        if (shulkerBox instanceof ShulkerBoxBlockEntity sbbe) {
+            sbbe.stopOpen(player);
+        }
     }
 
     @Override

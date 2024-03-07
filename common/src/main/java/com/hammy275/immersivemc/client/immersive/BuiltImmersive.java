@@ -74,6 +74,10 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
 
         }
 
+        if (info.immersiveDir == null) {
+            info.immersiveDir = currentDir; // Set currentDir ASAP if it's null for hitbox.recalculate() to use.
+        }
+
         for (int i = 0; i < info.hitboxes.length; i++) {
             HitboxInfo hitbox = info.hitboxes[i];
             // Update hitbox if its offset isn't constant, the current direction isn't the same as the last,

@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.server.ChestToOpenSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -62,5 +63,10 @@ public abstract class ChestLikeHandler extends ContainerHandler {
     @Override
     public boolean usesWorldStorage() {
         return false;
+    }
+
+    @Override
+    public void onStopTracking(ServerPlayer player, BlockPos pos) {
+        ChestToOpenSet.closeChest(player, pos);
     }
 }
