@@ -23,8 +23,11 @@ public class TrackedImmersives {
             TrackedImmersiveData data = dataIterator.next();
             ServerPlayer player = server.getPlayerList().getPlayer(data.playerUUID);
             if (player == null || !data.validForPlayer(player)) {
-                data.getHandler().clearDirtyForClientSync(player, data.getPos());
-                data.getHandler().onStopTracking(player, data.getPos());
+                if (player != null) {
+                    // Called for player == null in ServerSubscriber#onDisconnect().
+                    data.getHandler().clearDirtyForClientSync(player, data.getPos());
+                    data.getHandler().onStopTracking(player, data.getPos());
+                }
                 dataIterator.remove();
             }
         }
@@ -49,7 +52,15 @@ public class TrackedImmersives {
     }
 
     public static void clearForPlayer(ServerPlayer player) {
-        TRACKED_IMMERSIVES.removeIf((data) -> data.playerUUID.equals(player.getUUID()));
+        Iterator<TrackedImmersiveData> dataIterator = TRACKED_IMMERSIVES.iterator();
+        while (dataIterator.hasNext()) {
+            TrackedImmersiveData data = dataIterator.next();
+            if (data.playerUUID.equals(player.getUUID())) {
+                data.getHandler().clearDirtyForClientSync(player, data.getPos());
+                data.getHandler().onStopTracking(player, data.getPos());
+                dataIterator.remove();
+            }
+        }
     }
 
     private static void trackImmersive(ServerPlayer player, ImmersiveHandler handler, BlockPos pos) {
