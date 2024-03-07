@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc_fabric;
 
 import com.hammy275.immersivemc.common.compat.lootr.LootrCompat;
-import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
+import com.hammy275.immersivemc.server.ChestToOpenSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -59,10 +59,10 @@ public class LootrCompatImpl implements LootrCompat {
         if (player.level.getBlockEntity(pos) instanceof LootrBarrelBlockEntity lbbe) {
             if (nowOpen) {
                 lbbe.startOpen(player);
-                ChestShulkerOpenPacket.changeChestCount(pos, 1);
+                ChestToOpenSet.openChest(player, pos);
             } else {
                 lbbe.stopOpen(player);
-                ChestShulkerOpenPacket.changeChestCount(pos, -1);
+                ChestToOpenSet.closeChest(player, pos);
             }
             return true;
         }
@@ -74,10 +74,10 @@ public class LootrCompatImpl implements LootrCompat {
         if (player.level.getBlockEntity(pos) instanceof LootrShulkerBlockEntity lsbe) {
             if (nowOpen) {
                 lsbe.startOpen(player);
-                ChestShulkerOpenPacket.changeChestCount(pos, 1);
+                ChestToOpenSet.openChest(player, pos);
             } else {
                 lsbe.stopOpen(player);
-                ChestShulkerOpenPacket.changeChestCount(pos, -1);
+                ChestToOpenSet.closeChest(player, pos);
             }
             return true;
         }

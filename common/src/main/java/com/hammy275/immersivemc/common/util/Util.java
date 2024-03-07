@@ -122,6 +122,7 @@ public class Util {
 
     protected static ChestBlockEntity getOtherChest(ChestBlockEntity chest, boolean checkOther) {
         // Gets the chest this one is connected to. Can be null.
+        if (chest == null) return null;
         Direction otherDir = ChestBlock.getConnectedDirection(chest.getBlockState());
         BlockPos otherPos = chest.getBlockPos().relative(otherDir);
         if (chest.getLevel() != null && chest.getLevel().getBlockEntity(otherPos) instanceof ChestBlockEntity) {

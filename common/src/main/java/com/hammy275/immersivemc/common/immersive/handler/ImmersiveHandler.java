@@ -71,4 +71,11 @@ public interface ImmersiveHandler {
      * @return A unique ID to identify this handler over the network.
      */
     ResourceLocation getID();
+
+    /**
+     * Function called whenever this immersive is no longer being tracked. Only ever called server-side.
+     * @param player Player who is no longer tracking this immersive.
+     * @param pos Position of the block no longer being tracked.
+     */
+    default void onStopTracking(ServerPlayer player, BlockPos pos) {}
 }
