@@ -4,7 +4,7 @@ import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.server.ChestToOpenCount;
+import com.hammy275.immersivemc.server.ChestToOpenSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -49,18 +49,18 @@ public class ChestShulkerOpenPacket {
                         ChestBlockEntity other = Util.getOtherChest(chest);
                         if (message.isOpen) {
                             chest.startOpen(player);
-                            changeChestCount(chest.getBlockPos(), 1);
+                            ChestToOpenSet.openChest(player, chest.getBlockPos());
                             if (other != null) {
                                 other.startOpen(player);
-                                changeChestCount(other.getBlockPos(), 1);
+                                ChestToOpenSet.openChest(player, other.getBlockPos());
                             }
                             PiglinAi.angerNearbyPiglins(player, true);
                         } else {
                             chest.stopOpen(player);
-                            changeChestCount(chest.getBlockPos(), -1);
+                            ChestToOpenSet.closeChest(player, chest.getBlockPos());
                             if (other != null) {
                                 other.stopOpen(player);
-                                changeChestCount(other.getBlockPos(), -1);
+                                ChestToOpenSet.closeChest(player, other.getBlockPos());
                             }
                         }
                     } else if (tileEnt instanceof EnderChestBlockEntity) {
@@ -68,11 +68,11 @@ public class ChestShulkerOpenPacket {
                         EnderChestBlockEntity chest = (EnderChestBlockEntity) tileEnt;
                         if (message.isOpen) {
                             chest.startOpen(player);
-                            changeChestCount(chest.getBlockPos(), 1);
+                            ChestToOpenSet.openChest(player, chest.getBlockPos());
                             PiglinAi.angerNearbyPiglins(player, true);
                         } else {
                             chest.stopOpen(player);
-                            changeChestCount(chest.getBlockPos(), -1);
+                            ChestToOpenSet.closeChest(player, chest.getBlockPos());
                         }
                         maybeMarkOpen = false; // Never bother to attempt to mark ender chests as opened for Lootr
                     } else if (tileEnt instanceof ShulkerBoxBlockEntity shulkerBox) {
@@ -86,11 +86,11 @@ public class ChestShulkerOpenPacket {
                         if (!ActiveConfig.FILE.useBarrelImmersion) return;
                         if (message.isOpen) {
                             barrel.startOpen(player);
-                            changeChestCount(barrel.getBlockPos(), 1);
+                            ChestToOpenSet.openChest(player, barrel.getBlockPos());
                             PiglinAi.angerNearbyPiglins(player, true);
                         } else {
                             barrel.stopOpen(player);
-                            changeChestCount(barrel.getBlockPos(), -1);
+                            ChestToOpenSet.closeChest(player, barrel.getBlockPos());
                         }
                     } else if (Lootr.lootrImpl.openLootrBarrel(message.pos, player, message.isOpen) || Lootr.lootrImpl.openLootrShulkerBox(message.pos, player, message.isOpen)) {
                         // Intentional NO-OP. All the useful work is done in the if statement itself.
@@ -105,21 +105,4 @@ public class ChestShulkerOpenPacket {
         });
         
     }
-
-    public static void changeChestCount(BlockPos pos, int amount) {
-        Integer currentVal = ChestToOpenCount.chestImmersiveOpenCount.get(pos);
-        int newVal;
-        if (currentVal == null || currentVal == 0) {
-            newVal = amount;
-        } else {
-            newVal = amount + currentVal;
-        }
-        if (newVal <= 0) {
-            ChestToOpenCount.chestImmersiveOpenCount.remove(pos);
-        } else {
-            ChestToOpenCount.chestImmersiveOpenCount.put(pos, newVal);
-        }
-    }
-
-
 }
