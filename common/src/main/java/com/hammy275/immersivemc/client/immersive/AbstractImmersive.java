@@ -10,7 +10,6 @@ import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
-import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.mixin.DragonFireballRendererMixin;
@@ -556,15 +555,21 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     /**
      * Gets the forward direction of the block based on the player
      *
-     * Put simply, this returns the opposite of the Direction the player is currently facing (only N/S/E/W)
+     * Put simply, this returns the best direction such that the block is "facing" the play by looking that direction.
      * @param player Player to get forward from
+     * @param pos Blosck position of the
      * @return The forward direction of a block to use.
      */
-    public static Direction getForwardFromPlayer(Player player) {
-        if (VRPluginVerify.clientInVR() && VRPlugin.API.playerInVR(player)) {
-            return Util.horizontalDirectionFromLook(VRPlugin.API.getVRPlayer(player).getHMD().getLookAngle()).getOpposite();
+    public static Direction getForwardFromPlayer(Player player, BlockPos pos) {
+        Vec3 blockPos = Vec3.atBottomCenterOf(pos);
+        Vec3 playerPos = player.position();
+        Vec3 diff = playerPos.subtract(blockPos);
+        Direction.Axis axis = Math.abs(diff.x) > Math.abs(diff.z) ? Direction.Axis.X : Direction.Axis.Z;
+        if (axis == Direction.Axis.X) {
+            return diff.x < 0 ? Direction.WEST : Direction.EAST;
+        } else {
+            return diff.z < 0 ? Direction.NORTH : Direction.SOUTH;
         }
-        return player.getDirection().getOpposite();
     }
 
     /**
@@ -586,7 +591,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     public Vec3[] get3x3HorizontalGrid(BlockPos blockPos, double spacing) {
-        return get3x3HorizontalGrid(blockPos, spacing, getForwardFromPlayer(Minecraft.getInstance().player), false);
+        return get3x3HorizontalGrid(blockPos, spacing, getForwardFromPlayer(Minecraft.getInstance().player, blockPos), false);
     }
 
     public Vec3[] get3x3HorizontalGrid(BlockPos blockPos, double spacing, Direction blockForward,
@@ -616,7 +621,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     public Vec3[] get3x3VerticalGrid(BlockPos blockPos, double spacing) {
-        return get3x3VerticalGrid(blockPos, spacing, getForwardFromPlayer(Minecraft.getInstance().player));
+        return get3x3VerticalGrid(blockPos, spacing, getForwardFromPlayer(Minecraft.getInstance().player, blockPos));
     }
 
     public Vec3[] get3x3VerticalGrid(BlockPos blockPos, double spacing, Direction blockForward) {
@@ -696,7 +701,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         } else if (playerPos.y <= pos.getY() - 0.625 && filter != Direction.Axis.Y) {
             return Direction.DOWN;
         } else {
-            Direction forward = getForwardFromPlayer(player);
+            Direction forward = getForwardFromPlayer(player, pos);
             if (forward.getAxis() != filter) {
                 return forward;
             } else {
