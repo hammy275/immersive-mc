@@ -186,12 +186,12 @@ public class HitboxInfo implements Cloneable {
                 upDownRenderDir = null;
             }
         } else if (mode == HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING) {
-            Direction dir = info.immersiveDir;
+            Direction dir = info.immersiveDir; // Direction the block should be "facing" to the player
+            Direction literalFacing = level.getBlockState(pos).getValue(DirectionalBlock.FACING); // The direction the block is actually facing
             if (dir.getAxis() == Direction.Axis.Y) {
-                recalcTopBottomBlockFacing(AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition()),
-                        info, offset, dir == Direction.DOWN);
+                recalcTopBottomBlockFacing(literalFacing, info, offset, dir == Direction.DOWN);
             } else {
-                recalcHorizBlockFacing(dir, info, offset);
+                recalcHorizBlockFacing(dir, info, offset, literalFacing);
                 upDownRenderDir = null;
             }
         } else {
@@ -247,19 +247,35 @@ public class HitboxInfo implements Cloneable {
     }
 
     /**
-     * Helper function for recalculate().
+     * See below docstring for recalcHorizBlockFacing().
      */
     private void recalcHorizBlockFacing(Direction blockFacing, BuiltImmersiveInfo info, Vec3 offset) {
+        recalcHorizBlockFacing(blockFacing, info, offset, Direction.UP);
+    }
+
+    /**
+     * Helper function for recalculate() for blocks facing a horizontal direction.
+     * @param blockFacing Direction the block is facing towards the player.
+     * @param info Info instance.
+     * @param offset Relative offset from the center of the block. X and Y represent a horizontal grid, while Z
+     *               goes into/out of the block.
+     * @param blockLiteralFacing The direction the block is facing in the world, or more precisely,
+     *                           the direction that +Y should be.
+     */
+    private void recalcHorizBlockFacing(Direction blockFacing, BuiltImmersiveInfo info, Vec3 offset, Direction blockLiteralFacing) {
         BlockPos pos = info.getBlockPosition();
 
         // Vectors that are combined with centerOffset. May not necessarily correspond to the actual in-game axis.
         // For example, zVec corresponds always to the in-game Y-axis for PLAYER_FACING (such as crafting tables).
-        xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
-        yVec = new Vec3(0, 1, 0);
+        if (blockLiteralFacing.getAxis() != Direction.Axis.Y) {
+            xVec = new Vec3(0, 1, 0);
+        } else {
+            xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
+        }
+        yVec = Vec3.atLowerCornerOf(blockLiteralFacing.getNormal());
         zVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
 
-        centerPos = AbstractImmersive.getDirectlyInFront(blockFacing, pos)
-                .add(xVec.scale(0.5)).add(yVec.scale(0.5));
+        centerPos = Vec3.atCenterOf(info.getBlockPosition()).add(zVec.scale(0.5));
 
         // If, for example, the furnace is facing the X-axis, then the size should come from sizeZ, since the
         // Z size represents going "into"/"out of" the furnace (as the X size is for left and right on the furnace's
