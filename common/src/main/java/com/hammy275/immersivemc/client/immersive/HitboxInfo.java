@@ -140,7 +140,7 @@ public class HitboxInfo implements Cloneable {
             recalcHorizBlockFacing(blockFacing, info, offset);
             upDownRenderDir = null;
         } else if (mode == HitboxPositioningMode.TOP_PLAYER_FACING) {
-            recalcTopPlayerFacing(Minecraft.getInstance().player.getDirection(), info, offset);
+            recalcTopPlayerFacing(info.immersiveDir, info, offset);
             upDownRenderDir = Direction.UP;
         } else if (mode == HitboxPositioningMode.TOP_LITERAL) {
             xVec = new Vec3(1, 0, 0);
@@ -161,7 +161,7 @@ public class HitboxInfo implements Cloneable {
             recalcTopBottomBlockFacing(blockFacing, info, offset, false);
             upDownRenderDir = Direction.UP;
         } else if (mode == HitboxPositioningMode.HORIZONTAL_PLAYER_FACING) {
-            Direction blockFacing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
+            Direction blockFacing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition());
             recalcHorizBlockFacing(blockFacing, info, offset);
             upDownRenderDir = null;
         } else if (mode == HitboxPositioningMode.BLOCK_FACING_NEG_X) {
@@ -178,17 +178,17 @@ public class HitboxInfo implements Cloneable {
         } else if (mode == HitboxPositioningMode.PLAYER_FACING_NO_DOWN) {
             Direction playerFacing = AbstractImmersive.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition());
             if (playerFacing == Direction.UP) {
-                recalcTopPlayerFacing(Minecraft.getInstance().player.getDirection(), info, offset);
+                recalcTopPlayerFacing(info.immersiveDir, info, offset);
                 upDownRenderDir = Direction.UP;
             } else {
-                Direction blockFacing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
+                Direction blockFacing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition());
                 recalcHorizBlockFacing(blockFacing, info, offset);
                 upDownRenderDir = null;
             }
         } else if (mode == HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING) {
             Direction dir = info.immersiveDir;
             if (dir.getAxis() == Direction.Axis.Y) {
-                recalcTopBottomBlockFacing(AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player),
+                recalcTopBottomBlockFacing(AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition()),
                         info, offset, dir == Direction.DOWN);
             } else {
                 recalcHorizBlockFacing(dir, info, offset);
@@ -294,17 +294,17 @@ public class HitboxInfo implements Cloneable {
         this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
     }
 
-    private void recalcTopPlayerFacing(Direction blockFacing, BuiltImmersiveInfo info, Vec3 offset) {
+    private void recalcTopPlayerFacing(Direction playerFacing, BuiltImmersiveInfo info, Vec3 offset) {
         BlockPos pos = info.getBlockPosition();
-        xVec = Vec3.atLowerCornerOf(blockFacing.getClockWise().getNormal());
-        yVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
+        xVec = Vec3.atLowerCornerOf(playerFacing.getCounterClockWise().getNormal());
+        yVec = Vec3.atLowerCornerOf(playerFacing.getOpposite().getNormal());
         zVec = new Vec3(0, 1, 0);
 
         centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);
 
-        double actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeY : sizeX;
+        double actualXSize = playerFacing.getAxis() == Direction.Axis.X ? sizeY : sizeX;
         double actualYSize = this.sizeZ;
-        double actualZSize = blockFacing.getAxis() == Direction.Axis.X ? sizeX : sizeY;
+        double actualZSize = playerFacing.getAxis() == Direction.Axis.X ? sizeX : sizeY;
 
         this.pos = centerPos.add(xVec.scale(offset.x)).add(yVec.scale(offset.y)).add(zVec.scale(offset.z));
         this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
