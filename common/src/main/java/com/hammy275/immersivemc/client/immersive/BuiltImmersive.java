@@ -64,7 +64,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             case HORIZONTAL_BLOCK_FACING, BLOCK_FACING_NEG_X ->
                     currentDir = info.immersiveDir;
             case TOP_PLAYER_FACING, TOP_BLOCK_FACING, HORIZONTAL_PLAYER_FACING, PLAYER_FACING_NO_DOWN ->
-                    currentDir = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player);
+                    currentDir = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition());
             case TOP_LITERAL ->
                     currentDir = null;
             case PLAYER_FACING_FILTER_BLOCK_FACING ->
@@ -74,16 +74,15 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
 
         }
 
-        if (info.immersiveDir == null) {
-            info.immersiveDir = currentDir; // Set currentDir ASAP if it's null for hitbox.recalculate() to use.
-        }
+        boolean differentDirs = info.immersiveDir != currentDir;
+        info.immersiveDir = currentDir;
 
         for (int i = 0; i < info.hitboxes.length; i++) {
             HitboxInfo hitbox = info.hitboxes[i];
             // Update hitbox if its offset isn't constant, the current direction isn't the same as the last,
             // if it hasn't been calculated yet, if slots can change whether they're active, or if they need
             // to detect VR hand movements.
-            if (!hitbox.constantOffset || currentDir != info.immersiveDir || !hitbox.calcDone() || builder.slotActive != ImmersiveBuilder.SLOT_ALWAYS_ACTIVE
+            if (!hitbox.constantOffset || differentDirs || !hitbox.calcDone() || builder.slotActive != ImmersiveBuilder.SLOT_ALWAYS_ACTIVE
                 || hitbox.vrMovementInfo != null) {
                 if (builder.slotActive.apply(info, i)) {
                     hitbox.recalculate(Minecraft.getInstance().level, builder.positioningMode, info);
@@ -95,8 +94,6 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             }
 
         }
-
-        info.immersiveDir = currentDir;
     }
 
     @Override
@@ -216,7 +213,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             } else if (builder.positioningMode == HitboxPositioningMode.TOP_BLOCK_FACING) {
                 return info.getBlockPosition().above();
             } else if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_PLAYER_FACING) {
-              return info.getBlockPosition().relative(AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player));
+              return info.getBlockPosition().relative(AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition()));
             } else if (builder.positioningMode == HitboxPositioningMode.BLOCK_FACING_NEG_X) {
                 return info.getBlockPosition().relative(info.immersiveDir);
             } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING_NO_DOWN) {
