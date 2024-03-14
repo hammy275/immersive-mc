@@ -314,15 +314,15 @@ public class Immersives {
             .setRenderSize(ClientConstants.itemScaleSizeShulker)
             .add3x3Grid(HitboxInfoBuilder.createItemInput((info) -> {
                 ChestLikeData extra = (ChestLikeData) info.getExtraData();
-                return new Vec3(0, 0, -1d/3d * extra.offsetIn(0));
+                return new Vec3(0, 0.25, -1d/3d * extra.offsetIn(0));
             }, 0.14f).build(), 0.15)
             .add3x3Grid(HitboxInfoBuilder.createItemInput((info) -> {
                 ChestLikeData extra = (ChestLikeData) info.getExtraData();
-                return new Vec3(0, 0, -1d/3d * extra.offsetIn(1));
+                return new Vec3(0, 0.25, -1d/3d * extra.offsetIn(1));
             }, 0.14f).build(), 0.15)
             .add3x3Grid(HitboxInfoBuilder.createItemInput((info) -> {
                 ChestLikeData extra = (ChestLikeData) info.getExtraData();
-                return new Vec3(0, 0, -1d/3d * extra.offsetIn(2));
+                return new Vec3(0, 0.25, -1d/3d * extra.offsetIn(2));
             }, 0.14f).build(), 0.15)
             .setPositioningMode(HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING)
             .setRightClickHandler(((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand))))
