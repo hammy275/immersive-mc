@@ -175,7 +175,7 @@ public class ImmersiveMCConfig {
         // C2S Only Sync
         crouchBypassImmersion = builder
                 .comment("Allow users to crouch + right-click to bypass immersives.")
-                .define("crouch_bypass_immersion", true);
+                .define("crouch_bypass_immersion", false);
         doRumble = builder
                 .comment("Do controller rumble for ImmersiveMC actions.")
                 .define("do_rumble", true);
@@ -287,7 +287,7 @@ public class ImmersiveMCConfig {
         useTinkersConstructCraftingStationImmersion.set(true);
 
         // C2S Synced Values
-        crouchBypassImmersion.set(true);
+        crouchBypassImmersion.set(false);
         doRumble.set(true);
         returnItems.set(true);
         disableOutsideVR.set(false);
