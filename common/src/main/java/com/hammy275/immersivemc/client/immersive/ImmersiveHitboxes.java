@@ -190,7 +190,7 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
 
     private void doBagOpen(Player player) {
         if (backpackCooldown <= 0) {
-            VRRumble.rumbleIfVR(null, 1, CommonConstants.vibrationTimePlayerActionAlert);
+            VRRumble.rumbleIfVR(Minecraft.getInstance().player, 1, CommonConstants.vibrationTimePlayerActionAlert);
             ClientUtil.openBag(player);
             backpackCooldown = 50;
         }

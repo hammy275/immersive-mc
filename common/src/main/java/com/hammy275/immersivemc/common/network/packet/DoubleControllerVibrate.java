@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.network.packet;
 
-import com.hammy275.immersivemc.common.vr.VRRumble;
+import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,8 +26,7 @@ public class DoubleControllerVibrate {
         ctx.get().queue(() -> {
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player == null) { // Do vibrate
-                VRRumble.rumbleIfVR(null, 0, message.duration);
-                VRRumble.rumbleIfVR(null, 1, message.duration);
+                NetworkClientHandlers.doDoubleRumble(message.duration);
             }
         });
 

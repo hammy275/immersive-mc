@@ -278,7 +278,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
         } else if (hitboxNum == 7) {
             Network.INSTANCE.sendToServer(new BeaconConfirmPacket(info.getBlockPosition(), info.getEffectId(),
                     info.regenSelected ? BuiltInRegistries.MOB_EFFECT.getId(MobEffects.REGENERATION) : -1));
-            VRRumble.rumbleIfVR(null, tInfo.getVRControllerNum(), CommonConstants.vibrationTimeWorldInteraction);
+            VRRumble.rumbleIfVR(Minecraft.getInstance().player, tInfo.getVRControllerNum(), CommonConstants.vibrationTimeWorldInteraction);
         } else {
             info.regenSelected = hitboxNum == 5;
         }

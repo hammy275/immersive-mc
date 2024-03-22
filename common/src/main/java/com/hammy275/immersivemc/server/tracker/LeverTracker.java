@@ -90,7 +90,7 @@ public class LeverTracker extends AbstractTracker {
                     LeverBlock leverBlock = (LeverBlock) Blocks.LEVER;
                     leverBlock.use(state, player.level, leverPos, player, c == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND,
                             null);
-                    VRRumble.rumbleIfVR_P(player, c, CommonConstants.vibrationTimeWorldInteraction);
+                    VRRumble.rumbleIfVR(player, c, CommonConstants.vibrationTimeWorldInteraction);
                 }
             }
             info.setLastPos(c, handPos);
