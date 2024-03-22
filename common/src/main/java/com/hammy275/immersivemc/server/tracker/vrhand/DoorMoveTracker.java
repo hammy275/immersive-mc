@@ -69,7 +69,7 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
 
             // Play event to door opener/closer, since the use() call ignores them
             if (res == InteractionResult.CONSUME) {
-                VRRumble.rumbleIfVR_P(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
+                VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
                 boolean isNowOpen = blockState.getValue(BlockStateProperties.OPEN);
                 int event = -1;
                 if (blockState.getBlock() instanceof DoorBlock door) {

@@ -52,7 +52,7 @@ public class ArmorTracker extends AbstractVRHandTracker {
             toEquip.setCount(1);
             player.getInventory().armor.set(slot.getIndex(), toEquip);
             stackInHand.shrink(1);
-            VRRumble.rumbleIfVR_P(player, hand.ordinal(), CommonConstants.vibrationTimePlayerActionAlert);
+            VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimePlayerActionAlert);
         }
     }
 
