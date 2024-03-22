@@ -157,15 +157,15 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
                         // Use a distance check for checking if to vibrate the other controller to hopefully filter out
                         // actions of moving up that are for something other than the chest
                         if (diff0 >= threshold) {
-                            VRRumble.rumbleIfVR(null, 0, CommonConstants.vibrationTimeWorldInteraction);
+                            VRRumble.rumbleIfVR(Minecraft.getInstance().player, 0, CommonConstants.vibrationTimeWorldInteraction);
                             if (diff1 >= threshold / 5d && current0.distanceToSqr(current1) <= 1) {
-                                VRRumble.rumbleIfVR(null, 1, CommonConstants.vibrationTimeWorldInteraction);
+                                VRRumble.rumbleIfVR(Minecraft.getInstance().player, 1, CommonConstants.vibrationTimeWorldInteraction);
                             }
                         }
                         if (diff1 >= threshold) {
-                            VRRumble.rumbleIfVR(null, 1, CommonConstants.vibrationTimeWorldInteraction);
+                            VRRumble.rumbleIfVR(Minecraft.getInstance().player, 1, CommonConstants.vibrationTimeWorldInteraction);
                             if ((diff0 >= threshold / 5d && current0.distanceToSqr(current1) <= 1)) {
-                                VRRumble.rumbleIfVR(null, 0, CommonConstants.vibrationTimeWorldInteraction);
+                                VRRumble.rumbleIfVR(Minecraft.getInstance().player, 0, CommonConstants.vibrationTimeWorldInteraction);
                             }
                         }
                     }
