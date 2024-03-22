@@ -6,7 +6,7 @@ logoFile= "immersivemc_logo.png"
 
 [[mods]]
 modId = "immersivemc"
-version = "${version}"
+version = "2.0.0"
 displayName = "ImmersiveMC"
 displayURL = "https://hammy275.com/immersivemcwiki"
 authors = "hammy275"
@@ -38,28 +38,28 @@ config = "mixins.immersivemc.json"
 
 [[dependencies.immersivemc]]
 modId = "neoforge"
-mandatory = true
+type = "required"
 versionRange = "[20.2,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.immersivemc]]
 modId = "minecraft"
-mandatory = true
+type = "required"
 versionRange = "[1.20.4,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.immersivemc]]
 modId = "architectury"
-mandatory = true
+type = "required"
 versionRange = "[11.0.11,)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.immersivemc]]
 modId = "forgeconfigapiport"
-mandatory = true
+type = "required"
 versionRange = "[20.4.3,)"
 ordering = "AFTER"
 side = "BOTH"
