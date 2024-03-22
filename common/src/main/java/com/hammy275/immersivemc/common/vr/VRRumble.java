@@ -7,46 +7,30 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 public class VRRumble {
-    private static boolean rumbleInVRConfigCheck(ServerPlayer player) {
-        if (player == null) {
-            return ActiveConfig.FILE.doRumble;
-        } else {
+    private static boolean rumbleInVRConfigCheck(Player player) {
+        if (player instanceof ServerPlayer) {
             return ActiveConfig.getConfigForPlayer(player).doRumble;
+        } else {
+            return ActiveConfig.FILE.doRumble;
         }
     }
 
-    public static void rumbleIfVR(ServerPlayer player, int controller, float rumbleDuration) {
+    public static void rumbleIfVR(Player player, int controller, float rumbleDuration) {
         // Note: All rumble in ImmersiveMC should converge to this function call for config checking
-        if (VRPluginVerify.hasAPI && (player == null || VRPlugin.API.playerInVR(player)) &&
+        if (VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player) &&
             rumbleInVRConfigCheck(player)) {
-            VRPlugin.API.triggerHapticPulse(controller, rumbleDuration, player);
+            VRPlugin.API.triggerHapticPulse(controller, rumbleDuration, player instanceof ServerPlayer sp ? sp : null);
         }
     }
 
-    public static void rumbleIfVR_P(Player player, int controller, float rumbleDuration) {
-        if (player instanceof ServerPlayer sp) {
-            rumbleIfVR(sp, controller, rumbleDuration);
-        } else if (player == null) {
-            rumbleIfVR(null, controller, rumbleDuration);
-        }
-    }
-
-    public static void doubleRumbleIfVR(ServerPlayer player, float rumbleDuration) {
-        if (VRPluginVerify.hasAPI && (player == null || VRPlugin.API.playerInVR(player))) {
-            if (player == null) {
-                rumbleIfVR(null, 0, rumbleDuration);
-                rumbleIfVR(null, 1, rumbleDuration);
+    public static void doubleRumbleIfVR(Player player, float rumbleDuration) {
+        if (VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player)) {
+            if (player instanceof ServerPlayer sp) {
+                Network.INSTANCE.sendToPlayer(sp, new DoubleControllerVibrate(rumbleDuration));
             } else {
-                Network.INSTANCE.sendToPlayer(player, new DoubleControllerVibrate(rumbleDuration));
+                rumbleIfVR(player, 0, rumbleDuration);
+                rumbleIfVR(player, 1, rumbleDuration);
             }
-        }
-    }
-
-    public static void doubleRumbleIfVR_P(Player player, float rumbleDuration) {
-        if (player instanceof ServerPlayer sp) {
-            doubleRumbleIfVR(sp, rumbleDuration);
-        } else if (player == null) {
-            doubleRumbleIfVR(null, rumbleDuration);
         }
     }
 }
