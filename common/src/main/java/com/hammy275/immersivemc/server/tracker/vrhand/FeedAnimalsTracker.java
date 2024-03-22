@@ -54,7 +54,7 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
                     InteractionResult res = animal.mobInteract(player, hand);
                     if (res == InteractionResult.CONSUME || res == InteractionResult.SUCCESS) {
                         cooldown.put(player.getGameProfile().getName(), COOLDOWN_TICKS);
-                        VRRumble.doubleRumbleIfVR_P(player, CommonConstants.vibrationTimePlayerActionAlert);
+                        VRRumble.doubleRumbleIfVR(player, CommonConstants.vibrationTimePlayerActionAlert);
                         break;
                     }
                 }
