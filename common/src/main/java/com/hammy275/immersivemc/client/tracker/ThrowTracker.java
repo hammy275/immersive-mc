@@ -38,7 +38,7 @@ public class ThrowTracker extends AbstractTracker {
                 Network.INSTANCE.sendToServer(new ThrowPacket(
                         LastClientVRData.changeForVelocity(LastClientVRData.VRType.C0),
                         throwDir));
-                VRRumble.rumbleIfVR(null, 0, CommonConstants.vibrationTimePlayerActionAlert);
+                VRRumble.rumbleIfVR(Minecraft.getInstance().player, 0, CommonConstants.vibrationTimePlayerActionAlert);
             }
             holdTime = 0;
         }

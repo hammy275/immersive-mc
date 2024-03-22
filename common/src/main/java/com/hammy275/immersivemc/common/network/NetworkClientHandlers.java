@@ -8,6 +8,7 @@ import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
+import com.hammy275.immersivemc.common.vr.VRRumble;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -46,5 +47,9 @@ public class NetworkClientHandlers {
                 }
             }
         }
+    }
+
+    public static void doDoubleRumble(float duration) {
+        VRRumble.doubleRumbleIfVR(Minecraft.getInstance().player, duration);
     }
 }
