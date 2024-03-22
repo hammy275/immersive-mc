@@ -75,7 +75,7 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
 
             // Need to play the sound separately for the player opening/closing the block
             if (res == InteractionResult.CONSUME) {
-                VRRumble.rumbleIfVR_P(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
+                VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
                 boolean isNowOpen = blockState.getValue(BlockStateProperties.OPEN);
                 SoundEvent sound = null;
                 if (blockState.getBlock() instanceof FenceGateBlock fence) {
