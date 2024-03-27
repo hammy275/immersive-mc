@@ -130,6 +130,15 @@ public final class ActiveConfig implements Cloneable {
     }
 
     /**
+     * Gets the ACTIVE config. For client only, and should only be used for changing the values in the active config.
+     * All other methods should use active().
+     * @return The ACTIVE config.
+     */
+    public static ActiveConfig activeRaw() {
+        return ACTIVE;
+    }
+
+    /**
      * Register config for player
      * @param player Player to register config for.
      * @param config Config from the player.
@@ -143,17 +152,12 @@ public final class ActiveConfig implements Cloneable {
     }
 
     /**
-     * Set ACTIVE config to be the merge of the FILE config and the FROM_SERVER config if connected to a server, or to
-     * the disabled config if outside of VR and the setting to only use ImmersiveMC in VR is set.
+     * Set ACTIVE config to be the merge of the FILE config and the FROM_SERVER config if connected to a server.
      * Should only be called by the client.
      */
     public static void loadActive() {
-        if (DISABLED.disableOutsideVR && !VRPluginVerify.clientInVR()) {
-            ACTIVE = (ActiveConfig) DISABLED.clone();
-        } else {
-            ACTIVE = ((ActiveConfig) FILE.clone());
-            ACTIVE.mergeWithOther(FROM_SERVER);
-        }
+        ACTIVE = ((ActiveConfig) FILE.clone());
+        ACTIVE.mergeWithOther(FROM_SERVER);
     }
 
     /**

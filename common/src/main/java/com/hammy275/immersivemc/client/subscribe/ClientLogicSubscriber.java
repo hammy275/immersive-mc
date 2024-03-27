@@ -79,6 +79,9 @@ public class ClientLogicSubscriber {
             Minecraft.getInstance().setScreen(new ConfigScreen(null));
         }
 
+        // Stop ticking operations if not in VR and we don't want to use ImmersiveMC outside VR
+        if (!currentVRState && ActiveConfig.FILE.disableOutsideVR) return;
+
         if (ClientUtil.immersiveLeftClickCooldown > 0) {
             ClientUtil.immersiveLeftClickCooldown--;
         } else if (Minecraft.getInstance().options.keyAttack.isDown()) {
@@ -147,7 +150,8 @@ public class ClientLogicSubscriber {
 
     public static boolean onClick(int button) {
         // Don't run code if we're on spectator mode
-        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSpectator()) return false;
+        if ((Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSpectator()) ||
+                (!VRPluginVerify.clientInVR() && ActiveConfig.FILE.disableOutsideVR)) return false;
         if (button == 1) {
             int cooldown = handleRightClick(Minecraft.getInstance().player);
             if (cooldown > 0) {
@@ -263,7 +267,7 @@ public class ClientLogicSubscriber {
     }
 
     public static boolean handleLeftClick(Player player) {
-        if (Minecraft.getInstance().player == null) return false;
+        if (Minecraft.getInstance().player == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE.disableOutsideVR)) return false;
 
         boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
         if (inVR) {
@@ -349,7 +353,7 @@ public class ClientLogicSubscriber {
     }
 
     public static int handleRightClick(Player player) {
-        if (Minecraft.getInstance().gameMode == null) return 0;
+        if (Minecraft.getInstance().gameMode == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE.disableOutsideVR)) return 0;
         boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
         double dist = Minecraft.getInstance().gameMode.getPickRange();
         Vec3 start = player.getEyePosition(1);
