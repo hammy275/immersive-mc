@@ -121,11 +121,8 @@ public class ConfigScreen extends Screen {
             immersive.clearImmersives();
         }
         if (Minecraft.getInstance().hasSingleplayerServer()) {
-            // If host of a LAN server or playing in singleplayer, have server and client reload config, and send
-            // new config state to other players
-            ActiveConfig.FILE.loadFromFile(); // Load config for server-side
-            ActiveConfig.active().loadFromFile(); // Load config for client-side. Okay to do, since in this case, the client and server are the same config
-            ActiveConfig.registerPlayerConfig(Minecraft.getInstance().player, ActiveConfig.active()); // Register our config in the server map
+            // If host of a LAN server or playing in singleplayer, send the new config state to other players
+            ActiveConfig.registerPlayerConfig(Minecraft.getInstance().player, ActiveConfig.activeRaw()); // Register our config in the server map
 
             // Propagate config to other players on the server
             IntegratedServer server = Minecraft.getInstance().getSingleplayerServer();

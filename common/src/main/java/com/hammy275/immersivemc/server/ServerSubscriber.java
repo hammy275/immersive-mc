@@ -63,7 +63,7 @@ public class ServerSubscriber {
     }
 
     public static void onPlayerTick(Player playerIn) {
-        if (playerIn.level.isClientSide) return;
+        if (playerIn.level.isClientSide || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE.disableOutsideVR)) return;
         ServerPlayer player = (ServerPlayer) playerIn;
         for (AbstractTracker tracker : ServerTrackerInit.playerTrackers) {
             tracker.doTick(player);
