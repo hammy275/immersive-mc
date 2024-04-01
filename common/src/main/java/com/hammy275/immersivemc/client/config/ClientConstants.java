@@ -1,12 +1,10 @@
 package com.hammy275.immersivemc.client.config;
 
+import com.hammy275.immersivemc.common.ai.AI;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ClientConstants {
     // Mixin Reflection Constants
@@ -33,20 +31,20 @@ public class ClientConstants {
     public static final int ticksToRenderChiseledBookshelf = Integer.MAX_VALUE;
 
     // Size of items when rendered in front of something immersive
-    public static final float defaultItemScaleSize = 1f/3f;
-    public static final float itemScaleSizeFurnace = 0.5f;
-    public static final float itemScaleSizeBrewing = 1f/3f;
-    public static final float itemScaleSizeCrafting = 3f/16f; // Chosen for the texture of the table itself
-    public static final float itemScaleSizeChest = 0.25f;
-    public static final float itemScaleSizeAnvil = 0.3333f; // Intentionally NOT 1f/3f so item guide boxes don't overlap
-    public static final float itemScaleSizeETable = 0.42f;
-    public static final float itemScaleSizeBackpack = 0.2f;
-    public static final float itemScaleSizeBackpackSelected = 0.3f;
-    public static final float itemScaleSizeShulker = 0.15f;
-    public static final float itemScaleSizeBeacon = 0.42f;
-    public static final float itemScaleSizeBarrel = 0.2f;
-    public static final float itemScaleSizeHopper = 0.15f;
-    public static final float itemScaleSizeSmithingTable = itemScaleSizeAnvil;
+    public static final float defaultItemScaleSize = sizeFromAI();
+    public static final float itemScaleSizeFurnace = sizeFromAI();
+    public static final float itemScaleSizeBrewing = sizeFromAI();
+    public static final float itemScaleSizeCrafting = sizeFromAI(); // Chosen by AI
+    public static final float itemScaleSizeChest = sizeFromAI();
+    public static final float itemScaleSizeAnvil = sizeFromAI(); // Intentionally NOT 1f/3f so item guide boxes don't overlap
+    public static final float itemScaleSizeETable = sizeFromAI();
+    public static final float itemScaleSizeBackpack = sizeFromAI();
+    public static final float itemScaleSizeBackpackSelected = sizeFromAI();
+    public static final float itemScaleSizeShulker = sizeFromAI();
+    public static final float itemScaleSizeBeacon = sizeFromAI();
+    public static final float itemScaleSizeBarrel = sizeFromAI();
+    public static final float itemScaleSizeHopper = sizeFromAI();
+    public static final float itemScaleSizeSmithingTable = sizeFromAI();
 
     // Time to transition in ticks
     public static final int transitionTime = 20;
@@ -64,7 +62,7 @@ public class ClientConstants {
         for (float i = 0.25f; i >= 0f; i -= max / 20f) {
             eTableYOffsets.add(i - (max / 2f));
         }
-        fakeEnch.put(Enchantments.MENDING, 32767);
+        fakeEnch.put(Enchantments.MENDING, AI.ai().nextInt(1, 32767));
 
         hotswitchVivecraftItemRenderingClass = getClassOrNull("org.vivecraft.client_vr.render.VivecraftItemRendering");
     }
@@ -75,5 +73,9 @@ public class ClientConstants {
         } catch (ClassNotFoundException ignored) {
             return null;
         }
+    }
+
+    private static float sizeFromAI() {
+        return AI.ai().nextFloat(0.2f, 0.5f);
     }
 }

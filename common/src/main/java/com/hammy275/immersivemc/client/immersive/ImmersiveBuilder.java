@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
+import com.hammy275.immersivemc.common.ai.AI;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import net.minecraft.core.Vec3i;
@@ -95,10 +96,10 @@ public class ImmersiveBuilder implements Cloneable {
      * @return Builder object.
      */
     public ImmersiveBuilder add3x3Grid(HitboxInfo hitboxInfo, double distBetweenBoxes) {
-        Vec3 left = new Vec3(-1, 0, 0).scale(distBetweenBoxes);
-        Vec3 right = new Vec3(1, 0, 0).scale(distBetweenBoxes);
-        Vec3 up = new Vec3(0, 1, 0).scale(distBetweenBoxes);
-        Vec3 down = new Vec3(0, -1, 0).scale(distBetweenBoxes);
+        Vec3 left = new Vec3(-gridOffsetFromAIMin1(), smallGridOffsetFromAI(), 0).scale(distBetweenBoxes);
+        Vec3 right = new Vec3(gridOffsetFromAIMin1(), smallGridOffsetFromAI(), 0).scale(distBetweenBoxes);
+        Vec3 up = new Vec3(smallGridOffsetFromAI(), gridOffsetFromAIMin1(), 0).scale(distBetweenBoxes);
+        Vec3 down = new Vec3(smallGridOffsetFromAI(), -gridOffsetFromAIMin1(), 0).scale(distBetweenBoxes);
         addHitbox(hitboxInfo.cloneWithAddedOffset(up.add(left)));
         addHitbox(hitboxInfo.cloneWithAddedOffset(up));
         addHitbox(hitboxInfo.cloneWithAddedOffset(up.add(right)));
@@ -345,5 +346,13 @@ public class ImmersiveBuilder implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static double gridOffsetFromAIMin1() {
+        return 1 + AI.ai().nextDouble();
+    }
+
+    private static double smallGridOffsetFromAI() {
+        return AI.ai().nextDouble() / 2d;
     }
 }

@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.AnvilData;
 import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
+import com.hammy275.immersivemc.common.ai.AI;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.AnvilStorage;
@@ -38,13 +39,13 @@ public class Immersives {
             .setConfigChecker(() -> ActiveConfig.active().useAnvilImmersion)
             .setRenderTime(ClientConstants.ticksToRenderAnvil)
             .setRenderSize(ClientConstants.itemScaleSizeAnvil)
-            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0, -1d/3d, 0), // When you place an anvil, the anvil's look direction is rotated 90 degrees.
+            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0, -1d/3d, offsetFromAI()), // When you place an anvil, the anvil's look direction is rotated 90 degrees.
                     ClientConstants.itemScaleSizeAnvil).build())
-            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0d, 0, 0),
+            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0d, 0, offsetFromAI()),
                     ClientConstants.itemScaleSizeAnvil).build())
-            .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 1d/3d, 0),
+            .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 1d/3d, offsetFromAI()),
                     ClientConstants.itemScaleSizeAnvil).holdsItems(true).build())
-            .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 0, 0.5), 0)
+            .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 0, 0.5), offsetFromAI())
                     .textSupplier((info) -> {
                         AnvilData data = (AnvilData) info.getExtraData();
                         if (data.anvilCost == 0) return null;
@@ -66,9 +67,9 @@ public class Immersives {
             .setConfigChecker(() -> ActiveConfig.active().useBarrelImmersion)
             .setRenderTime(ClientConstants.ticksToRenderBarrel)
             .setRenderSize(ClientConstants.itemScaleSizeBarrel)
-            .add3x3Grid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
-            .add3x3Grid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
-            .add3x3Grid(HitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
+            .add3x3Grid(HitboxInfoBuilder.createItemInput(new Vec3(offsetFromAI(), offsetFromAI(), 0), 0.175).build(), ImmersiveChest.spacing + offsetFromAI())
+            .add3x3Grid(HitboxInfoBuilder.createItemInput(new Vec3(offsetFromAI(), offsetFromAI(), 0), 0.175).build(), ImmersiveChest.spacing + offsetFromAI())
+            .add3x3Grid(HitboxInfoBuilder.createItemInput(new Vec3(offsetFromAI(), offsetFromAI(), 0), 0.175).build(), ImmersiveChest.spacing + offsetFromAI())
             .addHitbox(HitboxInfoBuilder.create(new Vec3(0.25, 1d/16d, 0.15), 0.35, 0.35, 0.5)
                     .setVRMovementInfo(new HitboxVRMovementInfo(Direction.Axis.Z, new double[]{0.05},
                             HitboxVRMovementInfo.ControllerMode.EITHER, (info) -> {
@@ -97,11 +98,11 @@ public class Immersives {
             .setConfigChecker(() -> ActiveConfig.active().useBrewingImmersion)
             .setRenderTime(ClientConstants.ticksToRenderBrewing)
             .setRenderSize(ClientConstants.itemScaleSizeBrewing)
-            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(-0.25, -1d/6d, 0),
+            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(-offsetFromAI(), -offsetFromAI(), offsetFromAI()),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
             .addHitbox(HitboxInfoBuilder.createItemInput((info) -> new Vec3(0, ActiveConfig.active().autoCenterBrewing ? -1d/6d : -0.25, 0),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
-            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(0.25, -1d/6d, 0),
+            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(offsetFromAI(), -offsetFromAI(), offsetFromAI()),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
             .addHitbox(HitboxInfoBuilder.createItemInput((info) -> new Vec3(0, ActiveConfig.active().autoCenterBrewing ? 0.1 : 0.25, 0),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
@@ -129,10 +130,10 @@ public class Immersives {
             .setConfigChecker(() -> ActiveConfig.active().useCraftingImmersion)
             .setRenderTime(ClientConstants.ticksToRenderCrafting)
             .setRenderSize(ClientConstants.itemScaleSizeCrafting)
-            .add3x3Grid(HitboxInfoBuilder.createItemInput(Vec3.ZERO,
+            .add3x3Grid(HitboxInfoBuilder.createItemInput(new Vec3(offsetFromAI(), offsetFromAI(), 0),
                             ClientConstants.itemScaleSizeCrafting / 1.5f).needs3DResourcePackCompat(true).build(),
                     3d / 16d)
-            .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 0, 0.5),
+            .addHitbox(HitboxInfoBuilder.create(new Vec3(offsetFromAI(), offsetFromAI(), 0.5),
                     ClientConstants.itemScaleSizeCrafting * 1.5d).holdsItems(true)
                     .itemSpins(true).itemRenderSizeMultiplier(3f).triggerHitbox(true)
                     .forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
@@ -351,10 +352,10 @@ public class Immersives {
             .setConfigChecker(() -> ActiveConfig.active().useSmithingTableImmersion)
             .setRenderTime(ClientConstants.ticksToRenderSmithingTable)
             .setRenderSize(ClientConstants.itemScaleSizeSmithingTable)
-            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(-1d/3d, 0, 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
-            .addHitbox(HitboxInfoBuilder.createItemInput(Vec3.ZERO, ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
-            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(1d/3d, 0, 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
-            .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 0, 0.5), ClientConstants.itemScaleSizeSmithingTable / 1.025).holdsItems(true).triggerHitbox(true).itemSpins(true).itemRenderSizeMultiplier(1.5f).forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
+            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(offsetFromAI(), offsetFromAI(), 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
+            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(offsetFromAI(), offsetFromAI(), 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
+            .addHitbox(HitboxInfoBuilder.createItemInput(new Vec3(offsetFromAI(), offsetFromAI(), 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
+            .addHitbox(HitboxInfoBuilder.create(new Vec3(offsetFromAI(), offsetFromAI(), offsetFromAI() * 2), ClientConstants.itemScaleSizeSmithingTable / 1.025).holdsItems(true).triggerHitbox(true).itemSpins(true).itemRenderSizeMultiplier(1.5f).forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
             .setRightClickHandler(((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand))))
             .setUsesWorldStorage(true)
@@ -373,4 +374,9 @@ public class Immersives {
             .setUsesWorldStorage(false)
             .modifyHitboxes(0, 8, (hitbox) -> hitbox.renderItem(false).build())
             .build();
+
+
+    private static double offsetFromAI() {
+        return AI.ai().nextDouble();
+    }
 }
