@@ -144,7 +144,7 @@ public class Immersives {
                     return null;
                 }
                 if (data.isPresent()) {
-                    texts.add(new Pair<>(new TextComponent(data.levelsNeeded + " (" + 1 + ")"), new Vec3(0, 0.33, 0)));
+                    texts.add(new Pair<>(new TextComponent(data.levelsNeeded + " (1)"), new Vec3(0, 0.33, 0)));
                     texts.add(new Pair<>(data.textPreview, new Vec3(0, -0.33, 0)));
                 } else if (info.itemHitboxes.get(0).item != null && !info.itemHitboxes.get(0).item.isEmpty()) {
                     texts.add(new Pair<>(new TranslatableComponent("immersivemc.immersive.etable.no_ench"), new Vec3(0, -0.33, 0)));
@@ -161,7 +161,7 @@ public class Immersives {
                     return null;
                 }
                 if (data.isPresent()) {
-                    texts.add(new Pair<>(new TextComponent(data.levelsNeeded + " (" + 1 + ")"), new Vec3(0, 0.33, 0)));
+                    texts.add(new Pair<>(new TextComponent(data.levelsNeeded + " (2)"), new Vec3(0, 0.33, 0)));
                     texts.add(new Pair<>(data.textPreview, new Vec3(0, -0.33, 0)));
                 } else if (info.itemHitboxes.get(0).item != null && !info.itemHitboxes.get(0).item.isEmpty()) {
                     texts.add(new Pair<>(new TranslatableComponent("immersivemc.immersive.etable.no_ench"), new Vec3(0, -0.33, 0)));
@@ -178,7 +178,7 @@ public class Immersives {
                     return null;
                 }
                 if (data.isPresent()) {
-                    texts.add(new Pair<>(new TextComponent(data.levelsNeeded + " (" + 1 + ")"), new Vec3(0, 0.33, 0)));
+                    texts.add(new Pair<>(new TextComponent(data.levelsNeeded + " (3)"), new Vec3(0, 0.33, 0)));
                     texts.add(new Pair<>(data.textPreview, new Vec3(0, -0.33, 0)));
                 } else if (info.itemHitboxes.get(0).item != null && !info.itemHitboxes.get(0).item.isEmpty()) {
                     texts.add(new Pair<>(new TranslatableComponent("immersivemc.immersive.etable.no_ench"), new Vec3(0, -0.33, 0)));
