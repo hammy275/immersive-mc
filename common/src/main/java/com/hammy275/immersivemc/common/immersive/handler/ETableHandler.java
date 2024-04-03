@@ -22,11 +22,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EnchantmentTableBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Arrays;
 
-public class ETableHandler extends WorldStorageHandler {
+public class ETableHandler extends WorldStorageHandlerImpl {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         ImmersiveStorage immersiveStorage = GetStorage.getEnchantingStorage(player, pos);
@@ -50,7 +49,7 @@ public class ETableHandler extends WorldStorageHandler {
     }
 
     @Override
-    public HandlerStorage getEmptyHandler() {
+    public HandlerStorage getEmptyHandlerStorage() {
         return new ETableStorage();
     }
 
@@ -69,11 +68,6 @@ public class ETableHandler extends WorldStorageHandler {
             }
         }
         enchStorage.setDirty();
-    }
-
-    @Override
-    public boolean usesWorldStorage() {
-        return true;
     }
 
     @Override

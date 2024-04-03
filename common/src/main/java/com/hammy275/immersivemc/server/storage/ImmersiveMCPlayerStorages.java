@@ -10,8 +10,6 @@ import java.util.*;
 
 /**
  * Uses SavedData to hold player storage
- *
- * Not using capabilities because [REDACTED]
  */
 public class ImmersiveMCPlayerStorages extends SavedData {
     private static Factory<ImmersiveMCPlayerStorages> factory = new Factory<>(

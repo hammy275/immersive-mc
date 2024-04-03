@@ -40,7 +40,6 @@ public class ImmersiveMC {
         }
 
         // ServerSubscriber
-        BlockEvent.BREAK.register(ServerSubscriber::blockBreak);
         TickEvent.SERVER_POST.register(ServerSubscriber::onServerTick);
         TickEvent.PLAYER_POST.register(ServerSubscriber::onPlayerTick);
         PlayerEvent.PLAYER_JOIN.register(ServerSubscriber::onPlayerJoin);

@@ -23,7 +23,7 @@ public interface ImmersiveHandler {
      * @return The same type of HandlerStorage as made with makeInventoryContents(), but in an empty state to be
      * decoded into by the client.
      */
-    HandlerStorage getEmptyHandler();
+    HandlerStorage getEmptyHandlerStorage();
 
     /**
      * Swaps an item from a player's hand into this immersive (and/or vice-versa).
@@ -49,11 +49,6 @@ public interface ImmersiveHandler {
      * @param pos Position of block that is no longer dirty.
      */
     void clearDirtyForClientSync(ServerPlayer player, BlockPos pos);
-
-    /**
-     * @return Whether this immersive uses ImmersiveMC's World Storage system.
-     */
-    boolean usesWorldStorage();
 
     /**
      * @param pos Position to check.

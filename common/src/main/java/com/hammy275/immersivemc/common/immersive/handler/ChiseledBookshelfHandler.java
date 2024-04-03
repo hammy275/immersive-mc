@@ -12,8 +12,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChiseledBookShelfBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 public class ChiseledBookshelfHandler extends ContainerHandler {
     // Used for ChiseledBookShelfBlock to mixin for our redirection
@@ -26,7 +24,7 @@ public class ChiseledBookshelfHandler extends ContainerHandler {
     }
 
     @Override
-    public HandlerStorage getEmptyHandler() {
+    public HandlerStorage getEmptyHandlerStorage() {
         return new NullStorage();
     }
 
@@ -41,11 +39,6 @@ public class ChiseledBookshelfHandler extends ContainerHandler {
             bookshelfBlockSlotOverride = -1;
             bookshelfBlockHandOverride = null;
         }
-    }
-
-    @Override
-    public boolean usesWorldStorage() {
-        return false;
     }
 
     @Override

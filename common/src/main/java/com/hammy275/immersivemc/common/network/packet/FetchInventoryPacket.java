@@ -38,7 +38,7 @@ public class FetchInventoryPacket {
         for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
             if (handler.getID().equals(id)) {
                 handlerToSet = handler;
-                storage = handlerToSet.getEmptyHandler();
+                storage = handlerToSet.getEmptyHandlerStorage();
                 storage.decode(buffer);
                 break;
             }

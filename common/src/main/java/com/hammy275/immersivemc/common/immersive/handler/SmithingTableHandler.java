@@ -17,12 +17,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SmithingTableBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Arrays;
 
-public class SmithingTableHandler extends WorldStorageHandler {
+public class SmithingTableHandler extends WorldStorageHandlerImpl {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         ImmersiveStorage immersiveStorage = GetStorage.getSmithingTableStorage(player, pos);
@@ -30,7 +28,7 @@ public class SmithingTableHandler extends WorldStorageHandler {
     }
 
     @Override
-    public HandlerStorage getEmptyHandler() {
+    public HandlerStorage getEmptyHandlerStorage() {
         return new ListOfItemsStorage();
     }
 
@@ -53,11 +51,6 @@ public class SmithingTableHandler extends WorldStorageHandler {
             }
         }
         storage.setDirty();
-    }
-
-    @Override
-    public boolean usesWorldStorage() {
-        return true;
     }
 
     @Override

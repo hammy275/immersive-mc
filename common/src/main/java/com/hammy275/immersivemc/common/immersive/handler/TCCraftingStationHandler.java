@@ -34,7 +34,7 @@ public class TCCraftingStationHandler extends ContainerHandler {
     }
 
     @Override
-    public HandlerStorage getEmptyHandler() {
+    public HandlerStorage getEmptyHandlerStorage() {
         return new ListOfItemsStorage();
     }
 
@@ -71,11 +71,6 @@ public class TCCraftingStationHandler extends ContainerHandler {
                 storage.getItemsRaw()[i] = ItemStack.EMPTY;
             }
         }
-    }
-
-    @Override
-    public boolean usesWorldStorage() {
-        return false;
     }
 
     @Override

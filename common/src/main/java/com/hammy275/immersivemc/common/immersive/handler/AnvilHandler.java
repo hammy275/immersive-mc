@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.AnvilBlock;
 
 import java.util.Arrays;
 
-public class AnvilHandler extends WorldStorageHandler {
+public class AnvilHandler extends WorldStorageHandlerImpl {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         AnvilWorldStorage worldStorage = GetStorage.getAnvilStorage(player, pos);
@@ -30,7 +30,7 @@ public class AnvilHandler extends WorldStorageHandler {
     }
 
     @Override
-    public HandlerStorage getEmptyHandler() {
+    public HandlerStorage getEmptyHandlerStorage() {
         return new AnvilStorage();
     }
 
@@ -54,11 +54,6 @@ public class AnvilHandler extends WorldStorageHandler {
             }
         }
         storage.setDirty();
-    }
-
-    @Override
-    public boolean usesWorldStorage() {
-        return true;
     }
 
     @Override

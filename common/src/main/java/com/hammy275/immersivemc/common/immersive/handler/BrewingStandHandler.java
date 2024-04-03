@@ -15,9 +15,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 public class BrewingStandHandler extends ContainerHandler {
     @Override
@@ -26,7 +24,7 @@ public class BrewingStandHandler extends ContainerHandler {
     }
 
     @Override
-    public HandlerStorage getEmptyHandler() {
+    public HandlerStorage getEmptyHandlerStorage() {
         return new ListOfItemsStorage();
     }
 
@@ -48,11 +46,6 @@ public class BrewingStandHandler extends ContainerHandler {
             Util.placeLeftovers(player, result.leftovers);
         }
         stand.setChanged();
-    }
-
-    @Override
-    public boolean usesWorldStorage() {
-        return false;
     }
 
     @Override

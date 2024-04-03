@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.common.immersive;
 
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.immersive.handler.WorldStorageHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RepeaterBlock;
@@ -19,7 +20,7 @@ public class ImmersiveCheckers {
 
         for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
             CHECKERS.add(handler::isValidBlock);
-            if (handler.usesWorldStorage()) {
+            if (handler instanceof WorldStorageHandler) {
                 WORLD_STORAGE_CHECKERS.add(handler::isValidBlock);
             }
         }

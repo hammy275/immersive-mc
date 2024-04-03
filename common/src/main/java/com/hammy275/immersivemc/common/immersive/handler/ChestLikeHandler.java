@@ -44,7 +44,7 @@ public abstract class ChestLikeHandler extends ContainerHandler {
     }
 
     @Override
-    public HandlerStorage getEmptyHandler() {
+    public HandlerStorage getEmptyHandlerStorage() {
         return new ListOfItemsStorage();
     }
 
@@ -73,11 +73,6 @@ public abstract class ChestLikeHandler extends ContainerHandler {
             container.setItem(slot, result.mergedInto);
         }
         container.setChanged();
-    }
-
-    @Override
-    public boolean usesWorldStorage() {
-        return false;
     }
 
     @Override

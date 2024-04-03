@@ -15,9 +15,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 public class JukeboxHandler implements ImmersiveHandler {
     @Override
@@ -26,7 +24,7 @@ public class JukeboxHandler implements ImmersiveHandler {
     }
 
     @Override
-    public HandlerStorage getEmptyHandler() {
+    public HandlerStorage getEmptyHandlerStorage() {
         return new NullStorage();
     }
 
@@ -52,11 +50,6 @@ public class JukeboxHandler implements ImmersiveHandler {
     @Override
     public void clearDirtyForClientSync(ServerPlayer player, BlockPos pos) {
         // No-op. Jukebox doesn't have data to sync to the client.
-    }
-
-    @Override
-    public boolean usesWorldStorage() {
-        return false;
     }
 
     @Override

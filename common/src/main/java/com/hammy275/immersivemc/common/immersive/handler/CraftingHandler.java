@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 
 import java.util.Arrays;
 
-public class CraftingHandler extends WorldStorageHandler {
+public class CraftingHandler extends WorldStorageHandlerImpl {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         ImmersiveStorage immersiveStorage = GetStorage.getCraftingStorage(player, pos);
@@ -25,7 +25,7 @@ public class CraftingHandler extends WorldStorageHandler {
     }
 
     @Override
-    public HandlerStorage getEmptyHandler() {
+    public HandlerStorage getEmptyHandlerStorage() {
         return new ListOfItemsStorage();
     }
 
@@ -46,11 +46,6 @@ public class CraftingHandler extends WorldStorageHandler {
             }
         }
         storage.setDirty();
-    }
-
-    @Override
-    public boolean usesWorldStorage() {
-        return true;
     }
 
     @Override
