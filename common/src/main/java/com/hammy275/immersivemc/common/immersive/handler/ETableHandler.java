@@ -6,9 +6,10 @@ import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.ETableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
-import com.hammy275.immersivemc.server.storage.GetStorage;
+import com.hammy275.immersivemc.server.storage.WorldStorage;
+import com.hammy275.immersivemc.server.storage.WorldStorages;
+import com.hammy275.immersivemc.server.storage.impl.ETableWorldStorage;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -25,19 +26,19 @@ import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
 
 import java.util.Arrays;
 
-public class ETableHandler extends WorldStorageHandlerImpl {
+public class ETableHandler extends ItemWorldStorageHandlerImpl {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        ImmersiveStorage immersiveStorage = GetStorage.getEnchantingStorage(player, pos);
-        ETableStorage storage = new ETableStorage(Arrays.asList(immersiveStorage.getItemsRaw()));
+        ETableWorldStorage worldStorage = (ETableWorldStorage) WorldStorages.get(pos, player.serverLevel());
+        ETableStorage storage = new ETableStorage(Arrays.asList(worldStorage.getItemsRaw()));
 
-        if (immersiveStorage.getItem(0) != null && !immersiveStorage.getItem(0).isEmpty()) {
+        if (worldStorage.getItem(0) != null && !worldStorage.getItem(0).isEmpty()) {
             BlockEntity tileEnt = player.level().getBlockEntity(pos);
             if (tileEnt instanceof EnchantmentTableBlockEntity) {
                 EnchantmentMenu container = new EnchantmentMenu(-1,
                         player.getInventory(), ContainerLevelAccess.create(player.level(), pos));
                 container.setItem(1, 0, new ItemStack(Items.LAPIS_LAZULI, 64));
-                container.setItem(0, 0, immersiveStorage.getItem(0));
+                container.setItem(0, 0, worldStorage.getItem(0));
 
                 storage.xpLevels = container.costs;
                 storage.enchantHints = container.enchantClue;
@@ -56,7 +57,7 @@ public class ETableHandler extends WorldStorageHandlerImpl {
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
         if (player == null) return;
-        ImmersiveStorage enchStorage = GetStorage.getEnchantingStorage(player, pos);
+        ETableWorldStorage enchStorage = (ETableWorldStorage) WorldStorages.get(pos, player.serverLevel());
         if (slot == 0) {
             ItemStack toEnchant = player.getItemInHand(hand);
             if (!toEnchant.isEmpty() && !toEnchant.isEnchantable()) return;
@@ -67,7 +68,7 @@ public class ETableHandler extends WorldStorageHandlerImpl {
                 VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
             }
         }
-        enchStorage.setDirty();
+        enchStorage.setDirty(player.serverLevel());
     }
 
     @Override
@@ -86,7 +87,13 @@ public class ETableHandler extends WorldStorageHandlerImpl {
     }
 
     @Override
-    public ImmersiveStorage getStorage(ServerPlayer player, BlockPos pos) {
-        return GetStorage.getEnchantingStorage(player, pos);
+    public WorldStorage getEmptyWorldStorage() {
+        return new ETableWorldStorage();
     }
+
+    @Override
+    public Class<? extends WorldStorage> getWorldStorageClass() {
+        return ETableWorldStorage.class;
+    }
+
 }

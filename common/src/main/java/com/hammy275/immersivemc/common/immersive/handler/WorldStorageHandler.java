@@ -9,4 +9,9 @@ public interface WorldStorageHandler extends ImmersiveHandler {
      */
     public WorldStorage getEmptyWorldStorage();
 
+    /**
+     * @return The class this handler's world storage uses.
+     */
+    public Class<? extends WorldStorage> getWorldStorageClass();
+
 }

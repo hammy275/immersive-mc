@@ -48,15 +48,6 @@ public class ImmersiveMCLevelStorageV2 extends SavedData {
         return world.getDataStorage().computeIfAbsent(factory, "immersivemc_data");
     }
 
-    public void add(BlockPos pos, WorldStorage storage) {
-        storageMap.put(pos, storage);
-    }
-
-    @Nullable
-    public WorldStorage get(BlockPos pos) {
-        return storageMap.get(pos);
-    }
-
     @Nullable
     public WorldStorage remove(BlockPos pos) {
         return storageMap.remove(pos);
@@ -64,18 +55,30 @@ public class ImmersiveMCLevelStorageV2 extends SavedData {
 
     @Nullable
     public WorldStorage getOrCreate(BlockPos pos, Level level) {
-        return storageMap.computeIfAbsent(pos, (posIn) -> {
+        WorldStorage storage = storageMap.get(pos);
+        for (ImmersiveHandler handlerMaybeWS : ImmersiveHandlers.HANDLERS) {
+            if (handlerMaybeWS instanceof WorldStorageHandler handler) {
+                if (handler.getWorldStorageClass().isInstance(storage) && handler.isValidBlock(pos, level)) {
+                    return storage;
+                }
+            }
+        }
+        // At this point, we either didn't find a storage or the storage doesn't match with any handler
+
+        if (storage != null) { // Storage in-memory doesn't match a handler. Make a new storage.
             for (ImmersiveHandler handlerMaybeWS : ImmersiveHandlers.HANDLERS) {
                 if (handlerMaybeWS instanceof WorldStorageHandler handler) {
                     if (handler.isValidBlock(pos, level)) {
-                        return handler.getEmptyWorldStorage();
+                        storage = handler.getEmptyWorldStorage();
+                        storageMap.put(pos, storage);
+                        return storage;
                     }
                 }
             }
-            return null;
-        });
+        }
+        // Storage wasn't in-memory and didn't match a handler. Return null.
+        return null;
     }
-
 
     public static ImmersiveMCLevelStorageV2 load(CompoundTag nbt) {
         ImmersiveMCLevelStorageV2 levelStorage = new ImmersiveMCLevelStorageV2();

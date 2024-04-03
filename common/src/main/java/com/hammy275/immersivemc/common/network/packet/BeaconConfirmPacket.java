@@ -1,9 +1,9 @@
 package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.common.network.NetworkUtil;
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
-import com.hammy275.immersivemc.server.storage.GetStorage;
+import com.hammy275.immersivemc.server.storage.WorldStorages;
+import com.hammy275.immersivemc.server.storage.impl.BeaconWorldStorage;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -43,7 +43,7 @@ public class BeaconConfirmPacket {
             if (NetworkUtil.safeToRun(message.pos, player)) {
                 if (player.level().getBlockEntity(message.pos) instanceof BeaconBlockEntity beacon) {
                     ContainerData data = ((BeaconBlockEntityMixin) beacon).getBeaconData();
-                    ImmersiveStorage beaconStorage = GetStorage.getBeaconStorage(player, message.pos);
+                    BeaconWorldStorage beaconStorage = (BeaconWorldStorage) WorldStorages.get(message.pos, player.serverLevel());
                     int secondId = message.secondaryId;
                     if (data.get(0) == 4 && message.secondaryId == -1) {
                         secondId = message.primaryId;
@@ -53,7 +53,7 @@ public class BeaconConfirmPacket {
                         beaconStorage.setItem(0, ItemStack.EMPTY);
                         data.set(1, message.primaryId + 1);
                         data.set(2, secondId + 1);
-                        beaconStorage.setDirty();
+                        beaconStorage.setDirty(player.serverLevel());
                         player.level().blockEntityChanged(beacon.getBlockPos());
                     }
                 }

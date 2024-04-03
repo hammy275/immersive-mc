@@ -6,9 +6,11 @@ import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
-import com.hammy275.immersivemc.server.storage.GetStorage;
+import com.hammy275.immersivemc.server.storage.WorldStorage;
+import com.hammy275.immersivemc.server.storage.WorldStorages;
+import com.hammy275.immersivemc.server.storage.impl.ItemWorldStorage;
+import com.hammy275.immersivemc.server.storage.impl.SmithingTableWorldStorage;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -20,11 +22,11 @@ import net.minecraft.world.level.block.SmithingTableBlock;
 
 import java.util.Arrays;
 
-public class SmithingTableHandler extends WorldStorageHandlerImpl {
+public class SmithingTableHandler extends ItemWorldStorageHandlerImpl {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        ImmersiveStorage immersiveStorage = GetStorage.getSmithingTableStorage(player, pos);
-        return new ListOfItemsStorage(Arrays.asList(immersiveStorage.getItemsRaw()), 4);
+        SmithingTableWorldStorage worldStorage = (SmithingTableWorldStorage) WorldStorages.get(pos, player.serverLevel());
+        return new ListOfItemsStorage(Arrays.asList(worldStorage.getItemsRaw()), 4);
     }
 
     @Override
@@ -34,7 +36,7 @@ public class SmithingTableHandler extends WorldStorageHandlerImpl {
 
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
-        ImmersiveStorage storage = GetStorage.getSmithingTableStorage(player, pos);
+        SmithingTableWorldStorage storage = (SmithingTableWorldStorage) WorldStorages.get(pos, player.serverLevel());
         if (slot != 3) {
             storage.placeItem(player, hand, Swap.getPlaceAmount(player.getItemInHand(hand), mode), slot);
             storage.setItem(3, ItemStack.EMPTY);
@@ -50,7 +52,7 @@ public class SmithingTableHandler extends WorldStorageHandlerImpl {
                 VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
             }
         }
-        storage.setDirty();
+        storage.setDirty(player.serverLevel());
     }
 
     @Override
@@ -69,7 +71,19 @@ public class SmithingTableHandler extends WorldStorageHandlerImpl {
     }
 
     @Override
-    public ImmersiveStorage getStorage(ServerPlayer player, BlockPos pos) {
-        return GetStorage.getSmithingTableStorage(player, pos);
+    public WorldStorage getEmptyWorldStorage() {
+        return new SmithingTableWorldStorage();
+    }
+
+    @Override
+    public Class<? extends WorldStorage> getWorldStorageClass() {
+        return SmithingTableWorldStorage.class;
+    }
+
+    @Override
+    public void updateStorageOutputAfterItemReturn(ServerPlayer player, BlockPos pos, ItemWorldStorage storage) {
+        ItemStack out = Swap.getSmithingTableOutput(storage.getItem(0), storage.getItem(1),
+                storage.getItem(2), player);
+        storage.setItem(3, out);
     }
 }

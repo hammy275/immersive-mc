@@ -6,10 +6,11 @@ import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
-import com.hammy275.immersivemc.common.storage.AnvilWorldStorage;
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
-import com.hammy275.immersivemc.server.storage.GetStorage;
+import com.hammy275.immersivemc.server.storage.WorldStorage;
+import com.hammy275.immersivemc.server.storage.WorldStorages;
+import com.hammy275.immersivemc.server.storage.impl.AnvilWorldStorage;
+import com.hammy275.immersivemc.server.storage.impl.ItemWorldStorage;
 import com.hammy275.immersivemc.server.swap.Swap;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -22,10 +23,10 @@ import net.minecraft.world.level.block.AnvilBlock;
 
 import java.util.Arrays;
 
-public class AnvilHandler extends WorldStorageHandlerImpl {
+public class AnvilHandler extends ItemWorldStorageHandlerImpl {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        AnvilWorldStorage worldStorage = GetStorage.getAnvilStorage(player, pos);
+        AnvilWorldStorage worldStorage = (AnvilWorldStorage) WorldStorages.get(pos, player.serverLevel());
         return new AnvilStorage(Arrays.asList(worldStorage.getItemsRaw()), worldStorage.xpLevels);
     }
 
@@ -36,7 +37,7 @@ public class AnvilHandler extends WorldStorageHandlerImpl {
 
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
-        AnvilWorldStorage storage = GetStorage.getAnvilStorage(player, pos);
+        AnvilWorldStorage storage = (AnvilWorldStorage) WorldStorages.get(pos, player.serverLevel());
         if (slot != 2) {
             storage.placeItem(player, hand, Swap.getPlaceAmount(player.getItemInHand(hand), mode), slot);
             storage.setItem(2, ItemStack.EMPTY);
@@ -53,7 +54,7 @@ public class AnvilHandler extends WorldStorageHandlerImpl {
                 VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
             }
         }
-        storage.setDirty();
+        storage.setDirty(player.serverLevel());
     }
 
     @Override
@@ -72,7 +73,20 @@ public class AnvilHandler extends WorldStorageHandlerImpl {
     }
 
     @Override
-    public ImmersiveStorage getStorage(ServerPlayer player, BlockPos pos) {
-        return GetStorage.getAnvilStorage(player, pos);
+    public WorldStorage getEmptyWorldStorage() {
+        return new AnvilWorldStorage();
+    }
+
+    @Override
+    public Class<? extends WorldStorage> getWorldStorageClass() {
+        return AnvilWorldStorage.class;
+    }
+
+    @Override
+    public void updateStorageOutputAfterItemReturn(ServerPlayer player, BlockPos pos, ItemWorldStorage storageIn) {
+        AnvilWorldStorage storage = (AnvilWorldStorage) storageIn;
+        Pair<ItemStack, Integer> out = Swap.getAnvilOutput(storage.getItem(0), storage.getItem(1), player);
+        storage.xpLevels = out.getSecond();
+        storage.setItem(2, out.getFirst());
     }
 }

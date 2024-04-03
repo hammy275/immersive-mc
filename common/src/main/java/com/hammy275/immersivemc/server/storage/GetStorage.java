@@ -1,18 +1,10 @@
 package com.hammy275.immersivemc.server.storage;
 
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.storage.AnvilWorldStorage;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
-import com.hammy275.immersivemc.server.swap.Swap;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import java.util.List;
@@ -36,22 +28,6 @@ public class GetStorage {
         return storage;
     }
 
-    // Used because we don't want to drop outputs on the ground, so we need the last input index
-    public static int getLastInputIndex(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        if (ImmersiveHandlers.craftingHandler.isValidBlock(pos, level)) {
-            return 8;
-        } else if (ImmersiveHandlers.anvilHandler.isValidBlock(pos, level)) {
-            return 1;
-        } else if (ImmersiveHandlers.enchantingTableHandler.isValidBlock(pos, level)) {
-            return 0;
-        } else if (ImmersiveHandlers.beaconHandler.isValidBlock(pos, level)) {
-            return 0;
-        } else if (ImmersiveHandlers.smithingTableHandler.isValidBlock(pos, level)) {
-            return 2;
-        }
-        throw new RuntimeException("Last input index not defined for the block that was just broken!");
-    }
-
     public static ImmersiveStorage getPlayerStorage(Player player, String playerStorageKey) {
         List<ImmersiveStorage> storages = ImmersiveMCPlayerStorages.getStorages(player);
         for (ImmersiveStorage storage : storages) {
@@ -69,108 +45,7 @@ public class GetStorage {
         throw new IllegalArgumentException("Invalid player storage type!");
     }
 
-    public static ImmersiveStorage getStorage(Player player, BlockPos pos) {
-        if (ImmersiveHandlers.craftingHandler.isValidBlock(pos, player.level())) {
-            return getCraftingStorage(player, pos);
-        } else if (ImmersiveHandlers.anvilHandler.isValidBlock(pos, player.level())) {
-            return getAnvilStorage(player, pos);
-        } else if (ImmersiveHandlers.enchantingTableHandler.isValidBlock(pos, player.level())) {
-            return getEnchantingStorage(player, pos);
-        } else if (ImmersiveHandlers.beaconHandler.isValidBlock(pos, player.level())) {
-            return getBeaconStorage(player, pos);
-        } else if (ImmersiveHandlers.smithingTableHandler.isValidBlock(pos, player.level())) {
-            return getSmithingTableStorage(player, pos);
-        }
-        return null;
-    }
-
-    /**
-     * Get storage at position only if it already exists. Returns null if one isn't there.
-     * @param player Player that is getting storage.
-     * @param pos Position to get at
-     * @return The storage there, or null if none are there.
-     */
-    public static ImmersiveStorage getStorageIfExists(Player player, BlockPos pos) {
-        return ImmersiveMCLevelStorage.getLevelStorage(player).get(pos);
-    }
-
-    public static void updateStorageOutputAfterItemReturn(ServerPlayer player, BlockPos pos, ImmersiveStorage storage) {
-        if (storage != null) {
-            if (ImmersiveHandlers.craftingHandler.isValidBlock(pos, player.level())) {
-                ItemStack out = Swap.getRecipeOutput(player, storage.getItemsRaw());
-                storage.setItem(9, out);
-            } else if (ImmersiveHandlers.anvilHandler.isValidBlock(pos, player.level()) &&
-                storage instanceof AnvilWorldStorage aStorage) {
-                Pair<ItemStack, Integer> out = Swap.getAnvilOutput(storage.getItem(0), storage.getItem(1), player);
-                aStorage.xpLevels = out.getSecond();
-                aStorage.setItem(2, out.getFirst());
-            } else if (ImmersiveHandlers.smithingTableHandler.isValidBlock(pos, player.level())) {
-                ItemStack out = Swap.getSmithingTableOutput(storage.getItem(0), storage.getItem(1),
-                        storage.getItem(2), player);
-                storage.setItem(3, out);
-            } else if (ImmersiveHandlers.enchantingTableHandler.isValidBlock(pos, player.level())) {
-                // No-op
-            } else if (ImmersiveHandlers.beaconHandler.isValidBlock(pos, player.level())) {
-                // No-op
-            }
-        }
-
-    }
-
-    public static ImmersiveStorage getEnchantingStorage(Player player, BlockPos pos) {
-        return ImmersiveMCLevelStorage.getLevelStorage(player).getOrCreate(pos).initIfNotAlready(1);
-    }
-
-    public static AnvilWorldStorage getAnvilStorage(Player player, BlockPos pos) {
-        ImmersiveMCLevelStorage wStorage = ImmersiveMCLevelStorage.getLevelStorage(player);
-        ImmersiveStorage storageOld = wStorage.get(pos);
-        AnvilWorldStorage storage;
-        if (!(storageOld instanceof AnvilWorldStorage)) {
-            storage = new AnvilWorldStorage(wStorage);
-            storage.initIfNotAlready(3);
-            ImmersiveMCLevelStorage.getLevelStorage(player).add(pos, storage);
-        } else {
-            storage = (AnvilWorldStorage) storageOld;
-        }
-        return storage;
-    }
-
     public static ImmersiveStorage getCraftingStorage(Player player, BlockPos pos) {
         return ImmersiveMCLevelStorage.getLevelStorage(player).getOrCreate(pos).initIfNotAlready(10);
-    }
-
-    public static ImmersiveStorage getBeaconStorage(Player player, BlockPos pos) {
-        return ImmersiveMCLevelStorage.getLevelStorage(player).getOrCreate(pos).initIfNotAlready(1);
-    }
-
-    public static ImmersiveStorage getSmithingTableStorage(Player player, BlockPos pos) {
-        ImmersiveMCLevelStorage wStorage = ImmersiveMCLevelStorage.getLevelStorage(player);
-        ImmersiveStorage storageOld = wStorage.get(pos);
-        ImmersiveStorage toRet;
-        // May be AnvilStorage from before the anvil/smithing table split (SAVE_DATA_VERSION 1 -> 2)
-        if (storageOld instanceof AnvilWorldStorage) {
-            toRet = new ImmersiveStorage(wStorage);
-            toRet.initIfNotAlready(4);
-            for (int i = 0; i <= 2; i++) {
-                // Offset index by 1 because of smithing table. No need to move item counts
-                // as AnvilStorage was made into a different storage before item counts were added.
-                toRet.getItemsRaw()[i  + 1] = storageOld.getItemsRaw()[i];
-            }
-            ImmersiveMCLevelStorage.getLevelStorage(player).add(pos, toRet);
-        } else if (storageOld == null) { // Create the storage normally if not found
-            toRet = new ImmersiveStorage(wStorage);
-            toRet.initIfNotAlready(4);
-            ImmersiveMCLevelStorage.getLevelStorage(player).add(pos, toRet);
-        } else { // Use the pre-existing storage
-            toRet = storageOld;
-        }
-        if (toRet.getItemsRaw().length == 3) {
-            // Convert up for 1.20's smithing templates. Don't move the output, since it might be a
-            // 1.19 --> 1.20 world upgrade.
-            toRet.moveSlot(1, 2);
-            toRet.moveSlot(0, 1);
-            toRet.addSlotsToEnd(1);
-        }
-        return toRet;
     }
 }

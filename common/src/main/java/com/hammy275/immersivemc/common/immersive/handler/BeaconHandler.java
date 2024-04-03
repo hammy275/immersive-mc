@@ -5,9 +5,10 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.server.storage.GetStorage;
+import com.hammy275.immersivemc.server.storage.WorldStorage;
+import com.hammy275.immersivemc.server.storage.WorldStorages;
+import com.hammy275.immersivemc.server.storage.impl.BeaconWorldStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,11 +20,11 @@ import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 
 import java.util.Arrays;
 
-public class BeaconHandler extends WorldStorageHandlerImpl {
+public class BeaconHandler extends ItemWorldStorageHandlerImpl {
     @Override
     public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        ImmersiveStorage immersiveStorage = GetStorage.getBeaconStorage(player, pos);
-        return new ListOfItemsStorage(Arrays.asList(immersiveStorage.getItemsRaw()), 1);
+        BeaconWorldStorage beaconStorage = (BeaconWorldStorage) WorldStorages.get(pos, player.serverLevel());
+        return new ListOfItemsStorage(Arrays.asList(beaconStorage.getItemsRaw()), 1);
     }
 
     @Override
@@ -34,14 +35,14 @@ public class BeaconHandler extends WorldStorageHandlerImpl {
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
         if (!player.getItemInHand(hand).is(ItemTags.BEACON_PAYMENT_ITEMS) && !player.getItemInHand(hand).isEmpty()) return;
-        ImmersiveStorage beaconStorage = GetStorage.getBeaconStorage(player, pos);
+        BeaconWorldStorage beaconStorage = (BeaconWorldStorage) WorldStorages.get(pos, player.serverLevel());
         ItemStack beaconItem = beaconStorage.getItem(0);
         if (!beaconItem.isEmpty()) {
             Util.placeLeftovers(player, beaconItem);
             beaconStorage.setItem(0, ItemStack.EMPTY);
         }
         beaconStorage.placeItem(player, hand, 1, 0);
-        beaconStorage.setDirty();
+        beaconStorage.setDirty(player.serverLevel());
     }
 
     @Override
@@ -60,7 +61,13 @@ public class BeaconHandler extends WorldStorageHandlerImpl {
     }
 
     @Override
-    public ImmersiveStorage getStorage(ServerPlayer player, BlockPos pos) {
-        return GetStorage.getBeaconStorage(player, pos);
+    public WorldStorage getEmptyWorldStorage() {
+        return new BeaconWorldStorage();
     }
+
+    @Override
+    public Class<? extends WorldStorage> getWorldStorageClass() {
+        return BeaconWorldStorage.class;
+    }
+
 }
