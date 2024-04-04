@@ -1,16 +1,11 @@
 package com.hammy275.immersivemc.server.storage;
 
-import com.hammy275.immersivemc.common.immersive.CheckerFunction;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import java.util.HashMap;
@@ -30,19 +25,6 @@ public class ImmersiveMCLevelStorage extends SavedData {
 
     private static ImmersiveMCLevelStorage create() {
         return new ImmersiveMCLevelStorage();
-    }
-
-    public static boolean usesWorldStorage(BlockPos pos, Level level) {
-        return usesWorldStorage(pos, level.getBlockState(pos), level.getBlockEntity(pos), level);
-    }
-
-    public static boolean usesWorldStorage(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        for (CheckerFunction checker : ImmersiveCheckers.WORLD_STORAGE_CHECKERS) {
-            if (checker.apply(pos, level)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public static ImmersiveMCLevelStorage getLevelStorage(ServerLevel world) {

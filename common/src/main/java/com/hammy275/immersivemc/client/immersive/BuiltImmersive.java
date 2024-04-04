@@ -31,9 +31,6 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     public BuiltImmersive(ImmersiveBuilder builder) {
         super(builder.maxImmersives);
         this.builder = builder;
-        if (builder.usesWorldStorage) {
-            Immersives.WS_IMMERSIVES.add(this);
-        }
     }
 
     @Override

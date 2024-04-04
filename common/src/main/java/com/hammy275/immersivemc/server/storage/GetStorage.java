@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.server.storage;
 
 import com.hammy275.immersivemc.common.storage.AnvilWorldStorage;
 import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -43,9 +42,5 @@ public class GetStorage {
             return storage;
         }
         throw new IllegalArgumentException("Invalid player storage type!");
-    }
-
-    public static ImmersiveStorage getCraftingStorage(Player player, BlockPos pos) {
-        return ImmersiveMCLevelStorage.getLevelStorage(player).getOrCreate(pos).initIfNotAlready(10);
     }
 }

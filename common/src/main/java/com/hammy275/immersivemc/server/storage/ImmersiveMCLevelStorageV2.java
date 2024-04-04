@@ -1,7 +1,5 @@
 package com.hammy275.immersivemc.server.storage;
 
-import com.hammy275.immersivemc.common.immersive.CheckerFunction;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.handler.WorldStorageHandler;
@@ -33,15 +31,6 @@ public class ImmersiveMCLevelStorageV2 extends SavedData {
 
     private static ImmersiveMCLevelStorageV2 create() {
         return new ImmersiveMCLevelStorageV2();
-    }
-
-    public static boolean usesWorldStorage(BlockPos pos, Level level) {
-        for (CheckerFunction checker : ImmersiveCheckers.WORLD_STORAGE_CHECKERS) {
-            if (checker.apply(pos, level)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public static ImmersiveMCLevelStorageV2 getLevelStorage(ServerLevel world) {

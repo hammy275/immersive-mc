@@ -31,7 +31,6 @@ public class ImmersiveBuilder implements Cloneable {
     int maxImmersives = -1;
     Function<BuiltImmersiveInfo, Boolean> extraRenderReady = (info) -> true;
     RightClickHandler rightClickHandler = (a, b, c, d) -> {};
-    boolean usesWorldStorage = false;
     int triggerHitboxControllerNum = 0;
     boolean vrOnly = false;
     List<Vec3i> airCheckPositionOffsets = new ArrayList<>();
@@ -171,16 +170,6 @@ public class ImmersiveBuilder implements Cloneable {
      */
     public ImmersiveBuilder setRightClickHandler(RightClickHandler handler) {
         this.rightClickHandler = handler;
-        return this;
-    }
-
-    /**
-     * Sets whether this immersive uses world storage.
-     * @param usesWorldStorage New state of using world storage (false by default).
-     * @return Builder object.
-     */
-    public ImmersiveBuilder setUsesWorldStorage(boolean usesWorldStorage) {
-        this.usesWorldStorage = usesWorldStorage;
         return this;
     }
 
@@ -325,8 +314,6 @@ public class ImmersiveBuilder implements Cloneable {
     }
 
     public BuiltImmersive build() {
-        // Only allow extraStorageConsumer if we use world storage
-        assert this.extraStorageConsumer == null || this.usesWorldStorage;
         return new BuiltImmersive(this);
     }
 
