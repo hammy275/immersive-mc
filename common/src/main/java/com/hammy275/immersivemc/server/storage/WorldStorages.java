@@ -13,7 +13,7 @@ public class WorldStorages {
      *         WorldStorageHandler instances.
      */
     public static WorldStorage get(BlockPos pos, ServerLevel level) {
-        return ImmersiveMCLevelStorageV2.getLevelStorage(level).getOrCreate(pos, level);
+        return ImmersiveMCLevelStorage.getLevelStorage(level).getOrCreate(pos, level);
     }
 
     /**
@@ -23,7 +23,7 @@ public class WorldStorages {
      * @return The WorldStorage instance that was removed, or null if nothing was removed.
      */
     public static WorldStorage remove(BlockPos pos, ServerLevel level) {
-        return ImmersiveMCLevelStorageV2.getLevelStorage(level).remove(pos);
+        return ImmersiveMCLevelStorage.getLevelStorage(level).remove(pos);
     }
 
     /**
@@ -32,7 +32,7 @@ public class WorldStorages {
      * @param level Level that had a WorldStorage change.
      */
     public static void markDirty(ServerLevel level) {
-        ImmersiveMCLevelStorageV2.getLevelStorage(level).setDirty();
+        ImmersiveMCLevelStorage.getLevelStorage(level).setDirty();
     }
 
 }

@@ -2,10 +2,10 @@ package com.hammy275.immersivemc.server.swap;
 
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
-import com.hammy275.immersivemc.common.storage.workarounds.NullContainer;
+import com.hammy275.immersivemc.common.util.NullContainer;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.mixin.AnvilMenuMixin;
+import com.hammy275.immersivemc.server.storage.ImmersiveMCPlayerStorages;
 import com.hammy275.immersivemc.server.storage.WorldStorages;
 import com.hammy275.immersivemc.server.storage.impl.AnvilWorldStorage;
 import com.hammy275.immersivemc.server.storage.impl.ETableWorldStorage;
@@ -28,6 +28,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -73,21 +74,27 @@ public class Swap {
         return false;
     }
 
-    public static void handleBackpackCraftingSwap(int slot, InteractionHand hand, ImmersiveStorage storage,
+    public static void handleBackpackCraftingSwap(int slot, InteractionHand hand, List<ItemStack> items,
                                                   ServerPlayer player, PlacementMode mode) {
-        ItemStack[] items = storage.getItemsRaw();
+        ItemStack[] itemArray = new ItemStack[5];
+        for (int i = 0; i <= 4; i++) {
+            itemArray[i] = items.get(i);
+        }
         if (slot < 4) {
             ItemStack playerItem = player.getItemInHand(hand);
-            ItemStack tableItem = items[slot];
+            ItemStack tableItem = itemArray[slot];
             SwapResult result = getSwap(playerItem, tableItem, mode);
-            items[slot] = result.toOther;
+            itemArray[slot] = result.toOther;
             givePlayerItemSwap(result.toHand, playerItem, player, hand);
             Util.placeLeftovers(player, result.leftovers);
-            items[4] = getRecipeOutput(player, items);
+            itemArray[4] = getRecipeOutput(player, itemArray);
         } else {
-            handleDoCraft(player, items, null);
+            handleDoCraft(player, itemArray, null);
         }
-        storage.setDirty();
+        for (int i = 0; i <= 4; i++) {
+            items.set(i, itemArray[i]);
+        }
+        ImmersiveMCPlayerStorages.getPlayerStorage(player).setDirty();
     }
 
     public static boolean handleAnvilCraft(AnvilWorldStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {

@@ -67,10 +67,10 @@ public class ImmersiveMC {
                 InventorySwapPacket::decode, InventorySwapPacket::handle);
         Network.INSTANCE.register(SetRepeaterPacket.class, SetRepeaterPacket::encode,
                 SetRepeaterPacket::decode, SetRepeaterPacket::handle);
-        Network.INSTANCE.register(InteractPacket.class, InteractPacket::encode,
-                InteractPacket::decode, InteractPacket::handle);
-        Network.INSTANCE.register(FetchPlayerStoragePacket.class, FetchPlayerStoragePacket::encode,
-                FetchPlayerStoragePacket::decode, FetchPlayerStoragePacket::handle);
+        Network.INSTANCE.register(BackpackInteractPacket.class, BackpackInteractPacket::encode,
+                BackpackInteractPacket::decode, BackpackInteractPacket::handle);
+        Network.INSTANCE.register(FetchBackpackStoragePacket.class, FetchBackpackStoragePacket::encode,
+                FetchBackpackStoragePacket::decode, FetchBackpackStoragePacket::handle);
         Network.INSTANCE.register(BeaconConfirmPacket.class, BeaconConfirmPacket::encode,
                 BeaconConfirmPacket::decode, BeaconConfirmPacket::handle);
         Network.INSTANCE.register(ThrowPacket.class, ThrowPacket::encode,

@@ -1,9 +1,9 @@
 package com.hammy275.immersivemc.server.storage;
 
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import java.util.*;
@@ -18,19 +18,20 @@ public class ImmersiveMCPlayerStorages extends SavedData {
             null
     );
 
-    protected Map<UUID, List<ImmersiveStorage>> playerStorages = new HashMap<>();
+    protected Map<UUID, List<ItemStack>> backpackCraftingItemsMap = new HashMap<>();
 
     private static ImmersiveMCPlayerStorages create() {
         return new ImmersiveMCPlayerStorages();
     }
 
-    public static List<ImmersiveStorage> getStorages(Player player) {
-        List<ImmersiveStorage> immersiveStorages = getPlayerStorage(player).playerStorages.get(player.getUUID());
-        if (immersiveStorages == null) {
-            immersiveStorages = new ArrayList<>();
-            getPlayerStorage(player).playerStorages.put(player.getUUID(), immersiveStorages);
-        }
-        return immersiveStorages;
+    public static List<ItemStack> getBackpackCraftingStorage(Player player) {
+        return getPlayerStorage(player).backpackCraftingItemsMap.computeIfAbsent(player.getUUID(), uuid -> {
+            List<ItemStack> items = new ArrayList<>();
+            for (int i = 0; i <= 4; i++) {
+                items.add(ItemStack.EMPTY);
+            }
+            return items;
+        });
     }
 
     public static ImmersiveMCPlayerStorages getPlayerStorage(Player player) {
@@ -47,39 +48,33 @@ public class ImmersiveMCPlayerStorages extends SavedData {
         Set<String> keys = nbt.getAllKeys();
         for (String uuidStr : keys) {
             UUID uuid = UUID.fromString(uuidStr);
-            CompoundTag playerTag = nbt.getCompound(uuidStr);
-            CompoundTag storagesTag = playerTag.getCompound("storages");
-            int numStorages = storagesTag.getInt("numStorages");
-            List<ImmersiveStorage> storages = new ArrayList<>();
-            for (int i = 0; i < numStorages; i++) {
-                CompoundTag storageInfo = storagesTag.getCompound(String.valueOf(i));
-                String storageType = storageInfo.getString("dataType");
-                ImmersiveStorage storage = GetStorage.assembleStorage(storageInfo.getCompound("data"),
-                        storageType, playerStorage);
-                storages.add(storage);
+            CompoundTag bagItems = nbt.getCompound(uuidStr).getCompound("bagItems");
+            List<ItemStack> items = new ArrayList<>();
+            for (int i = 0; i <= 4; i++) {
+                items.add(ItemStack.of(bagItems.getCompound(String.valueOf(i))));
             }
-            playerStorage.playerStorages.put(uuid, storages);
+            playerStorage.backpackCraftingItemsMap.put(uuid, items);
         }
         return playerStorage;
     }
 
     @Override
     public CompoundTag save(CompoundTag nbt) {
-        for (Map.Entry<UUID, List<ImmersiveStorage>> entry : playerStorages.entrySet()) {
-            CompoundTag playerTag = new CompoundTag();
-            CompoundTag storagesTag = new CompoundTag();
-
-            int numStorages = entry.getValue().size();
-            storagesTag.putInt("numStorages", numStorages);
-            for (int i = 0; i < numStorages; i++) {
-                CompoundTag storageInfo = new CompoundTag();
-                storageInfo.put("data", entry.getValue().get(i).save(new CompoundTag()));
-                storageInfo.putString("dataType", entry.getValue().get(i).getType());
-                storagesTag.put(String.valueOf(i), storageInfo);
+        for (Map.Entry<UUID, List<ItemStack>> entry : backpackCraftingItemsMap.entrySet()) {
+            CompoundTag playerData = new CompoundTag();
+            CompoundTag bagData = new CompoundTag();
+            List<ItemStack> items = entry.getValue();
+            for (int i = 0; i <= 4; i++) {
+                CompoundTag itemData = new CompoundTag();
+                if (i >= items.size()) {
+                    itemData = ItemStack.EMPTY.save(itemData);
+                } else {
+                    itemData = items.get(i).save(itemData);
+                }
+                bagData.put(String.valueOf(i), itemData);
             }
-
-            playerTag.put("storages", storagesTag);
-            nbt.put(entry.getKey().toString(), playerTag);
+            playerData.put("bagItems", bagData);
+            nbt.put(String.valueOf(entry.getKey()), playerData);
         }
         return nbt;
     }
