@@ -169,6 +169,11 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
         return this.items;
     }
 
+    public void copyFromOld(ItemStorage oldStorage) {
+        this.items = oldStorage.items;
+        this.itemCounts = oldStorage.itemCounts;
+    }
+
     /**
      * Return items to player when leaving radius
      * @param player Player to return items to
