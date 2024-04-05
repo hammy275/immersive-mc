@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.common.immersive.storage;
+package com.hammy275.immersivemc.common.immersive.storage.network.impl;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;

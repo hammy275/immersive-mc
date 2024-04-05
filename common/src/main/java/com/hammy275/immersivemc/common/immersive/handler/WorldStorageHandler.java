@@ -1,30 +1,17 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
-import com.hammy275.immersivemc.server.storage.GetStorage;
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerPlayer;
+import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 
-public abstract class WorldStorageHandler implements ImmersiveHandler {
+public interface WorldStorageHandler extends ImmersiveHandler {
 
-    @Override
-    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        return getStorage(player, pos).isDirtyForClientSync();
-    }
+    /**
+     * @return An empty WorldStorage to load from NBT in.
+     */
+    public WorldStorage getEmptyWorldStorage();
 
-    @Override
-    public void clearDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        getStorage(player, pos).setNoLongerDirtyForClientSync();
-    }
+    /**
+     * @return The class this handler's world storage uses.
+     */
+    public Class<? extends WorldStorage> getWorldStorageClass();
 
-    @Override
-    public void onStopTracking(ServerPlayer player, BlockPos pos) {
-        ImmersiveStorage storage = GetStorage.getStorageIfExists(player, pos);
-        if (storage != null) {
-            storage.returnItems(player);
-            GetStorage.updateStorageOutputAfterItemReturn(player, pos, storage);
-        }
-    }
-
-    public abstract ImmersiveStorage getStorage(ServerPlayer player, BlockPos pos);
 }
