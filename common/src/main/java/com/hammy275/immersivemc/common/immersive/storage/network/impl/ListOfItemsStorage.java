@@ -1,5 +1,6 @@
-package com.hammy275.immersivemc.common.immersive.storage;
+package com.hammy275.immersivemc.common.immersive.storage.network.impl;
 
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ListOfItemsStorage implements HandlerStorage {
+public class ListOfItemsStorage implements NetworkStorage {
 
     private final List<ItemStack> items = new ArrayList<>();
 
