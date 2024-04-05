@@ -48,7 +48,7 @@ public class ImmersiveMCPlayerStorages extends SavedData {
 
     public static ImmersiveMCPlayerStorages load(CompoundTag nbt) {
         ImmersiveMCPlayerStorages playerStorage = new ImmersiveMCPlayerStorages();
-        maybeUpgradeNBT(nbt, playerStorage);
+        nbt = maybeUpgradeNBT(nbt);
         Set<String> keys = nbt.getAllKeys();
         for (String uuidStr : keys) {
             UUID uuid = UUID.fromString(uuidStr);
@@ -85,20 +85,37 @@ public class ImmersiveMCPlayerStorages extends SavedData {
 
     /**
      * Upgrades NBT tag to something this version of ImmersiveMC can understand.
-     * @param nbt NBT to upgrade.
-     * @param storage ImmersiveMCPlayerStorages instance to mark dirty.
+     * @param nbtIn NBT to upgrade. This may be modified in any way.
+     * @return A converted NBT, that isn't necessarily the same object as the nbt going into this function.
      */
-    private static void maybeUpgradeNBT(CompoundTag nbt, ImmersiveMCPlayerStorages storage) {
+    private static CompoundTag maybeUpgradeNBT(CompoundTag nbtIn) {
         int version = 1;
-        if (nbt.contains("version")) { // Version 1 didn't store a version int
-            version = nbt.getInt("version");
+        if (nbtIn.contains("version")) { // Version 1 didn't store a version int
+            version = nbtIn.getInt("version");
         }
         while (version < PLAYER_STORAGES_VERSION) {
             if (version == 1) {
-                // TODO: Write code to convert to version 2.
+                CompoundTag newNBT = new CompoundTag();
+                Set<String> keys = nbtIn.getAllKeys();
+                for (String uuidStr : keys) {
+                    CompoundTag oldPlayerData = nbtIn.getCompound(uuidStr);
+                    CompoundTag bagItems = oldPlayerData.getCompound("storages").getCompound("0").getCompound("data");
+                    bagItems.remove("identifier");
+                    bagItems.remove("numOfItems");
+                    for (int i = 0; i <= 4; i++) {
+                        CompoundTag itemData = bagItems.getCompound("item" + i);
+                        bagItems.remove("item" + i);
+                        bagItems.put(String.valueOf(i), itemData);
+                    }
+                    // {UUID: {bagItems: {...}}}
+                    CompoundTag newPlayerData = new CompoundTag();
+                    newPlayerData.put("bagItems", bagItems);
+                    newNBT.put(uuidStr, newPlayerData);
+                }
+                nbtIn = newNBT;
             }
             version++;
-            storage.setDirty();
         }
+        return nbtIn;
     }
 }
