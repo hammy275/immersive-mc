@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
-import com.hammy275.immersivemc.server.storage.WorldStorage;
+import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 
 public interface WorldStorageHandler extends ImmersiveHandler {
 

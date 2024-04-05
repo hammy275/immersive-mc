@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.client.SafeClientUtil;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.server.storage.ImmersiveMCPlayerStorages;
+import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import com.hammy275.immersivemc.server.swap.Swap;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;

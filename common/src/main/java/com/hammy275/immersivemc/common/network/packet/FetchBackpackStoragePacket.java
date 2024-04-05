@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.server.storage.ImmersiveMCPlayerStorages;
+import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;

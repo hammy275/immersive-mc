@@ -5,11 +5,11 @@ import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.util.NullContainer;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.mixin.AnvilMenuMixin;
-import com.hammy275.immersivemc.server.storage.ImmersiveMCPlayerStorages;
-import com.hammy275.immersivemc.server.storage.WorldStorages;
-import com.hammy275.immersivemc.server.storage.impl.AnvilWorldStorage;
-import com.hammy275.immersivemc.server.storage.impl.ETableWorldStorage;
-import com.hammy275.immersivemc.server.storage.impl.SmithingTableWorldStorage;
+import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
+import com.hammy275.immersivemc.server.storage.world.WorldStorages;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
+import com.hammy275.immersivemc.server.storage.world.impl.ETableWorldStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,7 +38,7 @@ public class Swap {
         // NOTE: slot is 1-3, depending on which enchantment the player is going for.
         if (!player.getItemInHand(hand).isEmpty()) return false;
         if (slot < 1 || slot > 3) return false;
-        ETableWorldStorage storage = (ETableWorldStorage) WorldStorages.get(pos, player.serverLevel());
+        ETableWorldStorage storage = (ETableWorldStorage) WorldStorages.getOrCreate(pos, player.serverLevel());
         ItemStack toEnchantItem = storage.getItem(0).copy();
         if (toEnchantItem.isEmpty()) return false;
         int lapisInInventory = 0;
@@ -97,7 +97,7 @@ public class Swap {
         ImmersiveMCPlayerStorages.getPlayerStorage(player).setDirty();
     }
 
-    public static boolean handleAnvilCraft(AnvilWorldStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
+    public static boolean handleAnvilCraft(AnvilStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
         if (!player.getItemInHand(hand).isEmpty()) return false;
         ItemStack left = storage.getItem(0);
         ItemStack mid = storage.getItem(1);
@@ -125,7 +125,7 @@ public class Swap {
         return false;
     }
 
-    public static boolean handleSmithingTableCraft(SmithingTableWorldStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
+    public static boolean handleSmithingTableCraft(SmithingTableStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
         if (!player.getItemInHand(hand).isEmpty()) return false;
         ItemStack left = storage.getItem(0);
         ItemStack mid = storage.getItem(1);

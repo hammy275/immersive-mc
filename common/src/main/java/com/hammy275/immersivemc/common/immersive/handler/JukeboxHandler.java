@@ -4,8 +4,8 @@ import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
-import com.hammy275.immersivemc.common.immersive.storage.NullStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -19,12 +19,12 @@ import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 
 public class JukeboxHandler implements ImmersiveHandler {
     @Override
-    public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         return new NullStorage();
     }
 
     @Override
-    public HandlerStorage getEmptyHandlerStorage() {
+    public NetworkStorage getEmptyHandlerStorage() {
         return new NullStorage();
     }
 

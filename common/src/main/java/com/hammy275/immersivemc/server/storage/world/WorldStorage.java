@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.server.storage;
+package com.hammy275.immersivemc.server.storage.world;
 
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import net.minecraft.nbt.CompoundTag;

@@ -1,10 +1,12 @@
-package com.hammy275.immersivemc.server.storage.impl;
+package com.hammy275.immersivemc.common.immersive.storage.dual.impl;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.server.storage.WorldStorage;
-import com.hammy275.immersivemc.server.storage.WorldStorages;
+import com.hammy275.immersivemc.server.storage.world.WorldStorage;
+import com.hammy275.immersivemc.server.storage.world.WorldStorages;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -12,7 +14,11 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
 
-public abstract class ItemWorldStorage implements WorldStorage {
+/**
+ * Functions both as WorldStorage for saving server side and as a NetworkStorage for sending items
+ * to the client. Note that only the items array is sent to the client, no other fields are!
+ */
+public abstract class ItemStorage implements WorldStorage, NetworkStorage {
 
     /**
      * A list of items. Usually contains inputs and outputs.
@@ -32,7 +38,7 @@ public abstract class ItemWorldStorage implements WorldStorage {
      */
     public final int maxInputIndex;
 
-    public ItemWorldStorage(int numItems, int maxInputIndex) {
+    public ItemStorage(int numItems, int maxInputIndex) {
         items = new ItemStack[numItems];
         Arrays.fill(items, ItemStack.EMPTY);
         itemCounts = new LinkedList[numItems];
@@ -261,6 +267,20 @@ public abstract class ItemWorldStorage implements WorldStorage {
         }
         for (int i = oldItemCounts.length; i < this.itemCounts.length; i++) {
             this.itemCounts[i] = new LinkedList<>();
+        }
+    }
+
+    @Override
+    public void encode(FriendlyByteBuf buffer) {
+        for (ItemStack item : this.items) {
+            buffer.writeItem(item);
+        }
+    }
+
+    @Override
+    public void decode(FriendlyByteBuf buffer) {
+        for (int i = 0; i < this.items.length; i++) {
+            this.items[i] = buffer.readItem();
         }
     }
 

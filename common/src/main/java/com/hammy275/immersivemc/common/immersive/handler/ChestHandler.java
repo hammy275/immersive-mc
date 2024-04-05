@@ -3,8 +3,8 @@ package com.hammy275.immersivemc.common.immersive.handler;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
-import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 public class ChestHandler extends ChestLikeHandler {
 
     @Override
-    public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         ListOfItemsStorage storage = (ListOfItemsStorage) super.makeInventoryContents(player, pos);
         BlockEntity blockEntity = player.level().getBlockEntity(pos);
         if (blockEntity instanceof ChestBlockEntity cbe) {

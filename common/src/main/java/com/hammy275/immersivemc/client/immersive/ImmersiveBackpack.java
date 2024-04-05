@@ -10,7 +10,7 @@ import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.BackpackInteractPacket;
 import com.hammy275.immersivemc.common.network.packet.FetchBackpackStoragePacket;
@@ -248,7 +248,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {}
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, HandlerStorage storage) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, NetworkStorage storage) {
         // Intentional NO-OP
     }
 

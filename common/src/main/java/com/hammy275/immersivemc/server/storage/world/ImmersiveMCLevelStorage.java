@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.server.storage;
+package com.hammy275.immersivemc.server.storage.world;
 
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
@@ -43,7 +43,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
     }
 
     @Nullable
-    public WorldStorage getOrCreate(BlockPos pos, Level level) {
+    public WorldStorage get(BlockPos pos, Level level) {
         WorldStorage storage = storageMap.get(pos);
         for (ImmersiveHandler handlerMaybeWS : ImmersiveHandlers.HANDLERS) {
             if (handlerMaybeWS instanceof WorldStorageHandler handler) {
@@ -52,20 +52,28 @@ public class ImmersiveMCLevelStorage extends SavedData {
                 }
             }
         }
-        // At this point, we either didn't find a storage or the storage doesn't match with any handler
+        return null;
+    }
 
-        if (storage != null) { // Storage in-memory doesn't match a handler. Make a new storage.
-            for (ImmersiveHandler handlerMaybeWS : ImmersiveHandlers.HANDLERS) {
-                if (handlerMaybeWS instanceof WorldStorageHandler handler) {
-                    if (handler.isValidBlock(pos, level)) {
-                        storage = handler.getEmptyWorldStorage();
-                        storageMap.put(pos, storage);
-                        return storage;
-                    }
+    @Nullable
+    public WorldStorage getOrCreate(BlockPos pos, Level level) {
+        WorldStorage storage = get(pos, level);
+        if (storage != null) {
+            return storage;
+        }
+
+        // At this point, we either didn't find a storage or the storage we found doesn't match with any handler.
+        // Either way, attempt to make a new one.
+        for (ImmersiveHandler handlerMaybeWS : ImmersiveHandlers.HANDLERS) {
+            if (handlerMaybeWS instanceof WorldStorageHandler handler) {
+                if (handler.isValidBlock(pos, level)) {
+                    storage = handler.getEmptyWorldStorage();
+                    storageMap.put(pos, storage);
+                    return storage;
                 }
             }
         }
-        // Storage wasn't in-memory and didn't match a handler. Return null.
+        // Storage wasn't in-memory, and we couldn't make a new one. Return null.
         return null;
     }
 

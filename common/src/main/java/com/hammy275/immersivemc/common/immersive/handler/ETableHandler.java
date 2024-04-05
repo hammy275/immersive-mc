@@ -4,12 +4,12 @@ import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.storage.ETableStorage;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
-import com.hammy275.immersivemc.server.storage.WorldStorage;
-import com.hammy275.immersivemc.server.storage.WorldStorages;
-import com.hammy275.immersivemc.server.storage.impl.ETableWorldStorage;
+import com.hammy275.immersivemc.server.storage.world.WorldStorage;
+import com.hammy275.immersivemc.server.storage.world.WorldStorages;
+import com.hammy275.immersivemc.server.storage.world.impl.ETableWorldStorage;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -26,10 +26,10 @@ import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
 
 import java.util.Arrays;
 
-public class ETableHandler extends ItemWorldStorageHandlerImpl {
+public class ETableHandler extends ItemWorldStorageHandler {
     @Override
-    public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        ETableWorldStorage worldStorage = (ETableWorldStorage) WorldStorages.get(pos, player.serverLevel());
+    public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+        ETableWorldStorage worldStorage = (ETableWorldStorage) WorldStorages.getOrCreate(pos, player.serverLevel());
         ETableStorage storage = new ETableStorage(Arrays.asList(worldStorage.getItemsRaw()));
 
         if (worldStorage.getItem(0) != null && !worldStorage.getItem(0).isEmpty()) {
@@ -50,14 +50,14 @@ public class ETableHandler extends ItemWorldStorageHandlerImpl {
     }
 
     @Override
-    public HandlerStorage getEmptyHandlerStorage() {
+    public NetworkStorage getEmptyHandlerStorage() {
         return new ETableStorage();
     }
 
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
         if (player == null) return;
-        ETableWorldStorage enchStorage = (ETableWorldStorage) WorldStorages.get(pos, player.serverLevel());
+        ETableWorldStorage enchStorage = (ETableWorldStorage) WorldStorages.getOrCreate(pos, player.serverLevel());
         if (slot == 0) {
             ItemStack toEnchant = player.getItemInHand(hand);
             if (!toEnchant.isEmpty() && !toEnchant.isEnchantable()) return;

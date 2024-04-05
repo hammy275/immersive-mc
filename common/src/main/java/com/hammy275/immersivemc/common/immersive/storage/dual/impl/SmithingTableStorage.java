@@ -1,10 +1,10 @@
-package com.hammy275.immersivemc.server.storage.impl;
+package com.hammy275.immersivemc.common.immersive.storage.dual.impl;
 
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 
-public class SmithingTableWorldStorage extends ItemWorldStorage {
-    public SmithingTableWorldStorage() {
+public class SmithingTableStorage extends ItemStorage {
+    public SmithingTableStorage() {
         super(4, 2);
     }
 

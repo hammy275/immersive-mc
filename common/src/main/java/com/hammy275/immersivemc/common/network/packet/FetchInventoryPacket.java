@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
@@ -14,11 +14,11 @@ import java.util.function.Supplier;
 
 public class FetchInventoryPacket {
 
-    public final HandlerStorage storage;
+    public final NetworkStorage storage;
     public final ImmersiveHandler handler;
     public final BlockPos pos;
 
-    public FetchInventoryPacket(ImmersiveHandler handler, HandlerStorage storage, BlockPos pos) {
+    public FetchInventoryPacket(ImmersiveHandler handler, NetworkStorage storage, BlockPos pos) {
         this.handler = handler;
         this.storage = storage;
         this.pos = pos;
@@ -33,7 +33,7 @@ public class FetchInventoryPacket {
     public static FetchInventoryPacket decode(FriendlyByteBuf buffer) {
         BlockPos pos = buffer.readBlockPos();
         ImmersiveHandler handlerToSet = null;
-        HandlerStorage storage = null;
+        NetworkStorage storage = null;
         ResourceLocation id = buffer.readResourceLocation();
         for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
             if (handler.getID().equals(id)) {

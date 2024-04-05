@@ -3,12 +3,11 @@ package com.hammy275.immersivemc.common.immersive.handler;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
-import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
-import com.hammy275.immersivemc.server.storage.WorldStorage;
-import com.hammy275.immersivemc.server.storage.WorldStorages;
-import com.hammy275.immersivemc.server.storage.impl.CraftingTableWorldStorage;
-import com.hammy275.immersivemc.server.storage.impl.ItemWorldStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.CraftingTableStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.server.storage.world.WorldStorage;
+import com.hammy275.immersivemc.server.storage.world.WorldStorages;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -18,23 +17,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
-import java.util.Arrays;
-
-public class CraftingHandler extends ItemWorldStorageHandlerImpl {
+public class CraftingHandler extends ItemWorldStorageHandler {
     @Override
-    public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        CraftingTableWorldStorage worldStorage = (CraftingTableWorldStorage) WorldStorages.get(pos, player.serverLevel());
-        return new ListOfItemsStorage(Arrays.asList(worldStorage.getItemsRaw()), 10);
+    public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+        return (NetworkStorage) WorldStorages.getOrCreate(pos, player.serverLevel());
     }
 
     @Override
-    public HandlerStorage getEmptyHandlerStorage() {
-        return new ListOfItemsStorage();
+    public NetworkStorage getEmptyHandlerStorage() {
+        return new CraftingTableStorage();
     }
 
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
-        CraftingTableWorldStorage storage = (CraftingTableWorldStorage) WorldStorages.get(pos, player.serverLevel());
+        CraftingTableStorage storage = (CraftingTableStorage) WorldStorages.getOrCreate(pos, player.serverLevel());
         if (slot < 9) {
             storage.placeItem(player, hand,
                     Swap.getPlaceAmount(player.getItemInHand(hand), mode),
@@ -71,16 +67,16 @@ public class CraftingHandler extends ItemWorldStorageHandlerImpl {
 
     @Override
     public WorldStorage getEmptyWorldStorage() {
-        return new CraftingTableWorldStorage();
+        return new CraftingTableStorage();
     }
 
     @Override
     public Class<? extends WorldStorage> getWorldStorageClass() {
-        return CraftingTableWorldStorage.class;
+        return CraftingTableStorage.class;
     }
 
     @Override
-    public void updateStorageOutputAfterItemReturn(ServerPlayer player, BlockPos pos, ItemWorldStorage storage) {
+    public void updateStorageOutputAfterItemReturn(ServerPlayer player, BlockPos pos, ItemStorage storage) {
         ItemStack out = Swap.getRecipeOutput(player, storage.getItemsRaw());
         storage.setItem(9, out);
     }

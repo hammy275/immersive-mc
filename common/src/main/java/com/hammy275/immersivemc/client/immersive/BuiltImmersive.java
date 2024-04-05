@@ -4,8 +4,9 @@ import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
-import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -274,11 +275,15 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, HandlerStorage storage) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, NetworkStorage storage) {
         BuiltImmersiveInfo bInfo = (BuiltImmersiveInfo) info;
         if (storage instanceof ListOfItemsStorage itemsStorage) {
             for (int i = 0; i < itemsStorage.getItems().size(); i++) {
                 bInfo.itemHitboxes.get(i).item = itemsStorage.getItems().get(i);
+            }
+        } else if (storage instanceof ItemStorage iws) {
+            for (int i = 0; i < iws.getNumItems(); i++) {
+                bInfo.itemHitboxes.get(i).item = iws.getItem(i);
             }
         }
         if (builder.extraStorageConsumer != null) {

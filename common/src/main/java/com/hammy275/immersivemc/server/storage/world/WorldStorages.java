@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.server.storage;
+package com.hammy275.immersivemc.server.storage.world;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -6,14 +6,25 @@ import net.minecraft.server.level.ServerLevel;
 public class WorldStorages {
 
     /**
-     * Gets the WorldStorage at the given location.
+     * Gets the WorldStorage at the given location, or creates a new one if needed.
      * @param pos Position of block with a WorldStorage and/or associated with a handler.
      * @param level Level the block is in.
      * @return A WorldStorage instance for the given block position, or null if the block isn't associated with any
      *         WorldStorageHandler instances.
      */
-    public static WorldStorage get(BlockPos pos, ServerLevel level) {
+    public static WorldStorage getOrCreate(BlockPos pos, ServerLevel level) {
         return ImmersiveMCLevelStorage.getLevelStorage(level).getOrCreate(pos, level);
+    }
+
+    /**
+     * Gets the WorldStorage already present at the given location.
+     * @param pos Position of block with a WorldStorage and/or associated with a handler.
+     * @param level Level the block is in.
+     * @return A WorldStorage instance for the given block position, or null if the block isn't associated with any
+     *         WorldStorageHandler instances or if there isn't a WorldStorage already there.
+     */
+    public static WorldStorage get(BlockPos pos, ServerLevel level) {
+        return ImmersiveMCLevelStorage.getLevelStorage(level).get(pos, level);
     }
 
     /**

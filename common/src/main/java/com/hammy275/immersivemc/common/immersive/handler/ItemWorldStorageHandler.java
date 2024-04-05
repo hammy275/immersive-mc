@@ -1,34 +1,34 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.server.storage.WorldStorage;
-import com.hammy275.immersivemc.server.storage.WorldStorages;
-import com.hammy275.immersivemc.server.storage.impl.ItemWorldStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
+import com.hammy275.immersivemc.server.storage.world.WorldStorages;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
-public abstract class ItemWorldStorageHandlerImpl implements WorldStorageHandler {
+public abstract class ItemWorldStorageHandler implements WorldStorageHandler {
 
     @Override
     public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        return ((ItemWorldStorage) WorldStorages.get(pos, player.serverLevel())).isDirtyForClientSync();
+        if (WorldStorages.get(pos, player.serverLevel()) instanceof ItemStorage iws) {
+            return iws.isDirtyForClientSync();
+        }
+        return false;
     }
 
     @Override
     public void clearDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        WorldStorage storage = WorldStorages.get(pos, player.serverLevel());
-        if (storage instanceof ItemWorldStorage iws) {
+        if (WorldStorages.get(pos, player.serverLevel()) instanceof ItemStorage iws) {
             iws.setNoLongerDirtyForClientSync();
         }
     }
 
     @Override
     public void onStopTracking(ServerPlayer player, BlockPos pos) {
-        WorldStorage worldStorage = WorldStorages.get(pos, player.serverLevel());
-        if (worldStorage instanceof ItemWorldStorage iws) {
+        if (WorldStorages.get(pos, player.serverLevel()) instanceof ItemStorage iws) {
             if (isValidBlock(pos, player.level())) {
                 if (ActiveConfig.getConfigForPlayer(player).returnItems) { // Player left block range
                     iws.returnItems(player);
@@ -51,5 +51,5 @@ public abstract class ItemWorldStorageHandlerImpl implements WorldStorageHandler
         }
     }
 
-    public void updateStorageOutputAfterItemReturn(ServerPlayer player, BlockPos pos, ItemWorldStorage storage) {}
+    public void updateStorageOutputAfterItemReturn(ServerPlayer player, BlockPos pos, ItemStorage storage) {}
 }
