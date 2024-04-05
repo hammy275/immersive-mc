@@ -132,10 +132,14 @@ public class ImmersiveMCLevelStorage extends SavedData {
         return nbt;
     }
 
+    /**
+     * Upgrades NBT tag to something this version of ImmersiveMC can understand.
+     * @param nbt NBT to upgrade.
+     * @param storage ImmersiveMCLevelStorage instance to mark dirty.
+     */
     private static void maybeUpgradeNBT(CompoundTag nbt, ImmersiveMCLevelStorage storage) {
-        // Updates the compound tag to something this version of ImmersiveMC can understand.
         int version = 1;
-        if (nbt.contains("version")) {
+        if (nbt.contains("version")) { // Version 1 didn't store a version int
             version = nbt.getInt("version");
         }
         while (version < LEVEL_STORAGE_VERSION) {
@@ -145,6 +149,5 @@ public class ImmersiveMCLevelStorage extends SavedData {
             version++;
             storage.setDirty();
         }
-
     }
 }

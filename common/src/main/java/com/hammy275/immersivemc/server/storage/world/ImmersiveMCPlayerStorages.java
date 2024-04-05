@@ -12,6 +12,9 @@ import java.util.*;
  * Uses SavedData to hold player storage
  */
 public class ImmersiveMCPlayerStorages extends SavedData {
+
+    private static final int PLAYER_STORAGES_VERSION = 2;
+
     private static Factory<ImmersiveMCPlayerStorages> factory = new Factory<>(
             ImmersiveMCPlayerStorages::create,
             ImmersiveMCPlayerStorages::load,
@@ -45,6 +48,7 @@ public class ImmersiveMCPlayerStorages extends SavedData {
 
     public static ImmersiveMCPlayerStorages load(CompoundTag nbt) {
         ImmersiveMCPlayerStorages playerStorage = new ImmersiveMCPlayerStorages();
+        maybeUpgradeNBT(nbt, playerStorage);
         Set<String> keys = nbt.getAllKeys();
         for (String uuidStr : keys) {
             UUID uuid = UUID.fromString(uuidStr);
@@ -77,5 +81,24 @@ public class ImmersiveMCPlayerStorages extends SavedData {
             nbt.put(String.valueOf(entry.getKey()), playerData);
         }
         return nbt;
+    }
+
+    /**
+     * Upgrades NBT tag to something this version of ImmersiveMC can understand.
+     * @param nbt NBT to upgrade.
+     * @param storage ImmersiveMCPlayerStorages instance to mark dirty.
+     */
+    private static void maybeUpgradeNBT(CompoundTag nbt, ImmersiveMCPlayerStorages storage) {
+        int version = 1;
+        if (nbt.contains("version")) { // Version 1 didn't store a version int
+            version = nbt.getInt("version");
+        }
+        while (version < PLAYER_STORAGES_VERSION) {
+            if (version == 1) {
+                // TODO: Write code to convert to version 2.
+            }
+            version++;
+            storage.setDirty();
+        }
     }
 }
