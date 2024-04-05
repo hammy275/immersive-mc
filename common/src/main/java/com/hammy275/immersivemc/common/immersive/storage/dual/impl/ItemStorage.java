@@ -1,35 +1,24 @@
-package com.hammy275.immersivemc.common.storage;
+package com.hammy275.immersivemc.common.immersive.storage.dual.impl;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.server.storage.world.WorldStorage;
+import com.hammy275.immersivemc.server.storage.world.WorldStorages;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.saveddata.SavedData;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Stack;
-import java.util.UUID;
+import java.util.*;
 
 /**
- * Holds all info for a given block's storage.
+ * Functions both as WorldStorage for saving server side and as a NetworkStorage for sending items
+ * to the client. Note that only the items array is sent to the client, no other fields are!
  */
-public class ImmersiveStorage {
-
-    /**
-     * Instance of WorldStorage. Will always exist server-side and NEVER exist client-side.
-     * Do not use this in a constructor! Clients also use the constructor!
-     */
-    private final SavedData wStorage;
-
-    /**
-     * A unique String representing the type of storage this is. Used in WorldStorage when saving/loading NBT.
-     */
-    public static final String TYPE = "basic_item_store";
+public abstract class ItemStorage implements WorldStorage, NetworkStorage {
 
     /**
      * A list of items. Usually contains inputs and outputs.
@@ -40,58 +29,36 @@ public class ImmersiveStorage {
      * Item counts from each player for each slot. Used for item returns.
      */
     protected List<PlayerItemCounts>[] itemCounts;
-
-    public String identifier = "world";
     /**
      * Whether this storage has changed since the last sync to the client.
      */
     private boolean isDirtyForClientSync = false;
-
-    public ImmersiveStorage(SavedData storage) {
-        this.wStorage = storage;
-    }
-
     /**
-     * Sets this immersive as dirty.
+     * The index of the last item in the items array that is an input item.
      */
-    public void setDirty() {
-        this.wStorage.setDirty();
-        this.isDirtyForClientSync = true;
+    public final int maxInputIndex;
+
+    public ItemStorage(int numItems, int maxInputIndex) {
+        items = new ItemStack[numItems];
+        Arrays.fill(items, ItemStack.EMPTY);
+        itemCounts = new LinkedList[numItems];
+        for (int i = 0; i < numItems; i++) {
+            itemCounts[i] = new LinkedList<>();
+        }
+        this.maxInputIndex = maxInputIndex;
     }
 
     public boolean isDirtyForClientSync() {
         return this.isDirtyForClientSync;
     }
 
+    public void setDirty(ServerLevel level) {
+        WorldStorages.markDirty(level);
+        this.isDirtyForClientSync = true;
+    }
+
     public void setNoLongerDirtyForClientSync() {
         this.isDirtyForClientSync = false;
-    }
-
-    /**
-     * Initializes this storage ONLY IF IT ISN'T ALREADY!!!
-     * @param numOfItems Number of items to store
-     * @return This object.
-     */
-    public ImmersiveStorage initIfNotAlready(int numOfItems) {
-        if (items == null) {
-            items = new ItemStack[numOfItems];
-            Arrays.fill(items, ItemStack.EMPTY);
-            itemCounts = new LinkedList[numOfItems];
-            for (int i = 0; i < numOfItems; i++) {
-                itemCounts[i] = new LinkedList<>();
-            }
-            this.setDirty();
-        }
-        return this;
-    }
-
-    /**
-     * Used to determine which storage type is being loaded from disk. MUST BE CHANGED FOR ANYTHING THAT
-     * EXTENDS THIS CLASS, AND IT MUST BE UNIQUE!!!
-     * @return A String ID of what type of storage instance this is
-     */
-    public String getType() {
-        return TYPE;
     }
 
     /**
@@ -102,7 +69,6 @@ public class ImmersiveStorage {
     public void setItem(int slot, ItemStack stack) {
         this.items[slot] = stack;
         this.itemCounts[slot].clear();
-        this.setDirty();
     }
 
     /**
@@ -113,7 +79,6 @@ public class ImmersiveStorage {
     public void shrinkSlot(int slot, int amount) {
         this.items[slot].shrink(amount);
         this.shrinkCountsOnly(slot, amount);
-        this.setDirty();
     }
 
     /**
@@ -147,7 +112,7 @@ public class ImmersiveStorage {
         ItemStack leftovers;
         ItemStack handStack = player.getItemInHand(hand);
         ItemStack immersiveStack = this.items[slot];
-        if (Util.stacksEqualBesidesCount(handStack, this.items[slot])) {
+        if (Util.stacksEqualBesidesCount(handStack, this.items[slot]) && !handStack.isEmpty()) {
             ItemStack handStackToPlace = handStack.copy();
             handStackToPlace.setCount(amountToPlace);
             int oldImmersiveCount = immersiveStack.getCount();
@@ -188,7 +153,6 @@ public class ImmersiveStorage {
         this.items[slot] = toImmersive;
         player.setItemInHand(hand, toHand);
         Util.placeLeftovers(player, leftovers);
-        this.setDirty();
     }
 
     public ItemStack getItem(int slot) {
@@ -203,6 +167,11 @@ public class ImmersiveStorage {
      */
     public ItemStack[] getItemsRaw() {
         return this.items;
+    }
+
+    public void copyFromOld(ItemStorage oldStorage) {
+        this.items = oldStorage.items;
+        this.itemCounts = oldStorage.itemCounts;
     }
 
     /**
@@ -226,19 +195,14 @@ public class ImmersiveStorage {
                 this.itemCounts[slot].remove((int) countsToRemove.pop());
             }
         }
-        this.setDirty();
     }
-
-
+    
+    @Override
     public void load(CompoundTag nbt) {
         int length = nbt.getInt("numOfItems");
         this.items = new ItemStack[length];
         for (int i = 0; i < length; i++) {
             this.items[i] = ItemStack.of(nbt.getCompound("item" + i));
-        }
-        this.identifier = nbt.getString("identifier");
-        if (this.identifier.equals("")) {
-            this.identifier = "world"; // Safe default if string isn't there
         }
         itemCounts = new LinkedList[length];
         for (int i = 0; i < length; i++) {
@@ -256,12 +220,12 @@ public class ImmersiveStorage {
         }
     }
 
+    @Override
     public CompoundTag save(CompoundTag nbt) {
         nbt.putInt("numOfItems", items.length);
         for (int i = 0; i < items.length; i++) {
             nbt.put("item" + i, items[i].save(new CompoundTag()));
         }
-        nbt.putString("identifier", identifier);
         CompoundTag rootCounts = new CompoundTag();
         for (int slot = 0; slot < itemCounts.length; slot++) {
             CompoundTag countSlot = new CompoundTag();
@@ -288,7 +252,6 @@ public class ImmersiveStorage {
         this.itemCounts[newSlot] = this.itemCounts[oldSlot];
         this.items[oldSlot] = ItemStack.EMPTY;
         this.itemCounts[oldSlot] = new LinkedList<>();
-        this.setDirty();
     }
 
     /**
@@ -310,7 +273,20 @@ public class ImmersiveStorage {
         for (int i = oldItemCounts.length; i < this.itemCounts.length; i++) {
             this.itemCounts[i] = new LinkedList<>();
         }
-        this.setDirty();
+    }
+
+    @Override
+    public void encode(FriendlyByteBuf buffer) {
+        for (ItemStack item : this.items) {
+            buffer.writeItem(item);
+        }
+    }
+
+    @Override
+    public void decode(FriendlyByteBuf buffer) {
+        for (int i = 0; i < this.items.length; i++) {
+            this.items[i] = buffer.readItem();
+        }
     }
 
     public static class PlayerItemCounts {

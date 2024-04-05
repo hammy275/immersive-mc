@@ -1,8 +1,8 @@
-package com.hammy275.immersivemc.common.immersive.storage;
+package com.hammy275.immersivemc.common.immersive.storage.network;
 
 import net.minecraft.network.FriendlyByteBuf;
 
-public interface HandlerStorage {
+public interface NetworkStorage {
 
     void encode(FriendlyByteBuf buffer);
 

@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.common.storage.workarounds;
+package com.hammy275.immersivemc.common.util;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;

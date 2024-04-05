@@ -7,7 +7,6 @@ import net.minecraft.world.level.Level;
 public abstract class AbstractWorldStorageImmersive<I extends AbstractWorldStorageInfo> extends AbstractImmersive<I> {
     public AbstractWorldStorageImmersive(int maxImmersives) {
         super(maxImmersives);
-        Immersives.WS_IMMERSIVES.add(this);
     }
 
     public abstract I getNewInfo(BlockPos pos);

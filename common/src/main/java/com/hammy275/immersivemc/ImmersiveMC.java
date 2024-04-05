@@ -6,7 +6,6 @@ import com.hammy275.immersivemc.common.network.packet.*;
 import com.hammy275.immersivemc.common.subscribe.CommonSubscriber;
 import dev.architectury.event.events.client.ClientLifecycleEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
-import dev.architectury.event.events.common.BlockEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
 import dev.architectury.platform.Platform;
@@ -40,7 +39,6 @@ public class ImmersiveMC {
         }
 
         // ServerSubscriber
-        BlockEvent.BREAK.register(ServerSubscriber::blockBreak);
         TickEvent.SERVER_POST.register(ServerSubscriber::onServerTick);
         TickEvent.PLAYER_POST.register(ServerSubscriber::onPlayerTick);
         PlayerEvent.PLAYER_JOIN.register(ServerSubscriber::onPlayerJoin);
@@ -69,12 +67,10 @@ public class ImmersiveMC {
                 InventorySwapPacket::decode, InventorySwapPacket::handle);
         Network.INSTANCE.register(SetRepeaterPacket.class, SetRepeaterPacket::encode,
                 SetRepeaterPacket::decode, SetRepeaterPacket::handle);
-        Network.INSTANCE.register(InteractPacket.class, InteractPacket::encode,
-                InteractPacket::decode, InteractPacket::handle);
-        Network.INSTANCE.register(FetchPlayerStoragePacket.class, FetchPlayerStoragePacket::encode,
-                FetchPlayerStoragePacket::decode, FetchPlayerStoragePacket::handle);
-        Network.INSTANCE.register(GetRecipePacket.class, GetRecipePacket::encode,
-                GetRecipePacket::decode, GetRecipePacket::handle);
+        Network.INSTANCE.register(BackpackInteractPacket.class, BackpackInteractPacket::encode,
+                BackpackInteractPacket::decode, BackpackInteractPacket::handle);
+        Network.INSTANCE.register(FetchBackpackStoragePacket.class, FetchBackpackStoragePacket::encode,
+                FetchBackpackStoragePacket::decode, FetchBackpackStoragePacket::handle);
         Network.INSTANCE.register(BeaconConfirmPacket.class, BeaconConfirmPacket::encode,
                 BeaconConfirmPacket::decode, BeaconConfirmPacket::handle);
         Network.INSTANCE.register(ThrowPacket.class, ThrowPacket::encode,

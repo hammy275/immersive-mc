@@ -4,8 +4,8 @@ import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
-import com.hammy275.immersivemc.common.immersive.storage.NullStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -16,18 +16,16 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 public class JukeboxHandler implements ImmersiveHandler {
     @Override
-    public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         return new NullStorage();
     }
 
     @Override
-    public HandlerStorage getEmptyHandler() {
+    public NetworkStorage getEmptyNetworkStorage() {
         return new NullStorage();
     }
 
@@ -57,11 +55,6 @@ public class JukeboxHandler implements ImmersiveHandler {
     @Override
     public void clearDirtyForClientSync(ServerPlayer player, BlockPos pos) {
         // No-op. Jukebox doesn't have data to sync to the client.
-    }
-
-    @Override
-    public boolean usesWorldStorage() {
-        return false;
     }
 
     @Override

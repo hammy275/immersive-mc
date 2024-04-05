@@ -8,8 +8,8 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
-import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
@@ -183,7 +183,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo infoIn, HandlerStorage storageIn) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo infoIn, NetworkStorage storageIn) {
         ChestInfo info = (ChestInfo) infoIn;
         ListOfItemsStorage storage = (ListOfItemsStorage) storageIn;
         for (int i = 0; i < storage.getItems().size(); i++) {
