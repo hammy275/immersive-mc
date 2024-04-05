@@ -7,11 +7,11 @@ import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.common.immersive.storage.AnvilStorage;
-import com.hammy275.immersivemc.common.immersive.storage.ETableStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
@@ -29,9 +29,6 @@ import java.util.List;
 public class Immersives {
 
     public static final List<AbstractImmersive<? extends AbstractImmersiveInfo>> IMMERSIVES =
-            new LinkedList<>();
-
-    public static final List<AbstractImmersive<? extends AbstractImmersiveInfo>> WS_IMMERSIVES =
             new LinkedList<>();
 
     public static final BuiltImmersive immersiveAnvil = ImmersiveBuilder.create(ImmersiveHandlers.anvilHandler)
@@ -58,7 +55,6 @@ public class Immersives {
             })
             .setPositioningMode(HitboxPositioningMode.TOP_BLOCK_FACING)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
-            .setUsesWorldStorage(true)
             .setExtraInfoDataClass(AnvilData.class)
             .build();
     public static final ImmersiveBackpack immersiveBackpack = new ImmersiveBackpack();
@@ -138,7 +134,6 @@ public class Immersives {
                     .forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
-            .setUsesWorldStorage(true)
             .setTriggerHitboxControllerNum(0)
             .build();
     public static final BuiltImmersive immersiveETable = ImmersiveBuilder.create(ImmersiveHandlers.enchantingTableHandler)
@@ -198,7 +193,6 @@ public class Immersives {
                 return texts;
             }).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
-            .setUsesWorldStorage(true)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .setExtraInfoDataClass(EnchantingData.class)
             .setExtraStorageConsumer((storageIn, info) -> {
@@ -357,7 +351,6 @@ public class Immersives {
             .addHitbox(HitboxInfoBuilder.create(new Vec3(0, 0, 0.5), ClientConstants.itemScaleSizeSmithingTable / 1.025).holdsItems(true).triggerHitbox(true).itemSpins(true).itemRenderSizeMultiplier(1.5f).forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
             .setRightClickHandler(((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand))))
-            .setUsesWorldStorage(true)
             .setTriggerHitboxControllerNum(0)
             .build();
 
@@ -370,7 +363,6 @@ public class Immersives {
     public static final BuiltImmersive immersiveTinkersConstructCraftingStation = immersiveCrafting.getBuilderClone()
             .setHandler(ImmersiveHandlers.tcCraftingStationHandler)
             .setConfigChecker(() -> ActiveConfig.active().useTinkersConstructCraftingStationImmersion)
-            .setUsesWorldStorage(false)
             .modifyHitboxes(0, 8, (hitbox) -> hitbox.renderItem(false).build())
             .build();
 }
