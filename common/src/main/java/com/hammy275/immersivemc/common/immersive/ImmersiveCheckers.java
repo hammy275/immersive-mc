@@ -12,16 +12,12 @@ import java.util.List;
 public class ImmersiveCheckers {
 
     public static final List<CheckerFunction> CHECKERS = new LinkedList<>();
-    public static final List<CheckerFunction> WORLD_STORAGE_CHECKERS = new LinkedList<>();
 
     static {
         CHECKERS.add(ImmersiveCheckers::isRepeater);
 
         for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
             CHECKERS.add(handler::isValidBlock);
-            if (handler.usesWorldStorage()) {
-                WORLD_STORAGE_CHECKERS.add(handler::isValidBlock);
-            }
         }
     }
 

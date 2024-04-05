@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import net.minecraft.client.Minecraft;
@@ -34,7 +34,7 @@ public class NetworkClientHandlers {
         }
     }
 
-    public static void handleReceiveInvData(HandlerStorage storage, BlockPos pos, ImmersiveHandler handler) {
+    public static void handleReceiveInvData(NetworkStorage storage, BlockPos pos, ImmersiveHandler handler) {
         Objects.requireNonNull(storage);
         Level level = Minecraft.getInstance().player.level;
         // Search all immersives for the matching handler. If found and the block is the state we expect, create or refresh

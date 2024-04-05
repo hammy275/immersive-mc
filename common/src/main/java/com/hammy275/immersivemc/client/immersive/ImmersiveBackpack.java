@@ -10,12 +10,11 @@ import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.FetchPlayerStoragePacket;
-import com.hammy275.immersivemc.common.network.packet.InteractPacket;
+import com.hammy275.immersivemc.common.network.packet.BackpackInteractPacket;
+import com.hammy275.immersivemc.common.network.packet.FetchBackpackStoragePacket;
 import com.hammy275.immersivemc.common.network.packet.InventorySwapPacket;
-import com.hammy275.immersivemc.common.storage.ImmersiveStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -40,6 +39,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -116,8 +116,8 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
             Network.INSTANCE.sendToServer(new InventorySwapPacket(slot + 9));
             Swap.handleInventorySwap(player, slot + 9, InteractionHand.MAIN_HAND); // Do swap on both sides
         } else {
-            Network.INSTANCE.sendToServer(new InteractPacket("backpack", slot, InteractionHand.MAIN_HAND));
-            Network.INSTANCE.sendToServer(new FetchPlayerStoragePacket("backpack"));
+            Network.INSTANCE.sendToServer(new BackpackInteractPacket(slot, InteractionHand.MAIN_HAND));
+            Network.INSTANCE.sendToServer(new FetchBackpackStoragePacket());
         }
     }
 
@@ -240,24 +240,24 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     @Override
     protected void initInfo(BackpackInfo info) {
         // Get inventory data on initialization
-        Network.INSTANCE.sendToServer(new FetchPlayerStoragePacket("backpack"));
+        Network.INSTANCE.sendToServer(new FetchBackpackStoragePacket());
     }
 
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {}
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, HandlerStorage storage) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, NetworkStorage storage) {
         // Intentional NO-OP
     }
 
-    public void processFromNetwork(ImmersiveStorage storage) {
+    public void processFromNetwork(List<ItemStack> items) {
         if (this.infos.size() > 0) {
             BackpackInfo info = this.infos.get(0);
             for (int i = 0; i <= 3; i++) {
-                info.craftingInput[i] = storage.getItem(i);
+                info.craftingInput[i] = items.get(i);
             }
-            info.craftingOutput = storage.getItem(4);
+            info.craftingOutput = items.get(4);
         }
     }
 

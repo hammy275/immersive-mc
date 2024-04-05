@@ -57,7 +57,7 @@ public class TrackedImmersiveData {
         return this.handler;
     }
 
-    private boolean blockMatches() {
+    public boolean blockMatches() {
         return handler.isValidBlock(pos, level);
     }
 }

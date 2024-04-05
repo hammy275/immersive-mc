@@ -5,6 +5,8 @@ import com.hammy275.immersivemc.common.immersive.CheckerFunction;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -200,6 +202,18 @@ public class Util {
             ItemEntity item = new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), leftovers);
             player.level.addFreshEntity(item);
         }
+    }
+
+    public static void putResourceLocation(CompoundTag nbt, String key, ResourceLocation loc) {
+        CompoundTag locTag = new CompoundTag();
+        locTag.putString("namespace", loc.getNamespace());
+        locTag.putString("path", loc.getPath());
+        nbt.put(key, locTag);
+    }
+
+    public static ResourceLocation getResourceLocation(CompoundTag nbt, String key) {
+        CompoundTag subTag = nbt.getCompound(key);
+        return new ResourceLocation(subTag.getString("namespace"), subTag.getString("path"));
     }
 
     public static class ItemStackMergeResult {
