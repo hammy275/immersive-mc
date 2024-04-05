@@ -9,7 +9,7 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.mixin.DragonFireballRendererMixin;
@@ -170,7 +170,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         return info.slotHovered == slotNum;
     }
 
-    public abstract void processStorageFromNetwork(AbstractImmersiveInfo info, HandlerStorage storage);
+    public abstract void processStorageFromNetwork(AbstractImmersiveInfo info, NetworkStorage storage);
 
     public void tick(I info, boolean isInVR) {
         if (enabledInConfig()) {

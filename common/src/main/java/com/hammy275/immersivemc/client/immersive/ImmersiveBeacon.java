@@ -8,15 +8,15 @@ import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.common.immersive.storage.ListOfItemsStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.BeaconConfirmPacket;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -307,10 +307,10 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, HandlerStorage storage) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, NetworkStorage storage) {
         BeaconInfo beaconInfo = (BeaconInfo) info;
-        ListOfItemsStorage items = (ListOfItemsStorage) storage;
-        beaconInfo.items[0] = items.getItems().get(0);
+        BeaconStorage items = (BeaconStorage) storage;
+        beaconInfo.items[0] = items.getItem(0);
     }
 
     @Override

@@ -3,8 +3,8 @@ package com.hammy275.immersivemc.common.immersive.handler;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
-import com.hammy275.immersivemc.common.immersive.storage.NullStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,8 +12,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChiseledBookShelfBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 public class ChiseledBookshelfHandler extends ContainerHandler {
     // Used for ChiseledBookShelfBlock to mixin for our redirection
@@ -21,12 +19,12 @@ public class ChiseledBookshelfHandler extends ContainerHandler {
     public static InteractionHand bookshelfBlockHandOverride = null;
 
     @Override
-    public HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         return new NullStorage();
     }
 
     @Override
-    public HandlerStorage getEmptyHandler() {
+    public NetworkStorage getEmptyNetworkStorage() {
         return new NullStorage();
     }
 
@@ -41,11 +39,6 @@ public class ChiseledBookshelfHandler extends ContainerHandler {
             bookshelfBlockSlotOverride = -1;
             bookshelfBlockHandOverride = null;
         }
-    }
-
-    @Override
-    public boolean usesWorldStorage() {
-        return false;
     }
 
     @Override

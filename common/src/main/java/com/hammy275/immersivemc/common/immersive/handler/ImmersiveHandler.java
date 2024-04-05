@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,15 +15,15 @@ public interface ImmersiveHandler {
      * Creates inventory contents on the server to send to clients.
      * @param player Player being sent to.
      * @param pos Position of the block being sent about.
-     * @return A HandlerStorage to be sent over the network.
+     * @return A NetworkStorage to be sent over the network.
      */
-    HandlerStorage makeInventoryContents(ServerPlayer player, BlockPos pos);
+    NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos);
 
     /**
-     * @return The same type of HandlerStorage as made with makeInventoryContents(), but in an empty state to be
+     * @return The same type of NetworkStorage as made with makeInventoryContents(), but in an empty state to be
      * decoded into by the client.
      */
-    HandlerStorage getEmptyHandler();
+    NetworkStorage getEmptyNetworkStorage();
 
     /**
      * Swaps an item from a player's hand into this immersive (and/or vice-versa).
@@ -49,11 +49,6 @@ public interface ImmersiveHandler {
      * @param pos Position of block that is no longer dirty.
      */
     void clearDirtyForClientSync(ServerPlayer player, BlockPos pos);
-
-    /**
-     * @return Whether this immersive uses ImmersiveMC's World Storage system.
-     */
-    boolean usesWorldStorage();
 
     /**
      * @param pos Position to check.

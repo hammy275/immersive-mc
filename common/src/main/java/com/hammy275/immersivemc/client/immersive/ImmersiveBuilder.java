@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.storage.HandlerStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.Vec3;
 
@@ -31,12 +31,11 @@ public class ImmersiveBuilder implements Cloneable {
     int maxImmersives = -1;
     Function<BuiltImmersiveInfo, Boolean> extraRenderReady = (info) -> true;
     RightClickHandler rightClickHandler = (a, b, c, d) -> {};
-    boolean usesWorldStorage = false;
     int triggerHitboxControllerNum = 0;
     boolean vrOnly = false;
     List<Vec3i> airCheckPositionOffsets = new ArrayList<>();
     Class<?> extraInfoDataClazz = null;
-    BiConsumer<HandlerStorage, BuiltImmersiveInfo> extraStorageConsumer = null;
+    BiConsumer<NetworkStorage, BuiltImmersiveInfo> extraStorageConsumer = null;
     BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotActive = SLOT_ALWAYS_ACTIVE;
     Consumer<BuiltImmersiveInfo> onRemove = (info) -> {};
     boolean blockRightClickWhenGUIClickDisabled = true;
@@ -175,16 +174,6 @@ public class ImmersiveBuilder implements Cloneable {
     }
 
     /**
-     * Sets whether this immersive uses world storage.
-     * @param usesWorldStorage New state of using world storage (false by default).
-     * @return Builder object.
-     */
-    public ImmersiveBuilder setUsesWorldStorage(boolean usesWorldStorage) {
-        this.usesWorldStorage = usesWorldStorage;
-        return this;
-    }
-
-    /**
      * Sets the controller num that's used for checking for trigger hitboxes.
      * @param controllerNum Controller number.
      * @return Builder object.
@@ -233,12 +222,12 @@ public class ImmersiveBuilder implements Cloneable {
     }
 
     /**
-     * Sets a consumer that acts after an incoming HandlerStorage is parsed. For example, this is used
+     * Sets a consumer that acts after an incoming NetworkStorage is parsed. For example, this is used
      * for the anvil to retrieve the level amount and store it in extra data.
      * @param storageConsumer New storage consumer.
      * @return Builder object.
      */
-    public ImmersiveBuilder setExtraStorageConsumer(BiConsumer<HandlerStorage, BuiltImmersiveInfo> storageConsumer) {
+    public ImmersiveBuilder setExtraStorageConsumer(BiConsumer<NetworkStorage, BuiltImmersiveInfo> storageConsumer) {
         this.extraStorageConsumer = storageConsumer;
         return this;
     }
@@ -325,8 +314,6 @@ public class ImmersiveBuilder implements Cloneable {
     }
 
     public BuiltImmersive build() {
-        // Only allow extraStorageConsumer if we use world storage
-        assert this.extraStorageConsumer == null || this.usesWorldStorage;
         return new BuiltImmersive(this);
     }
 
