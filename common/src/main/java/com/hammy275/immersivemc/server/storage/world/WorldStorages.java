@@ -28,6 +28,17 @@ public class WorldStorages {
     }
 
     /**
+     * Gets the WorldStorage already present at the given location even if it doesn't match the present block.
+     * @param pos Position of block with a WorldStorage and/or associated with a handler.
+     * @param level Level the block is in.
+     * @return A WorldStorage instance for the given block position, or null if the block isn't associated with any
+     *         WorldStorageHandler instances or if there isn't a WorldStorage already there.
+     */
+    public static WorldStorage getWithoutVerification(BlockPos pos, ServerLevel level) {
+        return ImmersiveMCLevelStorage.getLevelStorage(level).getWithoutVerification(pos, level);
+    }
+
+    /**
      * Remove the WorldStorage at the given location.
      * @param pos Position of block potentially with a WorldStorage.
      * @param level Level the block is in.
