@@ -61,6 +61,11 @@ public class ImmersiveMCLevelStorage extends SavedData {
     }
 
     @Nullable
+    public WorldStorage getWithoutVerification(BlockPos pos, Level level) {
+        return storageMap.get(pos);
+    }
+
+    @Nullable
     public WorldStorage getOrCreate(BlockPos pos, Level level) {
         WorldStorage storage = get(pos, level);
         if (storage != null) {
