@@ -31,10 +31,6 @@ public class TrackedImmersiveData {
         return this.handler.isDirtyForClientSync(player, this.pos);
     }
 
-    public void didSync(ServerPlayer player) {
-        this.handler.clearDirtyForClientSync(player, this.pos);
-    }
-
     public FetchInventoryPacket getSyncPacket(ServerPlayer player) {
         return new FetchInventoryPacket(handler, handler.makeInventoryContents(player, pos), pos);
     }
