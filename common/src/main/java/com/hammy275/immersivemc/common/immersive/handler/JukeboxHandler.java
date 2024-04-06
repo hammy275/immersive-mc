@@ -48,11 +48,6 @@ public class JukeboxHandler implements ImmersiveHandler {
     }
 
     @Override
-    public void clearDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        // No-op. Jukebox doesn't have data to sync to the client.
-    }
-
-    @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
         return level.getBlockEntity(pos) instanceof JukeboxBlockEntity;
     }
