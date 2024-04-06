@@ -36,19 +36,13 @@ public interface ImmersiveHandler {
     void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode);
 
     /**
+     * Function to determine whether the block has changed its contents to sync to the client since its last sync.
+     * Dirtiness is addressed every tick, so for every tick, you should clear ALL flags used for dirtiness.
      * @param player Player to potentially send new data to.
      * @param pos Position of block to check.
      * @return Whether the given block has changed since it was last synced to the client
      */
     boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos);
-
-    /**
-     * When called, the dirtiness checked for in isDirtyForClientSync has been handled. In other words, this function
-     * should mark the immersive as not-dirty/no-longer-dirty if needed.
-     * @param player Player that no longer has dirty data.
-     * @param pos Position of block that is no longer dirty.
-     */
-    void clearDirtyForClientSync(ServerPlayer player, BlockPos pos);
 
     /**
      * @param pos Position to check.

@@ -8,6 +8,7 @@ import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
+import com.hammy275.immersivemc.server.storage.world.ImmersiveMCLevelStorage;
 import com.hammy275.immersivemc.server.tracker.ServerTrackerInit;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,7 +23,8 @@ public class ServerSubscriber {
             tracker.doTick(null);
         }
         TrackedImmersives.tick(server);
-        DirtyTracker.unmarkAllDirty();
+        DirtyTracker.unmarkAllDirty(); // Remove dirtiness for block entities
+        ImmersiveMCLevelStorage.unmarkAllDirty(server);
     }
 
     public static void onPlayerTick(Player playerIn) {

@@ -20,13 +20,6 @@ public abstract class ItemWorldStorageHandler implements WorldStorageHandler {
     }
 
     @Override
-    public void clearDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        if (WorldStorages.get(pos, player.serverLevel()) instanceof ItemStorage iws) {
-            iws.setNoLongerDirtyForClientSync();
-        }
-    }
-
-    @Override
     public void onStopTracking(ServerPlayer player, BlockPos pos) {
         if (WorldStorages.getWithoutVerification(pos, player.serverLevel()) instanceof ItemStorage iws) {
             if (isValidBlock(pos, player.level())) {

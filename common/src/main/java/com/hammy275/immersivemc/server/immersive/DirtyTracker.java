@@ -23,13 +23,6 @@ public class DirtyTracker {
         positions.add(pos);
     }
 
-    public static void unmarkDirty(Level level, BlockPos pos) {
-        if (dirtyPositions.containsKey(level.dimension())) {
-            Set<BlockPos> positions = dirtyPositions.get(level.dimension());
-            positions.remove(pos);
-        }
-    }
-
     public static void unmarkAllDirty() {
         // Only clear values, since we'll likely use the keys next tick.
         dirtyPositions.forEach((key, value) -> value.clear());

@@ -5,11 +5,13 @@ import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.handler.WorldStorageHandler;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
@@ -27,14 +29,15 @@ public class ImmersiveMCLevelStorage extends SavedData {
 
     private static final int LEVEL_STORAGE_VERSION = 2;
 
+    private static final String DATA_KEY = "immersivemc_data";
     protected Map<BlockPos, WorldStorage> storageMap = new HashMap<>();
 
     private static ImmersiveMCLevelStorage create() {
         return new ImmersiveMCLevelStorage();
     }
 
-    public static ImmersiveMCLevelStorage getLevelStorage(ServerLevel world) {
-        return world.getDataStorage().computeIfAbsent(ImmersiveMCLevelStorage::load, ImmersiveMCLevelStorage::create, "immersivemc_data");
+    public static ImmersiveMCLevelStorage getLevelStorage(ServerLevel level) {
+        return level.getDataStorage().computeIfAbsent(ImmersiveMCLevelStorage::load, ImmersiveMCLevelStorage::create, DATA_KEY);
     }
 
     @Nullable
@@ -98,6 +101,19 @@ public class ImmersiveMCLevelStorage extends SavedData {
 
         // Storage wasn't in-memory, and we couldn't make a new one. Return null.
         return null;
+    }
+
+    public static void unmarkAllDirty(MinecraftServer server) {
+        for (ServerLevel level : server.getAllLevels()) {
+            ImmersiveMCLevelStorage storage = level.getDataStorage().get(ImmersiveMCLevelStorage::load, DATA_KEY);
+            if (storage != null) {
+                storage.storageMap.forEach((pos, ws) -> {
+                    if (ws instanceof ItemStorage is) {
+                        is.setNoLongerDirtyForClientSync();
+                    }
+                });
+            }
+        }
     }
 
     public static ImmersiveMCLevelStorage load(CompoundTag nbt) {
