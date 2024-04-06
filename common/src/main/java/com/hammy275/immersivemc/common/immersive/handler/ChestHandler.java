@@ -53,15 +53,6 @@ public class ChestHandler extends ChestLikeHandler {
     }
 
     @Override
-    public void clearDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        super.clearDirtyForClientSync(player, pos);
-        ChestBlockEntity otherChest = Util.getOtherChest((ChestBlockEntity) player.level.getBlockEntity(pos));
-        if (otherChest != null) {
-            super.clearDirtyForClientSync(player, otherChest.getBlockPos());
-        }
-    }
-
-    @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         return blockEntity instanceof ChestBlockEntity || blockEntity instanceof EnderChestBlockEntity;
