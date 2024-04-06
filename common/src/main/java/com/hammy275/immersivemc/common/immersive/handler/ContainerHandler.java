@@ -11,8 +11,4 @@ public abstract class ContainerHandler implements ImmersiveHandler {
         return DirtyTracker.isDirty(player.level(), pos);
     }
 
-    @Override
-    public void clearDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        DirtyTracker.unmarkDirty(player.level(), pos);
-    }
 }
