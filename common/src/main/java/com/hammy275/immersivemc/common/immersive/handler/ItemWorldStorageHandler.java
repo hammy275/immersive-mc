@@ -28,7 +28,7 @@ public abstract class ItemWorldStorageHandler implements WorldStorageHandler {
 
     @Override
     public void onStopTracking(ServerPlayer player, BlockPos pos) {
-        if (WorldStorages.get(pos, player.serverLevel()) instanceof ItemStorage iws) {
+        if (WorldStorages.getWithoutVerification(pos, player.serverLevel()) instanceof ItemStorage iws) {
             if (isValidBlock(pos, player.level())) {
                 if (ActiveConfig.getConfigForPlayer(player).returnItems) { // Player left block range
                     iws.returnItems(player);
