@@ -62,7 +62,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
     protected void render(BeaconInfo info, PoseStack stack, boolean isInVR) {
         float itemSize = ClientConstants.itemScaleSizeBeacon / info.getItemTransitionCountdown();
 
-        renderItem(info.items[0], stack, info.getPosition(0), info.slotHovered == 0 ? itemSize * 1.25f : itemSize,
+        renderItem(info.items[0], stack, info.getPosition(0), slotHelpBoxIsSelected(info, 0) ? itemSize * 1.25f : itemSize,
                 info.lastPlayerDir.getOpposite(), null, info.getHitbox(0),
                 false, -1, info.light);
         for (int i = 0; i < info.triggerBoxes.length; i++) {
