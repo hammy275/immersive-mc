@@ -13,17 +13,9 @@ public abstract class AbstractImmersiveInfo {
     public boolean initCompleted = false;
     protected AABB[] inputHitboxes = null;
     public int light = AbstractImmersive.maxLight;
-    /*
-    This variable is used in ONLY two spots:
-        - By BackpackInfo to determine which hitbox is hovered over for trigger presses*
-        - By desktop users to determine which hitbox is moused over
-    Don't re-use this variable for other purposes unless you factor in the above! Mainly how that in VR,
-    this variable will ONLY be updated for BackpackInfo instances.
-
-    * - This was done because backpacks were implemented before the InfoTriggerHitboxes system.
-     */
     public int slotHovered = -1;
-    public int triggerHitboxSlotHovered = -1; // Same warnings as above
+    public int slotHovered2 = -1; // Only used in VR for secondary hand slot hovering.
+    public int triggerHitboxSlotHovered = -1;
 
     public AbstractImmersiveInfo(int ticksToExist) {
         this.ticksLeft = ticksToExist;
@@ -31,6 +23,9 @@ public abstract class AbstractImmersiveInfo {
 
     public abstract void setInputSlots();
 
+    public boolean slotHovered(int slot) {
+        return slot == slotHovered || slot == slotHovered2;
+    }
     /**
      * Gets all the slot IDs that represent inputs. Used for guiding.
      * @return An array of all hitboxes that represent inputs
