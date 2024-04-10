@@ -3,16 +3,8 @@ package com.hammy275.immersivemc.client.subscribe;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
-import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
-import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
-import com.hammy275.immersivemc.client.immersive.ImmersiveChest;
-import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
-import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
-import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
-import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
+import com.hammy275.immersivemc.client.immersive.*;
+import com.hammy275.immersivemc.client.immersive.info.*;
 import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
 import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
 import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
@@ -24,6 +16,7 @@ import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
 import net.blf02.vrapi.api.data.IVRData;
+import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -229,16 +222,33 @@ public class ClientLogicSubscriber {
                     info.remove();
                 }
                 if (info.hasHitboxes()) {
-                    Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
-                    Optional<Integer> closest = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
-                            info.getAllHitboxes());
-                    info.slotHovered = closest.orElse(-1);
-                    if (info.slotHovered == -1 && info instanceof InfoTriggerHitboxes tInfo) {
-                        closest = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
-                                tInfo.getTriggerHitboxes());
-                        info.triggerHitboxSlotHovered = closest.orElse(-1);
+                    if (VRPluginVerify.clientInVR()) {
+                        IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player);
+                        info.slotHovered = Util.getFirstIntersect(vrPlayer.getController0().position(),
+                                info.getAllHitboxes()).orElse(-1);
+                        info.slotHovered2 = Util.getFirstIntersect(vrPlayer.getController1().position(),
+                                info.getAllHitboxes()).orElse(-1);
+                        if (!(singleton instanceof BuiltImmersive)) {
+                            if (info instanceof InfoTriggerHitboxes tInfo) {
+                                info.triggerHitboxSlotHovered = Util.getFirstIntersect(vrPlayer.getController(tInfo.getVRControllerNum()).position(),
+                                        tInfo.getTriggerHitboxes()).orElse(-1);
+                            } else {
+                                info.triggerHitboxSlotHovered = -1;
+                            }
+                        }
                     } else {
-                        info.triggerHitboxSlotHovered = -1;
+                        Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
+                        info.slotHovered = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
+                                info.getAllHitboxes()).orElse(-1);
+                        info.slotHovered2 = -1;
+                        if (!(singleton instanceof BuiltImmersive)) {
+                            if (info.slotHovered == -1 && info instanceof InfoTriggerHitboxes tInfo) {
+                                info.triggerHitboxSlotHovered = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
+                                        tInfo.getTriggerHitboxes()).orElse(-1);
+                            } else {
+                                info.triggerHitboxSlotHovered = -1;
+                            }
+                        }
                     }
                 }
                 if (info.getTicksLeft() <= 0) {
@@ -343,7 +353,7 @@ public class ClientLogicSubscriber {
         // Just before returning false, see if we're in a hitbox, so we can do a full stack place and return true
         for (AbstractImmersive<?> immersive : Immersives.IMMERSIVES) {
             for (AbstractImmersiveInfo info : immersive.getTrackedObjects()) {
-                if (info.slotHovered != -1) {
+                if (info.slotHovered != -1 || info.slotHovered2 != -1) {
                     return true;
                 }
             }
