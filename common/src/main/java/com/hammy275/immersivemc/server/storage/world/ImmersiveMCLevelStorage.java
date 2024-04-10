@@ -93,7 +93,6 @@ public class ImmersiveMCLevelStorage extends SavedData {
         if (storage instanceof AnvilStorage as && ImmersiveHandlers.smithingTableHandler.isValidBlock(pos, level)) {
             SmithingTableStorage sts = new SmithingTableStorage();
             sts.copyFromOld(as);
-            sts.convertFrom119();
             storageMap.put(pos, sts);
             this.setDirty();
             return sts;
@@ -196,7 +195,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
                     ResourceLocation id;
                     if (numItems == 10) {
                         id = new ResourceLocation(ImmersiveMC.MOD_ID, "crafting_table");
-                    } else if (numItems == 4 || (numItems == 3 && oldDataType.equals("basic_item_store"))) {
+                    } else if (numItems == 3 && oldDataType.equals("basic_item_store")) {
                         id = new ResourceLocation(ImmersiveMC.MOD_ID, "smithing_table");
                     } else if (numItems == 3) {
                         id = new ResourceLocation(ImmersiveMC.MOD_ID, "anvil");
