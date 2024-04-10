@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 
 public class ETableWorldStorage extends ItemStorage {
     public ETableWorldStorage() {
-        super(1, 1);
+        super(1, 0);
     }
 
     @Override
