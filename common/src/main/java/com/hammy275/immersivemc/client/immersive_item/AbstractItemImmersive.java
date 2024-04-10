@@ -54,8 +54,10 @@ public abstract class AbstractItemImmersive<I extends AbstractItemInfo> {
         for (I info : infos) {
             ItemStack currentHandItem = info.handIn == InteractionHand.MAIN_HAND ? mainStack : offStack;
             ItemStack currentOtherHandItem = info.handIn == InteractionHand.MAIN_HAND ? offStack : mainStack;
-            if (!Util.stacksEqualBesidesCount(info.item, currentHandItem)) {
-                if (Util.stacksEqualBesidesCount(info.item, currentOtherHandItem)) {
+            // Need isEmpty() checks on the below two lines, as dropping an item results in us holding 0 of that item,
+            // thus causing the stacks to be equal (since they're both empty)
+            if (!Util.stacksEqualBesidesCount(info.item, currentHandItem) || currentHandItem.isEmpty()) {
+                if (Util.stacksEqualBesidesCount(info.item, currentOtherHandItem) && !currentOtherHandItem.isEmpty()) {
                     // Swap hands
                     info.handIn = info.handIn == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
                 } else {
