@@ -167,7 +167,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     public void onRemove(I info) {}
 
     protected boolean slotHelpBoxIsSelected(I info, int slotNum) {
-        return info.slotHovered == slotNum;
+        return info.slotHovered(slotNum);
     }
 
     public abstract void processStorageFromNetwork(AbstractImmersiveInfo info, NetworkStorage storage);

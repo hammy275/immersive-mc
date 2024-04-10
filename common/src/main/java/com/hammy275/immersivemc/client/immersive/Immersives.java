@@ -133,7 +133,7 @@ public class Immersives {
             }, ClientConstants.itemScaleSizeETable).holdsItems(true).textSupplier((info) -> {
                 EnchantingData.ETableData data = ((EnchantingData) info.getExtraData()).weakData;
                 List<Pair<Component, Vec3>> texts = new ArrayList<>();
-                if (info.slotHovered != 1) {
+                if (!info.slotHovered(1)) {
                     return null;
                 }
                 if (data.isPresent()) {
@@ -150,7 +150,7 @@ public class Immersives {
             }, ClientConstants.itemScaleSizeETable).holdsItems(true).textSupplier((info) -> {
                 EnchantingData.ETableData data = ((EnchantingData) info.getExtraData()).midData;
                 List<Pair<Component, Vec3>> texts = new ArrayList<>();
-                if (info.slotHovered != 2) {
+                if (!info.slotHovered(2)) {
                     return null;
                 }
                 if (data.isPresent()) {
@@ -167,7 +167,7 @@ public class Immersives {
             }, ClientConstants.itemScaleSizeETable).holdsItems(true).textSupplier((info) -> {
                 EnchantingData.ETableData data = ((EnchantingData) info.getExtraData()).strongData;
                 List<Pair<Component, Vec3>> texts = new ArrayList<>();
-                if (info.slotHovered != 3) {
+                if (!info.slotHovered(3)) {
                     return null;
                 }
                 if (data.isPresent()) {
