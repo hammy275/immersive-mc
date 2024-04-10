@@ -15,7 +15,6 @@ import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.BackpackInteractPacket;
 import com.hammy275.immersivemc.common.network.packet.FetchBackpackStoragePacket;
 import com.hammy275.immersivemc.common.network.packet.InventorySwapPacket;
-import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -41,7 +40,6 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * This uses a hack when rendering where we re-calculate all the positions and hitboxes
@@ -81,13 +79,6 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
                 VRPlugin.API.getVRPlayer(Minecraft.getInstance().player) :
                 VRPlugin.API.getRenderVRPlayer();
         calculatePositions(info, vrPlayer);
-        Optional<Integer> hitboxIntersect = Util.getFirstIntersect(vrPlayer.getController0().position(),
-                info.getAllHitboxes());
-        if (hitboxIntersect.isPresent()) {
-            info.slotHovered = hitboxIntersect.get();
-        } else {
-            info.slotHovered = -1;
-        }
     }
 
     @Override
