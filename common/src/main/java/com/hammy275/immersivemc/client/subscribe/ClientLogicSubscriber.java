@@ -56,6 +56,7 @@ public class ClientLogicSubscriber {
         if (Minecraft.getInstance().level == null) return;
         Player player = Minecraft.getInstance().player;
         if (player == null) return;
+        minecraft.getProfiler().push(ImmersiveMC.MOD_ID);
 
         // Clear all immersives if switching out of VR and we disable ImmersiveMC outside of VR
         boolean currentVRState = VRPluginVerify.clientInVR();
@@ -131,6 +132,8 @@ public class ClientLogicSubscriber {
 
         possiblyTrack(pos, state, tileEntity, Minecraft.getInstance().level);
 
+        // Pop profiler push from above. Not using a popPush() so we're part of tick in the profiler.
+        minecraft.getProfiler().pop();
     }
 
     public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
