@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -21,9 +22,7 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
 
@@ -49,7 +48,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         return
                 shouldTrack(info.getBlockPosition()) && // Check that block is still there
                         info.readyToRender() &&
-                        airCheck(info) &&
+                        info.airCheckPassed &&
                         builder.extraRenderReady.apply(info);
     }
 
@@ -90,8 +89,9 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
                     hitbox.forceNull();
                 }
             }
-
         }
+
+        info.airCheckPassed = airCheck(info);
     }
 
     @Override
@@ -225,13 +225,24 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     }
 
     protected boolean airCheck(BuiltImmersiveInfo info) {
-        List<BlockPos> positions = new ArrayList<>();
+        Collection<BlockPos> positions;
         if (builder.airCheckPositionOffsets.isEmpty()) {
-            if (info.immersiveDir == null) {
-                return true;
-            }
-            positions.add(info.getBlockPosition().relative(info.immersiveDir));
+            positions = new HashSet<>();
+            Arrays.stream(info.hitboxes).forEach((hitbox) -> {
+                if (hitbox.hasAABB()) {
+                    positions.addAll(Util.allPositionsWithAABB(hitbox.getAABB()));
+                }
+            });
+            BlockPos immersivePos = info.getBlockPosition();
+            positions.remove(immersivePos);
+            // Remove checking for air all positions >1 block out on any individual axis. This is done so things
+            // like the Enchanting Table Immersive's animations, which barely clip into the next block on the Y-axis,
+            // aren't checked for the air check.
+            positions.removeIf((pos) -> (Math.abs(pos.getX() - immersivePos.getX()) > 1 ||
+                    Math.abs(pos.getY() - immersivePos.getY()) > 1 ||
+                    Math.abs(pos.getZ() - immersivePos.getZ()) > 1));
         } else {
+            positions = new ArrayList<>();
             for (Vec3i offset : builder.airCheckPositionOffsets) {
                 positions.add(info.getBlockPosition().offset(offset));
             }
