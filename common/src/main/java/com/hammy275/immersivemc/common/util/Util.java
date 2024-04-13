@@ -19,6 +19,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class Util {
@@ -214,6 +216,24 @@ public class Util {
     public static ResourceLocation getResourceLocation(CompoundTag nbt, String key) {
         CompoundTag subTag = nbt.getCompound(key);
         return new ResourceLocation(subTag.getString("namespace"), subTag.getString("path"));
+    }
+
+    public static List<BlockPos> allPositionsWithAABB(AABB box) {
+        List<BlockPos> positions = new ArrayList<>();
+        int minX = (int) Math.floor(box.minX);
+        int minY = (int) Math.floor(box.minY);
+        int minZ = (int) Math.floor(box.minZ);
+        int maxX = (int) Math.floor(box.maxX);
+        int maxY = (int) Math.floor(box.maxY);
+        int maxZ = (int) Math.floor(box.maxZ);
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    positions.add(new BlockPos(x, y, z));
+                }
+            }
+        }
+        return positions;
     }
 
     public static class ItemStackMergeResult {
