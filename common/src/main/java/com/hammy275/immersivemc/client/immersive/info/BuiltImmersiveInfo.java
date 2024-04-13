@@ -7,10 +7,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Base class for infos that Immersives constructed with the builder can use.
@@ -29,6 +26,7 @@ public class BuiltImmersiveInfo extends AbstractImmersiveInfo implements InfoTri
     private int triggerControllerNum;
     public final Object extraData;
     public Direction immersiveDir = null; // Stores the direction the immersive is facing (towards the player, for example)
+    public boolean airCheckPassed = false;
 
     public BuiltImmersiveInfo(List<HitboxInfo> hitboxes, BlockPos pos, int ticksToExist,
                               int triggerControllerNum, Class<?> extraDataClazz) {
