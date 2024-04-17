@@ -368,21 +368,19 @@ public class ClientLogicSubscriber {
     public static int handleRightClick(Player player) {
         if (Minecraft.getInstance().gameMode == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE.disableOutsideVR)) return 0;
         boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
-        double dist = Minecraft.getInstance().gameMode.getPickRange();
-        Vec3 start = player.getEyePosition(1);
-        Vec3 viewVec = player.getViewVector(1);
-        Vec3 end = player.getEyePosition(1).add(viewVec.x * dist, viewVec.y * dist,
-                viewVec.z * dist);
-
         HitResult looking = Minecraft.getInstance().hitResult;
+
         if (ActiveConfig.active().crouchBypassImmersion &&
                 looking != null && looking.getType() == HitResult.Type.BLOCK &&
                 Minecraft.getInstance().player.isSecondaryUseActive()) {
             if (Util.isHittingImmersive((BlockHitResult) looking, Minecraft.getInstance().level)) {
                 return -1;
             }
-
         }
+
+        Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(Minecraft.getInstance().player);
+        Vec3 start = startAndEnd.getA();
+        Vec3 end = startAndEnd.getB();
 
         if (!inVR || ActiveConfig.active().rightClickInVR) { // Don't handle right clicks for VR players, they have hands (unless they config to!)!
             for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
