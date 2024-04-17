@@ -12,6 +12,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class ClientUtil {
@@ -30,17 +32,19 @@ public class ClientUtil {
     public static Tuple<Vec3, Vec3> getStartAndEndOfLookTrace(Player player) {
         double dist = Minecraft.getInstance().gameMode.getPickRange();
         Vec3 start;
+        Vec3 viewVec;
         Vec3 end;
         if (VRPluginVerify.clientInVR()) {
             start = VRPlugin.API.getVRPlayer(player).getController0().position();
-            Vec3 viewVec = VRPlugin.API.getVRPlayer(player).getController0().getLookAngle();
-            end = start.add(viewVec.x * dist, viewVec.y * dist, viewVec.z * dist);
+            viewVec = VRPlugin.API.getVRPlayer(player).getController0().getLookAngle();
         } else {
             start = player.getEyePosition(1);
-            Vec3 viewVec = player.getViewVector(1);
-            end = player.getEyePosition(1).add(viewVec.x * dist, viewVec.y * dist,
-                    viewVec.z * dist);
+            viewVec = player.getViewVector(1);
         }
+        if (Minecraft.getInstance().hitResult instanceof BlockHitResult bhr && bhr.getType() == HitResult.Type.BLOCK) {
+            dist = bhr.getLocation().distanceTo(start);
+        }
+        end = start.add(viewVec.x * dist, viewVec.y * dist, viewVec.z * dist);
         return new Tuple<>(start, end);
     }
 
