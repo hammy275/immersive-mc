@@ -115,7 +115,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     @Override
     protected void render(RepeaterInfo info, PoseStack stack, boolean isInVR) {
         for (int i = 0; i <= 3; i++) {
-            renderHitbox(stack, info.getHitbox(i), info.getPosition(i));
+            renderHitbox(stack, info.getHitbox(i));
         }
     }
 

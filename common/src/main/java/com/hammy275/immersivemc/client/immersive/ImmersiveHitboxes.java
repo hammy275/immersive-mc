@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.common.obb.BoundingBox;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
@@ -116,15 +117,15 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
 
     @Override
     protected void render(ImmersiveHitboxesInfo info, PoseStack stack, boolean isInVR) {
-        AABB backpackHitbox = info.getHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX);
+        BoundingBox backpackHitbox = info.getHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX);
         if (backpackHitbox != null) {
-            renderHitbox(stack, backpackHitbox, backpackHitbox.getCenter());
+            renderHitbox(stack, backpackHitbox);
             if (VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(Minecraft.getInstance().player)
             && Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
                 IVRData c1 = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1();
                 if (backpackHitbox.contains(c1.position())) {
                     renderHitbox(stack, AABB.ofSize(c1.position(), 0.25, 0.25, 0.25),
-                            c1.position(), true,
+                            true,
                             0f, 1f, 0f);
                 }
             }
