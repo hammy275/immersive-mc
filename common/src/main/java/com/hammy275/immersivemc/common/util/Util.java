@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.common.util;
 
 import com.hammy275.immersivemc.common.immersive.CheckerFunction;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
+import com.hammy275.immersivemc.common.obb.BoundingBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -68,11 +69,19 @@ public class Util {
                 && Math.abs(item.getDeltaMovement().x) <= 0.01 && Math.abs(item.getDeltaMovement().z) <= 0.01;
     }
 
-    public static Optional<Integer> rayTraceClosest(Vec3 rayStart, Vec3 rayEnd, AABB... targets) {
+    /**
+     * Find the closest BoundingBox that is ray traced through the ray. Note that this uses the underlying AABB
+     * for OBBs, as this method is currently only used on desktop, where OBBs aren't needed.
+     * @param rayStart Start of the ray.
+     * @param rayEnd End of the ray.
+     * @param targets List of targets.
+     * @return Target in targets that intersects the ray and is closer to rayStart than all other intersecting targets.
+     */
+    public static Optional<Integer> rayTraceClosest(Vec3 rayStart, Vec3 rayEnd, BoundingBox... targets) {
         double dist = Double.MAX_VALUE;
         Integer winner = null;
         int i = 0;
-        for (AABB target : targets) {
+        for (BoundingBox target : targets) {
             // This is needed since, with chest immersives for example, we don't know
             // if we have a single chest or double chest. As a result, we can have null targets.
             if (target != null) {
@@ -81,7 +90,7 @@ public class Util {
                     return Optional.of(i);
                 }
                 // Gets the "hit" for our ray.
-                Optional<Vec3> closestHitOpt = target.clip(rayStart, rayEnd);
+                Optional<Vec3> closestHitOpt = (target.isAABB() ? target.asAABB() : target.asOBB().getUnderlyingAABB()).clip(rayStart, rayEnd);
                 double distTemp = closestHitOpt.isPresent() ? closestHitOpt.get().distanceTo(rayStart) : -1;
                 if (closestHitOpt.isPresent() && distTemp < dist) {
                     winner = i;
@@ -93,9 +102,9 @@ public class Util {
         return Optional.ofNullable(winner);
     }
 
-    public static Optional<Integer> getFirstIntersect(Vec3 pos, AABB... targets) {
+    public static Optional<Integer> getFirstIntersect(Vec3 pos, BoundingBox... targets) {
         int i = 0;
-        for (AABB target : targets) {
+        for (BoundingBox target : targets) {
             if (target != null && target.contains(pos)) {
                 return Optional.of(i);
             }
@@ -104,7 +113,7 @@ public class Util {
         return Optional.empty();
     }
 
-    public static Optional<Integer> getClosestIntersect(Vec3 pos, AABB[] targets, Vec3[] positions) {
+    public static Optional<Integer> getClosestIntersect(Vec3 pos, BoundingBox[] targets, Vec3[] positions) {
         if (targets.length != positions.length) throw new IllegalArgumentException("Targets and positions must be same length!");
         int res = -1;
         double distanceToBeat = Double.MAX_VALUE;

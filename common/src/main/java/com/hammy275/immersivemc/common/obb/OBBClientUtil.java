@@ -20,14 +20,19 @@ public class OBBClientUtil {
             stack.translate(-renderInfo.getPosition().x + obb.center.x,
                     -renderInfo.getPosition().y + obb.center.y,
                     -renderInfo.getPosition().z + obb.center.z);
-            stack.mulPose(Axis.ZN.rotation((float) obb.roll));
-            stack.mulPose(Axis.XN.rotation((float) obb.pitch));
-            stack.mulPose(Axis.YN.rotation((float) obb.yaw));
+            rotateStackForOBB(stack, obb);
             MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
             LevelRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
                     obb.aabb.move(obb.center.scale(-1)),
                     red, green, blue, alpha);
             stack.popPose();
         }
+    }
+
+    public static void rotateStackForOBB(PoseStack stack, OBB obb) {
+        // Note: Roll likely doesn't currently work lol
+        stack.mulPose(Axis.ZN.rotation((float) obb.roll));
+        stack.mulPose(Axis.YN.rotation((float) obb.yaw));
+        stack.mulPose(Axis.XN.rotation((float) obb.pitch));
     }
 }

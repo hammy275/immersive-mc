@@ -1,8 +1,8 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.common.obb.BoundingBox;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public abstract class AbstractImmersiveInfo {
@@ -11,7 +11,7 @@ public abstract class AbstractImmersiveInfo {
     protected int itemTransitionCountdown = 10; // Used for transitions for the items
     public int ticksActive = 0;
     public boolean initCompleted = false;
-    protected AABB[] inputHitboxes = null;
+    protected BoundingBox[] inputHitboxes = null;
     public int light = AbstractImmersive.maxLight;
     public int slotHovered = -1;
     public int slotHovered2 = -1; // Only used in VR for secondary hand slot hovering.
@@ -28,9 +28,10 @@ public abstract class AbstractImmersiveInfo {
     }
     /**
      * Gets all the slot IDs that represent inputs. Used for guiding.
+     *
      * @return An array of all hitboxes that represent inputs
      */
-    public AABB[] getInputSlots() {
+    public BoundingBox[] getInputSlots() {
         return this.inputHitboxes;
     }
 
@@ -46,11 +47,11 @@ public abstract class AbstractImmersiveInfo {
         this.ticksLeft = value;
     }
 
-    public abstract AABB getHitbox(int slot);
+    public abstract BoundingBox getHitbox(int slot);
 
-    public abstract AABB[] getAllHitboxes();
+    public abstract BoundingBox[] getAllHitboxes();
 
-    public abstract void setHitbox(int slot, AABB hitbox);
+    public abstract void setHitbox(int slot, BoundingBox hitbox);
 
     public abstract boolean hasHitboxes();
 

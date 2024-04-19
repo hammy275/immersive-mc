@@ -1,9 +1,9 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
+import com.hammy275.immersivemc.common.obb.BoundingBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class ImmersiveHitboxesInfo extends AbstractImmersiveInfo implements InfoTriggerHitboxes {
@@ -12,11 +12,11 @@ public class ImmersiveHitboxesInfo extends AbstractImmersiveInfo implements Info
     // index numbers. Have the actual immersive handle both behaviors.
     public static final int BACKPACK_BACK_INDEX = 0;
 
-    private AABB backpackBackHitbox = null;
+    private BoundingBox backpackBackHitbox = null;
 
     public ImmersiveHitboxesInfo() {
         super(ClientConstants.ticksToRenderHitboxesImmersive);
-        this.inputHitboxes = new AABB[0];
+        this.inputHitboxes = new BoundingBox[0];
     }
 
     @Override
@@ -25,7 +25,7 @@ public class ImmersiveHitboxesInfo extends AbstractImmersiveInfo implements Info
     }
 
     @Override
-    public AABB getHitbox(int slot) {
+    public BoundingBox getHitbox(int slot) {
         if (slot == BACKPACK_BACK_INDEX) {
             return backpackBackHitbox;
         }
@@ -34,12 +34,12 @@ public class ImmersiveHitboxesInfo extends AbstractImmersiveInfo implements Info
     }
 
     @Override
-    public AABB[] getAllHitboxes() {
-        return new AABB[]{backpackBackHitbox};
+    public BoundingBox[] getAllHitboxes() {
+        return new BoundingBox[]{backpackBackHitbox};
     }
 
     @Override
-    public void setHitbox(int slot, AABB hitbox) {
+    public void setHitbox(int slot, BoundingBox hitbox) {
         if (slot == BACKPACK_BACK_INDEX) {
             this.backpackBackHitbox = hitbox;
         }
@@ -52,15 +52,15 @@ public class ImmersiveHitboxesInfo extends AbstractImmersiveInfo implements Info
 
     @Override
     public Vec3 getPosition(int slot) {
-        return backpackBackHitbox.getCenter();
+        return backpackBackHitbox.asAABB().getCenter();
     }
 
     @Override
     public Vec3[] getAllPositions() {
-        AABB[] hitboxes = getAllHitboxes();
+        BoundingBox[] hitboxes = getAllHitboxes();
         Vec3[] positions = new Vec3[hitboxes.length];
         for (int i = 0; i < hitboxes.length; i++) {
-            positions[i] = hitboxes[i].getCenter();
+            positions[i] = hitboxes[i].asAABB().getCenter();
         }
         return positions;
     }
@@ -86,12 +86,12 @@ public class ImmersiveHitboxesInfo extends AbstractImmersiveInfo implements Info
     }
 
     @Override
-    public AABB getTriggerHitbox(int hitboxNum) {
+    public BoundingBox getTriggerHitbox(int hitboxNum) {
         return getHitbox(hitboxNum);
     }
 
     @Override
-    public AABB[] getTriggerHitboxes() {
+    public BoundingBox[] getTriggerHitboxes() {
         return getAllHitboxes();
     }
 

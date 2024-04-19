@@ -12,7 +12,7 @@ import org.joml.Quaternionf;
  * Internally, the OBB is an AABB, but rotated by some amount on the X, Y, and Z axis. All rotations are in
  * radians.
  */
-public class OBB {
+public class OBB implements BoundingBox {
 
     final AABB aabb;
     final Vec3 center;
@@ -70,12 +70,21 @@ public class OBB {
      * @param point Point to check.
      * @return Whether the point is in this OBB or not.
      */
-    public boolean containsPoint(Vec3 point) {
+    @Override
+    public boolean contains(Vec3 point) {
         Vec3 centerRay = point.subtract(this.center);
 
         return Math.abs(centerRay.dot(xLine) * 2) <= (aabb.maxX - aabb.minX) &&
                 Math.abs(centerRay.dot(yLine) * 2) <= (aabb.maxY - aabb.minY) &&
                 Math.abs(centerRay.dot(zLine) * 2) <= (aabb.maxZ - aabb.minZ);
+    }
+
+    /**
+     * OBBs are rotated AABBs internally. This function retrieves that internal AABB.
+     * @return Internal AABB
+     */
+    public AABB getUnderlyingAABB() {
+        return this.aabb;
     }
 
     public OBB translate(Vec3 translation) {
@@ -88,5 +97,15 @@ public class OBB {
 
     public OBB translate(double x, double y, double z) {
         return new OBB(this.aabb.move(x, y, z));
+    }
+
+    @Override
+    public OBB asOBB() {
+        return this;
+    }
+
+    @Override
+    public AABB asAABB() {
+        throw new RuntimeException("Cannot get AABB as OBB!");
     }
 }
