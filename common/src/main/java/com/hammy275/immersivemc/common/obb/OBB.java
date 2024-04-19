@@ -87,6 +87,13 @@ public class OBB implements BoundingBox {
         return this.aabb;
     }
 
+    /**
+     * @return The center of this OBB
+     */
+    public Vec3 getCenter() {
+        return this.center;
+    }
+
     public OBB translate(Vec3 translation) {
         return this.translate(translation.x, translation.y, translation.z);
     }
