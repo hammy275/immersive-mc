@@ -5,6 +5,8 @@ import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
 import com.hammy275.immersivemc.client.workaround.ClickHandlerScreen;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.obb.OBB;
+import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Axis;
@@ -26,6 +28,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
@@ -51,8 +54,6 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     public static final double pageHalfHeight = scaleSize / 4d;
     public static final float textStackScaleSize = -scaleSize * 0.0025f;
     public static final double textUpAmount = 0.1875 * (scaleSize / 2f);
-    public static final double pageTurnStartDistanceSqr = (pageHalfHeight * 1.1) * (pageHalfHeight * 1.1);
-    public static final double pageDontStartTurnDistanceSqr = 2.2 * 2.2 * singlePageWidth * singlePageWidth;
     public static final double textInteractDistanceSqr = (textUpAmount * 1.2) * (textUpAmount * 1.2);
 
     // Helpful constants
@@ -100,6 +101,14 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         if (info.pageChangeState == WrittenBookInfo.PageChangeState.NONE) {
             renderPage(stack, hand, info.left, true);
             renderPage(stack, hand, info.right, false);
+        }
+
+        if (info.pageChangeState == WrittenBookInfo.PageChangeState.NONE) {
+            for (int i = 0; i <= 1; i++) {
+                OBBClientUtil.renderOBB(stack, info.pageTurnBoxes[i], false, 1f, 1f, 1f, 1f);
+            }
+        } else if (!info.pageChangeState.isAnim) {
+            OBBClientUtil.renderOBB(stack, info.pageTurnBoxes[2], false, 1f, 1f, 1f, 1f);
         }
     }
 
@@ -152,61 +161,47 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         Vec3 right = getLeftRight(hand, false);
         Vec3 away = getAway(hand);
 
-        info.distancePoints[0] = hand.position().add(left.scale(singlePageWidth * 1.1)).add(away.scale(textUpAmount));
-        info.distancePoints[1] = hand.position().add(right.scale(singlePageWidth * 1.1)).add(away.scale(textUpAmount));
-        info.distancePoints[2] = hand.position().add(away.scale(textUpAmount));
-        for (int i = 0; i <= 2; i++) {
-            info.distancePoints[i + 3] = info.distancePoints[i].add(away.scale(singlePageWidth));
-        }
+        info.positions[2] = hand.position().add(away.scale(textUpAmount)); // Center
+        info.positions[0] = info.positions[2].add(left.scale(singlePageWidth)); // Left edge
+        info.positions[1] = info.positions[2].add(right.scale(singlePageWidth)); // Right edge
+        Vec3 upCenter = info.positions[2].add(away.scale(singlePageWidth * 0.5)); // Used for "continue page turning" boxes.
+
+        double pitch = Math.toRadians(hand.getPitch());
+        double yaw = Math.toRadians(hand.getYaw());
+
+        // Boxes to start a page turn are a box on the page edge to generally capture the hand
+        info.pageTurnBoxes[0] = new OBB(AABB.ofSize(info.positions[0], 0.2, 0.2, pageHalfHeight * 2),
+                pitch, yaw, 0);
+        info.pageTurnBoxes[1] = new OBB(AABB.ofSize(info.positions[1], 0.2, 0.2, pageHalfHeight * 2),
+                pitch, yaw, 0);
+        // Box to continue a page turn
+        info.pageTurnBoxes[2] = new OBB(AABB.ofSize(upCenter, singlePageWidth * 3, singlePageWidth * 2, pageHalfHeight * 2.25),
+                pitch, yaw, 0);
 
         if (info.pageChangeState == WrittenBookInfo.PageChangeState.NONE) {
-            if (possiblyBeginPageTurn(other.position(), info.distancePoints[0], info.distancePoints[1]) && !info.onFirstPage()) {
+            if (possiblyBeginPageTurn(other.position(), info.pageTurnBoxes[0]) && !info.onFirstPage()) {
                 info.pageChangeState = WrittenBookInfo.PageChangeState.LEFT_TO_RIGHT;
-            } else if (possiblyBeginPageTurn(other.position(), info.distancePoints[1], info.distancePoints[0]) && !info.onLastPage()) {
+            } else if (possiblyBeginPageTurn(other.position(), info.pageTurnBoxes[1]) && !info.onLastPage()) {
                 info.pageChangeState = WrittenBookInfo.PageChangeState.RIGHT_TO_LEFT;
             }
         } else if (!info.pageChangeState.isAnim) {
-            // Make sure we're nearby at least one point
-            double smallestDistanceSqr = Double.POSITIVE_INFINITY;
-            for (Vec3 pos : info.distancePoints) {
-                smallestDistanceSqr = Math.min(pos.distanceToSqr(other.position()), smallestDistanceSqr);
-            }
-            if (smallestDistanceSqr > pageTurnStartDistanceSqr) {
-                resetTurnState(info);
-            }
-
-            // Make sure we didn't go off the page in the opposite direction of where we're turning
-            // Technically, these evaluate to the same numbers, so could reduce this down or calculate the distance
-            // between the two points once
-            if (info.pageChangeState == WrittenBookInfo.PageChangeState.LEFT_TO_RIGHT) {
-                if (shouldCancelByGoingOffPage(other.position(), info.distancePoints[1], info.distancePoints[3])) {
-                    resetTurnState(info);
-                }
-            } else if (info.pageChangeState == WrittenBookInfo.PageChangeState.RIGHT_TO_LEFT) {
-                if (shouldCancelByGoingOffPage(other.position(), info.distancePoints[0], info.distancePoints[4])) {
-                    resetTurnState(info);
-                }
-            }
-
-            // Manual page turning
-            if (info.pageChangeState == WrittenBookInfo.PageChangeState.LEFT_TO_RIGHT) {
-                double toLeftDist = other.position().distanceTo(info.distancePoints[0]);
-                double toRightDist = other.position().distanceTo(info.distancePoints[1]);
-                if (toRightDist < toLeftDist) {
+            if (info.pageTurnBoxes[2].contains(other.position())) {
+                boolean doingLToR = info.pageChangeState == WrittenBookInfo.PageChangeState.LEFT_TO_RIGHT;
+                double distToLeft = other.position().distanceTo(info.positions[0]);
+                double distToRight = other.position().distanceTo(info.positions[1]);
+                if (doingLToR && distToRight < distToLeft) {
                     info.pageChangeState = WrittenBookInfo.PageChangeState.LEFT_TO_RIGHT_ANIM;
                     info.lastPage();
-                } else {
-                    info.leftPageTurn = (float) (toLeftDist / (toLeftDist + toRightDist));
-                }
-            } else if (info.pageChangeState == WrittenBookInfo.PageChangeState.RIGHT_TO_LEFT) {
-                double toLeftDist = other.position().distanceTo(info.distancePoints[0]);
-                double toRightDist = other.position().distanceTo(info.distancePoints[1]);
-                if (toLeftDist < toRightDist) {
+                } else if (!doingLToR && distToLeft < distToRight) {
                     info.pageChangeState = WrittenBookInfo.PageChangeState.RIGHT_TO_LEFT_ANIM;
                     info.nextPage();
+                } else if (doingLToR) {
+                    info.leftPageTurn = (float) (distToLeft / (distToLeft + distToRight));
                 } else {
-                    info.rightPageTurn = 1f - ((float) (toRightDist / (toLeftDist + toRightDist)));
+                    info.rightPageTurn = 1f - ((float) (distToRight / (distToLeft + distToRight)));
                 }
+            } else {
+                resetTurnState(info);
             }
         }
 
@@ -387,14 +382,8 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         return new Vec3(awayFromBookF.x(), awayFromBookF.y(), awayFromBookF.z());
     }
 
-    public boolean possiblyBeginPageTurn(Vec3 handPos, Vec3 startPos, Vec3 oppositePos) {
-        return handPos.distanceToSqr(startPos) < pageTurnStartDistanceSqr &&
-        handPos.distanceToSqr(oppositePos) >= pageDontStartTurnDistanceSqr;
-    }
-
-    public boolean shouldCancelByGoingOffPage(Vec3 handPos, Vec3 oppositePos, Vec3 startAbovePos) {
-        double oppositeHandDistanceSqr = handPos.distanceToSqr(oppositePos);
-        return oppositeHandDistanceSqr > oppositePos.distanceToSqr(startAbovePos);
+    public boolean possiblyBeginPageTurn(Vec3 handPos, OBB startBox) {
+        return startBox.contains(handPos);
     }
 
     private void resetTurnState(WrittenBookInfo info) {

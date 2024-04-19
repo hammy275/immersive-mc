@@ -258,7 +258,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
 
         for (int i = 0; i <= 1; i++) {
             if (info.openCloseHitboxes[i] != null && info.openClosePositions[i] != null) {
-                renderHitbox(stack, info.openCloseHitboxes[i], info.openClosePositions[i]);
+                renderHitbox(stack, info.openCloseHitboxes[i]);
             }
         }
     }
