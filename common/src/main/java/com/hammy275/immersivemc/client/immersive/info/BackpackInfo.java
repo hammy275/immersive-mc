@@ -2,10 +2,10 @@ package com.hammy275.immersivemc.client.immersive.info;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.mojang.math.Vector3f;
+import com.hammy275.immersivemc.common.obb.BoundingBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Arrays;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 public class BackpackInfo extends AbstractImmersiveInfo {
 
     protected final Vec3[] positions = new Vec3[32];
-    protected final AABB[] hitboxes = new AABB[32];
+    protected final BoundingBox[] hitboxes = new BoundingBox[32];
     // 0-26: Inventory
     // 27-31: Input crafting
     // 32: Output crafting
@@ -43,17 +43,17 @@ public class BackpackInfo extends AbstractImmersiveInfo {
     }
 
     @Override
-    public AABB getHitbox(int slot) {
+    public BoundingBox getHitbox(int slot) {
         return hitboxes[slot];
     }
 
     @Override
-    public AABB[] getAllHitboxes() {
+    public BoundingBox[] getAllHitboxes() {
         return hitboxes;
     }
 
     @Override
-    public void setHitbox(int slot, AABB hitbox) {
+    public void setHitbox(int slot, BoundingBox hitbox) {
         hitboxes[slot] = hitbox;
     }
 

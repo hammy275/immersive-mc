@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
+import com.hammy275.immersivemc.common.obb.BoundingBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
@@ -46,12 +47,12 @@ public class BeaconInfo extends AbstractWorldStorageInfo implements InfoTriggerH
     }
 
     @Override
-    public AABB getTriggerHitbox(int hitboxNum) {
+    public BoundingBox getTriggerHitbox(int hitboxNum) {
         return triggerBoxes[hitboxNum];
     }
 
     @Override
-    public AABB[] getTriggerHitboxes() {
+    public BoundingBox[] getTriggerHitboxes() {
         return triggerBoxes;
     }
 
