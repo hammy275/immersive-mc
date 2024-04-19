@@ -67,7 +67,7 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
                 false, -1, info.light);
         for (int i = 0; i < info.triggerBoxes.length; i++) {
             if (info.triggerBoxes[i] != null) {
-                renderHitbox(stack, info.triggerBoxes[i], info.triggerBoxes[i].getCenter());
+                renderHitbox(stack, info.triggerBoxes[i]);
             }
         }
 
@@ -109,21 +109,21 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo> {
             }
             renderHitbox(stack,
                     AABB.ofSize(info.effectSelectedDisplayPos, displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
-                    info.effectSelectedDisplayPos, true,
+                    true,
                     0f, 1f, 0f
                     );
             if (info.regenSelected) {
                 renderHitbox(stack,
                         AABB.ofSize(info.triggerBoxes[5].getCenter(),
                                 displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
-                        info.effectSelectedDisplayPos, true,
+                        true,
                         0f, 1f, 0f
                 );
             } else {
                 renderHitbox(stack,
                         AABB.ofSize(info.triggerBoxes[6].getCenter(),
                                 displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
-                        info.effectSelectedDisplayPos, true,
+                        true,
                         0f, 1f, 0f
                 );
             }

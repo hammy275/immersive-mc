@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "plugin": "com.hammy275.immersivemc.MixinConfigPlugin",
   "mixins": [
+    "AABBBoundingBoxImplMixin",
     "AbstractArrowAccessor",
     "AbstractCauldronBlockAccessor",
     "AnvilMenuMixin",
