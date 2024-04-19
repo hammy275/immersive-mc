@@ -1,14 +1,12 @@
 package com.hammy275.immersivemc.client.immersive_item.info;
 
+import com.hammy275.immersivemc.common.obb.OBB;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.lwjgl.system.CallbackI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +16,12 @@ public class WrittenBookInfo extends AbstractItemInfo {
     private boolean pageChanged = true;
     public FormattedText left = FormattedText.EMPTY;
     public FormattedText right = FormattedText.EMPTY;
-    // Index 0 - Left point
-    // Index 1 - Right point
-    // Index 2 - Center point
-    // Indicies 3-5 - Above left, right, and center respectively
-    public Vec3[] distancePoints = new Vec3[6];
+    // Indices 0-1: Left page start turn box and right page start turn boxes
+    // Index 2: The "page progress" box. If the hand isn't in this box, the turn is cancelled.
+    // If the hand is in the opposite one from when the turn started, the turn auto-completes.
+    public OBB[] pageTurnBoxes = new OBB[3];
+    // Index 0 is left center, index 1 is right center, index 2 is true center.
+    public Vec3[] positions = new Vec3[3];
     public PageChangeState pageChangeState = PageChangeState.NONE;
     public float leftPageTurn = 0f;
     public float rightPageTurn = 1f;

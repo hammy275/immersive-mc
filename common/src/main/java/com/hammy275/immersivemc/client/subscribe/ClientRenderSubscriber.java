@@ -8,6 +8,8 @@ import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
 import com.hammy275.immersivemc.client.model.Cube1x1;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
+import com.hammy275.immersivemc.common.obb.BoundingBox;
+import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.util.RGBA;
 import com.hammy275.immersivemc.common.util.ShieldUtil;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
@@ -54,7 +56,7 @@ public class ClientRenderSubscriber {
                 if (Minecraft.getInstance().player.getItemInHand(iHand).getUseAnimation() == UseAnim.BLOCK) {
                     IVRData hand = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(iHand.ordinal());
                     AbstractImmersive.renderHitbox(stack, ShieldUtil.getShieldHitbox(Minecraft.getInstance().player, hand, iHand),
-                            hand.position(), false, 1, 1, 1);
+                            false, 1, 1, 1);
                 }
             }
         }
@@ -83,30 +85,36 @@ public class ClientRenderSubscriber {
         }
     }
 
-    private static void renderItemGuide(PoseStack stack, AABB hitbox, float alpha, boolean isSelected, int light) {
+    private static void renderItemGuide(PoseStack stack, BoundingBox hitbox, float alpha, boolean isSelected, int light) {
         if (hitbox != null && !Minecraft.getInstance().options.hideGui) {
             RGBA color = isSelected ? ActiveConfig.active().itemGuideSelectedColor : ActiveConfig.active().itemGuideColor;
-            float size = (float) hitbox.getSize() * (isSelected ? (float) ActiveConfig.active().itemGuideSelectedSize : (float) ActiveConfig.active().itemGuideSize);
+            AABB aabb = hitbox.isAABB() ? hitbox.asAABB() : hitbox.asOBB().getUnderlyingAABB();
+            float size = (float) aabb.getSize() * (isSelected ? (float) ActiveConfig.active().itemGuideSelectedSize : (float) ActiveConfig.active().itemGuideSize);
             if (ActiveConfig.active().placementGuideMode == PlacementGuideMode.CUBE) {
-                hitbox = hitbox
-                        .move(0, hitbox.getYsize() / 2, 0);
                 Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
-                Vec3 pos = hitbox.getCenter();
+                Vec3 pos = aabb.getCenter();
                 stack.pushPose();
                 stack.translate(-renderInfo.getPosition().x + pos.x,
-                        -renderInfo.getPosition().y + pos.y,
+                        -renderInfo.getPosition().y + pos.y + aabb.getYsize() / 2,
                         -renderInfo.getPosition().z + pos.z);
                 MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+                if (hitbox.isOBB()) {
+                    OBBClientUtil.rotateStackForOBB(stack, hitbox.asOBB());
+                }
                 cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
                         color.redF(), color.greenF(), color.blueF(), color.alphaF(), size / 2, light);
                 stack.popPose();
             } else if (ActiveConfig.active().placementGuideMode == PlacementGuideMode.OUTLINE) {
-                AbstractImmersive.renderHitbox(stack, AABB.ofSize(hitbox.getCenter(), size, size, size), hitbox.getCenter(), true,
-                        color.redF(), color.greenF(), color.blueF(), color.alphaF());
+                if (hitbox.isAABB()) {
+                    AbstractImmersive.renderHitbox(stack, AABB.ofSize(aabb.getCenter(), size, size, size), true,
+                            color.redF(), color.greenF(), color.blueF(), color.alphaF());
+                } else {
+                    OBBClientUtil.renderOBB(stack, hitbox.asOBB(), false, color.redF(), color.greenF(), color.blueF(), color.alphaF());
+                }
             }
         }
     }
 
-    public record ItemGuideRenderData(PoseStack stack, AABB hitbox, float alpha, boolean isSelected, int light) {}
+    public record ItemGuideRenderData(PoseStack stack, BoundingBox hitbox, float alpha, boolean isSelected, int light) {}
 
 }

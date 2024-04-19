@@ -105,7 +105,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
                         slotHelpBoxIsSelected(info, i) ? size * 1.25f * hitbox.itemRenderSizeMultiplier : size * hitbox.itemRenderSizeMultiplier,
                         info.immersiveDir, hitbox.getUpDownRenderDir(), hitbox.getAABB(), hitbox.renderItemCount, spinDegrees, info.light);
             } else {
-                renderHitbox(stack, hitbox.getAABB(), hitbox.getPos());
+                renderHitbox(stack, hitbox.getAABB());
             }
             for (TextData data : hitbox.getTextData()) {
                 renderText(data.text(), stack, data.pos(), info.light);
