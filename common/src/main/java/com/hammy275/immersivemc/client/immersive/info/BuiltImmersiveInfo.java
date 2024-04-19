@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
 import com.hammy275.immersivemc.client.immersive.HitboxInfo;
+import com.hammy275.immersivemc.common.obb.BoundingBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
@@ -71,12 +72,12 @@ public class BuiltImmersiveInfo extends AbstractImmersiveInfo implements InfoTri
     }
 
     @Override
-    public AABB getHitbox(int slot) {
+    public BoundingBox getHitbox(int slot) {
         return this.hitboxes[slot].getAABB();
     }
 
     @Override
-    public AABB[] getAllHitboxes() {
+    public BoundingBox[] getAllHitboxes() {
         AABB[] hitboxes = new AABB[this.hitboxes.length];
         for (int i = 0; i < this.hitboxes.length; i++) {
             hitboxes[i] = this.hitboxes[i].getAABB();
@@ -85,7 +86,7 @@ public class BuiltImmersiveInfo extends AbstractImmersiveInfo implements InfoTri
     }
 
     @Override
-    public void setHitbox(int slot, AABB hitbox) {
+    public void setHitbox(int slot, BoundingBox hitbox) {
         throw new UnsupportedOperationException("Not supported by immersives made via builders.");
     }
 
@@ -147,12 +148,12 @@ public class BuiltImmersiveInfo extends AbstractImmersiveInfo implements InfoTri
     }
 
     @Override
-    public AABB getTriggerHitbox(int hitboxNum) {
+    public BoundingBox getTriggerHitbox(int hitboxNum) {
         return this.triggerHitboxes.get(hitboxNum).getAABB();
     }
 
     @Override
-    public AABB[] getTriggerHitboxes() {
+    public BoundingBox[] getTriggerHitboxes() {
         if (hasHitboxes()) {
             AABB[] triggerHitboxes = new AABB[this.triggerHitboxes.size()];
             for (int i = 0; i < this.triggerHitboxes.size(); i++) {

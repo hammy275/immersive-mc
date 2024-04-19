@@ -1,14 +1,14 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
+import com.hammy275.immersivemc.common.obb.BoundingBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public abstract class AbstractWorldStorageInfo extends AbstractImmersiveInfo {
 
     protected Vec3[] positions;
-    protected AABB[] hitboxes;
+    protected BoundingBox[] hitboxes;
     public ItemStack[] items;
     protected final BlockPos pos;
     public final int maxSlotIndex;
@@ -18,22 +18,22 @@ public abstract class AbstractWorldStorageInfo extends AbstractImmersiveInfo {
         this.pos = pos;
         this.positions = new Vec3[maxSlotIndex + 1];
         this.items = new ItemStack[maxSlotIndex + 1];
-        this.hitboxes = new AABB[maxSlotIndex + 1];
+        this.hitboxes = new BoundingBox[maxSlotIndex + 1];
         this.maxSlotIndex = maxSlotIndex;
     }
 
     @Override
-    public AABB getHitbox(int slot) {
+    public BoundingBox getHitbox(int slot) {
         return hitboxes[slot];
     }
 
     @Override
-    public AABB[] getAllHitboxes() {
+    public BoundingBox[] getAllHitboxes() {
         return this.hitboxes;
     }
 
     @Override
-    public void setHitbox(int slot, AABB hitbox) {
+    public void setHitbox(int slot, BoundingBox hitbox) {
         this.hitboxes[slot] = hitbox;
     }
 

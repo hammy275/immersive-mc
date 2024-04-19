@@ -10,6 +10,8 @@ import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.common.obb.BoundingBox;
+import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.mixin.DragonFireballRendererMixin;
@@ -270,7 +272,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                     // Add from -1 because we're adding lengths, so we subtract one to have valid indexes
                     for (int i = 0; i < info.getInputSlots().length; i++) {
                         if (inputSlotShouldRenderHelpHitbox(info, i)) {
-                            AABB itemBox = info.getInputSlots()[i];
+                            BoundingBox itemBox = info.getInputSlots()[i];
                             enqueueItemGuideRender(stack, itemBox, 0.2f, slotHelpBoxIsSelected(info, i), info.light);
                         }
                     }
@@ -308,7 +310,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
     }
 
     public void renderItem(ItemStack item, PoseStack stack, Vec3 pos, float size, Direction facing,
-                           AABB hitbox, boolean renderItemCounts, int light) {
+                           BoundingBox hitbox, boolean renderItemCounts, int light) {
         renderItem(item, stack, pos, size, facing, null, hitbox, renderItemCounts, -1, light);
     }
 
@@ -325,7 +327,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * @param spinDegrees Degress to spin on x/z. Overwritten if facing is nonnull.
      */
     public void renderItem(ItemStack item, PoseStack stack, Vec3 pos, float size, Direction facing, Direction upDown,
-                           AABB hitbox, boolean renderItemCounts, int spinDegrees, int light) {
+                           BoundingBox hitbox, boolean renderItemCounts, int spinDegrees, int light) {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         if (item != null && item != ItemStack.EMPTY && pos != null) {
             stack.pushPose();
@@ -403,42 +405,46 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
                         stack, textPos, facing == null ? 0.0025f : 0.01f, light);
             }
         }
-        renderHitbox(stack, hitbox, pos);
+        renderHitbox(stack, hitbox);
     }
 
-    protected void enqueueItemGuideRender(PoseStack stack, AABB hitbox, float alpha, boolean isSelected, int light) {
+    protected void enqueueItemGuideRender(PoseStack stack, BoundingBox hitbox, float alpha, boolean isSelected, int light) {
         ClientRenderSubscriber.itemGuideRenderData.add(
                 new ClientRenderSubscriber.ItemGuideRenderData(stack, hitbox, alpha, isSelected, light));
     }
 
-    protected void renderHitbox(PoseStack stack, AABB hitbox, Vec3 pos) {
-        renderHitbox(stack, hitbox, pos, false);
+    protected void renderHitbox(PoseStack stack, BoundingBox hitbox) {
+        renderHitbox(stack, hitbox, false);
     }
 
-    protected void renderHitbox(PoseStack stack, AABB hitbox, Vec3 pos, boolean alwaysRender) {
-        renderHitbox(stack, hitbox, pos, alwaysRender, 1, 1, 1);
+    protected void renderHitbox(PoseStack stack, BoundingBox hitbox, boolean alwaysRender) {
+        renderHitbox(stack, hitbox, alwaysRender, 1, 1, 1);
     }
 
-    public static void renderHitbox(PoseStack stack, AABB hitbox, Vec3 pos, boolean alwaysRender,
+    public static void renderHitbox(PoseStack stack, BoundingBox hitbox, boolean alwaysRender,
                                     float red, float green, float blue) {
-        renderHitbox(stack, hitbox, pos, alwaysRender, red, green, blue, 1);
+        renderHitbox(stack, hitbox, alwaysRender, red, green, blue, 1);
     }
 
-    public static void renderHitbox(PoseStack stack, AABB hitbox, Vec3 pos, boolean alwaysRender,
+    public static void renderHitbox(PoseStack stack, BoundingBox hitbox, boolean alwaysRender,
                                     float red, float green, float blue, float alpha) {
         if ((Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() || alwaysRender) &&
-                hitbox != null && pos != null) {
-            Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
-            // Use a new stack here, so we don't conflict with the stack.scale() for the item itself
-            stack.pushPose();
-            stack.translate(-renderInfo.getPosition().x + pos.x,
-                    -renderInfo.getPosition().y + pos.y,
-                    -renderInfo.getPosition().z + pos.z);
-            MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-            LevelRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
-                    hitbox.move(-pos.x, -pos.y, -pos.z),
-                    red, green, blue, alpha);
-            stack.popPose();
+                hitbox != null) {
+            if (hitbox.isAABB()) {
+                Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+                // Use a new stack here, so we don't conflict with the stack.scale() for the item itself
+                stack.pushPose();
+                stack.translate(-renderInfo.getPosition().x,
+                        -renderInfo.getPosition().y,
+                        -renderInfo.getPosition().z);
+                MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+                LevelRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
+                        hitbox.asAABB(),
+                        red, green, blue, alpha);
+                stack.popPose();
+            } else {
+                OBBClientUtil.renderOBB(stack, hitbox.asOBB(), alwaysRender, red, green, blue, alpha);
+            }
         }
     }
 

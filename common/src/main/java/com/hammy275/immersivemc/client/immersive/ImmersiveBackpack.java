@@ -15,6 +15,7 @@ import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.BackpackInteractPacket;
 import com.hammy275.immersivemc.common.network.packet.FetchBackpackStoragePacket;
 import com.hammy275.immersivemc.common.network.packet.InventorySwapPacket;
+import com.hammy275.immersivemc.common.obb.OBB;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -128,8 +129,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     protected void render(BackpackInfo info, PoseStack stack, boolean isInVR) {
         boolean leftHanded = VRPlugin.API.isLeftHanded(Minecraft.getInstance().player);
         for (int i = 0; i <= 31; i++) {
-            AABB hitbox = info.getHitbox(i);
-            renderHitbox(stack, hitbox, info.getPosition(i));
+            renderHitbox(stack, info.getHitbox(i));
         }
 
         for (int i = 0; i <= 26; i++) {
@@ -191,8 +191,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
         if (ActiveConfig.active().placementGuideMode != PlacementGuideMode.OFF) {
             for (int i = 0; i < info.getInputSlots().length; i++) {
                 if (inputSlotShouldRenderHelpHitbox(info, i)) { // Use info here since it holds info about crafting
-                    AABB itemBox = info.getInputSlots()[i];
-                    enqueueItemGuideRender(stack, itemBox, 0.2f, slotHelpBoxIsSelected(info, i), info.light);
+                    enqueueItemGuideRender(stack, info.getInputSlots()[i], 0.2f, slotHelpBoxIsSelected(info, i), info.light);
                 }
             }
         }
@@ -373,7 +372,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
             Vec3 slotPos = posRaw;
             slotPos = slotPos.add(yDown);
             info.setPosition(i, slotPos);
-            info.setHitbox(i, createHitbox(info.getPosition(i), 0.05f));
+            info.setHitbox(i, new OBB(AABB.ofSize(info.getPosition(i), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, 0));
         }
 
         Vec3 upVec = info.downVec.multiply(-1, -1, -1);
@@ -398,11 +397,11 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
         for (int i = 27; i <= 30; i++) {
             info.setPosition(i, craftingPositions[i - 27]);
-            info.setHitbox(i, createHitbox(info.getPosition(i), 0.05f));
+            info.setHitbox(i, new OBB(AABB.ofSize(info.getPosition(i), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, 0));
         }
 
         info.setPosition(31, centerCraftingPos.add(upVec.multiply(0.125, 0.125, 0.125)));
-        info.setHitbox(31, createHitbox(info.getPosition(31), 0.05f));
+        info.setHitbox(31, new OBB(AABB.ofSize(info.getPosition(31), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, 0));
 
         info.setInputSlots();
     }
