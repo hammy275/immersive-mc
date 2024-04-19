@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive.info;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
+import com.hammy275.immersivemc.common.obb.BoundingBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,7 +15,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ChestInfo extends AbstractBlockEntityImmersiveInfo<BlockEntity> {
 
-    protected AABB[] hitboxes = new AABB[54];
+    protected BoundingBox[] hitboxes = new BoundingBox[54];
     public BlockEntity other = null;
     public BlockPos otherPos = null;
     public Direction forward = null;
@@ -58,23 +59,23 @@ public class ChestInfo extends AbstractBlockEntityImmersiveInfo<BlockEntity> {
         if (this.isOpen) {
             this.inputHitboxes = this.hitboxes;
         } else {
-            this.inputHitboxes = new AABB[0];
+            this.inputHitboxes = new BoundingBox[0];
         }
 
     }
 
     @Override
-    public AABB getHitbox(int slot) {
+    public BoundingBox getHitbox(int slot) {
         return hitboxes[slot];
     }
 
     @Override
-    public AABB[] getAllHitboxes() {
+    public BoundingBox[] getAllHitboxes() {
         return hitboxes;
     }
 
     @Override
-    public void setHitbox(int slot, AABB hitbox) {
+    public void setHitbox(int slot, BoundingBox hitbox) {
         hitboxes[slot] = hitbox;
     }
 

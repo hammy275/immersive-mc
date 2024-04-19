@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
-import net.minecraft.world.phys.AABB;
+import com.hammy275.immersivemc.common.obb.BoundingBox;
 
 /**
  * Attached to immersive infos to signify that they have hitboxes that should only activate
@@ -8,9 +8,9 @@ import net.minecraft.world.phys.AABB;
  */
 public interface InfoTriggerHitboxes {
 
-    public AABB getTriggerHitbox(int hitboxNum);
+    public BoundingBox getTriggerHitbox(int hitboxNum);
 
-    public AABB[] getTriggerHitboxes();
+    public BoundingBox[] getTriggerHitboxes();
 
     // InfoTriggerHitboxes must define which controller number can interact with them
     public int getVRControllerNum();
