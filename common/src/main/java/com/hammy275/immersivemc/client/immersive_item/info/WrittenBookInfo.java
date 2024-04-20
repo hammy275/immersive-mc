@@ -13,7 +13,6 @@ import java.util.List;
 
 public class WrittenBookInfo extends AbstractItemInfo {
     private int leftPageIndex = 0;
-    private boolean pageChanged = true;
     public FormattedText left = FormattedText.EMPTY;
     public FormattedText right = FormattedText.EMPTY;
     // Indices 0-1: Left page start turn box and right page start turn boxes
@@ -40,14 +39,12 @@ public class WrittenBookInfo extends AbstractItemInfo {
         if (leftPageIndex + 2 <= maxLeftPageIndex) {
             leftPageIndex += 2;
         }
-        pageChanged = true;
     }
 
     public void lastPage() {
         if (leftPageIndex - 2 >= 0) {
             leftPageIndex -= 2;
         }
-        pageChanged = true;
     }
 
     public void setPage(int newPageIndex) {
@@ -60,7 +57,6 @@ public class WrittenBookInfo extends AbstractItemInfo {
             newPageIndex = 0;
         }
         leftPageIndex = newPageIndex;
-        pageChanged = true;
     }
 
     public boolean onFirstPage() {
@@ -77,14 +73,6 @@ public class WrittenBookInfo extends AbstractItemInfo {
 
     public int getRightPageIndex() {
         return getLeftPageIndex() + 1;
-    }
-
-    public void setPageChanged(boolean pageChanged) {
-        this.pageChanged = pageChanged;
-    }
-
-    public boolean pageChanged() {
-        return this.pageChanged;
     }
 
     public void addClickInfo(Vec3 pos, Style style) {
