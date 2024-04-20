@@ -148,14 +148,12 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     @Override
     protected void tick(WrittenBookInfo info, IVRData hand, IVRData other) {
         ItemStack book = info.item;
-        if (info.pageChanged()) {
-            BookViewScreen.WrittenBookAccess access = new BookViewScreen.WrittenBookAccess(book);
-            info.left = access.getPage(info.getLeftPageIndex());
-            info.right = access.getPage(info.getRightPageIndex());
-            info.clickInfos.clear(); // Clear all click infos due to page change changing click information
-            info.setPageChanged(false);
-        }
 
+        // Get page contents. Can change at random, whether due to command blocks or due to editing for a book and quill
+        BookViewScreen.BookAccess access = BookViewScreen.BookAccess.fromItem(book);
+        info.left = access.getPage(info.getLeftPageIndex());
+        info.right = access.getPage(info.getRightPageIndex());
+        info.clickInfos.clear(); // Clear all click infos due to page change changing click information
 
         Vec3 left = getLeftRight(hand, true);
         Vec3 right = getLeftRight(hand, false);
@@ -321,7 +319,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
 
     @Override
     public boolean itemMatches(ItemStack item) {
-        return item.getItem() == Items.WRITTEN_BOOK;
+        return item.getItem() == Items.WRITTEN_BOOK || item.getItem() == Items.WRITABLE_BOOK;
     }
 
     @Override
