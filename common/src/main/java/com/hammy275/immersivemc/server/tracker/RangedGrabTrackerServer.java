@@ -43,7 +43,7 @@ public class RangedGrabTrackerServer extends AbstractTracker {
                 Vec3 move = info.item.getLookAngle().multiply(moveMultiplier, moveMultiplier, moveMultiplier).add(baseVelocity);
                 info.item.setDeltaMovement(move.x, move.y, move.z);
                 info.item.hurtMarked = true; // velocityChanged from MCP
-                VRRumble.rumbleIfVR(player, 0, CommonConstants.vibrationTimeRangedGrab);
+                VRRumble.rumbleIfVR(info.player, 0, CommonConstants.vibrationTimeRangedGrab);
             }
         }
 
