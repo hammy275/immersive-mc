@@ -225,21 +225,25 @@ public class ClientLogicSubscriber {
                     info.remove();
                 }
                 if (info.hasHitboxes()) {
+                    boolean inBox = false;
                     if (VRPluginVerify.clientInVR()) {
                         IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player);
                         info.slotHovered = Util.getFirstIntersect(vrPlayer.getController0().position(),
                                 info.getAllHitboxes()).orElse(-1);
+                        inBox = info.slotHovered != -1;
                         info.slotHovered2 = Util.getFirstIntersect(vrPlayer.getController1().position(),
                                 info.getAllHitboxes()).orElse(-1);
                         if (!(singleton instanceof BuiltImmersive)) {
                             if (info instanceof InfoTriggerHitboxes tInfo) {
                                 info.triggerHitboxSlotHovered = Util.getFirstIntersect(vrPlayer.getController(tInfo.getVRControllerNum()).position(),
                                         tInfo.getTriggerHitboxes()).orElse(-1);
+                                inBox = inBox || info.triggerHitboxSlotHovered != -1;
                             } else {
                                 info.triggerHitboxSlotHovered = -1;
                             }
                         }
-                    } else {
+                    }
+                    if (!VRPluginVerify.clientInVR() || (ActiveConfig.active().rightClickInVR && !inBox)) {
                         Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
                         info.slotHovered = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
                                 info.getAllHitboxes()).orElse(-1);
