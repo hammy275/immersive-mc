@@ -70,8 +70,7 @@ public class Util {
     }
 
     /**
-     * Find the closest BoundingBox that is ray traced through the ray. Note that this uses the underlying AABB
-     * for OBBs, as this method is currently only used on desktop, where OBBs aren't needed.
+     * Find the closest BoundingBox that is ray traced through the ray.
      * @param rayStart Start of the ray.
      * @param rayEnd End of the ray.
      * @param targets List of targets.
@@ -90,8 +89,13 @@ public class Util {
                     return Optional.of(i);
                 }
                 // Gets the "hit" for our ray.
-                Optional<Vec3> closestHitOpt = (target.isAABB() ? target.asAABB() : target.asOBB().getUnderlyingAABB()).clip(rayStart, rayEnd);
-                double distTemp = closestHitOpt.isPresent() ? closestHitOpt.get().distanceTo(rayStart) : -1;
+                Optional<Vec3> closestHitOpt;
+                if (target.isAABB()) {
+                    closestHitOpt = target.asAABB().clip(rayStart, rayEnd);
+                } else {
+                    closestHitOpt = target.asOBB().rayHit(rayStart, rayEnd);
+                }
+                double distTemp = closestHitOpt.isPresent() ? closestHitOpt.get().distanceToSqr(rayStart) : -1;
                 if (closestHitOpt.isPresent() && distTemp < dist) {
                     winner = i;
                     dist = distTemp;
