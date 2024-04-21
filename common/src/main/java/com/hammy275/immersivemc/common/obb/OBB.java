@@ -5,6 +5,8 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Optional;
+
 /**
  * Oriented Bounding Box. This is similar to an Axis-Aligned Bounding Box (AABB), but rotatable. OBBs allow for better
  * accuracy at the cost of a significant performance hit.
@@ -83,6 +85,27 @@ public class OBB implements BoundingBox {
         return Math.abs(centerRay.dot(xLine) * 2) <= (aabb.maxX - aabb.minX) &&
                 Math.abs(centerRay.dot(yLine) * 2) <= (aabb.maxY - aabb.minY) &&
                 Math.abs(centerRay.dot(zLine) * 2) <= (aabb.maxZ - aabb.minZ);
+    }
+
+    /**
+     * Where the provided ray intersects this OBB the soonest.
+     * @param rayStart Start of ray
+     * @param rayEnd End of ray
+     * @return An optional containing where they ray hit this OBB, or an empty Optional if there was no hit.
+     */
+    public Optional<Vec3> rayHit(Vec3 rayStart, Vec3 rayEnd) {
+        // We rotate the start position and the ray direction to be the same as this OBB's, do a normal
+        // AABB check, then rotate back to get a proper position.
+        Vec3 dir = rayEnd.subtract(rayStart).normalize();
+        double dist = rayStart.distanceTo(rayEnd);
+        dir = dir.zRot((float) -this.roll).xRot((float) -this.pitch).yRot((float) -this.yaw);
+        rayStart = rayStart.subtract(this.center).zRot((float) -this.roll).xRot((float) -this.pitch).yRot((float) -this.yaw).add(this.center);
+        Optional<Vec3> intersect = this.aabb.clip(rayStart, rayStart.add(dir.scale(dist)));
+        if (intersect.isPresent()) {
+            return Optional.of(intersect.get().zRot((float) this.roll).xRot((float) this.pitch).yRot((float) this.yaw));
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**
