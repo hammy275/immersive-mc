@@ -6,3 +6,4 @@ Sources used for creating the OBB representation:
 - The following StackOverflow posts:
   - <https://stackoverflow.com/questions/52673935/check-if-3d-point-inside-a-box>
   - <https://stackoverflow.com/questions/21037241/how-to-determine-a-point-is-inside-or-outside-a-cube>
+- [three.js](https://github.com/mrdoob/three.js/blob/master/examples/jsm/math/OBB.js#L313)
