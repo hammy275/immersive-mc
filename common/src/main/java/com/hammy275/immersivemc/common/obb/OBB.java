@@ -102,7 +102,7 @@ public class OBB implements BoundingBox {
         rayStart = rayStart.subtract(this.center).zRot((float) -this.roll).xRot((float) -this.pitch).yRot((float) -this.yaw).add(this.center);
         Optional<Vec3> intersect = this.aabb.clip(rayStart, rayStart.add(dir.scale(dist)));
         if (intersect.isPresent()) {
-            return Optional.of(intersect.get().zRot((float) this.roll).xRot((float) this.pitch).yRot((float) this.yaw));
+            return Optional.of(intersect.get().subtract(this.center).zRot((float) this.roll).xRot((float) this.pitch).yRot((float) this.yaw).add(this.center));
         } else {
             return Optional.empty();
         }
