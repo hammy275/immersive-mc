@@ -8,6 +8,7 @@ import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.obb.BoundingBox;
+import com.hammy275.immersivemc.common.obb.OBB;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
@@ -28,6 +29,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> {
 
+    private static final Minecraft mc = Minecraft.getInstance();
+    
     private static final double backpackHeight = 0.625;
     private static final Vec3 DOWN = new Vec3(0, -1, 0);
     private int backpackCooldown = 0;
@@ -43,29 +46,29 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
         super.renderTick(info, isInVR);
         if (ActiveConfig.active().reachBehindBackpackMode.usesBehindBack() && VRPluginVerify.clientInVR()) {
             // centerPos is the center of the back of the player
-            IVRData hmdData = Platform.isDevelopmentEnvironment() ?
-                    VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD() :
-                    VRPlugin.API.getRenderVRPlayer().getHMD();
-            Vec3 centerPos = hmdData.position().add(0, -0.5, 0).add(hmdData.getLookAngle().scale(-0.15));
+            IVRData hmdData = Platform.isDevelopmentEnvironment() ? null : VRPlugin.API.getRenderVRPlayer().getHMD();
+            Vec3 centerPos = hmdData != null ?
+                    hmdData.position().add(0, -0.5, 0).add(hmdData.getLookAngle().scale(-0.15)) :
+                    mc.player.getEyePosition(mc.getFrameTime()).add(0, -0.5, 0).add(mc.player.getLookAngle().scale(-0.15));
+            double yaw;
             Vec3 headLook;
-            // Even though it's VR-Only, let's try to get something for desktop testing purposes
-            if (VRPluginVerify.clientInVR() && VRPlugin.API.playerInVR(Minecraft.getInstance().player)
+            if (VRPluginVerify.clientInVR() && VRPlugin.API.playerInVR(mc.player)
                     && !Platform.isDevelopmentEnvironment()) {
+                yaw = Math.toRadians(hmdData.getYaw());
                 headLook = hmdData.getLookAngle();
             } else {
-                headLook = Minecraft.getInstance().player.getLookAngle();
+                // Yaw based on player's yaw for testing in dev
+                yaw = Math.toRadians(mc.player.getYRot());
+                headLook = mc.player.getLookAngle();
             }
             headLook = headLook.multiply(1, 0, 1).normalize(); // Ignore y rotation
             centerPos = centerPos.add(headLook.scale(-0.25));
-            // Back is 0.5 blocks across from center, making size 0.35 for x and z (full back has funny accidental detections).
-            // We swap x and z since if we're looking along z, we want it to be big on the x axis and vice-versa
+            // Back is 0.5 blocks across from center, making size 0.35 longways (full back has funny accidental detections).
+            // Since +Z is 0 yaw, we make the length across the back 0.35 on the X-axis.
             // Add 0.2 to have some sane minimum
             info.setHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX,
-                    AABB.ofSize(centerPos,
-                            Math.max(Math.abs(headLook.z) * 0.35, 0.2),
-                            backpackHeight,
-                            Math.max(Math.abs(headLook.x) * 0.35, 0.2)
-                    ));
+                    new OBB(AABB.ofSize(centerPos, 0.35, backpackHeight, 0.2),
+                            0, yaw, 0));
         } else {
             // In case setting changes mid-game
             info.setHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX, null);
@@ -73,10 +76,10 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
 
         if (ActiveConfig.active().reachBehindBackpackMode.usesOverShoulder() && VRPluginVerify.clientInVR()) {
             IVRData hmdData = Platform.isDevelopmentEnvironment() ?
-                    VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD() :
+                    VRPlugin.API.getVRPlayer(mc.player).getHMD() :
                     VRPlugin.API.getRenderVRPlayer().getHMD();
             IVRData c1Data = Platform.isDevelopmentEnvironment() ?
-                    VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1() :
+                    VRPlugin.API.getVRPlayer(mc.player).getController1() :
                     VRPlugin.API.getRenderVRPlayer().getController1();
 
             Vec3 hmdDir = hmdData.getLookAngle();
@@ -92,7 +95,7 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
             boolean behindHMD = c1HMDAngleDiff > 2 * Math.PI / 3d;
 
             if (pointingDown && behindHMD) {
-                doBagOpen(Minecraft.getInstance().player);
+                doBagOpen(mc.player);
             }
         }
     }
@@ -120,9 +123,9 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
         BoundingBox backpackHitbox = info.getHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX);
         if (backpackHitbox != null) {
             renderHitbox(stack, backpackHitbox);
-            if (VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(Minecraft.getInstance().player)
-            && Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
-                IVRData c1 = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1();
+            if (VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(mc.player)
+            && mc.getEntityRenderDispatcher().shouldRenderHitBoxes()) {
+                IVRData c1 = VRPlugin.API.getVRPlayer(mc.player).getController1();
                 if (backpackHitbox.contains(c1.position())) {
                     renderHitbox(stack, AABB.ofSize(c1.position(), 0.25, 0.25, 0.25),
                             true,
@@ -191,7 +194,7 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
 
     private void doBagOpen(Player player) {
         if (backpackCooldown <= 0) {
-            VRRumble.rumbleIfVR(Minecraft.getInstance().player, 1, CommonConstants.vibrationTimePlayerActionAlert);
+            VRRumble.rumbleIfVR(mc.player, 1, CommonConstants.vibrationTimePlayerActionAlert);
             ClientUtil.openBag(player);
             backpackCooldown = 50;
         }
