@@ -52,7 +52,7 @@ public class ImmersiveHitboxesInfo extends AbstractImmersiveInfo implements Info
 
     @Override
     public Vec3 getPosition(int slot) {
-        return backpackBackHitbox.asAABB().getCenter();
+        return backpackBackHitbox.asOBB().getCenter();
     }
 
     @Override
@@ -60,7 +60,7 @@ public class ImmersiveHitboxesInfo extends AbstractImmersiveInfo implements Info
         BoundingBox[] hitboxes = getAllHitboxes();
         Vec3[] positions = new Vec3[hitboxes.length];
         for (int i = 0; i < hitboxes.length; i++) {
-            positions[i] = hitboxes[i].asAABB().getCenter();
+            positions[i] = hitboxes[i].asOBB().getCenter();
         }
         return positions;
     }
