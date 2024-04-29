@@ -21,5 +21,7 @@ public interface BoundingBox {
         return this instanceof AABB;
     }
 
-    public boolean contains(Vec3 vec3);
+    public static boolean contains(BoundingBox box, Vec3 pos) {
+        return box.isOBB() ? box.asOBB().contains(pos) : box.asAABB().contains(pos);
+    }
 }
