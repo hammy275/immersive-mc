@@ -72,7 +72,6 @@ public class OBB implements BoundingBox {
      * @param point Point to check.
      * @return Whether the point is in this OBB or not.
      */
-    @Override
     public boolean contains(Vec3 point) {
         Vec3 centerRay = point.subtract(this.center);
 
