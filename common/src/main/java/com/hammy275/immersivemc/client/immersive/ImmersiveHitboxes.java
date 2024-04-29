@@ -126,7 +126,7 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
             if (VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(mc.player)
             && mc.getEntityRenderDispatcher().shouldRenderHitBoxes()) {
                 IVRData c1 = VRPlugin.API.getVRPlayer(mc.player).getController1();
-                if (backpackHitbox.contains(c1.position())) {
+                if (BoundingBox.contains(backpackHitbox, c1.position())) {
                     renderHitbox(stack, AABB.ofSize(c1.position(), 0.25, 0.25, 0.25),
                             true,
                             0f, 1f, 0f);
