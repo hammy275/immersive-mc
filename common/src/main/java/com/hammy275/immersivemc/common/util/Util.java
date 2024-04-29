@@ -85,7 +85,7 @@ public class Util {
             // if we have a single chest or double chest. As a result, we can have null targets.
             if (target != null) {
                 // If the start or end of the ray is in the target hitbox, we immediately return true
-                if (target.contains(rayStart)) {
+                if (BoundingBox.contains(target, rayStart)) {
                     return Optional.of(i);
                 }
                 // Gets the "hit" for our ray.
@@ -109,7 +109,7 @@ public class Util {
     public static Optional<Integer> getFirstIntersect(Vec3 pos, BoundingBox... targets) {
         int i = 0;
         for (BoundingBox target : targets) {
-            if (target != null && target.contains(pos)) {
+            if (target != null && BoundingBox.contains(target, pos)) {
                 return Optional.of(i);
             }
             i++;
@@ -122,7 +122,7 @@ public class Util {
         int res = -1;
         double distanceToBeat = Double.MAX_VALUE;
         for (int i = 0; i < targets.length; i++) {
-            if (targets[i] != null && targets[i].contains(pos)) {
+            if (targets[i] != null && BoundingBox.contains(targets[i], pos)) {
                 double newDist = pos.distanceToSqr(positions[i]);
                 if (newDist < distanceToBeat) {
                     distanceToBeat = newDist;
