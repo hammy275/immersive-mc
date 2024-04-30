@@ -27,16 +27,12 @@ public class WrittenBookInfo extends AbstractItemInfo {
     public List<BookClickInfo> clickInfos = new ArrayList<>();
     public int selectedClickInfo = -1;
 
-    private final int maxLeftPageIndex;
-
     public WrittenBookInfo(ItemStack item, InteractionHand hand) {
         super(item, hand);
-        BookViewScreen.WrittenBookAccess access = new BookViewScreen.WrittenBookAccess(item);
-        maxLeftPageIndex = access.getPageCount() % 2 == 0 ? access.getPageCount() - 2 : access.getPageCount() - 1;
     }
 
     public void nextPage() {
-        if (leftPageIndex + 2 <= maxLeftPageIndex) {
+        if (leftPageIndex + 2 <= maxLeftPageIndex()) {
             leftPageIndex += 2;
         }
     }
@@ -51,8 +47,8 @@ public class WrittenBookInfo extends AbstractItemInfo {
         if (newPageIndex % 2 != 0) {
             newPageIndex--;
         }
-        if (newPageIndex > maxLeftPageIndex) {
-            newPageIndex = maxLeftPageIndex;
+        if (newPageIndex > maxLeftPageIndex()) {
+            newPageIndex = maxLeftPageIndex();
         } else if (newPageIndex < 0) {
             newPageIndex = 0;
         }
@@ -64,7 +60,7 @@ public class WrittenBookInfo extends AbstractItemInfo {
     }
 
     public boolean onLastPage() {
-        return leftPageIndex == maxLeftPageIndex;
+        return leftPageIndex == maxLeftPageIndex();
     }
 
     public int getLeftPageIndex() {
@@ -89,6 +85,12 @@ public class WrittenBookInfo extends AbstractItemInfo {
         for (BookClickInfo clickInfo : this.clickInfos) {
             clickInfo.positions.clear();
         }
+    }
+
+    // Note: Current behavior assumes you can't remove pages from the book.
+    private int maxLeftPageIndex() {
+        BookViewScreen.BookAccess access = BookViewScreen.BookAccess.fromItem(item);
+        return access.getPageCount() % 2 == 0 ? access.getPageCount() - 2 : access.getPageCount() - 1;
     }
 
     public enum PageChangeState {
