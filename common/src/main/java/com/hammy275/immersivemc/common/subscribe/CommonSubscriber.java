@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.common.subscribe;
 
+import com.hammy275.immersivemc.common.obb.OBB;
 import com.hammy275.immersivemc.common.util.ShieldUtil;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -11,7 +12,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 
 import java.util.HashMap;
@@ -40,8 +40,8 @@ public class CommonSubscriber {
         if (!player.level().isClientSide && VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player)) {
             for (InteractionHand iHand : InteractionHand.values()) {
                 IVRData hand = VRPlugin.API.getVRPlayer(player).getController(iHand.ordinal());
-                AABB shieldBox = ShieldUtil.getShieldHitbox(player, hand, iHand);
-                List<Entity> ents = player.level().getEntities(player, shieldBox);
+                OBB shieldBox = ShieldUtil.getShieldHitbox(player, hand, iHand);
+                List<Entity> ents = player.level().getEntities(player, shieldBox.getEnclosingAABB());
                 for (Entity e : ents) {
                     if (e instanceof Projectile proj) {
                         if (!reflected.containsKey(proj.getUUID()) && shouldProjAttemptHit(proj)) {
