@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 
+import java.util.List;
+
 public class OBBClientUtil {
 
     public static void renderOBB(PoseStack stack, OBB obb, boolean forceRender,
@@ -30,9 +32,13 @@ public class OBBClientUtil {
     }
 
     public static void rotateStackForOBB(PoseStack stack, OBB obb) {
-        // Note: Roll likely doesn't currently work lol
-        stack.mulPose(Vector3f.ZN.rotation((float) obb.roll));
-        stack.mulPose(Vector3f.YN.rotation((float) obb.yaw));
-        stack.mulPose(Vector3f.XN.rotation((float) obb.pitch));
+        List<OBBRot> rots = obb.rotations.getRotations();
+        for (OBBRot rot : rots) {
+            switch (rot.rotType()) {
+                case PITCH -> stack.mulPose(Vector3f.XN.rotation(rot.rot()));
+                case YAW -> stack.mulPose(Vector3f.YN.rotation(rot.rot()));
+                case ROLL -> stack.mulPose(Vector3f.ZP.rotation(rot.rot()));
+            }
+        }
     }
 }

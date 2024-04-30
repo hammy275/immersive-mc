@@ -17,19 +17,14 @@ public class OBB implements BoundingBox {
 
     final AABB aabb;
     final Vec3 center;
-    final double pitch;
-    final double yaw;
-    final double roll;
-    final Vec3 xLine;
-    final Vec3 yLine;
-    final Vec3 zLine;
+    final OBBRotList rotations;
 
     /**
      * Create an OBB from an existing AABB.
      * @param aabb The AABB to create an OBB from.
      */
     public OBB(AABB aabb) {
-        this(aabb, 0, 0, 0);
+        this(aabb, OBBRotList.create());
     }
 
     /**
@@ -40,37 +35,18 @@ public class OBB implements BoundingBox {
      * @param roll The roll of the OBB, in radians
      */
     public OBB(AABB aabb, double pitch, double yaw, double roll) {
+        this(aabb, OBBRotList.create().addRot(yaw, RotType.YAW).addRot(pitch, RotType.PITCH).addRot(roll, RotType.ROLL));
+    }
+
+    /**
+     * Create an OBB from an existing AABB, rotated by some arbitrary rotations.
+     * @param aabb The AABB to create an OBB from.
+     * @param rotations A list of rotations to apply, in order, to the AABB to create the OBB.
+     */
+    public OBB(AABB aabb, OBBRotList rotations) {
         this.aabb = aabb;
         this.center = aabb.getCenter();
-        this.pitch = pitch;
-        this.yaw = yaw;
-        this.roll = roll;
-
-        // Calculates some things so we don't need to calculate them when position checking
-        Quaternion rot = new Quaternion((float) -this.pitch, (float) -this.yaw, (float) -this.roll, true);
-        Quaternion rotConj = new Quaternion(rot);
-        rotConj.conj();
-        Vec3 x1 = new Vec3(aabb.minX, aabb.minY, aabb.minZ);
-        Vec3 x2 = new Vec3(aabb.maxX, aabb.minY, aabb.minZ);
-        Vec3 y1 = new Vec3(aabb.minX, aabb.minY, aabb.minZ);
-        Vec3 y2 = new Vec3(aabb.minX, aabb.maxY, aabb.minZ);
-        Vec3 z1 = new Vec3(aabb.minX, aabb.minY, aabb.minZ);
-        Vec3 z2 = new Vec3(aabb.minX, aabb.minY, aabb.maxZ);
-        Vec3 x = x2.subtract(x1).normalize();
-        Vec3 y = y2.subtract(y1).normalize();
-        Vec3 z = z2.subtract(z1).normalize();
-        Quaternion xQuat = rot.copy();
-        Quaternion yQuat = rot.copy();
-        Quaternion zQuat = rot.copy();
-        xQuat.mul(new Quaternion((float) x.x, (float) x.y, (float) x.z, 0));
-        xQuat.mul(rotConj);
-        yQuat.mul(new Quaternion((float) y.x, (float) y.y, (float) y.z, 0));
-        yQuat.mul(rotConj);
-        zQuat.mul(new Quaternion((float) z.x, (float) z.y, (float) z.z, 0));
-        zQuat.mul(rotConj);
-        this.xLine = new Vec3(xQuat.i(), xQuat.j(), xQuat.k());
-        this.yLine = new Vec3(yQuat.i(), yQuat.j(), yQuat.k());
-        this.zLine = new Vec3(zQuat.i(), zQuat.j(), zQuat.k());
+        this.rotations = rotations;
     }
 
     /**
@@ -79,11 +55,10 @@ public class OBB implements BoundingBox {
      * @return Whether the point is in this OBB or not.
      */
     public boolean contains(Vec3 point) {
-        Vec3 centerRay = point.subtract(this.center);
-
-        return Math.abs(centerRay.dot(xLine) * 2) <= (aabb.maxX - aabb.minX) &&
-                Math.abs(centerRay.dot(yLine) * 2) <= (aabb.maxY - aabb.minY) &&
-                Math.abs(centerRay.dot(zLine) * 2) <= (aabb.maxZ - aabb.minZ);
+        // We rotate the start position and the ray direction to be the same as this OBB's, do a normal
+        // AABB check, then rotate back to get a proper position.
+        point = this.rotations.rotate(point.subtract(this.center), false).add(this.center);
+        return this.aabb.contains(point);
     }
 
     /**
@@ -97,11 +72,11 @@ public class OBB implements BoundingBox {
         // AABB check, then rotate back to get a proper position.
         Vec3 dir = rayEnd.subtract(rayStart).normalize();
         double dist = rayStart.distanceTo(rayEnd);
-        dir = dir.zRot((float) -this.roll).xRot((float) -this.pitch).yRot((float) -this.yaw);
-        rayStart = rayStart.subtract(this.center).zRot((float) -this.roll).xRot((float) -this.pitch).yRot((float) -this.yaw).add(this.center);
+        dir = this.rotations.rotate(dir, false);
+        rayStart = this.rotations.rotate(rayStart.subtract(this.center), false).add(this.center);
         Optional<Vec3> intersect = this.aabb.clip(rayStart, rayStart.add(dir.scale(dist)));
         if (intersect.isPresent()) {
-            return Optional.of(intersect.get().subtract(this.center).zRot((float) this.roll).xRot((float) this.pitch).yRot((float) this.yaw).add(this.center));
+            return Optional.of(this.rotations.rotate(intersect.get().subtract(this.center), true).add(this.center));
         } else {
             return Optional.empty();
         }
@@ -120,6 +95,13 @@ public class OBB implements BoundingBox {
      */
     public Vec3 getCenter() {
         return this.center;
+    }
+
+    /**
+     * @return A copy of the rotations that make this OBB.
+     */
+    public OBBRotList getRotList() {
+        return this.rotations.copy();
     }
 
     public OBB translate(Vec3 translation) {
