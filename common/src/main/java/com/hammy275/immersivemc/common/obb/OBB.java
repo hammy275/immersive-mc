@@ -14,6 +14,9 @@ import java.util.Optional;
  */
 public class OBB implements BoundingBox {
 
+    private static final double HALFSQRT2 = Math.sqrt(2) / 2d;
+
+
     final AABB aabb;
     final Vec3 center;
     final OBBRotList rotations;
@@ -27,7 +30,7 @@ public class OBB implements BoundingBox {
     }
 
     /**
-     * Create an OBB from an existing AABB, rotated on the axes.
+     * Create an OBB from an existing AABB, rotated on the axes in the order yaw, pitch, roll.
      * @param aabb The AABB to create an OBB from.
      * @param pitch The pitch of the OBB, in radians.
      * @param yaw The yaw of the OBB, in radians,
@@ -101,6 +104,15 @@ public class OBB implements BoundingBox {
      */
     public OBBRotList getRotList() {
         return this.rotations.copy();
+    }
+
+    /**
+     * @return A reasonably-sized AABB guaranteed to contain this OBB. Bad for collision checks, as it tends to be
+     * significantly larger, but good for detecting things that should then be detected on this OBB.
+     */
+    public AABB getEnclosingAABB() {
+        double maxSize = Math.max(Math.max(this.aabb.getXsize(), this.aabb.getYsize()), this.aabb.getZsize());
+        return this.aabb.inflate(maxSize * HALFSQRT2);
     }
 
     public OBB translate(Vec3 translation) {
