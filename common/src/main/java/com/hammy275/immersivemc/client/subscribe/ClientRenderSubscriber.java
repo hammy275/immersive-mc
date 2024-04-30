@@ -95,7 +95,7 @@ public class ClientRenderSubscriber {
                 Vec3 pos = aabb.getCenter();
                 stack.pushPose();
                 stack.translate(-renderInfo.getPosition().x + pos.x,
-                        -renderInfo.getPosition().y + pos.y + aabb.getYsize() / 2,
+                        -renderInfo.getPosition().y + pos.y,
                         -renderInfo.getPosition().z + pos.z);
                 MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
                 if (hitbox.isOBB()) {
