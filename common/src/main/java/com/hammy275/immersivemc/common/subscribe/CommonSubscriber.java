@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.common.subscribe;
 
+import com.hammy275.immersivemc.common.obb.OBB;
 import com.hammy275.immersivemc.common.util.ShieldUtil;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -40,8 +41,8 @@ public class CommonSubscriber {
         if (!player.level.isClientSide && VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player)) {
             for (InteractionHand iHand : InteractionHand.values()) {
                 IVRData hand = VRPlugin.API.getVRPlayer(player).getController(iHand.ordinal());
-                AABB shieldBox = ShieldUtil.getShieldHitbox(player, hand, iHand);
-                List<Entity> ents = player.level.getEntities(player, shieldBox);
+                OBB shieldBox = ShieldUtil.getShieldHitbox(player, hand, iHand);
+                List<Entity> ents = player.level.getEntities(player, shieldBox.getEnclosingAABB());
                 for (Entity e : ents) {
                     if (e instanceof Projectile proj) {
                         if (!reflected.containsKey(proj.getUUID()) && shouldProjAttemptHit(proj)) {

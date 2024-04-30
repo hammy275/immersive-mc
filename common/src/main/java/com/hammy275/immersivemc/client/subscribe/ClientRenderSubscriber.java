@@ -15,7 +15,9 @@ import com.hammy275.immersivemc.common.util.ShieldUtil;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.architectury.platform.Platform;
 import net.blf02.vrapi.api.data.IVRData;
+import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -54,6 +56,9 @@ public class ClientRenderSubscriber {
         if (VRPluginVerify.clientInVR()) {
             for (InteractionHand iHand : InteractionHand.values()) {
                 if (Minecraft.getInstance().player.getItemInHand(iHand).getUseAnimation() == UseAnim.BLOCK) {
+                    IVRPlayer vrPlayer = Platform.isDevelopmentEnvironment() ?
+                            VRPlugin.API.getVRPlayer(Minecraft.getInstance().player) :
+                            VRPlugin.API.getRenderVRPlayer();
                     IVRData hand = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(iHand.ordinal());
                     AbstractImmersive.renderHitbox(stack, ShieldUtil.getShieldHitbox(Minecraft.getInstance().player, hand, iHand),
                             false, 1, 1, 1);
