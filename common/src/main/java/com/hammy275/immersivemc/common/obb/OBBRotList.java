@@ -69,6 +69,18 @@ public class OBBRotList {
     }
 
     /**
+     * Rotates the provided position around the provided point using the rotations in this OBBRotList. Equivalent
+     * to {@link OBBRotList#rotate} rotating around 0,0,0.
+     * @param posToRotate The position that is being rotated before any rotation.
+     * @param posToRotateAround The position that posToRotate is being rotated around.
+     * @param negative Whether to negate the rotation amount before rotating.
+     * @return The rotated position.
+     */
+    public Vec3 rotateAround(Vec3 posToRotate, Vec3 posToRotateAround, boolean negative) {
+        return rotate(posToRotate.subtract(posToRotateAround), negative).add(posToRotateAround);
+    }
+
+    /**
      * @return A copy of the rotations that make this rotation list.
      */
     public List<OBBRot> getRotations() {
