@@ -43,7 +43,7 @@ public class CommonSubscriber {
                 OBB shieldBox = ShieldUtil.getShieldHitbox(player, hand, iHand);
                 List<Entity> ents = player.level().getEntities(player, shieldBox.getEnclosingAABB());
                 for (Entity e : ents) {
-                    if (e instanceof Projectile proj) {
+                    if (e instanceof Projectile proj && shieldBox.contains(e.position())) {
                         if (!reflected.containsKey(proj.getUUID()) && shouldProjAttemptHit(proj)) {
                             reflected.put(proj.getUUID(), 100);
                             // "Hit" player ahead of time. We should reflect it from immersive shield, though!
