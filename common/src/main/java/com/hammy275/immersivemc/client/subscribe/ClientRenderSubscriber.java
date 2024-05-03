@@ -59,7 +59,7 @@ public class ClientRenderSubscriber {
                     IVRPlayer vrPlayer = Platform.isDevelopmentEnvironment() ?
                             VRPlugin.API.getVRPlayer(Minecraft.getInstance().player) :
                             VRPlugin.API.getRenderVRPlayer();
-                    IVRData hand = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(iHand.ordinal());
+                    IVRData hand = vrPlayer.getController(iHand.ordinal());
                     AbstractImmersive.renderHitbox(stack, ShieldUtil.getShieldHitbox(Minecraft.getInstance().player, hand, iHand),
                             false, 1, 1, 1);
                 }
