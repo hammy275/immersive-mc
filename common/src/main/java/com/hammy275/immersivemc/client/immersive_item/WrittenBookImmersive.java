@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.client.workaround.ClickHandlerScreen;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.obb.OBB;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
+import com.hammy275.immersivemc.common.util.Util;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Axis;
@@ -34,6 +35,7 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo> {
     /*
@@ -60,6 +62,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     public static final float pageTilt = 11f;
     public static final int linesPerPage = 14;
     public static final int pixelsPerLine = 114;
+    public static final double leftPageRot = Math.toRadians(15);
 
     /*
      * Pitch is 0 forward, with 30 up and -30 down
@@ -110,6 +113,10 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         } else if (!info.pageChangeState.isAnim) {
             OBBClientUtil.renderOBB(stack, info.pageTurnBoxes[2], false, 1f, 1f, 1f, 1f);
         }
+
+        for (WrittenBookInfo.BookClickInfo clickInfo : info.clickInfos) {
+            AbstractImmersive.renderHitbox(stack, clickInfo.obb(), false, 0f, 0f, 1f, 1f);
+        }
     }
 
     protected void renderPage(PoseStack stack, IVRData hand, FormattedText textRaw, boolean leftPage) {
@@ -153,15 +160,15 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         BookViewScreen.BookAccess access = BookViewScreen.BookAccess.fromItem(book);
         info.left = access.getPage(info.getLeftPageIndex());
         info.right = access.getPage(info.getRightPageIndex());
-        info.clickInfos.clear(); // Clear all click infos due to page change changing click information
+        info.clickInfos.clear();
 
         Vec3 left = getLeftRight(hand, true);
         Vec3 right = getLeftRight(hand, false);
         Vec3 away = getAway(hand);
 
         info.positions[2] = hand.position().add(away.scale(textUpAmount)); // Center
-        info.positions[0] = info.positions[2].add(left.scale(singlePageWidth)); // Left edge
-        info.positions[1] = info.positions[2].add(right.scale(singlePageWidth)); // Right edge
+        info.positions[0] = info.positions[2].add(left.scale(singlePageWidth * 1.25d)); // Left edge
+        info.positions[1] = info.positions[2].add(right.scale(singlePageWidth * 1.25d)); // Right edge
         Vec3 upCenter = info.positions[2].add(away.scale(singlePageWidth * 0.5)); // Used for "continue page turning" boxes.
 
         double pitch = Math.toRadians(hand.getPitch());
@@ -173,7 +180,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         info.pageTurnBoxes[1] = new OBB(AABB.ofSize(info.positions[1], 0.2, 0.2, pageHalfHeight * 2),
                 pitch, yaw, 0);
         // Box to continue a page turn
-        info.pageTurnBoxes[2] = new OBB(AABB.ofSize(upCenter, singlePageWidth * 3, singlePageWidth * 2, pageHalfHeight * 2.25),
+        info.pageTurnBoxes[2] = new OBB(AABB.ofSize(upCenter, singlePageWidth * 11d/3d, singlePageWidth * 2d, pageHalfHeight * 2.25),
                 pitch, yaw, 0);
 
         if (info.pageChangeState == WrittenBookInfo.PageChangeState.NONE) {
@@ -218,38 +225,31 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
             }
         }
 
-        // Place positions for interacting with text
-        info.clearClickInfoLists();  // Only clear the list of positions, as the same click events still exist
-        setClickPositions(info, hand, other, true);
-        setClickPositions(info, hand, other, false);
+        // Place positions for interacting with text. Note that these lists are cleared much earlier in tick()
+        if (info.pageChangeState == WrittenBookInfo.PageChangeState.NONE) {
+            setClickPositions(info, hand, other, true);
+            setClickPositions(info, hand, other, false);
+        }
 
         // Find nearest link to click
         info.selectedClickInfo = -1;
-        // Move pos out a bit to make easier to point at
-        double smallestDistSoFarSqr = Double.POSITIVE_INFINITY;
-        for (int clickInfoIndex = 0; clickInfoIndex < info.clickInfos.size(); clickInfoIndex++) {
-            WrittenBookInfo.BookClickInfo clickInfo = info.clickInfos.get(clickInfoIndex);
-            for (Vec3 pos : clickInfo.positions) {
-                double distSqr = pos.distanceToSqr(other.position());
-                if (distSqr < textInteractDistanceSqr && distSqr < smallestDistSoFarSqr) {
-                    info.selectedClickInfo = clickInfoIndex;
-                    smallestDistSoFarSqr = distSqr;
-                }
+        for (int i = 0; i < info.clickInfos.size(); i++) {
+            if (info.clickInfos.get(i).obb().contains(other.position())) {
+                info.selectedClickInfo = i;
+                break;
             }
+        }
+
+        // Attempt to trace to hitboxes if we aren't in one
+        if (info.selectedClickInfo == -1) {
+            Optional<Integer> hit = Util.rayTraceClosest(other.position(), other.position().add(other.getLookAngle()), info.getClickBoxes());
+            info.selectedClickInfo = hit.orElse(-1);
         }
 
         // Indicator on currently selected click info
         if (info.selectedClickInfo > -1) {
             WrittenBookInfo.BookClickInfo clickInfo = info.clickInfos.get(info.selectedClickInfo);
-            Vec3 particlePos;
-            if (clickInfo.positions.size() % 2 != 0) {
-                particlePos = clickInfo.positions.get(clickInfo.positions.size() / 2);
-            } else {
-                // Averages the two middle positions
-                particlePos = clickInfo.positions.get(clickInfo.positions.size() / 2)
-                        .add(clickInfo.positions.get(clickInfo.positions.size() / 2 - 1))
-                        .scale(0.5);
-            }
+            Vec3 particlePos = clickInfo.obb().getCenter();
             Minecraft.getInstance().player.level.addParticle(
                     new DustParticleOptions(new Vector3f(0f, 0f, 1f), 0.2f),
                     particlePos.x, particlePos.y, particlePos.z,
@@ -265,7 +265,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         Vec3 right = getLeftRight(hand, false);
         Vec3 away = getAway(hand);
 
-        // Top left of text
+        // Makes pos be the very top left of the page text
         Vec3 leftStartMove = isLeft ? left.scale(singlePageWidth * 0.96) : Vec3.ZERO;
         Vec3 pos = hand.position().add(pageUp.scale(pageHalfHeight)).add(leftStartMove)
                 .add(away.scale(textUpAmount)).add(pageDown.scale(9 * Math.abs(textStackScaleSize)));
@@ -282,6 +282,9 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
                 return true; // Return true to move to next char always
             });
             double pixelsMoved = 0;
+            Style styleForPositions = null;
+            List<Vec3> stylePositions = new ArrayList<>();
+            double length = 0;
             for (Pair<String, Style> c : chars) {
                 String str = c.getFirst();
                 Style style = c.getSecond();
@@ -290,6 +293,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
                 double halfCharWidth = (font.width(str) / 2d) * Math.abs(textStackScaleSize);
                 leftPos = leftPos.add(right.scale(halfCharWidth));
                 if (style.getClickEvent() != null) {
+                    // Set placePos to where the next character will be placed
                     Vec3 placePos;
                     double pixelMovedRatio = pixelsMoved / pixelsPerLine;
                     if (pixelMovedRatio < 0.5 && isLeft || pixelMovedRatio > 0.5 && !isLeft) {
@@ -307,14 +311,38 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
                         }
                         placePos = leftPos.add(away.scale(textUpAmount).scale(-pixelMovedRatio / 2d));
                     }
-                    info.addClickInfo(placePos, style);
+
+                    // If this character has a different style than the last, save the old style, assuming it
+                    // has a click event, into the list of clickable objects, then start building the new one.
+                    if (style != styleForPositions) {
+                        // Save current style (click event) then start tracking the new one
+                        addClickableStyle(stylePositions, styleForPositions, length, info, hand, isLeft);
+                        styleForPositions = style;
+                        stylePositions.clear();
+                    } else { // Else, add this to the list, and continue tracking the length
+                        stylePositions.add(placePos);
+                        length += halfCharWidth * 2;
+                    }
                 }
+                // Move forward the pixels
                 pixelsMoved += font.width(str) / 2d;
                 leftPos = leftPos.add(right.scale(halfCharWidth));
             }
-
+            // After loop, add this as a clickable style in case if it is.
+            addClickableStyle(stylePositions, styleForPositions, length, info, hand, isLeft);
         }
+    }
 
+    private void addClickableStyle(List<Vec3> positions, Style style, double length, WrittenBookInfo info, IVRData hand, boolean isLeft) {
+        if (style != null && style.getClickEvent() != null && !positions.isEmpty()) {
+            Vec3 centerPos = getCenterPos(positions);
+            info.clickInfos.add(new WrittenBookInfo.BookClickInfo(
+                    new OBB(AABB.ofSize(centerPos, length, 0.04 * scaleSize, 0.02 * scaleSize),
+                            Math.toRadians(hand.getPitch()),
+                            Math.toRadians(hand.getYaw()),
+                            isLeft ? leftPageRot : -leftPageRot),
+                    style));
+        }
     }
 
     @Override
@@ -339,7 +367,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         }
         if (info.selectedClickInfo > -1) {
             WrittenBookInfo.BookClickInfo clickInfo = info.clickInfos.get(info.selectedClickInfo);
-            ClickEvent clickEvent = clickInfo.style.getClickEvent();
+            ClickEvent clickEvent = clickInfo.style().getClickEvent();
             if (clickEvent != null) {
                 String eventValue = clickEvent.getValue();
                 if (clickEvent.getAction() == ClickEvent.Action.CHANGE_PAGE) {
@@ -351,7 +379,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
                 } else {
                     ClickHandlerScreen tempScreen = new ClickHandlerScreen();
                     Minecraft.getInstance().setScreen(tempScreen);
-                    tempScreen.handleComponentClicked(clickInfo.style);
+                    tempScreen.handleComponentClicked(clickInfo.style());
                 }
                 return true;
             }
@@ -388,5 +416,17 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         info.leftPageTurn = 0f;
         info.rightPageTurn = 1f;
         info.pageChangeState = WrittenBookInfo.PageChangeState.NONE;
+    }
+
+    private static Vec3 getCenterPos(List<Vec3> positions) {
+        int size = positions.size();
+        if (size % 2 == 0) {
+            // Average two center positions
+            Vec3 a = positions.get(size / 2);
+            Vec3 b = positions.get(size / 2 - 1);
+            return a.add(b).scale(0.5);
+        } else {
+            return positions.get(size / 2); // Just get the center
+        }
     }
 }
