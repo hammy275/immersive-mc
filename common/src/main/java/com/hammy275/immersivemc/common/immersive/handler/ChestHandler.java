@@ -11,25 +11,32 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ChestHandler extends ChestLikeHandler {
 
     @Override
     public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        ListOfItemsStorage storage = (ListOfItemsStorage) super.makeInventoryContents(player, pos);
         BlockEntity blockEntity = player.level.getBlockEntity(pos);
         if (blockEntity instanceof ChestBlockEntity cbe) {
+            ListOfItemsStorage storage = (ListOfItemsStorage) super.makeInventoryContents(player, pos);
             ChestBlockEntity otherChest = Util.getOtherChest(cbe);
             if (otherChest != null) {
                 ListOfItemsStorage otherStorage = (ListOfItemsStorage) super.makeInventoryContents(player, otherChest.getBlockPos());
                 storage.getItems().addAll(otherStorage.getItems());
             }
+            return storage;
+        } else { // Is an ender chest
+            List<ItemStack> items = new ArrayList<>(player.getEnderChestInventory().items);
+            return new ListOfItemsStorage(items, 27);
         }
-        return storage;
     }
 
     @Override
@@ -44,12 +51,17 @@ public class ChestHandler extends ChestLikeHandler {
 
     @Override
     public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        boolean isDirtyForClientSync = super.isDirtyForClientSync(player, pos);
-        ChestBlockEntity otherChest = Util.getOtherChest((ChestBlockEntity) player.level.getBlockEntity(pos));
-        if (otherChest != null) {
-            isDirtyForClientSync = isDirtyForClientSync || super.isDirtyForClientSync(player, otherChest.getBlockPos());
+        BlockEntity blockEntity = player.level.getBlockEntity(pos);
+        if (blockEntity instanceof EnderChestBlockEntity) {
+            return player.tickCount % 2 == 0; // Every other tick for dirtiness. Not ideal, but works.
+        } else {
+            boolean isDirtyForClientSync = super.isDirtyForClientSync(player, pos);
+            ChestBlockEntity otherChest = Util.getOtherChest((ChestBlockEntity) player.level.getBlockEntity(pos));
+            if (otherChest != null) {
+                isDirtyForClientSync = isDirtyForClientSync || super.isDirtyForClientSync(player, otherChest.getBlockPos());
+            }
+            return isDirtyForClientSync;
         }
-        return isDirtyForClientSync;
     }
 
     @Override
