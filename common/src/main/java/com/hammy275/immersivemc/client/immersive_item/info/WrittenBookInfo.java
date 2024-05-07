@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive_item.info;
 
+import com.hammy275.immersivemc.common.obb.BoundingBox;
 import com.hammy275.immersivemc.common.obb.OBB;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.network.chat.FormattedText;
@@ -71,20 +72,13 @@ public class WrittenBookInfo extends AbstractItemInfo {
         return getLeftPageIndex() + 1;
     }
 
-    public void addClickInfo(Vec3 pos, Style style) {
-        for (BookClickInfo clickInfo : this.clickInfos) {
-            if (clickInfo.style == style) {
-                clickInfo.positions.add(pos);
-                return;
-            }
+    public BoundingBox[] getClickBoxes() {
+        if (this.clickInfos.isEmpty()) {
+            return new BoundingBox[0];
         }
-        clickInfos.add(new BookClickInfo(style, pos));
-    }
-
-    public void clearClickInfoLists() {
-        for (BookClickInfo clickInfo : this.clickInfos) {
-            clickInfo.positions.clear();
-        }
+        List<BoundingBox> list = new ArrayList<>();
+        this.clickInfos.forEach((clickInfo) -> list.add(clickInfo.obb));
+        return list.toArray(new BoundingBox[0]);
     }
 
     // Note: Current behavior assumes you can't remove pages from the book.
@@ -104,13 +98,5 @@ public class WrittenBookInfo extends AbstractItemInfo {
         }
     }
 
-    public static class BookClickInfo {
-        public final List<Vec3> positions = new ArrayList<>();
-        public final Style style;
-
-        public BookClickInfo(Style style, Vec3 pos) {
-            this.style = style;
-            this.positions.add(pos);
-        }
-    }
+    public record BookClickInfo(OBB obb, Style style) {}
 }
