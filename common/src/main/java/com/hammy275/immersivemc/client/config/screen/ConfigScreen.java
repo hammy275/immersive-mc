@@ -119,13 +119,17 @@ public class ConfigScreen extends Screen {
 
     @Override
     public void onClose() {
+        boolean isSingleplayerHost = Minecraft.getInstance().hasSingleplayerServer();
         ActiveConfig.FILE.loadFromFile();
+        if (isSingleplayerHost) {
+            ActiveConfig.FROM_SERVER = (ActiveConfig) ActiveConfig.FILE.clone();
+        }
         ActiveConfig.loadActive();
         // Clear all immersives in-case we disabled one
         for (AbstractImmersive<?> immersive : Immersives.IMMERSIVES) {
             immersive.clearImmersives();
         }
-        if (Minecraft.getInstance().hasSingleplayerServer()) {
+        if (isSingleplayerHost) {
             // If host of a LAN server or playing in singleplayer, send the new config state to other players
             ActiveConfig.registerPlayerConfig(Minecraft.getInstance().player, ActiveConfig.activeRaw()); // Register our config in the server map
 
