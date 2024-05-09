@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -194,6 +195,14 @@ public class Util {
         if (state.getBlock() instanceof RepeaterBlock) {
             state = state.setValue(RepeaterBlock.DELAY, newDelay);
             level.setBlock(pos, state, 3);
+        }
+    }
+
+    public static void useLever(Player player, BlockPos pos) {
+        if (ImmersiveCheckers.isLever(pos, player.level())) {
+            BlockState lever = player.level().getBlockState(pos);
+            lever.use(player.level(), player, InteractionHand.MAIN_HAND,
+                    new BlockHitResult(Vec3.atCenterOf(pos), Direction.NORTH, pos, true));
         }
     }
 
