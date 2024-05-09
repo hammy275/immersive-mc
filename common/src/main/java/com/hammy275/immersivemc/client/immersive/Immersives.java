@@ -313,6 +313,8 @@ public class Immersives {
             .setVROnly(true)
             .build();
 
+    public static final ImmersiveLever immersiveLever = new ImmersiveLever();
+
     public static final ImmersiveRepeater immersiveRepeater = new ImmersiveRepeater();
     public static final BuiltImmersive immersiveShulker = ImmersiveBuilder.create(ImmersiveHandlers.shulkerBoxHandler)
             .setConfigChecker(() -> ActiveConfig.active().useShulkerImmersion)

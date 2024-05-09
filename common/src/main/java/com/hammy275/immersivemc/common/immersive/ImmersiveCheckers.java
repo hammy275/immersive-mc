@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.LeverBlock;
 import net.minecraft.world.level.block.RepeaterBlock;
 
 import java.util.LinkedList;
@@ -14,6 +15,7 @@ public class ImmersiveCheckers {
     public static final List<CheckerFunction> CHECKERS = new LinkedList<>();
 
     static {
+        CHECKERS.add(ImmersiveCheckers::isLever);
         CHECKERS.add(ImmersiveCheckers::isRepeater);
 
         for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
@@ -22,6 +24,10 @@ public class ImmersiveCheckers {
     }
 
     // Vanilla
+
+    public static boolean isLever(BlockPos pos, Level level) {
+        return level.getBlockState(pos).getBlock() instanceof LeverBlock;
+    }
 
     public static boolean isRepeater(BlockPos pos, Level level) {
         return level.getBlockState(pos).getBlock() instanceof RepeaterBlock;
