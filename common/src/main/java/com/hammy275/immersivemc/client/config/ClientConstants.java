@@ -27,6 +27,7 @@ public class ClientConstants {
     public static final int ticksToRenderHopper = Integer.MAX_VALUE;
     public static final int ticksToRenderHitboxesImmersive = Integer.MAX_VALUE;
     public static final int ticksToRenderSmithingTable = ticksToRenderAnvil;
+    public static final int ticksToRenderLever = Integer.MAX_VALUE;
 
     // Size of items when rendered in front of something immersive
     public static final float defaultItemScaleSize = 1f/3f;
