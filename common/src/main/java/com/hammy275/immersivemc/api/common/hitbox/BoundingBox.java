@@ -5,9 +5,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Generic interface applied to both OBBs and AABBs, so they both share a common ancestor in the type hierarchy. Other
- * classes may implement this interface in the future, though only ImmersiveMC should create implementations of this
- * Interface.
+ * A representation of a box for collision and similar detection purposes. Minecraft's {@link AABB} and ImmersiveMC"s
+ * {@link OBB} both implement this. Other classes may implement this interface in the future, though only ImmersiveMC
+ * should create implementations of this interface.
  */
 public interface BoundingBox {
 
