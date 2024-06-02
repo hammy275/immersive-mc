@@ -2,10 +2,12 @@ package com.hammy275.immersivemc.client.api_impl.immersive;
 
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveRenderHelpersImpl;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -95,7 +97,34 @@ public class ImmersiveAPIAdapter<I extends ImmersiveInfo, S extends NetworkStora
 
     @Override
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
-        apiImmersive.handleHitboxInteract(getAPIInfo(info), Minecraft.getInstance().player, closest, hand);
+        int runningSlot = 0;
+        I apiInfo = getAPIInfo(info);
+        for (int i = 0; i < apiInfo.getAllHitboxes().size(); i++) {
+            HitboxInfo hbox = apiInfo.getAllHitboxes().get(i);
+            if (!hbox.isTriggerHitbox()) {
+                if (runningSlot == closest) {
+                    apiImmersive.handleHitboxInteract(apiInfo, Minecraft.getInstance().player, closest, hand);
+                } else {
+                    runningSlot++;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void handleTriggerHitboxRightClick(InfoTriggerHitboxes info, Player player, int hitboxNum) {
+        int runningSlot = 0;
+        I apiInfo = getAPIInfo((AbstractImmersiveInfo) info);
+        for (int i = 0; i < apiInfo.getAllHitboxes().size(); i++) {
+            HitboxInfo hbox = apiInfo.getAllHitboxes().get(i);
+            if (hbox.isTriggerHitbox()) {
+                if (runningSlot == hitboxNum) {
+                    apiImmersive.handleHitboxInteract(apiInfo, Minecraft.getInstance().player, hitboxNum, InteractionHand.MAIN_HAND);
+                } else {
+                    runningSlot++;
+                }
+            }
+        }
     }
 
     @Override
