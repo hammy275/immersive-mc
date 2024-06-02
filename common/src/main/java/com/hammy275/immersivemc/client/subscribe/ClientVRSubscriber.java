@@ -42,7 +42,7 @@ public class ClientVRSubscriber {
         if (cooldown > 0) {
             cooldown--;
         } else {
-            for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
+            for (AbstractImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
                 for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
                     if (handleInfo(singleton, info, vrPlayer)) {
                         return;

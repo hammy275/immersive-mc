@@ -5,7 +5,6 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.CraftingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -17,14 +16,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
-public class CraftingHandler extends ItemWorldStorageHandler {
+public class CraftingHandler extends ItemWorldStorageHandler<CraftingTableStorage> {
     @Override
-    public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return (NetworkStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+    public CraftingTableStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+        return (CraftingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
     }
 
     @Override
-    public NetworkStorage getEmptyNetworkStorage() {
+    public CraftingTableStorage getEmptyNetworkStorage() {
         return new CraftingTableStorage();
     }
 

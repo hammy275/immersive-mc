@@ -21,11 +21,11 @@ import java.util.Collection;
 /**
  * A temporary adapter to allow the API to work with ImmersiveMC during API development.
  */
-public class ImmersiveAPIAdapter<I extends ImmersiveInfo> extends AbstractImmersive<ImmersiveInfoAPIAdapter<I>> {
+public class ImmersiveAPIAdapter<I extends ImmersiveInfo, S extends NetworkStorage> extends AbstractImmersive<ImmersiveInfoAPIAdapter<I>, S> {
 
-    private final Immersive<I> apiImmersive;
+    private final Immersive<I, S> apiImmersive;
 
-    public ImmersiveAPIAdapter(Immersive<I> apiImmersive) {
+    public ImmersiveAPIAdapter(Immersive<I, S> apiImmersive) {
         super(-1);
         this.apiImmersive = apiImmersive;
     }
@@ -36,7 +36,7 @@ public class ImmersiveAPIAdapter<I extends ImmersiveInfo> extends AbstractImmers
     }
 
     @Override
-    public @Nullable ImmersiveHandler getHandler() {
+    public @Nullable ImmersiveHandler<S> getHandler() {
         return apiImmersive.getHandler();
     }
 
@@ -100,7 +100,7 @@ public class ImmersiveAPIAdapter<I extends ImmersiveInfo> extends AbstractImmers
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, NetworkStorage storage) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, S storage) {
         apiImmersive.processStorageFromNetwork(getAPIInfo(info), storage);
     }
 

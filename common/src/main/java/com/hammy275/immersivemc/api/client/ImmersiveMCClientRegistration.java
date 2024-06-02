@@ -18,6 +18,6 @@ public interface ImmersiveMCClientRegistration {
      * @param immersive Immersive to register.
      * @throws IllegalArgumentException If the Immersive is already registered.
      */
-    public void registerImmersive(Immersive<?> immersive) throws IllegalArgumentException;
+    public void registerImmersive(Immersive<?, ?> immersive) throws IllegalArgumentException;
 
 }

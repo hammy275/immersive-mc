@@ -22,7 +22,7 @@ public class LevelMixin {
         BlockEntity blockEntity = me.getBlockEntity(blockPos);
         if (!me.isClientSide && blockEntity instanceof Container) {
             BlockState state = me.getBlockState(blockPos);
-            for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
+            for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
                 if (handler.isValidBlock(blockPos, me)) {
                     DirtyTracker.markDirty(me, blockPos);
                 }

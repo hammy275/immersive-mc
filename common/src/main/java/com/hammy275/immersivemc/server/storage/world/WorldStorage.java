@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.server.storage.world;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import net.minecraft.nbt.CompoundTag;
 
 public interface WorldStorage {
@@ -21,6 +22,6 @@ public interface WorldStorage {
     /**
      * @return Handler for this type of WorldStorage.
      */
-    public ImmersiveHandler getHandler();
+    public ImmersiveHandler<? extends NetworkStorage> getHandler();
 
 }

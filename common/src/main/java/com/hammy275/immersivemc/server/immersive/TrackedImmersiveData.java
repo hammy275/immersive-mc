@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.server.immersive;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,16 +12,16 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.UUID;
 
-public class TrackedImmersiveData {
+public class TrackedImmersiveData<S extends NetworkStorage> {
 
     public static final double maxDist = CommonConstants.distanceToRemoveImmersive;
 
     public final UUID playerUUID;
     private final BlockPos pos;
-    private final ImmersiveHandler handler;
+    private final ImmersiveHandler<S> handler;
     private final Level level;
 
-    public TrackedImmersiveData(UUID playerUUID, BlockPos pos, ImmersiveHandler handler, Level level) {
+    public TrackedImmersiveData(UUID playerUUID, BlockPos pos, ImmersiveHandler<S> handler, Level level) {
         this.playerUUID = playerUUID;
         this.pos = pos;
         this.handler = handler;
@@ -31,8 +32,8 @@ public class TrackedImmersiveData {
         return this.handler.isDirtyForClientSync(player, this.pos);
     }
 
-    public FetchInventoryPacket getSyncPacket(ServerPlayer player) {
-        return new FetchInventoryPacket(handler, handler.makeInventoryContents(player, pos), pos);
+    public FetchInventoryPacket<S> getSyncPacket(ServerPlayer player) {
+        return new FetchInventoryPacket<>(handler, handler.makeInventoryContents(player, pos), pos);
     }
 
     public boolean validForPlayer(ServerPlayer player) {
@@ -49,7 +50,7 @@ public class TrackedImmersiveData {
         return this.level;
     }
 
-    public ImmersiveHandler getHandler() {
+    public ImmersiveHandler<S> getHandler() {
         return this.handler;
     }
 

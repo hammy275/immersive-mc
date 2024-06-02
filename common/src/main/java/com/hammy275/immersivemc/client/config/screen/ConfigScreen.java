@@ -126,7 +126,7 @@ public class ConfigScreen extends Screen {
         }
         ActiveConfig.loadActive();
         // Clear all immersives in-case we disabled one
-        for (AbstractImmersive<?> immersive : Immersives.IMMERSIVES) {
+        for (AbstractImmersive<?, ?> immersive : Immersives.IMMERSIVES) {
             immersive.clearImmersives();
         }
         if (isSingleplayerHost) {

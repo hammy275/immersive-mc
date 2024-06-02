@@ -62,7 +62,7 @@ public class ClientLogicSubscriber {
         if (currentVRState != lastVRState) {
             lastVRState = currentVRState;
             if (!currentVRState && ActiveConfig.FILE.disableOutsideVR) {
-                for (AbstractImmersive<?> immersive : Immersives.IMMERSIVES) {
+                for (AbstractImmersive<?, ?> immersive : Immersives.IMMERSIVES) {
                     immersive.clearImmersives();
                 }
             }
@@ -99,7 +99,7 @@ public class ClientLogicSubscriber {
         for (AbstractTracker tracker : ClientTrackerInit.trackers) {
             tracker.doTick(player);
         }
-        for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
+        for (AbstractImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
             tickInfos(singleton, player);
         }
         if (VRPluginVerify.clientInVR()) {
@@ -136,7 +136,7 @@ public class ClientLogicSubscriber {
     }
 
     public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
-        for (AbstractImmersive<? extends AbstractImmersiveInfo> immersive : Immersives.IMMERSIVES) {
+        for (AbstractImmersive<? extends AbstractImmersiveInfo, ?> immersive : Immersives.IMMERSIVES) {
             if (immersive.shouldTrack(pos, level) && immersive.clientAuthoritative()) {
                 immersive.refreshOrTrackObject(pos, level);
             }
@@ -158,7 +158,7 @@ public class ClientLogicSubscriber {
             HitResult looking = Minecraft.getInstance().hitResult;
             if (looking != null && looking.getType() == HitResult.Type.BLOCK && ActiveConfig.active().disableVanillaGUIs) {
                 BlockPos pos = ((BlockHitResult) looking).getBlockPos();
-                for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
+                for (AbstractImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
                     // Don't bother checking this immersive if not in VR and immersive is VR only. Never skip those!
                     if (singleton.isVROnly() && !VRPluginVerify.clientInVR()) {
                         continue;
@@ -189,7 +189,7 @@ public class ClientLogicSubscriber {
     }
 
     public static void onDisconnect(Player player) {
-        for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
+        for (AbstractImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
             singleton.getTrackedObjects().clear();
         }
         ActiveConfig.FROM_SERVER = (ActiveConfig) ActiveConfig.DISABLED.clone();
@@ -199,7 +199,7 @@ public class ClientLogicSubscriber {
 
     }
 
-    protected static <I extends AbstractImmersiveInfo> void tickInfos(AbstractImmersive<I> singleton, Player player) {
+    protected static <I extends AbstractImmersiveInfo> void tickInfos(AbstractImmersive<I, ?> singleton, Player player) {
         // Don't tick if VR only and not in VR
         if (singleton.isVROnly() && !VRPluginVerify.clientInVR()) {
             return;
@@ -305,7 +305,7 @@ public class ClientLogicSubscriber {
         }
 
         if (inVR) {
-            for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
+            for (AbstractImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
                 for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
                     if (!(info instanceof InfoTriggerHitboxes)) break;
                     InfoTriggerHitboxes triggerInfo = (InfoTriggerHitboxes) info;
@@ -358,7 +358,7 @@ public class ClientLogicSubscriber {
         }
 
         // Just before returning false, see if we're in a hitbox, so we can do a full stack place and return true
-        for (AbstractImmersive<?> immersive : Immersives.IMMERSIVES) {
+        for (AbstractImmersive<?, ?> immersive : Immersives.IMMERSIVES) {
             for (AbstractImmersiveInfo info : immersive.getTrackedObjects()) {
                 if (info.slotHovered != -1 || info.slotHovered2 != -1) {
                     return true;
@@ -387,7 +387,7 @@ public class ClientLogicSubscriber {
         Vec3 end = startAndEnd.getB();
 
         if (!inVR || ActiveConfig.active().rightClickInVR) { // Don't handle right clicks for VR players, they have hands (unless they config to!)!
-            for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
+            for (AbstractImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
                 if (singleton.isVROnly() && !inVR) continue;
                 for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
                     if (info.hasHitboxes() && singleton.hitboxesAvailable(info)) {

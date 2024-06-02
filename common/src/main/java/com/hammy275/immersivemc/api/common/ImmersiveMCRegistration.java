@@ -18,6 +18,6 @@ public interface ImmersiveMCRegistration {
      * @param handler The handler to register.
      * @throws IllegalArgumentException If the handler is already registered.
      */
-    public void registerImmersiveHandler(ImmersiveHandler handler) throws IllegalArgumentException;
+    public void registerImmersiveHandler(ImmersiveHandler<?> handler) throws IllegalArgumentException;
     
 }

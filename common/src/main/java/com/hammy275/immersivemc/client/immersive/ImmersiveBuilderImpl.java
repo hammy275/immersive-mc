@@ -1,9 +1,9 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveBuilder;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.Vec3;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.*;
 
-public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
+public class ImmersiveBuilderImpl<S extends NetworkStorage> implements ImmersiveBuilder<S> {
 
     // NOTE: Variables aren't prefixed with any visibility, so they're package-private
 
@@ -20,7 +20,7 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
 
 
     // -- Required --
-    ImmersiveHandler handler;
+    ImmersiveHandler<S> handler;
 
     // -- Optional --
     Supplier<Boolean> enabledInConfigSupplier = () -> true;
@@ -36,23 +36,14 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
     boolean vrOnly = false;
     List<Vec3i> airCheckPositionOffsets = new ArrayList<>();
     Class<?> extraInfoDataClazz = null;
-    BiConsumer<NetworkStorage, BuiltImmersiveInfo> extraStorageConsumer = null;
+    BiConsumer<S, BuiltImmersiveInfo> extraStorageConsumer = null;
     BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotActive = SLOT_ALWAYS_ACTIVE;
     Consumer<BuiltImmersiveInfo> onRemove = (info) -> {};
     boolean blockRightClickWhenGUIClickDisabled = true;
     BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
-    public ImmersiveBuilderImpl(ImmersiveHandler handler) {
-        this.handler = handler;
-    }
 
-    /**
-     * Sets the immersive handler for this immersive.
-     * @param handler New handler for this immersive.
-     * @return Builder object.
-     */
-    public ImmersiveBuilderImpl setHandler(ImmersiveHandler handler) {
+    public ImmersiveBuilderImpl(ImmersiveHandler<S> handler) {
         this.handler = handler;
-        return this;
     }
 
 
@@ -61,7 +52,7 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param time The amount of time for this immersive to render.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl setRenderTime(int time) {
+    public ImmersiveBuilderImpl<S> setRenderTime(int time) {
         this.renderTime = time;
         return this;
     }
@@ -71,7 +62,8 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param size The size of the item when rendering.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl setRenderSize(float size) {
+    @Override
+    public ImmersiveBuilderImpl<S> setRenderSize(float size) {
         this.renderSize = size;
         return this;
     }
@@ -82,7 +74,8 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param hitboxInfo HitboxInfo to add. Can use HitboxInfoBuilder to make it easier to create.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl addHitbox(HitboxInfo hitboxInfo) {
+    @Override
+    public ImmersiveBuilderImpl<S> addHitbox(HitboxInfo hitboxInfo) {
         this.hitboxes.add(hitboxInfo);
         return this;
     }
@@ -94,7 +87,8 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param distBetweenBoxes Distance between boxes.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl add3x3Grid(HitboxInfo hitboxInfo, double distBetweenBoxes) {
+    @Override
+    public ImmersiveBuilderImpl<S> add3x3Grid(HitboxInfo hitboxInfo, double distBetweenBoxes) {
         Vec3 left = new Vec3(-1, 0, 0).scale(distBetweenBoxes);
         Vec3 right = new Vec3(1, 0, 0).scale(distBetweenBoxes);
         Vec3 up = new Vec3(0, 1, 0).scale(distBetweenBoxes);
@@ -116,20 +110,9 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param newMode New mode for positioning.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl setPositioningMode(HitboxPositioningMode newMode) {
+    @Override
+    public ImmersiveBuilderImpl<S> setPositioningMode(HitboxPositioningMode newMode) {
         this.positioningMode = newMode;
-        return this;
-    }
-
-    /**
-     * Adds a position to be used for light calculations. If none are supplied, a light position is determined
-     * by the HitboxPositioningMode of the immersive.
-     * Note: Offsets are currently literal, and are not translated in the same way hitboxes are.
-     * @param lightPosOffset Offset of this block's position to add as a light source.
-     * @return Builder object.
-     */
-    public ImmersiveBuilderImpl addLightPositionOffset(Vec3i lightPosOffset) {
-        this.lightPositionOffsets.add(lightPosOffset);
         return this;
     }
 
@@ -138,29 +121,9 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param checker Checker to retrieve config value. Something such as () -> ActiveConfig.active().myConfigValue works here.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl setConfigChecker(Supplier<Boolean> checker) {
+    @Override
+    public ImmersiveBuilderImpl<S> setConfigChecker(Supplier<Boolean> checker) {
         this.enabledInConfigSupplier = checker;
-        return this;
-    }
-
-    /**
-     * Sets the maximum amount of infos this immersive should manage.
-     * @param newMax The new maximum.
-     * @return Builder object.
-     */
-    public ImmersiveBuilderImpl setMaxImmersives(int newMax) {
-        this.maxImmersives = newMax;
-        return this;
-    }
-
-    /**
-     * Sets an extra function to check if an info is ready to render. This is best used for things such as
-     * air checking.
-     * @param renderReady Function that consumes an info instance and returns if it's ready to render.
-     * @return Builder object.
-     */
-    public ImmersiveBuilderImpl setExtraRenderReady(Function<BuiltImmersiveInfo, Boolean> renderReady) {
-        this.extraRenderReady = renderReady;
         return this;
     }
 
@@ -169,7 +132,8 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param handler Function that handles a right-click.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl setRightClickHandler(RightClickHandler handler) {
+    @Override
+    public ImmersiveBuilderImpl<S> setRightClickHandler(RightClickHandler handler) {
         this.rightClickHandler = handler;
         return this;
     }
@@ -179,7 +143,8 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param controllerNum Controller number.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl setTriggerHitboxControllerNum(int controllerNum) {
+    @Override
+    public ImmersiveBuilderImpl<S> setTriggerHitboxControllerNum(int controllerNum) {
         assert controllerNum == 0 || controllerNum == 1;
         this.triggerHitboxControllerNum = controllerNum;
         return this;
@@ -190,23 +155,9 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param vrOnly Whether this immersive should now be VR only.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl setVROnly(boolean vrOnly) {
+    @Override
+    public ImmersiveBuilderImpl<S> setVROnly(boolean vrOnly) {
         this.vrOnly = vrOnly;
-        return this;
-    }
-
-    /**
-     * Adds a position to be used for cancelling rendering if exposed to air. If none are supplied, a position is
-     * determined by the HitboxPositioningMode of the immersive. This is calculated identically to the light position
-     * offset.
-     * Note that internally, air is not actually checked for! Instead, it checks if the position can be replaced,
-     * such as air, water, and tall grass.
-     * Note: Offsets are currently literal, and are not translated in the same way hitboxes are.
-     * @param offset Offset of this block's position to add as an air check.
-     * @return Builder object.
-     */
-    public ImmersiveBuilderImpl addAirCheckPos(Vec3i offset) {
-        this.airCheckPositionOffsets.add(offset);
         return this;
     }
 
@@ -217,7 +168,8 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param clazz Class that represents extra data storage, or null to specify none.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl setExtraInfoDataClass(Class<?> clazz) {
+    @Override
+    public ImmersiveBuilderImpl<S> setExtraInfoDataClass(Class<?> clazz) {
         this.extraInfoDataClazz = clazz;
         return this;
     }
@@ -228,7 +180,8 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param storageConsumer New storage consumer.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl setExtraStorageConsumer(BiConsumer<NetworkStorage, BuiltImmersiveInfo> storageConsumer) {
+    @Override
+    public ImmersiveBuilderImpl<S> setExtraStorageConsumer(BiConsumer<S, BuiltImmersiveInfo> storageConsumer) {
         this.extraStorageConsumer = storageConsumer;
         return this;
     }
@@ -238,7 +191,8 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param slotActive Function that takes an info instance and a slot number and returns whether the slot is active.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl setSlotActiveFunction(BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotActive) {
+    @Override
+    public ImmersiveBuilderImpl<S> setSlotActiveFunction(BiFunction<BuiltImmersiveInfo, Integer, Boolean> slotActive) {
         this.slotActive = slotActive;
         return this;
     }
@@ -248,7 +202,8 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param onRemove Function to run on info just before removal.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl setOnRemove(Consumer<BuiltImmersiveInfo> onRemove) {
+    @Override
+    public ImmersiveBuilderImpl<S> setOnRemove(Consumer<BuiltImmersiveInfo> onRemove) {
         this.onRemove = onRemove;
         return this;
     }
@@ -259,7 +214,8 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param doDisable Whether to disable as described above.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl shouldDisableRightClicksWhenInteractionsDisabled(boolean doDisable) {
+    @Override
+    public ImmersiveBuilderImpl<S> shouldDisableRightClicksWhenInteractionsDisabled(boolean doDisable) {
         this.blockRightClickWhenGUIClickDisabled = doDisable;
         return this;
     }
@@ -270,7 +226,8 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param itemGuideActive Function that returns whether the given slot is active given the info.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl setShouldRenderItemGuideFunction(BiFunction<BuiltImmersiveInfo, Integer, Boolean> itemGuideActive) {
+    @Override
+    public ImmersiveBuilderImpl<S> setShouldRenderItemGuideFunction(BiFunction<BuiltImmersiveInfo, Integer, Boolean> itemGuideActive) {
         this.slotRendersItemGuide = itemGuideActive;
         return this;
     }
@@ -281,7 +238,8 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param hitboxInfo New hitbox information.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl overwriteHitbox(int index, HitboxInfo hitboxInfo) {
+    @Override
+    public ImmersiveBuilderImpl<S> overwriteHitbox(int index, HitboxInfo hitboxInfo) {
         this.hitboxes.set(index, hitboxInfo);
         return this;
     }
@@ -292,7 +250,8 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param modifier A function that takes the old hitbox as a builder and returns new hitbox info.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl modifyHitbox(int index, Function<HitboxInfoBuilder, HitboxInfo> modifier) {
+    @Override
+    public ImmersiveBuilderImpl<S> modifyHitbox(int index, Function<HitboxInfoBuilder, HitboxInfo> modifier) {
         return modifyHitboxes(index, index, modifier);
     }
 
@@ -303,7 +262,8 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
      * @param modifier A function that takes the old hitbox as a builder and returns new hitbox info.
      * @return Builder object.
      */
-    public ImmersiveBuilderImpl modifyHitboxes(int startIndex, int endIndex, Function<HitboxInfoBuilder, HitboxInfo> modifier) {
+    @Override
+    public ImmersiveBuilderImpl<S> modifyHitboxes(int startIndex, int endIndex, Function<HitboxInfoBuilder, HitboxInfo> modifier) {
         if (startIndex < 0 || endIndex < 0 || startIndex > endIndex || endIndex >= hitboxes.size()) {
             throw new IllegalArgumentException("Invalid starting and ending index. Keep them in range of the hitboxes, and make sure startIndex < endIndex.");
         }
@@ -313,28 +273,39 @@ public class ImmersiveBuilderImpl implements ImmersiveBuilder,Cloneable {
         return this;
     }
 
-    public BuiltImmersive build() {
-        return new BuiltImmersive(this);
+    public BuiltImmersive<S> build() {
+        return new BuiltImmersive<>(this);
     }
 
-    public static ImmersiveBuilderImpl create(ImmersiveHandler handler) {
-        return new ImmersiveBuilderImpl(handler);
+    public static <NS extends NetworkStorage> ImmersiveBuilderImpl<NS> create(ImmersiveHandler<NS> handler) {
+        return new ImmersiveBuilderImpl<>(handler);
     }
 
     /**
-     * Create a clone of this ImmersiveBuilder.
-     * @return A clone of this ImmersiveBuilder.
+     * Create a copy of this ImmersiveBuilder, setting the extra storage consumer to null.
+     * @return A best-effort copy of this ImmersiveBuilder.
      */
     @Override
-    public ImmersiveBuilderImpl clone() {
-        try {
-            ImmersiveBuilderImpl clone = (ImmersiveBuilderImpl) super.clone();
-            clone.hitboxes = new ArrayList<>(hitboxes);
-            clone.lightPositionOffsets = new ArrayList<>(lightPositionOffsets);
-            clone.airCheckPositionOffsets = new ArrayList<>(airCheckPositionOffsets);
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
+    public <T extends NetworkStorage> ImmersiveBuilderImpl<T> copy(ImmersiveHandler<T> newHandler) {
+        ImmersiveBuilderImpl<T> clone = new ImmersiveBuilderImpl<>(newHandler);
+        clone.enabledInConfigSupplier = this.enabledInConfigSupplier;
+        clone.renderTime = this.renderTime;
+        clone.renderSize = this.renderSize;
+        clone.hitboxes = new ArrayList<>(this.hitboxes);
+        clone.lightPositionOffsets = new ArrayList<>(this.lightPositionOffsets);
+        clone.positioningMode = this.positioningMode;
+        clone.maxImmersives = this.maxImmersives;
+        clone.extraRenderReady = this.extraRenderReady;
+        clone.rightClickHandler = this.rightClickHandler;
+        clone.triggerHitboxControllerNum = this.triggerHitboxControllerNum;
+        clone.vrOnly = this.vrOnly;
+        clone.airCheckPositionOffsets = new ArrayList<>(this.airCheckPositionOffsets);
+        clone.extraInfoDataClazz = this.extraInfoDataClazz;
+        clone.extraStorageConsumer = null;
+        clone.slotActive = this.slotActive;
+        clone.onRemove = this.onRemove;
+        clone.blockRightClickWhenGUIClickDisabled = this.blockRightClickWhenGUIClickDisabled;
+        clone.slotRendersItemGuide = this.slotRendersItemGuide;
+        return clone;
     }
 }

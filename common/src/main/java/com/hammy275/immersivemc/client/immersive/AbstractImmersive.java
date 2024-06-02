@@ -42,7 +42,7 @@ import java.util.List;
  * Abstract immersive anything
  * @param <I> Info type
  */
-public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
+public abstract class AbstractImmersive<I extends AbstractImmersiveInfo, S extends NetworkStorage> {
     public static final int maxLight = LightTexture.pack(15, 15);
 
     protected final List<I> infos;
@@ -94,7 +94,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
      * immersive doesn't receive item data from the server through FetchInventoryPacket.
      */
     @Nullable
-    public abstract ImmersiveHandler getHandler();
+    public abstract ImmersiveHandler<S> getHandler();
 
     public boolean hasInfo(BlockPos pos) {
         for (I info : this.infos) {
@@ -158,7 +158,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo> {
         return info.slotHovered(slotNum);
     }
 
-    public abstract void processStorageFromNetwork(AbstractImmersiveInfo info, NetworkStorage storage);
+    public abstract void processStorageFromNetwork(AbstractImmersiveInfo info, S storage);
 
     public void tick(I info, boolean isInVR) {
         if (enabledInConfig()) {

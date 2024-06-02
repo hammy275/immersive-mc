@@ -24,11 +24,11 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.*;
 
-public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
+public class BuiltImmersive<S extends NetworkStorage> extends AbstractImmersive<BuiltImmersiveInfo, S> {
 
-    protected final ImmersiveBuilderImpl builder;
+    protected final ImmersiveBuilderImpl<S> builder;
 
-    public BuiltImmersive(ImmersiveBuilderImpl builder) {
+    public BuiltImmersive(ImmersiveBuilderImpl<S> builder) {
         super(builder.maxImmersives);
         this.builder = builder;
     }
@@ -39,7 +39,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     }
 
     @Override
-    public ImmersiveHandler getHandler() {
+    public ImmersiveHandler<S> getHandler() {
         return builder.handler;
     }
 
@@ -286,7 +286,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, NetworkStorage storage) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, S storage) {
         BuiltImmersiveInfo bInfo = (BuiltImmersiveInfo) info;
         if (storage instanceof ListOfItemsStorage itemsStorage) {
             for (int i = 0; i < itemsStorage.getItems().size(); i++) {
@@ -312,7 +312,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         return null;
     }
 
-    public ImmersiveBuilderImpl getBuilderClone() {
-        return builder.clone();
+    public <T extends NetworkStorage> ImmersiveBuilderImpl<T> getBuilderClone(ImmersiveHandler<T> newHandler) {
+        return builder.copy(newHandler);
     }
 }

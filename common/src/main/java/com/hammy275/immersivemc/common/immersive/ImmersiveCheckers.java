@@ -18,7 +18,7 @@ public class ImmersiveCheckers {
         CHECKERS.add(ImmersiveCheckers::isLever);
         CHECKERS.add(ImmersiveCheckers::isRepeater);
 
-        for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
+        for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
             CHECKERS.add(handler::isValidBlock);
         }
     }

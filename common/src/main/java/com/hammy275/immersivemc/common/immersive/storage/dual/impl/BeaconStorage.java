@@ -9,7 +9,7 @@ public class BeaconStorage extends ItemStorage {
     }
 
     @Override
-    public ImmersiveHandler getHandler() {
+    public ImmersiveHandler<BeaconStorage> getHandler() {
         return ImmersiveHandlers.beaconHandler;
     }
 }

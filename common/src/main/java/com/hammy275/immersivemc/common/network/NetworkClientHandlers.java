@@ -34,16 +34,17 @@ public class NetworkClientHandlers {
         }
     }
 
-    public static void handleReceiveInvData(NetworkStorage storage, BlockPos pos, ImmersiveHandler handler) {
+    @SuppressWarnings("unchecked")
+    public static <NS extends NetworkStorage> void handleReceiveInvData(NS storage, BlockPos pos, ImmersiveHandler<NS> handler) {
         Objects.requireNonNull(storage);
         Level level = Minecraft.getInstance().player.level();
         // Search all immersives for the matching handler. If found and the block is the state we expect, create or refresh
         // the info and process storage on it.
-        for (AbstractImmersive<?> immersive : Immersives.IMMERSIVES) {
+        for (AbstractImmersive<?, ?> immersive : Immersives.IMMERSIVES) {
             if (immersive.getHandler() == handler && immersive.shouldTrack(pos, level)) {
                 AbstractImmersiveInfo info = immersive.refreshOrTrackObject(pos, level);
                 if (info != null) {
-                    immersive.processStorageFromNetwork(info, storage);
+                    ((AbstractImmersive<?, NS>) immersive).processStorageFromNetwork(info, storage);
                 }
             }
         }

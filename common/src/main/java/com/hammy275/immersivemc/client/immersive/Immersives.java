@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
@@ -28,10 +29,10 @@ import java.util.List;
 
 public class Immersives {
 
-    public static final List<AbstractImmersive<? extends AbstractImmersiveInfo>> IMMERSIVES =
+    public static final List<AbstractImmersive<? extends AbstractImmersiveInfo, ? extends NetworkStorage>> IMMERSIVES =
             new LinkedList<>();
 
-    public static final BuiltImmersive immersiveAnvil = ImmersiveBuilderImpl.create(ImmersiveHandlers.anvilHandler)
+    public static final BuiltImmersive<?> immersiveAnvil = ImmersiveBuilderImpl.create(ImmersiveHandlers.anvilHandler)
             .setConfigChecker(() -> ActiveConfig.active().useAnvilImmersion)
             .setRenderTime(ClientConstants.ticksToRenderAnvil)
             .setRenderSize(ClientConstants.itemScaleSizeAnvil)
@@ -58,7 +59,7 @@ public class Immersives {
             .setExtraInfoDataClass(AnvilData.class)
             .build();
     public static final ImmersiveBackpack immersiveBackpack = new ImmersiveBackpack();
-    public static final BuiltImmersive immersiveBarrel = ImmersiveBuilderImpl.create(ImmersiveHandlers.barrelHandler)
+    public static final BuiltImmersive<?> immersiveBarrel = ImmersiveBuilderImpl.create(ImmersiveHandlers.barrelHandler)
             .setConfigChecker(() -> ActiveConfig.active().useBarrelImmersion)
             .setRenderTime(ClientConstants.ticksToRenderBarrel)
             .setRenderSize(ClientConstants.itemScaleSizeBarrel)
@@ -89,7 +90,7 @@ public class Immersives {
             })
             .build();
     public static final ImmersiveBeacon immersiveBeacon = new ImmersiveBeacon();
-    public static final BuiltImmersive immersiveBrewing = ImmersiveBuilderImpl.create(ImmersiveHandlers.brewingStandHandler)
+    public static final BuiltImmersive<?> immersiveBrewing = ImmersiveBuilderImpl.create(ImmersiveHandlers.brewingStandHandler)
             .setConfigChecker(() -> ActiveConfig.active().useBrewingImmersion)
             .setRenderTime(ClientConstants.ticksToRenderBrewing)
             .setRenderSize(ClientConstants.itemScaleSizeBrewing)
@@ -107,7 +108,7 @@ public class Immersives {
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .build();
     public static final ImmersiveChest immersiveChest = new ImmersiveChest();
-    public static final BuiltImmersive immersiveChiseledBookshelf = ImmersiveBuilderImpl.create(ImmersiveHandlers.chiseledBookshelfHandler)
+    public static final BuiltImmersive<?> immersiveChiseledBookshelf = ImmersiveBuilderImpl.create(ImmersiveHandlers.chiseledBookshelfHandler)
             .setConfigChecker(() -> ActiveConfig.active().useChiseledBookshelfImmersion)
             .setRenderTime(ClientConstants.ticksToRenderChiseledBookshelf)
             .shouldDisableRightClicksWhenInteractionsDisabled(false)
@@ -121,7 +122,7 @@ public class Immersives {
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .setVROnly(true)
             .build();
-    public static final BuiltImmersive immersiveCrafting = ImmersiveBuilderImpl.create(ImmersiveHandlers.craftingHandler)
+    public static final BuiltImmersive<?> immersiveCrafting = ImmersiveBuilderImpl.create(ImmersiveHandlers.craftingHandler)
             .setConfigChecker(() -> ActiveConfig.active().useCraftingImmersion)
             .setRenderTime(ClientConstants.ticksToRenderCrafting)
             .setRenderSize(ClientConstants.itemScaleSizeCrafting)
@@ -136,7 +137,7 @@ public class Immersives {
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .setTriggerHitboxControllerNum(0)
             .build();
-    public static final BuiltImmersive immersiveETable = ImmersiveBuilderImpl.create(ImmersiveHandlers.enchantingTableHandler)
+    public static final BuiltImmersive<?> immersiveETable = ImmersiveBuilderImpl.create(ImmersiveHandlers.enchantingTableHandler)
             .setConfigChecker(() -> ActiveConfig.active().useETableImmersion)
             .setRenderTime(ClientConstants.ticksToRenderETable)
             .setRenderSize(ClientConstants.itemScaleSizeETable)
@@ -214,7 +215,7 @@ public class Immersives {
                 }
             })
             .build();
-    public static final BuiltImmersive immersiveFurnace = ImmersiveBuilderImpl.create(ImmersiveHandlers.furnaceHandler)
+    public static final BuiltImmersive<?> immersiveFurnace = ImmersiveBuilderImpl.create(ImmersiveHandlers.furnaceHandler)
             .setConfigChecker(() -> ActiveConfig.active().useFurnaceImmersion)
             .setRenderTime(ClientConstants.ticksToRenderFurnace)
             .setRenderSize(ClientConstants.itemScaleSizeFurnace)
@@ -269,7 +270,7 @@ public class Immersives {
             })
             .build();
     public static final ImmersiveHitboxes immersiveHitboxes = new ImmersiveHitboxes();
-    public static final BuiltImmersive immersiveHopper = ImmersiveBuilderImpl.create(ImmersiveHandlers.hopperHandler)
+    public static final BuiltImmersive<?> immersiveHopper = ImmersiveBuilderImpl.create(ImmersiveHandlers.hopperHandler)
             .setConfigChecker(() -> ActiveConfig.active().useHopperImmersion)
             .setRenderTime(ClientConstants.ticksToRenderHopper)
             .setRenderSize(ClientConstants.itemScaleSizeHopper)
@@ -304,7 +305,7 @@ public class Immersives {
             .setPositioningMode(HitboxPositioningMode.PLAYER_FACING_NO_DOWN)
             .setRightClickHandler((info, player, slot, hand) -> Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand)))
             .build();
-    public static final BuiltImmersive immersiveJukebox = ImmersiveBuilderImpl.create(ImmersiveHandlers.jukeboxHandler)
+    public static final BuiltImmersive<?> immersiveJukebox = ImmersiveBuilderImpl.create(ImmersiveHandlers.jukeboxHandler)
             .setConfigChecker(() -> ActiveConfig.active().useJukeboxImmersion)
             .setRenderTime(ClientConstants.ticksToHandleJukebox)
             .addHitbox(HitboxInfoBuilder.create(Vec3.ZERO, 0.125, 0.125, 0.625).build())
@@ -316,7 +317,7 @@ public class Immersives {
     public static final ImmersiveLever immersiveLever = new ImmersiveLever();
 
     public static final ImmersiveRepeater immersiveRepeater = new ImmersiveRepeater();
-    public static final BuiltImmersive immersiveShulker = ImmersiveBuilderImpl.create(ImmersiveHandlers.shulkerBoxHandler)
+    public static final BuiltImmersive<?> immersiveShulker = ImmersiveBuilderImpl.create(ImmersiveHandlers.shulkerBoxHandler)
             .setConfigChecker(() -> ActiveConfig.active().useShulkerImmersion)
             .setRenderTime(ClientConstants.ticksToRenderShulker)
             .setRenderSize(ClientConstants.itemScaleSizeShulker)
@@ -343,7 +344,7 @@ public class Immersives {
             })
             .build();
 
-    public static final BuiltImmersive immersiveSmithingTable = ImmersiveBuilderImpl.create(ImmersiveHandlers.smithingTableHandler)
+    public static final BuiltImmersive<?> immersiveSmithingTable = ImmersiveBuilderImpl.create(ImmersiveHandlers.smithingTableHandler)
             .setConfigChecker(() -> ActiveConfig.active().useSmithingTableImmersion)
             .setRenderTime(ClientConstants.ticksToRenderSmithingTable)
             .setRenderSize(ClientConstants.itemScaleSizeSmithingTable)
@@ -357,13 +358,11 @@ public class Immersives {
             .build();
 
 
-    public static final BuiltImmersive immersiveIronFurnacesFurnace = immersiveFurnace.getBuilderClone()
-            .setHandler(ImmersiveHandlers.ironFurnacesFurnaceHandler)
+    public static final BuiltImmersive<?> immersiveIronFurnacesFurnace = immersiveFurnace.getBuilderClone(ImmersiveHandlers.ironFurnacesFurnaceHandler)
             .setConfigChecker(() -> ActiveConfig.active().useIronFurnacesFurnaceImmersion)
             .build();
 
-    public static final BuiltImmersive immersiveTinkersConstructCraftingStation = immersiveCrafting.getBuilderClone()
-            .setHandler(ImmersiveHandlers.tcCraftingStationHandler)
+    public static final BuiltImmersive<?> immersiveTinkersConstructCraftingStation = immersiveCrafting.getBuilderClone(ImmersiveHandlers.tcCraftingStationHandler)
             .setConfigChecker(() -> ActiveConfig.active().useTinkersConstructCraftingStationImmersion)
             .modifyHitboxes(0, 8, (hitbox) -> hitbox.renderItem(false).build())
             .build();

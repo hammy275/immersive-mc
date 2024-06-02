@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
@@ -15,9 +14,9 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ChestLikeHandler extends ContainerHandler {
+public abstract class ChestLikeHandler extends ContainerHandler<ListOfItemsStorage> {
     @Override
-    public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         List<ItemStack> items = new ArrayList<>();
         Container inv;
         Container lootrInv = Lootr.lootrImpl.getContainer(player, pos);
@@ -44,7 +43,7 @@ public abstract class ChestLikeHandler extends ContainerHandler {
     }
 
     @Override
-    public NetworkStorage getEmptyNetworkStorage() {
+    public ListOfItemsStorage getEmptyNetworkStorage() {
         return new ListOfItemsStorage();
     }
 

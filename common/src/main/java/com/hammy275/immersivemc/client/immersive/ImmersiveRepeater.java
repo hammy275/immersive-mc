@@ -1,17 +1,17 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
-import com.hammy275.immersivemc.common.network.Network;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.RepeaterInfo;
+import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
+import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.SetRepeaterPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
+public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo, NullStorage> {
 
     public ImmersiveRepeater() {
         super(-1);
@@ -158,7 +158,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo> {
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, NetworkStorage storage) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, NullStorage storage) {
         // Intentional NO-OP
     }
 }

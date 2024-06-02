@@ -1,13 +1,13 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.ImmersiveHitboxesInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
-import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.obb.OBB;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Used for hitboxes attached to the player
  */
-public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> {
+public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo, NullStorage> {
 
     private static final Minecraft mc = Minecraft.getInstance();
     
@@ -177,7 +177,7 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, NetworkStorage storage) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, NullStorage storage) {
         // Intentional NO-OP
     }
 

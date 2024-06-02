@@ -4,12 +4,11 @@ import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
-import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
-import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.server.swap.Swap;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -20,14 +19,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AnvilBlock;
 
-public class AnvilHandler extends ItemWorldStorageHandler {
+public class AnvilHandler extends ItemWorldStorageHandler<AnvilStorage> {
     @Override
-    public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return (NetworkStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+    public AnvilStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+        return (AnvilStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
     }
 
     @Override
-    public NetworkStorage getEmptyNetworkStorage() {
+    public AnvilStorage getEmptyNetworkStorage() {
         return new AnvilStorage();
     }
 

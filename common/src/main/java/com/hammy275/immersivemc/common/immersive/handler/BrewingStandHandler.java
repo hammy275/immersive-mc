@@ -3,7 +3,6 @@ package com.hammy275.immersivemc.common.immersive.handler;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -17,14 +16,14 @@ import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 
-public class BrewingStandHandler extends ContainerHandler {
+public class BrewingStandHandler extends ContainerHandler<ListOfItemsStorage> {
     @Override
-    public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         return HandlerUtil.makeInventoryContentsFromContainer(player, (Container) player.level().getBlockEntity(pos), 5);
     }
 
     @Override
-    public NetworkStorage getEmptyNetworkStorage() {
+    public ListOfItemsStorage getEmptyNetworkStorage() {
         return new ListOfItemsStorage();
     }
 

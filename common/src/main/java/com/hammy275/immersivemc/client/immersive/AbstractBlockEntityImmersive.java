@@ -1,13 +1,14 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.client.immersive.info.AbstractBlockEntityImmersiveInfo;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-public abstract class AbstractBlockEntityImmersive<T extends BlockEntity, I extends AbstractBlockEntityImmersiveInfo<T>>
-    extends AbstractImmersive<I> {
+public abstract class AbstractBlockEntityImmersive<T extends BlockEntity, I extends AbstractBlockEntityImmersiveInfo<T>, S extends NetworkStorage>
+    extends AbstractImmersive<I, S> {
 
     public AbstractBlockEntityImmersive(int maxImmersives) {
         super(maxImmersives);

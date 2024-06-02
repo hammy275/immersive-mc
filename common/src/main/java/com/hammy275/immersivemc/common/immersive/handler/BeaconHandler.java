@@ -3,11 +3,10 @@ package com.hammy275.immersivemc.common.immersive.handler;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
-import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,14 +16,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 
-public class BeaconHandler extends ItemWorldStorageHandler {
+public class BeaconHandler extends ItemWorldStorageHandler<BeaconStorage> {
     @Override
-    public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return (NetworkStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+    public BeaconStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+        return (BeaconStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
     }
 
     @Override
-    public NetworkStorage getEmptyNetworkStorage() {
+    public BeaconStorage getEmptyNetworkStorage() {
         return new BeaconStorage();
     }
 

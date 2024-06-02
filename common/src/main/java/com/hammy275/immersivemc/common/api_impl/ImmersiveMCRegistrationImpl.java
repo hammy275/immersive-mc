@@ -9,7 +9,7 @@ public class ImmersiveMCRegistrationImpl implements ImmersiveMCRegistration {
     public static final ImmersiveMCRegistration INSTANCE = new ImmersiveMCRegistrationImpl();
 
     @Override
-    public void registerImmersiveHandler(ImmersiveHandler handler) throws IllegalArgumentException {
+    public void registerImmersiveHandler(ImmersiveHandler<?> handler) throws IllegalArgumentException {
         if (ImmersiveHandlers.HANDLERS.contains(handler)) {
             throw new IllegalArgumentException("Handler %s already registered.".formatted(handler.toString()));
         }

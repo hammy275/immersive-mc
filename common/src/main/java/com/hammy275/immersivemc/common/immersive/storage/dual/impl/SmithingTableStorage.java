@@ -10,7 +10,7 @@ public class SmithingTableStorage extends ItemStorage {
     }
 
     @Override
-    public ImmersiveHandler getHandler() {
+    public ImmersiveHandler<SmithingTableStorage> getHandler() {
         return ImmersiveHandlers.smithingTableHandler;
     }
 

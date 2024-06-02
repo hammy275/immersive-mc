@@ -8,7 +8,7 @@ public class ImmersiveMCClientRegistrationImpl implements ImmersiveMCClientRegis
     public static final ImmersiveMCClientRegistration INSTANCE = new ImmersiveMCClientRegistrationImpl();
 
     @Override
-    public void registerImmersive(Immersive<?> immersive) throws IllegalArgumentException {
+    public void registerImmersive(Immersive<?, ?> immersive) throws IllegalArgumentException {
 
     }
 }

@@ -39,7 +39,7 @@ public class ClientRenderSubscriber {
 
     public static void onWorldRender(PoseStack stack) {
         try {
-            for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
+            for (AbstractImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
                 renderInfos(singleton, stack);
             }
             if (VRPluginVerify.clientInVR()) {
@@ -75,7 +75,7 @@ public class ClientRenderSubscriber {
         itemGuideRenderData.clear();
     }
 
-    protected static <I extends AbstractImmersiveInfo> void renderInfos(AbstractImmersive<I> singleton,
+    protected static <I extends AbstractImmersiveInfo> void renderInfos(AbstractImmersive<I, ?> singleton,
                                                                  PoseStack stack) {
         try {
             if (singleton.isVROnly() && !VRPluginVerify.clientInVR()) {

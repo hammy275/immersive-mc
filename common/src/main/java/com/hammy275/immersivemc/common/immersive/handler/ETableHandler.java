@@ -5,7 +5,6 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
@@ -26,9 +25,9 @@ import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
 
 import java.util.Arrays;
 
-public class ETableHandler extends ItemWorldStorageHandler {
+public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
     @Override
-    public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public ETableStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         ETableWorldStorage worldStorage = (ETableWorldStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
         ETableStorage storage = new ETableStorage(Arrays.asList(worldStorage.getItemsRaw()));
 
@@ -50,7 +49,7 @@ public class ETableHandler extends ItemWorldStorageHandler {
     }
 
     @Override
-    public NetworkStorage getEmptyNetworkStorage() {
+    public ETableStorage getEmptyNetworkStorage() {
         return new ETableStorage();
     }
 

@@ -9,7 +9,7 @@ public class CraftingTableStorage extends ItemStorage {
     }
 
     @Override
-    public ImmersiveHandler getHandler() {
+    public ImmersiveHandler<CraftingTableStorage> getHandler() {
         return ImmersiveHandlers.craftingHandler;
     }
 }

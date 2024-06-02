@@ -1,14 +1,13 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
@@ -37,7 +36,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.Objects;
 
-public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, ChestInfo> {
+public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, ChestInfo, ListOfItemsStorage> {
     public static final double spacing = 3d/16d;
     private final double threshold = 0.03;
     // Intentionally stored outside infos, so a chest close (which removes the info) will still have a cooldown
@@ -181,7 +180,7 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo infoIn, NetworkStorage storageIn) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo infoIn, ListOfItemsStorage storageIn) {
         ChestInfo info = (ChestInfo) infoIn;
         ListOfItemsStorage storage = (ListOfItemsStorage) storageIn;
         for (int i = 0; i < storage.getItems().size(); i++) {

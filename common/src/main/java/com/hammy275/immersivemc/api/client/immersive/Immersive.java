@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public interface Immersive<I extends ImmersiveInfo> {
+public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
 
     /**
      * Get the collection of ImmersiveInfos currently active for this Immersive. The contents of the list may be
@@ -88,7 +88,7 @@ public interface Immersive<I extends ImmersiveInfo> {
     /**
      * @return The {@link ImmersiveHandler} this Immersive uses.
      */
-    public ImmersiveHandler getHandler();
+    public ImmersiveHandler<S> getHandler();
 
     /**
      * Whether blocks matching this Immersive should be initiated by the client. If this is true, the server should
@@ -126,7 +126,7 @@ public interface Immersive<I extends ImmersiveInfo> {
      * @param info The info with storage being processed.
      * @param storage The storage to be processed.
      */
-    public void processStorageFromNetwork(I info, NetworkStorage storage);
+    public void processStorageFromNetwork(I info, S storage);
 
     /**
      * This is the same as {@link #tick(ImmersiveInfo)}, but called once per tick, instead of called once per tick

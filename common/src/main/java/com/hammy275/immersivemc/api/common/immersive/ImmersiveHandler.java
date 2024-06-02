@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 
-public interface ImmersiveHandler {
+public interface ImmersiveHandler<S extends NetworkStorage> {
 
     /**
      * Creates inventory contents on the server to send to clients.
@@ -17,13 +17,13 @@ public interface ImmersiveHandler {
      * @param pos Position of the block being sent about.
      * @return A NetworkStorage to be sent over the network.
      */
-    NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos);
+    S makeInventoryContents(ServerPlayer player, BlockPos pos);
 
     /**
      * @return The same type of NetworkStorage as made with makeInventoryContents(), but in an empty state to be
      * decoded into by the client.
      */
-    NetworkStorage getEmptyNetworkStorage();
+    S getEmptyNetworkStorage();
 
     /**
      * Swaps an item from a player's hand into this immersive (and/or vice-versa).

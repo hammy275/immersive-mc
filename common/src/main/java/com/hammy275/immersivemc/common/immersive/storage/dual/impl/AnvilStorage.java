@@ -14,7 +14,7 @@ public class AnvilStorage extends ItemStorage {
     }
 
     @Override
-    public ImmersiveHandler getHandler() {
+    public ImmersiveHandler<AnvilStorage> getHandler() {
         return ImmersiveHandlers.anvilHandler;
     }
 

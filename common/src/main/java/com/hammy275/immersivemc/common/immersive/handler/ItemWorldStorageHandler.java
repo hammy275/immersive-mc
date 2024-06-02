@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -9,7 +10,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
-public abstract class ItemWorldStorageHandler implements WorldStorageHandler {
+public abstract class ItemWorldStorageHandler<S extends NetworkStorage> implements WorldStorageHandler<S> {
 
     @Override
     public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {

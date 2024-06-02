@@ -14,13 +14,13 @@ import java.util.List;
 
 public class TrackedImmersives {
 
-    public static final List<TrackedImmersiveData> TRACKED_IMMERSIVES = new ArrayList<>();
+    public static final List<TrackedImmersiveData<?>> TRACKED_IMMERSIVES = new ArrayList<>();
 
     public static void tick(MinecraftServer server) {
         // Remove for all logged out players or invalid states (blocks no longer match or player too far away)
-        Iterator<TrackedImmersiveData> dataIterator = TRACKED_IMMERSIVES.iterator();
+        Iterator<TrackedImmersiveData<?>> dataIterator = TRACKED_IMMERSIVES.iterator();
         while (dataIterator.hasNext()) {
-            TrackedImmersiveData data = dataIterator.next();
+            TrackedImmersiveData<?> data = dataIterator.next();
             ServerPlayer player = server.getPlayerList().getPlayer(data.playerUUID);
             if (player == null || !data.validForPlayer(player)) {
                 if (player != null) {
@@ -41,7 +41,7 @@ public class TrackedImmersives {
     }
 
     public static void maybeTrackImmersive(ServerPlayer player, BlockPos pos) {
-        for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
+        for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
             if (handler.isValidBlock(pos, player.level())
                 && handler.enabledInConfig(ActiveConfig.getConfigForPlayer(player))) {
                 trackImmersive(player, handler, pos);
@@ -51,9 +51,9 @@ public class TrackedImmersives {
     }
 
     public static void clearForPlayer(ServerPlayer player) {
-        Iterator<TrackedImmersiveData> dataIterator = TRACKED_IMMERSIVES.iterator();
+        Iterator<TrackedImmersiveData<?>> dataIterator = TRACKED_IMMERSIVES.iterator();
         while (dataIterator.hasNext()) {
-            TrackedImmersiveData data = dataIterator.next();
+            TrackedImmersiveData<?> data = dataIterator.next();
             if (data.playerUUID.equals(player.getUUID())) {
                 data.getHandler().onStopTracking(player, data.getPos());
                 dataIterator.remove();
@@ -61,18 +61,18 @@ public class TrackedImmersives {
         }
     }
 
-    private static void trackImmersive(ServerPlayer player, ImmersiveHandler handler, BlockPos pos) {
-        for (TrackedImmersiveData data : TRACKED_IMMERSIVES) {
+    private static void trackImmersive(ServerPlayer player, ImmersiveHandler<?> handler, BlockPos pos) {
+        for (TrackedImmersiveData<?> data : TRACKED_IMMERSIVES) {
             if (data.getPos().equals(pos) && data.playerUUID.equals(player.getUUID())) {
                 return;
             }
         }
-        TrackedImmersiveData data = new TrackedImmersiveData(player.getUUID(), pos, handler, player.level());
+        TrackedImmersiveData<?> data = new TrackedImmersiveData<>(player.getUUID(), pos, handler, player.level());
         TRACKED_IMMERSIVES.add(data);
         syncDataToClient(player, data);
     }
 
-    private static void syncDataToClient(ServerPlayer player, TrackedImmersiveData data) {
+    private static void syncDataToClient(ServerPlayer player, TrackedImmersiveData<?> data) {
         Network.INSTANCE.sendToPlayer(player, data.getSyncPacket(player));
     }
 }
