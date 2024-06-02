@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.client.immersive.HitboxPositioningMode;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
