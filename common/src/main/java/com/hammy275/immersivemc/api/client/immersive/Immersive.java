@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.api.client.immersive;
 
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
+import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import net.minecraft.client.player.LocalPlayer;
@@ -60,15 +61,16 @@ public interface Immersive<I extends ImmersiveInfo> {
      * does not have its data ready for rendering.
      * @param info The info to check.
      * @return Whether the provided info should render to the world, which includes calling
-     *         {@link #render(ImmersiveInfo)}.
+     *         {@link #render(ImmersiveInfo, ImmersiveRenderHelpers)}.
      */
     public boolean shouldRender(I info);
 
     /**
      * Render the provided info.
      * @param info The info to render.
+     * @param helpers Some helper functions for rendering.
      */
-    public void render(I info);
+    public void render(I info, ImmersiveRenderHelpers helpers);
 
     /**
      * Whether the given index into {@link ImmersiveInfo#getAllHitboxes()} should have an item guide rendered. This

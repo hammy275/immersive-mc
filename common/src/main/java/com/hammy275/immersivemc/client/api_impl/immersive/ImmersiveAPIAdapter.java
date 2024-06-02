@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.api_impl.immersive;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.client.api_impl.ImmersiveRenderHelpersImpl;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
@@ -46,7 +47,7 @@ public class ImmersiveAPIAdapter<I extends ImmersiveInfo> extends AbstractImmers
 
     @Override
     protected void render(ImmersiveInfoAPIAdapter<I> info, PoseStack stack, boolean isInVR) {
-        apiImmersive.render(info.apiInfo);
+        apiImmersive.render(info.apiInfo, ImmersiveRenderHelpersImpl.INSTANCE);
     }
 
     @Override

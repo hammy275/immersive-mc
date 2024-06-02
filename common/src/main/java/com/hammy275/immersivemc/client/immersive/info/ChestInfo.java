@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.client.immersive.info;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
-import com.hammy275.immersivemc.api.common.obb.BoundingBox;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

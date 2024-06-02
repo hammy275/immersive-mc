@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.mixin;
 
-import com.hammy275.immersivemc.api.common.obb.BoundingBox;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.common.obb.OBB;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;

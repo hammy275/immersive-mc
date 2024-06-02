@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.api.client;
 
-import com.hammy275.immersivemc.api.common.obb.BoundingBox;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveRenderHelpersImpl;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.core.BlockPos;

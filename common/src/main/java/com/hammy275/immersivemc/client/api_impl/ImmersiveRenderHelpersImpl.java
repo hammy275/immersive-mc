@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.client.api_impl;
 
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
-import com.hammy275.immersivemc.api.common.obb.BoundingBox;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;

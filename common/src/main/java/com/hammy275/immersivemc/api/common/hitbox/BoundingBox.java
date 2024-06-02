@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.api.common.obb;
+package com.hammy275.immersivemc.api.common.hitbox;
 
 import com.hammy275.immersivemc.common.obb.OBB;
 import net.minecraft.world.phys.AABB;
@@ -6,7 +6,8 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * Generic interface applied to both OBBs and AABBs, so they both share a common ancestor in the type hierarchy. Other
- * classes may implement this interface in the future.
+ * classes may implement this interface in the future, though only ImmersiveMC should create implementations of this
+ * Interface.
  */
 public interface BoundingBox {
 

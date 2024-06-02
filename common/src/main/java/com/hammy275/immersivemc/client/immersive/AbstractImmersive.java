@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.api.common.obb.BoundingBox;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveRenderHelpersImpl;
 import com.hammy275.immersivemc.client.config.ClientConstants;

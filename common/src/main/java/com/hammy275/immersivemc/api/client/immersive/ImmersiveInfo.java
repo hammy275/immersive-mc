@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.api.client.immersive;
 
-import com.hammy275.immersivemc.api.common.obb.BoundingBox;
+import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import net.minecraft.core.BlockPos;
 
 import java.util.List;
@@ -11,7 +11,7 @@ public interface ImmersiveInfo {
      * @return The list of all hitboxes this Immersive uses. This can contain null elements, and can return an
      *         immutable list implementation if desired.
      */
-    public List<BoundingBox> getAllHitboxes();
+    public List<HitboxInfo> getAllHitboxes();
 
     /**
      * Whether this ImmersiveInfo contains valid hitboxes that are ready for use by users in-game.
