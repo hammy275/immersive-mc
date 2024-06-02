@@ -1,9 +1,14 @@
 package com.hammy275.immersivemc.client.subscribe;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.client.ClientUtil;
+import com.hammy275.immersivemc.client.api_impl.immersive.ImmersiveAPIAdapter;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
-import com.hammy275.immersivemc.client.immersive.*;
+import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
+import com.hammy275.immersivemc.client.immersive.ImmersiveChest;
+import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.*;
 import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
 import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
@@ -233,7 +238,7 @@ public class ClientLogicSubscriber {
                         inBox = info.slotHovered != -1;
                         info.slotHovered2 = Util.getFirstIntersect(vrPlayer.getController1().position(),
                                 info.getAllHitboxes()).orElse(-1);
-                        if (!(singleton instanceof BuiltImmersive)) {
+                        if (!(singleton instanceof ImmersiveAPIAdapter<?, ?>)) {
                             if (info instanceof InfoTriggerHitboxes tInfo) {
                                 info.triggerHitboxSlotHovered = Util.getFirstIntersect(vrPlayer.getController(tInfo.getVRControllerNum()).position(),
                                         tInfo.getTriggerHitboxes()).orElse(-1);
@@ -248,7 +253,7 @@ public class ClientLogicSubscriber {
                         info.slotHovered = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
                                 info.getAllHitboxes()).orElse(-1);
                         info.slotHovered2 = -1;
-                        if (!(singleton instanceof BuiltImmersive)) {
+                        if (!(singleton instanceof ImmersiveAPIAdapter<?, ?>)) {
                             if (info.slotHovered == -1 && info instanceof InfoTriggerHitboxes tInfo) {
                                 info.triggerHitboxSlotHovered = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
                                         tInfo.getTriggerHitboxes()).orElse(-1);
@@ -333,9 +338,9 @@ public class ClientLogicSubscriber {
                     return true;
                 }
             } else if (ImmersiveHandlers.shulkerBoxHandler.isValidBlock(pos, player.level())) {
-                BuiltImmersiveInfo info = Immersives.immersiveShulker.findImmersive(pos);
+                BuiltImmersiveInfo<ChestLikeData> info = Immersives.immersiveShulker.findImmersive(pos);
                 if (info != null) {
-                    ChestLikeData data = (ChestLikeData) info.getExtraData();
+                    ChestLikeData data = info.getExtraData();
                     if (data.isOpen) {
                         data.nextRow();
                         return true;
@@ -343,9 +348,9 @@ public class ClientLogicSubscriber {
 
                 }
             } else if (ImmersiveHandlers.barrelHandler.isValidBlock(pos, player.level())) {
-                BuiltImmersiveInfo info = Immersives.immersiveBarrel.findImmersive(pos);
+                BuiltImmersiveInfo<ChestLikeData> info = Immersives.immersiveBarrel.findImmersive(pos);
                 if (info != null) {
-                    ChestLikeData data = (ChestLikeData) info.getExtraData();
+                    ChestLikeData data = info.getExtraData();
                     if (data.isOpen) {
                         data.nextRow();
                         return true;
@@ -437,18 +442,18 @@ public class ClientLogicSubscriber {
         }
         if (ActiveConfig.active().useBarrelImmersion &&
                 ImmersiveHandlers.barrelHandler.isValidBlock(pos, player.level())) {
-            BuiltImmersiveInfo info = Immersives.immersiveBarrel.findImmersive(pos);
+            BuiltImmersiveInfo<ChestLikeData> info = Immersives.immersiveBarrel.findImmersive(pos);
             if (info != null) {
-                ((ChestLikeData) info.getExtraData()).toggleOpen(pos);
-                return Immersives.immersiveBarrel.getCooldownDesktop();
+                info.getExtraData().toggleOpen(pos);
+                return 6;
             }
         }
         if (ActiveConfig.active().useShulkerImmersion &&
                 ImmersiveHandlers.shulkerBoxHandler.isValidBlock(pos, player.level())) {
-            for (BuiltImmersiveInfo info : Immersives.immersiveShulker.getTrackedObjects()) {
+            for (BuiltImmersiveInfo<ChestLikeData> info : Immersives.immersiveShulker.getTrackedObjects()) {
                 if (info.getBlockPosition().equals(pos)) {
-                    ((ChestLikeData) info.getExtraData()).toggleOpen(info.getBlockPosition());
-                    return Immersives.immersiveShulker.getCooldownDesktop();
+                    info.getExtraData().toggleOpen(info.getBlockPosition());
+                    return 6;
                 }
             }
         }

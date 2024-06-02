@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.api_impl;
 
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -120,6 +121,12 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
             }
         }
         renderHitbox(stack, hitbox);
+    }
+
+    @Override
+    public void renderItemGuide(PoseStack stack, BoundingBox hitbox, boolean isSelected, int light) {
+        ClientRenderSubscriber.itemGuideRenderData.add(
+                new ClientRenderSubscriber.ItemGuideRenderData(stack, hitbox, 0.2f, isSelected, light));
     }
 
     @Override

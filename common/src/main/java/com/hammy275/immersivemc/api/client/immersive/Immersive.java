@@ -4,9 +4,11 @@ import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -20,7 +22,7 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
      * For example, if this Immersive represented a furnace, and the furnace was broken, ImmersiveMC would remove the
      * ImmersiveInfo from the collection returned by this function to indicate that this Immersive should no longer
      * handle the block, as it is no longer a furnace. As another example, if this Immersive represented a furnace, and
-     * a player placed a furnace, ImmersiveMC would add the result of {@link #buildInfo(BlockPos)} to the collection
+     * a player placed a furnace, ImmersiveMC would add the result of {@link #buildInfo(BlockPos, Level)} to the collection
      * returned by this function.
      * <br>
      * In short, you should the actual collection of ImmersiveInfos used by this Immersive instead of a copy of it,
@@ -32,10 +34,12 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
     /**
      * Constructs a new ImmersiveInfo based on the provided block position. It's best to calculate initial hitboxes,
      * etc. in this method to make the Immersive available for interaction as soon as possible.
+     *
      * @param pos The position of a block that matches this Immersive.
+     * @param level The level in which this info is being built.
      * @return An instance of an ImmersiveInfo implementation with the same position as provided.
      */
-    public I buildInfo(BlockPos pos);
+    public I buildInfo(BlockPos pos, Level level);
 
     /**
      * The method called when a player interacts with a hitbox.
@@ -61,16 +65,17 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
      * does not have its data ready for rendering.
      * @param info The info to check.
      * @return Whether the provided info should render to the world, which includes calling
-     *         {@link #render(ImmersiveInfo, ImmersiveRenderHelpers)}.
+     *         {@link #render(ImmersiveInfo, PoseStack, ImmersiveRenderHelpers)}.
      */
     public boolean shouldRender(I info);
 
     /**
      * Render the provided info.
      * @param info The info to render.
+     * @param stack The pose stack being rendered with.
      * @param helpers Some helper functions for rendering.
      */
-    public void render(I info, ImmersiveRenderHelpers helpers);
+    public void render(I info, PoseStack stack, ImmersiveRenderHelpers helpers);
 
     /**
      * Whether the given index into {@link ImmersiveInfo#getAllHitboxes()} should have an item guide rendered. This
@@ -127,6 +132,20 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
      * @param storage The storage to be processed.
      */
     public void processStorageFromNetwork(I info, S storage);
+
+    /**
+     * @return Whether this Immersive should only exist for VR users.
+     */
+    public boolean isVROnly();
+
+    /**
+     * Get an Immersive info instance for the provided block position for this Immersive, or null if the provided
+     * position doesn't have an info for this Immersive.
+     * @param pos Position to get the Immersive info for.
+     * @return The Immersive info for the given position or null, as described above.
+     */
+    @Nullable
+    public I findImmersive(BlockPos pos);
 
     /**
      * This is the same as {@link #tick(ImmersiveInfo)}, but called once per tick, instead of called once per tick

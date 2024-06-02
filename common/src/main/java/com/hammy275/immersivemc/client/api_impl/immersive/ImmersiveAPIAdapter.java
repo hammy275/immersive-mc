@@ -48,7 +48,7 @@ public class ImmersiveAPIAdapter<I extends ImmersiveInfo, S extends NetworkStora
 
     @Override
     protected void render(ImmersiveInfoAPIAdapter<I> info, PoseStack stack, boolean isInVR) {
-        apiImmersive.render(info.apiInfo, ImmersiveRenderHelpersImpl.INSTANCE);
+        apiImmersive.render(info.apiInfo, stack, ImmersiveRenderHelpersImpl.INSTANCE);
     }
 
     @Override
@@ -74,15 +74,15 @@ public class ImmersiveAPIAdapter<I extends ImmersiveInfo, S extends NetworkStora
 
     @Override
     public @Nullable ImmersiveInfoAPIAdapter<I> refreshOrTrackObject(BlockPos pos, Level level) {
-        Collection<I> infos = apiImmersive.getTrackedObjects();
-        for (I info : infos) {
+        for (ImmersiveInfoAPIAdapter<I>  info : infos) {
             if (info.getBlockPosition().equals(pos)) {
-                return new ImmersiveInfoAPIAdapter<>(info);
+                return info;
             }
         }
-        I info = apiImmersive.buildInfo(pos);
-        infos.add(info);
-        return new ImmersiveInfoAPIAdapter<>(info);
+        I info = apiImmersive.buildInfo(pos, level);
+        ImmersiveInfoAPIAdapter<I> adaptedInfo = new ImmersiveInfoAPIAdapter<>(info);
+        infos.add(adaptedInfo);
+        return adaptedInfo;
     }
 
     @Override
@@ -103,7 +103,8 @@ public class ImmersiveAPIAdapter<I extends ImmersiveInfo, S extends NetworkStora
             HitboxInfo hbox = apiInfo.getAllHitboxes().get(i);
             if (!hbox.isTriggerHitbox()) {
                 if (runningSlot == closest) {
-                    apiImmersive.handleHitboxInteract(apiInfo, Minecraft.getInstance().player, closest, hand);
+                    apiImmersive.handleHitboxInteract(apiInfo, Minecraft.getInstance().player, i, hand);
+                    break;
                 } else {
                     runningSlot++;
                 }
@@ -119,7 +120,8 @@ public class ImmersiveAPIAdapter<I extends ImmersiveInfo, S extends NetworkStora
             HitboxInfo hbox = apiInfo.getAllHitboxes().get(i);
             if (hbox.isTriggerHitbox()) {
                 if (runningSlot == hitboxNum) {
-                    apiImmersive.handleHitboxInteract(apiInfo, Minecraft.getInstance().player, hitboxNum, InteractionHand.MAIN_HAND);
+                    apiImmersive.handleHitboxInteract(apiInfo, Minecraft.getInstance().player, i, InteractionHand.MAIN_HAND);
+                    break;
                 } else {
                     runningSlot++;
                 }
@@ -139,6 +141,15 @@ public class ImmersiveAPIAdapter<I extends ImmersiveInfo, S extends NetworkStora
 
     @Override
     public void globalTick() {
+        // Reconstruct the API implementation with our state first
+        Collection<I> rawInfos = apiImmersive.getTrackedObjects();
+        rawInfos.clear();
+        for (ImmersiveInfoAPIAdapter<I> adaptedInfo : infos) {
+            rawInfos.add(adaptedInfo.apiInfo);
+            adaptedInfo.apiInfo.setSlotHovered(adaptedInfo.slotHovered, 0);
+            adaptedInfo.apiInfo.setSlotHovered(adaptedInfo.slotHovered2, 1);
+        }
+        // Pass off to API's global tick
         apiImmersive.globalTick();
     }
 

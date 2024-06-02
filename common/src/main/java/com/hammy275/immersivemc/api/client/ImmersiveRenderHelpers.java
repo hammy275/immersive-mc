@@ -22,7 +22,7 @@ public interface ImmersiveRenderHelpers {
     }
 
     /**
-     * Renders an item at the specified position facing the camera.
+     * Renders an item at the specified position facing the camera, or an item guide if there's no item.
      *
      * @param item The item to render.
      * @param stack The pose stack being rendered with.
@@ -36,7 +36,7 @@ public interface ImmersiveRenderHelpers {
                            boolean renderItemCounts, int light);
 
     /**
-     * Renders an item at the specified position.
+     * Renders an item at the specified position, or an item guide if there's no item.
      *
      * @param item The item to render.
      * @param stack The pose stack being rendered with.
@@ -54,6 +54,18 @@ public interface ImmersiveRenderHelpers {
     public void renderItem(ItemStack item, PoseStack stack, Vec3 pos, float size, BoundingBox hitbox,
                            boolean renderItemCounts, int light, int spinDegrees, @Nullable Direction facing,
                            @Nullable Direction upDown);
+
+    /**
+     * Renders an item guide. Any place where items can be input should call this method if there isn't an item there.
+     * <br>
+     * Technically, this doesn't immediately render the item guide, but renders it after all Immersives have already
+     * rendered. This way, transparency happens properly.
+     * @param stack Pose stack to render with.
+     * @param hitbox The hitbox defining the item guide.
+     * @param isSelected Whether the item guide is currently selected/hovered over.
+     * @param light The packed sky light and block light to render with.
+     */
+    public void renderItemGuide(PoseStack stack, BoundingBox hitbox, boolean isSelected, int light);
 
     /**
      * Render a white, solid, hitbox in the world if showing hitboxes.
