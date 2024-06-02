@@ -1,12 +1,12 @@
 package com.hammy275.immersivemc.api.common.immersive;
 
-import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public interface ImmersiveHandler<S extends NetworkStorage> {
@@ -52,9 +52,10 @@ public interface ImmersiveHandler<S extends NetworkStorage> {
     boolean isValidBlock(BlockPos pos, Level level);
 
     /**
+     * @param player The player we're checking the config of.
      * @return Whether the immersive this handler handles is enabled in the supplied config.
      */
-    boolean enabledInConfig(ActiveConfig config);
+    boolean enabledInConfig(Player player);
 
     /**
      * @return A unique ID to identify this handler over the network.

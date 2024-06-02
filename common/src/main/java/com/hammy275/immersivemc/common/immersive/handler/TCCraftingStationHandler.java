@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -66,8 +67,8 @@ public class TCCraftingStationHandler extends ContainerHandler<ListOfItemsStorag
     }
 
     @Override
-    public boolean enabledInConfig(ActiveConfig config) {
-        return config.useTinkersConstructCraftingStationImmersion;
+    public boolean enabledInConfig(Player player) {
+        return ActiveConfig.getActiveConfigCommon(player).useTinkersConstructCraftingStationImmersion;
     }
 
     @Override

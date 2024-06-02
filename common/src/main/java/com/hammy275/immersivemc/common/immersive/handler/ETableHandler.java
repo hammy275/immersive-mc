@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.item.ItemStack;
@@ -76,8 +77,8 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
     }
 
     @Override
-    public boolean enabledInConfig(ActiveConfig config) {
-        return config.useETableImmersion;
+    public boolean enabledInConfig(Player player) {
+        return ActiveConfig.getActiveConfigCommon(player).useETableImmersion;
     }
 
     @Override

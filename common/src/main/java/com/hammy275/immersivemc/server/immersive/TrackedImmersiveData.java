@@ -1,8 +1,7 @@
 package com.hammy275.immersivemc.server.immersive;
 
-import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import net.minecraft.core.BlockPos;
@@ -39,7 +38,7 @@ public class TrackedImmersiveData<S extends NetworkStorage> {
     public boolean validForPlayer(ServerPlayer player) {
         return blockMatches() &&
                 player.distanceToSqr(Vec3.atCenterOf(pos)) <= maxDist*maxDist &&
-                this.handler.enabledInConfig(ActiveConfig.getConfigForPlayer(player));
+                this.handler.enabledInConfig(player);
     }
 
     public BlockPos getPos() {

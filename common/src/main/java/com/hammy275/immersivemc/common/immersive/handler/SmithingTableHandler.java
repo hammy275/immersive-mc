@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SmithingTableBlock;
@@ -56,8 +57,8 @@ public class SmithingTableHandler extends ItemWorldStorageHandler<SmithingTableS
     }
 
     @Override
-    public boolean enabledInConfig(ActiveConfig config) {
-        return config.useSmithingTableImmersion;
+    public boolean enabledInConfig(Player player) {
+        return ActiveConfig.getActiveConfigCommon(player).useSmithingTableImmersion;
     }
 
     @Override

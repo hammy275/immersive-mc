@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChiseledBookShelfBlock;
@@ -46,8 +47,8 @@ public class ChiseledBookshelfHandler extends ContainerHandler<NullStorage> {
     }
 
     @Override
-    public boolean enabledInConfig(ActiveConfig config) {
-        return config.useChiseledBookshelfImmersion;
+    public boolean enabledInConfig(Player player) {
+        return ActiveConfig.getActiveConfigCommon(player).useChiseledBookshelfImmersion;
     }
 
     @Override

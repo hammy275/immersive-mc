@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.server.immersive;
 
-import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
@@ -43,7 +42,7 @@ public class TrackedImmersives {
     public static void maybeTrackImmersive(ServerPlayer player, BlockPos pos) {
         for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
             if (handler.isValidBlock(pos, player.level())
-                && handler.enabledInConfig(ActiveConfig.getConfigForPlayer(player))) {
+                && handler.enabledInConfig(player)) {
                 trackImmersive(player, handler, pos);
                 return;
             }

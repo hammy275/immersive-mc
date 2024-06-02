@@ -6,7 +6,6 @@ import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveRenderHelpersImpl;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -58,7 +57,7 @@ public class ImmersiveAPIAdapter<I extends ImmersiveInfo, S extends NetworkStora
 
     @Override
     public boolean enabledInConfig() {
-        return apiImmersive.getHandler().enabledInConfig(ActiveConfig.active());
+        return apiImmersive.getHandler().enabledInConfig(Minecraft.getInstance().player);
     }
 
     @Override
