@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
-import com.hammy275.immersivemc.server.storage.world.WorldStorages;
+import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -13,7 +13,7 @@ public abstract class ItemWorldStorageHandler implements WorldStorageHandler {
 
     @Override
     public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        if (WorldStorages.get(pos, player.serverLevel()) instanceof ItemStorage iws) {
+        if (WorldStoragesImpl.getS(pos, player.serverLevel()) instanceof ItemStorage iws) {
             return iws.isDirtyForClientSync();
         }
         return false;
@@ -21,7 +21,7 @@ public abstract class ItemWorldStorageHandler implements WorldStorageHandler {
 
     @Override
     public void onStopTracking(ServerPlayer player, BlockPos pos) {
-        if (WorldStorages.getWithoutVerification(pos, player.serverLevel()) instanceof ItemStorage iws) {
+        if (WorldStoragesImpl.getWithoutVerificationS(pos, player.serverLevel()) instanceof ItemStorage iws) {
             if (isValidBlock(pos, player.level())) {
                 if (ActiveConfig.getConfigForPlayer(player).returnItems) { // Player left block range
                     iws.returnItems(player);
@@ -39,7 +39,7 @@ public abstract class ItemWorldStorageHandler implements WorldStorageHandler {
                         player.level().addFreshEntity(itemEnt);
                     }
                 }
-                WorldStorages.remove(pos, player.serverLevel());
+                WorldStoragesImpl.removeS(pos, player.serverLevel());
             }
         }
     }

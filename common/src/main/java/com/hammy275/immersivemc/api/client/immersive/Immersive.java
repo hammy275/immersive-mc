@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.api.client.immersive;
 
+import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import net.minecraft.client.player.LocalPlayer;

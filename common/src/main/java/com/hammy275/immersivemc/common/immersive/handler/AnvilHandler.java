@@ -7,7 +7,7 @@ import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.server.storage.world.WorldStorage;
-import com.hammy275.immersivemc.server.storage.world.WorldStorages;
+import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.AnvilBlock;
 public class AnvilHandler extends ItemWorldStorageHandler {
     @Override
     public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return (NetworkStorage) WorldStorages.getOrCreate(pos, player.serverLevel());
+        return (NetworkStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
     }
 
     @Override
@@ -33,7 +33,7 @@ public class AnvilHandler extends ItemWorldStorageHandler {
 
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
-        AnvilStorage storage = (AnvilStorage) WorldStorages.getOrCreate(pos, player.serverLevel());
+        AnvilStorage storage = (AnvilStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
         if (slot != 2) {
             storage.placeItem(player, hand, Swap.getPlaceAmount(player.getItemInHand(hand), mode), slot);
             storage.setItem(2, ItemStack.EMPTY);

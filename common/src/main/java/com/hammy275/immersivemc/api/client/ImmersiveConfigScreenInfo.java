@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.api.client.immersive;
+package com.hammy275.immersivemc.api.client;
 
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;

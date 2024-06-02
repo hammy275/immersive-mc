@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.common.util.NullContainer;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.mixin.AnvilMenuMixin;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
-import com.hammy275.immersivemc.server.storage.world.WorldStorages;
+import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.server.storage.world.impl.ETableWorldStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
@@ -38,7 +38,7 @@ public class Swap {
         // NOTE: slot is 1-3, depending on which enchantment the player is going for.
         if (!player.getItemInHand(hand).isEmpty()) return false;
         if (slot < 1 || slot > 3) return false;
-        ETableWorldStorage storage = (ETableWorldStorage) WorldStorages.getOrCreate(pos, player.serverLevel());
+        ETableWorldStorage storage = (ETableWorldStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
         ItemStack toEnchantItem = storage.getItem(0).copy();
         if (toEnchantItem.isEmpty()) return false;
         int lapisInInventory = 0;

@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.storage.world.WorldStorage;
-import com.hammy275.immersivemc.server.storage.world.WorldStorages;
+import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 public class BeaconHandler extends ItemWorldStorageHandler {
     @Override
     public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return (NetworkStorage) WorldStorages.getOrCreate(pos, player.serverLevel());
+        return (NetworkStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
     }
 
     @Override
@@ -31,7 +31,7 @@ public class BeaconHandler extends ItemWorldStorageHandler {
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
         if (!player.getItemInHand(hand).is(ItemTags.BEACON_PAYMENT_ITEMS) && !player.getItemInHand(hand).isEmpty()) return;
-        BeaconStorage beaconStorage = (BeaconStorage) WorldStorages.getOrCreate(pos, player.serverLevel());
+        BeaconStorage beaconStorage = (BeaconStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
         ItemStack beaconItem = beaconStorage.getItem(0);
         if (!beaconItem.isEmpty()) {
             Util.placeLeftovers(player, beaconItem);
