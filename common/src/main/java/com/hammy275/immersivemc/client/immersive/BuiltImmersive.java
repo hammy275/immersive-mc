@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
@@ -26,9 +26,9 @@ import java.util.*;
 
 public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
 
-    protected final ImmersiveBuilder builder;
+    protected final ImmersiveBuilderImpl builder;
 
-    public BuiltImmersive(ImmersiveBuilder builder) {
+    public BuiltImmersive(ImmersiveBuilderImpl builder) {
         super(builder.maxImmersives);
         this.builder = builder;
     }
@@ -79,7 +79,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
             // Update hitbox if its offset isn't constant, the current direction isn't the same as the last,
             // if it hasn't been calculated yet, if slots can change whether they're active, or if they need
             // to detect VR hand movements.
-            if (!hitbox.constantOffset || differentDirs || !hitbox.calcDone() || builder.slotActive != ImmersiveBuilder.SLOT_ALWAYS_ACTIVE
+            if (!hitbox.constantOffset || differentDirs || !hitbox.calcDone() || builder.slotActive != ImmersiveBuilderImpl.SLOT_ALWAYS_ACTIVE
                 || hitbox.vrMovementInfo != null) {
                 if (builder.slotActive.apply(info, i)) {
                     hitbox.recalculate(Minecraft.getInstance().level, builder.positioningMode, info);
@@ -312,7 +312,7 @@ public class BuiltImmersive extends AbstractImmersive<BuiltImmersiveInfo> {
         return null;
     }
 
-    public ImmersiveBuilder getBuilderClone() {
+    public ImmersiveBuilderImpl getBuilderClone() {
         return builder.clone();
     }
 }

@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.common.obb;
 
+import com.hammy275.immersivemc.api.common.obb.BoundingBox;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;

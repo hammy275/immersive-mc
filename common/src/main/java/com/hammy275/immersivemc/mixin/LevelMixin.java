@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.mixin;
 
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import net.minecraft.core.BlockPos;

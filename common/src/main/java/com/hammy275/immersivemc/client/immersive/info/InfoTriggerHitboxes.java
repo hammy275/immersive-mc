@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
-import com.hammy275.immersivemc.common.obb.BoundingBox;
+import com.hammy275.immersivemc.api.common.obb.BoundingBox;
 
 /**
  * Attached to immersive infos to signify that they have hitboxes that should only activate

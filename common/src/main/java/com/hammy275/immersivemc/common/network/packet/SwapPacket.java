@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.common.network.packet;
 import com.hammy275.immersivemc.client.SafeClientUtil;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import dev.architectury.networking.NetworkManager;

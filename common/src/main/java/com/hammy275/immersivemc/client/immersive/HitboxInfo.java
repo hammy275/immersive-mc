@@ -71,7 +71,7 @@ public class HitboxInfo implements Cloneable {
      * @param holdsItems Whether this hitbox holds items.
      * @param isInput Whether this hitbox is an input hitbox.
      * @param itemSpins Whether the item in this hitbox should spin.
-     * @param itemRenderSizeMultiplier Multiplier to the size passed in the {@link ImmersiveBuilder} for the size the
+     * @param itemRenderSizeMultiplier Multiplier to the size passed in the {@link ImmersiveBuilderImpl} for the size the
      *                                 item should render at.
      * @param isTriggerHitbox Whether this hitbox is a trigger hitbox.
      * @param textSupplier A function taking an info instance and returning a list of text components.

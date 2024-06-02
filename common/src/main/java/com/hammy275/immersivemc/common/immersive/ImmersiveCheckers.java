@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.immersive;
 
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ImmersiveCheckers {
 
-    public static final List<CheckerFunction> CHECKERS = new LinkedList<>();
+    public static final List<ImmersiveChecker> CHECKERS = new LinkedList<>();
 
     static {
         CHECKERS.add(ImmersiveCheckers::isLever);

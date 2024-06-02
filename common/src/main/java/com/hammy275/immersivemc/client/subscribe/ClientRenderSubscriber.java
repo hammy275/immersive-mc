@@ -8,7 +8,7 @@ import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
 import com.hammy275.immersivemc.client.model.Cube1x1;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
-import com.hammy275.immersivemc.common.obb.BoundingBox;
+import com.hammy275.immersivemc.api.common.obb.BoundingBox;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.util.RGBA;
 import com.hammy275.immersivemc.common.util.ShieldUtil;

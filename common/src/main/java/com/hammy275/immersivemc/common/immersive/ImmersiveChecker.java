@@ -4,6 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 @FunctionalInterface
-public interface CheckerFunction {
+public interface ImmersiveChecker {
     boolean apply(BlockPos pos, Level level);
 }

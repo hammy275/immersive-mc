@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.common.immersive.handler;
+package com.hammy275.immersivemc.api.common.immersive;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;

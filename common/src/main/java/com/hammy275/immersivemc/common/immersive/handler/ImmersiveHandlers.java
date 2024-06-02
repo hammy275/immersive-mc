@@ -1,5 +1,7 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+
 import java.util.ArrayList;
 import java.util.List;
 

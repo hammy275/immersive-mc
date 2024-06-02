@@ -1,9 +1,9 @@
 package com.hammy275.immersivemc.common.util;
 
 
-import com.hammy275.immersivemc.common.immersive.CheckerFunction;
+import com.hammy275.immersivemc.common.immersive.ImmersiveChecker;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
-import com.hammy275.immersivemc.common.obb.BoundingBox;
+import com.hammy275.immersivemc.api.common.obb.BoundingBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -48,7 +48,7 @@ public class Util {
 
     public static boolean isHittingImmersive(BlockHitResult result, Level level) {
         BlockPos pos = result.getBlockPos();
-        for (CheckerFunction checker : ImmersiveCheckers.CHECKERS) {
+        for (ImmersiveChecker checker : ImmersiveCheckers.CHECKERS) {
             if (checker.apply(pos, level)) {
                 return true; // "I'm totally not crouching" if SHIFT+Right-clicking an immersive
             }
