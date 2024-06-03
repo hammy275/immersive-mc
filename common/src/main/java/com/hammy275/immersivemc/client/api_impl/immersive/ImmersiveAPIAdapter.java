@@ -48,7 +48,7 @@ public class ImmersiveAPIAdapter<I extends ImmersiveInfo, S extends NetworkStora
 
     @Override
     protected void render(ImmersiveInfoAPIAdapter<I> info, PoseStack stack, boolean isInVR) {
-        apiImmersive.render(info.apiInfo, stack, ImmersiveRenderHelpersImpl.INSTANCE);
+        apiImmersive.render(info.apiInfo, stack, ImmersiveRenderHelpersImpl.INSTANCE, Minecraft.getInstance().getFrameTime());
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ImmersiveAPIAdapter<I extends ImmersiveInfo, S extends NetworkStora
 
     @Override
     protected boolean inputSlotShouldRenderHelpHitbox(ImmersiveInfoAPIAdapter<I> info, int slotNum) {
-        return apiImmersive.slotShouldRenderItemGuide(info.apiInfo, slotNum);
+        return false;
     }
 
     @Override

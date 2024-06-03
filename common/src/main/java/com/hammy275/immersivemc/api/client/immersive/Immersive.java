@@ -65,30 +65,19 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
      * does not have its data ready for rendering.
      * @param info The info to check.
      * @return Whether the provided info should render to the world, which includes calling
-     *         {@link #render(ImmersiveInfo, PoseStack, ImmersiveRenderHelpers)}.
+     *         {@link #render(ImmersiveInfo, PoseStack, ImmersiveRenderHelpers, float)}.
      */
     public boolean shouldRender(I info);
 
     /**
      * Render the provided info.
+     *
      * @param info The info to render.
      * @param stack The pose stack being rendered with.
      * @param helpers Some helper functions for rendering.
+     * @param partialTicks The fraction of time between the last tick and the current tick.
      */
-    public void render(I info, PoseStack stack, ImmersiveRenderHelpers helpers);
-
-    /**
-     * Whether the given index into {@link ImmersiveInfo#getAllHitboxes()} should have an item guide rendered. This
-     * should usually return true for all hitboxes that can hold items, are not currently holding an item, and
-     * can accept items from a user.
-     * <br>
-     * For example, if this Immersive represented a furnace, this would always return false for the output slot, and
-     * would return true for the other two slots if an item was not already inside the slot.
-     * @param info The info containing the hitbox that may render an item guide.
-     * @param hitboxIndex The hitbox index that may render an item guide.
-     * @return Whether an item guide should be rendered.
-     */
-    public boolean slotShouldRenderItemGuide(I info, int hitboxIndex);
+    public void render(I info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks);
 
     /**
      * @return The {@link ImmersiveHandler} this Immersive uses.

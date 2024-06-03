@@ -103,7 +103,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
     }
 
     @Override
-    public void render(BuiltImmersiveInfo<E> infoIn, PoseStack stack, ImmersiveRenderHelpers helpers) {
+    public void render(BuiltImmersiveInfo<E> infoIn, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
         BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
         float size = info.ticksExisted < 10 ? builder.renderSize / (10 - info.ticksExisted) : builder.renderSize;
         for (int i = 0; i < info.hitboxes.size(); i++) {
@@ -125,13 +125,6 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             }
         }
 
-    }
-
-    @Override
-    public boolean slotShouldRenderItemGuide(BuiltImmersiveInfo<E> infoIn, int hitboxIndex) {
-        BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
-        RelativeHitboxInfoImpl hitbox = info.hitboxes.get(hitboxIndex);
-        return (hitbox.item == null || hitbox.item.isEmpty()) && builder.slotRendersItemGuide.apply(info, hitboxIndex);
     }
 
     @Override
