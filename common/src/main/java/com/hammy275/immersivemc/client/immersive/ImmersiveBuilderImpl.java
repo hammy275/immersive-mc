@@ -1,9 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
-import com.hammy275.immersivemc.api.client.immersive.HitboxPositioningMode;
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveBuilder;
-import com.hammy275.immersivemc.api.client.immersive.RightClickHandler;
+import com.hammy275.immersivemc.api.client.immersive.*;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.api_impl.immersive.ImmersiveAPIAdapter;
 import com.hammy275.immersivemc.client.config.ClientConstants;
@@ -26,7 +23,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     // -- Optional --
     Supplier<Boolean> enabledInConfigSupplier = () -> true;
     float renderSize = ClientConstants.defaultItemScaleSize;
-    List<RelativeHitboxInfo> hitboxes = new ArrayList<>();
+    List<RelativeHitboxInfoImpl> hitboxes = new ArrayList<>();
     List<Vec3i> lightPositionOffsets = new ArrayList<>();
     HitboxPositioningMode positioningMode = HitboxPositioningMode.HORIZONTAL_BLOCK_FACING;
     Function<BuiltImmersiveInfo<E>, Boolean> extraRenderReady = (info) -> true;
@@ -65,7 +62,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      */
     @Override
     public ImmersiveBuilderImpl<E,S> addHitbox(RelativeHitboxInfo relativeHitboxInfo) {
-        this.hitboxes.add(relativeHitboxInfo);
+        this.hitboxes.add((RelativeHitboxInfoImpl) relativeHitboxInfo);
         return this;
     }
 
@@ -106,7 +103,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     }
 
     /**
-     * Sets a function used to retrieve the config value for whether this immerisve is enabled.
+     * Sets a function used to retrieve the config value for whether this immersive is enabled.
      * @param checker Checker to retrieve config value. Something such as () -> ActiveConfig.active().myConfigValue works here.
      * @return Builder object.
      */
@@ -204,7 +201,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      */
     @Override
     public ImmersiveBuilderImpl<E,S> overwriteHitbox(int index, RelativeHitboxInfo relativeHitboxInfo) {
-        this.hitboxes.set(index, relativeHitboxInfo);
+        this.hitboxes.set(index, (RelativeHitboxInfoImpl) relativeHitboxInfo);
         return this;
     }
 

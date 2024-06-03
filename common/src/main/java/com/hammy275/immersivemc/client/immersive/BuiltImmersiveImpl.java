@@ -82,7 +82,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
         info.immersiveDir = currentDir;
 
         for (int i = 0; i < info.hitboxes.size(); i++) {
-            RelativeHitboxInfo hitbox = info.hitboxes.get(i);
+            RelativeHitboxInfoImpl hitbox = info.hitboxes.get(i);
             // Update hitbox if its offset isn't constant, the current direction isn't the same as the last,
             // if it hasn't been calculated yet, if slots can change whether they're active, or if they need
             // to detect VR hand movements.
@@ -107,7 +107,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
         BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
         float size = info.ticksExisted < 10 ? builder.renderSize / (10 - info.ticksExisted) : builder.renderSize;
         for (int i = 0; i < info.hitboxes.size(); i++) {
-            RelativeHitboxInfo hitbox = info.hitboxes.get(i);
+            RelativeHitboxInfoImpl hitbox = info.hitboxes.get(i);
             if (hitbox.holdsItems && hitbox.renderItem) {
                 int spinDegrees = hitbox.itemSpins ? (int) (info.ticksExisted % 100d * 3.6d) : -1;
                 if (hitbox.isInput && (hitbox.item == null || hitbox.item.isEmpty())) {
@@ -130,7 +130,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
     @Override
     public boolean slotShouldRenderItemGuide(BuiltImmersiveInfo<E> infoIn, int hitboxIndex) {
         BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
-        RelativeHitboxInfo hitbox = info.hitboxes.get(hitboxIndex);
+        RelativeHitboxInfoImpl hitbox = info.hitboxes.get(hitboxIndex);
         return (hitbox.item == null || hitbox.item.isEmpty()) && builder.slotRendersItemGuide.apply(info, hitboxIndex);
     }
 

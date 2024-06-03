@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.client.immersive.info;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
-import com.hammy275.immersivemc.client.immersive.RelativeHitboxInfo;
+import com.hammy275.immersivemc.client.immersive.RelativeHitboxInfoImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 public final class BuiltImmersiveInfoImpl<E> implements BuiltImmersiveInfo<E> {
 
-    public final List<RelativeHitboxInfo> hitboxes;
+    public final List<RelativeHitboxInfoImpl> hitboxes;
     public final List<HitboxInfo> hitboxesOut;
     // Key is input slot number, value is a HitboxInfo
     private BlockPos pos;
@@ -28,11 +28,11 @@ public final class BuiltImmersiveInfoImpl<E> implements BuiltImmersiveInfo<E> {
     public int light = AbstractImmersive.maxLight;
     public long ticksExisted = 0;
 
-    public BuiltImmersiveInfoImpl(List<RelativeHitboxInfo> hitboxes, BlockPos pos, Class<E> extraDataClazz) {
+    public BuiltImmersiveInfoImpl(List<RelativeHitboxInfoImpl> hitboxes, BlockPos pos, Class<E> extraDataClazz) {
         this.hitboxes = new ArrayList<>(hitboxes.size());
         this.hitboxesOut = new ArrayList<>(hitboxes.size());
-        for (RelativeHitboxInfo hitbox : hitboxes) {
-            RelativeHitboxInfo clone = (RelativeHitboxInfo) hitbox.clone();
+        for (RelativeHitboxInfoImpl hitbox : hitboxes) {
+            RelativeHitboxInfoImpl clone = (RelativeHitboxInfoImpl) hitbox.clone();
             this.hitboxes.add(clone);
             this.hitboxesOut.add(clone);
         }
@@ -52,7 +52,7 @@ public final class BuiltImmersiveInfoImpl<E> implements BuiltImmersiveInfo<E> {
     @Override
     public boolean hasHitboxes() {
         // Only need to have one hitbox to be valid.
-        for (RelativeHitboxInfo hitbox : this.hitboxes) {
+        for (RelativeHitboxInfoImpl hitbox : this.hitboxes) {
             if (hitbox.hasAABB()) {
                 return true;
             }

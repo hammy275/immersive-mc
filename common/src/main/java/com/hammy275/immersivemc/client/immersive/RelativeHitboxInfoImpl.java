@@ -1,6 +1,9 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.client.immersive.ForcedUpDownRenderDir;
 import com.hammy275.immersivemc.api.client.immersive.HitboxPositioningMode;
+import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfo;
+import com.hammy275.immersivemc.api.client.immersive.RelativeHitboxInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.LastClientVRData;
@@ -24,12 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class RelativeHitboxInfo implements HitboxInfo, Cloneable {
+public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, Cloneable {
 
     // Settings
-    private final RelativeHitboxInfoBuilder usedBuilder;
+    private final RelativeHitboxInfoBuilderImpl usedBuilder;
 
-    public final Function<BuiltImmersiveInfoImpl, Vec3> centerOffset;
+    public final Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset;
     public final double sizeX;
     public final double sizeY;
     public final double sizeZ;
@@ -38,7 +41,7 @@ public class RelativeHitboxInfo implements HitboxInfo, Cloneable {
     public final boolean itemSpins;
     public final float itemRenderSizeMultiplier;
     public final boolean isTriggerHitbox;
-    public final Function<BuiltImmersiveInfoImpl, List<Pair<Component, Vec3>>> textSupplier;
+    public final Function<BuiltImmersiveInfoImpl<?>, List<Pair<Component, Vec3>>> textSupplier;
     public final ForcedUpDownRenderDir forcedUpDownRenderDir;
     // Not directly configured by programmers. This is whether the offset from centerOffset returns a constant value.
     public final boolean constantOffset;
@@ -64,7 +67,7 @@ public class RelativeHitboxInfo implements HitboxInfo, Cloneable {
     public ItemStack item = null;
 
     /**
-     * Constructor. See the respective functions in {@link RelativeHitboxInfoBuilder} for more information.
+     * Constructor. See the respective functions in {@link RelativeHitboxInfoBuilderImpl} for more information.
      * @param usedBuilder The builder used to create this HitboxInfo. Only used to allow cloning this hitbox.
      * @param centerOffset Function that takes an info instance and returns the offset from the center position for the
      *                     location of this hitbox.
@@ -85,12 +88,12 @@ public class RelativeHitboxInfo implements HitboxInfo, Cloneable {
      * @param renderItem Whether to render the item in this hitbox if it can contain one.
      * @param renderItemCount Whether to render the item count in this hitbox if it can contain an item.
      */
-    public RelativeHitboxInfo(RelativeHitboxInfoBuilder usedBuilder,
-                              Function<BuiltImmersiveInfoImpl, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
-                              boolean holdsItems, boolean isInput, boolean itemSpins, float itemRenderSizeMultiplier,
-                              boolean isTriggerHitbox, Function<BuiltImmersiveInfoImpl, List<Pair<Component, Vec3>>> textSupplier,
-                              ForcedUpDownRenderDir forcedUpDownDir, boolean constantOffset, boolean needs3dCompat,
-                              HitboxVRMovementInfo vrMovementInfo, boolean renderItem, boolean renderItemCount) {
+    public RelativeHitboxInfoImpl(RelativeHitboxInfoBuilderImpl usedBuilder,
+                                  Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
+                                  boolean holdsItems, boolean isInput, boolean itemSpins, float itemRenderSizeMultiplier,
+                                  boolean isTriggerHitbox, Function<BuiltImmersiveInfoImpl<?>, List<Pair<Component, Vec3>>> textSupplier,
+                                  ForcedUpDownRenderDir forcedUpDownDir, boolean constantOffset, boolean needs3dCompat,
+                                  HitboxVRMovementInfo vrMovementInfo, boolean renderItem, boolean renderItemCount) {
         this.usedBuilder = usedBuilder;
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
@@ -127,7 +130,7 @@ public class RelativeHitboxInfo implements HitboxInfo, Cloneable {
      * @param mode Positioning mode. See {@link HitboxPositioningMode} for what each mode does.
      * @param info Info instance.
      */
-    public void recalculate(Level level, HitboxPositioningMode mode, BuiltImmersiveInfoImpl info) {
+    public void recalculate(Level level, HitboxPositioningMode mode, BuiltImmersiveInfoImpl<?> info) {
         Vec3 offset = this.centerOffset.apply(info);
         if (offset == null) {
             forceNull();
@@ -252,7 +255,7 @@ public class RelativeHitboxInfo implements HitboxInfo, Cloneable {
     /**
      * See below docstring for recalcHorizBlockFacing().
      */
-    private void recalcHorizBlockFacing(Direction blockFacing, BuiltImmersiveInfoImpl info, Vec3 offset) {
+    private void recalcHorizBlockFacing(Direction blockFacing, BuiltImmersiveInfoImpl<?> info, Vec3 offset) {
         recalcHorizBlockFacing(blockFacing, info, offset, Direction.UP);
     }
 
@@ -265,7 +268,7 @@ public class RelativeHitboxInfo implements HitboxInfo, Cloneable {
      * @param blockLiteralFacing The direction the block is facing in the world, or more precisely,
      *                           the direction that +Y should be.
      */
-    private void recalcHorizBlockFacing(Direction blockFacing, BuiltImmersiveInfoImpl info, Vec3 offset, Direction blockLiteralFacing) {
+    private void recalcHorizBlockFacing(Direction blockFacing, BuiltImmersiveInfoImpl<?> info, Vec3 offset, Direction blockLiteralFacing) {
         BlockPos pos = info.getBlockPosition();
 
         // Vectors that are combined with centerOffset. May not necessarily correspond to the actual in-game axis.
@@ -295,7 +298,7 @@ public class RelativeHitboxInfo implements HitboxInfo, Cloneable {
     /**
      * Helper function for recalculate().
      */
-    private void recalcTopBottomBlockFacing(Direction blockFacing, BuiltImmersiveInfoImpl info, Vec3 offset, boolean bottomOfBlock) {
+    private void recalcTopBottomBlockFacing(Direction blockFacing, BuiltImmersiveInfoImpl<?> info, Vec3 offset, boolean bottomOfBlock) {
 
         BlockPos pos = info.getBlockPosition();
 
@@ -313,7 +316,7 @@ public class RelativeHitboxInfo implements HitboxInfo, Cloneable {
         this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
     }
 
-    private void recalcTopPlayerFacing(Direction playerFacing, BuiltImmersiveInfoImpl info, Vec3 offset) {
+    private void recalcTopPlayerFacing(Direction playerFacing, BuiltImmersiveInfoImpl<?> info, Vec3 offset) {
         BlockPos pos = info.getBlockPosition();
         xVec = Vec3.atLowerCornerOf(playerFacing.getCounterClockWise().getNormal());
         yVec = Vec3.atLowerCornerOf(playerFacing.getOpposite().getNormal());
@@ -332,7 +335,7 @@ public class RelativeHitboxInfo implements HitboxInfo, Cloneable {
     /**
      * Helper function for recalculate(). Calculates the textData list.
      */
-    private void calcTextOffsets(BuiltImmersiveInfoImpl info) {
+    private void calcTextOffsets(BuiltImmersiveInfoImpl<?> info) {
         if (textSupplier != null) {
             List<Pair<Component, Vec3>> textList = textSupplier.apply(info);
             textData.clear();
@@ -414,7 +417,7 @@ public class RelativeHitboxInfo implements HitboxInfo, Cloneable {
      * @param newOffset New offset for the clone.
      * @return Clone with the offset replaced with newOffset.
      */
-    public RelativeHitboxInfo cloneWithNewOffset(Function<BuiltImmersiveInfoImpl, Vec3> newOffset) {
+    public RelativeHitboxInfoImpl cloneWithNewOffset(Function<BuiltImmersiveInfoImpl<?>, Vec3> newOffset) {
         return getBuilderClone().setCenterOffset(newOffset).build();
     }
 
@@ -423,7 +426,7 @@ public class RelativeHitboxInfo implements HitboxInfo, Cloneable {
      * @param offset Offset relative to this HitboxInfo's offset.
      * @return HitboxInfo that is offset by offset in comparison to this HitboxInfo.
      */
-    public RelativeHitboxInfo cloneWithAddedOffset(Vec3 offset) {
+    public RelativeHitboxInfoImpl cloneWithAddedOffset(Vec3 offset) {
         return getBuilderClone().setCenterOffset((info) -> {
             Vec3 offsetOut = centerOffset.apply(info);
             if (offsetOut == null) {
@@ -433,7 +436,7 @@ public class RelativeHitboxInfo implements HitboxInfo, Cloneable {
         }).build();
     }
 
-    public RelativeHitboxInfoBuilder getBuilderClone() {
+    public RelativeHitboxInfoBuilderImpl getBuilderClone() {
         return usedBuilder.clone();
     }
 

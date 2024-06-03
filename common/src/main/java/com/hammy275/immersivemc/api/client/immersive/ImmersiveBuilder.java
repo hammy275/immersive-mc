@@ -2,8 +2,6 @@ package com.hammy275.immersivemc.api.client.immersive;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBuilderImpl;
-import com.hammy275.immersivemc.client.immersive.RelativeHitboxInfo;
-import com.hammy275.immersivemc.client.immersive.RelativeHitboxInfoBuilder;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 
 import java.util.function.*;
@@ -148,7 +146,7 @@ public interface ImmersiveBuilder<E, S extends NetworkStorage> {
      * Create a copy of this ImmersiveBuilder, setting the extra storage consumer to null.
      * @return A best-effort copy of this ImmersiveBuilder.
      */
-    public <T extends NetworkStorage> ImmersiveBuilderImpl<E, T> copy(ImmersiveHandler<T> newHandler);
+    public <T extends NetworkStorage> ImmersiveBuilder<E, T> copy(ImmersiveHandler<T> newHandler);
 
     /**
      * Create a copy of this ImmersiveBuilder, setting the extra storage consumer, the extra render ready,
@@ -156,7 +154,7 @@ public interface ImmersiveBuilder<E, S extends NetworkStorage> {
      * handler to null/no-op.
      * @return A best-effort copy of this ImmersiveBuilder.
      */
-    public <F, T extends NetworkStorage> ImmersiveBuilderImpl<F, T> copy(ImmersiveHandler<T> newHandler, Class<F> newExtraInfoDataClass);
+    public <F, T extends NetworkStorage> ImmersiveBuilder<F, T> copy(ImmersiveHandler<T> newHandler, Class<F> newExtraInfoDataClass);
 
     /**
      * Builds and AUTOMATICALLY REGISTERS this Immersive.

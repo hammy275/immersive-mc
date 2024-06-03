@@ -1,5 +1,8 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.client.immersive.ForcedUpDownRenderDir;
+import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfo;
+import com.hammy275.immersivemc.api.client.immersive.RelativeHitboxInfoBuilder;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfoImpl;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
@@ -8,7 +11,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 import java.util.function.Function;
 
-public class RelativeHitboxInfoBuilder implements Cloneable {
+public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder, Cloneable {
 
     // -- REQUIRED --
     /**
@@ -18,7 +21,7 @@ public class RelativeHitboxInfoBuilder implements Cloneable {
      * on the player, so for the furnace, -0.5, 0, 0 moves the box to the leftmost edge from the
      * player's perspective, or the rightmost edge if one were spectating the furnace.
      */
-    private Function<BuiltImmersiveInfoImpl, Vec3> centerOffset;
+    private Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset;
     /**
      * Left/right size of the hitbox. See X axis for centerOffset.
      */
@@ -61,10 +64,10 @@ public class RelativeHitboxInfoBuilder implements Cloneable {
      * The Vec3 is run through the usual relative math in the same way the centerOffset is, but the position
      * is offset from centerOffset.
      */
-    private Function<BuiltImmersiveInfoImpl, List<Pair<Component, Vec3>>> textSupplier = null;
+    private Function<BuiltImmersiveInfoImpl<?>, List<Pair<Component, Vec3>>> textSupplier = null;
     /**
      * For hitboxes containing an item, this forces the item to render facing UP, DOWN, or null instead of
-     * the default for the given HiboxPositioningMode.
+     * the default for the given HitboxPositioningMode.
      */
     private ForcedUpDownRenderDir forcedUpDown = ForcedUpDownRenderDir.NOT_FORCED;
     /**
@@ -90,12 +93,12 @@ public class RelativeHitboxInfoBuilder implements Cloneable {
     private final boolean constantOffset;
 
 
-    private RelativeHitboxInfoBuilder(Function<BuiltImmersiveInfoImpl, Vec3> centerOffset, double size, boolean constantOffset) {
+    public RelativeHitboxInfoBuilderImpl(Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double size, boolean constantOffset) {
         this(centerOffset, size, size, size, constantOffset);
     }
 
-    private RelativeHitboxInfoBuilder(Function<BuiltImmersiveInfoImpl, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
-                                      boolean constantOffset) {
+    public RelativeHitboxInfoBuilderImpl(Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
+                                          boolean constantOffset) {
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -103,65 +106,65 @@ public class RelativeHitboxInfoBuilder implements Cloneable {
         this.constantOffset = constantOffset;
     }
 
-    private RelativeHitboxInfoBuilder(Vec3 centerOffset, double size) {
+    public RelativeHitboxInfoBuilderImpl(Vec3 centerOffset, double size) {
         this((info) -> centerOffset, size, true);
     }
 
-    private RelativeHitboxInfoBuilder(Vec3 centerOffset, double sizeX, double sizeY, double sizeZ) {
+    public RelativeHitboxInfoBuilderImpl(Vec3 centerOffset, double sizeX, double sizeY, double sizeZ) {
         this((info) -> centerOffset, sizeX, sizeY, sizeZ, true);
     }
 
-    public RelativeHitboxInfoBuilder setCenterOffset(Function<BuiltImmersiveInfoImpl, Vec3> newOffset) {
+    public RelativeHitboxInfoBuilderImpl setCenterOffset(Function<BuiltImmersiveInfoImpl<?>, Vec3> newOffset) {
         this.centerOffset = newOffset;
         return this;
     }
 
-    public RelativeHitboxInfoBuilder setCenterOffset(Vec3 newOffset) {
+    public RelativeHitboxInfoBuilderImpl setCenterOffset(Vec3 newOffset) {
         this.centerOffset = (info) -> newOffset;
         return this;
     }
 
-    public RelativeHitboxInfoBuilder holdsItems(boolean holdsItems) {
+    public RelativeHitboxInfoBuilderImpl holdsItems(boolean holdsItems) {
         this.holdsItems = holdsItems;
         return this;
     }
 
-    public RelativeHitboxInfoBuilder isInput(boolean isInput) {
+    public RelativeHitboxInfoBuilderImpl isInput(boolean isInput) {
         this.isInput = isInput;
         return this;
     }
 
-    public RelativeHitboxInfoBuilder itemSpins(boolean spins) {
+    public RelativeHitboxInfoBuilderImpl itemSpins(boolean spins) {
         this.itemSpins = spins;
         return this;
     }
 
-    public RelativeHitboxInfoBuilder itemRenderSizeMultiplier(float multiplier) {
+    public RelativeHitboxInfoBuilderImpl itemRenderSizeMultiplier(float multiplier) {
         this.itemRenderSizeMultiplier = multiplier;
         return this;
     }
 
-    public RelativeHitboxInfoBuilder triggerHitbox(boolean isTriggerHitbox) {
+    public RelativeHitboxInfoBuilderImpl triggerHitbox(boolean isTriggerHitbox) {
         this.isTriggerHitbox = isTriggerHitbox;
         return this;
     }
 
-    public RelativeHitboxInfoBuilder textSupplier(Function<BuiltImmersiveInfoImpl, List<Pair<Component, Vec3>>> textSupplier) {
+    public RelativeHitboxInfoBuilderImpl textSupplier(Function<BuiltImmersiveInfoImpl<?>, List<Pair<Component, Vec3>>> textSupplier) {
         this.textSupplier = textSupplier;
         return this;
     }
 
-    public RelativeHitboxInfoBuilder forceUpDownRenderDir(ForcedUpDownRenderDir forcedDir) {
+    public RelativeHitboxInfoBuilderImpl forceUpDownRenderDir(ForcedUpDownRenderDir forcedDir) {
         this.forcedUpDown = forcedDir;
         return this;
     }
 
-    public RelativeHitboxInfoBuilder needs3DResourcePackCompat(boolean needs3dCompat) {
+    public RelativeHitboxInfoBuilderImpl needs3DResourcePackCompat(boolean needs3dCompat) {
         this.needs3dCompat = needs3dCompat;
         return this;
     }
 
-    public RelativeHitboxInfoBuilder setVRMovementInfo(HitboxVRMovementInfo vrMovementInfo) {
+    public RelativeHitboxInfoBuilderImpl setVRMovementInfo(HitboxVRMovementInfo vrMovementInfo) {
         assert vrMovementInfo.thresholds().length > 0;
         for (double threshold : vrMovementInfo.thresholds()) {
             assert threshold != 0;
@@ -178,51 +181,51 @@ public class RelativeHitboxInfoBuilder implements Cloneable {
         return this;
     }
 
-    public RelativeHitboxInfoBuilder renderItem(boolean renderItem) {
+    public RelativeHitboxInfoBuilderImpl renderItem(boolean renderItem) {
         this.renderItem = renderItem;
         return this;
     }
 
-    public RelativeHitboxInfoBuilder renderItemCount(boolean renderItemCount) {
+    public RelativeHitboxInfoBuilderImpl renderItemCount(boolean renderItemCount) {
         this.renderItemCount = renderItemCount;
         return this;
     }
 
-    public RelativeHitboxInfo build() {
+    public RelativeHitboxInfoImpl build() {
         assert !isInput || holdsItems; // If isInput, must holdsItems
-        return new RelativeHitboxInfo(this, centerOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
+        return new RelativeHitboxInfoImpl(this, centerOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
                 forcedUpDown, constantOffset, needs3dCompat, vrMovementInfo, renderItem, renderItemCount);
     }
 
-    public static RelativeHitboxInfoBuilder create(Vec3 centerOffset, double size) {
-        return new RelativeHitboxInfoBuilder(centerOffset, size);
+    public static RelativeHitboxInfoBuilderImpl create(Vec3 centerOffset, double size) {
+        return new RelativeHitboxInfoBuilderImpl(centerOffset, size);
     }
 
-    public static RelativeHitboxInfoBuilder create(Function<BuiltImmersiveInfoImpl, Vec3> centerOffset, double size) {
-        return new RelativeHitboxInfoBuilder(centerOffset, size, false);
+    public static RelativeHitboxInfoBuilderImpl create(Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double size) {
+        return new RelativeHitboxInfoBuilderImpl(centerOffset, size, false);
     }
 
-    public static RelativeHitboxInfoBuilder create(Vec3 centerOffset, double sizeX, double sizeY, double sizeZ) {
-        return new RelativeHitboxInfoBuilder(centerOffset, sizeX, sizeY, sizeZ);
+    public static RelativeHitboxInfoBuilderImpl create(Vec3 centerOffset, double sizeX, double sizeY, double sizeZ) {
+        return new RelativeHitboxInfoBuilderImpl(centerOffset, sizeX, sizeY, sizeZ);
     }
 
-    public static RelativeHitboxInfoBuilder create(Function<BuiltImmersiveInfoImpl, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ) {
-        return new RelativeHitboxInfoBuilder(centerOffset, sizeX, sizeY, sizeZ, false);
+    public static RelativeHitboxInfoBuilderImpl create(Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ) {
+        return new RelativeHitboxInfoBuilderImpl(centerOffset, sizeX, sizeY, sizeZ, false);
     }
 
-    public static RelativeHitboxInfoBuilder createItemInput(Vec3 centerOffset, double size) {
-        return new RelativeHitboxInfoBuilder(centerOffset, size).holdsItems(true).isInput(true);
+    public static RelativeHitboxInfoBuilderImpl createItemInput(Vec3 centerOffset, double size) {
+        return new RelativeHitboxInfoBuilderImpl(centerOffset, size).holdsItems(true).isInput(true);
     }
 
-    public static RelativeHitboxInfoBuilder createItemInput(Function<BuiltImmersiveInfoImpl, Vec3> centerOffset, double size) {
-        return new RelativeHitboxInfoBuilder(centerOffset, size, false).holdsItems(true).isInput(true);
+    public static RelativeHitboxInfoBuilderImpl createItemInput(Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double size) {
+        return new RelativeHitboxInfoBuilderImpl(centerOffset, size, false).holdsItems(true).isInput(true);
     }
 
     @Override
-    public RelativeHitboxInfoBuilder clone() {
+    public RelativeHitboxInfoBuilderImpl clone() {
         try {
-            return (RelativeHitboxInfoBuilder) super.clone();
+            return (RelativeHitboxInfoBuilderImpl) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }

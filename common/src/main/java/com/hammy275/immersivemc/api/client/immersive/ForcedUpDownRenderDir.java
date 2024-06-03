@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.client.immersive;
+package com.hammy275.immersivemc.api.client.immersive;
 
 import net.minecraft.core.Direction;
 
