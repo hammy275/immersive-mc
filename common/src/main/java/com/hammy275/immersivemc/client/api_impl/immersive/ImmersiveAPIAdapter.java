@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveRenderHelpersImpl;
+import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
@@ -25,6 +26,8 @@ import java.util.Collection;
 public class ImmersiveAPIAdapter<I extends ImmersiveInfo, S extends NetworkStorage> extends AbstractImmersive<ImmersiveInfoAPIAdapter<I>, S> {
 
     private final Immersive<I, S> apiImmersive;
+    // Hack to enforce the cooldown from the API with the adapter
+    private int lastCooldown = -1;
 
     public ImmersiveAPIAdapter(Immersive<I, S> apiImmersive) {
         super(-1);
@@ -103,7 +106,7 @@ public class ImmersiveAPIAdapter<I extends ImmersiveInfo, S extends NetworkStora
             HitboxInfo hbox = apiInfo.getAllHitboxes().get(i);
             if (!hbox.isTriggerHitbox()) {
                 if (runningSlot == closest) {
-                    apiImmersive.handleHitboxInteract(apiInfo, Minecraft.getInstance().player, i, hand);
+                    lastCooldown = apiImmersive.handleHitboxInteract(apiInfo, Minecraft.getInstance().player, i, hand);
                     break;
                 } else {
                     runningSlot++;
@@ -120,13 +123,28 @@ public class ImmersiveAPIAdapter<I extends ImmersiveInfo, S extends NetworkStora
             HitboxInfo hbox = apiInfo.getAllHitboxes().get(i);
             if (hbox.isTriggerHitbox()) {
                 if (runningSlot == hitboxNum) {
-                    apiImmersive.handleHitboxInteract(apiInfo, Minecraft.getInstance().player, i, InteractionHand.MAIN_HAND);
+                    lastCooldown = apiImmersive.handleHitboxInteract(apiInfo, Minecraft.getInstance().player, i, InteractionHand.MAIN_HAND);
                     break;
                 } else {
                     runningSlot++;
                 }
             }
         }
+    }
+
+    @Override
+    public int getCooldownDesktop() {
+        return lastCooldown;
+    }
+
+    @Override
+    public int getCooldownVR() {
+        return isVROnly() ? getCooldownDesktop() : (int) (getCooldownDesktop() * ClientConstants.cooldownVRMultiplier);
+    }
+
+    @Override
+    public boolean isVROnly() {
+        return apiImmersive.isVROnly();
     }
 
     @Override

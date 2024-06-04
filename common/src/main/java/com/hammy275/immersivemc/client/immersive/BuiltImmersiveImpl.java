@@ -172,10 +172,8 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
 
     @Override
     public int handleHitboxInteract(BuiltImmersiveInfo<E> infoIn, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
-        // TODO: Use consumer-returned cooldown once we add support for it
         BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
-        builder.rightClickHandler.apply(info, player, hitboxIndex, hand);
-        return 6;
+        return builder.hitboxInteractHandler.apply(info, player, hitboxIndex, hand);
     }
 
     private boolean airCheck(BuiltImmersiveInfo<E> infoIn) {

@@ -27,7 +27,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     List<Vec3i> lightPositionOffsets = new ArrayList<>();
     HitboxPositioningMode positioningMode = HitboxPositioningMode.HORIZONTAL_BLOCK_FACING;
     Function<BuiltImmersiveInfo<E>, Boolean> extraRenderReady = (info) -> true;
-    RightClickHandler<E> rightClickHandler = (a, b, c, d) -> {};
+    HitboxInteractHandler<E> hitboxInteractHandler = (a, b, c, d) -> -1;
     boolean vrOnly = false;
     List<Vec3i> airCheckPositionOffsets = new ArrayList<>();
     Class<E> extraInfoDataClazz;
@@ -114,13 +114,16 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     }
 
     /**
-     * Sets what should happen on right click.
-     * @param handler Function that handles a right-click.
+     * Sets what should happen when a hitbox is interacted with.
+     * @param handler Function that takes an info instance, a player doing the interaction, the slot being interacted
+     *                with, and the hand being interacted with. This function should return a number denoting the
+     *                cooldown until the user can interact with Immersives again, or a negative number to denote that
+     *                no interaction took place.
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilderImpl<E,S> setRightClickHandler(RightClickHandler<E> handler) {
-        this.rightClickHandler = handler;
+    public ImmersiveBuilderImpl<E,S> setHitboxInteractHandler(HitboxInteractHandler<E> handler) {
+        this.hitboxInteractHandler = handler;
         return this;
     }
 
@@ -253,7 +256,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
         clone.lightPositionOffsets = new ArrayList<>(this.lightPositionOffsets);
         clone.positioningMode = this.positioningMode;
         clone.extraRenderReady = this.extraRenderReady;
-        clone.rightClickHandler = this.rightClickHandler;
+        clone.hitboxInteractHandler = this.hitboxInteractHandler;
         clone.vrOnly = this.vrOnly;
         clone.airCheckPositionOffsets = new ArrayList<>(this.airCheckPositionOffsets);
         clone.extraStorageConsumer = null;
@@ -273,7 +276,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
         clone.lightPositionOffsets = new ArrayList<>(this.lightPositionOffsets);
         clone.positioningMode = this.positioningMode;
         clone.extraRenderReady = (info) -> true;
-        clone.rightClickHandler = (a, b, c, d) -> {};
+        clone.hitboxInteractHandler = (a, b, c, d) -> -1;
         clone.vrOnly = this.vrOnly;
         clone.airCheckPositionOffsets = new ArrayList<>(this.airCheckPositionOffsets);
         clone.extraStorageConsumer = null;

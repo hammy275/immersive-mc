@@ -66,11 +66,15 @@ public interface ImmersiveBuilder<E, S extends NetworkStorage> {
     public ImmersiveBuilder<E,S> setConfigChecker(Supplier<Boolean> checker);
 
     /**
-     * Sets what should happen on right click.
-     * @param handler Function that handles a right-click.
+     * Sets what should happen when a hitbox is interacted with.
+     * @param handler Function that takes an info instance, a player doing the interaction, the slot being interacted
+     *                with, and the hand being interacted with. This function should return a number denoting the
+     *                cooldown until the user can interact with Immersives again, or a negative number to denote that
+     *                no interaction took place. The returned cooldown is increased for VR users, unless the Immersive
+     *                is VR-only.
      * @return Builder object.
      */
-    public ImmersiveBuilder<E,S> setRightClickHandler(RightClickHandler<E> handler);
+    public ImmersiveBuilder<E,S> setHitboxInteractHandler(HitboxInteractHandler<E> handler);
 
     /**
      * Sets whether this immersive is only for VR users.
