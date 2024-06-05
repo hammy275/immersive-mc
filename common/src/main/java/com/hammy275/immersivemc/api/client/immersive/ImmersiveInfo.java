@@ -45,4 +45,9 @@ public interface ImmersiveInfo {
      * @return Whether the given slotIndex is being hovered by any hand.
      */
     public boolean isSlotHovered(int hitboxIndex);
+
+    /**
+     * @return The number of ticks this info has existed for.
+     */
+    public long getTicksExisted();
 }

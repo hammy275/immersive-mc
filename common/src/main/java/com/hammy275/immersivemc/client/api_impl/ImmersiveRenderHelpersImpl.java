@@ -1,7 +1,10 @@
 package com.hammy275.immersivemc.client.api_impl;
 
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
+import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
@@ -35,6 +38,28 @@ import org.joml.Matrix4f;
 public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
 
     public static final ImmersiveRenderHelpers INSTANCE = new ImmersiveRenderHelpersImpl();
+
+    @Override
+    public void renderItemWithInfo(ItemStack item, PoseStack stack, float size, boolean renderItemCounts, int light, ImmersiveInfo info, boolean shouldRenderItemGuide, int hitboxIndex, int spinDegrees, @Nullable Direction facing, @Nullable Direction upDown) {
+        HitboxInfo hitbox = info.getAllHitboxes().get(hitboxIndex);
+        boolean hovered = info.isSlotHovered(hitboxIndex);
+        if (item == null || item.isEmpty()) {
+            if (shouldRenderItemGuide) {
+                renderItemGuide(stack, hitbox.getHitbox(), hovered, light);
+            }
+        } else {
+            long ticksExisted = info.getTicksExisted();
+            if (ticksExisted < ClientConstants.transitionTime) {
+                // Adjust size based on transition
+                size *= getTransitionMultiplier(info.getTicksExisted());
+            } else {
+                // Adjust size based on if it's hovered
+                size = hovered ? size * ClientConstants.sizeScaleForHover : size;
+            }
+            BoundingBox bbox = hitbox.getHitbox();
+            renderItem(item, stack, BoundingBox.getCenter(bbox), size, bbox, renderItemCounts, light, spinDegrees, facing, upDown);
+        }
+    }
 
     @Override
     public void renderItem(ItemStack item, PoseStack stack, Vec3 pos, float size, BoundingBox hitbox, boolean renderItemCounts, int light) {
@@ -252,5 +277,10 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
             }
         }
         return LightTexture.pack(maxBlock, maxSky);
+    }
+
+    @Override
+    public float getTransitionMultiplier(long ticksExisted) {
+        return ClientConstants.transitionMult * (ticksExisted + Minecraft.getInstance().getFrameTime());
     }
 }

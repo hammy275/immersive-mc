@@ -75,6 +75,11 @@ public final class BuiltImmersiveInfoImpl<E> implements BuiltImmersiveInfo<E> {
         return slotsHovered[0] == hitboxIndex || slotsHovered[1] == hitboxIndex;
     }
 
+    @Override
+    public long getTicksExisted() {
+        return ticksExisted;
+    }
+
     public E getExtraData() {
         return this.extraData;
     }

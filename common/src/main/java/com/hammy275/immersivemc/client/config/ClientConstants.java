@@ -39,12 +39,14 @@ public class ClientConstants {
     public static final float itemScaleSizeSmithingTable = itemScaleSizeAnvil;
 
     // Time to transition in ticks
-    public static final int transitionTime = 20;
+    public static final int transitionTime = 10;
+    public static final float transitionMult = 1f / transitionTime;
 
     // Default cooldown time for interactions for desktop users
     public static final int defaultCooldownTicks = 8;
     // Multiplier for the cooldown time in ticks for VR users
     public static final double cooldownVRMultiplier = 1.5;
+    public static final float sizeScaleForHover = 1.25f;
 
 
     // Enchanting table y offsets for item animations and a map storing enchantments for fake items to have glimmer
