@@ -24,7 +24,7 @@ public interface ImmersiveRenderHelpers {
 
     /**
      * Renders an item based on an ImmersiveInfo, or an item guide if applicable. As of writing, items
-     * will grow when hovered-over/selected, will shrink for the start of the info's existance, and an item guide
+     * will grow when hovered-over/selected, will shrink for the start of the info's existence, and an item guide
      * will render if there is no item and
      * @param item The item to render.
      * @param stack The pose stack being rendered with.
@@ -40,22 +40,21 @@ public interface ImmersiveRenderHelpers {
      * @param upDown Direction upwards or downwards for the item to face. Can be null if not facing up or down. If this
      *               is not null, facing instead controls the direction the item is rotated towards.
      */
-    public void renderItemWithInfo(ItemStack item, PoseStack stack, float size, boolean renderItemCounts, int light,
-                                   ImmersiveInfo info, boolean shouldRenderItemGuide, int hitboxIndex, int spinDegrees,
-                                   @Nullable Direction facing, @Nullable Direction upDown);
+    public void renderItemWithInfo(@Nullable ItemStack item, PoseStack stack, float size, boolean renderItemCounts,
+                                   int light, ImmersiveInfo info, boolean shouldRenderItemGuide, int hitboxIndex,
+                                   int spinDegrees, @Nullable Direction facing, @Nullable Direction upDown);
 
     /**
      * Renders an item at the specified position facing the camera.
      *
-     * @param item The item to render.
-     * @param stack The pose stack being rendered with.
-     * @param pos The in-world position to render at.
-     * @param size The size to render at.
-     * @param hitbox The hitbox for interacting with this item. Used for displaying a hitbox when hitboxes are enabled.
+     * @param item             The item to render.
+     * @param stack            The pose stack being rendered with.
+     * @param size             The size to render at.
+     * @param hitbox           The hitbox for interacting with this item. Used for displaying a hitbox when hitboxes are enabled.
      * @param renderItemCounts Whether to render a number representing the item count with the item.
-     * @param light The packed sky light and block light to render with.
+     * @param light            The packed sky light and block light to render with.
      */
-    public void renderItem(ItemStack item, PoseStack stack, Vec3 pos, float size, BoundingBox hitbox,
+    public void renderItem(@Nullable ItemStack item, PoseStack stack, float size, BoundingBox hitbox,
                            boolean renderItemCounts, int light);
 
     /**
@@ -63,7 +62,6 @@ public interface ImmersiveRenderHelpers {
      *
      * @param item The item to render.
      * @param stack The pose stack being rendered with.
-     * @param pos The in-world position to render at.
      * @param size The size to render at.
      * @param hitbox The hitbox for interacting with this item. Used for displaying a hitbox when hitboxes are enabled.
      * @param renderItemCounts Whether to render a number representing the item count with the item.
@@ -74,7 +72,7 @@ public interface ImmersiveRenderHelpers {
      * @param upDown Direction upwards or downwards for the item to face. Can be null if not facing up or down. If this
      *               is not null, facing instead controls the direction the item is rotated towards.
      */
-    public void renderItem(ItemStack item, PoseStack stack, Vec3 pos, float size, BoundingBox hitbox,
+    public void renderItem(@Nullable ItemStack item, PoseStack stack, float size, BoundingBox hitbox,
                            boolean renderItemCounts, int light, int spinDegrees, @Nullable Direction facing,
                            @Nullable Direction upDown);
 

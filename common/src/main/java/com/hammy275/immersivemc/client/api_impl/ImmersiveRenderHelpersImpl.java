@@ -57,19 +57,20 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
                 size = hovered ? size * ClientConstants.sizeScaleForHover : size;
             }
             BoundingBox bbox = hitbox.getHitbox();
-            renderItem(item, stack, BoundingBox.getCenter(bbox), size, bbox, renderItemCounts, light, spinDegrees, facing, upDown);
+            renderItem(item, stack, size, bbox, renderItemCounts, light, spinDegrees, facing, upDown);
         }
     }
 
     @Override
-    public void renderItem(ItemStack item, PoseStack stack, Vec3 pos, float size, BoundingBox hitbox, boolean renderItemCounts, int light) {
-        this.renderItem(item, stack, pos, size, hitbox, renderItemCounts, light, -1, null, null);
+    public void renderItem(ItemStack item, PoseStack stack, float size, BoundingBox hitbox, boolean renderItemCounts, int light) {
+        this.renderItem(item, stack, size, hitbox, renderItemCounts, light, -1, null, null);
     }
 
     @Override
-    public void renderItem(ItemStack item, PoseStack stack, Vec3 pos, float size, BoundingBox hitbox, boolean renderItemCounts, int light, int spinDegrees, @Nullable Direction facing, @Nullable Direction upDown) {
+    public void renderItem(ItemStack item, PoseStack stack, float size, BoundingBox hitbox, boolean renderItemCounts, int light, int spinDegrees, @Nullable Direction facing, @Nullable Direction upDown) {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
-        if (item != null && item != ItemStack.EMPTY && pos != null) {
+        Vec3 pos = BoundingBox.getCenter(hitbox);
+        if (item != null && item != ItemStack.EMPTY) {
             stack.pushPose();
 
             // Move the stack to be relative to the camera

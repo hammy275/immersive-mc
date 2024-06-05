@@ -79,7 +79,7 @@ public interface RelativeHitboxInfoBuilder {
     public RelativeHitboxInfoBuilder textSupplier(Function<BuiltImmersiveInfoImpl<?>, List<Pair<Component, Vec3>>> textSupplier);
 
     /**
-     * @param forcedDir Forces the direction passed to upDown {@link com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers#renderItem(ItemStack, PoseStack, Vec3, float, BoundingBox, boolean, int, int, Direction, Direction)}
+     * @param forcedDir Forces the direction passed to upDown {@link com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers#renderItem(ItemStack, PoseStack, float, BoundingBox, boolean, int, int, Direction, Direction)}
      *                  instead of determining it based on the hitbox positioning mode.
      * @return This builder object.
      */
