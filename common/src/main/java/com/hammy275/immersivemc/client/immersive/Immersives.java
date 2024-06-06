@@ -1,14 +1,13 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.api.client.immersive.*;
+import com.hammy275.immersivemc.client.api_impl.immersive.ImmersiveAPIAdapter;
 import com.hammy275.immersivemc.client.config.ClientConstants;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
-import com.hammy275.immersivemc.client.immersive.info.AnvilData;
-import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
-import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
+import com.hammy275.immersivemc.client.immersive.info.*;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
 import com.hammy275.immersivemc.common.network.Network;
@@ -91,7 +90,7 @@ public class Immersives {
                 ((ChestLikeData) info.getExtraData()).forceClose(info.getBlockPosition());
             })
             .build();
-    public static final ImmersiveBeacon immersiveBeacon = new ImmersiveBeacon();
+    public static final ImmersiveAPIAdapter<BeaconInfo, BeaconStorage> immersiveBeacon = new ImmersiveAPIAdapter<>(new ImmersiveBeaconV2());
     public static final BuiltImmersive<?,?> immersiveBrewing = ImmersiveBuilder.create(ImmersiveHandlers.brewingStandHandler)
             .setConfigChecker(() -> ActiveConfig.active().useBrewingImmersion)
             .setRenderSize(ClientConstants.itemScaleSizeBrewing)

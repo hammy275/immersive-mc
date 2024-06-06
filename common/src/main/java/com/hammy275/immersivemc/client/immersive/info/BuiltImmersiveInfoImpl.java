@@ -20,7 +20,7 @@ public final class BuiltImmersiveInfoImpl<E> implements BuiltImmersiveInfo<E> {
     public final List<RelativeHitboxInfoImpl> hitboxes;
     public final List<HitboxInfo> hitboxesOut;
     // Key is input slot number, value is a HitboxInfo
-    private BlockPos pos;
+    private final BlockPos pos;
     public final E extraData;
     public Direction immersiveDir = null; // Stores the direction the immersive is facing (towards the player, for example)
     public boolean airCheckPassed = false;

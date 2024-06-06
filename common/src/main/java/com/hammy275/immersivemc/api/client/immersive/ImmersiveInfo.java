@@ -11,7 +11,7 @@ public interface ImmersiveInfo {
      * @return The list of all hitboxes this Immersive uses. This can contain null elements, and can return an
      *         immutable list implementation if desired.
      */
-    public List<HitboxInfo> getAllHitboxes();
+    public List<? extends HitboxInfo> getAllHitboxes();
 
     /**
      * Whether this ImmersiveInfo contains valid hitboxes that are ready for use by users in-game.

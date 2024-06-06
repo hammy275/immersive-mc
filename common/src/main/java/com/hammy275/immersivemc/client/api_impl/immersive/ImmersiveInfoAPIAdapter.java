@@ -5,7 +5,6 @@ import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
-import com.hammy275.immersivemc.common.api_impl.hitbox.HitboxInfoFactoryImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
@@ -33,19 +32,13 @@ public final class ImmersiveInfoAPIAdapter<I extends ImmersiveInfo> extends Abst
         return apiInfo.getAllHitboxes().stream().filter((hInfo) -> !hInfo.isTriggerHitbox()).map(HitboxInfo::getHitbox).toList().toArray(new BoundingBox[0]);
     }
 
+    public BoundingBox[] getAllHitboxesAllTypes() {
+        return apiInfo.getAllHitboxes().stream().map(HitboxInfo::getHitbox).toList().toArray(new BoundingBox[0]);
+    }
+
     @Override
     public void setHitbox(int slot, BoundingBox hitbox) {
-        int runningSlot = 0;
-        for (int i = 0; i < apiInfo.getAllHitboxes().size(); i++) {
-            HitboxInfo hbox = apiInfo.getAllHitboxes().get(i);
-            if (!hbox.isTriggerHitbox()) {
-                if (runningSlot == slot) {
-                    apiInfo.getAllHitboxes().set(i, HitboxInfoFactoryImpl.INSTANCE.interactHitbox(hitbox));
-                } else {
-                    runningSlot++;
-                }
-            }
-        }
+        // Intentional no-op. ImmersiveMC never calls this generically, so we don't need to support it.
     }
 
     @Override

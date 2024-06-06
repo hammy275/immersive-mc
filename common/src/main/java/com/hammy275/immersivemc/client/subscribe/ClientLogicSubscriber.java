@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.api_impl.immersive.ImmersiveAPIAdapter;
+import com.hammy275.immersivemc.client.api_impl.immersive.ImmersiveInfoAPIAdapter;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
@@ -232,13 +233,13 @@ public class ClientLogicSubscriber {
                 if (info.hasHitboxes()) {
                     boolean inBox = false;
                     if (VRPluginVerify.clientInVR()) {
-                        IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player);
-                        info.slotHovered = Util.getFirstIntersect(vrPlayer.getController0().position(),
-                                info.getAllHitboxes()).orElse(-1);
-                        inBox = info.slotHovered != -1;
-                        info.slotHovered2 = Util.getFirstIntersect(vrPlayer.getController1().position(),
-                                info.getAllHitboxes()).orElse(-1);
                         if (!(singleton instanceof ImmersiveAPIAdapter<?, ?>)) {
+                            IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player);
+                            info.slotHovered = Util.getFirstIntersect(vrPlayer.getController0().position(),
+                                    info.getAllHitboxes()).orElse(-1);
+                            inBox = info.slotHovered != -1;
+                            info.slotHovered2 = Util.getFirstIntersect(vrPlayer.getController1().position(),
+                                    info.getAllHitboxes()).orElse(-1);
                             if (info instanceof InfoTriggerHitboxes tInfo) {
                                 info.triggerHitboxSlotHovered = Util.getFirstIntersect(vrPlayer.getController(tInfo.getVRControllerNum()).position(),
                                         tInfo.getTriggerHitboxes()).orElse(-1);
@@ -246,20 +247,30 @@ public class ClientLogicSubscriber {
                             } else {
                                 info.triggerHitboxSlotHovered = -1;
                             }
+                        } else {
+                            IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player);
+                            info.slotHovered = Util.getFirstIntersect(vrPlayer.getController0().position(),
+                                    ((ImmersiveInfoAPIAdapter<?>) info).getAllHitboxesAllTypes()).orElse(-1);
+                            info.slotHovered2 = Util.getFirstIntersect(vrPlayer.getController1().position(),
+                                    ((ImmersiveInfoAPIAdapter<?>) info).getAllHitboxesAllTypes()).orElse(-1);
                         }
                     }
                     if (!VRPluginVerify.clientInVR() || (ActiveConfig.active().rightClickInVR && !inBox)) {
-                        Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
-                        info.slotHovered = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
-                                info.getAllHitboxes()).orElse(-1);
-                        info.slotHovered2 = -1;
                         if (!(singleton instanceof ImmersiveAPIAdapter<?, ?>)) {
+                            Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
+                            info.slotHovered = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
+                                    info.getAllHitboxes()).orElse(-1);
+                            info.slotHovered2 = -1;
                             if (info.slotHovered == -1 && info instanceof InfoTriggerHitboxes tInfo) {
                                 info.triggerHitboxSlotHovered = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
                                         tInfo.getTriggerHitboxes()).orElse(-1);
                             } else {
                                 info.triggerHitboxSlotHovered = -1;
                             }
+                        } else {
+                            Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
+                            info.slotHovered = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
+                                    ((ImmersiveInfoAPIAdapter<?>) info).getAllHitboxesAllTypes()).orElse(-1);
                         }
                     }
                 }

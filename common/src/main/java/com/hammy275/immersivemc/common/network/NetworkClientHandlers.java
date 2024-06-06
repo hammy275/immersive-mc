@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.common.network;
 
+import com.hammy275.immersivemc.client.api_impl.immersive.ImmersiveInfoAPIAdapter;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
@@ -19,10 +20,10 @@ import java.util.Objects;
 public class NetworkClientHandlers {
 
     public static void setBeaconData(BeaconDataPacket packet) {
-        for (BeaconInfo info : Immersives.immersiveBeacon.getTrackedObjects()) {
+        for (ImmersiveInfoAPIAdapter<BeaconInfo> info : Immersives.immersiveBeacon.getTrackedObjects()) {
             if (packet.pos.equals(info.getBlockPosition())) {
-                info.effectSelected = packet.powerIndex;
-                info.regenSelected = packet.useRegen;
+                info.apiInfo.effectSelected = packet.powerIndex;
+                info.apiInfo.regenSelected = packet.useRegen;
             }
         }
     }

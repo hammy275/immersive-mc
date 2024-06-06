@@ -1,12 +1,13 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
+import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.config.ClientConstants;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
-import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
-import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.client.immersive.info.HitboxItemPair;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
@@ -18,21 +19,22 @@ import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 
-public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo, BeaconStorage> {
+public class ImmersiveBeaconV2 extends AbstractImmersiveV2<BeaconInfo, BeaconStorage> {
 
     private static final double effectHitboxSize = 0.2;
     private static final double displayHitboxSize = 0.2;
@@ -48,85 +50,147 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo, B
     private static final ResourceLocation confirmLocation = new ResourceLocation(ImmersiveMC.MOD_ID, "confirm.png");
     private static final ResourceLocation addLocation = new ResourceLocation(ImmersiveMC.MOD_ID, "add.png");
 
-    public ImmersiveBeacon() {
-        super(-1);
+    @Override
+    public BeaconInfo buildInfo(BlockPos pos, Level level) {
+        BeaconInfo info = new BeaconInfo(pos);
+        info.startMillis = Instant.now().toEpochMilli();
+        Network.INSTANCE.sendToServer(new BeaconDataPacket(info.getBlockPosition()));
+        return info;
     }
 
     @Override
-    public ImmersiveHandler getHandler() {
-        return ImmersiveHandlers.beaconHandler;
+    public int handleHitboxInteract(BeaconInfo info, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
+        if (hitboxIndex <= 4) {
+            info.effectSelected = hitboxIndex;
+        } else if (hitboxIndex == 5) {
+            info.regenSelected = true;
+        } else if (hitboxIndex == 6) {
+            info.regenSelected = false;
+        } else if (hitboxIndex == 7) {
+            Network.INSTANCE.sendToServer(new BeaconConfirmPacket(info.getBlockPosition(), info.getEffectId(),
+                    info.regenSelected ? BuiltInRegistries.MOB_EFFECT.getId(MobEffects.REGENERATION) : -1));
+            VRRumble.rumbleIfVR(Minecraft.getInstance().player, 0, CommonConstants.vibrationTimeWorldInteraction);
+        } else {
+            Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), 0, hand));
+        }
+        return ClientConstants.defaultCooldownTicks;
     }
 
     @Override
-    protected void render(BeaconInfo info, PoseStack stack, boolean isInVR) {
-        float itemSize = ClientConstants.itemScaleSizeBeacon / info.getItemTransitionCountdown();
+    public void tick(BeaconInfo info) {
+        super.tick(info);
 
-        renderItem(info.items[0], stack, info.getPosition(0), slotHelpBoxIsSelected(info, 0) ? itemSize * 1.25f : itemSize,
-                info.lastPlayerDir.getOpposite(), null, info.getHitbox(0),
-                false, -1, info.light);
-        for (int i = 0; i < info.triggerBoxes.length; i++) {
-            if (info.triggerBoxes[i] != null) {
-                renderHitbox(stack, info.triggerBoxes[i]);
+        // Run every tick since effects spin in a circle
+        setHitboxesAndPositions(info);
+
+        info.lastPlayerDir = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
+    }
+
+    @Override
+    public boolean shouldRender(BeaconInfo info) {
+        return info.lastPlayerDir != null && info.areaAboveIsAir;
+    }
+
+    @Override
+    public void render(BeaconInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
+        helpers.renderItemWithInfo(info.hitboxes.get(8).item, stack, ClientConstants.itemScaleSizeBeacon,
+                false, info.light, info, true, 8, -1,
+                info.lastPlayerDir.getOpposite(), null);
+
+        float transitionMultiplier = helpers.getTransitionMultiplier(info.getTicksExisted());
+
+        float effectSize = (float) effectHitboxSize * transitionMultiplier;
+        for (int i = 0; i < info.hitboxes.size() - 1; i++) {
+            HitboxItemPair hitbox = info.hitboxes.get(i);
+            if (hitbox.box != null) {
+                helpers.renderHitbox(stack, hitbox.box);
+                if (i <= 4) {
+                    helpers.renderImage(stack, effectLocations[i],
+                            BoundingBox.getCenter(hitbox.box).add(0, -0.05, 0),
+                            info.effectSelected == i ? effectSize * 1.5f : info.isSlotHovered(i) ? effectSize * 1.25f : effectSize,
+                            info.light, info.lastPlayerDir);
+                }
             }
         }
 
-        float effectSize = (float) effectHitboxSize / info.getItemTransitionCountdown();
-
-        for (int i = 0; i <= 4; i++) {
-            if (info.triggerBoxes[i] != null) {
-                renderImage(stack, effectLocations[i], info.triggerBoxes[i].getCenter().add(0, -0.05, 0), info.lastPlayerDir,
-                        info.effectSelected == i ? effectSize * 1.5f :
-                                info.triggerHitboxSlotHovered == i ? effectSize * 1.25f : effectSize, info.light);
-            }
-        }
-
-        float displaySize = (float) displayHitboxSize / info.getItemTransitionCountdown();
+        float displaySize = (float) displayHitboxSize * transitionMultiplier;
 
         if (info.effectSelected != -1) {
-            renderImage(stack, effectLocations[info.effectSelected], info.effectSelectedDisplayPos.add(0, -0.05, 0),
-                    info.lastPlayerDir, displaySize, info.light);
+            helpers.renderImage(stack, effectLocations[info.effectSelected], info.effectSelectedDisplayPos.add(0, -0.05, 0),
+                    displaySize, info.light, info.lastPlayerDir);
         }
 
-        if (info.triggerBoxes[6] != null) { // Regen and plus
-            renderImage(stack, regenerationLocation, info.triggerBoxes[5].getCenter().add(0, -0.05, 0),
-                    info.lastPlayerDir, info.triggerHitboxSlotHovered == 5 ? displaySize * 1.25f : displaySize, info.light);
-            renderImage(stack, addLocation, info.triggerBoxes[6].getCenter().add(0, -0.05, 0),
-                    info.lastPlayerDir, info.triggerHitboxSlotHovered == 6 ? displaySize * 1.25f : displaySize, info.light);
-        }
-
-        if (info.triggerBoxes[7] != null && info.isReadyForConfirmExceptPayment()) {
-            if (info.isReadyForConfirm()) {
-                renderImage(stack, confirmLocation, info.triggerBoxes[7].getCenter().add(0, -0.1, 0),
-                        info.lastPlayerDir, info.triggerHitboxSlotHovered == 7 ? itemSize * 1.25f : itemSize, info.light);
+        for (int i = 5; i <= 6; i++) {
+            HitboxItemPair hitbox = info.hitboxes.get(i);
+            if (hitbox.box != null) {
+                helpers.renderImage(stack, i == 5 ? regenerationLocation : addLocation,
+                        BoundingBox.getCenter(hitbox.box).add(0, -0.05, 0),
+                        info.isSlotHovered(i) ? displaySize * 1.25f : displaySize,
+                        info.light, info.lastPlayerDir);
             }
+        }
+
+        HitboxItemPair hitbox7 = info.hitboxes.get(7);
+        if (hitbox7.box != null && info.isEffectSelected()) {
+            if (info.isReadyForConfirm()) {
+                helpers.renderImage(stack, confirmLocation, BoundingBox.getCenter(hitbox7.box).add(0, -0.1, 0),
+                        info.isSlotHovered(7) ? ClientConstants.itemScaleSizeBeacon * 1.25f : ClientConstants.itemScaleSizeBeacon,
+                        info.light, info.lastPlayerDir);
+            }
+
+            Direction playerForward = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
             double xMult = 0;
             double zMult = 0;
-            if (getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite().getNormal().getX() != 0) {
+            if (playerForward.getNormal().getX() != 0) {
                 zMult = 1;
             } else {
                 xMult = 1;
             }
-            renderHitbox(stack,
+            helpers.renderHitbox(stack,
                     AABB.ofSize(info.effectSelectedDisplayPos, displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
-                    true,
-                    0f, 1f, 0f
-                    );
+                    true, 0f, 1f, 0f);
             if (info.regenSelected) {
-                renderHitbox(stack,
-                        AABB.ofSize(info.triggerBoxes[5].getCenter(),
+                helpers.renderHitbox(stack,
+                        AABB.ofSize(BoundingBox.getCenter(info.hitboxes.get(5).box),
                                 displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
-                        true,
-                        0f, 1f, 0f
-                );
+                        true, 0f, 1f, 0f);
             } else {
-                renderHitbox(stack,
-                        AABB.ofSize(info.triggerBoxes[6].getCenter(),
+                helpers.renderHitbox(stack,
+                        AABB.ofSize(BoundingBox.getCenter(info.hitboxes.get(6).box),
                                 displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
-                        true,
-                        0f, 1f, 0f
-                );
+                        true, 0f, 1f, 0f);
             }
         }
+    }
+
+    @Override
+    public ImmersiveHandler<BeaconStorage> getHandler() {
+        return ImmersiveHandlers.beaconHandler;
+    }
+
+    @Override
+    public boolean clientAuthoritative() {
+        return false;
+    }
+
+    @Override
+    public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
+        return null; // TODO: Config screen info once that system is up and running
+    }
+
+    @Override
+    public boolean shouldDisableRightClicksWhenInteractionsDisabled(BeaconInfo info) {
+        return false;
+    }
+
+    @Override
+    public void processStorageFromNetwork(BeaconInfo info, BeaconStorage storage) {
+        info.hitboxes.get(8).item = storage.getItem(0);
+    }
+
+    @Override
+    public boolean isVROnly() {
+        return false;
     }
 
     protected void setHitboxesAndPositions(BeaconInfo info) {
@@ -146,21 +210,22 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo, B
             // NOTE: Unlike most other places in ImmersiveMC, left refers to left from the player's
             // perspective, not the block's!
             Vec3 center = Vec3.atCenterOf(info.getBlockPosition()).add(0, 1, 0);
-            Direction forward = getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition());
-            Vec3 forwardFromBlockVec = new Vec3(forward.getNormal().getX(), forward.getNormal().getY(),
-                    forward.getNormal().getZ());
-            Direction left = forward.getClockWise();
+            Direction beaconForward = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition());
+            Vec3 forwardFromBlockVec = new Vec3(beaconForward.getNormal().getX(), beaconForward.getNormal().getY(),
+                    beaconForward.getNormal().getZ());
+            Direction left = beaconForward.getClockWise();
 
             Vec3 leftVec = new Vec3(left.getNormal().getX(), left.getNormal().getY(), left.getNormal().getZ());
 
             // For item input
             double itemHitboxSize = ClientConstants.itemScaleSizeBeacon;
-            info.setPosition(0, Vec3.atBottomCenterOf(info.getBlockPosition()).add(forwardFromBlockVec.scale(0.25)
-                    .add(forwardFromBlockVec.scale(itemHitboxSize / 2d)).add(0, itemHitboxSize / 2d + 0.01, 0)));
-            info.setHitbox(0, AABB.ofSize(info.getPosition(0),
-                    itemHitboxSize, itemHitboxSize, itemHitboxSize));
-            info.triggerBoxes[7] = AABB.ofSize(
-                    info.getPosition(0).add(0, itemHitboxSize / 2d + 0.25, 0),
+            info.hitboxes.get(8).box = AABB.ofSize(
+                    Vec3.atBottomCenterOf(info.getBlockPosition()).add(forwardFromBlockVec.scale(0.25)
+                            .add(forwardFromBlockVec.scale(itemHitboxSize / 2d)).add(0, itemHitboxSize / 2d + 0.01, 0)),
+                    itemHitboxSize, itemHitboxSize, itemHitboxSize
+            );
+            info.hitboxes.get(7).box = AABB.ofSize(
+                    BoundingBox.getCenter(info.hitboxes.get(8).box).add(0, itemHitboxSize / 2d + 0.25, 0),
                     itemHitboxSize, itemHitboxSize, itemHitboxSize
             );
 
@@ -180,34 +245,34 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo, B
                 long timeSinceStartMilli = Instant.now().toEpochMilli() - info.startMillis;
                 long millisPerRot = 9000;
                 // Need to get the direction the player is facing, so opposite the forward (which is immersive's forward)
-                Direction centerDir = getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
+                Direction centerDir = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
                 Vec3 forwardPos = center.add(leftVec.scale(0.8)).add(0, effectCircleRadius, 0);
                 double rot0 = ((double) (timeSinceStartMilli % millisPerRot) / millisPerRot) * 2 * Math.PI;
                 if (beaconLevel == 1) {
                     double rot1 = rot0 + Math.PI;
-                    info.triggerBoxes[0] = AABB.ofSize(posToRotatedPos(forwardPos,
+                    info.hitboxes.get(0).box = AABB.ofSize(posToRotatedPos(forwardPos,
                             rot0, centerDir), effectHitboxSize, effectHitboxSize, effectHitboxSize);
-                    info.triggerBoxes[1] = AABB.ofSize(posToRotatedPos(forwardPos,
+                    info.hitboxes.get(1).box = AABB.ofSize(posToRotatedPos(forwardPos,
                             rot1, centerDir), effectHitboxSize, effectHitboxSize, effectHitboxSize);
                     // Use .length - 1 as checkmark needs to not be overwritten
-                    for (int i = 2; i < info.triggerBoxes.length - 1; i++) {
-                        info.triggerBoxes[i] = null;
+                    for (int i = 2; i < info.hitboxes.size() - 2; i++) {
+                        info.hitboxes.get(i).box = null;
                     }
                 } else if (beaconLevel == 2) {
                     double rotDiff = 2d * Math.PI / 4d;
                     double rot1 = rot0 + rotDiff;
                     double rot2 = rot0 + 2 * rotDiff;
                     double rot3 = rot0 + 3 * rotDiff;
-                    info.triggerBoxes[0] = AABB.ofSize(posToRotatedPos(forwardPos, rot0, centerDir),
+                    info.hitboxes.get(0).box = AABB.ofSize(posToRotatedPos(forwardPos, rot0, centerDir),
                             effectHitboxSize, effectHitboxSize, effectHitboxSize);
-                    info.triggerBoxes[1] = AABB.ofSize(posToRotatedPos(forwardPos, rot1, centerDir),
+                    info.hitboxes.get(1).box = AABB.ofSize(posToRotatedPos(forwardPos, rot1, centerDir),
                             effectHitboxSize, effectHitboxSize, effectHitboxSize);
-                    info.triggerBoxes[2] = AABB.ofSize(posToRotatedPos(forwardPos, rot2, centerDir),
+                    info.hitboxes.get(2).box = AABB.ofSize(posToRotatedPos(forwardPos, rot2, centerDir),
                             effectHitboxSize, effectHitboxSize, effectHitboxSize);
-                    info.triggerBoxes[3] = AABB.ofSize(posToRotatedPos(forwardPos, rot3, centerDir),
+                    info.hitboxes.get(3).box = AABB.ofSize(posToRotatedPos(forwardPos, rot3, centerDir),
                             effectHitboxSize, effectHitboxSize, effectHitboxSize);
-                    for (int i = 4; i < info.triggerBoxes.length - 1; i++) {
-                        info.triggerBoxes[i] = null;
+                    for (int i = 4; i < info.hitboxes.size() - 2; i++) {
+                        info.hitboxes.get(i).box = null;
                     }
                 } else {
                     double rotDiff = 2d * Math.PI / 5d;
@@ -215,31 +280,31 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo, B
                     double rot2 = rot0 + 2 * rotDiff;
                     double rot3 = rot0 + 3 * rotDiff;
                     double rot4 = rot0 + 4 * rotDiff;
-                    info.triggerBoxes[0] = AABB.ofSize(posToRotatedPos(forwardPos, rot0, centerDir),
+                    info.hitboxes.get(0).box = AABB.ofSize(posToRotatedPos(forwardPos, rot0, centerDir),
                             effectHitboxSize, effectHitboxSize, effectHitboxSize);
-                    info.triggerBoxes[1] = AABB.ofSize(posToRotatedPos(forwardPos, rot1, centerDir),
+                    info.hitboxes.get(1).box = AABB.ofSize(posToRotatedPos(forwardPos, rot1, centerDir),
                             effectHitboxSize, effectHitboxSize, effectHitboxSize);
-                    info.triggerBoxes[2] = AABB.ofSize(posToRotatedPos(forwardPos, rot2, centerDir),
+                    info.hitboxes.get(2).box = AABB.ofSize(posToRotatedPos(forwardPos, rot2, centerDir),
                             effectHitboxSize, effectHitboxSize, effectHitboxSize);
-                    info.triggerBoxes[3] = AABB.ofSize(posToRotatedPos(forwardPos, rot3, centerDir),
+                    info.hitboxes.get(3).box = AABB.ofSize(posToRotatedPos(forwardPos, rot3, centerDir),
                             effectHitboxSize, effectHitboxSize, effectHitboxSize);
-                    info.triggerBoxes[4] = AABB.ofSize(posToRotatedPos(forwardPos, rot4, centerDir),
+                    info.hitboxes.get(4).box = AABB.ofSize(posToRotatedPos(forwardPos, rot4, centerDir),
                             effectHitboxSize, effectHitboxSize, effectHitboxSize);
                     if (beaconLevel == 4) {
-                        info.triggerBoxes[5] = AABB.ofSize(info.effectSelectedDisplayPos.add(leftVec.scale(-0.25)),
+                        info.hitboxes.get(5).box = AABB.ofSize(info.effectSelectedDisplayPos.add(leftVec.scale(-0.25)),
                                 displayHitboxSize, displayHitboxSize, displayHitboxSize);
-                        info.triggerBoxes[6] = AABB.ofSize(info.effectSelectedDisplayPos.add(0, -0.25, 0),
+                        info.hitboxes.get(6).box = AABB.ofSize(info.effectSelectedDisplayPos.add(0, -0.25, 0),
                                 displayHitboxSize, displayHitboxSize, displayHitboxSize);
                     } else {
-                        for (int i = 5; i < info.triggerBoxes.length - 1; i++) {
-                            info.triggerBoxes[i] = null;
+                        for (int i = 5; i < info.hitboxes.size() - 2; i++) {
+                            info.hitboxes.get(i).box = null;
                         }
                         info.regenSelected = false;
                     }
                 }
             } else if (info.levelWasNonzero) { // Beacon level is 0 and it wasn't 0 before! (have this check for initial beacon info from server)
-                for (int i = 0; i < info.triggerBoxes.length; i++) {
-                    info.triggerBoxes[i] = null;
+                for (int i = 0; i < info.hitboxes.size(); i++) {
+                    info.hitboxes.get(i).box = null;
                 }
                 info.effectSelected = -1;
                 info.regenSelected = false;
@@ -247,79 +312,6 @@ public class ImmersiveBeacon extends AbstractWorldStorageImmersive<BeaconInfo, B
             }
             info.lastLevel = beaconLevel;
         }
-    }
-
-    @Override
-    protected void doTick(BeaconInfo info, boolean isInVR) {
-        super.doTick(info, isInVR);
-
-        // Run every tick since effects spin in a circle
-        setHitboxesAndPositions(info);
-
-        info.lastPlayerDir = getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
-    }
-
-    @Override
-    public BlockPos getLightPos(BeaconInfo info) {
-        return info.getBlockPosition().above();
-    }
-
-    @Override
-    public boolean enabledInConfig() {
-        return ActiveConfig.active().useBeaconImmersion;
-    }
-
-    @Override
-    public void handleTriggerHitboxRightClick(InfoTriggerHitboxes tInfo, Player player, int hitboxNum) {
-        BeaconInfo info = (BeaconInfo) tInfo;
-        if (hitboxNum <= 4) {
-            info.effectSelected = hitboxNum;
-        } else if (hitboxNum == 7) {
-            Network.INSTANCE.sendToServer(new BeaconConfirmPacket(info.getBlockPosition(), info.getEffectId(),
-                    info.regenSelected ? BuiltInRegistries.MOB_EFFECT.getId(MobEffects.REGENERATION) : -1));
-            VRRumble.rumbleIfVR(Minecraft.getInstance().player, tInfo.getVRControllerNum(), CommonConstants.vibrationTimeWorldInteraction);
-        } else {
-            info.regenSelected = hitboxNum == 5;
-        }
-    }
-
-    @Override
-    public boolean shouldTrack(BlockPos pos, Level level) {
-        return ImmersiveHandlers.beaconHandler.isValidBlock(pos, level);
-    }
-
-    @Override
-    public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
-        return true;
-    }
-
-    @Override
-    protected void initInfo(BeaconInfo info) {
-        info.startMillis = Instant.now().toEpochMilli();
-        setHitboxesAndPositions(info);
-        Network.INSTANCE.sendToServer(new BeaconDataPacket(info.getBlockPosition()));
-    }
-
-    @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
-        Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), closest, hand));
-    }
-
-    @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, BeaconStorage storage) {
-        BeaconInfo beaconInfo = (BeaconInfo) info;
-        BeaconStorage items = (BeaconStorage) storage;
-        beaconInfo.items[0] = items.getItem(0);
-    }
-
-    @Override
-    public BeaconInfo getNewInfo(BlockPos pos) {
-        return new BeaconInfo(pos); // Beacon data is only known server-side :(
-    }
-
-    @Override
-    public int getTickTime() {
-        return ClientConstants.ticksToRenderBeacon;
     }
 
     /**
