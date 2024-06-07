@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 
-public class ImmersiveBeaconV2 extends AbstractImmersiveV2<BeaconInfo, BeaconStorage> {
+public class ImmersiveBeacon extends AbstractImmersiveV2<BeaconInfo, BeaconStorage> {
 
     private static final double effectHitboxSize = 0.2;
     private static final double displayHitboxSize = 0.2;

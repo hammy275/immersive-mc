@@ -90,7 +90,7 @@ public class Immersives {
                 ((ChestLikeData) info.getExtraData()).forceClose(info.getBlockPosition());
             })
             .build();
-    public static final ImmersiveAPIAdapter<BeaconInfo, BeaconStorage> immersiveBeacon = new ImmersiveAPIAdapter<>(new ImmersiveBeaconV2());
+    public static final ImmersiveAPIAdapter<BeaconInfo, BeaconStorage> immersiveBeacon = new ImmersiveAPIAdapter<>(new ImmersiveBeacon());
     public static final BuiltImmersive<?,?> immersiveBrewing = ImmersiveBuilder.create(ImmersiveHandlers.brewingStandHandler)
             .setConfigChecker(() -> ActiveConfig.active().useBrewingImmersion)
             .setRenderSize(ClientConstants.itemScaleSizeBrewing)
