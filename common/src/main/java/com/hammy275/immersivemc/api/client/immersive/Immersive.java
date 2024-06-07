@@ -128,15 +128,6 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
     public boolean isVROnly();
 
     /**
-     * Get an Immersive info instance for the provided block position for this Immersive, or null if the provided
-     * position doesn't have an info for this Immersive.
-     * @param pos Position to get the Immersive info for.
-     * @return The Immersive info for the given position or null, as described above.
-     */
-    @Nullable
-    public I findImmersive(BlockPos pos);
-
-    /**
      * This is the same as {@link #tick(ImmersiveInfo)}, but called once per tick, instead of called once per tick
      * per info.
      */

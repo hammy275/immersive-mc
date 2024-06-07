@@ -271,16 +271,6 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
         return builder.vrOnly;
     }
 
-    public BuiltImmersiveInfo<E> findImmersive(BlockPos pos) {
-        Objects.requireNonNull(pos);
-        for (BuiltImmersiveInfo<E> info : this.getTrackedObjects()) {
-            if (info.getBlockPosition().equals(pos)) {
-                return info;
-            }
-        }
-        return null;
-    }
-
     public <T extends NetworkStorage> ImmersiveBuilderImpl<E, T> getBuilderClone(ImmersiveHandler<T> newHandler) {
         return builder.copy(newHandler);
     }

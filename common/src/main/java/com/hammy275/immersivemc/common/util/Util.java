@@ -1,6 +1,8 @@
 package com.hammy275.immersivemc.common.util;
 
 
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.common.immersive.ImmersiveChecker;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
@@ -20,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,16 @@ public class Util {
                 item == Items.ENDER_PEARL || item == Items.SPLASH_POTION ||
                 item == Items.LINGERING_POTION || item == Items.SNOWBALL ||
                 item instanceof TridentItem || item instanceof FishingRodItem;
+    }
+
+    @Nullable
+    public static <I extends ImmersiveInfo> I findImmersive(Immersive<I, ?> immersive, BlockPos pos) {
+        for (I info : immersive.getTrackedObjects()) {
+            if (info.getBlockPosition().equals(pos)) {
+                return info;
+            }
+        }
+        return null;
     }
 
     public static Direction horizontalDirectionFromLook(Vec3 look) {
