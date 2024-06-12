@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersive;
@@ -99,7 +100,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
         }
 
         info.airCheckPassed = airCheck(info);
-        info.light = ImmersiveRenderHelpers.instance().getLight(getLightPositions(info));
+        info.light = ImmersiveClientLogicHelpers.instance().getLight(getLightPositions(info));
     }
 
     @Override

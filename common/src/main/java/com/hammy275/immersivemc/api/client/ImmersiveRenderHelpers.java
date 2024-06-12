@@ -4,7 +4,6 @@ import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveRenderHelpersImpl;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -155,23 +154,6 @@ public interface ImmersiveRenderHelpers {
      */
     public void renderImage(PoseStack stack, ResourceLocation imageLocation, Vec3 pos, float size, int light,
                             @Nullable Direction facing);
-
-    /**
-     * Get the intended light level to render with at the given position as packed sky light and block light. This
-     * may not necessarily return the actual light level at the given block, though it should be treated as such.
-     * @param pos The position to get the intended light level for rendering at.
-     * @return The intended light level for rendering.
-     */
-    public int getLight(BlockPos pos);
-
-    /**
-     * Get the intended light level to render with given several positions. The value returned is a packed sky light
-     * and block light, and intentionally may not necessarily return data consistent with all the positions, though
-     * should be treated as such.
-     * @param positions The positions to get the intended light rendering for.
-     * @return The intended light level for rendering.
-     */
-    public int getLight(Iterable<BlockPos> positions);
 
     /**
      * Returns a float between 0 and 1 denoting the multiplier to the size of something being rendered that ImmersiveMC

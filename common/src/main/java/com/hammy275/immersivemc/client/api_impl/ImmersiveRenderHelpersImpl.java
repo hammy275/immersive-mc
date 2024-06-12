@@ -19,17 +19,14 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
@@ -243,41 +240,6 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
         DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, light, 0f, 1, 0, 0);
 
         stack.popPose();
-    }
-
-    @Override
-    public int getLight(BlockPos pos) {
-        // TODO: Return maxLight here if full bright in ImmersiveMC settings
-        return LightTexture.pack(Minecraft.getInstance().level.getBrightness(LightLayer.BLOCK, pos),
-                Minecraft.getInstance().level.getBrightness(LightLayer.SKY, pos));
-    }
-
-    @Override
-    public int getLight(Iterable<BlockPos> positions) {
-        // TODO: Return maxLight here if full bright in ImmersiveMC settings
-        int maxBlock = 0;
-        int maxSky = 0;
-        for (BlockPos pos : positions) {
-            if (pos == null) {
-                continue;
-            }
-
-            int blockLight = Minecraft.getInstance().level.getBrightness(LightLayer.BLOCK, pos);
-            if (blockLight > maxBlock) {
-                maxBlock = blockLight;
-            }
-
-            int skyLight = Minecraft.getInstance().level.getBrightness(LightLayer.SKY, pos);
-            if (skyLight > maxSky) {
-                maxSky = skyLight;
-            }
-
-            // Have max light for both, no need to continue light calculations!
-            if (maxBlock == 15 && maxSky == 15) {
-                break;
-            }
-        }
-        return LightTexture.pack(maxBlock, maxSky);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.ClientUtil;
@@ -500,11 +501,11 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo, S exten
     }
 
     public int getLight(BlockPos pos) {
-        return ImmersiveRenderHelpersImpl.INSTANCE.getLight(pos);
+        return ImmersiveClientLogicHelpers.instance().getLight(pos);
     }
 
     public int getLight(BlockPos[] positions) {
-        return ImmersiveRenderHelpersImpl.INSTANCE.getLight(Arrays.stream(positions).toList());
+        return ImmersiveClientLogicHelpers.instance().getLight(Arrays.stream(positions).toList());
     }
 
     public void clearImmersives() {
