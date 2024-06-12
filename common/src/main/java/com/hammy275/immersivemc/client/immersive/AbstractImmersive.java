@@ -1,8 +1,8 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveRenderHelpersImpl;
 import com.hammy275.immersivemc.client.config.ClientConstants;
@@ -20,15 +20,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DirectionalBlock;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -96,15 +93,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo, S exten
      */
     @Nullable
     public abstract ImmersiveHandler<S> getHandler();
-
-    public boolean hasInfo(BlockPos pos) {
-        for (I info : this.infos) {
-            if (info.getBlockPosition().equals(pos)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public boolean hitboxesAvailable(AbstractImmersiveInfo info) {
         return true;
@@ -341,19 +329,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo, S exten
         ImmersiveRenderHelpersImpl.INSTANCE.renderHitbox(stack, hitbox, alwaysRender, red, green, blue, alpha);
     }
 
-    public static void renderText(Component text, PoseStack stack, Vec3 pos, int light) {
-        renderText(text, stack, pos, 0.02f, light);
-    }
-
-    public static void renderText(Component text, PoseStack stack, Vec3 pos, float textSize, int light) {
-        ImmersiveRenderHelpersImpl.INSTANCE.renderText(text, stack, pos, light, textSize);
-    }
-
-    public void renderImage(PoseStack stack, ResourceLocation imageLocation, Vec3 pos, Direction facing,
-                            float size, int light) {
-        ImmersiveRenderHelpersImpl.INSTANCE.renderImage(stack, imageLocation, pos, size, light, facing);
-    }
-
     /**
      * Gets the direction to the left from the Direction's perspective, assuming the Direction is
      * looking at the player. This makes it to the right for the player.
@@ -372,35 +347,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo, S exten
             return Direction.EAST;
         }
         return Direction.NORTH;
-    }
-
-    /**
-     * Gets the position precisely to the front-right of pos given the direction forward.
-     *
-     * This is effectively the bottom right of the front face from the block's perspective, or the bottom left
-     * from the player's perspective facing the block.
-     *
-     * @param forwardFromBlock Direction forward from block. Can also be opposite direction of player
-     * @param pos BlockPos of block
-     * @return Vec3 of the front-right of the block face from the block's perspective (front left from the player's)
-     */
-    public static Vec3 getDirectlyInFront(Direction forwardFromBlock, BlockPos pos) {
-        // This mess sets pos to always be directly in front of the face of the tile entity
-        if (forwardFromBlock == Direction.SOUTH) {
-            BlockPos front = pos.relative(forwardFromBlock);
-            return new Vec3(front.getX(), front.getY(), front.getZ());
-        } else if (forwardFromBlock == Direction.WEST) {
-            BlockPos front = pos;
-            return new Vec3(front.getX(), front.getY(), front.getZ());
-        } else if (forwardFromBlock == Direction.NORTH) {
-            BlockPos front = pos.relative(Direction.EAST);
-            return new Vec3(front.getX(), front.getY(), front.getZ());
-        } else if (forwardFromBlock == Direction.EAST) {
-            BlockPos front = pos.relative(Direction.SOUTH).relative(Direction.EAST);
-            return new Vec3(front.getX(), front.getY(), front.getZ());
-        } else {
-            throw new IllegalArgumentException("Furnaces can't point up or down?!?!");
-        }
     }
 
     public Vec3 getTopCenterOfBlock(BlockPos pos) {
@@ -428,28 +374,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo, S exten
         }
     }
 
-    /**
-     * Creates the hitbox for an item.
-     *
-     * Practically identical to how hitboxes are created manually in ImmersiveFurnace
-     * @param pos Position for center of hitbox
-     * @param size Size of hitbox
-     * @return
-     */
-    public AABB createHitbox(Vec3 pos, float size) {
-        return new AABB(
-                pos.x - size,
-                pos.y - size,
-                pos.z - size,
-                pos.x + size,
-                pos.y + size,
-                pos.z + size);
-    }
-
-    public Vec3[] get3x3HorizontalGrid(BlockPos blockPos, double spacing) {
-        return get3x3HorizontalGrid(blockPos, spacing, getForwardFromPlayer(Minecraft.getInstance().player, blockPos), false);
-    }
-
     public Vec3[] get3x3HorizontalGrid(BlockPos blockPos, double spacing, Direction blockForward,
                                        boolean use3DCompat) {
         Vec3 pos = getTopCenterOfBlock(blockPos);
@@ -474,30 +398,6 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo, S exten
                 pos.add(leftOffset), pos, pos.add(rightOffset),
                 pos.add(leftOffset).add(botOffset), pos.add(botOffset), pos.add(rightOffset).add(botOffset)
         };
-    }
-
-    public Vec3[] get3x3VerticalGrid(BlockPos blockPos, double spacing) {
-        return get3x3VerticalGrid(blockPos, spacing, getForwardFromPlayer(Minecraft.getInstance().player, blockPos));
-    }
-
-    public Vec3[] get3x3VerticalGrid(BlockPos blockPos, double spacing, Direction blockForward) {
-        Vec3 posBotLeft = getDirectlyInFront(blockForward, blockPos);
-        Direction left = getLeftOfDirection(blockForward);
-        Vec3 pos = posBotLeft.add(left.getNormal().getX() * 0.5, 0.5, left.getNormal().getZ() * 0.5);
-        Vec3 leftOffset = new Vec3(
-                left.getNormal().getX() * -spacing, 0, left.getNormal().getZ() * -spacing);
-        Vec3 rightOffset = new Vec3(
-                left.getNormal().getX() * spacing, 0, left.getNormal().getZ() * spacing);
-
-        Vec3 upOffset = new Vec3(0, spacing, 0);
-        Vec3 downOffset = new Vec3(0, -spacing, 0);
-
-        return new Vec3[]{
-                pos.add(leftOffset).add(upOffset), pos.add(upOffset), pos.add(rightOffset).add(upOffset),
-                pos.add(leftOffset), pos, pos.add(rightOffset),
-                pos.add(leftOffset).add(downOffset), pos.add(downOffset), pos.add(rightOffset).add(downOffset)
-        };
-
     }
 
     public int getLight(BlockPos pos) {

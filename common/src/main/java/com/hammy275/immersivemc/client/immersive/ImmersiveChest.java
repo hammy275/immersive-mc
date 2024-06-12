@@ -76,13 +76,13 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
 
             Vec3[] positions = get3x3HorizontalGrid(chest.getBlockPos(), spacing, info.forward,
                     false);
-            float hitboxSize = ClientConstants.itemScaleSizeChest / 3f * 1.1f;
+            float hitboxSize = ClientConstants.itemScaleSizeChest / 3f * 2.2f;
             int startTop = 9 * info.getRowNum() + 27 * i;
             int endTop = startTop + 9;
             for (int z = startTop; z < endTop; z++) {
                 Vec3 posRaw = positions[z % 9];
                 info.setPosition(z, posRaw.add(0, -0.2, 0));
-                info.setHitbox(z, createHitbox(posRaw.add(0, -0.2, 0), hitboxSize));
+                info.setHitbox(z, AABB.ofSize(posRaw.add(0, -0.2, 0), hitboxSize, hitboxSize, hitboxSize));
             }
 
             int startMid = 9 * info.getNextRow(info.getRowNum()) + 27 * i;

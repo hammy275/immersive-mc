@@ -21,6 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.RepeaterBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,7 +65,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo, NullStora
         info.setPosition(3, centerPos.add(forward.multiply(-5d/16d, 0, -5d/16d)));
 
         for (int i = 0; i <= 3; i++) {
-            info.setHitbox(i, createHitbox(info.getPosition(i), 1f/14f).inflate(0, 0.2, 0));
+            info.setHitbox(i, AABB.ofSize(info.getPosition(i), 1f/7f, 1f/7f, 1f/7f).inflate(0, 0.2, 0));
         }
     }
 
