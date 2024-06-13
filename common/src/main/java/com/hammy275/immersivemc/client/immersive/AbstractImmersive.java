@@ -349,7 +349,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo, S exten
         return Direction.NORTH;
     }
 
-    public Vec3 getTopCenterOfBlock(BlockPos pos) {
+    public static Vec3 getTopCenterOfBlock(BlockPos pos) {
         // Only add 0.5 to y since atCenterOf moves it up 0.5 for us
         return Vec3.upFromBottomCenterOf(pos, 1);
     }

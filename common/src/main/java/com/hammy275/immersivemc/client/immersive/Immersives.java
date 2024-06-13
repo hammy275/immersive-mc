@@ -327,7 +327,7 @@ public class Immersives {
 
     public static final ImmersiveAPIAdapter<?, ?> immersiveLever = new ImmersiveAPIAdapter<>(new ImmersiveLever());
 
-    public static final ImmersiveRepeater immersiveRepeater = new ImmersiveRepeater();
+    public static final ImmersiveAPIAdapter<?, ?> immersiveRepeater = new ImmersiveAPIAdapter<>(new ImmersiveRepeater());
     public static final BuiltImmersive<ChestLikeData,?> immersiveShulker = ImmersiveBuilder.create(ImmersiveHandlers.shulkerBoxHandler, ChestLikeData.class)
             .setConfigChecker(() -> ActiveConfig.active().useShulkerImmersion)
             .setRenderSize(ClientConstants.itemScaleSizeShulker)

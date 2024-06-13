@@ -136,13 +136,12 @@ public class Util {
         return Optional.empty();
     }
 
-    public static Optional<Integer> getClosestIntersect(Vec3 pos, BoundingBox[] targets, Vec3[] positions) {
-        if (targets.length != positions.length) throw new IllegalArgumentException("Targets and positions must be same length!");
+    public static Optional<Integer> getClosestIntersect(Vec3 pos, List<BoundingBox> targets) {
         int res = -1;
         double distanceToBeat = Double.MAX_VALUE;
-        for (int i = 0; i < targets.length; i++) {
-            if (targets[i] != null && BoundingBox.contains(targets[i], pos)) {
-                double newDist = pos.distanceToSqr(positions[i]);
+        for (int i = 0; i < targets.size(); i++) {
+            if (targets.get(i) != null && BoundingBox.contains(targets.get(i), pos)) {
+                double newDist = pos.distanceToSqr(BoundingBox.getCenter(targets.get(i)));
                 if (newDist < distanceToBeat) {
                     distanceToBeat = newDist;
                     res = i;
