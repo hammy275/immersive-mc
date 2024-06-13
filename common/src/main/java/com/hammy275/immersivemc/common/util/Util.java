@@ -25,6 +25,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -121,6 +122,10 @@ public class Util {
     }
 
     public static Optional<Integer> getFirstIntersect(Vec3 pos, BoundingBox... targets) {
+        return getFirstIntersect(pos, Arrays.stream(targets).toList());
+    }
+
+    public static Optional<Integer> getFirstIntersect(Vec3 pos, Iterable<BoundingBox> targets) {
         int i = 0;
         for (BoundingBox target : targets) {
             if (target != null && BoundingBox.contains(target, pos)) {
