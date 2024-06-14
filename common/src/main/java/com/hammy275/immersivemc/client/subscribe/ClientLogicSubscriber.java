@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.api_impl.immersive.ImmersiveAPIAdapter;
 import com.hammy275.immersivemc.client.api_impl.immersive.ImmersiveInfoAPIAdapter;
+import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
@@ -447,7 +448,7 @@ public class ClientLogicSubscriber {
                 ChestInfo info = ImmersiveChest.findImmersive(player.level().getBlockEntity(pos));
                 if (info != null) {
                     ImmersiveChest.openChest(info);
-                    return Immersives.immersiveChest.getCooldownDesktop();
+                    return ClientConstants.defaultCooldownTicks;
                 }
             }
         }

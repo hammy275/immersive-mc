@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.CraftingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class ImmersiveHandlers {
     public static final ImmersiveHandler<?> barrelHandler = new BarrelHandler();
     public static final ImmersiveHandler<BeaconStorage> beaconHandler = new BeaconHandler();
     public static final ImmersiveHandler<?> brewingStandHandler = new BrewingStandHandler();
-    public static final ImmersiveHandler<?> chestHandler = new ChestHandler();
+    public static final ImmersiveHandler<ListOfItemsStorage> chestHandler = new ChestHandler();
     public static final ImmersiveHandler<?> chiseledBookshelfHandler = new ChiseledBookshelfHandler();
     public static final ImmersiveHandler<CraftingTableStorage> craftingHandler = new CraftingHandler();
     public static final ImmersiveHandler<ETableStorage> enchantingTableHandler = new ETableHandler();

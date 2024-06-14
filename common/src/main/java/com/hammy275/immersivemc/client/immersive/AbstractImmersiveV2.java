@@ -11,7 +11,7 @@ import java.util.List;
 public abstract class AbstractImmersiveV2<I extends AbstractImmersiveInfoV2, S extends NetworkStorage>
         implements Immersive<I, S> {
 
-    private final List<I> infos = new ArrayList<>();
+    protected final List<I> infos = new ArrayList<>();
 
     @Override
     public Collection<I> getTrackedObjects() {

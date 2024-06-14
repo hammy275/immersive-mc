@@ -14,13 +14,8 @@ public class ClientConstants {
 
 
     // How long the overlay should be displayed
-    public static final int ticksToRenderChest = Integer.MAX_VALUE; // You manually close a chest
-    public static final int ticksToRenderAnvil = Integer.MAX_VALUE;
     public static final int ticksToRenderBackpack = Integer.MAX_VALUE; // You dismiss the backpack manually
-    public static final int ticksToRenderRepeater = Integer.MAX_VALUE; // We're always pointing at one, so we don't need it much longer after that
-    public static final int ticksToRenderBeacon = Integer.MAX_VALUE;
     public static final int ticksToRenderHitboxesImmersive = Integer.MAX_VALUE;
-    public static final int ticksToRenderLever = Integer.MAX_VALUE;
 
     // Size of items when rendered in front of something immersive
     public static final float defaultItemScaleSize = 1f/3f;

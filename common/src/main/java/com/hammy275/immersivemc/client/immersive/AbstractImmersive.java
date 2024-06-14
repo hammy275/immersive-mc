@@ -335,7 +335,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo, S exten
      * @param forward Forward direction of the block
      * @return The aforementioned left
      */
-    public Direction getLeftOfDirection(Direction forward) {
+    public static Direction getLeftOfDirection(Direction forward) {
         if (forward == Direction.UP || forward == Direction.DOWN) {
             throw new IllegalArgumentException("Direction cannot be up or down!");
         }
@@ -374,7 +374,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo, S exten
         }
     }
 
-    public Vec3[] get3x3HorizontalGrid(BlockPos blockPos, double spacing, Direction blockForward,
+    public static Vec3[] get3x3HorizontalGrid(BlockPos blockPos, double spacing, Direction blockForward,
                                        boolean use3DCompat) {
         Vec3 pos = getTopCenterOfBlock(blockPos);
         if (use3DCompat) {

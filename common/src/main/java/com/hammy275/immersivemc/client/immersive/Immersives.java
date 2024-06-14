@@ -110,7 +110,7 @@ public class Immersives {
                 return ClientConstants.defaultCooldownTicks;
             })
             .build();
-    public static final ImmersiveChest immersiveChest = new ImmersiveChest();
+    public static final ImmersiveAPIAdapter<ChestInfo, ?> immersiveChest = new ImmersiveAPIAdapter<>(new ImmersiveChest());
     public static final BuiltImmersive<?,?> immersiveChiseledBookshelf = ImmersiveBuilder.create(ImmersiveHandlers.chiseledBookshelfHandler)
             .setConfigChecker(() -> ActiveConfig.active().useChiseledBookshelfImmersion)
             .shouldDisableRightClicksWhenInteractionsDisabled(false)

@@ -1,22 +1,21 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
-import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
-import net.minecraft.client.Minecraft;
+import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public class ChestInfo extends AbstractBlockEntityImmersiveInfo<BlockEntity> {
+import java.util.ArrayList;
+import java.util.List;
 
-    protected BoundingBox[] hitboxes = new BoundingBox[54];
-    public BlockEntity other = null;
+public class ChestInfo extends AbstractImmersiveInfoV2 {
+
+    public List<HitboxItemPair> hitboxes = new ArrayList<>(54);
+    public BlockEntity chest;
+    public BlockEntity otherChest;
     public BlockPos otherPos = null;
     public Direction forward = null;
     public boolean failRender = false; // Used for thread safety when changing `other`
@@ -26,12 +25,17 @@ public class ChestInfo extends AbstractBlockEntityImmersiveInfo<BlockEntity> {
     public double lastY1;
     public AABB[] openCloseHitboxes = new AABB[]{null, null};
     public Vec3[] openClosePositions = new Vec3[]{null, null};
+    public int light = AbstractImmersive.maxLight;
 
-    public ChestInfo(BlockEntity tileEntity, int ticksToExist, BlockEntity other) {
-        super(tileEntity, ticksToExist, 53); // Accounts for double chest
-        this.other = other;
-        if (this.other != null) {
-            this.otherPos = this.other.getBlockPos();
+    public ChestInfo(BlockEntity chest, BlockEntity otherChest) {
+        super(chest.getBlockPos()); // Accounts for double chest
+        this.chest = chest;
+        this.otherChest = otherChest;
+        if (this.otherChest != null) {
+            this.otherPos = this.otherChest.getBlockPos();
+        }
+        for (int i = 0; i < 54; i++) {
+            hitboxes.add(new HitboxItemPair(null, ItemStack.EMPTY, false));
         }
     }
 
@@ -51,48 +55,22 @@ public class ChestInfo extends AbstractBlockEntityImmersiveInfo<BlockEntity> {
     }
 
     @Override
-    public void setInputSlots() {
-        if (this.isOpen) {
-            this.inputHitboxes = this.hitboxes;
-        } else {
-            this.inputHitboxes = new BoundingBox[0];
-        }
-
-    }
-
-    @Override
-    public BoundingBox getHitbox(int slot) {
-        return hitboxes[slot];
-    }
-
-    @Override
-    public BoundingBox[] getAllHitboxes() {
+    public List<HitboxItemPair> getAllHitboxes() {
         return hitboxes;
     }
 
     @Override
-    public void setHitbox(int slot, BoundingBox hitbox) {
-        hitboxes[slot] = hitbox;
-    }
-
-    @Override
     public boolean hasHitboxes() {
-        return (hitboxes[8] != null || hitboxes[17] != null || hitboxes[26] != null);
+        return (hitboxes.get(8).box != null || hitboxes.get(17).box != null || hitboxes.get(26).box != null) &&
+                (this.otherChest == null || (hitboxes.get(35).box != null || hitboxes.get(44).box != null || hitboxes.get(53).box != null));
     }
 
-    @Override
-    public boolean hasItems() {
-        boolean mainChest = items[26] != null;
-        boolean otherChest = this.other == null || items[53] != null;
-        return mainChest && otherChest;
-    }
-
-    /**
+    /*
      * If a double chest is broken, this function transforms the info representing a double chest to one representing
      * a single chest.
      * @return true on a successful transformation. false on failure (this was already a single chest or both chests are gone)
      */
-    public boolean migrateToValidChest(Level level) {
+    /*public boolean migrateToValidChest(Level level) {
         boolean mainValid = getBlockPosition() != null && ImmersiveHandlers.chestHandler.isValidBlock(getBlockPosition(), level);
         boolean otherValid = otherPos != null && ImmersiveHandlers.chestHandler.isValidBlock(otherPos, level);
         if (!mainValid && !otherValid) {
@@ -127,5 +105,5 @@ public class ChestInfo extends AbstractBlockEntityImmersiveInfo<BlockEntity> {
             }
         }
         return clearOther;
-    }
+    }*/
 }
