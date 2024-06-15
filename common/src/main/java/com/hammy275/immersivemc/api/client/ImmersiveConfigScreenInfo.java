@@ -7,12 +7,12 @@ import org.jetbrains.annotations.Nullable;
 public interface ImmersiveConfigScreenInfo {
 
     /**
-     * Get the Component for the name of the mod this Immersive is from. The mod name should be the name of the mod
+     * Get the mod ID for the mod this Immersive is from. The mod name should be the name of the mod
      * that provides the Immersive, not the mod that provides the Immersive itself. For example, for the support
      * for Lootr blocks that ImmersiveMC provides, the mod returned here should be ImmersiveMC, NOT Lootr.
      * @return The mod name of the mod that implemented this Immersive.
      */
-    public Component getModName();
+    public String getModID();
 
     /**
      * Get the Component for the button label, not including the enabled/disabled state.
