@@ -46,12 +46,12 @@ public interface ImmersiveRenderHelpers {
     /**
      * Renders an item at the specified position facing the camera.
      *
-     * @param item             The item to render.
-     * @param stack            The pose stack being rendered with.
-     * @param size             The size to render at.
-     * @param hitbox           The hitbox for interacting with this item. Used for displaying a hitbox when hitboxes are enabled.
+     * @param item The item to render.
+     * @param stack The pose stack being rendered with.
+     * @param size The size to render at.
+     * @param hitbox The hitbox for interacting with this item. Used for displaying a hitbox when hitboxes are enabled.
      * @param renderItemCounts Whether to render a number representing the item count with the item.
-     * @param light            The packed sky light and block light to render with.
+     * @param light The packed sky light and block light to render with.
      */
     public void renderItem(@Nullable ItemStack item, PoseStack stack, float size, BoundingBox hitbox,
                            boolean renderItemCounts, int light);
