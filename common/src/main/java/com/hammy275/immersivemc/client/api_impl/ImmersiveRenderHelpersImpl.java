@@ -37,7 +37,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
     public static final ImmersiveRenderHelpers INSTANCE = new ImmersiveRenderHelpersImpl();
 
     @Override
-    public void renderItemWithInfo(ItemStack item, PoseStack stack, float size, boolean renderItemCounts, int light, ImmersiveInfo info, boolean shouldRenderItemGuide, int hitboxIndex, int spinDegrees, @Nullable Direction facing, @Nullable Direction upDown) {
+    public void renderItemWithInfo(ItemStack item, PoseStack stack, float size, boolean renderItemCounts, int light, ImmersiveInfo info, boolean shouldRenderItemGuide, int hitboxIndex, @Nullable Float spinDegrees, @Nullable Direction facing, @Nullable Direction upDown) {
         HitboxInfo hitbox = info.getAllHitboxes().get(hitboxIndex);
         boolean hovered = info.isSlotHovered(hitboxIndex);
         if (item == null || item.isEmpty()) {
@@ -60,11 +60,11 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
 
     @Override
     public void renderItem(ItemStack item, PoseStack stack, float size, BoundingBox hitbox, boolean renderItemCounts, int light) {
-        this.renderItem(item, stack, size, hitbox, renderItemCounts, light, -1, null, null);
+        this.renderItem(item, stack, size, hitbox, renderItemCounts, light, null, null, null);
     }
 
     @Override
-    public void renderItem(ItemStack item, PoseStack stack, float size, BoundingBox hitbox, boolean renderItemCounts, int light, int spinDegrees, @Nullable Direction facing, @Nullable Direction upDown) {
+    public void renderItem(ItemStack item, PoseStack stack, float size, BoundingBox hitbox, boolean renderItemCounts, int light, @Nullable Float spinDegrees, @Nullable Direction facing, @Nullable Direction upDown) {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         Vec3 pos = BoundingBox.getCenter(hitbox);
         if (item != null && item != ItemStack.EMPTY) {
@@ -81,8 +81,8 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
             Vec3 textPos = pos;
 
             // Rotate the item to face the player properly
-            int degreesRotation = 0; // If North, we're already good
-            if (spinDegrees > -1) {
+            float degreesRotation = 0; // If North, we're already good
+            if (spinDegrees != null) {
                 degreesRotation = spinDegrees;
             } else if (facing == Direction.WEST) {
                 degreesRotation = 90;

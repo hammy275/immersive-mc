@@ -110,7 +110,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
         for (int i = 0; i < info.hitboxes.size(); i++) {
             RelativeHitboxInfoImpl hitbox = info.hitboxes.get(i);
             if (hitbox.holdsItems && hitbox.renderItem) {
-                int spinDegrees = hitbox.itemSpins ? (int) (info.ticksExisted % 100d * 3.6d) : -1;
+                Float spinDegrees = hitbox.itemSpins ? info.ticksExisted % 100f * 3.6f : null;
                 helpers.renderItemWithInfo(hitbox.item, stack, size, hitbox.renderItemCount, info.light, info,
                         hitbox.isInput, i, spinDegrees, info.immersiveDir, hitbox.getUpDownRenderDir());
             } else {

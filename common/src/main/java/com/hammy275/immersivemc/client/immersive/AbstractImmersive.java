@@ -303,7 +303,7 @@ public abstract class AbstractImmersive<I extends AbstractImmersiveInfo, S exten
      */
     public void renderItem(ItemStack item, PoseStack stack, Vec3 pos, float size, Direction facing, Direction upDown,
                            BoundingBox hitbox, boolean renderItemCounts, int spinDegrees, int light) {
-        ImmersiveRenderHelpersImpl.INSTANCE.renderItem(item, stack, size, hitbox, renderItemCounts, light, spinDegrees, facing, upDown);
+        ImmersiveRenderHelpersImpl.INSTANCE.renderItem(item, stack, size, hitbox, renderItemCounts, light, spinDegrees < 0 ? null : (float) spinDegrees, facing, upDown);
     }
 
     protected void enqueueItemGuideRender(PoseStack stack, BoundingBox hitbox, float alpha, boolean isSelected, int light) {

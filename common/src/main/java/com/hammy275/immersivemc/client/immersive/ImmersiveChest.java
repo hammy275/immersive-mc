@@ -86,7 +86,7 @@ public class ImmersiveChest extends AbstractImmersiveV2<ChestInfo, ListOfItemsSt
                 int endTop = startTop + 9;
                 boolean showCount = i >= startTop && i <= endTop;
                 helpers.renderItemWithInfo(info.hitboxes.get(i).item, stack, ClientConstants.itemScaleSizeChest,
-                        showCount, info.light, info, true, i, -1, info.forward, Direction.UP);
+                        showCount, info.light, info, true, i, null, info.forward, Direction.UP);
             }
 
             if (info.otherChest != null) {
@@ -95,7 +95,7 @@ public class ImmersiveChest extends AbstractImmersiveV2<ChestInfo, ListOfItemsSt
                     int endTop = startTop + 9 + 27;
                     boolean showCount = i >= startTop && i <= endTop;
                     helpers.renderItemWithInfo(info.hitboxes.get(i).item, stack, ClientConstants.itemScaleSizeChest,
-                            showCount, info.light, info, true, i, -1, info.forward, Direction.UP);
+                            showCount, info.light, info, true, i, null, info.forward, Direction.UP);
                 }
             }
         }

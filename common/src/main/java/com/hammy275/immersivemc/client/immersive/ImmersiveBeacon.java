@@ -94,7 +94,7 @@ public class ImmersiveBeacon extends AbstractImmersiveV2<BeaconInfo, BeaconStora
     @Override
     public void render(BeaconInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
         helpers.renderItemWithInfo(info.hitboxes.get(8).item, stack, ClientConstants.itemScaleSizeBeacon,
-                false, info.light, info, true, 8, -1,
+                false, info.light, info, true, 8, null,
                 info.lastPlayerDir.getOpposite(), null);
 
         float transitionMultiplier = helpers.getTransitionMultiplier(info.getTicksExisted());

@@ -33,7 +33,7 @@ public interface ImmersiveRenderHelpers {
      * @param info The {@link ImmersiveInfo} that is rendering this item.
      * @param shouldRenderItemGuide Whether this slot should render an item guide if other conditions are met to do so.
      * @param hitboxIndex The index into {@link ImmersiveInfo#getAllHitboxes()} that is being rendered.
-     * @param spinDegrees The number of degrees to spin on x/z. Ignored if negative.
+     * @param spinDegrees The number of degrees to spin on x/z. Ignored if null.
      * @param facing The direction for the item to face. If null, the item will face the camera. This value should not
      *               be UP or DOWN. Ignored if spinDegrees is at least 0.
      * @param upDown Direction upwards or downwards for the item to face. Can be null if not facing up or down. If this
@@ -41,7 +41,7 @@ public interface ImmersiveRenderHelpers {
      */
     public void renderItemWithInfo(@Nullable ItemStack item, PoseStack stack, float size, boolean renderItemCounts,
                                    int light, ImmersiveInfo info, boolean shouldRenderItemGuide, int hitboxIndex,
-                                   int spinDegrees, @Nullable Direction facing, @Nullable Direction upDown);
+                                   @Nullable Float spinDegrees, @Nullable Direction facing, @Nullable Direction upDown);
 
     /**
      * Renders an item at the specified position facing the camera.
@@ -65,14 +65,14 @@ public interface ImmersiveRenderHelpers {
      * @param hitbox The hitbox for interacting with this item. Used for displaying a hitbox when hitboxes are enabled.
      * @param renderItemCounts Whether to render a number representing the item count with the item.
      * @param light The packed sky light and block light to render with.
-     * @param spinDegrees The number of degrees to spin on x/z. Ignored if negative.
+     * @param spinDegrees The number of degrees to spin on x/z. Ignored if null.
      * @param facing The direction for the item to face. If null, the item will face the camera. This value should not
      *               be UP or DOWN. Ignored if spinDegrees is at least 0.
      * @param upDown Direction upwards or downwards for the item to face. Can be null if not facing up or down. If this
      *               is not null, facing instead controls the direction the item is rotated towards.
      */
     public void renderItem(@Nullable ItemStack item, PoseStack stack, float size, BoundingBox hitbox,
-                           boolean renderItemCounts, int light, int spinDegrees, @Nullable Direction facing,
+                           boolean renderItemCounts, int light, @Nullable Float spinDegrees, @Nullable Direction facing,
                            @Nullable Direction upDown);
 
     /**
