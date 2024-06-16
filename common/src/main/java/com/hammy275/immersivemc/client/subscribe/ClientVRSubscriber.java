@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.subscribe;
 
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.common.util.Util;
@@ -49,10 +50,39 @@ public class ClientVRSubscriber {
                     }
                 }
             }
+            for (AbstractPlayerAttachmentImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+                for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
+                    if (handleInfo(singleton, info, vrPlayer)) {
+                        return;
+                    }
+                }
+            }
         }
     }
 
-    protected static boolean handleInfo(AbstractImmersive singleton, AbstractImmersiveInfo info, IVRPlayer vrPlayer) {
+    protected static boolean handleInfo(AbstractImmersive<?, ?> singleton, AbstractImmersiveInfo info, IVRPlayer vrPlayer) {
+        if (info.hasHitboxes() && singleton.hitboxesAvailable(info)) {
+            for (int c = 0; c <= 1; c++) {
+                IVRData controller = vrPlayer.getController(c);
+                Vec3 pos = controller.position();
+                Optional<Integer> hit = Util.getFirstIntersect(pos, info.getAllHitboxes());
+                if (hit.isPresent()) {
+                    singleton.onAnyRightClick(info);
+                    singleton.handleRightClick(info, Minecraft.getInstance().player, hit.get(),
+                            c == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+                    if (Minecraft.getInstance().options.keyAttack.isDown()) {
+                        cooldown = 20; // Set long cooldown if whole stack is placed
+                    } else {
+                        cooldown = singleton.getCooldownVR();
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected static boolean handleInfo(AbstractPlayerAttachmentImmersive<?, ?> singleton, AbstractImmersiveInfo info, IVRPlayer vrPlayer) {
         if (info.hasHitboxes() && singleton.hitboxesAvailable(info)) {
             for (int c = 0; c <= 1; c++) {
                 IVRData controller = vrPlayer.getController(c);

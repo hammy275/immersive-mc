@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.common.network;
 
 import com.hammy275.immersivemc.client.api_impl.immersive.ImmersiveInfoAPIAdapter;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
@@ -46,6 +47,14 @@ public class NetworkClientHandlers {
                 AbstractImmersiveInfo info = immersive.refreshOrTrackObject(pos, level);
                 if (info != null) {
                     ((AbstractImmersive<?, NS>) immersive).processStorageFromNetwork(info, storage);
+                }
+            }
+        }
+        for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
+            if (immersive.getHandler() == handler && immersive.shouldTrack(pos, level)) {
+                AbstractImmersiveInfo info = immersive.refreshOrTrackObject(pos, level);
+                if (info != null) {
+                    ((AbstractPlayerAttachmentImmersive<?, NS>) immersive).processStorageFromNetwork(info, storage);
                 }
             }
         }

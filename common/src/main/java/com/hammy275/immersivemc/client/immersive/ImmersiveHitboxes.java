@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Used for hitboxes attached to the player
  */
-public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo, NullStorage> {
+public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<ImmersiveHitboxesInfo, NullStorage> {
 
     private static final Minecraft mc = Minecraft.getInstance();
     

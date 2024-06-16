@@ -49,7 +49,7 @@ import java.util.List;
  * From there, we render that info, using the regular tick-based info in appropriate spots (mainly for getting
  * stored items in crafting and stuff).
  */
-public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo, NullStorage> {
+public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<BackpackInfo, NullStorage> {
     public static final BackpackBundleModel bundleModel =
             new BackpackBundleModel(Minecraft.getInstance().getEntityModels().bakeLayer(BackpackBundleModel.LAYER_LOCATION));
 

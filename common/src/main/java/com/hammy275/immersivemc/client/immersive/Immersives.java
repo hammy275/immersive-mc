@@ -31,6 +31,8 @@ public class Immersives {
 
     public static final List<AbstractImmersive<? extends AbstractImmersiveInfo, ? extends NetworkStorage>> IMMERSIVES =
             new LinkedList<>();
+    public static final List<AbstractPlayerAttachmentImmersive<? extends AbstractImmersiveInfo, ? extends NetworkStorage>> IMMERSIVE_ATTACHMENTS =
+            new ArrayList<>();
 
     public static final BuiltImmersive<?,?> immersiveAnvil = ImmersiveBuilder.create(ImmersiveHandlers.anvilHandler, AnvilData.class)
             .setConfigChecker(() -> ActiveConfig.active().useAnvilImmersion)
