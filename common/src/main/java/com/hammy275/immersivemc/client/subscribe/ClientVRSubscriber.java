@@ -1,6 +1,8 @@
 package com.hammy275.immersivemc.client.subscribe;
 
-import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
@@ -43,11 +45,9 @@ public class ClientVRSubscriber {
         if (cooldown > 0) {
             cooldown--;
         } else {
-            for (AbstractImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
-                for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
-                    if (handleInfo(singleton, info, vrPlayer)) {
-                        return;
-                    }
+            for (Immersive<?, ?> singleton : Immersives.IMMERSIVES) {
+                if (handleInfos(singleton, vrPlayer)) {
+                    return;
                 }
             }
             for (AbstractPlayerAttachmentImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
@@ -60,22 +60,26 @@ public class ClientVRSubscriber {
         }
     }
 
-    protected static boolean handleInfo(AbstractImmersive<?, ?> singleton, AbstractImmersiveInfo info, IVRPlayer vrPlayer) {
-        if (info.hasHitboxes() && singleton.hitboxesAvailable(info)) {
-            for (int c = 0; c <= 1; c++) {
-                IVRData controller = vrPlayer.getController(c);
-                Vec3 pos = controller.position();
-                Optional<Integer> hit = Util.getFirstIntersect(pos, info.getAllHitboxes());
-                if (hit.isPresent()) {
-                    singleton.onAnyRightClick(info);
-                    singleton.handleRightClick(info, Minecraft.getInstance().player, hit.get(),
-                            c == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
-                    if (Minecraft.getInstance().options.keyAttack.isDown()) {
-                        cooldown = 20; // Set long cooldown if whole stack is placed
-                    } else {
-                        cooldown = singleton.getCooldownVR();
+    protected static <I extends ImmersiveInfo> boolean handleInfos(Immersive<I, ?> singleton, IVRPlayer vrPlayer) {
+        for (I info : singleton.getTrackedObjects()) {
+            if (info.hasHitboxes()) {
+                for (int c = 0; c <= 1; c++) {
+                    IVRData controller = vrPlayer.getController(c);
+                    Vec3 pos = controller.position();
+                    Optional<Integer> hit = Util.getFirstIntersect(pos, info.getAllHitboxes());
+                    if (hit.isPresent()) {
+                        int cooldownFromInfo = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, hit.get(),
+                                c == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+                        if (cooldownFromInfo >= 0) {
+                            if (Minecraft.getInstance().options.keyAttack.isDown()) {
+                                // Set longer cooldown if whole stack is placed
+                                cooldown = (int) (cooldownFromInfo * (singleton.isVROnly() ? 1.5 : ClientConstants.cooldownVRMultiplier + 0.5));
+                            } else {
+                                cooldown = (int) (cooldownFromInfo * (singleton.isVROnly() ? 1 : ClientConstants.cooldownVRMultiplier));
+                            }
+                            return true;
+                        }
                     }
-                    return true;
                 }
             }
         }

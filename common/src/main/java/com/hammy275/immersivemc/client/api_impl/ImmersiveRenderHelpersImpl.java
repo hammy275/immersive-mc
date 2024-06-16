@@ -39,7 +39,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
     @Override
     public void renderItemWithInfo(ItemStack item, PoseStack stack, float size, boolean renderItemCounts, int light, ImmersiveInfo info, boolean shouldRenderItemGuide, int hitboxIndex, @Nullable Float spinDegrees, @Nullable Direction facing, @Nullable Direction upDown) {
         HitboxInfo hitbox = info.getAllHitboxes().get(hitboxIndex);
-        boolean hovered = info.isSlotHovered(hitboxIndex);
+        boolean hovered = info.getSlotHovered(0) == hitboxIndex || info.getSlotHovered(1) == hitboxIndex;
         if (item == null || item.isEmpty()) {
             if (shouldRenderItemGuide) {
                 renderItemGuide(stack, hitbox.getHitbox(), hovered, light);

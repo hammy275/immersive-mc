@@ -71,6 +71,11 @@ public final class BuiltImmersiveInfoImpl<E> implements BuiltImmersiveInfo<E> {
     }
 
     @Override
+    public int getSlotHovered(int handIndex) {
+        return slotsHovered[handIndex];
+    }
+
+    @Override
     public boolean isSlotHovered(int hitboxIndex) {
         return slotsHovered[0] == hitboxIndex || slotsHovered[1] == hitboxIndex;
     }

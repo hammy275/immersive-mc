@@ -4,6 +4,7 @@ package com.hammy275.immersivemc.common.util;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.common.immersive.ImmersiveChecker;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import net.minecraft.core.BlockPos;
@@ -24,10 +25,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Util {
 
@@ -92,6 +90,14 @@ public class Util {
      * @return Target in targets that intersects the ray and is closer to rayStart than all other intersecting targets.
      */
     public static Optional<Integer> rayTraceClosest(Vec3 rayStart, Vec3 rayEnd, BoundingBox... targets) {
+        return rayTraceClosest(rayStart, rayEnd, Arrays.stream(targets).toList());
+    }
+
+    public static Optional<Integer> rayTraceClosest(Vec3 rayStart, Vec3 rayEnd, Collection<? extends HitboxInfo> targets) {
+        return rayTraceClosest(rayStart, rayEnd, targets.stream().map(HitboxInfo::getHitbox).toList());
+    }
+
+    public static Optional<Integer> rayTraceClosest(Vec3 rayStart, Vec3 rayEnd, Iterable<BoundingBox> targets) {
         double dist = Double.MAX_VALUE;
         Integer winner = null;
         int i = 0;
@@ -123,6 +129,10 @@ public class Util {
 
     public static Optional<Integer> getFirstIntersect(Vec3 pos, BoundingBox... targets) {
         return getFirstIntersect(pos, Arrays.stream(targets).toList());
+    }
+
+    public static Optional<Integer> getFirstIntersect(Vec3 pos, Collection<? extends HitboxInfo> targets) {
+        return getFirstIntersect(pos, targets.stream().map(HitboxInfo::getHitbox).toList());
     }
 
     public static Optional<Integer> getFirstIntersect(Vec3 pos, Iterable<BoundingBox> targets) {

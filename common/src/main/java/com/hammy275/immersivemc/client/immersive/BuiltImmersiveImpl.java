@@ -109,16 +109,21 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
         float size = info.ticksExisted < 10 ? builder.renderSize / (10 - info.ticksExisted) : builder.renderSize;
         for (int i = 0; i < info.hitboxes.size(); i++) {
             RelativeHitboxInfoImpl hitbox = info.hitboxes.get(i);
-            if (hitbox.holdsItems && hitbox.renderItem) {
-                Float spinDegrees = hitbox.itemSpins ? info.ticksExisted % 100f * 3.6f : null;
-                helpers.renderItemWithInfo(hitbox.item, stack, size, hitbox.renderItemCount, info.light, info,
-                        hitbox.isInput, i, spinDegrees, info.immersiveDir, hitbox.getUpDownRenderDir());
-            } else {
-                helpers.renderHitbox(stack, hitbox.getAABB());
+            // Built Immersives can give null hitboxes to skip rendering them. Need to make sure it's nonnull before
+            // trying to render it.
+            if (hitbox.hasAABB()) {
+                if (hitbox.holdsItems && hitbox.renderItem) {
+                    Float spinDegrees = hitbox.itemSpins ? info.ticksExisted % 100f * 3.6f : null;
+                    helpers.renderItemWithInfo(hitbox.item, stack, size, hitbox.renderItemCount, info.light, info,
+                            hitbox.isInput, i, spinDegrees, info.immersiveDir, hitbox.getUpDownRenderDir());
+                } else {
+                    helpers.renderHitbox(stack, hitbox.getAABB());
+                }
+                for (TextData data : hitbox.getTextData()) {
+                    helpers.renderText(data.text(), stack, data.pos(), info.light, 0.02f);
+                }
             }
-            for (TextData data : hitbox.getTextData()) {
-                helpers.renderText(data.text(), stack, data.pos(), info.light, 0.02f);
-            }
+
         }
 
     }
@@ -151,7 +156,6 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
         } else {
             throw new UnsupportedOperationException("Tracking for positioning mode " + builder.positioningMode + " unimplemented!");
         }
-        this.infos.add(info);
         return info;
     }
 

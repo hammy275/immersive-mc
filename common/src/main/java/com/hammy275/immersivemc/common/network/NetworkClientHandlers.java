@@ -1,13 +1,14 @@
 package com.hammy275.immersivemc.common.network;
 
-import com.hammy275.immersivemc.client.api_impl.immersive.ImmersiveInfoAPIAdapter;
-import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.client.subscribe.ClientLogicSubscriber;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
 import com.hammy275.immersivemc.common.vr.VRRumble;
@@ -21,10 +22,10 @@ import java.util.Objects;
 public class NetworkClientHandlers {
 
     public static void setBeaconData(BeaconDataPacket packet) {
-        for (ImmersiveInfoAPIAdapter<BeaconInfo> info : Immersives.immersiveBeacon.getTrackedObjects()) {
+        for (BeaconInfo info : Immersives.immersiveBeacon.getTrackedObjects()) {
             if (packet.pos.equals(info.getBlockPosition())) {
-                info.apiInfo.effectSelected = packet.powerIndex;
-                info.apiInfo.regenSelected = packet.useRegen;
+                info.effectSelected = packet.powerIndex;
+                info.regenSelected = packet.useRegen;
             }
         }
     }
@@ -42,11 +43,11 @@ public class NetworkClientHandlers {
         Level level = Minecraft.getInstance().player.level();
         // Search all immersives for the matching handler. If found and the block is the state we expect, create or refresh
         // the info and process storage on it.
-        for (AbstractImmersive<?, ?> immersive : Immersives.IMMERSIVES) {
-            if (immersive.getHandler() == handler && immersive.shouldTrack(pos, level)) {
-                AbstractImmersiveInfo info = immersive.refreshOrTrackObject(pos, level);
+        for (Immersive<?, ?> immersive : Immersives.IMMERSIVES) {
+            if (immersive.getHandler() == handler && handler.isValidBlock(pos, level)) {
+                ImmersiveInfo info = ClientLogicSubscriber.doTrackIfNotTrackingAlready(immersive, pos, level);
                 if (info != null) {
-                    ((AbstractImmersive<?, NS>) immersive).processStorageFromNetwork(info, storage);
+                    processStorageFromNetwork(immersive, info, storage);
                 }
             }
         }
@@ -58,6 +59,13 @@ public class NetworkClientHandlers {
                 }
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <I extends ImmersiveInfo, NS extends NetworkStorage> void processStorageFromNetwork(Immersive<?, ?> immersive,
+                                                                                                       I info, NS storage) {
+        Immersive<I, NS> immersiveCast = (Immersive<I, NS>) immersive;
+        immersiveCast.processStorageFromNetwork(info, storage);
     }
 
     public static void doDoubleRumble(float duration) {

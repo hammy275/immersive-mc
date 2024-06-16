@@ -33,4 +33,11 @@ public interface BuiltImmersiveInfo<E> extends ImmersiveInfo {
      * @param item The item to set.
      */
     public void setFakeItem(int hitboxIndex, ItemStack item);
+
+    /**
+     * Checks if the given hitbox is currently hovered by some hand or the mouse.
+     * @param hitboxIndex The hitbox index to check if hovered.
+     * @return Whether the given hitboxIndex is hovered.
+     */
+    public boolean isSlotHovered(int hitboxIndex);
 }

@@ -362,28 +362,11 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
         return box;
     }
 
-    /**
-     * @return Literal position for this hitbox.
-     */
-    public Vec3 getPos() {
-        if (!didCalc) {
-            throw new IllegalStateException("Should call recalculate() or forceNull() before getting position.");
-        }
-        return pos;
-    }
-
     public Direction getUpDownRenderDir() {
         if (!didCalc) {
             throw new IllegalStateException("Should call recalculate() or forceNull() before getting upDownRenderDir.");
         }
         return upDownRenderDir;
-    }
-
-    /**
-     * @return Whether this has its calculated position.
-     */
-    public boolean hasPos() {
-        return pos != null;
     }
 
     /**

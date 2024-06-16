@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.api.client.immersive.*;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.client.api_impl.immersive.ImmersiveAPIAdapter;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import net.minecraft.core.Vec3i;
@@ -239,7 +238,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
 
     public BuiltImmersiveImpl<E, S> build() {
         BuiltImmersiveImpl<E, S> builtImmersive = new BuiltImmersiveImpl<>(this);
-        new ImmersiveAPIAdapter<>(builtImmersive); // The act of constructing this adds it to the list of Immersives
+        Immersives.IMMERSIVES.add(builtImmersive);
         return builtImmersive;
     }
 

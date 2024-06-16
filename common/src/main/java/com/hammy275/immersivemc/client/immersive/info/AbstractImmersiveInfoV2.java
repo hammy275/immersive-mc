@@ -42,6 +42,10 @@ public abstract class AbstractImmersiveInfoV2 implements ImmersiveInfo {
     }
 
     @Override
+    public int getSlotHovered(int handIndex) {
+        return slotsHovered[handIndex];
+    }
+
     public boolean isSlotHovered(int hitboxIndex) {
         return slotsHovered[0] == hitboxIndex || slotsHovered[1] == hitboxIndex;
     }

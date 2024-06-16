@@ -1,13 +1,14 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.api.client.immersive.*;
-import com.hammy275.immersivemc.client.api_impl.immersive.ImmersiveAPIAdapter;
 import com.hammy275.immersivemc.client.config.ClientConstants;
-import com.hammy275.immersivemc.client.immersive.info.*;
+import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.AnvilData;
+import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
+import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
-import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
 import com.hammy275.immersivemc.common.network.Network;
@@ -24,13 +25,12 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Immersives {
 
-    public static final List<AbstractImmersive<? extends AbstractImmersiveInfo, ? extends NetworkStorage>> IMMERSIVES =
-            new LinkedList<>();
+    public static final List<Immersive<? extends ImmersiveInfo, ? extends NetworkStorage>> IMMERSIVES =
+            new ArrayList<>();
     public static final List<AbstractPlayerAttachmentImmersive<? extends AbstractImmersiveInfo, ? extends NetworkStorage>> IMMERSIVE_ATTACHMENTS =
             new ArrayList<>();
 
@@ -92,7 +92,7 @@ public class Immersives {
                 ((ChestLikeData) info.getExtraData()).forceClose(info.getBlockPosition());
             })
             .build();
-    public static final ImmersiveAPIAdapter<BeaconInfo, BeaconStorage> immersiveBeacon = new ImmersiveAPIAdapter<>(new ImmersiveBeacon());
+    public static final ImmersiveBeacon immersiveBeacon = new ImmersiveBeacon();
     public static final BuiltImmersive<?,?> immersiveBrewing = ImmersiveBuilder.create(ImmersiveHandlers.brewingStandHandler)
             .setConfigChecker(() -> ActiveConfig.active().useBrewingImmersion)
             .setRenderSize(ClientConstants.itemScaleSizeBrewing)
@@ -112,7 +112,7 @@ public class Immersives {
                 return ClientConstants.defaultCooldownTicks;
             })
             .build();
-    public static final ImmersiveAPIAdapter<ChestInfo, ?> immersiveChest = new ImmersiveAPIAdapter<>(new ImmersiveChest());
+    public static final ImmersiveChest immersiveChest = new ImmersiveChest();
     public static final BuiltImmersive<?,?> immersiveChiseledBookshelf = ImmersiveBuilder.create(ImmersiveHandlers.chiseledBookshelfHandler)
             .setConfigChecker(() -> ActiveConfig.active().useChiseledBookshelfImmersion)
             .shouldDisableRightClicksWhenInteractionsDisabled(false)
@@ -327,9 +327,9 @@ public class Immersives {
             .setVROnly(true)
             .build();
 
-    public static final ImmersiveAPIAdapter<?, ?> immersiveLever = new ImmersiveAPIAdapter<>(new ImmersiveLever());
+    public static final ImmersiveLever immersiveLever = new ImmersiveLever();
 
-    public static final ImmersiveAPIAdapter<?, ?> immersiveRepeater = new ImmersiveAPIAdapter<>(new ImmersiveRepeater());
+    public static final ImmersiveRepeater immersiveRepeater = new ImmersiveRepeater();
     public static final BuiltImmersive<ChestLikeData,?> immersiveShulker = ImmersiveBuilder.create(ImmersiveHandlers.shulkerBoxHandler, ChestLikeData.class)
             .setConfigChecker(() -> ActiveConfig.active().useShulkerImmersion)
             .setRenderSize(ClientConstants.itemScaleSizeShulker)

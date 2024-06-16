@@ -1,5 +1,8 @@
 package com.hammy275.immersivemc.client.subscribe;
 
+import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
@@ -40,7 +43,7 @@ public class ClientRenderSubscriber {
 
     public static void onWorldRender(PoseStack stack) {
         try {
-            for (AbstractImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
+            for (Immersive<?, ?> singleton : Immersives.IMMERSIVES) {
                 renderInfos(singleton, stack);
             }
             for (AbstractPlayerAttachmentImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
@@ -79,14 +82,16 @@ public class ClientRenderSubscriber {
         itemGuideRenderData.clear();
     }
 
-    protected static <I extends AbstractImmersiveInfo> void renderInfos(AbstractImmersive<I, ?> singleton,
-                                                                 PoseStack stack) {
+    protected static <I extends ImmersiveInfo> void renderInfos(Immersive<I, ?> singleton,
+                                                                PoseStack stack) {
         try {
             if (singleton.isVROnly() && !VRPluginVerify.clientInVR()) {
                 return;
             }
             for (I info : singleton.getTrackedObjects()) {
-                singleton.doRender(info, stack, VRPluginVerify.clientInVR());
+                if (singleton.shouldRender(info)) {
+                    singleton.render(info, stack, ImmersiveRenderHelpers.instance(), Minecraft.getInstance().getFrameTime());
+                }
             }
         } catch (ConcurrentModificationException ignored) {
             // Skip rendering if the list is modified mid-render

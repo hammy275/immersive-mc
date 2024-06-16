@@ -11,6 +11,10 @@ import java.util.List;
 public abstract class AbstractImmersiveV2<I extends AbstractImmersiveInfoV2, S extends NetworkStorage>
         implements Immersive<I, S> {
 
+    public AbstractImmersiveV2() {
+        Immersives.IMMERSIVES.add(this);
+    }
+
     protected final List<I> infos = new ArrayList<>();
 
     @Override

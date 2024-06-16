@@ -4,7 +4,6 @@ import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.client.api_impl.immersive.ImmersiveInfoAPIAdapter;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.compat.Lootr;
@@ -265,8 +264,7 @@ public class ImmersiveChest extends AbstractImmersiveV2<ChestInfo, ListOfItemsSt
 
     public static ChestInfo findImmersive(BlockEntity chest) {
         Objects.requireNonNull(chest);
-        for (ImmersiveInfoAPIAdapter<ChestInfo> infoAdapted : Immersives.immersiveChest.getTrackedObjects()) {
-            ChestInfo info = infoAdapted.apiInfo;
+        for (ChestInfo info : Immersives.immersiveChest.getTrackedObjects()) {
             if (info.chest == chest || info.otherChest == chest) {
                 return info;
             }

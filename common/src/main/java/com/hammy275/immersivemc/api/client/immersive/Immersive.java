@@ -50,7 +50,10 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
      * @param hand The hand used for interaction.
      * @return A number representing the number of ticks of cooldown to apply before the player can interact with
      *         any Immersive again, or a negative number to denote no actual interaction has happened, such as
-     *         obtaining items from an output slot of an Immersive when the output slot has no items.
+     *         obtaining items from an output slot of an Immersive when the output slot has no items. This cooldown
+     *         should be the cooldown for desktop users if {@link #isVROnly()} returns false, and it should be the
+     *         cooldown for VR users if {@link #isVROnly()} returns true. ImmersiveMC will modify this cooldown time
+     *         to accommodate situations, such as VR users requiring an increased cooldown time.
      */
     public int handleHitboxInteract(I info, LocalPlayer player, int hitboxIndex, InteractionHand hand);
 

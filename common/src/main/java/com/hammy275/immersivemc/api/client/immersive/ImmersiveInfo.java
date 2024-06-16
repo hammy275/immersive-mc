@@ -36,15 +36,16 @@ public interface ImmersiveInfo {
      * A notification to mark the given slot as hovered by the given hand index.
      * @param hitboxIndex The index into {@link #getAllHitboxes()} to mark as hovered, or -1 to indicate no slot is
      *                  hovered by this hand.
-     * @param handIndex 0 for the primary hand, and 1 for the secondary hand.
+     * @param handIndex 0 for the primary hand (primary controller in VR or the player hand in non-VR), and 1 for the
+     *                  secondary hand (secondary controller in VR, or nothing in non-VR).
      */
     public void setSlotHovered(int hitboxIndex, int handIndex);
 
     /**
-     * @param hitboxIndex The index into {@link ImmersiveInfo#getAllHitboxes()} to check.
-     * @return Whether the given slotIndex is being hovered by any hand.
+     * @param handIndex The hand that is checking for a hovered hitbox.
+     * @return The hitbox the handIndex is hovering, or -1 if it isn't hovering any slot.
      */
-    public boolean isSlotHovered(int hitboxIndex);
+    public int getSlotHovered(int handIndex);
 
     /**
      * @return The number of ticks this info has existed for.
