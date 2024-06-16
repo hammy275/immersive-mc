@@ -37,11 +37,6 @@ public class ImmersiveRepeater extends AbstractImmersiveV2<RepeaterInfo, NullSto
     }
 
     @Override
-    public boolean clientAuthoritative() {
-        return true; // Doesn't require swap or items, so the client can just detect it and send repeater updates when needed.
-    }
-
-    @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
         return null;
     }

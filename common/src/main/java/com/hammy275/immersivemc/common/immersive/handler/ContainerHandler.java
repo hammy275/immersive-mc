@@ -13,4 +13,8 @@ public abstract class ContainerHandler<S extends NetworkStorage> implements Imme
         return DirtyTracker.isDirty(player.level(), pos);
     }
 
+    @Override
+    public boolean clientAuthoritative() {
+        return false;
+    }
 }

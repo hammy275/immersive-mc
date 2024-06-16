@@ -225,11 +225,6 @@ public class ImmersiveChest extends AbstractImmersiveV2<ChestInfo, ListOfItemsSt
     }
 
     @Override
-    public boolean clientAuthoritative() {
-        return false;
-    }
-
-    @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
         return null;
     }

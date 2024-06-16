@@ -88,13 +88,6 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
     public ImmersiveHandler<S> getHandler();
 
     /**
-     * Whether blocks matching this Immersive should be initiated by the client. If this is true, the server should
-     * not send any data to the client about this Immersive.
-     * @return Whether this immersive should have tracking initiated by the client.
-     */
-    public boolean clientAuthoritative();
-
-    /**
      * The info needed to build a config screen button for this Immersive. If this method returns null, ImmersiveMC
      * will not add a setting for this Immersive to its in-game configuration. Reasons to possibly return null from this
      * method include, but are not limited to:
@@ -119,7 +112,7 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
 
     /**
      * Process the storage from the server for this Immersive. Not called for Immersives that return
-     * true for {@link #clientAuthoritative()}.
+     * true for {@link #getHandler()}'s {@link ImmersiveHandler#clientAuthoritative()}.
      * @param info The info with storage being processed.
      * @param storage The storage to be processed.
      */

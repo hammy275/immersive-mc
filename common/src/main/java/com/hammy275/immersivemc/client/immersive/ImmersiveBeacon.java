@@ -169,11 +169,6 @@ public class ImmersiveBeacon extends AbstractImmersiveV2<BeaconInfo, BeaconStora
     }
 
     @Override
-    public boolean clientAuthoritative() {
-        return false;
-    }
-
-    @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
         return null; // TODO: Config screen info once that system is up and running
     }

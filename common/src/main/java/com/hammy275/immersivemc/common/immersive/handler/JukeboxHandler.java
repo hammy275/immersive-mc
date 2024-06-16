@@ -59,6 +59,11 @@ public class JukeboxHandler implements ImmersiveHandler<NullStorage> {
     }
 
     @Override
+    public boolean clientAuthoritative() {
+        return true;
+    }
+
+    @Override
     public ResourceLocation getID() {
         return new ResourceLocation(ImmersiveMC.MOD_ID, "jukebox");
     }

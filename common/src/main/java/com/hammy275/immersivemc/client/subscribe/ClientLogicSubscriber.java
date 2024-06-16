@@ -147,7 +147,7 @@ public class ClientLogicSubscriber {
     public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         // No similar loop for AbstractPlayerAttachmentImmersive since those don't run from blocks
         for (Immersive<?, ?> immersive : Immersives.IMMERSIVES) {
-            if (immersive.getHandler().isValidBlock(pos, level) && immersive.clientAuthoritative()) {
+            if (immersive.getHandler().isValidBlock(pos, level) && immersive.getHandler().clientAuthoritative()) {
                 doTrackIfNotTrackingAlready(immersive, pos, level);
             }
         }

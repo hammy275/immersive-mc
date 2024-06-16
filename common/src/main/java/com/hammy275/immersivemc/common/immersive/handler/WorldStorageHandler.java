@@ -6,6 +6,11 @@ import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 
 public interface WorldStorageHandler<S extends NetworkStorage> extends ImmersiveHandler<S> {
 
+    @Override
+    default boolean clientAuthoritative() {
+        return false;
+    }
+
     /**
      * @return An empty WorldStorage to load from NBT in.
      */

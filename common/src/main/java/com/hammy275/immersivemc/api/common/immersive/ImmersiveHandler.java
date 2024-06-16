@@ -58,7 +58,14 @@ public interface ImmersiveHandler<S extends NetworkStorage> {
     boolean enabledInConfig(Player player);
 
     /**
-     * @return A unique ID to identify this handler over the network.
+     * Whether blocks matching this Immersive should be initiated by the client. If this is true, the server should
+     * not send any data to the client about this Immersive.
+     * @return Whether this immersive should have tracking initiated by the client.
+     */
+    public boolean clientAuthoritative();
+
+    /**
+     * @return A unique ID to identify this handler.
      */
     ResourceLocation getID();
 

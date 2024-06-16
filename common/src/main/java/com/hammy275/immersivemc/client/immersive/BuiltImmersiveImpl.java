@@ -43,11 +43,6 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
     }
 
     @Override
-    public boolean clientAuthoritative() {
-        return false;
-    }
-
-    @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
         // TODO: Add the ability to provide this through the builder
         return null;

@@ -36,11 +36,6 @@ public class ImmersiveLever extends AbstractImmersiveV2<LeverInfo, NullStorage> 
     }
 
     @Override
-    public boolean clientAuthoritative() {
-        return true;
-    }
-
-    @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
         return null;
     }
