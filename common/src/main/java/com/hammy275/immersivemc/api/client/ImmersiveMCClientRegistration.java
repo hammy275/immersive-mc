@@ -3,6 +3,9 @@ package com.hammy275.immersivemc.api.client;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveMCClientRegistrationImpl;
 
+/**
+ * Contains methods for registering Immersives to ImmersiveMC.
+ */
 public interface ImmersiveMCClientRegistration {
 
     /**

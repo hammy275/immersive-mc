@@ -2,6 +2,9 @@ package com.hammy275.immersivemc.api.common.hitbox;
 
 import com.hammy275.immersivemc.common.api_impl.hitbox.HitboxInfoFactoryImpl;
 
+/**
+ * A class containing methods to create {@link HitboxInfo} instances. These
+ */
 public interface HitboxInfoFactory {
 
     /**

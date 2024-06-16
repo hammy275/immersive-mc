@@ -5,6 +5,9 @@ import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 
+/**
+ * Contains methods for interacting with ImmersiveMC's WorldStorage system.
+ */
 public interface WorldStorages {
 
     /**

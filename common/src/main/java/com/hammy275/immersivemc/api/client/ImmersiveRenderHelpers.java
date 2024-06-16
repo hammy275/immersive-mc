@@ -11,6 +11,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Contains several methods to help with rendering Immersives into the world.
+ */
 public interface ImmersiveRenderHelpers {
 
     /**

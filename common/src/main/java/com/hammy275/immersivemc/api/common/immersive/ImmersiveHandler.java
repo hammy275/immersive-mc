@@ -9,6 +9,13 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
+/**
+ * While an {@link com.hammy275.immersivemc.api.client.immersive.Immersive} defines how a client should work
+ * with a block-based Immersive, an ImmersiveHandler handles both the server-half of a block-based Immersive, along
+ * with the shared, common portion. For example, retrieving what items are stored in a furnace to send to the client
+ * (server-specific) and identifying what a furnace is (common) are both handled in an ImmersiveHandler.
+ * @param <S>
+ */
 public interface ImmersiveHandler<S extends NetworkStorage> {
 
     /**
@@ -53,7 +60,8 @@ public interface ImmersiveHandler<S extends NetworkStorage> {
 
     /**
      * @param player The player we're checking the config of.
-     * @return Whether the immersive this handler handles is enabled in the supplied config.
+     * @return Whether the immersive this handler handles is enabled. If you do not have a configuration system, this
+     * should always return true.
      */
     boolean enabledInConfig(Player player);
 

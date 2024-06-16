@@ -6,6 +6,14 @@ import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 
 import java.util.function.*;
 
+/**
+ * An alternative to {@link Immersive} to make (block-based) Immersives with much less effort, while still getting
+ * a significant amount of flexibility. Note that the underlying defaults if a given builder method isn't called are
+ * not part of the API, and may change in the future.
+ * @param <E> The type of "extra data" to add to {@link BuiltImmersiveInfo} instances. This way, data other than what
+ *           ImmersiveMC keeps track of can be used. This type MUST have a public constructor that takes 0 arguments.
+ * @param <S> The type of storage to use for sending Immersive data over the network.
+ */
 public interface ImmersiveBuilder<E, S extends NetworkStorage> {
 
     /**

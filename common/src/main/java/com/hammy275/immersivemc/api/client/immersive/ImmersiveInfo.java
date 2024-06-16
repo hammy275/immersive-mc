@@ -5,6 +5,12 @@ import net.minecraft.core.BlockPos;
 
 import java.util.List;
 
+/**
+ * ImmersiveInfo's are effectively containers of data for {@link Immersive}s. For example, with the furnace,
+ * there is one {@link Immersive} instance, which declares how to handle rendering furnaces, interacting with
+ * hitboxes, etc. Meanwhile, an ImmersiveInfo instance exists for each furnace that is being rendered in the world,
+ * containing data such as what item it contains, where in the world that furnace is, etc.
+ */
 public interface ImmersiveInfo {
 
     /**

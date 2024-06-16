@@ -13,6 +13,26 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
+/**
+ * Represents the client-side implementation of a block-based Immersive implementation.
+ * <br>
+ * To clarify what an Immersive is, from the user's perspective, an Immersive is a single category of thing that
+ * ImmersiveMC supports. Whether that be furnaces, throwing, or petting, those are all considered Immersives.
+ * <br>
+ * From a programming perspective, the term Immersive is used to represent a few different concepts:
+ * <ol>
+ *     <li>The aforementioned user definition of an Immersive.</li>
+ *     <li>The aforementioned user definition of an Immersive, but only for implementations that take advantage
+ *     of this interface. This is also referred to as a block-based Immersive.</li>
+ *     <li>The client-side exclusive logic of a block-based Immersive.</li>
+ * </ol>
+ * The final entry on that list is what this interface is; "The client-side exclusive logic of a block-based Immersive."
+ * Developers implement this interface to create the client-side implementation of a block-based Immersive (or,
+ * alternatively, build one using an {@link ImmersiveBuilder}). When combined with a {@link ImmersiveHandler}, you have
+ * a fully-functioning (block-based) Immersive!
+ * @param <I> The {@link ImmersiveInfo} implementation this Immersive uses.
+ * @param <S> The type of storage to use for sending Immersive data over the network.
+ */
 public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
 
     /**

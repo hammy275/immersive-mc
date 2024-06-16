@@ -4,6 +4,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * An object that contains info for placing information on ImmersiveMC's config screen. You may implement this (and
+ * return it from an Immersive) if you want things to be placed there, or you may choose not to, and instead handle
+ * configuration screens through some other method, or simply not have any.
+ */
 public interface ImmersiveConfigScreenInfo {
 
     /**
