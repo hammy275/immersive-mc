@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.common.immersive.handler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,7 +24,7 @@ public abstract class ItemWorldStorageHandler<S extends NetworkStorage> implemen
     @Override
     public void onStopTracking(ServerPlayer player, BlockPos pos) {
         if (WorldStoragesImpl.getWithoutVerificationS(pos, player.serverLevel()) instanceof ItemStorage iws) {
-            if (isValidBlock(pos, player.level())) {
+            if (Util.isValidBlocks(this, pos, player.level())) {
                 if (ActiveConfig.getConfigForPlayer(player).returnItems) { // Player left block range
                     iws.returnItems(player);
                     updateStorageOutputAfterItemReturn(player, pos, iws);

@@ -1,10 +1,10 @@
 package com.hammy275.immersivemc.common.util;
 
 
-import com.hammy275.immersivemc.api.client.immersive.Immersive;
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.ImmersiveChecker;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import net.minecraft.core.BlockPos;
@@ -23,27 +23,81 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 public class Util {
+
+    /**
+     * Check if Immersive has valid blocks. This is equivalent to {@link ImmersiveHandler#isValidBlock(BlockPos, Level)}
+     * for single-block Immersives, and running the
+     * former method on all blocks in {@link MultiblockImmersiveHandler#getHandledBlocks(BlockPos, Level)} for
+     * multiblock Immersives.
+     * @param handler Handler to run on.
+     * @param pos Position to check, or a position to check if part of a multiblock.
+     * @param level Level to check in.
+     * @return Whether all blocks are valid or not.
+     */
+    public static boolean isValidBlocks(ImmersiveHandler<?> handler, BlockPos pos, Level level) {
+        return getValidBlocks(handler, pos, level).contains(pos);
+    }
+
+    /**
+     * Checks if Immersive exactly matches the supplied set of blocks.
+     * @param handler Handler.
+     * @param pos Set of all positions in the Immersive.
+     * @param level Level.
+     * @return Whether the provided set of positions match the Immersive as it exists in-world.
+     */
+    public static boolean isValidBlocks(ImmersiveHandler<?> handler, Set<BlockPos> pos, Level level) {
+        return getValidBlocks(handler, pos.iterator().next(), level).equals(pos);
+    }
+
+    /**
+     * Get all blocks part of the Immersive at the specified position for the given handler.
+     * @param handler Handler to get valid positions of.
+     * @param pos A BlockPos that's part of the Immersive.
+     * @param level The level to get in.
+     * @return A set of valid positions for the Immersive, or an empty set if not valid.
+     */
+    public static Set<BlockPos> getValidBlocks(ImmersiveHandler<?> handler, BlockPos pos, Level level) {
+        boolean valid = handler.isValidBlock(pos, level);
+        if (valid) {
+            if (handler instanceof MultiblockImmersiveHandler<?> mih) {
+                Set<BlockPos> positions = mih.getHandledBlocks(pos, level);
+                if (positions != null && positions.stream().allMatch(p -> handler.isValidBlock(p, level))) {
+                    return positions;
+                } else {
+                    return Set.of();
+                }
+            } else {
+                return Set.of(pos);
+            }
+        }
+        return Set.of();
+    }
+
+    public static Vec3 average(Set<BlockPos> positions) {
+        double x = 0;
+        double y = 0;
+        double z = 0;
+        for (BlockPos pos : positions) {
+            x += pos.getX();
+            y += pos.getY();
+            z += pos.getZ();
+        }
+        return new Vec3(
+                x / positions.size(),
+                y / positions.size(),
+                z / positions.size()
+        );
+    }
 
     public static boolean isThrowableItem(Item item) {
         return item == Items.EXPERIENCE_BOTTLE || item == Items.EGG ||
                 item == Items.ENDER_PEARL || item == Items.SPLASH_POTION ||
                 item == Items.LINGERING_POTION || item == Items.SNOWBALL ||
                 item instanceof TridentItem || item instanceof FishingRodItem;
-    }
-
-    @Nullable
-    public static <I extends ImmersiveInfo> I findImmersive(Immersive<I, ?> immersive, BlockPos pos) {
-        for (I info : immersive.getTrackedObjects()) {
-            if (info.getBlockPosition().equals(pos)) {
-                return info;
-            }
-        }
-        return null;
     }
 
     public static Direction horizontalDirectionFromLook(Vec3 look) {

@@ -55,7 +55,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
         WorldStorage storage = storageMap.get(pos);
         for (ImmersiveHandler<?> handlerMaybeWS : ImmersiveHandlers.HANDLERS) {
             if (handlerMaybeWS instanceof WorldStorageHandler<?> handler) {
-                if (handler.getWorldStorageClass().isInstance(storage) && handler.isValidBlock(pos, level)) {
+                if (handler.getWorldStorageClass().isInstance(storage) && Util.isValidBlocks(handler, pos, level)) {
                     return storage;
                 }
             }
@@ -79,7 +79,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
         // Either way, attempt to make a new one.
         for (ImmersiveHandler<?> handlerMaybeWS : ImmersiveHandlers.HANDLERS) {
             if (handlerMaybeWS instanceof WorldStorageHandler<?> handler) {
-                if (handler.isValidBlock(pos, level)) {
+                if (Util.isValidBlocks(handler, pos, level)) {
                     storage = handler.getEmptyWorldStorage();
                     storageMap.put(pos, storage);
                     return storage;

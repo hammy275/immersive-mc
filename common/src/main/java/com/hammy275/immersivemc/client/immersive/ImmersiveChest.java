@@ -110,6 +110,9 @@ public class ImmersiveChest extends AbstractImmersiveV2<ChestInfo, ListOfItemsSt
     public void tick(ChestInfo info) {
         super.tick(info);
         info.light = ImmersiveClientLogicHelpers.instance().getLight(info.getBlockPosition().above());
+        if (Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()) instanceof ChestBlockEntity cbe) {
+            info.otherChest = Util.getOtherChest(cbe);
+        }
 
         BlockEntity[] chests = new BlockEntity[]{info.chest, info.otherChest};
         for (int i = 0; i <= 1; i++) {

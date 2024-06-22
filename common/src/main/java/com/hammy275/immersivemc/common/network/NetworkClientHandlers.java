@@ -11,6 +11,7 @@ import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.client.subscribe.ClientLogicSubscriber;
 import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -44,7 +45,7 @@ public class NetworkClientHandlers {
         // Search all immersives for the matching handler. If found and the block is the state we expect, create or refresh
         // the info and process storage on it.
         for (Immersive<?, ?> immersive : Immersives.IMMERSIVES) {
-            if (immersive.getHandler() == handler && handler.isValidBlock(pos, level)) {
+            if (immersive.getHandler() == handler && Util.isValidBlocks(handler, pos, level)) {
                 ImmersiveInfo info = ClientLogicSubscriber.doTrackIfNotTrackingAlready(immersive, pos, level);
                 if (info != null) {
                     processStorageFromNetwork(immersive, info, storage);

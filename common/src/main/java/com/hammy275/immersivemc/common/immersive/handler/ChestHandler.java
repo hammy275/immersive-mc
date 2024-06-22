@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
@@ -16,11 +17,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-public class ChestHandler extends ChestLikeHandler {
+public class ChestHandler extends ChestLikeHandler implements MultiblockImmersiveHandler<ListOfItemsStorage> {
 
     @Override
     public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
@@ -78,5 +81,21 @@ public class ChestHandler extends ChestLikeHandler {
     @Override
     public ResourceLocation getID() {
         return new ResourceLocation(ImmersiveMC.MOD_ID, "chest");
+    }
+
+    @Override
+    public @Nullable Set<BlockPos> getHandledBlocks(BlockPos pos, Level level) {
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof EnderChestBlockEntity) {
+            return Set.of(pos);
+        } else if (be instanceof ChestBlockEntity cbe) {
+            ChestBlockEntity other = Util.getOtherChest(cbe);
+            if (other != null) {
+                return Set.of(pos, other.getBlockPos());
+            } else {
+                return Set.of(pos);
+            }
+        }
+        return null;
     }
 }

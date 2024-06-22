@@ -147,19 +147,18 @@ public class ClientLogicSubscriber {
     public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         // No similar loop for AbstractPlayerAttachmentImmersive since those don't run from blocks
         for (Immersive<?, ?> immersive : Immersives.IMMERSIVES) {
-            if (immersive.getHandler().isValidBlock(pos, level) && immersive.getHandler().clientAuthoritative()) {
+            if (Util.isValidBlocks(immersive.getHandler(), pos, level) && immersive.getHandler().clientAuthoritative()) {
                 doTrackIfNotTrackingAlready(immersive, pos, level);
             }
         }
     }
 
     public static <I extends ImmersiveInfo> I doTrackIfNotTrackingAlready(Immersive<I, ?> immersive, BlockPos pos, Level level) {
-        for (I info : immersive.getTrackedObjects()) {
-            if (info.getBlockPosition().equals(pos)) {
-                return info;
-            }
+        I info = ClientUtil.findImmersive(immersive, pos);
+        if (info != null) {
+            return info;
         }
-        I info = immersive.buildInfo(pos, level);
+        info = immersive.buildInfo(pos, level);
         immersive.getTrackedObjects().add(info);
         return info;
     }
@@ -203,19 +202,11 @@ public class ClientLogicSubscriber {
     }
 
     private static <I extends ImmersiveInfo> boolean skipRightClick(Immersive<I, ?> immersive, BlockPos clickPos) {
-        for (I info : immersive.getTrackedObjects()) {
-            if (info.getBlockPosition().equals(clickPos)) {
-                // This is our looked at block, and we have an info for it!
-                if (immersive.getHandler().isValidBlock(clickPos, Minecraft.getInstance().level) &&
-                        immersive.shouldDisableRightClicksWhenInteractionsDisabled(info)) {
-                    // Cancel right click. We can use this immersive, it's enabled, and
-                    // the immersive wants us to block it (jukebox may not want to so it can eject disc,
-                    // for example).
-                    return true;
-                }
-            }
-        }
-        return false;
+        I info = ClientUtil.findImmersive(immersive, clickPos);
+        // Cancel right click. We can use this immersive, it's enabled, and
+        // the immersive wants us to block it (jukebox may not want to so it can eject disc,
+        // for example).
+        return info != null && immersive.shouldDisableRightClicksWhenInteractionsDisabled(info);
     }
 
     public static void onDisconnect(Player player) {
@@ -237,7 +228,7 @@ public class ClientLogicSubscriber {
         if (singleton.isVROnly() && !VRPluginVerify.clientInVR()) {
             return;
         }
-        singleton.getTrackedObjects().removeIf((info) -> !singleton.getHandler().isValidBlock(info.getBlockPosition(), Minecraft.getInstance().level));
+        singleton.getTrackedObjects().removeIf((info) -> !Util.isValidBlocks(singleton.getHandler(), info.getBlockPosition(), Minecraft.getInstance().level));
         singleton.globalTick();
         Collection<I> infos = singleton.getTrackedObjects();
 
@@ -390,7 +381,7 @@ public class ClientLogicSubscriber {
                     return true;
                 }
             } else if (ImmersiveHandlers.shulkerBoxHandler.isValidBlock(pos, player.level())) {
-                BuiltImmersiveInfo<ChestLikeData> info = Util.findImmersive(Immersives.immersiveShulker, pos);
+                BuiltImmersiveInfo<ChestLikeData> info = ClientUtil.findImmersive(Immersives.immersiveShulker, pos);
                 if (info != null) {
                     ChestLikeData data = info.getExtraData();
                     if (data.isOpen) {
@@ -400,7 +391,7 @@ public class ClientLogicSubscriber {
 
                 }
             } else if (ImmersiveHandlers.barrelHandler.isValidBlock(pos, player.level())) {
-                BuiltImmersiveInfo<ChestLikeData> info = Util.findImmersive(Immersives.immersiveBarrel, pos);
+                BuiltImmersiveInfo<ChestLikeData> info = ClientUtil.findImmersive(Immersives.immersiveBarrel, pos);
                 if (info != null) {
                     ChestLikeData data = info.getExtraData();
                     if (data.isOpen) {
@@ -521,7 +512,7 @@ public class ClientLogicSubscriber {
         }
         if (ActiveConfig.active().useBarrelImmersion &&
                 ImmersiveHandlers.barrelHandler.isValidBlock(pos, player.level())) {
-            BuiltImmersiveInfo<ChestLikeData> info = Util.findImmersive(Immersives.immersiveBarrel, pos);
+            BuiltImmersiveInfo<ChestLikeData> info = ClientUtil.findImmersive(Immersives.immersiveBarrel, pos);
             if (info != null) {
                 info.getExtraData().toggleOpen(pos);
                 return 6;

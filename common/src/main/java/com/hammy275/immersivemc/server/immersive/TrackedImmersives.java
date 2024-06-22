@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.server.immersive;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,7 +25,7 @@ public class TrackedImmersives {
             if (player == null || !data.validForPlayer(player)) {
                 if (player != null) {
                     // Called for player == null in ServerSubscriber#onDisconnect().
-                    data.getHandler().onStopTracking(player, data.getPos());
+                    data.getHandler().onStopTracking(player, data.getPos().iterator().next());
                 }
                 dataIterator.remove();
             }
@@ -41,7 +42,7 @@ public class TrackedImmersives {
 
     public static void maybeTrackImmersive(ServerPlayer player, BlockPos pos) {
         for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
-            if (handler.isValidBlock(pos, player.level())
+            if (Util.isValidBlocks(handler, pos, player.level())
                 && handler.enabledInConfig(player)) {
                 trackImmersive(player, handler, pos);
                 return;
@@ -54,19 +55,18 @@ public class TrackedImmersives {
         while (dataIterator.hasNext()) {
             TrackedImmersiveData<?> data = dataIterator.next();
             if (data.playerUUID.equals(player.getUUID())) {
-                data.getHandler().onStopTracking(player, data.getPos());
+                data.getHandler().onStopTracking(player, data.getPos().iterator().next());
                 dataIterator.remove();
             }
         }
     }
 
     private static void trackImmersive(ServerPlayer player, ImmersiveHandler<?> handler, BlockPos pos) {
-        for (TrackedImmersiveData<?> data : TRACKED_IMMERSIVES) {
-            if (data.getPos().equals(pos) && data.playerUUID.equals(player.getUUID())) {
-                return;
-            }
+        if (TRACKED_IMMERSIVES.stream().anyMatch((data) ->
+                Util.isValidBlocks(handler, pos, player.level()) && data.playerUUID.equals(player.getUUID()))) {
+            return;
         }
-        TrackedImmersiveData<?> data = new TrackedImmersiveData<>(player.getUUID(), pos, handler, player.level());
+        TrackedImmersiveData<?> data = new TrackedImmersiveData<>(player.getUUID(), Util.getValidBlocks(handler, pos, player.level()), handler, player.level());
         TRACKED_IMMERSIVES.add(data);
         syncDataToClient(player, data);
     }

@@ -1,13 +1,17 @@
 package com.hammy275.immersivemc.client;
 
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.mixin.MinecraftMixinAccessor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Tuple;
@@ -15,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 public class ClientUtil {
 
@@ -92,5 +97,15 @@ public class ClientUtil {
             player.sendSystemMessage(Component.translatable("message.immersivemc.no_api",
                     CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString()));
         }
+    }
+
+    @Nullable
+    public static <I extends ImmersiveInfo> I findImmersive(Immersive<I, ?> immersive, BlockPos pos) {
+        for (I info : immersive.getTrackedObjects()) {
+            if (Util.isValidBlocks(immersive.getHandler(), pos, Minecraft.getInstance().level)) {
+                return info;
+            }
+        }
+        return null;
     }
 }
