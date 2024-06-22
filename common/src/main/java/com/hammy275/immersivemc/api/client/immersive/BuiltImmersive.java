@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.api.client.immersive;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 
 /**
  * Representation of a built Immersive made using an {@link ImmersiveBuilder}. This acts as an {@link Immersive}, but

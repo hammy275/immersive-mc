@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.CraftingTableStorage;
@@ -17,14 +18,14 @@ public class ImmersiveHandlers {
     public static final List<ImmersiveHandler<?>> HANDLERS = new ArrayList<>();
 
 
-    public static final ImmersiveHandler<AnvilStorage> anvilHandler = new AnvilHandler();
+    public static final WorldStorageHandler<AnvilStorage> anvilHandler = new AnvilHandler();
     public static final ImmersiveHandler<?> barrelHandler = new BarrelHandler();
-    public static final ImmersiveHandler<BeaconStorage> beaconHandler = new BeaconHandler();
+    public static final WorldStorageHandler<BeaconStorage> beaconHandler = new BeaconHandler();
     public static final ImmersiveHandler<?> brewingStandHandler = new BrewingStandHandler();
     public static final ImmersiveHandler<ListOfItemsStorage> chestHandler = new ChestHandler();
     public static final ImmersiveHandler<?> chiseledBookshelfHandler = new ChiseledBookshelfHandler();
-    public static final ImmersiveHandler<CraftingTableStorage> craftingHandler = new CraftingHandler();
-    public static final ImmersiveHandler<ETableStorage> enchantingTableHandler = new ETableHandler();
+    public static final WorldStorageHandler<CraftingTableStorage> craftingHandler = new CraftingHandler();
+    public static final WorldStorageHandler<ETableStorage> enchantingTableHandler = new ETableHandler();
     public static final ImmersiveHandler<?> furnaceHandler = new FurnaceHandler();
     public static final ImmersiveHandler<?> hopperHandler = new HopperHandler();
     public static final ImmersiveHandler<?> ironFurnacesFurnaceHandler = new IronFurnacesFurnaceHandler();
@@ -32,7 +33,7 @@ public class ImmersiveHandlers {
     public static final ImmersiveHandler<NullStorage> leverHandler = new LeverHandler();
     public static final ImmersiveHandler<NullStorage> repeaterHandler = new RepeaterHandler();
     public static final ImmersiveHandler<?> shulkerBoxHandler = new ShulkerBoxHandler();
-    public static final ImmersiveHandler<SmithingTableStorage> smithingTableHandler = new SmithingTableHandler();
+    public static final WorldStorageHandler<SmithingTableStorage> smithingTableHandler = new SmithingTableHandler();
     public static final ImmersiveHandler<?> tcCraftingStationHandler = new TCCraftingStationHandler();
 
     static {

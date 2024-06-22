@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.server.storage.world;
 
+import com.hammy275.immersivemc.api.server.WorldStorage;
 import com.hammy275.immersivemc.api.server.WorldStorages;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

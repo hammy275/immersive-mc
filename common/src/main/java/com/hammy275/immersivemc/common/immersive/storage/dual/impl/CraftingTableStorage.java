@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.immersive.storage.dual.impl;
 
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 
 public class CraftingTableStorage extends ItemStorage {
@@ -9,7 +9,7 @@ public class CraftingTableStorage extends ItemStorage {
     }
 
     @Override
-    public ImmersiveHandler<CraftingTableStorage> getHandler() {
+    public WorldStorageHandler<CraftingTableStorage> getHandler() {
         return ImmersiveHandlers.craftingHandler;
     }
 }

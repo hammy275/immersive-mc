@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.api.common.immersive;
 
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;

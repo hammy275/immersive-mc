@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;

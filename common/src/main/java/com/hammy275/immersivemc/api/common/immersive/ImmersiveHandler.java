@@ -1,7 +1,6 @@
 package com.hammy275.immersivemc.api.common.immersive;
 
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
