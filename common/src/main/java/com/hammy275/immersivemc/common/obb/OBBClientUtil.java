@@ -1,14 +1,11 @@
 package com.hammy275.immersivemc.common.obb;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-
-import java.util.List;
 
 public class OBBClientUtil {
 
@@ -32,13 +29,6 @@ public class OBBClientUtil {
     }
 
     public static void rotateStackForOBB(PoseStack stack, OBB obb) {
-        List<OBBRot> rots = obb.rotations.getRotations();
-        for (OBBRot rot : rots) {
-            switch (rot.rotType()) {
-                case PITCH -> stack.mulPose(Axis.XN.rotation(rot.rot()));
-                case YAW -> stack.mulPose(Axis.YN.rotation(rot.rot()));
-                case ROLL -> stack.mulPose(Axis.ZP.rotation(rot.rot()));
-            }
-        }
+        stack.mulPose(obb.rotation);
     }
 }

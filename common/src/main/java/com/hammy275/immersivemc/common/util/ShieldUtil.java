@@ -22,7 +22,7 @@ public class ShieldUtil {
         // 1/32 blocks wide.
         Vec3 pos = getShieldPos(player, hand, iHand);
         return new OBB(AABB.ofSize(pos, 0.375 * 1.125, 0.6875 * 1.125, 1d/32d * 6),
-                makeRotList(player, hand, iHand));
+                makeRotList(player, hand, iHand).asQuaternion());
     }
 
     public static Vec3 getShieldPos(Player player, IVRData hand, InteractionHand iHand) {

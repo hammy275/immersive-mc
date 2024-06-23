@@ -4,6 +4,8 @@ import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.Optional;
 
@@ -20,14 +22,15 @@ public class OBB implements BoundingBox {
 
     final AABB aabb;
     final Vec3 center;
-    final OBBRotList rotations;
+    final Vector3f centerF;
+    final Quaternionf rotation;
 
     /**
      * Create an OBB from an existing AABB.
      * @param aabb The AABB to create an OBB from.
      */
     public OBB(AABB aabb) {
-        this(aabb, OBBRotList.create());
+        this(aabb, new Quaternionf());
     }
 
     /**
@@ -38,18 +41,19 @@ public class OBB implements BoundingBox {
      * @param roll The roll of the OBB, in radians
      */
     public OBB(AABB aabb, double pitch, double yaw, double roll) {
-        this(aabb, OBBRotList.create().addRot(yaw, RotType.YAW).addRot(pitch, RotType.PITCH).addRot(roll, RotType.ROLL));
+        this(aabb, OBBRotList.create().addRot(yaw, RotType.YAW).addRot(pitch, RotType.PITCH).addRot(roll, RotType.ROLL).asQuaternion());
     }
 
     /**
      * Create an OBB from an existing AABB, rotated by some arbitrary rotations.
      * @param aabb The AABB to create an OBB from.
-     * @param rotations A list of rotations to apply, in order, to the AABB to create the OBB.
+     * @param rotation The quaternion representing the rotations applied to this OBB.
      */
-    public OBB(AABB aabb, OBBRotList rotations) {
+    public OBB(AABB aabb, Quaternionf rotation) {
         this.aabb = aabb;
         this.center = aabb.getCenter();
-        this.rotations = rotations;
+        this.centerF = this.center.toVector3f();
+        this.rotation = rotation;
     }
 
     /**
@@ -60,8 +64,9 @@ public class OBB implements BoundingBox {
     public boolean contains(Vec3 point) {
         // We rotate the start position and the ray direction to be the same as this OBB's, do a normal
         // AABB check, then rotate back to get a proper position.
-        point = this.rotations.rotate(point.subtract(this.center), false).add(this.center);
-        return this.aabb.contains(point);
+        Vector3f pt = point.toVector3f();
+        pt = pt.sub(this.centerF).rotate(this.rotation).add(this.centerF);
+        return this.aabb.contains(toVec3(pt));
     }
 
     /**
@@ -75,11 +80,11 @@ public class OBB implements BoundingBox {
         // AABB check, then rotate back to get a proper position.
         Vec3 dir = rayEnd.subtract(rayStart).normalize();
         double dist = rayStart.distanceTo(rayEnd);
-        dir = this.rotations.rotate(dir, false);
-        rayStart = this.rotations.rotate(rayStart.subtract(this.center), false).add(this.center);
-        Optional<Vec3> intersect = this.aabb.clip(rayStart, rayStart.add(dir.scale(dist)));
+        Vector3f dirF = dir.toVector3f().rotate(this.rotation);
+        Vector3f rayStartF = rayStart.toVector3f().sub(this.centerF).rotate(this.rotation).add(this.centerF);
+        Optional<Vec3> intersect = this.aabb.clip(toVec3(rayStartF), toVec3(rayStartF.add(dirF.mul((float) dist))));
         if (intersect.isPresent()) {
-            return Optional.of(this.rotations.rotate(intersect.get().subtract(this.center), true).add(this.center));
+            return Optional.of(toVec3(intersect.get().toVector3f().sub(this.centerF).rotate(this.rotation).add(this.centerF)));
         } else {
             return Optional.empty();
         }
@@ -98,13 +103,6 @@ public class OBB implements BoundingBox {
      */
     public Vec3 getCenter() {
         return this.center;
-    }
-
-    /**
-     * @return A copy of the rotations that make this OBB.
-     */
-    public OBBRotList getRotList() {
-        return this.rotations.copy();
     }
 
     /**
@@ -136,5 +134,9 @@ public class OBB implements BoundingBox {
     @Override
     public AABB asAABB() {
         throw new RuntimeException("Cannot get AABB as OBB!");
+    }
+
+    private Vec3 toVec3(Vector3f vec3f) {
+        return new Vec3(vec3f.x(), vec3f.y(), vec3f.z());
     }
 }
