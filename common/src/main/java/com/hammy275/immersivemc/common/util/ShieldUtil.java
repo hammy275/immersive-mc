@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.util;
 
-import com.hammy275.immersivemc.common.obb.OBB;
+import com.hammy275.immersivemc.api.common.hitbox.OBB;
+import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.common.obb.OBBRotList;
 import com.hammy275.immersivemc.common.obb.RotType;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
@@ -21,7 +22,7 @@ public class ShieldUtil {
         // Note: Shield model is about 11/16 (0.6875) blocks tall, 6/16 (3/8) (0.375) blocks in length, and
         // 1/32 blocks wide.
         Vec3 pos = getShieldPos(player, hand, iHand);
-        return new OBB(AABB.ofSize(pos, 0.375 * 1.125, 0.6875 * 1.125, 1d/32d * 6),
+        return OBBFactory.instance().create(AABB.ofSize(pos, 0.375 * 1.125, 0.6875 * 1.125, 1d/32d * 6),
                 makeRotList(player, hand, iHand).asQuaternion());
     }
 

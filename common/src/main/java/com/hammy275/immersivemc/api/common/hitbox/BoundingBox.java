@@ -1,12 +1,12 @@
 package com.hammy275.immersivemc.api.common.hitbox;
 
-import com.hammy275.immersivemc.common.obb.OBB;
+import com.hammy275.immersivemc.common.api_impl.hitbox.OBBImpl;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
  * A representation of a box for collision and similar detection purposes. Minecraft's {@link AABB} and ImmersiveMC"s
- * {@link OBB} both implement this. Other classes may implement this interface in the future, though only ImmersiveMC
+ * {@link OBBImpl} both implement this. Other classes may implement this interface in the future, though only ImmersiveMC
  * should create implementations of this interface.
  */
 public interface BoundingBox {
@@ -15,7 +15,7 @@ public interface BoundingBox {
      * @return This BoundingBox as an OBB if it is one.
      * @throws RuntimeException If this BoundingBox is not an OBB.
      */
-    OBB asOBB() throws RuntimeException;
+    OBBImpl asOBB() throws RuntimeException;
 
     /**
      * @return This BoundingBox as an AABB if it is one.
@@ -27,7 +27,7 @@ public interface BoundingBox {
      * @return Whether this BoundingBox is an OBB.
      */
     default boolean isOBB() {
-        return this instanceof OBB;
+        return this instanceof OBBImpl;
     }
 
     /**

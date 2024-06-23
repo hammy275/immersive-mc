@@ -1,7 +1,8 @@
-package com.hammy275.immersivemc.common.obb;
+package com.hammy275.immersivemc.common.api_impl.hitbox;
 
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
-import net.minecraft.core.Vec3i;
+import com.hammy275.immersivemc.common.obb.OBBRotList;
+import com.hammy275.immersivemc.common.obb.RotType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
@@ -15,7 +16,7 @@ import java.util.Optional;
  * Internally, the OBB is an AABB, but rotated by some amount on the X, Y, and Z axis. All rotations are in
  * radians.
  */
-public class OBB implements BoundingBox {
+public class OBBImpl implements BoundingBox, com.hammy275.immersivemc.api.common.hitbox.OBB {
 
     private static final double HALFSQRT2 = Math.sqrt(2) / 2d;
 
@@ -29,7 +30,7 @@ public class OBB implements BoundingBox {
      * Create an OBB from an existing AABB.
      * @param aabb The AABB to create an OBB from.
      */
-    public OBB(AABB aabb) {
+    public OBBImpl(AABB aabb) {
         this(aabb, new Quaternionf());
     }
 
@@ -40,7 +41,7 @@ public class OBB implements BoundingBox {
      * @param yaw The yaw of the OBB, in radians,
      * @param roll The roll of the OBB, in radians
      */
-    public OBB(AABB aabb, double pitch, double yaw, double roll) {
+    public OBBImpl(AABB aabb, double pitch, double yaw, double roll) {
         this(aabb, OBBRotList.create().addRot(yaw, RotType.YAW).addRot(pitch, RotType.PITCH).addRot(roll, RotType.ROLL).asQuaternion());
     }
 
@@ -49,7 +50,7 @@ public class OBB implements BoundingBox {
      * @param aabb The AABB to create an OBB from.
      * @param rotation The quaternion representing the rotations applied to this OBB.
      */
-    public OBB(AABB aabb, Quaternionf rotation) {
+    public OBBImpl(AABB aabb, Quaternionf rotation) {
         this.aabb = aabb;
         this.center = aabb.getCenter();
         this.centerF = this.center.toVector3f();
@@ -106,28 +107,25 @@ public class OBB implements BoundingBox {
     }
 
     /**
+     * OBBs are rotated AABBs internally. This function retrieves a copy of the {@link Quaternionf} used for rotation.
+     * @return A copy of the internal Quaternionf.
+     */
+    @Override
+    public Quaternionf getRotation() {
+        return new Quaternionf(this.rotation);
+    }
+
+    /**
      * @return A reasonably-sized AABB guaranteed to contain this OBB. Bad for collision checks, as it tends to be
-     * significantly larger, but good for detecting things that should then be detected on this OBB.
+     * significantly larger than the actual OBB, but good for detecting things that should then be detected on this OBB.
      */
     public AABB getEnclosingAABB() {
         double maxSize = Math.max(Math.max(this.aabb.getXsize(), this.aabb.getYsize()), this.aabb.getZsize());
         return this.aabb.inflate(maxSize * HALFSQRT2);
     }
 
-    public OBB translate(Vec3 translation) {
-        return this.translate(translation.x, translation.y, translation.z);
-    }
-
-    public OBB translate(Vec3i translation) {
-        return this.translate(translation.getX(), translation.getY(), translation.getZ());
-    }
-
-    public OBB translate(double x, double y, double z) {
-        return new OBB(this.aabb.move(x, y, z));
-    }
-
     @Override
-    public OBB asOBB() {
+    public OBBImpl asOBB() {
         return this;
     }
 
