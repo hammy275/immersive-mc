@@ -44,8 +44,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
 
     @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
-        // TODO: Add the ability to provide this through the builder
-        return null;
+        return builder.configScreenInfo;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.immersive.*;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.config.ClientConstants;
@@ -35,6 +36,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     Consumer<BuiltImmersiveInfo<E>> onRemove = (info) -> {};
     boolean blockRightClickWhenGUIClickDisabled = true;
     BiFunction<BuiltImmersiveInfo<E>, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
+    ImmersiveConfigScreenInfo configScreenInfo = null;
 
     public ImmersiveBuilderImpl(ImmersiveHandler<S> handler, @Nullable Class<E> extraInfoDataClazz) {
         this.handler = handler;
@@ -195,6 +197,12 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
         return this;
     }
 
+    @Override
+    public ImmersiveBuilder<E, S> setConfigScreenInfo(ImmersiveConfigScreenInfo info) {
+        this.configScreenInfo = info;
+        return this;
+    }
+
     /**
      * Overwrites hitbox at index with a new hitbox. Useful when cloning.
      * @param index Index to overwrite.
@@ -263,6 +271,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
         clone.onRemove = this.onRemove;
         clone.blockRightClickWhenGUIClickDisabled = this.blockRightClickWhenGUIClickDisabled;
         clone.slotRendersItemGuide = this.slotRendersItemGuide;
+        clone.configScreenInfo = null;
         return clone;
     }
 
@@ -280,6 +289,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
         clone.airCheckPositionOffsets = new ArrayList<>(this.airCheckPositionOffsets);
         clone.extraStorageConsumer = null;
         clone.blockRightClickWhenGUIClickDisabled = this.blockRightClickWhenGUIClickDisabled;
+        clone.configScreenInfo = null;
         return clone;
     }
 }

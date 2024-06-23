@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.api.client.immersive;
 
+import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBuilderImpl;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
@@ -130,6 +131,13 @@ public interface ImmersiveBuilder<E, S extends NetworkStorage> {
     public ImmersiveBuilder<E,S> setShouldRenderItemGuideFunction(BiFunction<BuiltImmersiveInfo<E>, Integer, Boolean> itemGuideActive);
 
     /**
+     * Set the config screen info associated with this Immersive.
+     * @param info The config screen info to associate with this Immersive.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder<E,S> setConfigScreenInfo(ImmersiveConfigScreenInfo info);
+
+    /**
      * Overwrites hitbox at index with a new hitbox. Useful when cloning.
      * @param index Index to overwrite.
      * @param relativeHitboxInfo New hitbox information.
@@ -155,15 +163,16 @@ public interface ImmersiveBuilder<E, S extends NetworkStorage> {
     public ImmersiveBuilder<E,S> modifyHitboxes(int startIndex, int endIndex, Function<RelativeHitboxInfoBuilder, RelativeHitboxInfo> modifier);
 
     /**
-     * Create a copy of this ImmersiveBuilder, setting the extra storage consumer to null.
+     * Create a copy of this ImmersiveBuilder, setting the extra storage consumer and the Immersive config info to null
+     * on the copy.
      * @return A best-effort copy of this ImmersiveBuilder.
      */
     public <T extends NetworkStorage> ImmersiveBuilder<E, T> copy(ImmersiveHandler<T> newHandler);
 
     /**
      * Create a copy of this ImmersiveBuilder, setting the extra storage consumer, the extra render ready,
-     * the slot active function, the on remove function, the slot renders item guide function, and the right click
-     * handler to null/no-op.
+     * the slot active function, the on remove function, the slot renders item guide function, the right click
+     * handler, and the Immersive config info to null/no-op on the copy.
      * @return A best-effort copy of this ImmersiveBuilder.
      */
     public <F, T extends NetworkStorage> ImmersiveBuilder<F, T> copy(ImmersiveHandler<T> newHandler, Class<F> newExtraInfoDataClass);
