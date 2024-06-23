@@ -2,8 +2,8 @@ package com.hammy275.immersivemc.api.client.immersive;
 
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.client.immersive.ImmersiveBuilderImpl;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
+import com.hammy275.immersivemc.client.immersive.ImmersiveBuilderImpl;
 
 import java.util.function.*;
 
@@ -18,21 +18,27 @@ import java.util.function.*;
 public interface ImmersiveBuilder<E, S extends NetworkStorage> {
 
     /**
-     * Create an ImmersiveBuilder to start making an Immersive.
+     * Create an ImmersiveBuilder to start making an Immersive. You cannot use ImmersiveBuilders with
+     * MultiblockImmersiveHandlers; write an {@link Immersive} implementation instead to use those.
      * @param handler The handler for the Immersive.
      * @return A builder object.
+     * @throws IllegalArgumentException If provided a MultiblockImmersiveHandler, as it is unsupported with
+     * ImmersiveBuilders.
      */
-    public static <NS extends NetworkStorage> ImmersiveBuilder<?, NS> create(ImmersiveHandler<NS> handler) {
+    public static <NS extends NetworkStorage> ImmersiveBuilder<?, NS> create(ImmersiveHandler<NS> handler) throws IllegalArgumentException {
         return new ImmersiveBuilderImpl<>(handler, null);
     }
 
     /**
-     * Create an ImmersiveBuilder to start making an Immersive.
+     * Create an ImmersiveBuilder to start making an Immersive. You cannot use ImmersiveBuilders with
+     * MultiblockImmersiveHandlers; write an {@link Immersive} implementation instead to use those.
      * @param handler The handler for the Immersive.
      * @param extraInfoDataClass A class with an empty constructor that holds extra data for each info instance.
      * @return A builder object.
+     * @throws IllegalArgumentException If provided a MultiblockImmersiveHandler, as it is unsupported with
+     * ImmersiveBuilders.
      */
-    public static <E, NS extends NetworkStorage> ImmersiveBuilder<E, NS> create(ImmersiveHandler<NS> handler, Class<E> extraInfoDataClass) {
+    public static <E, NS extends NetworkStorage> ImmersiveBuilder<E, NS> create(ImmersiveHandler<NS> handler, Class<E> extraInfoDataClass) throws IllegalArgumentException {
         return new ImmersiveBuilderImpl<>(handler, extraInfoDataClass);
     }
 

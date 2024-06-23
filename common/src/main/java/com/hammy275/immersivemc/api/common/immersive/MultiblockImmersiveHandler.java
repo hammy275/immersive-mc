@@ -47,11 +47,13 @@ public interface MultiblockImmersiveHandler<S extends NetworkStorage> extends Im
      *     <li>Rarely, a multiblock may change shape while never ending up in an invalid state. For example, the left
      *     chest of a double chest may become the right chest of a double chest via command blocks. Your Immersive
      *     should handle this gracefully.</li>
+     *     <li>This function should NOT return an empty set or a set containing null elements.</li>
      * </ul>
      * @param pos The position of one block in this multiblock.
      * @param level The level where one block of this multiblock is found.
      * @return All blocks that make up this multiblock, or null if the provided position cannot make a valid multiblock.
-     *         This set will not be modified by ImmersiveMC.
+     *         This set will not be modified by ImmersiveMC, and it should NOT contain null nor should it be an empty
+     *         set.
      */
     @Nullable
     public Set<BlockPos> getHandledBlocks(BlockPos pos, Level level);

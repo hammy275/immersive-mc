@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.immersive.*;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import net.minecraft.core.Vec3i;
@@ -41,6 +42,9 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     public ImmersiveBuilderImpl(ImmersiveHandler<S> handler, @Nullable Class<E> extraInfoDataClazz) {
         this.handler = handler;
         this.extraInfoDataClazz = extraInfoDataClazz;
+        if (handler instanceof MultiblockImmersiveHandler<?>) {
+            throw new IllegalArgumentException("Cannot create an ImmersiveBuilder with a MultiblockImmersiveHandler.");
+        }
     }
 
 
