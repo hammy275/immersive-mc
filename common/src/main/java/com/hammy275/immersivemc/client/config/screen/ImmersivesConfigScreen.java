@@ -54,22 +54,12 @@ public class ImmersivesConfigScreen extends Screen {
     protected void initOptionsList() {
         List<OptionInstance<Boolean>> options = new ArrayList<>();
         if (this.type.isNonVR()) {
-            options.add(ScreenUtils.createOption("barrel", ImmersiveMCConfig.useBarrelImmersion));
-            options.add(ScreenUtils.createOption("beacon", ImmersiveMCConfig.useBeaconImmersion));
-            options.add(ScreenUtils.createOption("brewing", ImmersiveMCConfig.useBrewingImmersion));
-            options.add(ScreenUtils.createOption("chest", ImmersiveMCConfig.useChestImmersion));
-            options.add(ScreenUtils.createOption("crafting", ImmersiveMCConfig.useCraftingImmersion));
             if (Platform.isModLoaded("tconstruct")) {
                 options.add(ScreenUtils.createOption("tinkers_construct_crafting_station", ImmersiveMCConfig.useTinkersConstructCraftingStationImmersion));
             }
-            options.add(ScreenUtils.createOption("enchanting_table", ImmersiveMCConfig.useETableImmersion));
-            options.add(ScreenUtils.createOption("furnace", ImmersiveMCConfig.useFurnaceImmersion));
-            options.add(ScreenUtils.createOption("hopper", ImmersiveMCConfig.useHopperImmersion));
             if (Platform.isModLoaded("ironfurnaces")) {
                 options.add(ScreenUtils.createOption("iron_furnaces_furnace", ImmersiveMCConfig.useIronFurnacesFurnaceImmersion));
             }
-            options.add(ScreenUtils.createOption("shulker", ImmersiveMCConfig.useShulkerImmersion));
-            options.add(ScreenUtils.createOption("smithing_table", ImmersiveMCConfig.useSmithingTableImmersion));
         }
 
         if (this.type.isVR()) {
@@ -79,19 +69,16 @@ public class ImmersivesConfigScreen extends Screen {
             options.add(ScreenUtils.createOption("button", ImmersiveMCConfig.useButton));
             options.add(ScreenUtils.createOption("campfire", ImmersiveMCConfig.useCampfireImmersion));
             options.add(ScreenUtils.createOption("cauldron", ImmersiveMCConfig.useCauldronImmersion));
-            options.add(ScreenUtils.createOption("chiseled_bookshelf", ImmersiveMCConfig.useChiseledBookshelfImmersion));
             options.add(ScreenUtils.createOption("door", ImmersiveMCConfig.useDoorImmersion));
-            options.add(ScreenUtils.createOption("jukebox", ImmersiveMCConfig.useJukeboxImmersion));
-            options.add(ScreenUtils.createOption("lever", ImmersiveMCConfig.useLever));
             options.add(ScreenUtils.createOption("pet", ImmersiveMCConfig.canPet));
             options.add(ScreenUtils.createOption("ranged_grab", ImmersiveMCConfig.useRangedGrab));
-            options.add(ScreenUtils.createOption("repeater", ImmersiveMCConfig.useRepeaterImmersion));
             options.add(ScreenUtils.createOption("shield", ImmersiveMCConfig.immersiveShield));
             options.add(ScreenUtils.createOption("throw", ImmersiveMCConfig.useThrowing));
             options.add(ScreenUtils.createOption("written_book", ImmersiveMCConfig.useWrittenBookImmersion));
         }
 
         Immersives.IMMERSIVES.stream()
+                .filter((immersive) -> (this.type.isVR() || (this.type.isNonVR() && !immersive.isVROnly())))
                 .map(Immersive::configScreenInfo)
                 .filter(Objects::nonNull)
                 .map((configInfo) -> ScreenUtils.createOption(configInfo.getOptionTranslation(), configInfo.getOptionTooltip(),

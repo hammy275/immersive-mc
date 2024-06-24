@@ -95,6 +95,7 @@ public class Immersives {
             .setOnRemove((info) -> {
                 ((ChestLikeData) info.getExtraData()).forceClose(info.getBlockPosition());
             })
+            .setConfigScreenInfo(createConfigScreenInfo("barrel", () -> new ItemStack(Items.BARREL), ImmersiveMCConfig.useBarrelImmersion))
             .build();
     public static final ImmersiveBeacon immersiveBeacon = new ImmersiveBeacon();
     public static final BuiltImmersive<?,?> immersiveBrewing = ImmersiveBuilder.create(ImmersiveHandlers.brewingStandHandler)
@@ -115,6 +116,7 @@ public class Immersives {
                 Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand));
                 return ClientConstants.defaultCooldownTicks;
             })
+            .setConfigScreenInfo(createConfigScreenInfo("brewing", () -> new ItemStack(Items.BREWING_STAND), ImmersiveMCConfig.useBrewingImmersion))
             .build();
     public static final ImmersiveChest immersiveChest = new ImmersiveChest();
     public static final BuiltImmersive<?,?> immersiveChiseledBookshelf = ImmersiveBuilder.create(ImmersiveHandlers.chiseledBookshelfHandler)
@@ -132,6 +134,7 @@ public class Immersives {
                 return ClientConstants.defaultCooldownTicks;
             })
             .setVROnly(true)
+            .setConfigScreenInfo(createConfigScreenInfo("chiseled_bookshelf", () -> new ItemStack(Items.CHISELED_BOOKSHELF), ImmersiveMCConfig.useChiseledBookshelfImmersion))
             .build();
     public static final BuiltImmersive<?,?> immersiveCrafting = ImmersiveBuilder.create(ImmersiveHandlers.craftingHandler)
             .setConfigChecker(() -> ActiveConfig.active().useCraftingImmersion)
@@ -148,6 +151,7 @@ public class Immersives {
                 Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand));
                 return ClientConstants.defaultCooldownTicks;
             })
+            .setConfigScreenInfo(createConfigScreenInfo("crafting", () -> new ItemStack(Items.CRAFTING_TABLE), ImmersiveMCConfig.useCraftingImmersion))
             .build();
     public static final BuiltImmersive<?,?> immersiveETable = ImmersiveBuilder.create(ImmersiveHandlers.enchantingTableHandler, EnchantingData.class)
             .setConfigChecker(() -> ActiveConfig.active().useETableImmersion)
@@ -227,6 +231,7 @@ public class Immersives {
                     info.setFakeItem(i, item);
                 }
             })
+            .setConfigScreenInfo(createConfigScreenInfo("enchanting_table", () -> new ItemStack(Items.ENCHANTING_TABLE), ImmersiveMCConfig.useETableImmersion))
             .build();
     public static final BuiltImmersive<?,?> immersiveFurnace = ImmersiveBuilder.create(ImmersiveHandlers.furnaceHandler)
             .setConfigChecker(() -> ActiveConfig.active().useFurnaceImmersion)
@@ -281,6 +286,7 @@ public class Immersives {
                 Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand));
                 return ClientConstants.defaultCooldownTicks;
             })
+            .setConfigScreenInfo(createConfigScreenInfo("furnace", () -> new ItemStack(Items.FURNACE), ImmersiveMCConfig.useFurnaceImmersion))
             .build();
     public static final ImmersiveHitboxes immersiveHitboxes = new ImmersiveHitboxes();
     public static final BuiltImmersive<?,?> immersiveHopper = ImmersiveBuilder.create(ImmersiveHandlers.hopperHandler)
@@ -319,6 +325,7 @@ public class Immersives {
                 Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand));
                 return ClientConstants.defaultCooldownTicks;
             })
+            .setConfigScreenInfo(createConfigScreenInfo("hopper", () -> new ItemStack(Items.HOPPER), ImmersiveMCConfig.useHopperImmersion))
             .build();
     public static final BuiltImmersive<?,?> immersiveJukebox = ImmersiveBuilder.create(ImmersiveHandlers.jukeboxHandler)
             .setConfigChecker(() -> ActiveConfig.active().useJukeboxImmersion)
@@ -329,6 +336,7 @@ public class Immersives {
                 return ClientConstants.defaultCooldownTicks;
             })
             .setVROnly(true)
+            .setConfigScreenInfo(createConfigScreenInfo("jukebox", () -> new ItemStack(Items.JUKEBOX), ImmersiveMCConfig.useJukeboxImmersion))
             .build();
 
     public static final ImmersiveLever immersiveLever = new ImmersiveLever();
@@ -360,6 +368,7 @@ public class Immersives {
                 ChestLikeData extra = (ChestLikeData) info.getExtraData();
                 return slot >= extra.currentRow * 9 && slot < (extra.currentRow + 1) * 9;
             })
+            .setConfigScreenInfo(createConfigScreenInfo("shulker", () -> new ItemStack(Items.SHULKER_BOX), ImmersiveMCConfig.useShulkerImmersion))
             .build();
 
     public static final BuiltImmersive<?,?> immersiveSmithingTable = ImmersiveBuilder.create(ImmersiveHandlers.smithingTableHandler)
@@ -374,6 +383,7 @@ public class Immersives {
                 Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), slot, hand));
                 return ClientConstants.defaultCooldownTicks;
             })
+            .setConfigScreenInfo(createConfigScreenInfo("smithing_table", () -> new ItemStack(Items.SMITHING_TABLE), ImmersiveMCConfig.useSmithingTableImmersion))
             .build();
 
 

@@ -4,11 +4,13 @@ import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
+import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
@@ -24,6 +26,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -229,7 +233,7 @@ public class ImmersiveChest extends AbstractImmersiveV2<ChestInfo, ListOfItemsSt
 
     @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
-        return null;
+        return ClientUtil.createConfigScreenInfo("chest", () -> new ItemStack(Items.CHEST), ImmersiveMCConfig.useChestImmersion);
     }
 
     @Override

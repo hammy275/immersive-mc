@@ -5,10 +5,12 @@ import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.client.immersive.info.HitboxItemPair;
 import com.hammy275.immersivemc.common.config.CommonConstants;
+import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import com.hammy275.immersivemc.common.network.Network;
@@ -26,6 +28,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.phys.AABB;
@@ -170,7 +174,7 @@ public class ImmersiveBeacon extends AbstractImmersiveV2<BeaconInfo, BeaconStora
 
     @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
-        return null; // TODO: Config screen info once that system is up and running
+        return ClientUtil.createConfigScreenInfo("beacon", () -> new ItemStack(Items.BEACON), ImmersiveMCConfig.useBeaconImmersion);
     }
 
     @Override
