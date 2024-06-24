@@ -15,10 +15,10 @@ public class ImmersiveMCClientRegistrationImpl implements ImmersiveMCClientRegis
     public static final ImmersiveMCClientRegistration INSTANCE = new ImmersiveMCClientRegistrationImpl();
 
     @Override
-    public ImmersiveConfigScreenInfo createConfigScreenInfo(String modID, Component optionName, ItemStack optionItem,
+    public ImmersiveConfigScreenInfo createConfigScreenInfo(String modID, String optionTranslation, Supplier<ItemStack> optionItem,
                                                             @Nullable Component optionTooltip, Supplier<Boolean> isEnabledSupplier,
                                                             Consumer<Boolean> setEnabledConsumer) {
-        return new ImmersiveConfigScreenInfoImpl(modID, optionName, optionItem, optionTooltip, isEnabledSupplier, setEnabledConsumer);
+        return new ImmersiveConfigScreenInfoImpl(modID, optionTranslation, optionItem, optionTooltip, isEnabledSupplier, setEnabledConsumer);
     }
 
     @Override

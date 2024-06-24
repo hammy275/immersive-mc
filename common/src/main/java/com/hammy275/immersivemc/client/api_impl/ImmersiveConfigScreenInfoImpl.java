@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public record ImmersiveConfigScreenInfoImpl(String modID, Component optionName, ItemStack optionItem,
+public record ImmersiveConfigScreenInfoImpl(String modID, String optionTranslation, Supplier<ItemStack> optionItem,
                                             @Nullable Component optionTooltip, Supplier<Boolean> isEnabledSupplier,
                                             Consumer<Boolean> setEnabledConsumer) implements ImmersiveConfigScreenInfo {
     @Override
@@ -17,13 +17,13 @@ public record ImmersiveConfigScreenInfoImpl(String modID, Component optionName, 
     }
 
     @Override
-    public Component getOptionName() {
-        return optionName;
+    public String getOptionTranslation() {
+        return optionTranslation;
     }
 
     @Override
     public ItemStack getOptionItem() {
-        return optionItem;
+        return optionItem.get();
     }
 
     @Override

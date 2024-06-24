@@ -1,11 +1,20 @@
 package com.hammy275.immersivemc.client.config.screen;
 
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
+import dev.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 
 public class ImmersivesConfigScreen extends Screen {
 
@@ -43,41 +52,55 @@ public class ImmersivesConfigScreen extends Screen {
     }
 
     protected void initOptionsList() {
+        List<OptionInstance<Boolean>> options = new ArrayList<>();
         if (this.type.isNonVR()) {
-            ScreenUtils.addOption("anvil", ImmersiveMCConfig.useAnvilImmersion, this.list);
-            ScreenUtils.addOption("barrel", ImmersiveMCConfig.useBarrelImmersion, this.list);
-            ScreenUtils.addOption("beacon", ImmersiveMCConfig.useBeaconImmersion, this.list);
-            ScreenUtils.addOption("brewing", ImmersiveMCConfig.useBrewingImmersion, this.list);
-            ScreenUtils.addOption("chest", ImmersiveMCConfig.useChestImmersion, this.list);
-            ScreenUtils.addOption("crafting", ImmersiveMCConfig.useCraftingImmersion, this.list);
-            ScreenUtils.addOptionIfModLoaded("tconstruct", "tinkers_construct_crafting_station", ImmersiveMCConfig.useTinkersConstructCraftingStationImmersion, this.list);
-            ScreenUtils.addOption("enchanting_table", ImmersiveMCConfig.useETableImmersion, this.list);
-            ScreenUtils.addOption("furnace", ImmersiveMCConfig.useFurnaceImmersion, this.list);
-            ScreenUtils.addOption("hopper", ImmersiveMCConfig.useHopperImmersion, this.list);
-            ScreenUtils.addOptionIfModLoaded("ironfurnaces", "iron_furnaces_furnace", ImmersiveMCConfig.useIronFurnacesFurnaceImmersion, this.list);
-            ScreenUtils.addOption("shulker", ImmersiveMCConfig.useShulkerImmersion, this.list);
-            ScreenUtils.addOption("smithing_table", ImmersiveMCConfig.useSmithingTableImmersion, this.list);
+            options.add(ScreenUtils.createOption("barrel", ImmersiveMCConfig.useBarrelImmersion));
+            options.add(ScreenUtils.createOption("beacon", ImmersiveMCConfig.useBeaconImmersion));
+            options.add(ScreenUtils.createOption("brewing", ImmersiveMCConfig.useBrewingImmersion));
+            options.add(ScreenUtils.createOption("chest", ImmersiveMCConfig.useChestImmersion));
+            options.add(ScreenUtils.createOption("crafting", ImmersiveMCConfig.useCraftingImmersion));
+            if (Platform.isModLoaded("tconstruct")) {
+                options.add(ScreenUtils.createOption("tinkers_construct_crafting_station", ImmersiveMCConfig.useTinkersConstructCraftingStationImmersion));
+            }
+            options.add(ScreenUtils.createOption("enchanting_table", ImmersiveMCConfig.useETableImmersion));
+            options.add(ScreenUtils.createOption("furnace", ImmersiveMCConfig.useFurnaceImmersion));
+            options.add(ScreenUtils.createOption("hopper", ImmersiveMCConfig.useHopperImmersion));
+            if (Platform.isModLoaded("ironfurnaces")) {
+                options.add(ScreenUtils.createOption("iron_furnaces_furnace", ImmersiveMCConfig.useIronFurnacesFurnaceImmersion));
+            }
+            options.add(ScreenUtils.createOption("shulker", ImmersiveMCConfig.useShulkerImmersion));
+            options.add(ScreenUtils.createOption("smithing_table", ImmersiveMCConfig.useSmithingTableImmersion));
         }
 
         if (this.type.isVR()) {
-            ScreenUtils.addOption("animals", ImmersiveMCConfig.canFeedAnimals, this.list);
-            ScreenUtils.addOption("armor", ImmersiveMCConfig.useArmorImmersion, this.list);
-            ScreenUtils.addOption("backpack_button", ImmersiveMCConfig.useBackpack, this.list);
-            ScreenUtils.addOption("button", ImmersiveMCConfig.useButton, this.list);
-            ScreenUtils.addOption("campfire", ImmersiveMCConfig.useCampfireImmersion, this.list);
-            ScreenUtils.addOption("cauldron", ImmersiveMCConfig.useCauldronImmersion, this.list);
-            ScreenUtils.addOption("chiseled_bookshelf", ImmersiveMCConfig.useChiseledBookshelfImmersion, this.list);
-            ScreenUtils.addOption("door", ImmersiveMCConfig.useDoorImmersion, this.list);
-            ScreenUtils.addOption("jukebox", ImmersiveMCConfig.useJukeboxImmersion, this.list);
-            ScreenUtils.addOption("lever", ImmersiveMCConfig.useLever, this.list);
-            ScreenUtils.addOption("pet", ImmersiveMCConfig.canPet, this.list);
-            ScreenUtils.addOption("ranged_grab", ImmersiveMCConfig.useRangedGrab, this.list);
-            ScreenUtils.addOption("repeater", ImmersiveMCConfig.useRepeaterImmersion, this.list);
-            ScreenUtils.addOption("shield", ImmersiveMCConfig.immersiveShield, this.list);
-            ScreenUtils.addOption("throw", ImmersiveMCConfig.useThrowing, this.list);
-            ScreenUtils.addOption("written_book", ImmersiveMCConfig.useWrittenBookImmersion, this.list);
+            options.add(ScreenUtils.createOption("animals", ImmersiveMCConfig.canFeedAnimals));
+            options.add(ScreenUtils.createOption("armor", ImmersiveMCConfig.useArmorImmersion));
+            options.add(ScreenUtils.createOption("backpack_button", ImmersiveMCConfig.useBackpack));
+            options.add(ScreenUtils.createOption("button", ImmersiveMCConfig.useButton));
+            options.add(ScreenUtils.createOption("campfire", ImmersiveMCConfig.useCampfireImmersion));
+            options.add(ScreenUtils.createOption("cauldron", ImmersiveMCConfig.useCauldronImmersion));
+            options.add(ScreenUtils.createOption("chiseled_bookshelf", ImmersiveMCConfig.useChiseledBookshelfImmersion));
+            options.add(ScreenUtils.createOption("door", ImmersiveMCConfig.useDoorImmersion));
+            options.add(ScreenUtils.createOption("jukebox", ImmersiveMCConfig.useJukeboxImmersion));
+            options.add(ScreenUtils.createOption("lever", ImmersiveMCConfig.useLever));
+            options.add(ScreenUtils.createOption("pet", ImmersiveMCConfig.canPet));
+            options.add(ScreenUtils.createOption("ranged_grab", ImmersiveMCConfig.useRangedGrab));
+            options.add(ScreenUtils.createOption("repeater", ImmersiveMCConfig.useRepeaterImmersion));
+            options.add(ScreenUtils.createOption("shield", ImmersiveMCConfig.immersiveShield));
+            options.add(ScreenUtils.createOption("throw", ImmersiveMCConfig.useThrowing));
+            options.add(ScreenUtils.createOption("written_book", ImmersiveMCConfig.useWrittenBookImmersion));
         }
 
+        Immersives.IMMERSIVES.stream()
+                .map(Immersive::configScreenInfo)
+                .filter(Objects::nonNull)
+                .map((configInfo) -> ScreenUtils.createOption(configInfo.getOptionTranslation(), configInfo.getOptionTooltip(),
+                        configInfo::isEnabled, configInfo::setEnabled))
+                .forEach(options::add);
+
+        options.stream()
+                .sorted(Comparator.comparing(OptionInstance::toString))
+                .forEach((option) -> this.list.addBig(option));
 
     }
 

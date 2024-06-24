@@ -13,7 +13,7 @@ import java.util.function.Supplier;
  * instead handle configuration screens through some other method, or simply not have any.
  * <br>
  * It's recommended to get an instance of this interface using
- * {@link ImmersiveMCClientRegistration#createConfigScreenInfo(String, Component, ItemStack, Component, Supplier, Consumer)}
+ * {@link ImmersiveMCClientRegistration#createConfigScreenInfo(String, String, Supplier, Component, Supplier, Consumer)}
  * as it's easier to use. If you do implement this interface though, all methods should return the same value every
  * time it is called.
  */
@@ -28,13 +28,13 @@ public interface ImmersiveConfigScreenInfo {
     public String getModID();
 
     /**
-     * Get the Component for the button label, not including the enabled/disabled state.
+     * Get the translation string for the button label, not including the enabled/disabled state.
      * <br>
-     * For example, as of writing, the Furnace Immersive returns a Component that becomes "Use Furnace Immersion" when
-     * the language is set to U.S. English.
-     * @return The Component for the button for this config option.
+     * For example, as of writing, the Furnace Immersive returns "config.immersivemc.furnace", which becomes
+     * "Use Furnace Immersion" when the language is set to U.S. English.
+     * @return The String for a translation key for the title of this option.
      */
-    public Component getOptionName();
+    public String getOptionTranslation();
 
     /**
      * Get an ItemStack representing this config. As of writing, this currently goes unused in ImmersiveMC, but is

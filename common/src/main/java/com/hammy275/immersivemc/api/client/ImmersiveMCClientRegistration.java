@@ -25,15 +25,15 @@ public interface ImmersiveMCClientRegistration {
     /**
      * Creates an {@link ImmersiveConfigScreenInfo} instance. See the aforementioned interface for more information.
      * @param modID The mod ID as described in the javadoc for {@link ImmersiveConfigScreenInfo#getModID()}.
-     * @param optionName The component for the button label as described in the javadoc for {@link ImmersiveConfigScreenInfo#getOptionName()}.
-     * @param optionItem The item representing this Immersive as described in the javadoc for {@link ImmersiveConfigScreenInfo#getOptionItem()}.
+     * @param optionTranslation The translation string for the button label as described in the javadoc for {@link ImmersiveConfigScreenInfo#getOptionTranslation()}.
+     * @param optionItem A supplier for the item representing this Immersive as described in the javadoc for {@link ImmersiveConfigScreenInfo#getOptionItem()}.
      * @param optionTooltip An optional tooltip describing this Immersive and this option as described in the javadoc for {@link ImmersiveConfigScreenInfo#getOptionTooltip()}.
      * @param isEnabledSupplier A supplier that, when called, returns whether this Immersive is enabled. This method should NOT ever provide null as a value.
      * @param setEnabledConsumer A consumer that will be provided a non-null Boolean denoting a new enabled/disabled state for the Immersive.
      * @return An {@link ImmersiveConfigScreenInfo} instance.
      */
-    public ImmersiveConfigScreenInfo createConfigScreenInfo(String modID, Component optionName, ItemStack optionItem,
-                                                            @Nullable Component optionTooltip,
+    public ImmersiveConfigScreenInfo createConfigScreenInfo(String modID, String optionTranslation,
+                                                            Supplier<ItemStack> optionItem, @Nullable Component optionTooltip,
                                                             Supplier<Boolean> isEnabledSupplier,
                                                             Consumer<Boolean> setEnabledConsumer);
 

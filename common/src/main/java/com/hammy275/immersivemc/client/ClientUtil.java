@@ -1,5 +1,8 @@
 package com.hammy275.immersivemc.client;
 
+import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
+import com.hammy275.immersivemc.api.client.ImmersiveMCClientRegistration;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.Immersives;
@@ -16,15 +19,30 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeConfigSpec;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 public class ClientUtil {
 
 
     public static int immersiveLeftClickCooldown = 0;
+
+    public static ImmersiveConfigScreenInfo createConfigScreenInfo(String keyName, Supplier<ItemStack> optionItem,
+                                                                   ForgeConfigSpec.BooleanValue configEntry) {
+        return ImmersiveMCClientRegistration.instance().createConfigScreenInfo(ImmersiveMC.MOD_ID,
+                "config." + ImmersiveMC.MOD_ID + "." + keyName,
+                optionItem, Component.translatable("config." + ImmersiveMC.MOD_ID + "." + keyName + ".desc"),
+                configEntry, (newVal) -> {
+                    configEntry.set(newVal);
+                    ActiveConfig.FILE.loadFromFile();
+                });
+    }
 
     /**
      * Gets player position while accounting for partial ticks (getFrameTime())
