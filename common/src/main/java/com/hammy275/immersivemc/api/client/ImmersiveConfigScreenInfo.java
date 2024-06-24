@@ -4,10 +4,18 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 /**
- * An object that contains info for placing information on ImmersiveMC's config screen. You may implement this (and
- * return it from an Immersive) if you want things to be placed there, or you may choose not to, and instead handle
- * configuration screens through some other method, or simply not have any.
+ * An object that contains info for placing information on ImmersiveMC's config screen. You may return this from an
+ * Immersive if you want config buttons to be placed on ImmersiveMC's config screen, or you may choose not to, and
+ * instead handle configuration screens through some other method, or simply not have any.
+ * <br>
+ * It's recommended to get an instance of this interface using
+ * {@link ImmersiveMCClientRegistration#createConfigScreenInfo(String, Component, ItemStack, Component, Supplier, Consumer)}
+ * as it's easier to use. If you do implement this interface though, all methods should return the same value every
+ * time it is called.
  */
 public interface ImmersiveConfigScreenInfo {
 
