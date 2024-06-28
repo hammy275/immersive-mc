@@ -42,7 +42,7 @@ public interface ImmersiveMCClientRegistration {
     /**
      * Registers an object which, at some point, ImmersiveMC will call to register your {@link Immersives}s.
      * The time at which registration occurs is only guaranteed to be some time after mods are initially constructed, so
-     * these should register as early as possible, and be prepared for a lack of registry availability.
+     * handlers should be added here as early as possible, and be prepared for a lack of registry availability.
      * @param handler Your object that will register Immersives when called.
      * @throws IllegalStateException This method was called after registration.
      */
