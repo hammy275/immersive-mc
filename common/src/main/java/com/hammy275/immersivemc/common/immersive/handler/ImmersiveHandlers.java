@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
+import com.hammy275.immersivemc.common.api_impl.ImmersiveMCRegistrationImpl;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.CraftingTableStorage;
@@ -37,21 +38,10 @@ public class ImmersiveHandlers {
     public static final ImmersiveHandler<?> tcCraftingStationHandler = new TCCraftingStationHandler();
 
     static {
-        HANDLERS.add(anvilHandler);
-        HANDLERS.add(barrelHandler);
-        HANDLERS.add(beaconHandler);
-        HANDLERS.add(brewingStandHandler);
-        HANDLERS.add(chestHandler);
-        HANDLERS.add(chiseledBookshelfHandler);
-        HANDLERS.add(craftingHandler);
-        HANDLERS.add(enchantingTableHandler);
-        HANDLERS.add(furnaceHandler);
-        HANDLERS.add(hopperHandler);
-        HANDLERS.add(ironFurnacesFurnaceHandler);
-        HANDLERS.add(jukeboxHandler);
-        HANDLERS.add(leverHandler);
-        HANDLERS.add(shulkerBoxHandler);
-        HANDLERS.add(smithingTableHandler);
-        HANDLERS.add(tcCraftingStationHandler);
+        ImmersiveMCRegistrationImpl.doImmersiveRegistration((handler) -> {
+            if (!HANDLERS.contains(handler)) {
+                HANDLERS.add(handler);
+            }
+        });
     }
 }

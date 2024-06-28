@@ -1,6 +1,8 @@
 package com.hammy275.immersivemc;
 
+import com.hammy275.immersivemc.api.common.ImmersiveMCRegistration;
 import com.hammy275.immersivemc.client.subscribe.ClientLogicSubscriber;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.*;
 import com.hammy275.immersivemc.common.subscribe.CommonSubscriber;
@@ -49,10 +51,20 @@ public class ImmersiveMC {
         if (Platform.getEnvironment() == Env.CLIENT) {
             ImmersiveMCClient.init();
         }
-        serverSetup();
+        networkSetup();
+        ImmersiveMCRegistration.instance().addImmersiveHandlerRegistrationHandler((event) -> {
+            event.register(
+                    ImmersiveHandlers.anvilHandler, ImmersiveHandlers.barrelHandler, ImmersiveHandlers.beaconHandler,
+                    ImmersiveHandlers.brewingStandHandler, ImmersiveHandlers.chestHandler, ImmersiveHandlers.chiseledBookshelfHandler,
+                    ImmersiveHandlers.craftingHandler, ImmersiveHandlers.enchantingTableHandler, ImmersiveHandlers.furnaceHandler,
+                    ImmersiveHandlers.hopperHandler, ImmersiveHandlers.ironFurnacesFurnaceHandler, ImmersiveHandlers.jukeboxHandler,
+                    ImmersiveHandlers.leverHandler, ImmersiveHandlers.repeaterHandler, ImmersiveHandlers.shulkerBoxHandler,
+                    ImmersiveHandlers.smithingTableHandler, ImmersiveHandlers.tcCraftingStationHandler
+            );
+        });
     }
 
-    protected static void serverSetup() {
+    protected static void networkSetup() {
         Network.INSTANCE.register(SwapPacket.class, SwapPacket::encode,
                 SwapPacket::decode, SwapPacket::handle);
         Network.INSTANCE.register(FetchInventoryPacket.class, FetchInventoryPacket::encode,

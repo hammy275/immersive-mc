@@ -184,7 +184,7 @@ public interface ImmersiveBuilder<E, S extends NetworkStorage> {
     public <F, T extends NetworkStorage> ImmersiveBuilder<F, T> copy(ImmersiveHandler<T> newHandler, Class<F> newExtraInfoDataClass);
 
     /**
-     * Builds and AUTOMATICALLY REGISTERS this Immersive.
+     * Builds this Immersive.
      * @return The built Immersive from this builder.
      */
     public BuiltImmersive<E, S> build();

@@ -3,6 +3,8 @@ package com.hammy275.immersivemc.api.common;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveMCRegistrationImpl;
 
+import java.util.function.Consumer;
+
 /**
  * Contains methods for registering Immersives with ImmersiveMC.
  */
@@ -17,10 +19,12 @@ public interface ImmersiveMCRegistration {
     }
 
     /**
-     * Registers a handler for handling (block) Immersives.
-     * @param handler The handler to register.
-     * @throws IllegalArgumentException If the handler is already registered.
+     * Registers an object which, at some point, ImmersiveMC will call to register your {@link ImmersiveHandler}s.
+     * The time at which registration occurs is only guaranteed to be some time after mods are initially constructed, so
+     * these should register as early as possible, and be prepared for a lack of registry availability.
+     * @param handler Your object that will register ImmersiveHandlers when called.
+     * @throws IllegalStateException This method was called after registration.
      */
-    public void registerImmersiveHandler(ImmersiveHandler<?> handler) throws IllegalArgumentException;
+    public void addImmersiveHandlerRegistrationHandler(Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler<?>>> handler) throws IllegalStateException;
     
 }

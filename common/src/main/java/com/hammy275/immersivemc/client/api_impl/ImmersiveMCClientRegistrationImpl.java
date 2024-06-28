@@ -3,16 +3,33 @@ package com.hammy275.immersivemc.client.api_impl;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveMCClientRegistration;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.common.ImmersiveMCRegistrationEvent;
+import com.hammy275.immersivemc.common.api_impl.ImmersiveMCRegistrationEventImpl;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ImmersiveMCClientRegistrationImpl implements ImmersiveMCClientRegistration {
 
     public static final ImmersiveMCClientRegistration INSTANCE = new ImmersiveMCClientRegistrationImpl();
+    private static final Set<Consumer<ImmersiveMCRegistrationEvent<Immersive<?, ?>>>> HANDLERS = new HashSet<>();
+    private static boolean didRegistration = false;
+
+    public static void doImmersiveRegistration(Consumer<Immersive<?, ?>> immersiveConsumer) {
+        if (didRegistration) {
+            throw new IllegalStateException("Already did Immersive registration!");
+        }
+        ImmersiveMCRegistrationEvent<Immersive<?, ?>> event = new ImmersiveMCRegistrationEventImpl<>(immersiveConsumer);
+        for (Consumer<ImmersiveMCRegistrationEvent<Immersive<?, ?>>> handler : HANDLERS) {
+            handler.accept(event);
+        }
+        didRegistration = true;
+    }
 
     @Override
     public ImmersiveConfigScreenInfo createConfigScreenInfo(String modID, String optionTranslation, Supplier<ItemStack> optionItem,
@@ -22,7 +39,10 @@ public class ImmersiveMCClientRegistrationImpl implements ImmersiveMCClientRegis
     }
 
     @Override
-    public void registerImmersive(Immersive<?, ?> immersive) throws IllegalArgumentException {
-
+    public void addImmersiveRegistrationHandler(Consumer<ImmersiveMCRegistrationEvent<Immersive<?, ?>>> handler) throws IllegalStateException {
+        if (didRegistration) {
+            throw new IllegalStateException("Can't add a registration handler for Immersives after Immersives have been registered.");
+        }
+        HANDLERS.add(handler);
     }
 }

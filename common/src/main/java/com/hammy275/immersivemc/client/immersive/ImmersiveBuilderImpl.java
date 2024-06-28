@@ -249,9 +249,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     }
 
     public BuiltImmersiveImpl<E, S> build() {
-        BuiltImmersiveImpl<E, S> builtImmersive = new BuiltImmersiveImpl<>(this);
-        Immersives.IMMERSIVES.add(builtImmersive);
-        return builtImmersive;
+        return new BuiltImmersiveImpl<>(this);
     }
 
     /**

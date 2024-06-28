@@ -1,5 +1,7 @@
 package com.hammy275.immersivemc;
 
+import com.hammy275.immersivemc.api.client.ImmersiveMCClientRegistration;
+import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.model.*;
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
@@ -26,5 +28,14 @@ public class ImmersiveMCClient {
         EntityModelLayerRegistry.register(BackpackModel.LAYER_LOCATION, BackpackModel::createBodyLayer);
         EntityModelLayerRegistry.register(BackpackBundleModel.LAYER_LOCATION, BackpackBundleModel::createBodyLayer);
         EntityModelLayerRegistry.register(Cube1x1.LAYER_LOCATION, Cube1x1::createBodyLayer);
+
+        ImmersiveMCClientRegistration.instance().addImmersiveRegistrationHandler((event) -> {
+            event.register(Immersives.immersiveAnvil, Immersives.immersiveBarrel, Immersives.immersiveBeacon,
+                    Immersives.immersiveBrewing, Immersives.immersiveChest, Immersives.immersiveChiseledBookshelf,
+                    Immersives.immersiveCrafting, Immersives.immersiveETable, Immersives.immersiveFurnace,
+                    Immersives.immersiveHopper, Immersives.immersiveIronFurnacesFurnace, Immersives.immersiveJukebox,
+                    Immersives.immersiveLever, Immersives.immersiveRepeater, Immersives.immersiveShulker,
+                    Immersives.immersiveSmithingTable, Immersives.immersiveTinkersConstructCraftingStation);
+        });
     }
 }

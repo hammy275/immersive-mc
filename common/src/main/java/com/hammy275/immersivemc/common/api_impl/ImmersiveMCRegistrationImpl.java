@@ -1,18 +1,35 @@
 package com.hammy275.immersivemc.common.api_impl;
 
 import com.hammy275.immersivemc.api.common.ImmersiveMCRegistration;
+import com.hammy275.immersivemc.api.common.ImmersiveMCRegistrationEvent;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Consumer;
 
 public class ImmersiveMCRegistrationImpl implements ImmersiveMCRegistration {
 
     public static final ImmersiveMCRegistration INSTANCE = new ImmersiveMCRegistrationImpl();
+    private static final Set<Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler<?>>>> HANDLERS = new HashSet<>();
+    private static boolean didRegistration = false;
+
+    public static void doImmersiveRegistration(Consumer<ImmersiveHandler<?>> immersiveHandlerConsumer) {
+        if (didRegistration) {
+            throw new IllegalStateException("Already did ImmersiveHandler registration!");
+        }
+        ImmersiveMCRegistrationEvent<ImmersiveHandler<?>> event = new ImmersiveMCRegistrationEventImpl<>(immersiveHandlerConsumer);
+        for (Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler<?>>> handler : HANDLERS) {
+            handler.accept(event);
+        }
+        didRegistration = true;
+    }
 
     @Override
-    public void registerImmersiveHandler(ImmersiveHandler<?> handler) throws IllegalArgumentException {
-        if (ImmersiveHandlers.HANDLERS.contains(handler)) {
-            throw new IllegalArgumentException("Handler %s already registered.".formatted(handler.toString()));
+    public void addImmersiveHandlerRegistrationHandler(Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler<?>>> handler) throws IllegalStateException {
+        if (didRegistration) {
+            throw new IllegalStateException("Can't add a registration handler for ImmersiveHandlers after Immersives have been registered.");
         }
-        ImmersiveHandlers.HANDLERS.add(0, handler);
+        HANDLERS.add(handler);
     }
 }

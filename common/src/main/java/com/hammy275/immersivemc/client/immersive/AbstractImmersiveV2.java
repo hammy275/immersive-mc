@@ -12,7 +12,7 @@ public abstract class AbstractImmersiveV2<I extends AbstractImmersiveInfoV2, S e
         implements Immersive<I, S> {
 
     public AbstractImmersiveV2() {
-        Immersives.IMMERSIVES.add(this);
+
     }
 
     protected final List<I> infos = new ArrayList<>();

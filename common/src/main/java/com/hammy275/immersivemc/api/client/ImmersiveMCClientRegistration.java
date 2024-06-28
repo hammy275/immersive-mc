@@ -1,7 +1,9 @@
 package com.hammy275.immersivemc.api.client;
 
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.common.ImmersiveMCRegistrationEvent;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveMCClientRegistrationImpl;
+import com.hammy275.immersivemc.client.immersive.Immersives;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -38,10 +40,12 @@ public interface ImmersiveMCClientRegistration {
                                                             Consumer<Boolean> setEnabledConsumer);
 
     /**
-     * Register a block Immersive.
-     * @param immersive Immersive to register.
-     * @throws IllegalArgumentException If the Immersive is already registered.
+     * Registers an object which, at some point, ImmersiveMC will call to register your {@link Immersives}s.
+     * The time at which registration occurs is only guaranteed to be some time after mods are initially constructed, so
+     * these should register as early as possible, and be prepared for a lack of registry availability.
+     * @param handler Your object that will register Immersives when called.
+     * @throws IllegalStateException This method was called after registration.
      */
-    public void registerImmersive(Immersive<?, ?> immersive) throws IllegalArgumentException;
+    public void addImmersiveRegistrationHandler(Consumer<ImmersiveMCRegistrationEvent<Immersive<?, ?>>> handler) throws IllegalStateException;
 
 }
