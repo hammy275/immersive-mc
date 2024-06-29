@@ -4,6 +4,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -37,12 +38,12 @@ public interface ImmersiveConfigScreenInfo {
     public String getOptionTranslation();
 
     /**
-     * Get an ItemStack representing this config. As of writing, this currently goes unused in ImmersiveMC, but is
-     * planned to be used in the future. If there is no good item representing the Immersive, you may return
-     * an empty ItemStack here.
-     * @return An ItemStack that best represents this Immersive, or an empty ItemStack if none such ItemStack exists.
+     * Gets the ItemStacks representing this config. As of writing, this currently goes unused in ImmersiveMC, but is
+     * planned to be used in the future. If there are no good items representing the Immersive, you may return
+     * an empty set here.
+     * @return A set of ItemStacks that best represents this Immersive, or an empty set if none such ItemStack exists.
      */
-    public ItemStack getOptionItem();
+    public Set<ItemStack> getOptionItems();
 
     /**
      * Get the Component representing the description of this option.

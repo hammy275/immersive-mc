@@ -32,9 +32,15 @@ public class ImmersiveMCClientRegistrationImpl implements ImmersiveMCClientRegis
     }
 
     @Override
-    public ImmersiveConfigScreenInfo createConfigScreenInfo(String modID, String optionTranslation, Supplier<ItemStack> optionItem,
-                                                            @Nullable Component optionTooltip, Supplier<Boolean> isEnabledSupplier,
-                                                            Consumer<Boolean> setEnabledConsumer) {
+    public ImmersiveConfigScreenInfo createConfigScreenInfo(String modID, String optionTranslation, Supplier<ItemStack> optionItem, @Nullable Component optionTooltip, Supplier<Boolean> isEnabledSupplier, Consumer<Boolean> setEnabledConsumer) {
+        return createConfigScreenInfoMultipleItems(modID, optionTranslation, () -> Set.of(optionItem.get()),
+                optionTooltip, isEnabledSupplier, setEnabledConsumer);
+    }
+
+    @Override
+    public ImmersiveConfigScreenInfo createConfigScreenInfoMultipleItems(String modID, String optionTranslation, Supplier<Set<ItemStack>> optionItem,
+                                                                         @Nullable Component optionTooltip, Supplier<Boolean> isEnabledSupplier,
+                                                                         Consumer<Boolean> setEnabledConsumer) {
         return new ImmersiveConfigScreenInfoImpl(modID, optionTranslation, optionItem, optionTooltip, isEnabledSupplier, setEnabledConsumer);
     }
 

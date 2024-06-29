@@ -5,10 +5,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public record ImmersiveConfigScreenInfoImpl(String modID, String optionTranslation, Supplier<ItemStack> optionItem,
+public record ImmersiveConfigScreenInfoImpl(String modID, String optionTranslation, Supplier<Set<ItemStack>> optionItem,
                                             @Nullable Component optionTooltip, Supplier<Boolean> isEnabledSupplier,
                                             Consumer<Boolean> setEnabledConsumer) implements ImmersiveConfigScreenInfo {
     @Override
@@ -22,7 +23,7 @@ public record ImmersiveConfigScreenInfoImpl(String modID, String optionTranslati
     }
 
     @Override
-    public ItemStack getOptionItem() {
+    public Set<ItemStack> getOptionItems() {
         return optionItem.get();
     }
 
