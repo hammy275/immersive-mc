@@ -1,8 +1,8 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -29,7 +29,7 @@ public class BrewingStandHandler extends ContainerHandler<ListOfItemsStorage> {
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
         Container stand = (Container) player.level().getBlockEntity(pos);
         ItemStack standItem = stand.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand).copy();
@@ -40,7 +40,7 @@ public class BrewingStandHandler extends ContainerHandler<ListOfItemsStorage> {
             stand.setItem(slot, playerItem);
         } else { // Ingredient and Fuel
             if (!stand.canPlaceItem(slot, playerItem) && playerItem != ItemStack.EMPTY) return;
-            Swap.SwapResult result = Swap.getSwap(playerItem, standItem, mode);
+            Swap.SwapResult result = Swap.getSwap(playerItem, standItem, amount);
             Swap.givePlayerItemSwap(result.toHand, playerItem, player, hand);
             stand.setItem(slot, result.toOther);
             Util.placeLeftovers(player, result.leftovers);

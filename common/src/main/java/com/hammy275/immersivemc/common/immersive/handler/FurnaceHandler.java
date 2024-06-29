@@ -1,8 +1,8 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -29,13 +29,13 @@ public class FurnaceHandler extends ContainerHandler<ListOfItemsStorage> {
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
         WorldlyContainer furnace = (AbstractFurnaceBlockEntity) player.level().getBlockEntity(pos);
         ItemStack furnaceItem = furnace.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand).copy();
         if (slot != 2) {
             if (slot != 1 || furnace.canPlaceItem(1, playerItem) || playerItem.isEmpty()) {
-                Swap.SwapResult result = Swap.getSwap(playerItem, furnaceItem, mode);
+                Swap.SwapResult result = Swap.getSwap(playerItem, furnaceItem, amount);
                 Swap.givePlayerItemSwap(result.toHand, playerItem, player, hand);
                 furnace.setItem(slot, result.toOther);
                 Util.placeLeftovers(player, result.leftovers);

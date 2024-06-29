@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.api.common.immersive;
 
-import com.hammy275.immersivemc.common.config.PlacementMode;
+import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,13 +33,16 @@ public interface ImmersiveHandler<S extends NetworkStorage> {
 
     /**
      * Swaps an item from a player's hand into this immersive (and/or vice-versa).
+     *
      * @param slot Slot being swapped with in this immersive.
      * @param hand Player's hand being swapped with.
      * @param pos Position of block being swapped with.
      * @param player Player who is swapping.
-     * @param mode The placement mode being swapped with (how many items are being swapped).
+     * @param amount An object representing the amount of items to swap. Use
+     *               {@link ItemSwapAmount#getNumItemsToSwap(int)}, passing in the item stack size of the item in the
+     *               player's hand to get the amount of items to swap.
      */
-    void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode);
+    void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount);
 
     /**
      * Function to determine whether the block has changed its contents to sync to the client since its last sync.

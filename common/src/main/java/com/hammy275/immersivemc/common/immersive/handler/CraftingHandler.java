@@ -1,8 +1,8 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.CraftingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.api.server.WorldStorage;
@@ -29,11 +29,11 @@ public class CraftingHandler extends ItemWorldStorageHandler<CraftingTableStorag
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
         CraftingTableStorage storage = (CraftingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
         if (slot < 9) {
             storage.placeItem(player, hand,
-                    Swap.getPlaceAmount(player.getItemInHand(hand), mode),
+                    amount.getNumItemsToSwap(player.getItemInHand(hand).getCount()),
                     slot);
             storage.setItem(9, Swap.getRecipeOutput(player, storage.getItemsRaw()));
         } else {

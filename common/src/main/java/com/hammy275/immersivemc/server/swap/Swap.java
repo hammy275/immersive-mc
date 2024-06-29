@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.server.swap;
 
+import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.util.NullContainer;
@@ -75,7 +76,7 @@ public class Swap {
     }
 
     public static void handleBackpackCraftingSwap(int slot, InteractionHand hand, List<ItemStack> items,
-                                                  ServerPlayer player, PlacementMode mode) {
+                                                  ServerPlayer player, ItemSwapAmount amount) {
         ItemStack[] itemArray = new ItemStack[5];
         for (int i = 0; i <= 4; i++) {
             itemArray[i] = items.get(i);
@@ -83,7 +84,7 @@ public class Swap {
         if (slot < 4) {
             ItemStack playerItem = player.getItemInHand(hand);
             ItemStack tableItem = itemArray[slot];
-            SwapResult result = getSwap(playerItem, tableItem, mode);
+            SwapResult result = getSwap(playerItem, tableItem, amount);
             itemArray[slot] = result.toOther;
             givePlayerItemSwap(result.toHand, playerItem, player, hand);
             Util.placeLeftovers(player, result.leftovers);
@@ -284,15 +285,19 @@ public class Swap {
     }
 
     public static int getPlaceAmount(ItemStack handIn, PlacementMode mode) {
+        return getPlaceAmount(handIn.getCount(), mode);
+    }
+
+    public static int getPlaceAmount(int handInSize, PlacementMode mode) {
         switch (mode) {
             case PLACE_ONE:
                 return 1;
             case PLACE_QUARTER:
-                return (int) Math.max(handIn.getCount() / 4d, 1);
+                return (int) Math.max(handInSize / 4d, 1);
             case PLACE_HALF:
-                return (int) Math.max(handIn.getCount() / 2d, 1);
+                return (int) Math.max(handInSize / 2d, 1);
             case PLACE_ALL:
-                return handIn.getCount();
+                return handInSize;
             default:
                 throw new IllegalArgumentException("Unhandled placement mode " + mode);
         }
@@ -307,12 +312,12 @@ public class Swap {
      *
      * @param handIn The stack in the player's hand. This is what's subtracted from.
      * @param otherIn The other stack. This is what's being placed into.
-     * @param mode The placement mode as configured by the player.
+     * @param amount Object representing the amount to swap.
      * @return A SwapResult representing the new items to give to the player, the object, and any leftovers to
      * give to the player some other way (or to alert to failing the swap entirely).
      */
-    public static SwapResult getSwap(ItemStack handIn, ItemStack otherIn, PlacementMode mode) {
-        int toPlace = getPlaceAmount(handIn, mode);
+    public static SwapResult getSwap(ItemStack handIn, ItemStack otherIn, ItemSwapAmount amount) {
+        int toPlace = amount.getNumItemsToSwap(handIn.getCount());
 
         // Swap toPlace from handIn to otherIn
         ItemStack toHand;

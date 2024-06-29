@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.api.common.immersive;
 
-import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.api.server.WorldStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -18,7 +17,7 @@ import net.minecraft.world.InteractionHand;
  *     instances (usually by calling
  *     {@link com.hammy275.immersivemc.api.server.WorldStorages#getOrCreate(BlockPos, ServerLevel)} in
  *     {@link ImmersiveHandler#makeInventoryContents(ServerPlayer, BlockPos)} and/or
- *     {@link ImmersiveHandler#swap(int, InteractionHand, BlockPos, ServerPlayer, PlacementMode)} and by
+ *     {@link ImmersiveHandler#swap(int, InteractionHand, BlockPos, ServerPlayer, com.hammy275.immersivemc.api.server.ItemSwapAmount)} and by
  *     calling {@link com.hammy275.immersivemc.api.server.WorldStorages#remove(BlockPos, ServerLevel)} in
  *     {@link ImmersiveHandler#onStopTracking(ServerPlayer, BlockPos)}.</li>
  * </ul>

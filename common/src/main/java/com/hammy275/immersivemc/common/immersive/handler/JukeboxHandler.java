@@ -2,9 +2,9 @@ package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
-import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import net.minecraft.core.BlockPos;
@@ -30,7 +30,7 @@ public class JukeboxHandler implements ImmersiveHandler<NullStorage> {
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
         if (player.level().getBlockEntity(pos) instanceof JukeboxBlockEntity jukebox) {
             ItemStack playerItem = player.getItemInHand(hand);
             if (jukebox.getTheItem().isEmpty() &&

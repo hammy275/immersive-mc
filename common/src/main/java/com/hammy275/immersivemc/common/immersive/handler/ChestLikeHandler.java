@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
+import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.common.compat.Lootr;
-import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
@@ -52,7 +52,7 @@ public abstract class ChestLikeHandler extends ContainerHandler<ListOfItemsStora
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
         Container container = (Container) player.level().getBlockEntity(pos);
         Container lootrInv = Lootr.lootrImpl.getContainer(player, pos);
         if (lootrInv != null) {

@@ -1,9 +1,9 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
-import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
@@ -32,10 +32,10 @@ public class AnvilHandler extends ItemWorldStorageHandler<AnvilStorage> {
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
         AnvilStorage storage = (AnvilStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
         if (slot != 2) {
-            storage.placeItem(player, hand, Swap.getPlaceAmount(player.getItemInHand(hand), mode), slot);
+            storage.placeItem(player, hand, amount.getNumItemsToSwap(player.getItemInHand(hand).getCount()), slot);
             storage.setItem(2, ItemStack.EMPTY);
             storage.xpLevels = 0;
             if (!storage.getItem(0).isEmpty() && !storage.getItem(1).isEmpty()) {

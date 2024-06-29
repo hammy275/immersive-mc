@@ -1,7 +1,6 @@
 package com.hammy275.immersivemc.api.common;
 
 import com.hammy275.immersivemc.common.api_impl.ImmersiveLogicHelpersImpl;
-import com.hammy275.immersivemc.common.config.PlacementMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,7 +34,7 @@ public interface ImmersiveLogicHelpers {
 
     /**
      * Sends the packet to the server telling it to run
-     * {@link com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler#swap(int, InteractionHand, BlockPos, ServerPlayer, PlacementMode)}
+     * {@link com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler#swap(int, InteractionHand, BlockPos, ServerPlayer, com.hammy275.immersivemc.api.server.ItemSwapAmount)}
      * for the provided block at the given position. You usually should call this when a hitbox is right-clicked in your
      * Immersive.
      * @param pos The position of the block that a swap is being performed at.
