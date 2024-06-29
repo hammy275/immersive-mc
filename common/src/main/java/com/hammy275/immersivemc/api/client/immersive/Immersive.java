@@ -139,7 +139,8 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
     public void processStorageFromNetwork(I info, S storage);
 
     /**
-     * @return Whether this Immersive should only exist for VR users.
+     * @return Whether this Immersive should only exist for VR users. The same value should always be returned by this
+     *         method.
      */
     public boolean isVROnly();
 

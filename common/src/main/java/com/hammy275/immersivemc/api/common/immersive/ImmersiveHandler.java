@@ -70,12 +70,13 @@ public interface ImmersiveHandler<S extends NetworkStorage> {
     /**
      * Whether blocks matching this Immersive should be initiated by the client. If this is true, the server should
      * not send any data to the client about this Immersive.
-     * @return Whether this immersive should have tracking initiated by the client.
+     * @return Whether this immersive should have tracking initiated by the client. The same value should always be
+     *         returned by this method.
      */
     public boolean clientAuthoritative();
 
     /**
-     * @return A unique ID to identify this handler.
+     * @return A unique ID to identify this handler. The same value should always be returned by this method.
      */
     ResourceLocation getID();
 

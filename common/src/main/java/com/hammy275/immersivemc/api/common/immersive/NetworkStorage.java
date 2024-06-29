@@ -8,7 +8,15 @@ import net.minecraft.network.FriendlyByteBuf;
  */
 public interface NetworkStorage {
 
+    /**
+     * Encode this storage into a buffer.
+     * @param buffer Buffer to encode storage into.
+     */
     void encode(FriendlyByteBuf buffer);
 
+    /**
+     * Decode the buffer into this object.
+     * @param buffer Buffer to decode from.
+     */
     void decode(FriendlyByteBuf buffer);
 }
