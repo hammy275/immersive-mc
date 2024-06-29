@@ -35,10 +35,10 @@ public interface ImmersiveMCClientRegistration {
      * @param setEnabledConsumer A consumer that will be provided a non-null Boolean denoting a new enabled/disabled state for the Immersive.
      * @return An {@link ImmersiveConfigScreenInfo} instance.
      */
-    public ImmersiveConfigScreenInfo createConfigScreenInfo(String modID, String optionTranslation,
-                                                            Supplier<ItemStack> optionItem, @Nullable Component optionTooltip,
-                                                            Supplier<Boolean> isEnabledSupplier,
-                                                            Consumer<Boolean> setEnabledConsumer);
+    public ImmersiveConfigScreenInfo createConfigScreenInfoOneItem(String modID, String optionTranslation,
+                                                                   Supplier<ItemStack> optionItem, @Nullable Component optionTooltip,
+                                                                   Supplier<Boolean> isEnabledSupplier,
+                                                                   Consumer<Boolean> setEnabledConsumer);
 
     /**
      * Creates an {@link ImmersiveConfigScreenInfo} instance. See the aforementioned interface for more information.

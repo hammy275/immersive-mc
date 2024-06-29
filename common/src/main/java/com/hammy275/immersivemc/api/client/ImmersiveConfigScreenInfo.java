@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  * instead handle configuration screens through some other method, or simply not have any.
  * <br>
  * It's recommended to get an instance of this interface using
- * {@link ImmersiveMCClientRegistration#createConfigScreenInfo(String, String, Supplier, Component, Supplier, Consumer)}
+ * {@link ImmersiveMCClientRegistration#createConfigScreenInfoOneItem(String, String, Supplier, Component, Supplier, Consumer)}
  * as it's easier to use. If you do implement this interface though, all methods should return the same value every
  * time it is called.
  */

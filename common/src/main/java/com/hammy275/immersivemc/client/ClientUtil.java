@@ -35,7 +35,7 @@ public class ClientUtil {
 
     public static ImmersiveConfigScreenInfo createConfigScreenInfo(String keyName, Supplier<ItemStack> optionItem,
                                                                    ForgeConfigSpec.BooleanValue configEntry) {
-        return ImmersiveMCClientRegistration.instance().createConfigScreenInfo(ImmersiveMC.MOD_ID,
+        return ImmersiveMCClientRegistration.instance().createConfigScreenInfoOneItem(ImmersiveMC.MOD_ID,
                 "config." + ImmersiveMC.MOD_ID + "." + keyName,
                 optionItem, Component.translatable("config." + ImmersiveMC.MOD_ID + "." + keyName + ".desc"),
                 configEntry, (newVal) -> {
