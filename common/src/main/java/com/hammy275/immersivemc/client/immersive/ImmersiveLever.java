@@ -30,7 +30,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-public class ImmersiveLever extends AbstractImmersiveV2<LeverInfo, NullStorage> {
+public class ImmersiveLever extends AbstractImmersive<LeverInfo, NullStorage> {
     public ImmersiveLever() {
     }
 

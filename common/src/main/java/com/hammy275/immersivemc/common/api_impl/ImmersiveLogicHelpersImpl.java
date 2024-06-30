@@ -1,13 +1,10 @@
 package com.hammy275.immersivemc.common.api_impl;
 
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
-import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
-import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 public class ImmersiveLogicHelpersImpl implements ImmersiveLogicHelpers {
 
@@ -15,11 +12,14 @@ public class ImmersiveLogicHelpersImpl implements ImmersiveLogicHelpers {
 
     @Override
     public Direction getHorizontalBlockForward(Player player, BlockPos blockPos) {
-        return AbstractImmersive.getForwardFromPlayer(player, blockPos);
-    }
-
-    @Override
-    public void sendSwapPacket(BlockPos pos, int slot, InteractionHand hand) {
-        Network.INSTANCE.sendToServer(new SwapPacket(pos, slot, hand));
+        Vec3 pos = Vec3.atBottomCenterOf(blockPos);
+        Vec3 playerPos = player.position();
+        Vec3 diff = playerPos.subtract(pos);
+        Direction.Axis axis = Math.abs(diff.x) > Math.abs(diff.z) ? Direction.Axis.X : Direction.Axis.Z;
+        if (axis == Direction.Axis.X) {
+            return diff.x < 0 ? Direction.WEST : Direction.EAST;
+        } else {
+            return diff.z < 0 ? Direction.NORTH : Direction.SOUTH;
+        }
     }
 }

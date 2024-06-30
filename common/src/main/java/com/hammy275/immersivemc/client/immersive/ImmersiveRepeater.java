@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class ImmersiveRepeater extends AbstractImmersiveV2<RepeaterInfo, NullStorage> {
+public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo, NullStorage> {
 
     @Override
     public boolean isVROnly() {
@@ -64,7 +64,7 @@ public class ImmersiveRepeater extends AbstractImmersiveV2<RepeaterInfo, NullSto
         Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
         Direction forwardDir = facing.getOpposite();
         Vec3 forward = Vec3.atLowerCornerOf(forwardDir.getNormal());
-        Vec3 centerPos = AbstractImmersive.getTopCenterOfBlock(info.getBlockPosition()).add(0, -0.675, 0);
+        Vec3 centerPos = Vec3.upFromBottomCenterOf(info.getBlockPosition(), 1).add(0, -0.675, 0);
 
         info.getAllHitboxes().get(0).box = AABB.ofSize(centerPos.add(forward.multiply(1d/16d, 0, 1d/16d)),
                 1f/7f, 1f/7f, 1f/7f).inflate(0, 0.2, 0);

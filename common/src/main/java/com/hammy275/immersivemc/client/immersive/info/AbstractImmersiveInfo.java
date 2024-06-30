@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
-import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
@@ -12,7 +12,7 @@ public abstract class AbstractImmersiveInfo {
     public int ticksActive = 0;
     public boolean initCompleted = false;
     protected BoundingBox[] inputHitboxes = null;
-    public int light = AbstractImmersive.maxLight;
+    public int light = ClientUtil.maxLight;
     public int slotHovered = -1;
     public int slotHovered2 = -1; // Only used in VR for secondary hand slot hovering.
     public int triggerHitboxSlotHovered = -1;

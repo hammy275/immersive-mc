@@ -2,14 +2,22 @@ package com.hammy275.immersivemc.client.api_impl;
 
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveLogicHelpersImpl;
+import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.LightLayer;
 
 public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl implements ImmersiveClientLogicHelpers {
 
     public static final ImmersiveClientLogicHelpers INSTANCE = new ImmersiveClientLogicHelpersImpl();
+
+    @Override
+    public void sendSwapPacket(BlockPos pos, int slot, InteractionHand hand) {
+        Network.INSTANCE.sendToServer(new SwapPacket(pos, slot, hand));
+    }
 
     @Override
     public int getLight(BlockPos pos) {

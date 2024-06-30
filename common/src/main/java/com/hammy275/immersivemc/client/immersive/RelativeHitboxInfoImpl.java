@@ -4,11 +4,13 @@ import com.hammy275.immersivemc.api.client.immersive.ForcedUpDownRenderDir;
 import com.hammy275.immersivemc.api.client.immersive.HitboxPositioningMode;
 import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfo;
 import com.hammy275.immersivemc.api.client.immersive.RelativeHitboxInfo;
+import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.LastClientVRData;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfoImpl;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.datafixers.util.Pair;
@@ -167,7 +169,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
             recalcTopBottomBlockFacing(blockFacing, info, offset, false);
             upDownRenderDir = Direction.UP;
         } else if (mode == HitboxPositioningMode.HORIZONTAL_PLAYER_FACING) {
-            Direction blockFacing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition());
+            Direction blockFacing = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition());
             recalcHorizBlockFacing(blockFacing, info, offset);
             upDownRenderDir = null;
         } else if (mode == HitboxPositioningMode.BLOCK_FACING_NEG_X) {
@@ -182,12 +184,12 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
                 upDownRenderDir = blockFacing;
             }
         } else if (mode == HitboxPositioningMode.PLAYER_FACING_NO_DOWN) {
-            Direction playerFacing = AbstractImmersive.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition());
+            Direction playerFacing = Util.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition());
             if (playerFacing == Direction.UP) {
                 recalcTopPlayerFacing(info.immersiveDir, info, offset);
                 upDownRenderDir = Direction.UP;
             } else {
-                Direction blockFacing = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition());
+                Direction blockFacing = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition());
                 recalcHorizBlockFacing(blockFacing, info, offset);
                 upDownRenderDir = null;
             }

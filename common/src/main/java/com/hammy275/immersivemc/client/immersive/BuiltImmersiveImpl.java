@@ -6,10 +6,11 @@ import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersive;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.HitboxPositioningMode;
+import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfoImpl;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
-import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -26,7 +27,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements BuiltImmersive<E, S> {
 
@@ -63,11 +67,11 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             case HORIZONTAL_BLOCK_FACING, BLOCK_FACING_NEG_X ->
                     currentDir = info.immersiveDir;
             case TOP_PLAYER_FACING, TOP_BLOCK_FACING, HORIZONTAL_PLAYER_FACING, PLAYER_FACING_NO_DOWN ->
-                    currentDir = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition());
+                    currentDir = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition());
             case TOP_LITERAL ->
                     currentDir = null;
             case PLAYER_FACING_FILTER_BLOCK_FACING ->
-                    currentDir = AbstractImmersive.getForwardFromPlayerUpAndDownFilterBlockFacing(Minecraft.getInstance().player, info.getBlockPosition(), true);
+                    currentDir = Util.getForwardFromPlayerUpAndDownFilterBlockFacing(Minecraft.getInstance().player, info.getBlockPosition(), true);
             default ->
                     throw new UnsupportedOperationException("Facing direction for positioning mode " + builder.positioningMode + " unimplemented!");
 
@@ -235,11 +239,11 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             } else if (builder.positioningMode == HitboxPositioningMode.TOP_BLOCK_FACING) {
                 return info.getBlockPosition().above();
             } else if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_PLAYER_FACING) {
-                return info.getBlockPosition().relative(AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition()));
+                return info.getBlockPosition().relative(ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition()));
             } else if (builder.positioningMode == HitboxPositioningMode.BLOCK_FACING_NEG_X) {
                 return info.getBlockPosition().relative(info.immersiveDir);
             } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING_NO_DOWN) {
-                return info.getBlockPosition().relative(AbstractImmersive.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition()));
+                return info.getBlockPosition().relative(Util.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition()));
             } else {
                 throw new UnsupportedOperationException("Light pos for positioning mode " + builder.positioningMode + " unimplemented!");
             }

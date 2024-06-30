@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
@@ -38,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 
-public class ImmersiveBeacon extends AbstractImmersiveV2<BeaconInfo, BeaconStorage> {
+public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage> {
 
     private static final double effectHitboxSize = 0.2;
     private static final double displayHitboxSize = 0.2;
@@ -87,7 +88,7 @@ public class ImmersiveBeacon extends AbstractImmersiveV2<BeaconInfo, BeaconStora
         // Run every tick since effects spin in a circle
         setHitboxesAndPositions(info);
 
-        info.lastPlayerDir = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
+        info.lastPlayerDir = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
     }
 
     @Override
@@ -142,7 +143,7 @@ public class ImmersiveBeacon extends AbstractImmersiveV2<BeaconInfo, BeaconStora
                         info.light, info.lastPlayerDir);
             }
 
-            Direction playerForward = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
+            Direction playerForward = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
             double xMult = 0;
             double zMult = 0;
             if (playerForward.getNormal().getX() != 0) {
@@ -209,7 +210,7 @@ public class ImmersiveBeacon extends AbstractImmersiveV2<BeaconInfo, BeaconStora
             // NOTE: Unlike most other places in ImmersiveMC, left refers to left from the player's
             // perspective, not the block's!
             Vec3 center = Vec3.atCenterOf(info.getBlockPosition()).add(0, 1, 0);
-            Direction beaconForward = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition());
+            Direction beaconForward = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition());
             Vec3 forwardFromBlockVec = new Vec3(beaconForward.getNormal().getX(), beaconForward.getNormal().getY(),
                     beaconForward.getNormal().getZ());
             Direction left = beaconForward.getClockWise();
@@ -244,7 +245,7 @@ public class ImmersiveBeacon extends AbstractImmersiveV2<BeaconInfo, BeaconStora
                 long timeSinceStartMilli = Instant.now().toEpochMilli() - info.startMillis;
                 long millisPerRot = 9000;
                 // Need to get the direction the player is facing, so opposite the forward (which is immersive's forward)
-                Direction centerDir = AbstractImmersive.getForwardFromPlayer(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
+                Direction centerDir = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
                 Vec3 forwardPos = center.add(leftVec.scale(0.8)).add(0, effectCircleRadius, 0);
                 double rot0 = ((double) (timeSinceStartMilli % millisPerRot) / millisPerRot) * 2 * Math.PI;
                 if (beaconLevel == 1) {

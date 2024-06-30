@@ -1,9 +1,10 @@
 package com.hammy275.immersivemc.client.immersive_item;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.OBB;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
-import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
 import com.hammy275.immersivemc.client.workaround.ClickHandlerScreen;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
@@ -116,7 +117,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         }
 
         for (WrittenBookInfo.BookClickInfo clickInfo : info.clickInfos) {
-            AbstractImmersive.renderHitbox(stack, clickInfo.obb(), false, 0f, 0f, 1f, 1f);
+            ImmersiveRenderHelpers.instance().renderHitbox(stack, clickInfo.obb(), false, 0f, 0f, 1f, 1f);
         }
     }
 
@@ -147,7 +148,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
             // -56f is used to make the text left-aligned.
             font.drawInBatch(seq, -56f, 32 + lineNum++ * 9, 0xFF000000, false,
                     stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(),
-                    Font.DisplayMode.NORMAL, 0, AbstractImmersive.maxLight);
+                    Font.DisplayMode.NORMAL, 0, ClientUtil.maxLight);
         }
 
         stack.popPose();

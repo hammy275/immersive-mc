@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
-import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.client.ClientUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +25,7 @@ public class ChestInfo extends AbstractImmersiveInfoV2 {
     public double lastY1;
     public AABB[] openCloseHitboxes = new AABB[]{null, null};
     public Vec3[] openClosePositions = new Vec3[]{null, null};
-    public int light = AbstractImmersive.maxLight;
+    public int light = ClientUtil.maxLight;
 
     public ChestInfo(BlockEntity chest, BlockEntity otherChest) {
         super(chest.getBlockPos()); // Accounts for double chest

@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class ImmersiveChest extends AbstractImmersiveV2<ChestInfo, ListOfItemsStorage> {
+public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStorage> {
     public static final double spacing = 3d/16d;
     private final double threshold = 0.03;
     // Intentionally stored outside infos, so a chest close (which removes the info) will still have a cooldown
@@ -124,7 +124,7 @@ public class ImmersiveChest extends AbstractImmersiveV2<ChestInfo, ListOfItemsSt
             if (chest == null) continue;
             info.forward = chest.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
 
-            Vec3[] positions = AbstractImmersive.get3x3HorizontalGrid(chest.getBlockPos(), spacing, info.forward,
+            Vec3[] positions = Util.get3x3HorizontalGrid(chest.getBlockPos(), spacing, info.forward,
                     false);
             float hitboxSize = ClientConstants.itemScaleSizeChest / 3f * 2.2f;
             int startTop = 9 * info.getRowNum() + 27 * i;
@@ -153,8 +153,8 @@ public class ImmersiveChest extends AbstractImmersiveV2<ChestInfo, ListOfItemsSt
             BlockEntity chest = chests[chestNum];
             if (chest == null) continue;
             Vec3 forward = Vec3.atLowerCornerOf(info.forward.getNormal());
-            Vec3 left = Vec3.atLowerCornerOf(AbstractImmersive.getLeftOfDirection(info.forward).getNormal());
-            Vec3 frontMid = AbstractImmersive.getTopCenterOfBlock(chest.getBlockPos()).add(forward.multiply(0.5, 0.5, 0.5));
+            Vec3 left = Vec3.atLowerCornerOf(info.forward.getCounterClockWise().getNormal());
+            Vec3 frontMid = Vec3.upFromBottomCenterOf(chest.getBlockPos(), 1).add(forward.multiply(0.5, 0.5, 0.5));
             if (info.isOpen) {
                 Vec3 linePos = frontMid.add(forward.multiply(-0.5, -0.5, -0.5));
                 linePos = linePos.add(0, 0.5, 0);

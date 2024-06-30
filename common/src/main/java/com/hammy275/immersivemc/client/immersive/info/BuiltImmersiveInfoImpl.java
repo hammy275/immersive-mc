@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.client.immersive.info;
 
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
-import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.RelativeHitboxInfoImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,7 +25,7 @@ public final class BuiltImmersiveInfoImpl<E> implements BuiltImmersiveInfo<E> {
     public Direction immersiveDir = null; // Stores the direction the immersive is facing (towards the player, for example)
     public boolean airCheckPassed = false;
     public int[] slotsHovered = new int[]{-1, -1};
-    public int light = AbstractImmersive.maxLight;
+    public int light = ClientUtil.maxLight;
     public long ticksExisted = 0;
 
     public BuiltImmersiveInfoImpl(List<RelativeHitboxInfoImpl> hitboxes, BlockPos pos, Class<E> extraDataClazz) {

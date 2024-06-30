@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
-import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.client.ClientUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -26,7 +26,7 @@ public class BeaconInfo extends AbstractImmersiveInfoV2 {
     public long startMillis = 0;
     public int lastLevel = 0;
     public boolean levelWasNonzero = false;
-    public int light = AbstractImmersive.maxLight;
+    public int light = ClientUtil.maxLight;
 
     public BeaconInfo(BlockPos pos) {
         super(pos);
