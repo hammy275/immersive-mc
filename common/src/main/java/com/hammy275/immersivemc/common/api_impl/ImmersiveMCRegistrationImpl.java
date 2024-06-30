@@ -27,9 +27,11 @@ public class ImmersiveMCRegistrationImpl implements ImmersiveMCRegistration {
 
     @Override
     public void addImmersiveHandlerRegistrationHandler(Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler<?>>> handler) throws IllegalStateException {
-        if (didRegistration) {
-            throw new IllegalStateException("Can't add a registration handler for ImmersiveHandlers after Immersives have been registered.");
+        synchronized (this) {
+            if (didRegistration) {
+                throw new IllegalStateException("Can't add a registration handler for ImmersiveHandlers after Immersives have been registered.");
+            }
+            HANDLERS.add(handler);
         }
-        HANDLERS.add(handler);
     }
 }
