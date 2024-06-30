@@ -14,6 +14,7 @@ import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
 import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
 import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.util.Util;
@@ -229,7 +230,10 @@ public class ClientLogicSubscriber {
         if (singleton.isVROnly() && !VRPluginVerify.clientInVR()) {
             return;
         }
-        singleton.getTrackedObjects().removeIf((info) -> !Util.isValidBlocks(singleton.getHandler(), info.getBlockPosition(), Minecraft.getInstance().level));
+        singleton.getTrackedObjects().removeIf((info) -> {
+            Set<BlockPos> positions = Util.getValidBlocks(singleton.getHandler(), info.getBlockPosition(), Minecraft.getInstance().level);
+            return positions.isEmpty() || player.distanceToSqr(Util.average(positions)) > CommonConstants.distanceSquaredToRemoveImmersive;
+        });
         singleton.globalTick();
         Collection<I> infos = singleton.getTrackedObjects();
 
