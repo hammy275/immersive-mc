@@ -112,8 +112,14 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             if (hitbox.hasAABB()) {
                 if (hitbox.holdsItems && hitbox.renderItem) {
                     Float spinDegrees = hitbox.itemSpins ? info.ticksExisted % 100f * 3.6f : null;
-                    helpers.renderItemWithInfo(hitbox.item, stack, size, hitbox.renderItemCount, info.light, info,
-                            hitbox.isInput, i, spinDegrees, info.immersiveDir, hitbox.getUpDownRenderDir());
+                    if (hitbox.item == null || hitbox.item.isEmpty()) {
+                        if (hitbox.isInput && builder.slotRendersItemGuide.apply(info, i)) {
+                            helpers.renderItemGuide(stack, hitbox.getHitbox(), info.isSlotHovered(i), info.light);
+                        }
+                    } else {
+                        helpers.renderItem(hitbox.item, stack, size, hitbox.getHitbox(), hitbox.renderItemCount,
+                                info.light, spinDegrees, info.immersiveDir, hitbox.getUpDownRenderDir());
+                    }
                 } else {
                     helpers.renderHitbox(stack, hitbox.getAABB());
                 }
