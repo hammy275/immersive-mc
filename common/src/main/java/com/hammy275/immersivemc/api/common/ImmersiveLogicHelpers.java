@@ -1,13 +1,18 @@
 package com.hammy275.immersivemc.api.common;
 
+import com.hammy275.immersivemc.api.server.ItemSwapAmount;
+import com.hammy275.immersivemc.api.server.SwapResult;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveLogicHelpersImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Contains helpful methods that ensure the ImmersiveMC "style" is kept throughout API-implementors that wish
  * to implement it, while also making the life of API-implementors easier.
+ * <br>
+ * These functions may be useful on the client and/or the server.
  */
 public interface ImmersiveLogicHelpers {
 
@@ -30,5 +35,16 @@ public interface ImmersiveLogicHelpers {
      */
     public Direction getHorizontalBlockForward(Player player, BlockPos blockPos);
 
-
+    /**
+     * Gets the result of a swap action between a player and an Immersive where the player may place items into
+     * and take items out of a slot, such as the input slots of a furnace.
+     * @param stackFromPlayer The {@link ItemStack} currently in the player's hand.
+     * @param stackInImmersive The {@link ItemStack} currently in the slot of the Immersive the player is interacting
+     *                         with.
+     * @param swapAmount The {@link ItemSwapAmount} that is determining the settings for how many items to swap.
+     * @return A {@link SwapResult} containing the {@link ItemStack}s that should be placed in the player's hand, be
+     *         placed into the slot of the Immersive being interacted with, and the leftovers that should be given to
+     *         the player some other way.
+     */
+    public SwapResult swapItems(ItemStack stackFromPlayer, ItemStack stackInImmersive, ItemSwapAmount swapAmount);
 }

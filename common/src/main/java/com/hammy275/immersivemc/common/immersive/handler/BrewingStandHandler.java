@@ -1,7 +1,9 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.server.ItemSwapAmount;
+import com.hammy275.immersivemc.api.server.SwapResult;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
@@ -40,10 +42,10 @@ public class BrewingStandHandler extends ContainerHandler<ListOfItemsStorage> {
             stand.setItem(slot, playerItem);
         } else { // Ingredient and Fuel
             if (!stand.canPlaceItem(slot, playerItem) && playerItem != ItemStack.EMPTY) return;
-            Swap.SwapResult result = Swap.getSwap(playerItem, standItem, amount);
-            Swap.givePlayerItemSwap(result.toHand, playerItem, player, hand);
-            stand.setItem(slot, result.toOther);
-            Util.placeLeftovers(player, result.leftovers);
+            SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, standItem, amount);
+            Swap.givePlayerItemSwap(result.playerHandStack(), playerItem, player, hand);
+            stand.setItem(slot, result.immersiveStack());
+            Util.placeLeftovers(player, result.leftoverStack());
         }
         stand.setChanged();
     }

@@ -93,7 +93,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
 
     @Override
     public boolean shouldRender(BeaconInfo info) {
-        return info.lastPlayerDir != null && info.areaAboveIsAir;
+        return info.lastPlayerDir != null && info.areaAboveIsAir && info.hasHitboxes();
     }
 
     @Override
@@ -154,12 +154,12 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
             helpers.renderHitbox(stack,
                     AABB.ofSize(info.effectSelectedDisplayPos, displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
                     true, 0f, 1f, 0f);
-            if (info.regenSelected) {
+            if (info.regenSelected && info.hitboxes.get(5).box != null) {
                 helpers.renderHitbox(stack,
                         AABB.ofSize(BoundingBox.getCenter(info.hitboxes.get(5).box),
                                 displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
                         true, 0f, 1f, 0f);
-            } else {
+            } else if (!info.regenSelected && info.hitboxes.get(6).box != null) {
                 helpers.renderHitbox(stack,
                         AABB.ofSize(BoundingBox.getCenter(info.hitboxes.get(6).box),
                                 displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),

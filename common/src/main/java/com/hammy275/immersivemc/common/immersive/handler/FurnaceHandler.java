@@ -1,7 +1,9 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.server.ItemSwapAmount;
+import com.hammy275.immersivemc.api.server.SwapResult;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
@@ -35,10 +37,10 @@ public class FurnaceHandler extends ContainerHandler<ListOfItemsStorage> {
         ItemStack playerItem = player.getItemInHand(hand).copy();
         if (slot != 2) {
             if (slot != 1 || furnace.canPlaceItem(1, playerItem) || playerItem.isEmpty()) {
-                Swap.SwapResult result = Swap.getSwap(playerItem, furnaceItem, amount);
-                Swap.givePlayerItemSwap(result.toHand, playerItem, player, hand);
-                furnace.setItem(slot, result.toOther);
-                Util.placeLeftovers(player, result.leftovers);
+                SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, furnaceItem, amount);
+                Swap.givePlayerItemSwap(result.playerHandStack(), playerItem, player, hand);
+                furnace.setItem(slot, result.immersiveStack());
+                Util.placeLeftovers(player, result.leftoverStack());
             }
         } else {
             boolean itemTaken = false;
