@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.api.server;
 
+import com.google.common.annotations.Beta;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Contains methods for interacting with ImmersiveMC's WorldStorage system. See {@link WorldStorage} for more info.
  */
+@Beta
 public interface WorldStorages {
 
     /**

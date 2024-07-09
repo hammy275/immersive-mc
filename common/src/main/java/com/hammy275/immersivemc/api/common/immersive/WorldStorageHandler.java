@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.api.common.immersive;
 
+import com.google.common.annotations.Beta;
 import com.hammy275.immersivemc.api.server.WorldStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -22,6 +23,7 @@ import net.minecraft.world.InteractionHand;
  *     {@link ImmersiveHandler#onStopTracking(ServerPlayer, BlockPos)}.</li>
  * </ul>
  */
+@Beta
 public interface WorldStorageHandler<S extends NetworkStorage> extends ImmersiveHandler<S> {
 
     /**
