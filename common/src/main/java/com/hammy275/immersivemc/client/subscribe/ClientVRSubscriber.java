@@ -67,7 +67,8 @@ public class ClientVRSubscriber {
                     IVRData controller = vrPlayer.getController(c);
                     Vec3 pos = controller.position();
                     Optional<Integer> hit = Util.getFirstIntersect(pos, info.getAllHitboxes());
-                    if (hit.isPresent()) {
+                    if (hit.isPresent() &&
+                            (Minecraft.getInstance().options.keyAttack.isDown() || !info.getAllHitboxes().get(hit.get()).isTriggerHitbox())) {
                         int cooldownFromInfo = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, hit.get(),
                                 c == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
                         if (cooldownFromInfo >= 0) {

@@ -104,7 +104,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
     @Override
     public void render(BuiltImmersiveInfo<E> infoIn, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
         BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
-        float size = info.ticksExisted < 10 ? builder.renderSize / (10 - info.ticksExisted) : builder.renderSize;
+        float size = ImmersiveRenderHelpers.instance().getTransitionMultiplier(info.ticksExisted) * builder.renderSize;
         for (int i = 0; i < info.hitboxes.size(); i++) {
             RelativeHitboxInfoImpl hitbox = info.hitboxes.get(i);
             // Built Immersives can give null hitboxes to skip rendering them. Need to make sure it's nonnull before
@@ -117,8 +117,12 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
                             helpers.renderItemGuide(stack, hitbox.getHitbox(), info.isSlotHovered(i), info.light);
                         }
                     } else {
-                        helpers.renderItem(hitbox.item, stack, size, hitbox.getHitbox(), hitbox.renderItemCount,
-                                info.light, spinDegrees, info.immersiveDir, hitbox.getUpDownRenderDir());
+                        if (info.isSlotHovered(i)) {
+                            size *= ImmersiveRenderHelpers.instance().hoverScaleSizeMultiplier();
+                        }
+                        helpers.renderItem(hitbox.item, stack, size * hitbox.itemRenderSizeMultiplier,
+                                hitbox.getHitbox(), hitbox.renderItemCount, info.light, spinDegrees, info.immersiveDir,
+                                hitbox.getUpDownRenderDir());
                     }
                 } else {
                     helpers.renderHitbox(stack, hitbox.getAABB());

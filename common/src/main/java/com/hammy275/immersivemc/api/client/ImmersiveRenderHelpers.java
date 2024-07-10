@@ -166,4 +166,14 @@ public interface ImmersiveRenderHelpers {
      * @return The aforementioned float.
      */
     public float getTransitionMultiplier(long ticksExisted);
+
+    /**
+     * Gets the multiplier to apply to the size of an item to attach when the item is being hovered over. For example,
+     * if you want to render an item at some size n, you should render it as size
+     * n * {@link #getTransitionMultiplier(long)} * hoverScaleSizeMultiplier() if being hovered over, (or
+     * n * {@link #getTransitionMultiplier(long)} if not being hovered over).
+     * @return A float denoting the multiplier to use to increase the render size of an item to denote it's being
+     *         hovered over (pointed at or has a VR hand placed inside).
+     */
+    public float hoverScaleSizeMultiplier();
 }
