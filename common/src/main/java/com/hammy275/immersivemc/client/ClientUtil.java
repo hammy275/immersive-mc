@@ -122,7 +122,7 @@ public class ClientUtil {
     @Nullable
     public static <I extends ImmersiveInfo> I findImmersive(Immersive<I, ?> immersive, BlockPos pos) {
         for (I info : immersive.getTrackedObjects()) {
-            if (Util.isValidBlocks(immersive.getHandler(), pos, Minecraft.getInstance().level)) {
+            if (Util.getValidBlocks(immersive.getHandler(), info.getBlockPosition(), Minecraft.getInstance().level).contains(pos)) {
                 return info;
             }
         }

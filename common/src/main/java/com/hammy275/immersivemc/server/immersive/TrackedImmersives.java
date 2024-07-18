@@ -63,7 +63,8 @@ public class TrackedImmersives {
 
     private static void trackImmersive(ServerPlayer player, ImmersiveHandler<?> handler, BlockPos pos) {
         if (TRACKED_IMMERSIVES.stream().anyMatch((data) ->
-                Util.isValidBlocks(data.getHandler(), pos, player.level()) && data.playerUUID.equals(player.getUUID()))) {
+                Util.getValidBlocks(data.getHandler(), data.getPos().iterator().next(), player.level()).contains(pos) &&
+                        data.playerUUID.equals(player.getUUID()))) {
             return;
         }
         TrackedImmersiveData<?> data = new TrackedImmersiveData<>(player.getUUID(), Util.getValidBlocks(handler, pos, player.level()), handler, player.level());
