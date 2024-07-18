@@ -1,15 +1,18 @@
 package com.hammy275.immersivemc.server.swap;
 
+import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
+import com.hammy275.immersivemc.api.server.ItemSwapAmount;
+import com.hammy275.immersivemc.api.server.SwapResult;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.PlacementMode;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
 import com.hammy275.immersivemc.common.util.NullContainer;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.mixin.AnvilMenuMixin;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
-import com.hammy275.immersivemc.server.storage.world.WorldStorages;
-import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
+import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.storage.world.impl.ETableWorldStorage;
-import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,7 +41,7 @@ public class Swap {
         // NOTE: slot is 1-3, depending on which enchantment the player is going for.
         if (!player.getItemInHand(hand).isEmpty()) return false;
         if (slot < 1 || slot > 3) return false;
-        ETableWorldStorage storage = (ETableWorldStorage) WorldStorages.getOrCreate(pos, player.serverLevel());
+        ETableWorldStorage storage = (ETableWorldStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
         ItemStack toEnchantItem = storage.getItem(0).copy();
         if (toEnchantItem.isEmpty()) return false;
         int lapisInInventory = 0;
@@ -75,7 +78,7 @@ public class Swap {
     }
 
     public static void handleBackpackCraftingSwap(int slot, InteractionHand hand, List<ItemStack> items,
-                                                  ServerPlayer player, PlacementMode mode) {
+                                                  ServerPlayer player, ItemSwapAmount amount) {
         ItemStack[] itemArray = new ItemStack[5];
         for (int i = 0; i <= 4; i++) {
             itemArray[i] = items.get(i);
@@ -83,10 +86,10 @@ public class Swap {
         if (slot < 4) {
             ItemStack playerItem = player.getItemInHand(hand);
             ItemStack tableItem = itemArray[slot];
-            SwapResult result = getSwap(playerItem, tableItem, mode);
-            itemArray[slot] = result.toOther;
-            givePlayerItemSwap(result.toHand, playerItem, player, hand);
-            Util.placeLeftovers(player, result.leftovers);
+            SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, tableItem, amount);
+            itemArray[slot] = result.immersiveStack();
+            givePlayerItemSwap(result.playerHandStack(), playerItem, player, hand);
+            Util.placeLeftovers(player, result.leftoverStack());
             itemArray[4] = getRecipeOutput(player, itemArray);
         } else {
             handleDoCraft(player, itemArray, null);
@@ -284,61 +287,22 @@ public class Swap {
     }
 
     public static int getPlaceAmount(ItemStack handIn, PlacementMode mode) {
+        return getPlaceAmount(handIn.getCount(), mode);
+    }
+
+    public static int getPlaceAmount(int handInSize, PlacementMode mode) {
         switch (mode) {
             case PLACE_ONE:
                 return 1;
             case PLACE_QUARTER:
-                return (int) Math.max(handIn.getCount() / 4d, 1);
+                return (int) Math.max(handInSize / 4d, 1);
             case PLACE_HALF:
-                return (int) Math.max(handIn.getCount() / 2d, 1);
+                return (int) Math.max(handInSize / 2d, 1);
             case PLACE_ALL:
-                return handIn.getCount();
+                return handInSize;
             default:
                 throw new IllegalArgumentException("Unhandled placement mode " + mode);
         }
-    }
-
-    /**
-     * Get Swap Information.
-     *
-     * Will handle swapping the handIn stack to the otherIn stack using PlacementMode mode.
-     *
-     * This function DOES NOT modify the stacks coming in!
-     *
-     * @param handIn The stack in the player's hand. This is what's subtracted from.
-     * @param otherIn The other stack. This is what's being placed into.
-     * @param mode The placement mode as configured by the player.
-     * @return A SwapResult representing the new items to give to the player, the object, and any leftovers to
-     * give to the player some other way (or to alert to failing the swap entirely).
-     */
-    public static SwapResult getSwap(ItemStack handIn, ItemStack otherIn, PlacementMode mode) {
-        int toPlace = getPlaceAmount(handIn, mode);
-
-        // Swap toPlace from handIn to otherIn
-        ItemStack toHand;
-        ItemStack toOther;
-        ItemStack leftovers;
-        if (Util.stacksEqualBesidesCount(handIn, otherIn) && !handIn.isEmpty() && !otherIn.isEmpty()) {
-            ItemStack handInCountAdjusted = handIn.copy();
-            handInCountAdjusted.setCount(toPlace);
-            Util.ItemStackMergeResult mergeResult = Util.mergeStacks(otherIn.copy(), handInCountAdjusted, false);
-            toOther = mergeResult.mergedInto;
-            // Take our original hand, shrink by all of the amount to be moved, then grow by the amount
-            // that didn't get moved
-            toHand = handIn.copy();
-            toHand.shrink(toPlace);
-            toHand.grow(mergeResult.mergedFrom.getCount());
-            leftovers = ItemStack.EMPTY;
-        } else if (handIn.isEmpty()) { // We grab the items from the immersive into our hand
-            return new SwapResult(otherIn.copy(), ItemStack.EMPTY, ItemStack.EMPTY);
-        } else { // We're placing into a slot of air OR the other slot contains something that isn't what we have
-            toOther = handIn.copy();
-            toOther.setCount(toPlace);
-            toHand = handIn.copy();
-            toHand.shrink(toPlace);
-            leftovers = otherIn.copy();
-        }
-        return new SwapResult(toHand, toOther, leftovers);
     }
 
     public static void givePlayerItemSwap(ItemStack toPlayer, ItemStack fromPlayer, Player player, InteractionHand hand) {
@@ -350,11 +314,11 @@ public class Swap {
     }
 
 
-    public static class SwapResult {
+    public static class SwapResultOld {
         public final ItemStack toHand;
         public final ItemStack toOther;
         public final ItemStack leftovers;
-        public SwapResult(ItemStack toHand, ItemStack toOther, ItemStack leftovers) {
+        public SwapResultOld(ItemStack toHand, ItemStack toOther, ItemStack leftovers) {
             this.toHand = toHand;
             this.toOther = toOther;
             this.leftovers = leftovers;

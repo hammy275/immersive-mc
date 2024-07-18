@@ -14,24 +14,8 @@ public class ClientConstants {
 
 
     // How long the overlay should be displayed
-    public static final int defaultTicksToRender = Integer.MAX_VALUE;
-    public static final int ticksToRenderFurnace = Integer.MAX_VALUE;
-    public static final int ticksToRenderBrewing = Integer.MAX_VALUE;
-    public static final int ticksToRenderCrafting = Integer.MAX_VALUE;
-    public static final int ticksToHandleJukebox = Integer.MAX_VALUE;
-    public static final int ticksToRenderChest = Integer.MAX_VALUE; // You manually close a chest
-    public static final int ticksToRenderAnvil = Integer.MAX_VALUE;
-    public static final int ticksToRenderETable = Integer.MAX_VALUE; // 1 min
     public static final int ticksToRenderBackpack = Integer.MAX_VALUE; // You dismiss the backpack manually
-    public static final int ticksToRenderRepeater = Integer.MAX_VALUE; // We're always pointing at one, so we don't need it much longer after that
-    public static final int ticksToRenderShulker = Integer.MAX_VALUE;
-    public static final int ticksToRenderBeacon = Integer.MAX_VALUE;
-    public static final int ticksToRenderBarrel = ticksToRenderChest;
-    public static final int ticksToRenderHopper = Integer.MAX_VALUE;
     public static final int ticksToRenderHitboxesImmersive = Integer.MAX_VALUE;
-    public static final int ticksToRenderSmithingTable = ticksToRenderAnvil;
-    public static final int ticksToRenderChiseledBookshelf = Integer.MAX_VALUE;
-    public static final int ticksToRenderLever = Integer.MAX_VALUE;
 
     // Size of items when rendered in front of something immersive
     public static final float defaultItemScaleSize = 1f/3f;
@@ -50,7 +34,14 @@ public class ClientConstants {
     public static final float itemScaleSizeSmithingTable = itemScaleSizeAnvil;
 
     // Time to transition in ticks
-    public static final int transitionTime = 20;
+    public static final int transitionTime = 10;
+    public static final float transitionMult = 1f / transitionTime;
+
+    // Default cooldown time for interactions for desktop users
+    public static final int defaultCooldownTicks = 8;
+    // Multiplier for the cooldown time in ticks for VR users
+    public static final double cooldownVRMultiplier = 1.5;
+    public static final float sizeScaleForHover = 1.25f;
 
 
     // Enchanting table y offsets for item animations and a map storing enchantments for fake items to have glimmer

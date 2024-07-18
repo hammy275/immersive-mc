@@ -1,8 +1,25 @@
 package com.hammy275.immersivemc;
 
+import com.hammy275.immersivemc.api.common.ImmersiveMCRegistrationEvent;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.subscribe.ClientLogicSubscriber;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.*;
+import com.hammy275.immersivemc.common.network.packet.BackpackInteractPacket;
+import com.hammy275.immersivemc.common.network.packet.BeaconConfirmPacket;
+import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
+import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
+import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
+import com.hammy275.immersivemc.common.network.packet.DoubleControllerVibrate;
+import com.hammy275.immersivemc.common.network.packet.FetchBackpackStoragePacket;
+import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
+import com.hammy275.immersivemc.common.network.packet.GrabItemPacket;
+import com.hammy275.immersivemc.common.network.packet.InventorySwapPacket;
+import com.hammy275.immersivemc.common.network.packet.ReelFishPacket;
+import com.hammy275.immersivemc.common.network.packet.SetRepeaterPacket;
+import com.hammy275.immersivemc.common.network.packet.SwapPacket;
+import com.hammy275.immersivemc.common.network.packet.ThrowPacket;
+import com.hammy275.immersivemc.common.network.packet.UsePacket;
 import com.hammy275.immersivemc.common.subscribe.CommonSubscriber;
 import com.hammy275.immersivemc.server.ServerSubscriber;
 import dev.architectury.event.events.client.ClientLifecycleEvent;
@@ -15,6 +32,8 @@ import net.minecraft.client.KeyMapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.function.Consumer;
+
 public class ImmersiveMC {
 
     public static final String MOD_ID = "immersivemc";
@@ -25,6 +44,16 @@ public class ImmersiveMC {
     public static KeyMapping SUMMON_BACKPACK = null;
     public static KeyMapping OPEN_SETTINGS = null;
     public static KeyMapping RANGED_GRAB_KEY = null;
+
+    public static final Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler<?>>> handlerIMCRegistrationHandler =
+            (event) -> event.register(
+                    ImmersiveHandlers.anvilHandler, ImmersiveHandlers.barrelHandler, ImmersiveHandlers.beaconHandler,
+                    ImmersiveHandlers.brewingStandHandler, ImmersiveHandlers.chestHandler, ImmersiveHandlers.chiseledBookshelfHandler,
+                    ImmersiveHandlers.craftingHandler, ImmersiveHandlers.enchantingTableHandler, ImmersiveHandlers.furnaceHandler,
+                    ImmersiveHandlers.hopperHandler, ImmersiveHandlers.ironFurnacesFurnaceHandler, ImmersiveHandlers.jukeboxHandler,
+                    ImmersiveHandlers.leverHandler, ImmersiveHandlers.repeaterHandler, ImmersiveHandlers.shulkerBoxHandler,
+                    ImmersiveHandlers.smithingTableHandler, ImmersiveHandlers.tcCraftingStationHandler
+            );
 
     public ImmersiveMC() {
     }
@@ -49,10 +78,10 @@ public class ImmersiveMC {
         if (Platform.getEnvironment() == Env.CLIENT) {
             ImmersiveMCClient.init();
         }
-        serverSetup();
+        networkSetup();
     }
 
-    protected static void serverSetup() {
+    protected static void networkSetup() {
         Network.INSTANCE.register(SwapPacket.class, SwapPacket::encode,
                 SwapPacket::decode, SwapPacket::handle);
         Network.INSTANCE.register(FetchInventoryPacket.class, FetchInventoryPacket::encode,

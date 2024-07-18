@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.client.SafeClientUtil;
 import com.hammy275.immersivemc.common.config.PlacementMode;
+import com.hammy275.immersivemc.server.api_impl.ItemSwapAmountImpl;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import com.hammy275.immersivemc.server.swap.Swap;
 import dev.architectury.networking.NetworkManager;
@@ -45,7 +46,7 @@ public class BackpackInteractPacket {
             if (player != null) {
                 // -27 below since 0-26 are inventory slots
                 Swap.handleBackpackCraftingSwap(message.slot - 27, message.hand,
-                        ImmersiveMCPlayerStorages.getBackpackCraftingStorage(player), player, message.placementMode);
+                        ImmersiveMCPlayerStorages.getBackpackCraftingStorage(player), player, new ItemSwapAmountImpl(message.placementMode));
             }
         });
         

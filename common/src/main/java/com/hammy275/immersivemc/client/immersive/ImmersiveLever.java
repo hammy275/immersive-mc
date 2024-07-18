@@ -1,12 +1,14 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.client.config.ClientConstants;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
+import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.client.ClientUtil;
+import com.hammy275.immersivemc.client.immersive.info.HitboxItemPair;
 import com.hammy275.immersivemc.client.immersive.info.LeverInfo;
-import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.UsePacket;
 import com.hammy275.immersivemc.common.util.Util;
@@ -14,10 +16,12 @@ import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
@@ -26,9 +30,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-public class ImmersiveLever extends AbstractImmersive<LeverInfo> {
+public class ImmersiveLever extends AbstractImmersive<LeverInfo, NullStorage> {
     public ImmersiveLever() {
-        super(-1);
     }
 
     @Override
@@ -37,85 +40,23 @@ public class ImmersiveLever extends AbstractImmersive<LeverInfo> {
     }
 
     @Override
-    public boolean clientAuthoritative() {
+    public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
+        return ClientUtil.createConfigScreenInfo("lever", () -> new ItemStack(Items.LEVER), ImmersiveMCConfig.useLever);
+    }
+
+    @Override
+    public boolean shouldDisableRightClicksWhenInteractionsDisabled(LeverInfo info) {
         return true;
     }
 
     @Override
-    public @Nullable ImmersiveHandler getHandler() {
-        return null;
+    public void processStorageFromNetwork(LeverInfo info, NullStorage storage) {
+        // NO-OP. No storage.
     }
 
     @Override
-    public boolean shouldRender(LeverInfo info, boolean isInVR) {
-        return info.readyToRender();
-    }
-
-    @Override
-    protected void render(LeverInfo info, PoseStack stack, boolean isInVR) {
-        for (int i = 0; i <= 1; i++) {
-            renderHitbox(stack, info.getHitbox(i));
-        }
-    }
-
-    @Override
-    protected void doTick(LeverInfo info, boolean isInVR) {
-        super.doTick(info, isInVR);
-
-        BlockState lever = Minecraft.getInstance().level.getBlockState(info.getBlockPosition());
-        boolean powered = lever.getValue(BlockStateProperties.POWERED);
-        int startHitbox = powered ? 1 : 0;
-        int endHitbox = powered ? 0 : 1;
-
-        for (int c = 0; c <= 1; c++) {
-            IVRData hand = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(c);
-            int lastGrabbed = info.grabbedBox[c];
-            int grabbed = Util.getFirstIntersect(hand.position(), info.getAllHitboxes()).orElse(-1);
-            info.grabbedBox[c] = grabbed;
-            if (grabbed == endHitbox && lastGrabbed == startHitbox) {
-                Util.useLever(Minecraft.getInstance().player, info.getBlockPosition());
-                Network.INSTANCE.sendToServer(new UsePacket(info.getBlockPosition()));
-            }
-        }
-
-    }
-
-    @Override
-    public boolean enabledInConfig() {
-        return ActiveConfig.active().useLever;
-    }
-
-    @Override
-    protected boolean inputSlotShouldRenderHelpHitbox(LeverInfo info, int slotNum) {
-        return false;
-    }
-
-    @Override
-    public boolean shouldTrack(BlockPos pos, Level level) {
-        return ImmersiveCheckers.isLever(pos, level);
-    }
-
-    @Override
-    public @Nullable LeverInfo refreshOrTrackObject(BlockPos pos, Level level) {
-        for (LeverInfo info : getTrackedObjects()) {
-            if (info.getBlockPosition().equals(pos)) {
-                info.setTicksLeft(ClientConstants.ticksToRenderLever);
-                return info;
-            }
-        }
+    public LeverInfo buildInfo(BlockPos pos, Level level) {
         LeverInfo info = new LeverInfo(pos);
-        infos.add(info);
-        return info;
-    }
-
-    @Override
-    public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
-        return true;
-    }
-
-    @Override
-    protected void initInfo(LeverInfo info) {
-        Level level = Minecraft.getInstance().level;
         BlockState state = level.getBlockState(info.getBlockPosition());
         Vec3 center = Vec3.atCenterOf(info.getBlockPosition());
         AttachFace attachFace = state.getValue(BlockStateProperties.ATTACH_FACE);
@@ -144,25 +85,52 @@ public class ImmersiveLever extends AbstractImmersive<LeverInfo> {
         Vec3 offPos = center.add(towardsOn.scale(-0.25));
         Vec3 onPos = center.add(towardsOn.scale(0.25));
 
-        info.setPosition(0, offPos);
-        info.setPosition(1, onPos);
+        info.getAllHitboxes().get(0).box = AABB.ofSize(offPos, 0.5, 0.5, 0.5);
+        info.getAllHitboxes().get(1).box = AABB.ofSize(onPos, 0.5, 0.5, 0.5);
 
-        info.setHitbox(0, AABB.ofSize(offPos, 0.5, 0.5, 0.5));
-        info.setHitbox(1, AABB.ofSize(onPos, 0.5, 0.5, 0.5));
+        return info;
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
+    public int handleHitboxInteract(LeverInfo info, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
         // NO-OP. Handled in doTick()
+        return -1;
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, NetworkStorage storage) {
-        // NO-OP. No storage.
+    public boolean shouldRender(LeverInfo info) {
+        return true;
     }
 
     @Override
-    public BlockPos getLightPos(LeverInfo info) {
-        return info.getBlockPosition();
+    public void render(LeverInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
+        for (int i = 0; i < 2; i++) {
+            helpers.renderHitbox(stack, info.getAllHitboxes().get(i).box);
+        }
+    }
+
+    @Override
+    public void tick(LeverInfo info) {
+        super.tick(info);
+        BlockState lever = Minecraft.getInstance().level.getBlockState(info.getBlockPosition());
+        boolean powered = lever.getValue(BlockStateProperties.POWERED);
+        int startHitbox = powered ? 1 : 0;
+        int endHitbox = powered ? 0 : 1;
+
+        for (int c = 0; c <= 1; c++) {
+            IVRData hand = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(c);
+            int lastGrabbed = info.grabbedBox[c];
+            int grabbed = Util.getFirstIntersect(hand.position(), info.getAllHitboxes().stream().map(HitboxItemPair::getHitbox).toList()).orElse(-1);
+            info.grabbedBox[c] = grabbed;
+            if (grabbed == endHitbox && lastGrabbed == startHitbox) {
+                Util.useLever(Minecraft.getInstance().player, info.getBlockPosition());
+                Network.INSTANCE.sendToServer(new UsePacket(info.getBlockPosition()));
+            }
+        }
+    }
+
+    @Override
+    public ImmersiveHandler<NullStorage> getHandler() {
+        return ImmersiveHandlers.leverHandler;
     }
 }

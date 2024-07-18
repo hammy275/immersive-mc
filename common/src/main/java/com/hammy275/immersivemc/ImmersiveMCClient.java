@@ -1,13 +1,31 @@
 package com.hammy275.immersivemc;
 
-import com.hammy275.immersivemc.client.model.*;
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.common.ImmersiveMCRegistrationEvent;
+import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.model.BackpackBundleModel;
+import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
+import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
+import com.hammy275.immersivemc.client.model.BackpackModel;
+import com.hammy275.immersivemc.client.model.Cube1x1;
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import net.minecraft.client.KeyMapping;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.function.Consumer;
+
 public class ImmersiveMCClient {
+
+    public static final Consumer<ImmersiveMCRegistrationEvent<Immersive<?, ?>>> immersiveIMCRegistrationHandler = (event) -> event.register(
+            Immersives.immersiveAnvil, Immersives.immersiveBarrel, Immersives.immersiveBeacon,
+            Immersives.immersiveBrewing, Immersives.immersiveChest, Immersives.immersiveChiseledBookshelf,
+            Immersives.immersiveCrafting, Immersives.immersiveETable, Immersives.immersiveFurnace,
+            Immersives.immersiveHopper, Immersives.immersiveIronFurnacesFurnace, Immersives.immersiveJukebox,
+            Immersives.immersiveLever, Immersives.immersiveRepeater, Immersives.immersiveShulker,
+            Immersives.immersiveSmithingTable, Immersives.immersiveTinkersConstructCraftingStation
+    );
 
     public static void init() {
         // Map to a very obscure key, so it has no conflicts for VR users

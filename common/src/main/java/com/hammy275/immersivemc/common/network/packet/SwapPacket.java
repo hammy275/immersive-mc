@@ -1,11 +1,12 @@
 package com.hammy275.immersivemc.common.network.packet;
 
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.SafeClientUtil;
-import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
+import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.server.api_impl.ItemSwapAmountImpl;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -50,9 +51,9 @@ public class SwapPacket {
             if (NetworkUtil.safeToRun(message.block, player)) {
                 BlockEntity tileEnt = player.level().getBlockEntity(message.block);
                 BlockState state = player.level().getBlockState(message.block);
-                for (ImmersiveHandler handler : ImmersiveHandlers.HANDLERS) {
-                    if (handler.enabledInConfig(ActiveConfig.FILE) && handler.isValidBlock(message.block, player.level())) {
-                        handler.swap(message.slot, message.hand, message.block, player, message.placementMode);
+                for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
+                    if (handler.enabledInConfig(player) && Util.isValidBlocks(handler, message.block, player.level())) {
+                        handler.swap(message.slot, message.hand, message.block, player, new ItemSwapAmountImpl(message.placementMode));
                         break;
                     }
                 }
