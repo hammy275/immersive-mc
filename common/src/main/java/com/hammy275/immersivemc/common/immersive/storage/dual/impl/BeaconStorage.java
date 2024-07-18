@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.immersive.storage.dual.impl;
 
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 
 public class BeaconStorage extends ItemStorage {
@@ -9,7 +9,7 @@ public class BeaconStorage extends ItemStorage {
     }
 
     @Override
-    public ImmersiveHandler getHandler() {
+    public WorldStorageHandler<BeaconStorage> getHandler() {
         return ImmersiveHandlers.beaconHandler;
     }
 }

@@ -1,5 +1,7 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
@@ -9,13 +11,11 @@ import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
 import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.BackpackInteractPacket;
 import com.hammy275.immersivemc.common.network.packet.FetchBackpackStoragePacket;
 import com.hammy275.immersivemc.common.network.packet.InventorySwapPacket;
-import com.hammy275.immersivemc.common.obb.OBB;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -48,7 +48,7 @@ import java.util.List;
  * From there, we render that info, using the regular tick-based info in appropriate spots (mainly for getting
  * stored items in crafting and stuff).
  */
-public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
+public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<BackpackInfo, NullStorage> {
     public static final BackpackBundleModel bundleModel =
             new BackpackBundleModel(Minecraft.getInstance().getEntityModels().bakeLayer(BackpackBundleModel.LAYER_LOCATION));
 
@@ -237,7 +237,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
     public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {}
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, NetworkStorage storage) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, NullStorage storage) {
         // Intentional NO-OP
     }
 
@@ -371,7 +371,7 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
             Vec3 slotPos = posRaw;
             slotPos = slotPos.add(yDown);
             info.setPosition(i, slotPos);
-            info.setHitbox(i, new OBB(AABB.ofSize(info.getPosition(i), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, 0));
+            info.setHitbox(i, OBBFactory.instance().create(AABB.ofSize(info.getPosition(i), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, 0));
         }
 
         Vec3 upVec = info.downVec.multiply(-1, -1, -1);
@@ -396,11 +396,11 @@ public class ImmersiveBackpack extends AbstractImmersive<BackpackInfo> {
 
         for (int i = 27; i <= 30; i++) {
             info.setPosition(i, craftingPositions[i - 27]);
-            info.setHitbox(i, new OBB(AABB.ofSize(info.getPosition(i), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, 0));
+            info.setHitbox(i, OBBFactory.instance().create(AABB.ofSize(info.getPosition(i), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, 0));
         }
 
         info.setPosition(31, centerCraftingPos.add(upVec.multiply(0.125, 0.125, 0.125)));
-        info.setHitbox(31, new OBB(AABB.ofSize(info.getPosition(31), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, 0));
+        info.setHitbox(31, OBBFactory.instance().create(AABB.ofSize(info.getPosition(31), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, 0));
 
         info.setInputSlots();
     }

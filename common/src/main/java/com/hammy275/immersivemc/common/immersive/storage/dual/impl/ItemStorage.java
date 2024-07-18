@@ -1,10 +1,10 @@
 package com.hammy275.immersivemc.common.immersive.storage.dual.impl;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
+import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.server.storage.world.WorldStorage;
-import com.hammy275.immersivemc.server.storage.world.WorldStorages;
+import com.hammy275.immersivemc.api.server.WorldStorage;
+import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -53,7 +53,7 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
     }
 
     public void setDirty(ServerLevel level) {
-        WorldStorages.markDirty(level);
+        WorldStoragesImpl.markDirtyS(level);
         this.isDirtyForClientSync = true;
     }
 

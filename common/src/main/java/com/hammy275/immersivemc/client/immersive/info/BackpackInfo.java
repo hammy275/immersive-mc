@@ -1,8 +1,8 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
 import com.hammy275.immersivemc.client.config.ClientConstants;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.mojang.math.Vector3f;
-import com.hammy275.immersivemc.common.obb.BoundingBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;

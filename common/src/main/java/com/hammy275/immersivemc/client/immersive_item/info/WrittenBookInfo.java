@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.client.immersive_item.info;
 
-import com.hammy275.immersivemc.common.obb.BoundingBox;
-import com.hammy275.immersivemc.common.obb.OBB;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.api.common.hitbox.OBB;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
