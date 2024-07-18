@@ -1,6 +1,10 @@
 package com.hammy275.immersivemc.client.subscribe;
 
-import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
@@ -8,7 +12,6 @@ import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
 import com.hammy275.immersivemc.client.model.Cube1x1;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
-import com.hammy275.immersivemc.common.obb.BoundingBox;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.util.RGBA;
 import com.hammy275.immersivemc.common.util.ShieldUtil;
@@ -39,7 +42,10 @@ public class ClientRenderSubscriber {
 
     public static void onWorldRender(PoseStack stack) {
         try {
-            for (AbstractImmersive<? extends AbstractImmersiveInfo> singleton : Immersives.IMMERSIVES) {
+            for (Immersive<?, ?> singleton : Immersives.IMMERSIVES) {
+                renderInfos(singleton, stack);
+            }
+            for (AbstractPlayerAttachmentImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
                 renderInfos(singleton, stack);
             }
             if (VRPluginVerify.clientInVR()) {
@@ -60,7 +66,7 @@ public class ClientRenderSubscriber {
                             VRPlugin.API.getVRPlayer(Minecraft.getInstance().player) :
                             VRPlugin.API.getRenderVRPlayer();
                     IVRData hand = vrPlayer.getController(iHand.ordinal());
-                    AbstractImmersive.renderHitbox(stack, ShieldUtil.getShieldHitbox(Minecraft.getInstance().player, hand, iHand),
+                    ImmersiveRenderHelpers.instance().renderHitbox(stack, ShieldUtil.getShieldHitbox(Minecraft.getInstance().player, hand, iHand),
                             false, 1, 1, 1);
                 }
             }
@@ -75,8 +81,25 @@ public class ClientRenderSubscriber {
         itemGuideRenderData.clear();
     }
 
-    protected static <I extends AbstractImmersiveInfo> void renderInfos(AbstractImmersive<I> singleton,
-                                                                 PoseStack stack) {
+    protected static <I extends ImmersiveInfo> void renderInfos(Immersive<I, ?> singleton,
+                                                                PoseStack stack) {
+        try {
+            if (singleton.isVROnly() && !VRPluginVerify.clientInVR()) {
+                return;
+            }
+            for (I info : singleton.getTrackedObjects()) {
+                if (singleton.shouldRender(info)) {
+                    singleton.render(info, stack, ImmersiveRenderHelpers.instance(), Minecraft.getInstance().getFrameTime());
+                }
+            }
+        } catch (ConcurrentModificationException ignored) {
+            // Skip rendering if the list is modified mid-render
+            // It's fine, since we were only going to read it anyway!!
+        }
+    }
+
+    protected static <I extends AbstractImmersiveInfo> void renderInfos(AbstractPlayerAttachmentImmersive<I, ?> singleton,
+                                                                        PoseStack stack) {
         try {
             if (singleton.isVROnly() && !VRPluginVerify.clientInVR()) {
                 return;
@@ -111,7 +134,7 @@ public class ClientRenderSubscriber {
                 stack.popPose();
             } else if (ActiveConfig.active().placementGuideMode == PlacementGuideMode.OUTLINE) {
                 if (hitbox.isAABB()) {
-                    AbstractImmersive.renderHitbox(stack, AABB.ofSize(aabb.getCenter(), size, size, size), true,
+                    ImmersiveRenderHelpers.instance().renderHitbox(stack, AABB.ofSize(aabb.getCenter(), size, size, size), true,
                             color.redF(), color.greenF(), color.blueF(), color.alphaF());
                 } else {
                     OBBClientUtil.renderOBB(stack, hitbox.asOBB(), false, color.redF(), color.greenF(), color.blueF(), color.alphaF());
