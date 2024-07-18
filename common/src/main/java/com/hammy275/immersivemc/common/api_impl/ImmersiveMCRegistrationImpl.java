@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.common.api_impl;
 
+import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.common.ImmersiveMCRegistration;
 import com.hammy275.immersivemc.api.common.ImmersiveMCRegistrationEvent;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
@@ -22,16 +23,17 @@ public class ImmersiveMCRegistrationImpl implements ImmersiveMCRegistration {
         for (Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler<?>>> handler : HANDLERS) {
             handler.accept(event);
         }
+        ImmersiveMC.handlerIMCRegistrationHandler.accept(event); // Register ImmersiveMC's handlers last
         didRegistration = true;
     }
 
     @Override
-    public void addImmersiveHandlerRegistrationHandler(Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler<?>>> handler) throws IllegalStateException {
+    public void addImmersiveHandlerRegistrationHandler(Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler<?>>> registrationHandler) throws IllegalStateException {
         synchronized (this) {
             if (didRegistration) {
                 throw new IllegalStateException("Can't add a registration handler for ImmersiveHandlers after Immersives have been registered.");
             }
-            HANDLERS.add(handler);
+            HANDLERS.add(registrationHandler);
         }
     }
 }
