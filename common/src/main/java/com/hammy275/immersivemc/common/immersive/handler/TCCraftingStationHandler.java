@@ -1,10 +1,11 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
+import com.hammy275.immersivemc.api.server.ItemSwapAmount;
+import com.hammy275.immersivemc.api.server.SwapResult;
 import com.hammy275.immersivemc.common.compat.TinkersConstruct;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -13,15 +14,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TCCraftingStationHandler extends ContainerHandler {
+public class TCCraftingStationHandler extends ContainerHandler<ListOfItemsStorage> {
     @Override
-    public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         List<ItemStack> items = new ArrayList<>();
         Container inv = (Container) player.level().getBlockEntity(pos);
         for (int i = 0; i < inv.getContainerSize(); i++) {
@@ -32,22 +34,22 @@ public class TCCraftingStationHandler extends ContainerHandler {
     }
 
     @Override
-    public NetworkStorage getEmptyNetworkStorage() {
+    public ListOfItemsStorage getEmptyNetworkStorage() {
         return new ListOfItemsStorage();
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
         Container table = (Container) player.level().getBlockEntity(pos);
         ItemStack playerItem = player.getItemInHand(hand).copy();
         ItemStack craftingItem = table.getItem(slot).copy();
         if (slot < 9) {
             // Just place the item in. Recipe result is calculated in makeInventoryContents() to show the client
             // and at actual crafting time (else block below).
-            Swap.SwapResult result = Swap.getSwap(playerItem, craftingItem, mode);
-            Swap.givePlayerItemSwap(result.toHand, playerItem, player, hand);
-            table.setItem(slot, result.toOther);
-            Util.placeLeftovers(player, result.leftovers);
+            SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, craftingItem, amount);
+            Swap.givePlayerItemSwap(result.playerHandStack(), playerItem, player, hand);
+            table.setItem(slot, result.immersiveStack());
+            Util.placeLeftovers(player, result.leftoverStack());
         } else {
             // Get the items into an array, do the craft, then put the items back.
             ItemStack[] items = new ItemStack[10];
@@ -67,8 +69,8 @@ public class TCCraftingStationHandler extends ContainerHandler {
     }
 
     @Override
-    public boolean enabledInConfig(ActiveConfig config) {
-        return config.useTinkersConstructCraftingStationImmersion;
+    public boolean enabledInConfig(Player player) {
+        return ActiveConfig.getActiveConfigCommon(player).useTinkersConstructCraftingStationImmersion;
     }
 
     @Override

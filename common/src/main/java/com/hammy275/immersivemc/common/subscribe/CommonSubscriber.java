@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.subscribe;
 
-import com.hammy275.immersivemc.common.obb.OBB;
+import com.hammy275.immersivemc.api.common.hitbox.OBB;
 import com.hammy275.immersivemc.common.util.ShieldUtil;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;

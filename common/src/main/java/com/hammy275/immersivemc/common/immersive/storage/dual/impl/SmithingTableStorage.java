@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.immersive.storage.dual.impl;
 
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import net.minecraft.nbt.CompoundTag;
 
@@ -10,7 +10,7 @@ public class SmithingTableStorage extends ItemStorage {
     }
 
     @Override
-    public ImmersiveHandler getHandler() {
+    public WorldStorageHandler<SmithingTableStorage> getHandler() {
         return ImmersiveHandlers.smithingTableHandler;
     }
 

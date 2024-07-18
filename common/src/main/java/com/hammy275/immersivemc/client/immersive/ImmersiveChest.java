@@ -1,14 +1,17 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
+import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
+import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.common.compat.Lootr;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
+import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
@@ -19,34 +22,29 @@ import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.AbstractChestBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EnderChestBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, ChestInfo> {
+public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStorage> {
     public static final double spacing = 3d/16d;
     private final double threshold = 0.03;
     // Intentionally stored outside infos, so a chest close (which removes the info) will still have a cooldown
     // before you can open a chest again.
     public int openCloseCooldown = 0;
-
-    public ImmersiveChest() {
-        super(-1);
-    }
 
     @Override
     public void globalTick() {
@@ -54,52 +52,100 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
         if (openCloseCooldown > 0) {
             openCloseCooldown--;
         }
+        this.infos.removeIf((info) -> !chestsValid(info));
     }
 
     @Override
-    public ImmersiveHandler getHandler() {
-        return ImmersiveHandlers.chestHandler;
-    }
-
-    @Override
-    protected void doTick(ChestInfo info, boolean isInVR) {
-        if (!chestsValid(info) && !info.migrateToValidChest(Minecraft.getInstance().level)) {
-            info.remove();
-            return;
+    public ChestInfo buildInfo(BlockPos pos, Level level) {
+        BlockEntity blockEnt = level.getBlockEntity(pos);
+        if (blockEnt instanceof ChestBlockEntity) {
+            return new ChestInfo(blockEnt, Util.getOtherChest((ChestBlockEntity) blockEnt));
+        } else if (blockEnt instanceof EnderChestBlockEntity) {
+            return new ChestInfo(blockEnt, null);
         }
-        super.doTick(info, isInVR);
+        throw new IllegalArgumentException("ImmersiveChest can only track chests and ender chests!");
+    }
 
-        BlockEntity[] chests = new BlockEntity[]{info.getBlockEntity(), info.other};
+    @Override
+    public int handleHitboxInteract(ChestInfo info, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
+        if (!VRPluginVerify.clientInVR() && !ActiveConfig.active().rightClickChest) return -1;
+        if (!info.isOpen) return -1;
+        Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), hitboxIndex, hand));
+        return ClientConstants.defaultCooldownTicks;
+    }
+
+    @Override
+    public boolean shouldRender(ChestInfo info) {
+        return info.hasHitboxes();
+    }
+
+    @Override
+    public void render(ChestInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
+        Direction forward = info.forward;
+
+        if (info.isOpen) {
+            for (int i = 0; i < 27; i++) {
+                int startTop = 9 * info.getRowNum();
+                int endTop = startTop + 9;
+                boolean showCount = i >= startTop && i <= endTop;
+                helpers.renderItemWithInfo(info.hitboxes.get(i).item, stack, ClientConstants.itemScaleSizeChest,
+                        showCount, info.light, info, true, i, null, info.forward, Direction.UP);
+            }
+
+            if (info.otherChest != null) {
+                for (int i = 27; i < 27 * 2; i++) {
+                    int startTop = 9 * info.getRowNum() + 27;
+                    int endTop = startTop + 9 + 27;
+                    boolean showCount = i >= startTop && i <= endTop;
+                    helpers.renderItemWithInfo(info.hitboxes.get(i).item, stack, ClientConstants.itemScaleSizeChest,
+                            showCount, info.light, info, true, i, null, info.forward, Direction.UP);
+                }
+            }
+        }
+
+        for (int i = 0; i <= 1; i++) {
+            if (info.openCloseHitboxes[i] != null && info.openClosePositions[i] != null) {
+                helpers.renderHitbox(stack, info.openCloseHitboxes[i]);
+            }
+        }
+    }
+
+    @Override
+    public void tick(ChestInfo info) {
+        super.tick(info);
+        info.light = ImmersiveClientLogicHelpers.instance().getLight(info.getBlockPosition().above());
+        if (Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()) instanceof ChestBlockEntity cbe) {
+            info.otherChest = Util.getOtherChest(cbe);
+        }
+
+        BlockEntity[] chests = new BlockEntity[]{info.chest, info.otherChest};
         for (int i = 0; i <= 1; i++) {
             BlockEntity chest = chests[i];
             if (chest == null) continue;
             info.forward = chest.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
 
-            Vec3[] positions = get3x3HorizontalGrid(chest.getBlockPos(), spacing, info.forward,
+            Vec3[] positions = Util.get3x3HorizontalGrid(chest.getBlockPos(), spacing, info.forward,
                     false);
-            float hitboxSize = ClientConstants.itemScaleSizeChest / 3f * 1.1f;
+            float hitboxSize = ClientConstants.itemScaleSizeChest / 3f * 2.2f;
             int startTop = 9 * info.getRowNum() + 27 * i;
             int endTop = startTop + 9;
             for (int z = startTop; z < endTop; z++) {
-                Vec3 posRaw = positions[z % 9];
-                info.setPosition(z, posRaw.add(0, -0.2, 0));
-                info.setHitbox(z, createHitbox(posRaw.add(0, -0.2, 0), hitboxSize));
+                Vec3 pos = positions[z % 9];
+                info.getAllHitboxes().get(z).box = AABB.ofSize(pos.add(0, -0.2, 0), hitboxSize, hitboxSize, hitboxSize);
             }
 
             int startMid = 9 * info.getNextRow(info.getRowNum()) + 27 * i;
             int endMid = startMid + 9;
             for (int z = startMid; z < endMid; z++) {
-                Vec3 posRaw = positions[z % 9];
-                info.setPosition(z, posRaw.add(0, -0.325, 0));
-                info.setHitbox(z, null);
+                Vec3 pos = positions[z % 9];
+                info.getAllHitboxes().get(z).box = AABB.ofSize(pos.add(0, -0.325, 0), 0, 0, 0);
             }
 
             int startBot = 9 * info.getNextRow(info.getNextRow(info.getRowNum())) + 27 * i;
             int endBot = startBot + 9;
             for (int z = startBot; z < endBot; z++) {
-                Vec3 posRaw = positions[z % 9];
-                info.setPosition(z, posRaw.add(0, -0.45, 0));
-                info.setHitbox(z, null);
+                Vec3 pos = positions[z % 9];
+                info.getAllHitboxes().get(z).box = AABB.ofSize(pos.add(0, -0.45, 0), 0, 0, 0);
             }
         }
 
@@ -107,15 +153,15 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
             BlockEntity chest = chests[chestNum];
             if (chest == null) continue;
             Vec3 forward = Vec3.atLowerCornerOf(info.forward.getNormal());
-            Vec3 left = Vec3.atLowerCornerOf(getLeftOfDirection(info.forward).getNormal());
-            Vec3 frontMid = getTopCenterOfBlock(chest.getBlockPos()).add(forward.multiply(0.5, 0.5, 0.5));
+            Vec3 left = Vec3.atLowerCornerOf(info.forward.getCounterClockWise().getNormal());
+            Vec3 frontMid = Vec3.upFromBottomCenterOf(chest.getBlockPos(), 1).add(forward.multiply(0.5, 0.5, 0.5));
             if (info.isOpen) {
                 Vec3 linePos = frontMid.add(forward.multiply(-0.5, -0.5, -0.5));
                 linePos = linePos.add(0, 0.5, 0);
                 info.openClosePositions[chestNum] = linePos;
                 info.openCloseHitboxes[chestNum] = new AABB(
                         linePos.add(left.multiply(-0.5, -0.5, -0.5)).add(0, -1d/4d, 0)
-                          .add(forward.multiply(-0.625, -0.625, -0.625)),
+                                .add(forward.multiply(-0.625, -0.625, -0.625)),
                         linePos.add(left.multiply(0.5, 0.5, 0.5)).add(0, 1d/4d, 0)
                                 .add(forward.multiply(0.625, 0.625, 0.625))
                 );
@@ -181,185 +227,51 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo infoIn, NetworkStorage storageIn) {
-        ChestInfo info = (ChestInfo) infoIn;
-        ListOfItemsStorage storage = (ListOfItemsStorage) storageIn;
-        for (int i = 0; i < storage.getItems().size(); i++) {
-            info.items[i] = storage.getItems().get(i);
-        }
+    public ImmersiveHandler<ListOfItemsStorage> getHandler() {
+        return ImmersiveHandlers.chestHandler;
     }
 
     @Override
-    public BlockPos getLightPos(ChestInfo info) {
-        return info.getBlockPosition().above();
+    public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
+        return ClientUtil.createConfigScreenInfo("chest", () -> new ItemStack(Items.CHEST), ImmersiveMCConfig.useChestImmersion);
     }
 
     @Override
-    protected boolean inputSlotShouldRenderHelpHitbox(ChestInfo info, int slotNum) {
-        if (info.getBlockEntity() instanceof EnderChestBlockEntity) {
-            return info.items[slotNum] == null || info.items[slotNum].isEmpty();
-        }
-        return super.inputSlotShouldRenderHelpHitbox(info, slotNum);
-    }
-
-    @Override
-    public boolean shouldTrack(BlockPos pos, Level level) {
-        // shouldTrack() is called to check for validity. If this is happening, and we're in an invalid state,
-        // let's attempt to migrate to maybe end up in a valid state. Note that this only handles if the main chest
-        // is broken. ImmersiveChest#doTick() handles if the other chest is broken.
-        boolean res = ImmersiveHandlers.chestHandler.isValidBlock(pos, level);
-        if (res) {
-            return true;
-        }
-        ChestInfo info = null;
-        for (ChestInfo i : this.getTrackedObjects()) {
-            if (i.getBlockPosition().equals(pos) || (i.otherPos != null && i.otherPos.equals(pos))) {
-                info = i;
-                break;
-            }
-        }
-        if (info == null) {
-            return false;
-        }
-        return info.migrateToValidChest(Minecraft.getInstance().level);
-    }
-
-    @Override
-    public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
+    public boolean shouldDisableRightClicksWhenInteractionsDisabled(ChestInfo info) {
         return true;
     }
 
     @Override
-    protected void render(ChestInfo info, PoseStack stack, boolean isInVR) {
-        float itemSize = ClientConstants.itemScaleSizeChest / info.getItemTransitionCountdown();
-        Direction forward = info.forward;
-
-        if (info.isOpen) {
-            for (int i = 0; i < 27; i++) {
-                int startTop = 9 * info.getRowNum();
-                int endTop = startTop + 9;
-                boolean showCount = i >= startTop && i <= endTop;
-                float renderSize = slotHelpBoxIsSelected(info, i) ? itemSize * 1.25f : itemSize;
-                renderItem(info.items[i], stack, info.getPosition(i),
-                        renderSize, forward, Direction.UP, info.getHitbox(i), showCount, -1, info.light);
-            }
-
-            if (info.other != null) {
-                for (int i = 27; i < 27 * 2; i++) {
-                    int startTop = 9 * info.getRowNum() + 27;
-                    int endTop = startTop + 9 + 27;
-                    boolean showCount = i >= startTop && i <= endTop;
-                    float renderSize = info.slotHovered(i) ? itemSize * 1.25f : itemSize;
-                    renderItem(info.items[i], stack, info.getPosition(i),
-                            renderSize, forward, Direction.UP, info.getHitbox(i), showCount, -1, info.light);
-                }
-            }
-        }
-
-        for (int i = 0; i <= 1; i++) {
-            if (info.openCloseHitboxes[i] != null && info.openClosePositions[i] != null) {
-                renderHitbox(stack, info.openCloseHitboxes[i]);
-            }
+    public void processStorageFromNetwork(ChestInfo info, ListOfItemsStorage storage) {
+        for (int i = 0; i < storage.getItems().size(); i++) {
+            info.hitboxes.get(i).item = storage.getItems().get(i);
         }
     }
 
     @Override
-    public ChestInfo getNewInfo(BlockEntity tileEnt) {
-        if (tileEnt instanceof ChestBlockEntity) {
-            return new ChestInfo(tileEnt, ClientConstants.ticksToRenderChest, Util.getOtherChest((ChestBlockEntity) tileEnt));
-        } else if (tileEnt instanceof EnderChestBlockEntity) {
-            return new ChestInfo(tileEnt, ClientConstants.ticksToRenderChest, null);
-        }
-        throw new IllegalArgumentException("ImmersiveChest can only track chests and ender chests!");
-    }
-
-    @Override
-    public int getTickTime() {
-        return ClientConstants.ticksToRenderChest;
-    }
-
-    @Override
-    public boolean shouldRender(ChestInfo info, boolean isInVR) {
-        boolean dataReady = info.forward != null && info.readyToRender();
-        return !info.failRender && dataReady && chestsValid(info);
+    public boolean isVROnly() {
+        return false;
     }
 
     public boolean chestsValid(ChestInfo info) {
         try {
-            Block mainChestBlock = info.getBlockEntity().getLevel().getBlockState(info.getBlockPosition()).getBlock();
-            boolean mainChestExists = mainChestBlock instanceof AbstractChestBlock || mainChestBlock instanceof EnderChestBlock;
-            boolean otherChestExists = info.other == null ? true : (info.getBlockEntity().getLevel() != null &&
-                    info.getBlockEntity().getLevel().getBlockState(info.other.getBlockPos()).getBlock() instanceof AbstractChestBlock);
+            boolean mainChestExists = getHandler().isValidBlock(info.getBlockPosition(), info.chest.getLevel());
+            boolean otherChestExists = info.otherChest == null ||
+                    (info.chest.getLevel() != null && info.chest.getLevel().getBlockEntity(info.otherPos) instanceof ChestBlockEntity);
             return mainChestExists && otherChestExists;
         } catch (NullPointerException e) {
             return false;
         }
     }
 
-    @Override
-    public boolean reallyShouldTrack(BlockEntity tileEnt) {
-        // Make sure this isn't an "other" chest.
-        if (tileEnt instanceof ChestBlockEntity) {
-            ChestBlockEntity other = Util.getOtherChest((ChestBlockEntity) tileEnt);
-            if (other != null) { // If we have an other chest, make sure that one isn't already being tracked
-                for (AbstractImmersiveInfo aInfo : this.getTrackedObjects()) {
-                    ChestInfo info = (ChestInfo) aInfo;
-                    if (info.getBlockEntity() == other) { // If the info we're looking at is our neighboring chest
-                        if (info.other == null) { // If our neighboring chest's info isn't tracking us
-                            info.failRender = true;
-                            info.other = tileEnt; // Track us
-                            info.otherPos = tileEnt.getBlockPos();
-                            // Fill other chest contents with empty items. Technically causes a desync if the placed
-                            // chest is non-empty, but that shouldn't happen outside of command blocks.
-                            for (int i = 27; i < info.items.length; i++) {
-                                info.items[i] = ItemStack.EMPTY;
-                            }
-                            this.doTick(info, VRPluginVerify.clientInVR()); // Tick so we can handle the items in our other chest
-                            info.failRender = false;
-                        }
-                        return false; // Return false so this one isn't tracked
-                    }
-                }
-            }
-        }
-        return super.reallyShouldTrack(tileEnt);
-    }
-
-    @Override
-    public boolean enabledInConfig() {
-        return ActiveConfig.active().useChestImmersion;
-    }
-
-    @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
-        if (!VRPluginVerify.clientInVR() && !ActiveConfig.active().rightClickChest) return;
-        if (!((ChestInfo) info).isOpen) return;
-        Network.INSTANCE.sendToServer(new SwapPacket(
-                info.getBlockPosition(), closest, hand
-        ));
-    }
-
     public static ChestInfo findImmersive(BlockEntity chest) {
         Objects.requireNonNull(chest);
         for (ChestInfo info : Immersives.immersiveChest.getTrackedObjects()) {
-            if (info.getBlockEntity() == chest || info.other == chest) {
+            if (info.chest == chest || info.otherChest == chest) {
                 return info;
             }
         }
         return null;
-    }
-
-    @Override
-    public void onRemove(ChestInfo info) {
-        super.onRemove(info);
-        if (info.isOpen) {
-            openChest(info);
-        }
-    }
-
-    @Override
-    protected void initInfo(ChestInfo info) {
-        // NOOP since a chest in a double chest can be broken at any time
     }
 
     public static void openChest(ChestInfo info) {
@@ -368,10 +280,5 @@ public class ImmersiveChest extends AbstractBlockEntityImmersive<BlockEntity, Ch
         if (info.isOpen) {
             Lootr.lootrImpl.markOpener(Minecraft.getInstance().player, info.getBlockPosition());
         }
-    }
-
-    @Override
-    public boolean hitboxesAvailable(AbstractImmersiveInfo info) {
-        return ((ChestInfo) info).isOpen;
     }
 }
