@@ -1,9 +1,9 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
+import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.config.PlacementMode;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -11,19 +11,22 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-public class ChestHandler extends ChestLikeHandler {
+public class ChestHandler extends ChestLikeHandler implements MultiblockImmersiveHandler<ListOfItemsStorage> {
 
     @Override
-    public NetworkStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         BlockEntity blockEntity = player.level.getBlockEntity(pos);
         if (blockEntity instanceof ChestBlockEntity cbe) {
             ListOfItemsStorage storage = (ListOfItemsStorage) super.makeInventoryContents(player, pos);
@@ -40,7 +43,7 @@ public class ChestHandler extends ChestLikeHandler {
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, PlacementMode mode) {
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
         BlockEntity blockEntity = player.level.getBlockEntity(pos);
         if (blockEntity instanceof ChestBlockEntity cbe) {
             Swap.handleChest(cbe, player, hand, slot);
@@ -71,12 +74,28 @@ public class ChestHandler extends ChestLikeHandler {
     }
 
     @Override
-    public boolean enabledInConfig(ActiveConfig config) {
-        return config.useChestImmersion;
+    public boolean enabledInConfig(Player player) {
+        return ActiveConfig.getActiveConfigCommon(player).useChestImmersion;
     }
 
     @Override
     public ResourceLocation getID() {
         return new ResourceLocation(ImmersiveMC.MOD_ID, "chest");
+    }
+
+    @Override
+    public @Nullable Set<BlockPos> getHandledBlocks(BlockPos pos, Level level) {
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof EnderChestBlockEntity) {
+            return Set.of(pos);
+        } else if (be instanceof ChestBlockEntity cbe) {
+            ChestBlockEntity other = Util.getOtherChest(cbe);
+            if (other != null) {
+                return Set.of(pos, other.getBlockPos());
+            } else {
+                return Set.of(pos);
+            }
+        }
+        return null;
     }
 }

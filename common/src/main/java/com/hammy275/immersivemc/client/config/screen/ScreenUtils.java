@@ -11,6 +11,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -40,6 +41,16 @@ public class ScreenUtils {
                     configEntry.set(newVal);
                     ActiveConfig.FILE.loadFromFile();
                 }
+        );
+    }
+
+    public static OptionInstance<Boolean> createOption(String keyName, @Nullable Component tooltip,
+                                                       Supplier<Boolean> getter, Consumer<Boolean> setter) {
+        return OptionInstance.createBoolean(
+                keyName,
+                tooltip == null ? (obj) -> null : OptionInstance.cachedConstantTooltip(tooltip),
+                getter.get(),
+                setter
         );
     }
 

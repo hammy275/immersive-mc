@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.model.Cube1x1;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
@@ -99,7 +99,7 @@ public class ItemGuideCustomizeScreen extends Screen {
             float alpha = renderSquare ? 1f : color.alphaF();
             ClientRenderSubscriber.cubeModel.render(stack,
                     buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
-                    color.redF(), color.greenF(), color.blueF(), alpha, 64f * (float)size, AbstractImmersive.maxLight);
+                    color.redF(), color.greenF(), color.blueF(), alpha, 64f * (float)size, ClientUtil.maxLight);
         } else if (ActiveConfig.FILE.placementGuideMode == PlacementGuideMode.OUTLINE) {
             LevelRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
                     AABB.ofSize(Vec3.ZERO, 128 * size, 128 * size, 128 * size),

@@ -1,11 +1,13 @@
 package com.hammy275.immersivemc.client.immersive_item;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.client.immersive.AbstractImmersive;
+import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.common.hitbox.OBB;
+import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
 import com.hammy275.immersivemc.client.workaround.ClickHandlerScreen;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.obb.OBB;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.util.Util;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -115,7 +117,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         }
 
         for (WrittenBookInfo.BookClickInfo clickInfo : info.clickInfos) {
-            AbstractImmersive.renderHitbox(stack, clickInfo.obb(), false, 0f, 0f, 1f, 1f);
+            ImmersiveRenderHelpers.instance().renderHitbox(stack, clickInfo.obb(), false, 0f, 0f, 1f, 1f);
         }
     }
 
@@ -146,7 +148,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
             // -56f is used to make the text left-aligned.
             font.drawInBatch(seq, -56f, 32 + lineNum++ * 9, 0xFF000000, false,
                     stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(),
-                    Font.DisplayMode.NORMAL, 0, AbstractImmersive.maxLight);
+                    Font.DisplayMode.NORMAL, 0, ClientUtil.maxLight);
         }
 
         stack.popPose();
@@ -175,12 +177,12 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         double yaw = Math.toRadians(hand.getYaw());
 
         // Boxes to start a page turn are a box on the page edge to generally capture the hand
-        info.pageTurnBoxes[0] = new OBB(AABB.ofSize(info.positions[0], 0.2, 0.2, pageHalfHeight * 2),
+        info.pageTurnBoxes[0] = OBBFactory.instance().create(AABB.ofSize(info.positions[0], 0.2, 0.2, pageHalfHeight * 2),
                 pitch, yaw, 0);
-        info.pageTurnBoxes[1] = new OBB(AABB.ofSize(info.positions[1], 0.2, 0.2, pageHalfHeight * 2),
+        info.pageTurnBoxes[1] = OBBFactory.instance().create(AABB.ofSize(info.positions[1], 0.2, 0.2, pageHalfHeight * 2),
                 pitch, yaw, 0);
         // Box to continue a page turn
-        info.pageTurnBoxes[2] = new OBB(AABB.ofSize(upCenter, singlePageWidth * 11d/3d, singlePageWidth * 2d, pageHalfHeight * 2.25),
+        info.pageTurnBoxes[2] = OBBFactory.instance().create(AABB.ofSize(upCenter, singlePageWidth * 11d/3d, singlePageWidth * 2d, pageHalfHeight * 2.25),
                 pitch, yaw, 0);
 
         if (info.pageChangeState == WrittenBookInfo.PageChangeState.NONE) {
@@ -337,7 +339,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         if (style != null && style.getClickEvent() != null && !positions.isEmpty()) {
             Vec3 centerPos = getCenterPos(positions);
             info.clickInfos.add(new WrittenBookInfo.BookClickInfo(
-                    new OBB(AABB.ofSize(centerPos, length, 0.04 * scaleSize, 0.02 * scaleSize),
+                    OBBFactory.instance().create(AABB.ofSize(centerPos, length, 0.04 * scaleSize, 0.02 * scaleSize),
                             Math.toRadians(hand.getPitch()),
                             Math.toRadians(hand.getYaw()),
                             isLeft ? leftPageRot : -leftPageRot),
