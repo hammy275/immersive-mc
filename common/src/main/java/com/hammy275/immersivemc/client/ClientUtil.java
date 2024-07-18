@@ -1,25 +1,50 @@
 package com.hammy275.immersivemc.client;
 
+import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
+import com.hammy275.immersivemc.api.client.ImmersiveMCClientRegistration;
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.mixin.MinecraftMixinAccessor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeConfigSpec;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 public class ClientUtil {
 
 
+    public static final int maxLight = LightTexture.pack(15, 15);
     public static int immersiveLeftClickCooldown = 0;
+
+    public static ImmersiveConfigScreenInfo createConfigScreenInfo(String keyName, Supplier<ItemStack> optionItem,
+                                                                   ForgeConfigSpec.BooleanValue configEntry) {
+        return ImmersiveMCClientRegistration.instance().createConfigScreenInfoOneItem(ImmersiveMC.MOD_ID,
+                "config." + ImmersiveMC.MOD_ID + "." + keyName,
+                optionItem, new TranslatableComponent("config." + ImmersiveMC.MOD_ID + "." + keyName + ".desc"),
+                configEntry::get, (newVal) -> {
+                    configEntry.set(newVal);
+                    ActiveConfig.FILE.loadFromFile();
+                });
+    }
 
     /**
      * Gets player position while accounting for partial ticks (getFrameTime())
@@ -95,5 +120,15 @@ public class ClientUtil {
                             CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString()),
                     player.getUUID());
         }
+    }
+
+    @Nullable
+    public static <I extends ImmersiveInfo> I findImmersive(Immersive<I, ?> immersive, BlockPos pos) {
+        for (I info : immersive.getTrackedObjects()) {
+            if (Util.getValidBlocks(immersive.getHandler(), info.getBlockPosition(), Minecraft.getInstance().level).contains(pos)) {
+                return info;
+            }
+        }
+        return null;
     }
 }

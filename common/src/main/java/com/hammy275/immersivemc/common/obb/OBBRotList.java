@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.obb;
 
-import net.minecraft.world.phys.Vec3;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,40 +52,25 @@ public class OBBRotList {
     }
 
     /**
-     * Rotates the provided Vec3 with the rotations in this OBBRotList.
-     * @param toRot The Vec3 (such as a position) to rotate.
-     * @param negative Whether to negate the rotation amount before rotating.
-     * @return The rotated vector.
-     */
-    public Vec3 rotate(Vec3 toRot, boolean negative) {
-        float mult = negative ? -1 : 1;
-        for (OBBRot rot : this.rotList) {
-            switch (rot.rotType()) {
-                case PITCH -> toRot = toRot.xRot(rot.rot() * mult);
-                case YAW -> toRot = toRot.yRot(rot.rot() * mult);
-                case ROLL -> toRot = toRot.zRot(-rot.rot() * mult);
-            }
-        }
-        return toRot;
-    }
-
-    /**
-     * Rotates the provided position around the provided point using the rotations in this OBBRotList. Equivalent
-     * to {@link OBBRotList#rotate} rotating around 0,0,0.
-     * @param posToRotate The position that is being rotated before any rotation.
-     * @param posToRotateAround The position that posToRotate is being rotated around.
-     * @param negative Whether to negate the rotation amount before rotating.
-     * @return The rotated position.
-     */
-    public Vec3 rotateAround(Vec3 posToRotate, Vec3 posToRotateAround, boolean negative) {
-        return rotate(posToRotate.subtract(posToRotateAround), negative).add(posToRotateAround);
-    }
-
-    /**
      * @return A copy of the rotations that make this rotation list.
      */
     public List<OBBRot> getRotations() {
         return new ArrayList<>(this.rotList);
+    }
+
+    /**
+     * @return This {@link OBBRotList} as a Quaternion
+     */
+    public Quaternion asQuaternion() {
+        Quaternion quaternion = new Quaternion(0, 0, 0, 1);
+        for (OBBRot rot : rotList) {
+            switch (rot.rotType()) {
+                case PITCH -> quaternion.mul(Vector3f.XN.rotation(rot.rot()));
+                case YAW -> quaternion.mul(Vector3f.YN.rotation(rot.rot()));
+                case ROLL -> quaternion.mul(Vector3f.ZP.rotation(rot.rot()));
+            }
+        }
+        return quaternion;
     }
 
     /**

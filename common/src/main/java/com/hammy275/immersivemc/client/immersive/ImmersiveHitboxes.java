@@ -1,14 +1,14 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.ImmersiveHitboxesInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.storage.network.NetworkStorage;
-import com.hammy275.immersivemc.common.obb.BoundingBox;
-import com.hammy275.immersivemc.common.obb.OBB;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Used for hitboxes attached to the player
  */
-public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> {
+public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<ImmersiveHitboxesInfo, NullStorage> {
 
     private static final Minecraft mc = Minecraft.getInstance();
     
@@ -67,7 +67,7 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
             // Since +Z is 0 yaw, we make the length across the back 0.35 on the X-axis.
             // Add 0.2 to have some sane minimum
             info.setHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX,
-                    new OBB(AABB.ofSize(centerPos, 0.35, backpackHeight, 0.2),
+                    OBBFactory.instance().create(AABB.ofSize(centerPos, 0.35, backpackHeight, 0.2),
                             0, yaw, 0));
         } else {
             // In case setting changes mid-game
@@ -177,7 +177,7 @@ public class ImmersiveHitboxes extends AbstractImmersive<ImmersiveHitboxesInfo> 
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, NetworkStorage storage) {
+    public void processStorageFromNetwork(AbstractImmersiveInfo info, NullStorage storage) {
         // Intentional NO-OP
     }
 

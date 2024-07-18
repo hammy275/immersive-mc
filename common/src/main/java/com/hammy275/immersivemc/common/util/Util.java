@@ -1,9 +1,13 @@
 package com.hammy275.immersivemc.common.util;
 
 
-import com.hammy275.immersivemc.common.immersive.CheckerFunction;
+import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
+import com.hammy275.immersivemc.common.immersive.ImmersiveChecker;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
-import com.hammy275.immersivemc.common.obb.BoundingBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -14,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.RepeaterBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,11 +26,74 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Util {
+
+    /**
+     * Check if Immersive has valid blocks. This is equivalent to {@link ImmersiveHandler#isValidBlock(BlockPos, Level)}
+     * for single-block Immersives, and running the
+     * former method on all blocks in {@link MultiblockImmersiveHandler#getHandledBlocks(BlockPos, Level)} for
+     * multiblock Immersives.
+     * @param handler Handler to run on.
+     * @param pos Position to check, or a position to check if part of a multiblock.
+     * @param level Level to check in.
+     * @return Whether all blocks are valid or not.
+     */
+    public static boolean isValidBlocks(ImmersiveHandler<?> handler, BlockPos pos, Level level) {
+        return getValidBlocks(handler, pos, level).contains(pos);
+    }
+
+    /**
+     * Checks if Immersive exactly matches the supplied set of blocks.
+     * @param handler Handler.
+     * @param pos Set of all positions in the Immersive.
+     * @param level Level.
+     * @return Whether the provided set of positions match the Immersive as it exists in-world.
+     */
+    public static boolean isValidBlocks(ImmersiveHandler<?> handler, Set<BlockPos> pos, Level level) {
+        return getValidBlocks(handler, pos.iterator().next(), level).equals(pos);
+    }
+
+    /**
+     * Get all blocks part of the Immersive at the specified position for the given handler.
+     * @param handler Handler to get valid positions of.
+     * @param pos A BlockPos that's part of the Immersive.
+     * @param level The level to get in.
+     * @return A set of valid positions for the Immersive, or an empty set if not valid.
+     */
+    public static Set<BlockPos> getValidBlocks(ImmersiveHandler<?> handler, BlockPos pos, Level level) {
+        boolean valid = handler.isValidBlock(pos, level);
+        if (valid) {
+            if (handler instanceof MultiblockImmersiveHandler<?> mih) {
+                Set<BlockPos> positions = mih.getHandledBlocks(pos, level);
+                if (positions != null && positions.stream().allMatch(p -> handler.isValidBlock(p, level))) {
+                    return positions;
+                } else {
+                    return Set.of();
+                }
+            } else {
+                return Set.of(pos);
+            }
+        }
+        return Set.of();
+    }
+
+    public static Vec3 average(Set<BlockPos> positions) {
+        double x = 0;
+        double y = 0;
+        double z = 0;
+        for (BlockPos pos : positions) {
+            x += pos.getX();
+            y += pos.getY();
+            z += pos.getZ();
+        }
+        return new Vec3(
+                x / positions.size(),
+                y / positions.size(),
+                z / positions.size()
+        );
+    }
 
     public static boolean isThrowableItem(Item item) {
         return item == Items.EXPERIENCE_BOTTLE || item == Items.EGG ||
@@ -48,7 +116,7 @@ public class Util {
 
     public static boolean isHittingImmersive(BlockHitResult result, Level level) {
         BlockPos pos = result.getBlockPos();
-        for (CheckerFunction checker : ImmersiveCheckers.CHECKERS) {
+        for (ImmersiveChecker checker : ImmersiveCheckers.CHECKERS) {
             if (checker.apply(pos, level)) {
                 return true; // "I'm totally not crouching" if SHIFT+Right-clicking an immersive
             }
@@ -78,6 +146,14 @@ public class Util {
      * @return Target in targets that intersects the ray and is closer to rayStart than all other intersecting targets.
      */
     public static Optional<Integer> rayTraceClosest(Vec3 rayStart, Vec3 rayEnd, BoundingBox... targets) {
+        return rayTraceClosest(rayStart, rayEnd, Arrays.stream(targets).toList());
+    }
+
+    public static Optional<Integer> rayTraceClosest(Vec3 rayStart, Vec3 rayEnd, Collection<? extends HitboxInfo> targets) {
+        return rayTraceClosest(rayStart, rayEnd, targets.stream().map(HitboxInfo::getHitbox).toList());
+    }
+
+    public static Optional<Integer> rayTraceClosest(Vec3 rayStart, Vec3 rayEnd, Iterable<BoundingBox> targets) {
         double dist = Double.MAX_VALUE;
         Integer winner = null;
         int i = 0;
@@ -108,6 +184,14 @@ public class Util {
     }
 
     public static Optional<Integer> getFirstIntersect(Vec3 pos, BoundingBox... targets) {
+        return getFirstIntersect(pos, Arrays.stream(targets).toList());
+    }
+
+    public static Optional<Integer> getFirstIntersect(Vec3 pos, Collection<? extends HitboxInfo> targets) {
+        return getFirstIntersect(pos, targets.stream().map(HitboxInfo::getHitbox).toList());
+    }
+
+    public static Optional<Integer> getFirstIntersect(Vec3 pos, Iterable<BoundingBox> targets) {
         int i = 0;
         for (BoundingBox target : targets) {
             if (target != null && BoundingBox.contains(target, pos)) {
@@ -118,13 +202,12 @@ public class Util {
         return Optional.empty();
     }
 
-    public static Optional<Integer> getClosestIntersect(Vec3 pos, BoundingBox[] targets, Vec3[] positions) {
-        if (targets.length != positions.length) throw new IllegalArgumentException("Targets and positions must be same length!");
+    public static Optional<Integer> getClosestIntersect(Vec3 pos, List<BoundingBox> targets) {
         int res = -1;
         double distanceToBeat = Double.MAX_VALUE;
-        for (int i = 0; i < targets.length; i++) {
-            if (targets[i] != null && BoundingBox.contains(targets[i], pos)) {
-                double newDist = pos.distanceToSqr(positions[i]);
+        for (int i = 0; i < targets.size(); i++) {
+            if (targets.get(i) != null && BoundingBox.contains(targets.get(i), pos)) {
+                double newDist = pos.distanceToSqr(BoundingBox.getCenter(targets.get(i)));
                 if (newDist < distanceToBeat) {
                     distanceToBeat = newDist;
                     res = i;
@@ -256,6 +339,89 @@ public class Util {
             }
         }
         return positions;
+    }
+
+    public static Vec3[] get3x3HorizontalGrid(BlockPos blockPos, double spacing, Direction blockForward,
+                                              boolean use3DCompat) {
+        Vec3 pos = Vec3.upFromBottomCenterOf(blockPos, 1);
+        if (use3DCompat) {
+            pos = pos.add(0, 1d/16d, 0);
+        }
+        Direction left = blockForward.getCounterClockWise();
+
+        Vec3 leftOffset = new Vec3(
+                left.getNormal().getX() * -spacing, 0, left.getNormal().getZ() * -spacing);
+        Vec3 rightOffset = new Vec3(
+                left.getNormal().getX() * spacing, 0, left.getNormal().getZ() * spacing);
+
+        Vec3 topOffset = new Vec3(
+                blockForward.getNormal().getX() * -spacing, 0, blockForward.getNormal().getZ() * -spacing);
+        Vec3 botOffset = new Vec3(
+                blockForward.getNormal().getX() * spacing, 0, blockForward.getNormal().getZ() * spacing);
+
+
+        return new Vec3[]{
+                pos.add(leftOffset).add(topOffset), pos.add(topOffset), pos.add(rightOffset).add(topOffset),
+                pos.add(leftOffset), pos, pos.add(rightOffset),
+                pos.add(leftOffset).add(botOffset), pos.add(botOffset), pos.add(rightOffset).add(botOffset)
+        };
+    }
+
+    public static Direction getForwardFromPlayerUpAndDown(Player player, BlockPos pos) {
+        return getForwardFromPlayerUpAndDownFilterBlockFacing(player, pos, false);
+    }
+
+    /**
+     * Same as getForwardFromPlayer, but can return the block facing up or down, alongside any of the four
+     * directions of N/E/S/W.
+     * @param player Player.
+     * @param pos Position of block.
+     * @param filterOnBlockFacing If true, the axis of the block's DirectionalBlock.FACING will not be returned from
+     *                            this function. The block should have this property if this is true, of course!
+     * @return Any Direction, representing what direction the block should be facing based on the player's position.
+     */
+    public static Direction getForwardFromPlayerUpAndDownFilterBlockFacing(Player player, BlockPos pos, boolean filterOnBlockFacing) {
+        Direction.Axis filter = filterOnBlockFacing ? player.level.getBlockState(pos).getValue(DirectionalBlock.FACING).getAxis() : null;
+        Vec3 playerPos = player.position();
+        if (playerPos.y >= pos.getY() + 0.625 && filter != Direction.Axis.Y) {
+            return Direction.UP;
+        } else if (playerPos.y <= pos.getY() - 0.625 && filter != Direction.Axis.Y) {
+            return Direction.DOWN;
+        } else {
+            Direction forward = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(player, pos);
+            if (forward.getAxis() != filter) {
+                return forward;
+            } else {
+                // We filter on non-Y axis, and getForwardFromPlayer was on our filter. Find the closest and get it.
+                Direction blockFacing = player.level.getBlockState(pos).getValue(DirectionalBlock.FACING);
+                Vec3 blockCenter = Vec3.atCenterOf(pos);
+                Direction blockLeftDir = blockFacing.getCounterClockWise();
+                Vec3 blockLeftVec = new Vec3(blockLeftDir.getNormal().getX(), blockLeftDir.getNormal().getY(), blockLeftDir.getNormal().getZ());
+                Vec3 counterClockwisePos = blockCenter.add(blockLeftVec.scale(0.5));
+                Vec3 clockwisePos = blockCenter.add(blockLeftVec.scale(-0.5));
+                Vec3 upPos = blockCenter.add(0, 0.5, 0);
+                Vec3 downPos = blockCenter.add(0, -0.5, 0);
+
+                double counterClockwiseDist = counterClockwisePos.distanceToSqr(playerPos);
+                double clockwiseDist = clockwisePos.distanceToSqr(playerPos);
+                double upDist = upPos.distanceToSqr(playerPos);
+                double downDist = downPos.distanceToSqr(playerPos);
+
+                double min = Math.min(counterClockwiseDist, clockwiseDist);
+                min = Math.min(min, upDist);
+                min = Math.min(min, downDist);
+
+                if (min == counterClockwiseDist) {
+                    return forward.getCounterClockWise();
+                } else if (min == clockwiseDist) {
+                    return forward.getClockWise();
+                } else if (min == upDist) {
+                    return Direction.UP;
+                } else {
+                    return Direction.DOWN;
+                }
+            }
+        }
     }
 
     public static class ItemStackMergeResult {

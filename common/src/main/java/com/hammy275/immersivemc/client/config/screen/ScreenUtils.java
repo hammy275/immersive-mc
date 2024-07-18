@@ -10,8 +10,10 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -42,6 +44,16 @@ public class ScreenUtils {
                     configEntry.set(newVal);
                     ActiveConfig.FILE.loadFromFile();
                 }
+        );
+    }
+
+    public static CycleOption<Boolean> createOption(String keyName, @Nullable Component tooltip,
+                                                       Supplier<Boolean> getter, Consumer<Boolean> setter) {
+        return CycleOption.createOnOff(
+                keyName,
+                tooltip == null ? TextComponent.EMPTY : tooltip,
+                (unused) -> getter.get(),
+                (unused, unused2, newVal) -> setter.accept(newVal)
         );
     }
 
