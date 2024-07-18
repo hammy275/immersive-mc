@@ -1,7 +1,9 @@
 package com.hammy275.immersivemc.server;
 
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
@@ -47,7 +49,12 @@ public class ServerSubscriber {
     public static void onPlayerJoin(Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
             Network.INSTANCE.sendToPlayer(serverPlayer,
-                    new ConfigSyncPacket(ActiveConfig.FILE));
+                    new ConfigSyncPacket(ActiveConfig.FILE,
+                            ImmersiveHandlers.HANDLERS.stream()
+                                    .filter((handler) -> !handler.clientAuthoritative())
+                                    .map(ImmersiveHandler::getID)
+                                    .toList()
+                    ));
         }
     }
 
