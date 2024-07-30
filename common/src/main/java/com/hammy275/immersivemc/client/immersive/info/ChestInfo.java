@@ -67,46 +67,4 @@ public class ChestInfo extends AbstractImmersiveInfoV2 {
         return (hitboxes.get(8).box != null || hitboxes.get(17).box != null || hitboxes.get(26).box != null) &&
                 (this.otherChest == null || (hitboxes.get(35).box != null || hitboxes.get(44).box != null || hitboxes.get(53).box != null));
     }
-
-    /*
-     * If a double chest is broken, this function transforms the info representing a double chest to one representing
-     * a single chest.
-     * @return true on a successful transformation. false on failure (this was already a single chest or both chests are gone)
-     */
-    /*public boolean migrateToValidChest(Level level) {
-        boolean mainValid = getBlockPosition() != null && ImmersiveHandlers.chestHandler.isValidBlock(getBlockPosition(), level);
-        boolean otherValid = otherPos != null && ImmersiveHandlers.chestHandler.isValidBlock(otherPos, level);
-        if (!mainValid && !otherValid) {
-            return false;
-        }
-        // Note that we don't migrate the items/positions/hitboxes, as that will be re-calculated later in
-        // ImmersiveChest#doTick(). Just clear the ones for the other chest.
-        boolean clearOther = false;
-        boolean changeToOther = Minecraft.getInstance().level.getBlockEntity(this.otherPos) instanceof ChestBlockEntity other;
-        if (mainValid) {
-            // Other chest is invalid, remove references to it.
-            clearOther = true;
-        } else if (changeToOther) {
-            // Check if actually a chest above in case a chest is next to something that became an ender chest or similar
-            // Main chest is invalid. Migrate the other chest to be the main chest.
-            this.tileEntity = other;
-            if (isOpen) {
-                // Close chests on break
-                Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(this.pos, false));
-                Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(other.getBlockPos(), isOpen));
-            }
-            this.pos = other.getBlockPos();
-            clearOther = true;
-        }
-        if (clearOther) {
-            this.other = null;
-            this.otherPos = null;
-            for (int i = 27; i < this.items.length; i++) {
-                this.items[i] = null;
-                this.hitboxes[i] = null;
-                this.positions[i] = null;
-            }
-        }
-        return clearOther;
-    }*/
 }
