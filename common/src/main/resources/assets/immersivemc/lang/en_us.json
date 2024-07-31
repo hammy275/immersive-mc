@@ -121,7 +121,7 @@
   "config.immersivemc.placement_mode.2": "Place Half of the Items",
   "config.immersivemc.placement_mode.3": "Place All the Items",
   "config.immersivemc.placement_mode.desc": "When right-clicking or placing items into immersives, %s from the stack of items in your hand into the immersive.",
-  "config.immersivemc.pet_any_living": "Allow Pettting Anything Living",
+  "config.immersivemc.pet_any_living": "Allow Petting Anything Living",
   "config.immersivemc.pet_any_living.desc": "When enabled while the ability to pet is also enabled, VR users can pet any living entity, rather than just pets they own.",
   "config.immersivemc.ranged_grab_range": "Ranged Grab Range [VR Only]",
   "config.immersivemc.ranged_grab_range.desc": "Maximum range for ranged grab.",
