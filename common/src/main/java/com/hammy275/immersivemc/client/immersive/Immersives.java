@@ -44,7 +44,7 @@ public class Immersives {
                     ClientConstants.itemScaleSizeAnvil).build())
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(0d, 0, 0),
                     ClientConstants.itemScaleSizeAnvil).build())
-            .addHitbox(RelativeHitboxInfoBuilder.create(new Vec3(0, 1d/3d, 0),
+            .addHitbox(RelativeHitboxInfoBuilder.create((info) -> info.getItem(2).isEmpty() ? null : new Vec3(0, 1d/3d, 0),
                     ClientConstants.itemScaleSizeAnvil).holdsItems(true).build())
             .addHitbox(RelativeHitboxInfoBuilder.create(new Vec3(0, 0, 0.5), 0)
                     .textSupplier((info) -> {
@@ -142,7 +142,7 @@ public class Immersives {
             .add3x3Grid(RelativeHitboxInfoBuilder.createItemInput(Vec3.ZERO,
                             ClientConstants.itemScaleSizeCrafting / 1.5f).needs3DResourcePackCompat(true).build(),
                     3d / 16d)
-            .addHitbox(RelativeHitboxInfoBuilder.create(new Vec3(0, 0, 0.5),
+            .addHitbox(RelativeHitboxInfoBuilder.create((info) -> info.getItem(9).isEmpty() ? null : new Vec3(0, 0, 0.5),
                     ClientConstants.itemScaleSizeCrafting * 1.5d).holdsItems(true)
                     .itemSpins(true).itemRenderSizeMultiplier(3f).triggerHitbox(true)
                     .forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
@@ -158,6 +158,7 @@ public class Immersives {
             .setRenderSize(ClientConstants.itemScaleSizeETable)
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(0, 0.75, -0.5), ClientConstants.itemScaleSizeETable).build())
             .addHitbox(RelativeHitboxInfoBuilder.create((info) -> {
+                if (info.getItem(0).isEmpty()) return null;
                 int yOffset = (int) (info.ticksExisted() % ClientConstants.eTableYOffsets.size());
                 return new Vec3(-0.5, 1.25, -0.5).add(0, ClientConstants.eTableYOffsets.get(yOffset), 0);
             }, ClientConstants.itemScaleSizeETable).holdsItems(true).textSupplier((info) -> {
@@ -175,6 +176,7 @@ public class Immersives {
                 return texts;
             }).build())
             .addHitbox(RelativeHitboxInfoBuilder.create((info) -> {
+                if (info.getItem(0).isEmpty()) return null;
                 int yOffset = (int) ((info.ticksExisted() + 7) % ClientConstants.eTableYOffsets.size());
                 return new Vec3(0, 1.25, -0.5).add(0, ClientConstants.eTableYOffsets.get(yOffset), 0);
             }, ClientConstants.itemScaleSizeETable).holdsItems(true).textSupplier((info) -> {
@@ -192,6 +194,7 @@ public class Immersives {
                 return texts;
             }).build())
             .addHitbox(RelativeHitboxInfoBuilder.create((info) -> {
+                if (info.getItem(0).isEmpty()) return null;
                 int yOffset = (int) ((info.ticksExisted() + 14) % ClientConstants.eTableYOffsets.size());
                 return new Vec3(0.5, 1.25, -0.5).add(0, ClientConstants.eTableYOffsets.get(yOffset), 0);
             }, ClientConstants.itemScaleSizeETable).holdsItems(true).textSupplier((info) -> {
@@ -266,7 +269,7 @@ public class Immersives {
                         return new Vec3(0.25, 0.25, 0);
                     }
                 } else {
-                    return new Vec3(0.25, 0, 0);
+                    return info.getItem(2).isEmpty() ? null : new Vec3(0.25, 0, 0);
                 }},
                     ClientConstants.itemScaleSizeFurnace / 1.5d).holdsItems(true).needs3DResourcePackCompat(true).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_BLOCK_FACING)
@@ -377,7 +380,7 @@ public class Immersives {
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(-1d/3d, 0, 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(Vec3.ZERO, ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(1d/3d, 0, 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
-            .addHitbox(RelativeHitboxInfoBuilder.create(new Vec3(0, 0, 0.5), ClientConstants.itemScaleSizeSmithingTable / 1.025).holdsItems(true).triggerHitbox(true).itemSpins(true).itemRenderSizeMultiplier(1.5f).forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
+            .addHitbox(RelativeHitboxInfoBuilder.create((info) -> info.getItem(3).isEmpty() ? null : new Vec3(0, 0, 0.5), ClientConstants.itemScaleSizeSmithingTable / 1.025).holdsItems(true).triggerHitbox(true).itemSpins(true).itemRenderSizeMultiplier(1.5f).forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
             .setHitboxInteractHandler((info, player, slot, hand) -> {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
