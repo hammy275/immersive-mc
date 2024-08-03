@@ -36,6 +36,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -516,8 +517,10 @@ public class ClientLogicSubscriber {
                 }
             }
         }
+        // Direction check is so we only open when right-clicking the front of the barrel
         if (ActiveConfig.active().useBarrelImmersion &&
-                ImmersiveHandlers.barrelHandler.isValidBlock(pos, player.level())) {
+                ImmersiveHandlers.barrelHandler.isValidBlock(pos, player.level()) &&
+                ((BlockHitResult) looking).getDirection() == state.getValue(BlockStateProperties.FACING)) {
             BuiltImmersiveInfo<ChestLikeData> info = ClientUtil.findImmersive(Immersives.immersiveBarrel, pos);
             if (info != null) {
                 info.getExtraData().toggleOpen(pos);
