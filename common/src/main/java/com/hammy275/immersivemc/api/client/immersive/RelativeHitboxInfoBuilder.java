@@ -128,7 +128,8 @@ public interface RelativeHitboxInfoBuilder {
 
     /**
      * Create a RelativeHitboxInfoBuilder offset by some amount with some size.
-     * @param centerOffset The function to calculate the relative offset from the center.
+     * @param centerOffset The function to calculate the relative offset from the center. The function return null to
+     *                     denote no hitbox.
      * @param size The size of this hitbox, in blocks.
      * @return A builder object.
      */
@@ -150,7 +151,8 @@ public interface RelativeHitboxInfoBuilder {
 
     /**
      * Create a RelativeHitboxInfoBuilder offset by some amount with some size.
-     * @param centerOffset The function to calculate the relative offset from the center.
+     * @param centerOffset The function to calculate the relative offset from the center. The function can return null
+     *                     to denote no hitbox.
      * @param sizeX The size of this box on the relative x-axis.
      * @param sizeY The size of this box on the relative y-axis.
      * @param sizeZ The size of this box on the relative z-axis.
@@ -172,7 +174,8 @@ public interface RelativeHitboxInfoBuilder {
 
     /**
      * Create a RelativeHitboxInfoBuilder offset by some amount with some size that accepts items from players.
-     * @param centerOffset The function to calculate the relative offset from the center.
+     * @param centerOffset The function to calculate the relative offset from the center. The function can return null
+     *                     to denote no hitbox.
      * @param size The size of this hitbox, in blocks.
      * @return A builder object.
      */
