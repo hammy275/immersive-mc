@@ -62,8 +62,10 @@ public class ConfigSyncPacket {
         ctx.get().queue(() -> {
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player == null) { // S2C
-                // Check handlers and kick on mismatch
-                NetworkClientHandlers.checkHandlerMatch(message.handlerIDs);
+                if (message.handlerIDs != null) {
+                    // Check handlers and kick on mismatch
+                    NetworkClientHandlers.checkHandlerMatch(message.handlerIDs);
+                }
                 // Load server config
                 ActiveConfig.FROM_SERVER = message.config;
                 ActiveConfig.loadActive();

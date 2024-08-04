@@ -20,7 +20,10 @@ import net.minecraft.world.phys.HitResult;
 
 public class ServerSubscriber {
 
+    public static MinecraftServer server;
+
     public static void onServerTick(MinecraftServer server) {
+        ServerSubscriber.server = server; // Not a fan of this, but no better way to hold onto the server instance.
         for (AbstractTracker tracker : ServerTrackerInit.globalTrackers) {
             tracker.doTick(null);
         }
