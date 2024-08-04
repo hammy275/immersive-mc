@@ -28,7 +28,7 @@ public class ImmersiveMCNeoForge {
                 "immersive_mc.toml"));
 
         if (Platform.isModLoaded("lootr")) {
-            Lootr.lootrImpl = new LootrCompatImpl();
+            Lootr.lootrImpl = LootrCompatImpl.makeCompatImpl();
         }
     }
 }

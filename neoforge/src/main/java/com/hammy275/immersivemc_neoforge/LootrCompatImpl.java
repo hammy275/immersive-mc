@@ -1,6 +1,9 @@
 package com.hammy275.immersivemc_neoforge;
 
+import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.compat.lootr.LootrCompat;
+import com.hammy275.immersivemc.common.compat.lootr.LootrNullImpl;
+import com.hammy275.immersivemc.common.compat.util.CompatModule;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,6 +23,16 @@ import noobanidus.mods.lootr.block.entities.LootrShulkerBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class LootrCompatImpl implements LootrCompat {
+
+    private LootrCompatImpl() {}
+
+    public static LootrCompat makeCompatImpl() {
+        return CompatModule.create(new LootrCompatImpl(), LootrCompat.class, "Lootr",
+                (config, newValue) -> {
+                    Lootr.lootrImpl = new LootrNullImpl();
+                });
+    }
+
     @Override
     public @Nullable Container getContainer(ServerPlayer player, BlockPos pos) {
         Level level = player.level();
