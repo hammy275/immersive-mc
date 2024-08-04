@@ -21,7 +21,7 @@ public class ImmersiveMCFabric implements ModInitializer {
             ImmersiveMC.LOGGER.info("Not loading with mc-vr-api; it wasn't found!");
         }
         if (Platform.isModLoaded("lootr")) {
-            Lootr.lootrImpl = new LootrCompatImpl();
+            Lootr.lootrImpl = LootrCompatImpl.makeCompatImpl();
         }
     }
 }
