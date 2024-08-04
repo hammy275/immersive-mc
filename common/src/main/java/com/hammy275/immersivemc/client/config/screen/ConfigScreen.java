@@ -120,6 +120,11 @@ public class ConfigScreen extends Screen {
 
     @Override
     public void onClose() {
+        onClientConfigChange();
+        Minecraft.getInstance().setScreen(lastScreen);
+    }
+
+    public static void onClientConfigChange() {
         boolean isSingleplayerHost = Minecraft.getInstance().hasSingleplayerServer();
         ActiveConfig.FILE.loadFromFile();
         if (isSingleplayerHost) {
@@ -150,6 +155,5 @@ public class ConfigScreen extends Screen {
             // Let server know of our new config state
             Network.INSTANCE.sendToServer(new ConfigSyncPacket(ActiveConfig.FILE));
         }
-        Minecraft.getInstance().setScreen(lastScreen);
     }
 }
