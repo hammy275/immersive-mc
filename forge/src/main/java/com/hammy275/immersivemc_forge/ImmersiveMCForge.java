@@ -27,7 +27,7 @@ public class ImmersiveMCForge {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ImmersiveMCConfig.GENERAL_SPEC,
                 "immersive_mc.toml");
         if (Platform.isModLoaded("lootr")) {
-            Lootr.lootrImpl = new LootrCompatImpl();
+            Lootr.lootrImpl = LootrCompatImpl.makeCompatImpl();
         }
     }
 
