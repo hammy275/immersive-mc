@@ -10,6 +10,9 @@ import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
 import com.hammy275.immersivemc.common.util.PosRot;
+import com.hammy275.immersivemc.common.vr.VRPlugin;
+import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -18,7 +21,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -41,7 +43,7 @@ public class ImmersiveLectern implements Immersive<LecternInfo, BookData> {
 
     @Override
     public int handleHitboxInteract(LecternInfo info, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
-        return info.bookData.onPageInteract() ? 20 : -1;
+        return info.bookData.doPageInteract() ? 20 : -1;
     }
 
     @Override
@@ -57,8 +59,14 @@ public class ImmersiveLectern implements Immersive<LecternInfo, BookData> {
     @Override
     public void tick(LecternInfo info) {
         info.tickCount++;
-        // TODO: Get other for both VR and non-VR properly
-        info.bookData.tick(info.posRot, new PosRot(Minecraft.getInstance().player.position(), new Vec3(0, 0, 1), 0, 0, 0));
+        PosRot[] others;
+        if (VRPluginVerify.clientInVR()) {
+            others = new PosRot[]{VRUtil.posRot(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1())};
+        } else {
+            // TODO: Handle non-vr
+            return;
+        }
+        info.bookData.tick(info.posRot, others);
     }
 
     @Override

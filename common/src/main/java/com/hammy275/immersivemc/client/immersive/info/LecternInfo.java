@@ -26,8 +26,8 @@ public class LecternInfo implements ImmersiveInfo {
         this.pos = pos;
         Direction direction = level.getBlockState(pos).getValue(BlockStateProperties.HORIZONTAL_FACING);
 
-        // TODO: move up 1 block instead of 1.2 once normal lectern book is hidden
-        Vec3 renderPos = Vec3.atBottomCenterOf(pos).add(0, 1.2, 0);
+        Vec3 renderPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0)
+                .add(Vec3.atLowerCornerOf(direction.getNormal()).scale(0.1));
         posRot = new PosRot(renderPos, Util.getLookAngle((float) -Math.PI / 8f, (float) -Math.toRadians(direction.getOpposite().toYRot())),
                 22.5f,
                 direction.getOpposite().toYRot(), 0);

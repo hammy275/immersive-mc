@@ -211,7 +211,7 @@ public class ClientBookData extends BookData {
         stack.popPose();
     }
 
-    public void tick(PosRot hand, PosRot other) {
+    public void tick(PosRot hand, PosRot... others) {
         // Get page contents. Can change at random, whether due to command blocks or due to editing for a book and quill
         BookViewScreen.BookAccess access = BookViewScreen.BookAccess.fromItem(book);
         left = access.getPage(getLeftPageIndex());
@@ -239,31 +239,10 @@ public class ClientBookData extends BookData {
         pageTurnBoxes[2] = OBBFactory.instance().create(AABB.ofSize(upCenter, singlePageWidth * 11d/3d, singlePageWidth * 2d, pageHalfHeight * 2.25),
                 pitch, yaw, 0);
 
+        // Place positions for interacting with text. Note that these lists are cleared earlier in tick()
         if (pageChangeState == PageChangeState.NONE) {
-            if (possiblyBeginPageTurn(other.position(), pageTurnBoxes[0]) && !onFirstPage()) {
-                pageChangeState = PageChangeState.LEFT_TO_RIGHT;
-            } else if (possiblyBeginPageTurn(other.position(), pageTurnBoxes[1]) && !onLastPage()) {
-                pageChangeState = PageChangeState.RIGHT_TO_LEFT;
-            }
-        } else if (!pageChangeState.isAnim) {
-            if (pageTurnBoxes[2].contains(other.position())) {
-                boolean doingLToR = pageChangeState == PageChangeState.LEFT_TO_RIGHT;
-                double distToLeft = other.position().distanceTo(positions[0]);
-                double distToRight = other.position().distanceTo(positions[1]);
-                if (doingLToR && distToRight < distToLeft) {
-                    pageChangeState = PageChangeState.LEFT_TO_RIGHT_ANIM;
-                    lastPage();
-                } else if (!doingLToR && distToLeft < distToRight) {
-                    pageChangeState = PageChangeState.RIGHT_TO_LEFT_ANIM;
-                    nextPage();
-                } else if (doingLToR) {
-                    leftPageTurn = (float) (distToLeft / (distToLeft + distToRight));
-                } else {
-                    rightPageTurn = 1f - ((float) (distToRight / (distToLeft + distToRight)));
-                }
-            } else {
-                resetTurnState();
-            }
+            setClickPositions(hand, true);
+            setClickPositions(hand, false);
         }
 
         // Automatic page turning
@@ -281,27 +260,6 @@ public class ClientBookData extends BookData {
             }
         }
 
-        // Place positions for interacting with text. Note that these lists are cleared much earlier in tick()
-        if (pageChangeState == PageChangeState.NONE) {
-            setClickPositions(hand, other, true);
-            setClickPositions(hand, other, false);
-        }
-
-        // Find nearest link to click
-        selectedClickInfo = -1;
-        for (int i = 0; i < clickInfos.size(); i++) {
-            if (clickInfos.get(i).obb().contains(other.position())) {
-                selectedClickInfo = i;
-                break;
-            }
-        }
-
-        // Attempt to trace to hitboxes if we aren't in one
-        if (selectedClickInfo == -1) {
-            Optional<Integer> hit = Util.rayTraceClosest(other.position(), other.position().add(other.getLookAngle()), getClickBoxes());
-            selectedClickInfo = hit.orElse(-1);
-        }
-
         // Indicator on currently selected click info
         if (selectedClickInfo > -1) {
             ClientBookData.BookClickInfo clickInfo = clickInfos.get(selectedClickInfo);
@@ -312,9 +270,53 @@ public class ClientBookData extends BookData {
                     0, 0, 0
             );
         }
+
+        for (PosRot other : others) {
+            if (pageChangeState == PageChangeState.NONE) {
+                if (possiblyBeginPageTurn(other.position(), pageTurnBoxes[0]) && !onFirstPage()) {
+                    pageChangeState = PageChangeState.LEFT_TO_RIGHT;
+                } else if (possiblyBeginPageTurn(other.position(), pageTurnBoxes[1]) && !onLastPage()) {
+                    pageChangeState = PageChangeState.RIGHT_TO_LEFT;
+                }
+            } else if (!pageChangeState.isAnim) {
+                if (pageTurnBoxes[2].contains(other.position())) {
+                    boolean doingLToR = pageChangeState == PageChangeState.LEFT_TO_RIGHT;
+                    double distToLeft = other.position().distanceTo(positions[0]);
+                    double distToRight = other.position().distanceTo(positions[1]);
+                    if (doingLToR && distToRight < distToLeft) {
+                        pageChangeState = PageChangeState.LEFT_TO_RIGHT_ANIM;
+                        lastPage();
+                    } else if (!doingLToR && distToLeft < distToRight) {
+                        pageChangeState = PageChangeState.RIGHT_TO_LEFT_ANIM;
+                        nextPage();
+                    } else if (doingLToR) {
+                        leftPageTurn = (float) (distToLeft / (distToLeft + distToRight));
+                    } else {
+                        rightPageTurn = 1f - ((float) (distToRight / (distToLeft + distToRight)));
+                    }
+                } else {
+                    resetTurnState();
+                }
+            }
+
+            // Find nearest link to click
+            selectedClickInfo = -1;
+            for (int i = 0; i < clickInfos.size(); i++) {
+                if (clickInfos.get(i).obb().contains(other.position())) {
+                    selectedClickInfo = i;
+                    break;
+                }
+            }
+
+            // Attempt to trace to hitboxes if we aren't in one
+            if (selectedClickInfo == -1) {
+                Optional<Integer> hit = Util.rayTraceClosest(other.position(), other.position().add(other.getLookAngle()), getClickBoxes());
+                selectedClickInfo = hit.orElse(-1);
+            }
+        }
     }
 
-    public boolean onPageInteract() {
+    public boolean doPageInteract() {
         if (clickInfos.isEmpty()) {
             return false;
         }
@@ -340,7 +342,7 @@ public class ClientBookData extends BookData {
         return false;
     }
 
-    protected void setClickPositions(PosRot hand, PosRot other, boolean isLeft) {
+    protected void setClickPositions(PosRot hand, boolean isLeft) {
         Vec3 pageUp = hand.getLookAngle();
         Vec3 pageDown = pageUp.scale(-1);
         Vec3 left = getLeftRight(hand, true);
