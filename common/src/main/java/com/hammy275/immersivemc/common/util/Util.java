@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -29,6 +30,17 @@ import net.minecraft.world.phys.Vec3;
 import java.util.*;
 
 public class Util {
+
+    /**
+     * Gets a look angle from pitch/yaw.
+     * @param pitch The pitch in radians.
+     * @param yaw The yaw in radians.
+     * @return The look angle represented by the pitch and yaw.
+     */
+    public static Vec3 getLookAngle(float pitch, float yaw) {
+        float yawCos = Mth.cos(pitch);
+        return new Vec3(Mth.sin(yaw) * yawCos, -Mth.sin(pitch), Mth.cos(yaw) * yawCos);
+    }
 
     /**
      * Check if Immersive has valid blocks. This is equivalent to {@link ImmersiveHandler#isValidBlock(BlockPos, Level)}

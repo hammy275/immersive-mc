@@ -1,9 +1,11 @@
 package com.hammy275.immersivemc.server;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
@@ -30,6 +32,7 @@ public class ServerSubscriber {
         TrackedImmersives.tick(server);
         DirtyTracker.unmarkAllDirty(); // Remove dirtiness for block entities
         ImmersiveMCLevelStorage.unmarkAllDirty(server);
+        SharedNetworkStorages.instance().getAll(BookData.class).forEach(BookData::markPageNoLongerChanged);
     }
 
     public static void onPlayerTick(Player playerIn) {
