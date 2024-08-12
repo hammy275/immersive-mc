@@ -43,7 +43,7 @@ public class ImmersiveLectern implements Immersive<LecternInfo, BookData> {
 
     @Override
     public int handleHitboxInteract(LecternInfo info, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
-        return info.bookData.doPageInteract() ? 20 : -1;
+        return info.bookData.doPageInteract(hand.ordinal()) ? 20 : -1;
     }
 
     @Override
@@ -61,7 +61,8 @@ public class ImmersiveLectern implements Immersive<LecternInfo, BookData> {
         info.tickCount++;
         PosRot[] others;
         if (VRPluginVerify.clientInVR()) {
-            others = new PosRot[]{VRUtil.posRot(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1())};
+            others = new PosRot[]{VRUtil.posRot(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController0()),
+                    VRUtil.posRot(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1())};
         } else {
             // TODO: Handle non-vr
             return;

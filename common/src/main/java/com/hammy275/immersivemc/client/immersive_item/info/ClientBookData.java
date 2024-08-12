@@ -75,8 +75,9 @@ public class ClientBookData extends BookData {
     // Index 0 is left center, index 1 is right center, index 2 is true center.
     public Vec3[] positions = new Vec3[3];
     public List<BookClickInfo> clickInfos = new ArrayList<>();
-    public int selectedClickInfo = -1;
+    public int[] selectedClickInfos = new int[0];
     public ItemStack book;
+    public int pageTurnerIndex = -1;
 
     public ClientBookData() {
         this(ItemStack.EMPTY);
@@ -260,23 +261,23 @@ public class ClientBookData extends BookData {
             }
         }
 
-        // Indicator on currently selected click info
-        if (selectedClickInfo > -1) {
-            ClientBookData.BookClickInfo clickInfo = clickInfos.get(selectedClickInfo);
-            Vec3 particlePos = clickInfo.obb().getCenter();
-            Minecraft.getInstance().player.level().addParticle(
-                    new DustParticleOptions(new Vector3f(0f, 0f, 1f), 0.2f),
-                    particlePos.x, particlePos.y, particlePos.z,
-                    0, 0, 0
-            );
-        }
+        selectedClickInfos = new int[others.length];
+        boolean someHandPageTurning = false;
+        // If a hand is turning the page, only run code for it
+        int start = pageTurnerIndex == -1 ? 0 : pageTurnerIndex;
+        int end = pageTurnerIndex == -1 ? others.length : pageTurnerIndex + 1;
 
-        for (PosRot other : others) {
+        for (int i = start; i < end; i++) {
+            PosRot other = others[i];
             if (pageChangeState == PageChangeState.NONE) {
                 if (possiblyBeginPageTurn(other.position(), pageTurnBoxes[0]) && !onFirstPage()) {
                     pageChangeState = PageChangeState.LEFT_TO_RIGHT;
+                    someHandPageTurning = true;
+                    pageTurnerIndex = i;
                 } else if (possiblyBeginPageTurn(other.position(), pageTurnBoxes[1]) && !onLastPage()) {
                     pageChangeState = PageChangeState.RIGHT_TO_LEFT;
+                    someHandPageTurning = true;
+                    pageTurnerIndex = i;
                 }
             } else if (!pageChangeState.isAnim) {
                 if (pageTurnBoxes[2].contains(other.position())) {
@@ -291,37 +292,52 @@ public class ClientBookData extends BookData {
                         nextPage();
                     } else if (doingLToR) {
                         leftPageTurn = (float) (distToLeft / (distToLeft + distToRight));
+                        someHandPageTurning = true;
                     } else {
                         rightPageTurn = 1f - ((float) (distToRight / (distToLeft + distToRight)));
+                        someHandPageTurning = true;
                     }
-                } else {
-                    resetTurnState();
                 }
             }
 
             // Find nearest link to click
-            selectedClickInfo = -1;
-            for (int i = 0; i < clickInfos.size(); i++) {
-                if (clickInfos.get(i).obb().contains(other.position())) {
-                    selectedClickInfo = i;
+            selectedClickInfos[i] = -1;
+            for (int j = 0; j < clickInfos.size(); j++) {
+                if (clickInfos.get(j).obb().contains(other.position())) {
+                    selectedClickInfos[i] = j;
                     break;
                 }
             }
 
             // Attempt to trace to hitboxes if we aren't in one
-            if (selectedClickInfo == -1) {
+            if (selectedClickInfos[i] == -1) {
                 Optional<Integer> hit = Util.rayTraceClosest(other.position(), other.position().add(other.getLookAngle()), getClickBoxes());
-                selectedClickInfo = hit.orElse(-1);
+                selectedClickInfos[i] = hit.orElse(-1);
             }
+
+            // Indicator on currently selected click info
+            if (selectedClickInfos[i] > -1) {
+                ClientBookData.BookClickInfo clickInfo = clickInfos.get(selectedClickInfos[i]);
+                Vec3 particlePos = clickInfo.obb().getCenter();
+                Minecraft.getInstance().player.level().addParticle(
+                        new DustParticleOptions(new Vector3f(0f, 0f, 1f), 0.2f),
+                        particlePos.x, particlePos.y, particlePos.z,
+                        0, 0, 0
+                );
+            }
+        }
+
+        if (!someHandPageTurning && !pageChangeState.isAnim) {
+            resetTurnState();
         }
     }
 
-    public boolean doPageInteract() {
+    public boolean doPageInteract(int selectedIndex) {
         if (clickInfos.isEmpty()) {
             return false;
         }
-        if (selectedClickInfo > -1) {
-            ClientBookData.BookClickInfo clickInfo = clickInfos.get(selectedClickInfo);
+        if (selectedClickInfos[selectedIndex] > -1) {
+            ClientBookData.BookClickInfo clickInfo = clickInfos.get(selectedClickInfos[selectedIndex]);
             ClickEvent clickEvent = clickInfo.style().getClickEvent();
             if (clickEvent != null) {
                 String eventValue = clickEvent.getValue();
@@ -458,6 +474,7 @@ public class ClientBookData extends BookData {
         leftPageTurn = 0f;
         rightPageTurn = 1f;
         pageChangeState = PageChangeState.NONE;
+        pageTurnerIndex = -1;
     }
 
     private static Vec3 getCenterPos(List<Vec3> positions) {

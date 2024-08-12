@@ -38,6 +38,6 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
 
     @Override
     public boolean onLeftClick(WrittenBookInfo info, IVRData hand, IVRData other) {
-        return info.bookData.doPageInteract();
+        return info.bookData.doPageInteract(0);
     }
 }

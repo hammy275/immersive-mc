@@ -8,7 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.entity.LecternBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,8 +21,8 @@ public class LevelMixin {
     private void blockEntityChanged(BlockPos blockPos, CallbackInfo ci) {
         Level me = (Level) (Object) this;
         BlockEntity blockEntity = me.getBlockEntity(blockPos);
-        if (!me.isClientSide && blockEntity instanceof Container) {
-            BlockState state = me.getBlockState(blockPos);
+        // Lecterns hold items, but aren't directly Containers
+        if (!me.isClientSide && blockEntity instanceof Container || blockEntity instanceof LecternBlockEntity) {
             for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
                 if (Util.isValidBlocks(handler, blockPos, me)) {
                     DirtyTracker.markDirty(me, blockPos);
