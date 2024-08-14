@@ -4,8 +4,10 @@ import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfoFactory;
 import com.hammy275.immersivemc.client.immersive_item.info.ClientBookData;
+import com.hammy275.immersivemc.common.util.PageChangeState;
 import net.minecraft.core.BlockPos;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,9 +22,17 @@ public class LecternInfo implements ImmersiveInfo {
 
     @Override
     public List<? extends HitboxInfo> getAllHitboxes() {
-        return Arrays.stream(bookData.pageTurnBoxes)
+        List<HitboxInfo> hitboxes = new ArrayList<>(Arrays.stream(bookData.pageTurnBoxes)
                 .map(obb -> HitboxInfoFactory.instance().interactHitbox(obb))
-                .toList();
+                .toList());
+        if (bookData.pageChangeState == PageChangeState.NONE || bookData.pageChangeState.isAnim) {
+            // Set hitbox 2 to null when not doing a page turn to prevent it being intersected before clickInfos
+            hitboxes.set(2, null);
+        }
+        hitboxes.addAll(bookData.clickInfos.stream()
+                .map(bookClickInfo -> HitboxInfoFactory.instance().triggerHitbox(bookClickInfo.obb()))
+                .toList());
+        return hitboxes;
     }
 
     @Override

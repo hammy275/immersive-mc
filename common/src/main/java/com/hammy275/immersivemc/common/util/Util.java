@@ -162,7 +162,7 @@ public class Util {
     }
 
     public static Optional<Integer> rayTraceClosest(Vec3 rayStart, Vec3 rayEnd, Collection<? extends HitboxInfo> targets) {
-        return rayTraceClosest(rayStart, rayEnd, targets.stream().map(HitboxInfo::getHitbox).toList());
+        return rayTraceClosest(rayStart, rayEnd, targets.stream().map((info) -> info != null ? info.getHitbox() : null).toList());
     }
 
     public static Optional<Integer> rayTraceClosest(Vec3 rayStart, Vec3 rayEnd, Iterable<BoundingBox> targets) {
@@ -200,7 +200,7 @@ public class Util {
     }
 
     public static Optional<Integer> getFirstIntersect(Vec3 pos, Collection<? extends HitboxInfo> targets) {
-        return getFirstIntersect(pos, targets.stream().map(HitboxInfo::getHitbox).toList());
+        return getFirstIntersect(pos, targets.stream().map((info) -> info != null ? info.getHitbox() : null).toList());
     }
 
     public static Optional<Integer> getFirstIntersect(Vec3 pos, Iterable<BoundingBox> targets) {

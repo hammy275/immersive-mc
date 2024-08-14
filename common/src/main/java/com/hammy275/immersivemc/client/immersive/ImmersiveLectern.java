@@ -39,7 +39,12 @@ public class ImmersiveLectern implements Immersive<LecternInfo, BookData> {
 
     @Override
     public int handleHitboxInteract(LecternInfo info, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
-        return info.bookData.doPageInteract(hand.ordinal()) ? 20 : -1;
+        // Handled in ClientBookData#tick()
+        if (hitboxIndex <= 2) {
+            return 0;
+        } else {
+            return info.bookData.doPageInteract(hand.ordinal()) ? 20 : -1;
+        }
     }
 
     @Override
