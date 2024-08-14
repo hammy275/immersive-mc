@@ -28,6 +28,12 @@ import org.joml.Vector3f;
 
 public class BookData implements NetworkStorage, WorldStorage {
 
+    /*
+        Notes:
+        - Book is 14 lines long, with 20 characters per line
+        - Page turning is done using a central hitbox and edge hitboxes. Hand moves from edge to center to confirm turn.
+        If it doesn't make it to center, cancel the turn.
+     */
     // User Controlled
     public static final float scaleSize = 1f;
 
@@ -127,6 +133,10 @@ public class BookData implements NetworkStorage, WorldStorage {
     public void lecternServerTick() {
         if (pageTurner != null) {
             lecternPlayerTick(pageTurner, pos);
+        } else if (pageChangeState != PageChangeState.NONE) {
+            // Catches some logic bugs to ensure that we're never doing a page turn without a pageTurner
+            pageChangeState = PageChangeState.NONE;
+            setDirty();
         }
     }
 

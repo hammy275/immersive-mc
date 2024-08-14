@@ -40,13 +40,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class ClientBookData extends BookData {
-    /*
-        Notes:
-        - Book is 14 lines long, with 20 characters per line
-        - Page turning is done using a central hitbox and edge hitboxes. Hand moves from edge to center to confirm turn.
-        If it doesn't make it to center, cancel the turn.
-     */
-
     public static final BookModel bookModel = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
     public static final ResourceLocation writtenBookTexture = new ResourceLocation(ImmersiveMC.MOD_ID, "nahnotfox_written_book.png");
     
