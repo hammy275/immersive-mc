@@ -14,17 +14,23 @@ import java.util.function.Supplier;
 public class PageTurnPacket {
 
     public final BlockPos pos;
+    public final int forcedPageIndex;
 
     public PageTurnPacket(BlockPos pos) {
+        this(pos, -1);
+    }
+
+    public PageTurnPacket(BlockPos pos, int forcedPageIndex) {
         this.pos = pos;
+        this.forcedPageIndex = forcedPageIndex;
     }
 
     public static void encode(PageTurnPacket packet, FriendlyByteBuf buffer) {
-        buffer.writeBlockPos(packet.pos);
+        buffer.writeBlockPos(packet.pos).writeInt(packet.forcedPageIndex);
     }
 
     public static PageTurnPacket decode(FriendlyByteBuf buffer) {
-        return new PageTurnPacket(buffer.readBlockPos());
+        return new PageTurnPacket(buffer.readBlockPos(), buffer.readInt());
     }
 
     public static void handle(PageTurnPacket message, Supplier<NetworkManager.PacketContext> ctx) {
@@ -33,8 +39,12 @@ public class PageTurnPacket {
             if (NetworkUtil.safeToRun(message.pos, player)) {
                 BookData storage = (BookData) WorldStorages.instance().getOrCreate(message.pos, player.serverLevel());
                 if (storage != null && !storage.book.isEmpty() && storage.pageTurner == null) {
-                    storage.pageTurner = player;
-                    storage.pageTurnerVR = VRPluginVerify.playerInVR(player);
+                    if (message.forcedPageIndex == -1) {
+                        storage.pageTurner = player;
+                        storage.pageTurnerVR = VRPluginVerify.playerInVR(player);
+                    } else {
+                        storage.setPage(message.forcedPageIndex);
+                    }
                 }
             }
         });

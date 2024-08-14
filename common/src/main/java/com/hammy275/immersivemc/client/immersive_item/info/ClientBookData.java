@@ -8,6 +8,8 @@ import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.workaround.ClickHandlerScreen;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
+import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.packet.PageTurnPacket;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.util.PageChangeState;
 import com.hammy275.immersivemc.common.util.PosRot;
@@ -234,9 +236,12 @@ public class ClientBookData extends BookData {
                 if (clickEvent.getAction() == ClickEvent.Action.CHANGE_PAGE) {
                     try {
                         int newPageNum = Integer.parseInt(eventValue) - 1;
-                        setPage(newPageNum);
+                        if (authoritative) {
+                            setPage(newPageNum);
+                        } else {
+                            Network.INSTANCE.sendToServer(new PageTurnPacket(pos, newPageNum));
+                        }
                     } catch (Exception ignored) {}
-
                 } else {
                     ClickHandlerScreen tempScreen = new ClickHandlerScreen();
                     Minecraft.getInstance().setScreen(tempScreen);
