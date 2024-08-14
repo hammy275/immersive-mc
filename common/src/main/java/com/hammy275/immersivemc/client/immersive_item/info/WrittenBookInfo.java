@@ -9,6 +9,6 @@ public class WrittenBookInfo extends AbstractItemInfo {
 
     public WrittenBookInfo(ItemStack item, InteractionHand hand) {
         super(item, hand);
-        bookData = new ClientBookData(item);
+        bookData = new ClientBookData(true, item);
     }
 }

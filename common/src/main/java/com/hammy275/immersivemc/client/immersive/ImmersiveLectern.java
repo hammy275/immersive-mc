@@ -9,10 +9,6 @@ import com.hammy275.immersivemc.client.immersive.info.LecternInfo;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
-import com.hammy275.immersivemc.common.util.PosRot;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
-import com.hammy275.immersivemc.common.vr.VRUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -38,7 +34,7 @@ public class ImmersiveLectern implements Immersive<LecternInfo, BookData> {
 
     @Override
     public LecternInfo buildInfo(BlockPos pos, Level level) {
-        return new LecternInfo(pos, level);
+        return new LecternInfo(pos);
     }
 
     @Override
@@ -48,26 +44,18 @@ public class ImmersiveLectern implements Immersive<LecternInfo, BookData> {
 
     @Override
     public boolean shouldRender(LecternInfo info) {
-        return !info.bookData.book.isEmpty() && info.bookData.pageTurnBoxes[2] != null;
+        return !info.bookData.book.isEmpty() && info.bookData.pageTurnBoxes[2] != null && info.bookData.lecternPosRot != null;
     }
 
     @Override
     public void render(LecternInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
-        info.bookData.render(stack, info.posRot);
+        info.bookData.render(stack, info.bookData.lecternPosRot);
     }
 
     @Override
     public void tick(LecternInfo info) {
         info.tickCount++;
-        PosRot[] others;
-        if (VRPluginVerify.clientInVR()) {
-            others = new PosRot[]{VRUtil.posRot(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController0()),
-                    VRUtil.posRot(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1())};
-        } else {
-            // TODO: Handle non-vr
-            return;
-        }
-        info.bookData.tick(info.posRot, others);
+        info.bookData.lecternPlayerTick(Minecraft.getInstance().player, info.getBlockPosition());
     }
 
     @Override

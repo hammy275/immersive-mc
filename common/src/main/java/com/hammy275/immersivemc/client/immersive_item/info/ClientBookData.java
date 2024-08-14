@@ -12,6 +12,7 @@ import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.util.PageChangeState;
 import com.hammy275.immersivemc.common.util.PosRot;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Axis;
@@ -48,43 +49,25 @@ public class ClientBookData extends BookData {
 
     public static final BookModel bookModel = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
     public static final ResourceLocation writtenBookTexture = new ResourceLocation(ImmersiveMC.MOD_ID, "nahnotfox_written_book.png");
-
-    // User Controlled
-    public static final float scaleSize = 1f;
-
-    // Derived from user controlled
-    public static final double singlePageWidth = scaleSize * 0.3d;
-    public static final double pageHalfHeight = scaleSize / 4d;
-    public static final float textStackScaleSize = -scaleSize * 0.0025f;
-    public static final double textUpAmount = 0.1875 * (scaleSize / 2f);
-    public static final double textInteractDistanceSqr = (textUpAmount * 1.2) * (textUpAmount * 1.2);
-
-    // Helpful constants
-    public static final float pageTilt = 11f;
-    public static final int linesPerPage = 14;
-    public static final int pixelsPerLine = 114;
-    public static final double leftPageRot = Math.toRadians(15);
     
     
     public FormattedText left = FormattedText.EMPTY;
     public FormattedText right = FormattedText.EMPTY;
-    // Indices 0-1: Left page start turn box and right page start turn boxes
-    // Index 2: The "page progress" box. If the hand isn't in this box, the turn is cancelled.
-    // If the hand is in the opposite one from when the turn started, the turn auto-completes.
-    public OBB[] pageTurnBoxes = new OBB[3];
-    // Index 0 is left center, index 1 is right center, index 2 is true center.
-    public Vec3[] positions = new Vec3[3];
     public List<BookClickInfo> clickInfos = new ArrayList<>();
     public int[] selectedClickInfos = new int[0];
     public ItemStack book;
-    public int pageTurnerIndex = -1;
 
-    public ClientBookData() {
-        this(ItemStack.EMPTY);
+    public ClientBookData(boolean authoritative) {
+        this(authoritative, ItemStack.EMPTY);
     }
 
-    public ClientBookData(ItemStack book) {
+    public ClientBookData(boolean authoritative, ItemStack book) {
+        super(authoritative);
         this.book = book;
+        if (!authoritative) {
+            pageTurner = Minecraft.getInstance().player;
+            pageTurnerVR = VRPluginVerify.clientInVR();
+        }
     }
     
     public void processFromNetwork(BookData data) {
@@ -93,22 +76,6 @@ public class ClientBookData extends BookData {
         this.pageChangeState = data.pageChangeState;
         this.leftPageTurn = data.leftPageTurn;
         this.rightPageTurn = data.rightPageTurn;
-    }
-
-    public boolean onFirstPage() {
-        return leftPageIndex == 0;
-    }
-
-    public boolean onLastPage() {
-        return leftPageIndex == maxLeftPageIndex();
-    }
-
-    public int getLeftPageIndex() {
-        return this.leftPageIndex;
-    }
-
-    public int getRightPageIndex() {
-        return getLeftPageIndex() + 1;
     }
 
     public BoundingBox[] getClickBoxes() {
@@ -212,33 +179,14 @@ public class ClientBookData extends BookData {
         stack.popPose();
     }
 
+    @Override
     public void tick(PosRot hand, PosRot... others) {
+        super.tick(hand, others);
         // Get page contents. Can change at random, whether due to command blocks or due to editing for a book and quill
         BookViewScreen.BookAccess access = BookViewScreen.BookAccess.fromItem(book);
         left = access.getPage(getLeftPageIndex());
         right = access.getPage(getRightPageIndex());
         clickInfos.clear();
-
-        Vec3 left = getLeftRight(hand, true);
-        Vec3 right = getLeftRight(hand, false);
-        Vec3 away = getAway(hand);
-
-        positions[2] = hand.position().add(away.scale(textUpAmount)); // Center
-        positions[0] = positions[2].add(left.scale(singlePageWidth * 1.25d)); // Left edge
-        positions[1] = positions[2].add(right.scale(singlePageWidth * 1.25d)); // Right edge
-        Vec3 upCenter = positions[2].add(away.scale(singlePageWidth * 0.5)); // Used for "continue page turning" boxes.
-
-        double pitch = Math.toRadians(hand.getPitch());
-        double yaw = Math.toRadians(hand.getYaw());
-
-        // Boxes to start a page turn are a box on the page edge to generally capture the hand
-        pageTurnBoxes[0] = OBBFactory.instance().create(AABB.ofSize(positions[0], 0.2, 0.2, pageHalfHeight * 2),
-                pitch, yaw, 0);
-        pageTurnBoxes[1] = OBBFactory.instance().create(AABB.ofSize(positions[1], 0.2, 0.2, pageHalfHeight * 2),
-                pitch, yaw, 0);
-        // Box to continue a page turn
-        pageTurnBoxes[2] = OBBFactory.instance().create(AABB.ofSize(upCenter, singlePageWidth * 11d/3d, singlePageWidth * 2d, pageHalfHeight * 2.25),
-                pitch, yaw, 0);
 
         // Place positions for interacting with text. Note that these lists are cleared earlier in tick()
         if (pageChangeState == PageChangeState.NONE) {
@@ -246,59 +194,12 @@ public class ClientBookData extends BookData {
             setClickPositions(hand, false);
         }
 
-        // Automatic page turning
-        // Note that the next page/last page on the info is done as the animation starts, so the text is loaded
-        // by the time we get to resetState here.
-        if (pageChangeState == PageChangeState.LEFT_TO_RIGHT_ANIM) {
-            leftPageTurn = Math.min(leftPageTurn + 0.05f, 1f);
-            if (leftPageTurn == 1f) {
-                resetTurnState();
-            }
-        } else if (pageChangeState == PageChangeState.RIGHT_TO_LEFT_ANIM) {
-            rightPageTurn = Math.max(rightPageTurn - 0.05f, 0f);
-            if (rightPageTurn == 0f) {
-                resetTurnState();
-            }
-        }
-
         selectedClickInfos = new int[others.length];
-        boolean someHandPageTurning = false;
         // If a hand is turning the page, only run code for it
         int start = pageTurnerIndex == -1 ? 0 : pageTurnerIndex;
         int end = pageTurnerIndex == -1 ? others.length : pageTurnerIndex + 1;
-
         for (int i = start; i < end; i++) {
             PosRot other = others[i];
-            if (pageChangeState == PageChangeState.NONE) {
-                if (possiblyBeginPageTurn(other.position(), pageTurnBoxes[0]) && !onFirstPage()) {
-                    pageChangeState = PageChangeState.LEFT_TO_RIGHT;
-                    someHandPageTurning = true;
-                    pageTurnerIndex = i;
-                } else if (possiblyBeginPageTurn(other.position(), pageTurnBoxes[1]) && !onLastPage()) {
-                    pageChangeState = PageChangeState.RIGHT_TO_LEFT;
-                    someHandPageTurning = true;
-                    pageTurnerIndex = i;
-                }
-            } else if (!pageChangeState.isAnim) {
-                if (pageTurnBoxes[2].contains(other.position())) {
-                    boolean doingLToR = pageChangeState == PageChangeState.LEFT_TO_RIGHT;
-                    double distToLeft = other.position().distanceTo(positions[0]);
-                    double distToRight = other.position().distanceTo(positions[1]);
-                    if (doingLToR && distToRight < distToLeft) {
-                        pageChangeState = PageChangeState.LEFT_TO_RIGHT_ANIM;
-                        lastPage();
-                    } else if (!doingLToR && distToLeft < distToRight) {
-                        pageChangeState = PageChangeState.RIGHT_TO_LEFT_ANIM;
-                        nextPage();
-                    } else if (doingLToR) {
-                        leftPageTurn = (float) (distToLeft / (distToLeft + distToRight));
-                        someHandPageTurning = true;
-                    } else {
-                        rightPageTurn = 1f - ((float) (distToRight / (distToLeft + distToRight)));
-                        someHandPageTurning = true;
-                    }
-                }
-            }
 
             // Find nearest link to click
             selectedClickInfos[i] = -1;
@@ -325,10 +226,6 @@ public class ClientBookData extends BookData {
                         0, 0, 0
                 );
             }
-        }
-
-        if (!someHandPageTurning && !pageChangeState.isAnim) {
-            resetTurnState();
         }
     }
 
@@ -443,38 +340,6 @@ public class ClientBookData extends BookData {
                             isLeft ? leftPageRot : -leftPageRot),
                     style));
         }
-    }
-
-    private Vec3 getLeftRight(PosRot hand, boolean left) {
-        Vec3 look = hand.getLookAngle();
-        Vector3f leftF = new Vector3f((float) look.x(), 0, (float) look.z());
-        leftF.normalize();
-        leftF.rotate(Axis.YN.rotationDegrees(left ? 270 : 90));
-        return new Vec3(leftF.x(), Math.abs(leftF.y()), leftF.z());
-    }
-
-    /**
-     *
-     * @param hand Hand data
-     * @return The vector pointing away from the book. This is the opposite of the look vector of an HMD looking
-     * directly at the book.
-     */
-    private Vec3 getAway(PosRot hand) {
-        Vector3f awayFromBookF = new Vector3f(0, 1, 0);
-        awayFromBookF.rotate(Axis.XN.rotationDegrees(hand.getPitch()));
-        awayFromBookF.rotate(Axis.YN.rotationDegrees(hand.getYaw()));
-        return new Vec3(awayFromBookF.x(), awayFromBookF.y(), awayFromBookF.z());
-    }
-
-    public boolean possiblyBeginPageTurn(Vec3 handPos, OBB startBox) {
-        return startBox.contains(handPos);
-    }
-
-    private void resetTurnState() {
-        leftPageTurn = 0f;
-        rightPageTurn = 1f;
-        pageChangeState = PageChangeState.NONE;
-        pageTurnerIndex = -1;
     }
 
     private static Vec3 getCenterPos(List<Vec3> positions) {

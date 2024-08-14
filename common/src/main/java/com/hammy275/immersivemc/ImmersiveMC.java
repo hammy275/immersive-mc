@@ -15,6 +15,7 @@ import com.hammy275.immersivemc.common.network.packet.FetchBackpackStoragePacket
 import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import com.hammy275.immersivemc.common.network.packet.GrabItemPacket;
 import com.hammy275.immersivemc.common.network.packet.InventorySwapPacket;
+import com.hammy275.immersivemc.common.network.packet.PageTurnPacket;
 import com.hammy275.immersivemc.common.network.packet.ReelFishPacket;
 import com.hammy275.immersivemc.common.network.packet.SetRepeaterPacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
@@ -112,6 +113,8 @@ public class ImmersiveMC {
                 DoubleControllerVibrate::decode, DoubleControllerVibrate::handle);
         Network.INSTANCE.register(UsePacket.class, UsePacket::encode,
                 UsePacket::decode, UsePacket::handle);
+        Network.INSTANCE.register(PageTurnPacket.class, PageTurnPacket::encode,
+                PageTurnPacket::decode, PageTurnPacket::handle);
 
     }
 }
