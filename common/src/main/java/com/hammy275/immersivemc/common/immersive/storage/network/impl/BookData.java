@@ -133,10 +133,6 @@ public class BookData implements NetworkStorage, WorldStorage {
     public void lecternServerTick() {
         if (pageTurner != null) {
             lecternPlayerTick(pageTurner, pos);
-        } else if (pageChangeState != PageChangeState.NONE) {
-            // Catches some logic bugs to ensure that we're never doing a page turn without a pageTurner
-            pageChangeState = PageChangeState.NONE;
-            setDirty();
         }
     }
 
@@ -169,11 +165,13 @@ public class BookData implements NetworkStorage, WorldStorage {
             leftPageTurn = Math.min(leftPageTurn + 0.05f, 1f);
             if (leftPageTurn == 1f) {
                 resetTurnState();
+                return;
             }
         } else if (pageChangeState == PageChangeState.RIGHT_TO_LEFT_ANIM) {
             rightPageTurn = Math.max(rightPageTurn - 0.05f, 0f);
             if (rightPageTurn == 0f) {
                 resetTurnState();
+                return;
             }
         }
 
