@@ -26,8 +26,8 @@ public interface ImmersiveHandler<S extends NetworkStorage> {
     S makeInventoryContents(ServerPlayer player, BlockPos pos);
 
     /**
-     * @return The same type of NetworkStorage as made with makeInventoryContents(), but in an empty state to be
-     * decoded into by the client.
+     * @return A new instance of the same type of NetworkStorage as made with makeInventoryContents(), but in an empty
+     * state for purposes such as being decoded into by the client.
      */
     S getEmptyNetworkStorage();
 

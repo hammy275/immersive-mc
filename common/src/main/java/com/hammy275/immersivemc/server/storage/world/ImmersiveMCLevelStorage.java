@@ -2,12 +2,13 @@ package com.hammy275.immersivemc.server.storage.world;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
 import com.hammy275.immersivemc.api.server.WorldStorage;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -20,7 +21,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -103,7 +106,22 @@ public class ImmersiveMCLevelStorage extends SavedData {
         return null;
     }
 
-    public static void unmarkAllDirty(MinecraftServer server) {
+    public static List<BookData> getAllBookDatas(MinecraftServer server) {
+        List<BookData> datas = new ArrayList<>();
+        for (ServerLevel level : server.getAllLevels()) {
+            ImmersiveMCLevelStorage storage = level.getDataStorage().get(ImmersiveMCLevelStorage::load, DATA_KEY);
+            if (storage != null) {
+                storage.storageMap.forEach((pos, ws) -> {
+                    if (ws instanceof BookData bd) {
+                        datas.add(bd);
+                    }
+                });
+            }
+        }
+        return datas;
+    }
+
+    public static void unmarkAllItemStoragesDirty(MinecraftServer server) {
         for (ServerLevel level : server.getAllLevels()) {
             ImmersiveMCLevelStorage storage = level.getDataStorage().get(ImmersiveMCLevelStorage::load, DATA_KEY);
             if (storage != null) {

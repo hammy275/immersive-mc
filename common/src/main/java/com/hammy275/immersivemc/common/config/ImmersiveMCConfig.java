@@ -38,6 +38,7 @@ public class ImmersiveMCConfig {
     public static ForgeConfigSpec.BooleanValue useCauldronImmersion;
     public static ForgeConfigSpec.BooleanValue useIronFurnacesFurnaceImmersion;
     public static ForgeConfigSpec.BooleanValue useTinkersConstructCraftingStationImmersion;
+    public static ForgeConfigSpec.BooleanValue useLecternImmersion;
 
     // C2S Only Sync
     public static ForgeConfigSpec.BooleanValue crouchBypassImmersion;
@@ -171,6 +172,9 @@ public class ImmersiveMCConfig {
         useTinkersConstructCraftingStationImmersion = builder
                 .comment("Whether immersives for the crafting station from Tinkers' Construct should be allowed.")
                 .define("tinkers_construct_crafting_station_immersion", true);
+        useLecternImmersion = builder
+                .comment("Whether immersives for the lectern should be allowed.")
+                .define("lectern_immersion", true);
 
         // C2S Only Sync
         crouchBypassImmersion = builder
