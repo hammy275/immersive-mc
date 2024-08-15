@@ -60,6 +60,7 @@ public final class ActiveConfig implements Cloneable {
     public boolean useCauldronImmersion = false;
     public boolean useIronFurnacesFurnaceImmersion = false;
     public boolean useTinkersConstructCraftingStationImmersion = false;
+    public boolean useLecternImmersion = false;
 
     // C2S Synced values
     public boolean crouchBypassImmersion = false;
@@ -212,6 +213,7 @@ public final class ActiveConfig implements Cloneable {
         useCauldronImmersion = useCauldronImmersion && other.useCauldronImmersion;
         useIronFurnacesFurnaceImmersion = useIronFurnacesFurnaceImmersion && other.useIronFurnacesFurnaceImmersion;
         useTinkersConstructCraftingStationImmersion = useTinkersConstructCraftingStationImmersion && other.useTinkersConstructCraftingStationImmersion;
+        useLecternImmersion = useLecternImmersion && other.useLecternImmersion;
     }
 
     /**
@@ -250,6 +252,7 @@ public final class ActiveConfig implements Cloneable {
         useCauldronImmersion = ImmersiveMCConfig.useCauldronImmersion.get();
         useIronFurnacesFurnaceImmersion = ImmersiveMCConfig.useIronFurnacesFurnaceImmersion.get();
         useTinkersConstructCraftingStationImmersion = ImmersiveMCConfig.useTinkersConstructCraftingStationImmersion.get();
+        useLecternImmersion = ImmersiveMCConfig.useLecternImmersion.get();
 
         // C2S synced values
         crouchBypassImmersion = ImmersiveMCConfig.crouchBypassImmersion.get();
@@ -408,7 +411,8 @@ public final class ActiveConfig implements Cloneable {
                 "Reach Behind Backpack Mode: " + reachBehindBackpackMode + "\n" +
                 "Use Iron Furnaces Furnace Immersion: " + useIronFurnacesFurnaceImmersion + "\n" +
                 "Use Tinkers' Construct Crafting Station Immersion: " + useTinkersConstructCraftingStationImmersion + "\n" +
-                "Disable ImmersiveMC When not in VR: " + disableOutsideVR;
+                "Disable ImmersiveMC When not in VR: " + disableOutsideVR + "\n" +
+                "Use Lectern Immersion: " + useLecternImmersion;
         return stringOut;
     }
 

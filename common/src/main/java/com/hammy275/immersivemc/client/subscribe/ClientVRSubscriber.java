@@ -26,6 +26,10 @@ public class ClientVRSubscriber {
     // Global cooldown to prevent rapid-fire VR interactions
     protected static int cooldown = 0;
 
+    public static void setCooldown(int cooldown) {
+        ClientVRSubscriber.cooldown = Math.max(ClientVRSubscriber.cooldown, cooldown);
+    }
+
     public static void immersiveTickVR(Player player) {
         if (Platform.getEnv() != EnvType.CLIENT) return;
         if (Minecraft.getInstance().gameMode == null) return;
