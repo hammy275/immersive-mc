@@ -4,12 +4,18 @@ import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
-import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
-import com.hammy275.immersivemc.client.immersive.*;
-import com.hammy275.immersivemc.client.immersive.info.*;
+import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
+import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
+import com.hammy275.immersivemc.client.immersive.ImmersiveChest;
+import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
+import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
+import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
+import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
 import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
 import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
@@ -41,7 +47,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public class ClientLogicSubscriber {
 
@@ -245,7 +255,7 @@ public class ClientLogicSubscriber {
                     IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
                     for (int i = 0; i <= 1; i++) {
                         info.setSlotHovered(Util.getFirstIntersect(vrPlayer.getController(i).position(),
-                                info.getAllHitboxes().stream().map(HitboxInfo::getHitbox).toList()).orElse(-1), i);
+                                info.getAllHitboxes().stream().map((box) -> box != null ? box.getHitbox() : null).toList()).orElse(-1), i);
                     }
                 }
                 if (!VRPluginVerify.clientInVR() || ActiveConfig.active().rightClickInVR) {

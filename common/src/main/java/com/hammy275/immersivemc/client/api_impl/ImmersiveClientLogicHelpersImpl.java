@@ -1,6 +1,8 @@
 package com.hammy275.immersivemc.client.api_impl;
 
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
+import com.hammy275.immersivemc.client.ClientUtil;
+import com.hammy275.immersivemc.client.subscribe.ClientVRSubscriber;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveLogicHelpersImpl;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
@@ -13,6 +15,12 @@ import net.minecraft.world.level.LightLayer;
 public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl implements ImmersiveClientLogicHelpers {
 
     public static final ImmersiveClientLogicHelpers INSTANCE = new ImmersiveClientLogicHelpersImpl();
+
+    @Override
+    public void setCooldown(int cooldown) {
+        ClientUtil.setRightClickCooldown(cooldown);
+        ClientVRSubscriber.setCooldown(cooldown);
+    }
 
     @Override
     public void sendSwapPacket(BlockPos pos, int slot, InteractionHand hand) {
