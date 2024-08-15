@@ -325,6 +325,7 @@ public class Immersives {
             .setConfigScreenInfo(createConfigScreenInfo("jukebox", () -> new ItemStack(Items.JUKEBOX), ImmersiveMCConfig.useJukeboxImmersion))
             .build();
 
+    public static final ImmersiveLectern immersiveLectern = new ImmersiveLectern();
     public static final ImmersiveLever immersiveLever = new ImmersiveLever();
 
     public static final ImmersiveRepeater immersiveRepeater = new ImmersiveRepeater();
