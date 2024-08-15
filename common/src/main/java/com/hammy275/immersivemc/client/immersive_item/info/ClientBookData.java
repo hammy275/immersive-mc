@@ -14,7 +14,6 @@ import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.util.PageChangeState;
 import com.hammy275.immersivemc.common.util.PosRot;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Axis;
@@ -61,7 +60,6 @@ public class ClientBookData extends BookData {
         this.book = book;
         if (!authoritative) {
             pageTurner = Minecraft.getInstance().player;
-            pageTurnerVR = VRPluginVerify.clientInVR();
         }
     }
     
@@ -189,6 +187,9 @@ public class ClientBookData extends BookData {
             setClickPositions(hand, false);
         }
 
+        if (others.length < 2 && pageTurnerIndex != -1) { // Player switched out of VR while page turning
+            return;
+        }
         selectedClickInfos = new int[others.length];
         // If a hand is turning the page, only run code for it
         int start = pageTurnerIndex == -1 ? 0 : pageTurnerIndex;
@@ -229,28 +230,31 @@ public class ClientBookData extends BookData {
             return false;
         }
         if (selectedClickInfos[selectedIndex] > -1) {
-            ClientBookData.BookClickInfo clickInfo = clickInfos.get(selectedClickInfos[selectedIndex]);
-            ClickEvent clickEvent = clickInfo.style().getClickEvent();
-            if (clickEvent != null) {
-                String eventValue = clickEvent.getValue();
-                if (clickEvent.getAction() == ClickEvent.Action.CHANGE_PAGE) {
-                    try {
-                        int newPageNum = Integer.parseInt(eventValue) - 1;
-                        if (authoritative) {
-                            setPage(newPageNum);
-                        } else {
-                            Network.INSTANCE.sendToServer(new PageTurnPacket(pos, newPageNum));
-                        }
-                    } catch (Exception ignored) {}
-                } else {
-                    ClickHandlerScreen tempScreen = new ClickHandlerScreen();
-                    Minecraft.getInstance().setScreen(tempScreen);
-                    tempScreen.handleComponentClicked(clickInfo.style());
-                }
-                return true;
-            }
+            doPageInteract(clickInfos.get(selectedClickInfos[selectedIndex]));
+            return true;
         }
         return false;
+    }
+
+    public void doPageInteract(BookClickInfo clickInfo) {
+        ClickEvent clickEvent = clickInfo.style().getClickEvent();
+        if (clickEvent != null) {
+            String eventValue = clickEvent.getValue();
+            if (clickEvent.getAction() == ClickEvent.Action.CHANGE_PAGE) {
+                try {
+                    int newPageNum = Integer.parseInt(eventValue) - 1;
+                    if (authoritative) {
+                        setPage(newPageNum);
+                    } else {
+                        Network.INSTANCE.sendToServer(new PageTurnPacket(pos, newPageNum));
+                    }
+                } catch (Exception ignored) {}
+            } else {
+                ClickHandlerScreen tempScreen = new ClickHandlerScreen();
+                Minecraft.getInstance().setScreen(tempScreen);
+                tempScreen.handleComponentClicked(clickInfo.style());
+            }
+        }
     }
 
     protected void setClickPositions(PosRot hand, boolean isLeft) {

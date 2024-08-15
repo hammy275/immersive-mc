@@ -12,6 +12,7 @@ import com.hammy275.immersivemc.common.util.PageChangeState;
 import com.hammy275.immersivemc.common.util.PosRot;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
+import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.VRUtil;
 import com.mojang.math.Axis;
 import net.minecraft.core.BlockPos;
@@ -57,7 +58,6 @@ public class BookData implements NetworkStorage, WorldStorage {
     public float rightPageTurn = 1f;
 
     public transient Player pageTurner;
-    public transient boolean pageTurnerVR;
     public transient int pageTurnerIndex = -1;
     // Indices 0-1: Left page start turn box and right page start turn boxes
     // Index 2: The "page progress" box. If the hand isn't in this box, the turn is cancelled.
@@ -105,7 +105,7 @@ public class BookData implements NetworkStorage, WorldStorage {
         return isDirty;
     }
 
-    protected void setDirty() {
+    public void setDirty() {
         isDirty = true;
     }
 
@@ -114,7 +114,6 @@ public class BookData implements NetworkStorage, WorldStorage {
     }
 
     public void lecternPlayerTick(Player player, BlockPos pos) {
-        markNoLongerDirty(); // Mark no longer dirty at start of each tick
         if (lecternPosRot == null) {
             Direction direction = player.level().getBlockState(pos).getValue(BlockStateProperties.HORIZONTAL_FACING);
 
@@ -124,9 +123,11 @@ public class BookData implements NetworkStorage, WorldStorage {
                     22.5f,
                     direction.getOpposite().toYRot(), 0);
         }
-        if (pageTurnerVR) {
+        if (VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player)) {
             tick(lecternPosRot, VRUtil.posRot(VRPlugin.API.getVRPlayer(player).getController0()),
                     VRUtil.posRot(VRPlugin.API.getVRPlayer(player).getController1()));
+        } else {
+            tick(lecternPosRot);
         }
     }
 
@@ -175,6 +176,10 @@ public class BookData implements NetworkStorage, WorldStorage {
             }
         }
 
+        if (others.length < 2 && pageTurnerIndex != -1) { // Player switched out of VR while page turning
+            resetTurnState();
+            return;
+        }
         boolean someHandPageTurning = false;
         // If a hand is turning the page, only run code for it
         int start = pageTurnerIndex == -1 ? 0 : pageTurnerIndex;
@@ -233,7 +238,7 @@ public class BookData implements NetworkStorage, WorldStorage {
         this.rightPageTurn = buffer.readFloat();
     }
 
-    protected void startPageTurn(PageChangeState state, int handIndex) {
+    public void startPageTurn(PageChangeState state, int handIndex) {
         pageTurnerIndex = handIndex;
         if (authoritative) {
             pageChangeState = state;
@@ -276,11 +281,11 @@ public class BookData implements NetworkStorage, WorldStorage {
     }
 
     protected void resetTurnState() {
+        pageTurnerIndex = -1;
         if (authoritative) {
             leftPageTurn = 0f;
             rightPageTurn = 1f;
             pageChangeState = PageChangeState.NONE;
-            pageTurnerIndex = -1;
             pageTurner = null;
             setDirty();
         }

@@ -32,6 +32,7 @@ public class ServerSubscriber {
         TrackedImmersives.tick(server);
         DirtyTracker.unmarkAllDirty(); // Remove dirtiness for block entities
         ImmersiveMCLevelStorage.unmarkAllItemStoragesDirty(server);
+        ImmersiveMCLevelStorage.getAllBookDatas(server).forEach(BookData::markNoLongerDirty);
     }
 
     public static void onPlayerTick(Player playerIn) {
