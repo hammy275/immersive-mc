@@ -23,6 +23,7 @@ public class ImmersiveMCClient {
             Immersives.immersiveBrewing, Immersives.immersiveChest, Immersives.immersiveChiseledBookshelf,
             Immersives.immersiveCrafting, Immersives.immersiveETable, Immersives.immersiveFurnace,
             Immersives.immersiveHopper, Immersives.immersiveIronFurnacesFurnace, Immersives.immersiveJukebox,
+            Immersives.immersiveLectern,
             Immersives.immersiveLever, Immersives.immersiveRepeater, Immersives.immersiveShulker,
             Immersives.immersiveSmithingTable, Immersives.immersiveTinkersConstructCraftingStation
     );
