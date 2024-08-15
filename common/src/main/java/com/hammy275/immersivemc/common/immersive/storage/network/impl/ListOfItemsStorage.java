@@ -5,6 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,6 +17,14 @@ public class ListOfItemsStorage implements NetworkStorage {
         for (int i = 0; i < Math.min(items.size(), maxItems); i++) {
             this.items.add(items.get(i));
         }
+    }
+
+    public ListOfItemsStorage(List<ItemStack> items) {
+        this(items, items.size());
+    }
+
+    public ListOfItemsStorage(ItemStack... items) {
+        this(Arrays.asList(items), items.length);
     }
 
     public ListOfItemsStorage() {

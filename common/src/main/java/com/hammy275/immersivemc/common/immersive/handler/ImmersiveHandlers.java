@@ -8,6 +8,7 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.CraftingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 
@@ -31,6 +32,7 @@ public class ImmersiveHandlers {
     public static final ImmersiveHandler<?> hopperHandler = new HopperHandler();
     public static final ImmersiveHandler<?> ironFurnacesFurnaceHandler = new IronFurnacesFurnaceHandler();
     public static final ImmersiveHandler<?> jukeboxHandler = new JukeboxHandler();
+    public static final WorldStorageHandler<BookData> lecternHandler = new LecternHandler();
     public static final ImmersiveHandler<NullStorage> leverHandler = new LeverHandler();
     public static final ImmersiveHandler<NullStorage> repeaterHandler = new RepeaterHandler();
     public static final ImmersiveHandler<?> shulkerBoxHandler = new ShulkerBoxHandler();

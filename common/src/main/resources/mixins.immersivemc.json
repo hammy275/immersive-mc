@@ -31,6 +31,7 @@
     "BackpackTrackerMixin",
     "DragonFireballRendererMixin",
     "ItemInHandRendererMixin",
+    "LecternRendererMixin",
     "LevelRendererMixin",
     "MinecraftMixin",
     "MinecraftMixinAccessor",
