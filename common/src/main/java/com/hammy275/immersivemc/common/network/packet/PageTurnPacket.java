@@ -3,7 +3,6 @@ package com.hammy275.immersivemc.common.network.packet;
 import com.hammy275.immersivemc.api.server.WorldStorages;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
-import com.hammy275.immersivemc.common.util.PageChangeState;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
@@ -53,16 +52,7 @@ public class PageTurnPacket {
                     if (message.forcedPageIndex == -1) {
                         if (!VRPluginVerify.playerInVR(player) &&
                                 (message.clickedRight ? !storage.onLastPage() : !storage.onFirstPage())) {
-                            // Turn to the next page and start a full animation if out of VR and it's valid to
-                            // go to the next page
-                            storage.pageTurner = player;
-                            storage.pageChangeState = message.clickedRight ? PageChangeState.RIGHT_TO_LEFT_ANIM : PageChangeState.LEFT_TO_RIGHT_ANIM;
-                            if (message.clickedRight) {
-                                storage.nextPage();
-                            } else {
-                                storage.lastPage();
-                            }
-                            storage.setDirty();
+                            storage.startPageTurnAnim(player, message.clickedRight);
                         } else if (VRPluginVerify.playerInVR(player)) {
                             // Let the VR player have control of page turning
                             storage.pageTurner = player;

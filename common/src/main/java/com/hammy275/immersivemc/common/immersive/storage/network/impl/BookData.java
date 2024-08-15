@@ -127,6 +127,7 @@ public class BookData implements NetworkStorage, WorldStorage {
             tick(lecternPosRot, VRUtil.posRot(VRPlugin.API.getVRPlayer(player).getController0()),
                     VRUtil.posRot(VRPlugin.API.getVRPlayer(player).getController1()));
         } else {
+            maybeConvertToNonVR();
             tick(lecternPosRot);
         }
     }
@@ -176,10 +177,6 @@ public class BookData implements NetworkStorage, WorldStorage {
             }
         }
 
-        if (others.length < 2 && pageTurnerIndex != -1) { // Player switched out of VR while page turning
-            resetTurnState();
-            return;
-        }
         boolean someHandPageTurning = false;
         // If a hand is turning the page, only run code for it
         int start = pageTurnerIndex == -1 ? 0 : pageTurnerIndex;
@@ -245,6 +242,27 @@ public class BookData implements NetworkStorage, WorldStorage {
             setDirty();
         } else {
             Network.INSTANCE.sendToServer(new PageTurnPacket(pos));
+        }
+    }
+
+    public void startPageTurnAnim(Player pageTurner, boolean isNextPage) {
+        // Turn to the next page and start a full animation if out of VR and it's valid to
+        // go to the next page
+        this.pageTurner = pageTurner;
+        this.pageChangeState = isNextPage ? PageChangeState.RIGHT_TO_LEFT_ANIM : PageChangeState.LEFT_TO_RIGHT_ANIM;
+        this.pageTurnerIndex = -1;
+        if (isNextPage) {
+            nextPage();
+        } else {
+            lastPage();
+        }
+        setDirty();
+    }
+
+    // Converts this state from VR to non-vr if in the middle of turning a page.
+    protected void maybeConvertToNonVR() {
+        if (pageChangeState != PageChangeState.NONE && !pageChangeState.isAnim) {
+            startPageTurnAnim(this.pageTurner, pageChangeState == PageChangeState.RIGHT_TO_LEFT);
         }
     }
 
