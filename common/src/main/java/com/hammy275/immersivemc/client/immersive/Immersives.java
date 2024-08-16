@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.api.client.immersive.*;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveMCClientRegistrationImpl;
 import com.hammy275.immersivemc.client.config.ClientConstants;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.client.immersive.info.AnvilData;
 import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
@@ -34,7 +34,7 @@ public class Immersives {
 
     public static final List<Immersive<? extends ImmersiveInfo, ? extends NetworkStorage>> IMMERSIVES =
             new ArrayList<>();
-    public static final List<AbstractPlayerAttachmentImmersive<? extends AbstractImmersiveInfo, ? extends NetworkStorage>> IMMERSIVE_ATTACHMENTS =
+    public static final List<AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ? extends NetworkStorage>> IMMERSIVE_ATTACHMENTS =
             new ArrayList<>();
 
     public static final BuiltImmersive<?,?> immersiveAnvil = ImmersiveBuilder.create(ImmersiveHandlers.anvilHandler, AnvilData.class)

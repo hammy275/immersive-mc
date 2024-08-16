@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
 import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
 import com.hammy275.immersivemc.client.model.Cube1x1;
@@ -45,7 +45,7 @@ public class ClientRenderSubscriber {
             for (Immersive<?, ?> singleton : Immersives.IMMERSIVES) {
                 renderInfos(singleton, stack);
             }
-            for (AbstractPlayerAttachmentImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+            for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
                 renderInfos(singleton, stack);
             }
             if (VRPluginVerify.clientInVR()) {
@@ -98,8 +98,8 @@ public class ClientRenderSubscriber {
         }
     }
 
-    protected static <I extends AbstractImmersiveInfo> void renderInfos(AbstractPlayerAttachmentImmersive<I, ?> singleton,
-                                                                        PoseStack stack) {
+    protected static <I extends AbstractPlayerAttachmentInfo> void renderInfos(AbstractPlayerAttachmentImmersive<I, ?> singleton,
+                                                                               PoseStack stack) {
         try {
             if (singleton.isVROnly() && !VRPluginVerify.clientInVR()) {
                 return;
