@@ -11,7 +11,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChestInfo extends AbstractImmersiveInfoV2 {
+public class ChestInfo extends AbstractImmersiveInfo {
 
     public List<HitboxItemPair> hitboxes = new ArrayList<>(54);
     public BlockEntity chest;

@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.config.ClientConstants;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.client.model.BackpackBundleModel;
 import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
@@ -224,7 +224,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     }
 
     @Override
-    public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
+    public boolean shouldBlockClickIfEnabled(AbstractPlayerAttachmentInfo info) {
         return false;
     }
 
@@ -235,10 +235,10 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {}
+    public void handleRightClick(AbstractPlayerAttachmentInfo info, Player player, int closest, InteractionHand hand) {}
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, NullStorage storage) {
+    public void processStorageFromNetwork(AbstractPlayerAttachmentInfo info, NullStorage storage) {
         // Intentional NO-OP
     }
 
