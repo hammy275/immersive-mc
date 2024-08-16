@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import dev.architectury.platform.Platform;
@@ -57,8 +57,8 @@ public class ClientVRSubscriber {
                     return;
                 }
             }
-            for (AbstractPlayerAttachmentImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
-                for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
+            for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+                for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
                     if (handleInfo(singleton, info, vrPlayer)) {
                         return;
                     }
@@ -94,7 +94,7 @@ public class ClientVRSubscriber {
         return false;
     }
 
-    protected static boolean handleInfo(AbstractPlayerAttachmentImmersive<?, ?> singleton, AbstractImmersiveInfo info, IVRPlayer vrPlayer) {
+    protected static boolean handleInfo(AbstractPlayerAttachmentImmersive<?, ?> singleton, AbstractPlayerAttachmentInfo info, IVRPlayer vrPlayer) {
         if (info.hasHitboxes() && singleton.hitboxesAvailable(info)) {
             for (int c = 0; c <= 1; c++) {
                 IVRData controller = vrPlayer.getController(c);

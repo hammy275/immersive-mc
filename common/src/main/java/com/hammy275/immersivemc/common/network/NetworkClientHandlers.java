@@ -7,7 +7,7 @@ import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.client.subscribe.ClientLogicSubscriber;
@@ -89,7 +89,7 @@ public class NetworkClientHandlers {
         }
         for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
             if (immersive.getHandler() == handler && immersive.shouldTrack(pos, level)) {
-                AbstractImmersiveInfo info = immersive.refreshOrTrackObject(pos, level);
+                AbstractPlayerAttachmentInfo info = immersive.refreshOrTrackObject(pos, level);
                 if (info != null) {
                     ((AbstractPlayerAttachmentImmersive<?, NS>) immersive).processStorageFromNetwork(info, storage);
                 }
