@@ -6,7 +6,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LeverInfo extends AbstractImmersiveInfoV2 {
+public class LeverInfo extends AbstractImmersiveInfo {
 
     protected List<HitboxItemPair> hitboxes = new ArrayList<>(2);
     protected Vec3[] positions = new Vec3[2];

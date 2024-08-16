@@ -4,7 +4,7 @@ import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.client.immersive.info.ImmersiveHitboxesInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
@@ -157,7 +157,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
     }
 
     @Override
-    public boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info) {
+    public boolean shouldBlockClickIfEnabled(AbstractPlayerAttachmentInfo info) {
         return false; // Doesn't really matter, never hooked into a block anyways
     }
 
@@ -167,7 +167,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
     }
 
     @Override
-    public void handleRightClick(AbstractImmersiveInfo info, Player player, int closest, InteractionHand hand) {
+    public void handleRightClick(AbstractPlayerAttachmentInfo info, Player player, int closest, InteractionHand hand) {
         if (info instanceof ImmersiveHitboxesInfo hInfo) {
             if (closest == ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX && hand == InteractionHand.OFF_HAND) {
                 doBagOpen(player);
@@ -177,7 +177,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractImmersiveInfo info, NullStorage storage) {
+    public void processStorageFromNetwork(AbstractPlayerAttachmentInfo info, NullStorage storage) {
         // Intentional NO-OP
     }
 
