@@ -11,7 +11,7 @@ import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersi
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
 import com.hammy275.immersivemc.client.immersive.ImmersiveChest;
 import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
@@ -121,7 +121,7 @@ public class ClientLogicSubscriber {
         for (Immersive<? extends ImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
             tickInfos(singleton, player);
         }
-        for (AbstractPlayerAttachmentImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+        for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
             tickInfos(singleton, player);
         }
         if (VRPluginVerify.clientInVR()) {
@@ -227,7 +227,7 @@ public class ClientLogicSubscriber {
         for (Immersive<? extends ImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
             singleton.getTrackedObjects().clear();
         }
-        for (AbstractPlayerAttachmentImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+        for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
             singleton.clearImmersives();
         }
         ActiveConfig.FROM_SERVER = (ActiveConfig) ActiveConfig.DISABLED.clone();
@@ -267,7 +267,7 @@ public class ClientLogicSubscriber {
         }
     }
 
-    protected static <I extends AbstractImmersiveInfo> void tickInfos(AbstractPlayerAttachmentImmersive<I, ?> singleton, Player player) {
+    protected static <I extends AbstractPlayerAttachmentInfo> void tickInfos(AbstractPlayerAttachmentImmersive<I, ?> singleton, Player player) {
         // Don't tick if VR only and not in VR
         if (singleton.isVROnly() && !VRPluginVerify.clientInVR()) {
             return;
@@ -369,8 +369,8 @@ public class ClientLogicSubscriber {
         }
 
         if (inVR) {
-            for (AbstractPlayerAttachmentImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
-                for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
+            for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+                for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
                     if (!(info instanceof InfoTriggerHitboxes)) break;
                     InfoTriggerHitboxes triggerInfo = (InfoTriggerHitboxes) info;
                     IVRData data = VRPlugin.API.getVRPlayer(player).getController(triggerInfo.getVRControllerNum());
@@ -431,7 +431,7 @@ public class ClientLogicSubscriber {
         }
 
         for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
-            for (AbstractImmersiveInfo info : immersive.getTrackedObjects()) {
+            for (AbstractPlayerAttachmentInfo info : immersive.getTrackedObjects()) {
                 if (info.slotHovered != -1 || info.slotHovered2 != -1) {
                     return true;
                 }
@@ -466,9 +466,9 @@ public class ClientLogicSubscriber {
                     return fromInfos;
                 }
             }
-            for (AbstractPlayerAttachmentImmersive<? extends AbstractImmersiveInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+            for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
                 if (singleton.isVROnly() && !inVR) continue;
-                for (AbstractImmersiveInfo info : singleton.getTrackedObjects()) {
+                for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
                     if (info.hasHitboxes() && singleton.hitboxesAvailable(info)) {
                         Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
                         if (closest.isPresent()) {
