@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveRenderHelpersImpl;
 import com.hammy275.immersivemc.client.config.ClientConstants;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
@@ -40,7 +40,7 @@ import java.util.List;
  * Abstract immersive anything
  * @param <I> Info type
  */
-public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractImmersiveInfo, S extends NetworkStorage> {
+public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractPlayerAttachmentInfo, S extends NetworkStorage> {
     public static final int maxLight = LightTexture.pack(15, 15);
 
     protected final List<I> infos;
@@ -94,7 +94,7 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractImmers
     @Nullable
     public abstract ImmersiveHandler<S> getHandler();
 
-    public boolean hitboxesAvailable(AbstractImmersiveInfo info) {
+    public boolean hitboxesAvailable(AbstractPlayerAttachmentInfo info) {
         return true;
     }
 
@@ -112,7 +112,7 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractImmers
     public abstract I refreshOrTrackObject(BlockPos pos, Level level);
 
     // Whether to block a right-click if the option to block right clicks to open GUIs is enabled
-    public abstract boolean shouldBlockClickIfEnabled(AbstractImmersiveInfo info);
+    public abstract boolean shouldBlockClickIfEnabled(AbstractPlayerAttachmentInfo info);
 
     /**
      * Initializes an `info` instance after it's constructed.
@@ -126,7 +126,7 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractImmers
      * Called just before handleRightClick() and handleTriggerHitboxRightClick()
      * @param info Info instance that had a hitbox click
      */
-    public void onAnyRightClick(AbstractImmersiveInfo info) {
+    public void onAnyRightClick(AbstractPlayerAttachmentInfo info) {
 
     }
 
@@ -134,7 +134,7 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractImmers
         return false;
     }
 
-    public abstract void handleRightClick(AbstractImmersiveInfo info, Player player, int closest,
+    public abstract void handleRightClick(AbstractPlayerAttachmentInfo info, Player player, int closest,
                                           InteractionHand hand);
 
     public void handleTriggerHitboxRightClick(InfoTriggerHitboxes info, Player player, int hitboxNum) {
@@ -147,7 +147,7 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractImmers
         return info.slotHovered(slotNum);
     }
 
-    public abstract void processStorageFromNetwork(AbstractImmersiveInfo info, S storage);
+    public abstract void processStorageFromNetwork(AbstractPlayerAttachmentInfo info, S storage);
 
     public void tick(I info, boolean isInVR) {
         if (enabledInConfig()) {

@@ -1,14 +1,14 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfoV2;
+import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class AbstractImmersive<I extends AbstractImmersiveInfoV2, S extends NetworkStorage>
+public abstract class AbstractImmersive<I extends AbstractImmersiveInfo, S extends NetworkStorage>
         implements Immersive<I, S> {
 
     public AbstractImmersive() {

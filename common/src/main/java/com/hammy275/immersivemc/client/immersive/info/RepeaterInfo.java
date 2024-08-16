@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RepeaterInfo extends AbstractImmersiveInfoV2 {
+public class RepeaterInfo extends AbstractImmersiveInfo {
 
     protected List<HitboxItemPair> hitboxes = new ArrayList<>();
     public boolean[] grabbedCurrent = new boolean[]{false, false}; // Index is for controller num
