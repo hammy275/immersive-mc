@@ -328,14 +328,16 @@ public class BookData implements NetworkStorage, WorldStorage {
         return getLeftPageIndex() + 1;
     }
 
-
+    // Book is saved and loaded so setPage() has the max page number to work with.
     @Override
     public void load(CompoundTag nbt) {
+        this.book = ItemStack.of(nbt.getCompound("book"));
         setPage(nbt.getInt("leftPageIndex"));
     }
 
     @Override
     public CompoundTag save(CompoundTag nbt) {
+        nbt.put("book", book.save(new CompoundTag()));
         nbt.putInt("leftPageIndex", leftPageIndex);
         return nbt;
     }
