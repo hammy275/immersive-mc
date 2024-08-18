@@ -45,7 +45,7 @@ public class ImmersiveLever extends AbstractImmersive<LeverInfo, NullStorage> {
     }
 
     @Override
-    public boolean shouldDisableRightClicksWhenInteractionsDisabled(LeverInfo info) {
+    public boolean shouldDisableRightClicksWhenVanillaInteractionsDisabled(LeverInfo info) {
         return true;
     }
 

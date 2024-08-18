@@ -92,7 +92,7 @@ public class ImmersiveLectern implements Immersive<LecternInfo, BookData> {
     }
 
     @Override
-    public boolean shouldDisableRightClicksWhenInteractionsDisabled(LecternInfo info) {
+    public boolean shouldDisableRightClicksWhenVanillaInteractionsDisabled(LecternInfo info) {
         return false;
     }
 
