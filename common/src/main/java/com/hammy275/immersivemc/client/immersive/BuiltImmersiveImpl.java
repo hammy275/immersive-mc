@@ -168,7 +168,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
     }
 
     @Override
-    public boolean shouldDisableRightClicksWhenInteractionsDisabled(BuiltImmersiveInfo<E> info) {
+    public boolean shouldDisableRightClicksWhenVanillaInteractionsDisabled(BuiltImmersiveInfo<E> info) {
         return builder.blockRightClickWhenGUIClickDisabled;
     }
 

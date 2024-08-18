@@ -220,7 +220,7 @@ public class ClientLogicSubscriber {
         // Cancel right click. We can use this immersive, it's enabled, and
         // the immersive wants us to block it (jukebox may not want to so it can eject disc,
         // for example).
-        return info != null && immersive.shouldDisableRightClicksWhenInteractionsDisabled(info);
+        return info != null && immersive.shouldDisableRightClicksWhenVanillaInteractionsDisabled(info);
     }
 
     public static void onDisconnect(Player player) {

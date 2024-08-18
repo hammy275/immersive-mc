@@ -128,7 +128,7 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
      * @return Whether to skip right-click behavior for this block when the option to disable click interactions is
      *         enabled in ImmersiveMC.
      */
-    public boolean shouldDisableRightClicksWhenInteractionsDisabled(I info);
+    public boolean shouldDisableRightClicksWhenVanillaInteractionsDisabled(I info);
 
     /**
      * Process the storage from the server for this Immersive. Not called for Immersives that return
