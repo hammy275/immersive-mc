@@ -179,7 +179,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
     }
 
     @Override
-    public boolean shouldDisableRightClicksWhenInteractionsDisabled(BeaconInfo info) {
+    public boolean shouldDisableRightClicksWhenVanillaInteractionsDisabled(BeaconInfo info) {
         return false;
     }
 

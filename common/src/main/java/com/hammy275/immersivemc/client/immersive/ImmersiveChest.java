@@ -238,7 +238,7 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
     }
 
     @Override
-    public boolean shouldDisableRightClicksWhenInteractionsDisabled(ChestInfo info) {
+    public boolean shouldDisableRightClicksWhenVanillaInteractionsDisabled(ChestInfo info) {
         return true;
     }
 
