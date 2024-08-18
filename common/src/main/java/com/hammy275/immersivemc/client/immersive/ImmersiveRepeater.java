@@ -46,7 +46,7 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo, NullStora
     }
 
     @Override
-    public boolean shouldDisableRightClicksWhenInteractionsDisabled(RepeaterInfo info) {
+    public boolean shouldDisableRightClicksWhenVanillaInteractionsDisabled(RepeaterInfo info) {
         return VRPluginVerify.clientInVR();
     }
 
