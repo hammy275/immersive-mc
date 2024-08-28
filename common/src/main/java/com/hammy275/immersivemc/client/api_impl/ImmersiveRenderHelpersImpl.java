@@ -7,6 +7,8 @@ import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
+import com.hammy275.immersivemc.common.obb.OBBRotList;
+import com.hammy275.immersivemc.common.obb.RotType;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.mixin.DragonFireballRendererMixin;
@@ -109,7 +111,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
             } else if (facing == Direction.NORTH) {
                 textPos = textPos.add(0, 0, -0.15);
             } else if (facing == null) {
-                stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+                faceTowardsPlayer(stack, BoundingBox.getCenter(hitbox));
                 stack.mulPose(Vector3f.YP.rotationDegrees(180));
                 Vec3 textMove;
                 if (VRPluginVerify.hasAPI && VRPluginVerify.clientInVR()) {
@@ -225,7 +227,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
         } else if (facing == Direction.EAST) {
             stack.mulPose(Vector3f.YP.rotationDegrees(270));
         } else if (facing == null) {
-            stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+            faceTowardsPlayer(stack, pos);
             stack.mulPose(Vector3f.YP.rotationDegrees(180));
         }
 
@@ -251,5 +253,21 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
     @Override
     public float hoverScaleSizeMultiplier() {
         return ClientConstants.sizeScaleForHover;
+    }
+
+    private void faceTowardsPlayer(PoseStack stack, Vec3 renderPos) {
+        if (VRPluginVerify.clientInVR()) {
+            Vec3 target = Platform.isDevelopmentEnvironment() ?
+                    VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD().position() :
+                    VRPlugin.API.getRenderVRPlayer().getHMD().position();
+            Vec3 ray = target.subtract(renderPos);
+            Vec3 rayNoY = ray.multiply(1, 0, 1);
+            OBBRotList rotList = OBBRotList.create()
+                    .addRot(Math.atan2(ray.z, ray.x) + Math.PI / 2, RotType.YAW)
+                    .addRot(-Math.atan2(ray.y, rayNoY.length()), RotType.PITCH);
+            stack.mulPose(rotList.asQuaternion());
+        } else {
+            stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+        }
     }
 }
