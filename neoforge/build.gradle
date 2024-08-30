@@ -40,7 +40,7 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
     modApi "fuzs.forgeconfigapiport:forgeconfigapiport-neoforge:20.4.3"
-    modApi "curse.maven:mcvrapi-591092:5032472"
+    modApi "curse.maven:mcvrapi-591092:5360323"
 
     modApi "curse.maven:lootr-361276:5044725"
 
