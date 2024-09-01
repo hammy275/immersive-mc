@@ -190,7 +190,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     }
 
     /**
-     * Set whether the item guide for this slot should be active. This result is &&'d with the built-in checker,
+     * Set whether the item guide for this slot should be active. This result is AND'd with the built-in checker,
      * which is simply if the slot holds items but currently isn't holding one.
      * @param itemGuideActive Function that returns whether the given slot is active given the info.
      * @return Builder object.
