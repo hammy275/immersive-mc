@@ -17,6 +17,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,12 @@ public class TCCraftingStationHandler extends ContainerHandler<ListOfItemsStorag
     }
 
     @Override
+    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
+        // Sync often since taking station output doesn't update dirtiness
+        return super.isDirtyForClientSync(player, pos) || player.tickCount % 2 == 0;
+    }
+
+    @Override
     public ListOfItemsStorage getEmptyNetworkStorage() {
         return new ListOfItemsStorage();
     }
@@ -41,6 +48,7 @@ public class TCCraftingStationHandler extends ContainerHandler<ListOfItemsStorag
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
         Container table = (Container) player.level.getBlockEntity(pos);
+        BlockEntity tableBE = (BlockEntity) table;
         ItemStack playerItem = player.getItemInHand(hand).copy();
         ItemStack craftingItem = table.getItem(slot).copy();
         if (slot < 9) {
@@ -61,6 +69,7 @@ public class TCCraftingStationHandler extends ContainerHandler<ListOfItemsStorag
                 table.setItem(i, items[i]);
             }
         }
+        tableBE.setChanged(); // Dirtiness doesn't update from setItem() calls, so we need to force dirtiness setting
     }
 
     @Override
