@@ -146,7 +146,7 @@ public class Swap {
     }
 
     public static ItemStack getRecipeOutput(ServerPlayer player, ItemStack[] stacksIn) {
-        int invDim = stacksIn.length == 10 ? 3 : 2; // 10 since stacksIn includes the output slot
+        int invDim = stacksIn.length >= 9 ? 3 : 2;
         CraftingContainer inv = new CraftingContainer(new NullContainer(), invDim, invDim);
         for (int i = 0; i < stacksIn.length - 1; i++) {
             inv.setItem(i, stacksIn[i]);
