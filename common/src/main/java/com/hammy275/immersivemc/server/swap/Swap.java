@@ -174,6 +174,7 @@ public class Swap {
         ItemStack stackOut = getRecipeOutput(player, stacksIn);
         if (!stackOut.isEmpty()) {
             // Give our item to us, remove items from crafting inventory, and show new recipe
+            stackOut.onCraftedBy(player.level(), player, stackOut.getCount());
             for (int i = 0; i < stacksIn.length - 1; i++) {
                 if (stacksIn[i].getItem().hasCraftingRemainingItem()) {
                     if (stacksIn[i].getCount() == 1) {
