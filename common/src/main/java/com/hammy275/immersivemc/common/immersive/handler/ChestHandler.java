@@ -37,7 +37,12 @@ public class ChestHandler extends ChestLikeHandler implements MultiblockImmersiv
             }
             return storage;
         } else { // Is an ender chest
-            List<ItemStack> items = new ArrayList<>(player.getEnderChestInventory().items);
+            // NOTE: On (1.19.2) Forge, PlayerEnderChestContainer#items is private; hence why we for loop here
+            // instead of just initializing directly from the items list.
+            List<ItemStack> items = new ArrayList<>(player.getEnderChestInventory().getContainerSize());
+            for (int i = 0; i < player.getEnderChestInventory().getContainerSize(); i++) {
+                items.add(player.getEnderChestInventory().getItem(i));
+            }
             return new ListOfItemsStorage(items, 27);
         }
     }
