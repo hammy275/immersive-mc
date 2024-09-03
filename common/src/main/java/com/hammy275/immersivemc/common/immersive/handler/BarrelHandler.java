@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 public class BarrelHandler extends ChestLikeHandler {
     @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
-        return level.getBlockState(pos).getBlock() instanceof BarrelBlock;
+        return level.getBlockState(pos).getBlock() instanceof BarrelBlock && super.isValidBlock(pos, level);
     }
 
     @Override
