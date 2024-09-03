@@ -117,10 +117,11 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
                             helpers.renderItemGuide(stack, hitbox.getHitbox(), info.isSlotHovered(i), info.light);
                         }
                     } else {
+                        float renderSize = size * hitbox.itemRenderSizeMultiplier;
                         if (info.isSlotHovered(i)) {
-                            size *= ImmersiveRenderHelpers.instance().hoverScaleSizeMultiplier();
+                            renderSize *= ImmersiveRenderHelpers.instance().hoverScaleSizeMultiplier();
                         }
-                        helpers.renderItem(hitbox.item, stack, size * hitbox.itemRenderSizeMultiplier,
+                        helpers.renderItem(hitbox.item, stack, renderSize,
                                 hitbox.getHitbox(), hitbox.renderItemCount, info.light, spinDegrees, info.immersiveDir,
                                 hitbox.getUpDownRenderDir());
                     }
