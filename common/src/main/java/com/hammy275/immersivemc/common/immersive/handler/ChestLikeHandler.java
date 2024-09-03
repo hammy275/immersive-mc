@@ -10,11 +10,19 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ChestLikeHandler extends ContainerHandler<ListOfItemsStorage> {
+
+    // NOTE: Inheritors should && with isValidBlock() if they might be a Lootr block!
+    @Override
+    public boolean isValidBlock(BlockPos pos, Level level) {
+        return !Lootr.lootrImpl.isLootrContainer(pos, level) || !Lootr.lootrImpl.disableLootrContainerCompat();
+    }
+
     @Override
     public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         List<ItemStack> items = new ArrayList<>();
