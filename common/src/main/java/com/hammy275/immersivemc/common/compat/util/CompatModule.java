@@ -37,7 +37,7 @@ public class CompatModule<T> implements InvocationHandler {
         this.module = module;
         this.friendlyName = friendlyName;
         this.configSetter = configSetter;
-        for (Method method : module.getClass().getDeclaredMethods()) {
+        for (Method method : module.getClass().getMethods()) {
             methods.put(method.getName(), method);
         }
     }
