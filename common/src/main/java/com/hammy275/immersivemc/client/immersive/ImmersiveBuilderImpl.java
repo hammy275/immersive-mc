@@ -84,15 +84,16 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
         Vec3 right = new Vec3(1, 0, 0).scale(distBetweenBoxes);
         Vec3 up = new Vec3(0, 1, 0).scale(distBetweenBoxes);
         Vec3 down = new Vec3(0, -1, 0).scale(distBetweenBoxes);
-        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(up.add(left)));
-        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(up));
-        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(up.add(right)));
-        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(left));
-        addHitbox(relativeHitboxInfo);
-        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(right));
-        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(down.add(left)));
-        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(down));
-        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(down.add(right)));
+        Vec3 offset = new Vec3(0.0002, 0.0002, 0.0002); //Minor offset for each hitbox to prevent Z-fighting
+        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(up.add(left).add(offset)));
+        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(up.add(offset.scale(2))));
+        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(up.add(right).add(offset.scale(3))));
+        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(left.add(offset.scale(4))));
+        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(offset.scale(5)));
+        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(right.add(offset.scale(6))));
+        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(down.add(left).add(offset.scale(7))));
+        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(down.add(offset.scale(8))));
+        addHitbox(relativeHitboxInfo.cloneWithAddedOffset(down.add(right).add(offset.scale(9))));
         return this;
     }
 
