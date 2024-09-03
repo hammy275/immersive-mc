@@ -75,7 +75,8 @@ public class ChestHandler extends ChestLikeHandler implements MultiblockImmersiv
     @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        return blockEntity instanceof ChestBlockEntity || blockEntity instanceof EnderChestBlockEntity;
+        return (blockEntity instanceof ChestBlockEntity || blockEntity instanceof EnderChestBlockEntity) &&
+                super.isValidBlock(pos, level);
     }
 
     @Override

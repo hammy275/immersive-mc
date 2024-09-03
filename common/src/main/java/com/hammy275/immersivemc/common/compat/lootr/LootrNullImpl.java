@@ -20,7 +20,7 @@ public class LootrNullImpl implements LootrCompat {
 
     @Override
     public boolean isLootrContainer(BlockPos pos, Level level) {
-        return false;
+        return level.getBlockState(pos).is(LootrCompat.BLOCK_TAG);
     }
 
     @Override
@@ -38,4 +38,8 @@ public class LootrNullImpl implements LootrCompat {
         return false;
     }
 
+    @Override
+    public boolean disableLootrContainerCompat() {
+        return true;
+    }
 }
