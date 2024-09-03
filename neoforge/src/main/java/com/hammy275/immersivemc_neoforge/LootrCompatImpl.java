@@ -64,7 +64,7 @@ public class LootrCompatImpl implements LootrCompat {
 
     @Override
     public boolean isLootrContainer(BlockPos pos, Level level) {
-        return level.getBlockEntity(pos) instanceof ILootBlockEntity;
+        return level.getBlockState(pos).is(LootrCompat.BLOCK_TAG);
     }
 
     @Override

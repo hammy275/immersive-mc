@@ -1,13 +1,19 @@
 package com.hammy275.immersivemc.common.compat.lootr;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
 
 public interface LootrCompat {
+
+    public static final TagKey<Block> BLOCK_TAG = TagKey.create(Registries.BLOCK, new ResourceLocation("lootr", "containers"));
 
     /**
      * Gets the container Lootr-handled block, or returns null if the target isn't a Lootr-handled block.
@@ -57,5 +63,12 @@ public interface LootrCompat {
      * @return Whether the supplied Lootr block is open.
      */
     public boolean isOpen(BlockPos pos, Player player);
+
+    /**
+     * @return Whether Lootr compat should be fully disabled.
+     */
+    default boolean disableLootrContainerCompat() {
+        return false;
+    }
 
 }

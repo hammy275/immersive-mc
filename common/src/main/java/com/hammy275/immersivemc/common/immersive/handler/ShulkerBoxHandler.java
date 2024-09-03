@@ -23,7 +23,7 @@ public class ShulkerBoxHandler extends ChestLikeHandler {
 
     @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
-        return level.getBlockState(pos).getBlock() instanceof ShulkerBoxBlock;
+        return level.getBlockState(pos).getBlock() instanceof ShulkerBoxBlock && super.isValidBlock(pos, level);
     }
 
     @Override
