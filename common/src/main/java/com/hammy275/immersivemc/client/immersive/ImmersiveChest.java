@@ -82,7 +82,6 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
 
     @Override
     public void render(ChestInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
-        Direction forward = info.forward;
 
         if (info.isOpen) {
             for (int i = 0; i < 27; i++) {
@@ -132,21 +131,27 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
             int endTop = startTop + 9;
             for (int z = startTop; z < endTop; z++) {
                 Vec3 pos = positions[z % 9];
-                info.getAllHitboxes().get(z).box = AABB.ofSize(pos.add(0, -0.2, 0), hitboxSize, hitboxSize, hitboxSize);
+                double offset = (z - startTop) * 0.0002; //Minor offset for each hitbox to prevent Z-fighting
+                info.getAllHitboxes().get(z).box = AABB.ofSize(pos.add(offset, -0.2 + offset, offset),
+                        hitboxSize, hitboxSize, hitboxSize);
             }
 
             int startMid = 9 * info.getNextRow(info.getRowNum()) + 27 * i;
             int endMid = startMid + 9;
             for (int z = startMid; z < endMid; z++) {
                 Vec3 pos = positions[z % 9];
-                info.getAllHitboxes().get(z).box = AABB.ofSize(pos.add(0, -0.325, 0), 0, 0, 0);
+                double offset = (z - startMid) * 0.0002; //Minor offset for each hitbox to prevent Z-fighting
+                info.getAllHitboxes().get(z).box = AABB.ofSize(pos.add(offset, -0.325 + offset, offset),
+                        0, 0, 0);
             }
 
             int startBot = 9 * info.getNextRow(info.getNextRow(info.getRowNum())) + 27 * i;
             int endBot = startBot + 9;
             for (int z = startBot; z < endBot; z++) {
                 Vec3 pos = positions[z % 9];
-                info.getAllHitboxes().get(z).box = AABB.ofSize(pos.add(0, -0.45, 0), 0, 0, 0);
+                double offset = (z - startBot) * 0.0002; //Minor offset for each hitbox to prevent Z-fighting
+                info.getAllHitboxes().get(z).box = AABB.ofSize(pos.add(offset, -0.45 + offset, offset),
+                        0, 0, 0);
             }
         }
 
@@ -186,10 +191,10 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
 
                 double diff0 = current0.y - info.lastY0;
                 double diff1 = current1.y - info.lastY1;
-                if (!Util.getFirstIntersect(current0, info.openCloseHitboxes).isPresent()) {
+                if (Util.getFirstIntersect(current0, info.openCloseHitboxes).isEmpty()) {
                     diff0 = 0;
                 }
-                if (!Util.getFirstIntersect(current1, info.openCloseHitboxes).isPresent()) {
+                if (Util.getFirstIntersect(current1, info.openCloseHitboxes).isEmpty()) {
                     diff1 = 0;
                 }
 
