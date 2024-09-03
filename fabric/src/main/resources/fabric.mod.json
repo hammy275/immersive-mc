@@ -3,7 +3,7 @@
   "id": "immersivemc",
   "version": "${version}",
   "name": "ImmersiveMC",
-  "description": "Minimizes the need to interact with GUIs in Minecraft!\n\nWorks great both in and out of VR!\n\nRequires the MC VR API mod if you want to use this the best in VR!\n\nThanks to NahNotFox for the bundle bag model (the default) and the written book texture!\n\nThanks to:\n- andreiqwer for adding support for resizing item guides and a bugfix!\n- yaosiqian for Simplified Chinese translations!\n- Yermak for the Russian translations!\n- DadoSpeedy for the German translations!\n- stitch._.vr_ for the Dutch translations!\n\nThanks to the Vivecraft developers for inspiration for the backpack, and to various members of the ImmersiveMC Discord for ideas!\n\nThanks to the guide from leo3418 for the original config screen implementation!",
+  "description": "Minimizes the need to interact with GUIs in Minecraft!\n\nWorks great both in and out of VR!\n\nRequires the MC VR API mod if you want to use this the best in VR!\n\nThanks to NahNotFox for the bundle bag model (the default) and the written book texture!\n\nThanks to:\n- andreiqwer for adding support for resizing item guides and a bugfix!\n- Blocker226 for fixing Z-fighting issues on several Immersives!\n- yaosiqian for Simplified Chinese translations!\n- Yermak for the Russian translations!\n- DadoSpeedy for the German translations!\n- stitch._.vr_ for the Dutch translations!\n\nThanks to the Vivecraft developers for inspiration for the backpack, and to various members of the ImmersiveMC Discord for ideas!\n\nThanks to the guide from leo3418 for the original config screen implementation!",
   "authors": [
     "hammy275"
   ],
