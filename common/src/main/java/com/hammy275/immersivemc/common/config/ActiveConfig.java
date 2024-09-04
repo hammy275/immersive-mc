@@ -188,7 +188,6 @@ public class ActiveConfig implements Cloneable {
      * Should only be called by the client.
      */
     public static void loadActive() {
-        loadFilesToMemory();
         ACTIVE = ((ClientActiveConfig) FILE_CLIENT.clone());
         ACTIVE.mergeWithServer(FROM_SERVER);
     }
