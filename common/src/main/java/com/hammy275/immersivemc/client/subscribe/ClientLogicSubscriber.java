@@ -20,6 +20,7 @@ import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
 import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
 import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
@@ -229,7 +230,7 @@ public class ClientLogicSubscriber {
         for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
             singleton.clearImmersives();
         }
-        ActiveConfig.FROM_SERVER = (ActiveConfig) ActiveConfig.DISABLED.clone();
+        ActiveConfig.FROM_SERVER = (ClientActiveConfig) ClientActiveConfig.DISABLED.clone();
         alreadyInServer = false;
         // Cleared so leaving and re-joining a singleplayer world doesn't keep the lid open
         ChestToOpenSet.clear();

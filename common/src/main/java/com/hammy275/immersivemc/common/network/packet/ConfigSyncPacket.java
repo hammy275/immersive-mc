@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
@@ -23,15 +24,15 @@ import java.util.function.Supplier;
  */
 public class ConfigSyncPacket {
 
-    public final ActiveConfig config;
+    public final ClientActiveConfig config;
     @Nullable
     public final List<ResourceLocation> handlerIDs;
 
-    public ConfigSyncPacket(ActiveConfig config) {
+    public ConfigSyncPacket(ClientActiveConfig config) {
         this(config, null);
     }
 
-    public ConfigSyncPacket(ActiveConfig config, @Nullable List<ResourceLocation> handlerIDs) {
+    public ConfigSyncPacket(ClientActiveConfig config, @Nullable List<ResourceLocation> handlerIDs) {
         this.config = config;
         this.handlerIDs = handlerIDs;
     }
@@ -45,8 +46,7 @@ public class ConfigSyncPacket {
     }
 
     public static ConfigSyncPacket decode(FriendlyByteBuf buffer) {
-        ActiveConfig incoming = new ActiveConfig();
-        incoming.decode(buffer);
+        ClientActiveConfig incoming = ClientActiveConfig.decode(buffer);
         List<ResourceLocation> handlerIDs = null;
         int numIDs = buffer.readInt();
         if (numIDs > 0) {

@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
@@ -128,7 +129,7 @@ public class ConfigScreen extends Screen {
         boolean isSingleplayerHost = Minecraft.getInstance().hasSingleplayerServer();
         ActiveConfig.FILE.loadFromFile();
         if (isSingleplayerHost) {
-            ActiveConfig.FROM_SERVER = (ActiveConfig) ActiveConfig.FILE.clone();
+            ActiveConfig.FROM_SERVER = (ClientActiveConfig) ClientActiveConfig.FILE.clone();
         }
         ActiveConfig.loadActive();
         // Clear all immersives in-case we disabled one

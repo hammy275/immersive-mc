@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.config;
 
-import com.hammy275.immersivemc.common.util.RGBA;
+import com.google.gson.Gson;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -8,27 +8,34 @@ import net.minecraft.world.entity.player.Player;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public final class ActiveConfig implements Cloneable {
+public class ActiveConfig implements Cloneable {
     // The settings representing a disabled config.
     public static final ActiveConfig DISABLED = new ActiveConfig();
 
 
     // The settings for this server/client before combining. This is a direct reflection of the config file.
-    public static ActiveConfig FILE = new ActiveConfig();
+    // TODO: Migrate server-only configurations to be normal ActiveConfigs
+    public static ClientActiveConfig FILE;
     // The settings from the server. Only used by the client.
-    public static ActiveConfig FROM_SERVER = new ActiveConfig();
+    public static ClientActiveConfig FROM_SERVER;
     // The settings to actually use in-game. Only used by the client.
-    private static ActiveConfig ACTIVE = new ActiveConfig();
+    private static ClientActiveConfig ACTIVE;
     // The settings to actually use in-game for each player. Only used by the server.
-    private static final Map<UUID, ActiveConfig> CLIENTS = new HashMap<>();
+    private static final Map<UUID, ClientActiveConfig> CLIENTS = new HashMap<>();
 
     public static List<Field> fields;
     // Basic sanity check to make sure server and client have compatible configs.
     public static int fieldsHash = 0;
 
-    // Server authoritative
+    protected static final Gson GSON = new Gson();
+
     public boolean useAnvilImmersion = true;
     public boolean useBrewingImmersion = true;
     public boolean useChestImmersion = true;
@@ -63,32 +70,13 @@ public final class ActiveConfig implements Cloneable {
     public boolean useTinkersConstructCraftingStationImmersion = true;
     public boolean useLecternImmersion = true;
 
-    // Client authoritative
-    public boolean crouchBypassImmersion = false;
-    public boolean doRumble = true;
-    public boolean returnItems = true;
-    public boolean disableOutsideVR = false;
-    public int backpackColor = 11901820;
-    public boolean rightClickChest = false;
-    public boolean autoCenterFurnace = false;
-    public boolean autoCenterBrewing = false;
-    public BackpackMode backpackMode = BackpackMode.BUNDLE;
-    public PlacementGuideMode placementGuideMode = PlacementGuideMode.CUBE;
-    public PlacementMode placementMode = PlacementMode.PLACE_ONE;
-    public boolean spinCraftingOutput = true;
-    public boolean rightClickInVR = false;
-    public boolean resourcePack3dCompat = false;
-    public double itemGuideSize = 1.0;
-    public double itemGuideSelectedSize = 1.0;
-    public RGBA itemGuideColor = new RGBA(0x3300ffffL);
-    public RGBA itemGuideSelectedColor = new RGBA(0x3300ff00L);
-    public RGBA rangedGrabColor = new RGBA(0xff00ffffL);
-    public boolean disableVanillaGUIs = false;
-    public ReachBehindBackpackMode reachBehindBackpackMode = ReachBehindBackpackMode.BEHIND_BACK;
-
     static {
         DISABLED.setDisabled();
+        FROM_SERVER = new ClientActiveConfig();
         FROM_SERVER.setDisabled();
+        ActiveConfig.FILE = new ClientActiveConfig();
+        ActiveConfig.FILE.loadFromFile();
+        ACTIVE = new ClientActiveConfig();
         Field[] fieldsArr = ActiveConfig.class.getDeclaredFields();
         // Java doesn't guarantee order of getDeclaredFields(), so we sort it.
         fields = Arrays.stream(fieldsArr)
@@ -100,8 +88,6 @@ public final class ActiveConfig implements Cloneable {
         for (Field f : fields) {
             fieldsHash += f.getName().hashCode();
         }
-
-        ActiveConfig.FILE.loadFromFile();
     }
 
     /**
@@ -109,11 +95,11 @@ public final class ActiveConfig implements Cloneable {
      * @param player Player to get config of.
      * @return Config for player, or a disabled config if the player does not have a config.
      */
-    public static ActiveConfig getConfigForPlayer(Player player) {
-        ActiveConfig config = CLIENTS.getOrDefault(player.getUUID(), DISABLED);
+    public static ClientActiveConfig getConfigForPlayer(Player player) {
+        ClientActiveConfig config = CLIENTS.getOrDefault(player.getUUID(), ClientActiveConfig.DISABLED);
         // If not in VR and user wants ImmersiveMC disabled outside VR, return DISABLED config.
         if (config.disableOutsideVR && !VRPluginVerify.playerInVR((ServerPlayer) player)) {
-            return DISABLED;
+            return ClientActiveConfig.DISABLED;
         }
         return config;
     }
@@ -123,9 +109,9 @@ public final class ActiveConfig implements Cloneable {
      * @return Config for the local player, or a disabled config if not in VR and the setting to disable ImmersiveMC
      * outside VR is enabled.
      */
-    public static ActiveConfig active() {
+    public static ClientActiveConfig active() {
         if (FILE.disableOutsideVR && !VRPluginVerify.clientInVR()) {
-            return DISABLED;
+            return ClientActiveConfig.DISABLED;
         }
         return ACTIVE;
     }
@@ -135,7 +121,7 @@ public final class ActiveConfig implements Cloneable {
      * All other methods should use active().
      * @return The ACTIVE config.
      */
-    public static ActiveConfig activeRaw() {
+    public static ClientActiveConfig activeRaw() {
         return ACTIVE;
     }
 
@@ -144,7 +130,7 @@ public final class ActiveConfig implements Cloneable {
      * @param player Player to register config for.
      * @param config Config from the player.
      */
-    public static void registerPlayerConfig(Player player, ActiveConfig config) {
+    public static void registerPlayerConfig(Player player, ClientActiveConfig config) {
         CLIENTS.put(player.getUUID(), config);
     }
 
@@ -157,7 +143,8 @@ public final class ActiveConfig implements Cloneable {
      * Should only be called by the client.
      */
     public static void loadActive() {
-        ACTIVE = ((ActiveConfig) FILE.clone());
+        FILE.loadFromFile();
+        ACTIVE = ((ClientActiveConfig) FILE.clone());
         ACTIVE.mergeWithServer(FROM_SERVER);
     }
 
@@ -165,7 +152,7 @@ public final class ActiveConfig implements Cloneable {
      * Loads DISABLED config into the ACTIVE slot.
      */
     public static void loadDisabled() {
-        ACTIVE = (ActiveConfig) DISABLED.clone();
+        ACTIVE = (ClientActiveConfig) ClientActiveConfig.DISABLED.clone();
     }
 
     public static ActiveConfig getActiveConfigCommon(Player player) {
@@ -256,29 +243,6 @@ public final class ActiveConfig implements Cloneable {
         useIronFurnacesFurnaceImmersion = false;
         useTinkersConstructCraftingStationImmersion = false;
         useLecternImmersion = false;
-
-        // Client authoritative
-        crouchBypassImmersion = false;
-        doRumble = false;
-        returnItems = false;
-        disableOutsideVR = false;
-        backpackColor = 11901820;
-        rightClickChest = false;
-        autoCenterFurnace = false;
-        autoCenterBrewing = false;
-        backpackMode = BackpackMode.BUNDLE;
-        placementGuideMode = PlacementGuideMode.CUBE;
-        placementMode = PlacementMode.PLACE_ONE;
-        spinCraftingOutput = true;
-        rightClickInVR = false;
-        resourcePack3dCompat = false;
-        itemGuideSize = 1.0;
-        itemGuideSelectedSize = 1.0;
-        itemGuideColor = new RGBA(0x3300ffffL);
-        itemGuideSelectedColor = new RGBA(0x3300ff00L);
-        rangedGrabColor = new RGBA(0xff00ffffL);
-        disableVanillaGUIs = false;
-        reachBehindBackpackMode = ReachBehindBackpackMode.BEHIND_BACK;
     }
 
     /**
@@ -318,28 +282,6 @@ public final class ActiveConfig implements Cloneable {
         useIronFurnacesFurnaceImmersion = ImmersiveMCConfig.useIronFurnacesFurnaceImmersion.get();
         useTinkersConstructCraftingStationImmersion = ImmersiveMCConfig.useTinkersConstructCraftingStationImmersion.get();
         useLecternImmersion = ImmersiveMCConfig.useLecternImmersion.get();
-
-        crouchBypassImmersion = ImmersiveMCConfig.crouchBypassImmersion.get();
-        doRumble = ImmersiveMCConfig.doRumble.get();
-        returnItems = ImmersiveMCConfig.returnItems.get();
-        disableOutsideVR = ImmersiveMCConfig.disableOutsideVR.get();
-        backpackColor = ImmersiveMCConfig.backpackColor.get();
-        rightClickChest = ImmersiveMCConfig.rightClickChest.get();
-        autoCenterFurnace = ImmersiveMCConfig.autoCenterFurnace.get();
-        autoCenterBrewing = ImmersiveMCConfig.autoCenterBrewing.get();
-        backpackMode = BackpackMode.values()[ImmersiveMCConfig.backpackMode.get()];
-        placementGuideMode = PlacementGuideMode.values()[ImmersiveMCConfig.placementGuideMode.get()];
-        placementMode = PlacementMode.fromInt(ImmersiveMCConfig.itemPlacementMode.get());
-        spinCraftingOutput = ImmersiveMCConfig.spinCraftingOutput.get();
-        rightClickInVR = ImmersiveMCConfig.rightClickInVR.get();
-        resourcePack3dCompat = ImmersiveMCConfig.resourcePack3dCompat.get();
-        itemGuideSize = ImmersiveMCConfig.itemGuideSize.get();
-        itemGuideSelectedSize = ImmersiveMCConfig.itemGuideSelectedSize.get();
-        itemGuideColor = new RGBA(ImmersiveMCConfig.itemGuideColor.get());
-        itemGuideSelectedColor = new RGBA(ImmersiveMCConfig.itemGuideSelectedColor.get());
-        rangedGrabColor = new RGBA(ImmersiveMCConfig.rangedGrabColor.get());
-        disableVanillaGUIs = ImmersiveMCConfig.disableVanillaGUIs.get();
-        reachBehindBackpackMode = ReachBehindBackpackMode.values()[ImmersiveMCConfig.reachBehindBackpackMode.get()];
     }
 
     /**
@@ -348,77 +290,20 @@ public final class ActiveConfig implements Cloneable {
      */
     public void encode(FriendlyByteBuf buffer) {
         buffer.writeInt(fieldsHash);
-
-        try {
-            for (Field field : fields) {
-                Class<?> type = field.getType();
-                if (type == boolean.class) {
-                    buffer.writeBoolean(field.getBoolean(this));
-                } else if (type == int.class) {
-                    buffer.writeInt(field.getInt(this));
-                } else if (type == long.class) {
-                    buffer.writeLong(field.getLong(this));
-                } else if (type == float.class) {
-                    buffer.writeFloat(field.getFloat(this));
-                } else if (type == double.class) {
-                    buffer.writeDouble(field.getDouble(this));
-                } else if (type.isEnum()) {
-                    Object[] enums = type.getEnumConstants();
-                    for (int i = 0; i < enums.length; i++) {
-                        if (enums[i] == field.get(this)) {
-                            buffer.writeInt(i);
-                            break;
-                        }
-                    }
-                } else if (type == RGBA.class) {
-                    RGBA rgba = (RGBA) field.get(this);
-                    buffer.writeLong(rgba.toLong());
-                } else {
-                    throw new IllegalArgumentException("Encoding for type " + type.getName() + " not supported!");
-                }
-            }
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Failed to encode config!", e);
-        }
+        buffer.writeUtf(GSON.toJson(this));
     }
 
     /**
-     * Decodes a buffer into this ActiveConfig instance.
+     * Decodes a buffer into an ActiveConfig instance.
      * @param buffer Buffer to decode from.
      */
-    public void decode(FriendlyByteBuf buffer) {
+    public static ActiveConfig decode(FriendlyByteBuf buffer) {
         int hashFromBuffer = buffer.readInt();
         if (hashFromBuffer != fieldsHash) {
-            // Version mismatch, load disabled.
-            ACTIVE = (ActiveConfig) ActiveConfig.DISABLED.clone();
-            return;
+            // Version mismatch, return disabled clone.
+            return (ActiveConfig) DISABLED.clone();
         }
-
-        try {
-            for (Field field : fields) {
-                Class<?> type = field.getType();
-                if (type == boolean.class) {
-                    field.setBoolean(this, buffer.readBoolean());
-                } else if (type == int.class) {
-                    field.setInt(this, buffer.readInt());
-                } else if (type == long.class) {
-                    field.setLong(this, buffer.readLong());
-                } else if (type == float.class) {
-                    field.setFloat(this, buffer.readFloat());
-                } else if (type == double.class) {
-                    field.setDouble(this, buffer.readDouble());
-                } else if (type.isEnum()) {
-                    Object[] enums = type.getEnumConstants();
-                    field.set(this, enums[buffer.readInt()]);
-                } else if (type == RGBA.class) {
-                    field.set(this, new RGBA(buffer.readLong()));
-                } else {
-                    throw new IllegalArgumentException("Decoding for type " + type.getName() + " not supported!");
-                }
-            }
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Failed to decode config!", e);
-        }
+        return GSON.fromJson(buffer.readUtf(), ActiveConfig.class);
     }
 
     @Override
