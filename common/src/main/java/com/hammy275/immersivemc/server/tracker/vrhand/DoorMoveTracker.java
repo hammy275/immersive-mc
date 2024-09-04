@@ -106,7 +106,7 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
 
     @Override
     public boolean isEnabledInConfig(ActiveConfig config) {
-        return config.useDoorImmersion;
+        return config.useDoorImmersive;
     }
 
     public static Direction getDirectionToMove(BlockState state) {

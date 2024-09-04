@@ -25,7 +25,7 @@ public abstract class ItemWorldStorageHandler<S extends NetworkStorage> implemen
     public void onStopTracking(ServerPlayer player, BlockPos pos) {
         if (WorldStoragesImpl.getWithoutVerificationS(pos, player.getLevel()) instanceof ItemStorage iws) {
             if (Util.isValidBlocks(this, pos, player.level)) {
-                if (ActiveConfig.getConfigForPlayer(player).returnItems) { // Player left block range
+                if (ActiveConfig.getConfigForPlayer(player).returnItemsWhenLeavingImmersives) { // Player left block range
                     iws.returnItems(player);
                     updateStorageOutputAfterItemReturn(player, pos, iws);
                     iws.setDirty(player.getLevel());

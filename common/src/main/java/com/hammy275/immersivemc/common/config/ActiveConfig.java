@@ -1,93 +1,92 @@
 package com.hammy275.immersivemc.common.config;
 
-import com.hammy275.immersivemc.common.util.RGBA;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import dev.architectury.platform.Platform;
+import dev.architectury.utils.Env;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public final class ActiveConfig implements Cloneable {
+public class ActiveConfig implements Cloneable {
     // The settings representing a disabled config.
     public static final ActiveConfig DISABLED = new ActiveConfig();
 
 
-    // The settings for this server/client before combining. This is a direct reflection of the config file.
-    public static ActiveConfig FILE = new ActiveConfig();
+    // The settings from the server config file. Used by both the server and client.
+    public static ActiveConfig FILE_SERVER;
+    // The settings from the client config file. Only used by the client.
+    public static ClientActiveConfig FILE_CLIENT;
     // The settings from the server. Only used by the client.
-    public static ActiveConfig FROM_SERVER = (ActiveConfig) DISABLED.clone();
+    public static ActiveConfig FROM_SERVER;
     // The settings to actually use in-game. Only used by the client.
-    private static ActiveConfig ACTIVE = new ActiveConfig();
+    private static ClientActiveConfig ACTIVE;
     // The settings to actually use in-game for each player. Only used by the server.
-    private static final Map<UUID, ActiveConfig> CLIENTS = new HashMap<>();
+    private static final Map<UUID, ClientActiveConfig> CLIENTS = new HashMap<>();
 
     public static List<Field> fields;
     // Basic sanity check to make sure server and client have compatible configs.
     public static int fieldsHash = 0;
 
-    // Synced values
-    public boolean useAnvilImmersion = false;
-    public boolean useBrewingImmersion = false;
-    public boolean useChestImmersion = false;
-    public boolean useCraftingImmersion = false;
-    public boolean useFurnaceImmersion = false;
-    public boolean useJukeboxImmersion = false;
-    public boolean useRangedGrab = false;
-    public boolean useButton = false;
-    public boolean useETableImmersion = false;
-    public boolean useCampfireImmersion = false;
-    public boolean useLever = false;
-    public boolean useBackpack = false;
-    public boolean useRepeaterImmersion = false;
-    public boolean useDoorImmersion = false;
-    public boolean canPet = false;
-    public boolean useArmorImmersion = false;
-    public boolean canFeedAnimals = false;
-    public boolean useShulkerImmersion = false;
-    public boolean canPetAnyLiving = false;
-    public boolean immersiveShield = false;
-    public int rangedGrabRange = 0;
-    public boolean useBeaconImmersion = false;
-    public boolean useBarrelImmersion = false;
-    public boolean useThrowing = false;
-    public boolean allowThrowingBeyondMax = false;
-    public boolean useHopperImmersion = false;
-    public boolean useSmithingTableImmersion = false;
-    public boolean useWrittenBookImmersion = false;
-    public boolean useCauldronImmersion = false;
-    public boolean useIronFurnacesFurnaceImmersion = false;
-    public boolean useTinkersConstructCraftingStationImmersion = false;
-    public boolean useLecternImmersion = false;
+    protected static final Gson GSON = new Gson();
+    protected static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();
 
-    // C2S Synced values
-    public boolean crouchBypassImmersion = false;
-    public boolean doRumble = false;
-    public boolean returnItems = false;
-    public boolean disableOutsideVR = false;
-
-    // Non-synced values
-    public int backpackColor = 11901820;
-    public boolean rightClickChest = false;
-    public boolean autoCenterFurnace = false;
-    public boolean autoCenterBrewing = false;
-    public BackpackMode backpackMode = BackpackMode.BUNDLE;
-    public PlacementGuideMode placementGuideMode = PlacementGuideMode.CUBE;
-    public PlacementMode placementMode = PlacementMode.PLACE_ONE;
-    public boolean spinCraftingOutput = true;
-    public boolean rightClickInVR = false;
-    public boolean resourcePack3dCompat = false;
-    public double itemGuideSize = 1.0;
-    public double itemGuideSelectedSize = 1.0;
-    public RGBA itemGuideColor = new RGBA(0x3300ffffL);
-    public RGBA itemGuideSelectedColor = new RGBA(0x3300ff00L);
-    public RGBA rangedGrabColor = new RGBA(0xff00ffffL);
-    public boolean disableVanillaGUIs = false;
-    public ReachBehindBackpackMode reachBehindBackpackMode = ReachBehindBackpackMode.BEHIND_BACK;
+    public boolean useAnvilImmersive = true;
+    public boolean useBrewingStandImmersive = true;
+    public boolean useChestImmersive = true;
+    public boolean useCraftingTableImmersive = true;
+    public boolean useFurnaceImmersive = true;
+    public boolean useJukeboxImmersive = true;
+    public boolean useRangedGrabImmersive = true;
+    public boolean useButtonImmersive = true;
+    public boolean useEnchantingTableImmersive = true;
+    public boolean useCampfireImmersive = true;
+    public boolean useLeverImmersive = true;
+    public boolean useBagImmersive = true;
+    public boolean useRepeaterImmersive = true;
+    public boolean useDoorImmersive = true;
+    public boolean allowPetting = true;
+    public boolean useArmorImmersive = true;
+    public boolean useFeedingAnimalsImmersive = true;
+    public boolean useShulkerImmersive = true;
+    public boolean allowPettingAnythingLiving = false;
+    public boolean useShieldImmersive = true;
+    public int rangedGrabRange = 8;
+    public boolean useBeaconImmersive = true;
+    public boolean useBarrelImmersive = true;
+    public boolean useThrowingImmersive = true;
+    public boolean allowThrowingBeyondVanillaMaxRange = true;
+    public boolean useHopperImmersive = true;
+    public boolean useSmithingTableImmersive = true;
+    public boolean useChiseledBookshelfImmersive = true;
+    public boolean useWrittenBookImmersive = true;
+    public boolean useCauldronImmersive = true;
+    public boolean useIronFurnacesFurnaceImmersive = true;
+    public boolean useTinkersConstructCraftingStationImmersive = true;
+    public boolean useLecternImmersive = true;
 
     static {
+        DISABLED.setDisabled();
+        FROM_SERVER = new ClientActiveConfig();
+        FROM_SERVER.setDisabled();
+        loadFilesToMemory();
+        ACTIVE = new ClientActiveConfig();
         Field[] fieldsArr = ActiveConfig.class.getDeclaredFields();
         // Java doesn't guarantee order of getDeclaredFields(), so we sort it.
         fields = Arrays.stream(fieldsArr)
@@ -99,8 +98,6 @@ public final class ActiveConfig implements Cloneable {
         for (Field f : fields) {
             fieldsHash += f.getName().hashCode();
         }
-
-        ActiveConfig.FILE.loadFromFile();
     }
 
     /**
@@ -108,11 +105,11 @@ public final class ActiveConfig implements Cloneable {
      * @param player Player to get config of.
      * @return Config for player, or a disabled config if the player does not have a config.
      */
-    public static ActiveConfig getConfigForPlayer(Player player) {
-        ActiveConfig config = CLIENTS.getOrDefault(player.getUUID(), DISABLED);
+    public static ClientActiveConfig getConfigForPlayer(Player player) {
+        ClientActiveConfig config = CLIENTS.getOrDefault(player.getUUID(), ClientActiveConfig.DISABLED);
         // If not in VR and user wants ImmersiveMC disabled outside VR, return DISABLED config.
-        if (config.disableOutsideVR && !VRPluginVerify.playerInVR((ServerPlayer) player)) {
-            return DISABLED;
+        if (config.disableImmersiveMCOutsideVR && !VRPluginVerify.playerInVR((ServerPlayer) player)) {
+            return ClientActiveConfig.DISABLED;
         }
         return config;
     }
@@ -122,9 +119,9 @@ public final class ActiveConfig implements Cloneable {
      * @return Config for the local player, or a disabled config if not in VR and the setting to disable ImmersiveMC
      * outside VR is enabled.
      */
-    public static ActiveConfig active() {
-        if (FILE.disableOutsideVR && !VRPluginVerify.clientInVR()) {
-            return DISABLED;
+    public static ClientActiveConfig active() {
+        if (FILE_CLIENT.disableImmersiveMCOutsideVR && !VRPluginVerify.clientInVR()) {
+            return ClientActiveConfig.DISABLED;
         }
         return ACTIVE;
     }
@@ -134,7 +131,7 @@ public final class ActiveConfig implements Cloneable {
      * All other methods should use active().
      * @return The ACTIVE config.
      */
-    public static ActiveConfig activeRaw() {
+    public static ClientActiveConfig activeRaw() {
         return ACTIVE;
     }
 
@@ -143,12 +140,47 @@ public final class ActiveConfig implements Cloneable {
      * @param player Player to register config for.
      * @param config Config from the player.
      */
-    public static void registerPlayerConfig(Player player, ActiveConfig config) {
+    public static void registerPlayerConfig(Player player, ClientActiveConfig config) {
         CLIENTS.put(player.getUUID(), config);
+    }
+
+    public static ActiveConfig getFileConfig(ConfigType type) {
+        return type == ConfigType.CLIENT ? FILE_CLIENT : FILE_SERVER;
     }
 
     public ActiveConfig() {
 
+    }
+
+    public static ActiveConfig readConfigFile(ConfigType type) {
+        if (!type.configFile.exists() || !type.configFile.canRead()) {
+            return new ClientActiveConfig();
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(type.configFile))) {
+            ActiveConfig config = GSON.fromJson(reader, type.configClass);
+            config.validateConfig();
+            return config;
+        } catch (IOException | JsonParseException ignored) {
+            return new ClientActiveConfig();
+        }
+    }
+
+    public boolean writeConfigFile(ConfigType type) {
+        try {
+            if (!type.configFile.exists()) {
+                boolean createdFile = type.configFile.createNewFile();
+                if (!createdFile) {
+                    return false;
+                }
+            }
+            if (type.configFile.canWrite()) {
+                try (FileWriter writer = new FileWriter(type.configFile)) {
+                    writer.write(GSON_PRETTY.toJson(this));
+                    return true;
+                }
+            }
+        } catch (IOException ignored) {}
+        return false;
     }
 
     /**
@@ -156,15 +188,15 @@ public final class ActiveConfig implements Cloneable {
      * Should only be called by the client.
      */
     public static void loadActive() {
-        ACTIVE = ((ActiveConfig) FILE.clone());
-        ACTIVE.mergeWithOther(FROM_SERVER);
+        ACTIVE = ((ClientActiveConfig) FILE_CLIENT.clone());
+        ACTIVE.mergeWithServer(FROM_SERVER);
     }
 
     /**
      * Loads DISABLED config into the ACTIVE slot.
      */
     public static void loadDisabled() {
-        ACTIVE = (ActiveConfig) DISABLED.clone();
+        ACTIVE = (ClientActiveConfig) ClientActiveConfig.DISABLED.clone();
     }
 
     public static ActiveConfig getActiveConfigCommon(Player player) {
@@ -181,103 +213,90 @@ public final class ActiveConfig implements Cloneable {
      * The values in the other config will never change.
      * @param other The other config
      */
-    public void mergeWithOther(ActiveConfig other) {
-        useAnvilImmersion = useAnvilImmersion && other.useAnvilImmersion;
-        useBrewingImmersion = useBrewingImmersion && other.useBrewingImmersion;
-        useChestImmersion = useChestImmersion && other.useChestImmersion;
-        useCraftingImmersion = useCraftingImmersion && other.useCraftingImmersion;
-        useFurnaceImmersion = useFurnaceImmersion && other.useFurnaceImmersion;
-        useJukeboxImmersion = useJukeboxImmersion && other.useJukeboxImmersion;
-        useRangedGrab = useRangedGrab && other.useRangedGrab;
-        useButton = useButton && other.useButton;
-        useETableImmersion = useETableImmersion && other.useETableImmersion;
-        useCampfireImmersion = useCampfireImmersion && other.useCampfireImmersion;
-        useLever = useLever && other.useLever;
-        useBackpack = useBackpack && other.useBackpack;
-        useRepeaterImmersion = useRepeaterImmersion && other.useRepeaterImmersion;
-        useDoorImmersion = useDoorImmersion && other.useDoorImmersion;
-        canPet = canPet && other.canPet;
-        useArmorImmersion = useArmorImmersion && other.useArmorImmersion;
-        canFeedAnimals = canFeedAnimals && other.canFeedAnimals;
-        useShulkerImmersion = useShulkerImmersion && other.useShulkerImmersion;
-        canPetAnyLiving = canPetAnyLiving && other.canPetAnyLiving;
-        immersiveShield = immersiveShield && other.immersiveShield;
+    public void mergeWithServer(ActiveConfig other) {
+        useAnvilImmersive = useAnvilImmersive && other.useAnvilImmersive;
+        useBrewingStandImmersive = useBrewingStandImmersive && other.useBrewingStandImmersive;
+        useChestImmersive = useChestImmersive && other.useChestImmersive;
+        useCraftingTableImmersive = useCraftingTableImmersive && other.useCraftingTableImmersive;
+        useFurnaceImmersive = useFurnaceImmersive && other.useFurnaceImmersive;
+        useJukeboxImmersive = useJukeboxImmersive && other.useJukeboxImmersive;
+        useRangedGrabImmersive = useRangedGrabImmersive && other.useRangedGrabImmersive;
+        useButtonImmersive = useButtonImmersive && other.useButtonImmersive;
+        useEnchantingTableImmersive = useEnchantingTableImmersive && other.useEnchantingTableImmersive;
+        useCampfireImmersive = useCampfireImmersive && other.useCampfireImmersive;
+        useLeverImmersive = useLeverImmersive && other.useLeverImmersive;
+        useBagImmersive = useBagImmersive && other.useBagImmersive;
+        useRepeaterImmersive = useRepeaterImmersive && other.useRepeaterImmersive;
+        useDoorImmersive = useDoorImmersive && other.useDoorImmersive;
+        allowPetting = allowPetting && other.allowPetting;
+        useArmorImmersive = useArmorImmersive && other.useArmorImmersive;
+        useFeedingAnimalsImmersive = useFeedingAnimalsImmersive && other.useFeedingAnimalsImmersive;
+        useShulkerImmersive = useShulkerImmersive && other.useShulkerImmersive;
+        allowPettingAnythingLiving = allowPettingAnythingLiving && other.allowPettingAnythingLiving;
+        useShieldImmersive = useShieldImmersive && other.useShieldImmersive;
         rangedGrabRange = Math.min(rangedGrabRange, other.rangedGrabRange);
-        useBeaconImmersion = useBeaconImmersion && other.useBeaconImmersion;
-        useBarrelImmersion = useBarrelImmersion && other.useBarrelImmersion;
-        useThrowing = useThrowing && other.useThrowing;
-        allowThrowingBeyondMax = allowThrowingBeyondMax && other.allowThrowingBeyondMax;
-        useHopperImmersion = useHopperImmersion && other.useHopperImmersion;
-        useSmithingTableImmersion = useSmithingTableImmersion && other.useSmithingTableImmersion;
-        useWrittenBookImmersion = useWrittenBookImmersion && other.useWrittenBookImmersion;
-        useCauldronImmersion = useCauldronImmersion && other.useCauldronImmersion;
-        useIronFurnacesFurnaceImmersion = useIronFurnacesFurnaceImmersion && other.useIronFurnacesFurnaceImmersion;
-        useTinkersConstructCraftingStationImmersion = useTinkersConstructCraftingStationImmersion && other.useTinkersConstructCraftingStationImmersion;
-        useLecternImmersion = useLecternImmersion && other.useLecternImmersion;
+        useBeaconImmersive = useBeaconImmersive && other.useBeaconImmersive;
+        useBarrelImmersive = useBarrelImmersive && other.useBarrelImmersive;
+        useThrowingImmersive = useThrowingImmersive && other.useThrowingImmersive;
+        allowThrowingBeyondVanillaMaxRange = allowThrowingBeyondVanillaMaxRange && other.allowThrowingBeyondVanillaMaxRange;
+        useHopperImmersive = useHopperImmersive && other.useHopperImmersive;
+        useSmithingTableImmersive = useSmithingTableImmersive && other.useSmithingTableImmersive;
+        useChiseledBookshelfImmersive = useChiseledBookshelfImmersive && other.useChiseledBookshelfImmersive;
+        useWrittenBookImmersive = useWrittenBookImmersive && other.useWrittenBookImmersive;
+        useCauldronImmersive = useCauldronImmersive && other.useCauldronImmersive;
+        useIronFurnacesFurnaceImmersive = useIronFurnacesFurnaceImmersive && other.useIronFurnacesFurnaceImmersive;
+        useTinkersConstructCraftingStationImmersive = useTinkersConstructCraftingStationImmersive && other.useTinkersConstructCraftingStationImmersive;
+        useLecternImmersive = useLecternImmersive && other.useLecternImmersive;
     }
 
     /**
-     * Loads the config from the config file into this ActiveConfig instance.
+     * Sets this config to its disabled form.
      */
-    public void loadFromFile() {
-        // Synced values
-        useAnvilImmersion = ImmersiveMCConfig.useAnvilImmersion.get();
-        useBrewingImmersion = ImmersiveMCConfig.useBrewingImmersion.get();
-        useChestImmersion = ImmersiveMCConfig.useChestImmersion.get();
-        useCraftingImmersion = ImmersiveMCConfig.useCraftingImmersion.get();
-        useFurnaceImmersion = ImmersiveMCConfig.useFurnaceImmersion.get();
-        useJukeboxImmersion = ImmersiveMCConfig.useJukeboxImmersion.get();
-        useRangedGrab = ImmersiveMCConfig.useRangedGrab.get();
-        useButton = ImmersiveMCConfig.useButton.get();
-        useETableImmersion = ImmersiveMCConfig.useETableImmersion.get();
-        useCampfireImmersion = ImmersiveMCConfig.useCampfireImmersion.get();
-        useLever = ImmersiveMCConfig.useLever.get();
-        useBackpack = ImmersiveMCConfig.useBackpack.get();
-        useRepeaterImmersion = ImmersiveMCConfig.useRepeaterImmersion.get();
-        useDoorImmersion = ImmersiveMCConfig.useDoorImmersion.get();
-        canPet = ImmersiveMCConfig.canPet.get();
-        useArmorImmersion = ImmersiveMCConfig.useArmorImmersion.get();
-        canFeedAnimals = ImmersiveMCConfig.canFeedAnimals.get();
-        useShulkerImmersion = ImmersiveMCConfig.useShulkerImmersion.get();
-        canPetAnyLiving = ImmersiveMCConfig.canPetAnyLiving.get();
-        immersiveShield = ImmersiveMCConfig.immersiveShield.get();
-        rangedGrabRange = ImmersiveMCConfig.rangedGrabRange.get();
-        useBeaconImmersion = ImmersiveMCConfig.useBeaconImmersion.get();
-        useBarrelImmersion = ImmersiveMCConfig.useBarrelImmersion.get();
-        useThrowing = ImmersiveMCConfig.useThrowing.get();
-        allowThrowingBeyondMax = ImmersiveMCConfig.allowThrowingBeyondMax.get();
-        useHopperImmersion = ImmersiveMCConfig.useHopperImmersion.get();
-        useSmithingTableImmersion = ImmersiveMCConfig.useSmithingTableImmersion.get();
-        useWrittenBookImmersion = ImmersiveMCConfig.useWrittenBookImmersion.get();
-        useCauldronImmersion = ImmersiveMCConfig.useCauldronImmersion.get();
-        useIronFurnacesFurnaceImmersion = ImmersiveMCConfig.useIronFurnacesFurnaceImmersion.get();
-        useTinkersConstructCraftingStationImmersion = ImmersiveMCConfig.useTinkersConstructCraftingStationImmersion.get();
-        useLecternImmersion = ImmersiveMCConfig.useLecternImmersion.get();
+    public void setDisabled() {
+        useAnvilImmersive = false;
+        useBrewingStandImmersive = false;
+        useChestImmersive = false;
+        useCraftingTableImmersive = false;
+        useFurnaceImmersive = false;
+        useJukeboxImmersive = false;
+        useRangedGrabImmersive = false;
+        useButtonImmersive = false;
+        useEnchantingTableImmersive = false;
+        useCampfireImmersive = false;
+        useLeverImmersive = false;
+        useBagImmersive = false;
+        useRepeaterImmersive = false;
+        useDoorImmersive = false;
+        allowPetting = false;
+        useArmorImmersive = false;
+        useFeedingAnimalsImmersive = false;
+        useShulkerImmersive = false;
+        allowPettingAnythingLiving = false;
+        useShieldImmersive = false;
+        rangedGrabRange = 0;
+        useBeaconImmersive = false;
+        useBarrelImmersive = false;
+        useThrowingImmersive = false;
+        allowThrowingBeyondVanillaMaxRange = false;
+        useHopperImmersive = false;
+        useSmithingTableImmersive = false;
+        useChiseledBookshelfImmersive = false;
+        useWrittenBookImmersive = false;
+        useCauldronImmersive = false;
+        useIronFurnacesFurnaceImmersive = false;
+        useTinkersConstructCraftingStationImmersive = false;
+        useLecternImmersive = false;
+    }
 
-        // C2S synced values
-        crouchBypassImmersion = ImmersiveMCConfig.crouchBypassImmersion.get();
-        doRumble = ImmersiveMCConfig.doRumble.get();
-        returnItems = ImmersiveMCConfig.returnItems.get();
-        disableOutsideVR = ImmersiveMCConfig.disableOutsideVR.get();
-
-        // Not synced values
-        backpackColor = ImmersiveMCConfig.backpackColor.get();
-        rightClickChest = ImmersiveMCConfig.rightClickChest.get();
-        autoCenterFurnace = ImmersiveMCConfig.autoCenterFurnace.get();
-        autoCenterBrewing = ImmersiveMCConfig.autoCenterBrewing.get();
-        backpackMode = BackpackMode.values()[ImmersiveMCConfig.backpackMode.get()];
-        placementGuideMode = PlacementGuideMode.values()[ImmersiveMCConfig.placementGuideMode.get()];
-        placementMode = PlacementMode.fromInt(ImmersiveMCConfig.itemPlacementMode.get());
-        spinCraftingOutput = ImmersiveMCConfig.spinCraftingOutput.get();
-        rightClickInVR = ImmersiveMCConfig.rightClickInVR.get();
-        resourcePack3dCompat = ImmersiveMCConfig.resourcePack3dCompat.get();
-        itemGuideSize = ImmersiveMCConfig.itemGuideSize.get();
-        itemGuideSelectedSize = ImmersiveMCConfig.itemGuideSelectedSize.get();
-        itemGuideColor = new RGBA(ImmersiveMCConfig.itemGuideColor.get());
-        itemGuideSelectedColor = new RGBA(ImmersiveMCConfig.itemGuideSelectedColor.get());
-        rangedGrabColor = new RGBA(ImmersiveMCConfig.rangedGrabColor.get());
-        disableVanillaGUIs = ImmersiveMCConfig.disableVanillaGUIs.get();
-        reachBehindBackpackMode = ReachBehindBackpackMode.values()[ImmersiveMCConfig.reachBehindBackpackMode.get()];
+    /**
+     * Loads the configs from the config files.
+     */
+    public static void loadFilesToMemory() {
+        FILE_SERVER = readConfigFile(ConfigType.SERVER);
+        if (Platform.getEnvironment() == Env.CLIENT) {
+            FILE_CLIENT = (ClientActiveConfig) readConfigFile(ConfigType.CLIENT);
+        }
+        ConfigConverter.maybeDoConversion();
     }
 
     /**
@@ -285,135 +304,30 @@ public final class ActiveConfig implements Cloneable {
      * @param buffer Buffer to encode into.
      */
     public void encode(FriendlyByteBuf buffer) {
+        buffer.writeBoolean(this instanceof ClientActiveConfig);
         buffer.writeInt(fieldsHash);
-
-        try {
-            for (Field field : fields) {
-                Class<?> type = field.getType();
-                if (type == boolean.class) {
-                    buffer.writeBoolean(field.getBoolean(this));
-                } else if (type == int.class) {
-                    buffer.writeInt(field.getInt(this));
-                } else if (type == long.class) {
-                    buffer.writeLong(field.getLong(this));
-                } else if (type == float.class) {
-                    buffer.writeFloat(field.getFloat(this));
-                } else if (type == double.class) {
-                    buffer.writeDouble(field.getDouble(this));
-                } else if (type.isEnum()) {
-                    Object[] enums = type.getEnumConstants();
-                    for (int i = 0; i < enums.length; i++) {
-                        if (enums[i] == field.get(this)) {
-                            buffer.writeInt(i);
-                            break;
-                        }
-                    }
-                } else if (type == RGBA.class) {
-                    RGBA rgba = (RGBA) field.get(this);
-                    buffer.writeLong(rgba.toLong());
-                } else {
-                    throw new IllegalArgumentException("Encoding for type " + type.getName() + " not supported!");
-                }
-            }
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Failed to encode config!", e);
-        }
+        buffer.writeUtf(GSON.toJson(this));
     }
 
     /**
-     * Decodes a buffer into this ActiveConfig instance.
+     * Decodes a buffer into a (Client)ActiveConfig instance.
      * @param buffer Buffer to decode from.
      */
-    public void decode(FriendlyByteBuf buffer) {
+    public static ActiveConfig decode(FriendlyByteBuf buffer) {
+        Class<? extends ActiveConfig> configClass = buffer.readBoolean() ? ClientActiveConfig.class : ActiveConfig.class;
         int hashFromBuffer = buffer.readInt();
         if (hashFromBuffer != fieldsHash) {
-            // Version mismatch, load disabled.
-            ACTIVE = (ActiveConfig) ActiveConfig.DISABLED.clone();
-            return;
+            // Version mismatch, return disabled clone.
+            return (ActiveConfig) DISABLED.clone();
         }
-
-        try {
-            for (Field field : fields) {
-                Class<?> type = field.getType();
-                if (type == boolean.class) {
-                    field.setBoolean(this, buffer.readBoolean());
-                } else if (type == int.class) {
-                    field.setInt(this, buffer.readInt());
-                } else if (type == long.class) {
-                    field.setLong(this, buffer.readLong());
-                } else if (type == float.class) {
-                    field.setFloat(this, buffer.readFloat());
-                } else if (type == double.class) {
-                    field.setDouble(this, buffer.readDouble());
-                } else if (type.isEnum()) {
-                    Object[] enums = type.getEnumConstants();
-                    field.set(this, enums[buffer.readInt()]);
-                } else if (type == RGBA.class) {
-                    field.set(this, new RGBA(buffer.readLong()));
-                } else {
-                    throw new IllegalArgumentException("Decoding for type " + type.getName() + " not supported!");
-                }
-            }
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Failed to decode config!", e);
-        }
+        return GSON.fromJson(buffer.readUtf(), configClass);
     }
 
-    public String asString() {
-        String stringOut = "Use anvil immersion: " + useAnvilImmersion + "\n" +
-                "Use brewing immersion: " + useBrewingImmersion + "\n" +
-                "Use chest immersion: " + useChestImmersion + "\n" +
-                "Use crafting immersion: " + useCraftingImmersion + "\n" +
-                "Use furnace immersion: " + useFurnaceImmersion + "\n" +
-                "Use jukebox immersion: " + useJukeboxImmersion + "\n" +
-                "Use ranged grab: " + useRangedGrab + "\n" +
-                "Use button: " + useButton + "\n" +
-                "Use enchanting table: " + useETableImmersion + "\n" +
-                "Use campfire immersion: " + useCampfireImmersion + "\n" +
-                "Use lever: " + useLever + "\n" +
-                "Use backpack: " + useBackpack + "\n" +
-                "Backpack color: " + backpackColor + "\n" +
-                "Use right click chest: " + rightClickChest + "\n" +
-                "Use repeater immersion: " + useRepeaterImmersion + "\n" +
-                "Auto-center furnace: " + autoCenterFurnace + "\n" +
-                "Auto-center brewing: " + autoCenterBrewing + "\n" +
-                "Backpack mode: " + backpackMode + "\n" +
-                "Placement Guide mode: " + placementGuideMode + "\n" +
-                "Placement mode: " + placementMode + "\n" +
-                "Use door immersion: " + useDoorImmersion + "\n" +
-                "Spin crafting output: " + spinCraftingOutput + "\n" +
-                "Can pet: " + canPet + "\n" +
-                "Use armor immersion: " + useArmorImmersion + "\n" +
-                "Can feed animals: " + canFeedAnimals + "\n" +
-                "Use Shulker Box Immersion: " + useShulkerImmersion + "\n" +
-                "Can pet any living: " + canPetAnyLiving + "\n" +
-                "Use immersive shield: " + immersiveShield + "\n" +
-                "Ranged grab range: " + rangedGrabRange + "\n" +
-                "Right click in VR: " + rightClickInVR + "\n" +
-                "3D resource pack compatability: " + resourcePack3dCompat + "\n" +
-                "Use beacon immersion: " + useBeaconImmersion + "\n" +
-                "Crouch bypass immersion: " + crouchBypassImmersion + "\n" +
-                "Use barrel immersion: " + useBarrelImmersion + "\n" +
-                "Use throwing: " + useThrowing + "\n" +
-                "Allow throwing beyond max: " + allowThrowingBeyondMax + "\n" +
-                "Item Guide Size: " + itemGuideSize + '\n' +
-                "Hovered Over Item Guide Size: " + itemGuideSelectedSize + '\n' +
-                "Item Guide Color: " + itemGuideColor + "\n" +
-                "Item Guide Selected Color: " + itemGuideSelectedColor + "\n" +
-                "Ranged Grab Color: " + rangedGrabColor + "\n" +
-                "Use Hopper Immersion: " + useHopperImmersion + "\n" +
-                "Disable Vanilla GUIs: " + disableVanillaGUIs + "\n" +
-                "Use Smithing Table Immersion: " + useSmithingTableImmersion + "\n" +
-                "Do Rumble: " + doRumble + "\n" +
-                "Return Items: " + returnItems + "\n" +
-                "Use Written Book Immersion: " + useWrittenBookImmersion + "\n" +
-                "Use Cauldron Immersion: " + useCauldronImmersion + "\n" +
-                "Reach Behind Backpack Mode: " + reachBehindBackpackMode + "\n" +
-                "Use Iron Furnaces Furnace Immersion: " + useIronFurnacesFurnaceImmersion + "\n" +
-                "Use Tinkers' Construct Crafting Station Immersion: " + useTinkersConstructCraftingStationImmersion + "\n" +
-                "Disable ImmersiveMC When not in VR: " + disableOutsideVR + "\n" +
-                "Use Lectern Immersion: " + useLecternImmersion;
-        return stringOut;
+    /**
+     * Modifies the config to ensure all values are within valid ranges.
+     */
+    public void validateConfig() {
+        rangedGrabRange = Mth.clamp(rangedGrabRange, -1, 12);
     }
 
     @Override
@@ -423,5 +337,13 @@ public final class ActiveConfig implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected <T extends Enum<T>> T firstEnumIfNull(T val, Class<T> clazz) {
+        return val == null ? clazz.getEnumConstants()[0] : val;
+    }
+
+    protected <T> T defaultIfNull(T val, T def) {
+        return val == null ? def : val;
     }
 }

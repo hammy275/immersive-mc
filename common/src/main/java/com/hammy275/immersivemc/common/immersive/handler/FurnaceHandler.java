@@ -72,7 +72,7 @@ public class FurnaceHandler extends ContainerHandler<ListOfItemsStorage> {
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useFurnaceImmersion;
+        return ActiveConfig.getActiveConfigCommon(player).useFurnaceImmersive;
     }
 
     @Override

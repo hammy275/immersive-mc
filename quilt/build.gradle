@@ -5,10 +5,6 @@ plugins {
 repositories {
     maven { url "https://maven.quiltmc.org/repository/release/" }
     maven {
-        name = "Fuzs Mod Resources"
-        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
-    }
-    maven {
         url = "https://cursemaven.com"
     }
     maven { url "https://maven.terraformersmc.com/releases/" }
@@ -41,7 +37,6 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
     }
 
-    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:6.0.2"
     modApi "curse.maven:mcvrapi-591092:4548162"
 
     modApi "com.terraformersmc:modmenu:6.2.2"

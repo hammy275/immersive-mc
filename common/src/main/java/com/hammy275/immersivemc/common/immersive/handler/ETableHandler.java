@@ -78,7 +78,7 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useETableImmersion;
+        return ActiveConfig.getActiveConfigCommon(player).useEnchantingTableImmersive;
     }
 
     @Override

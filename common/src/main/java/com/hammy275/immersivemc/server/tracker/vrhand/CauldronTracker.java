@@ -86,7 +86,7 @@ public class CauldronTracker extends AbstractVRHandTracker {
 
     @Override
     public boolean isEnabledInConfig(ActiveConfig config) {
-        return config.useCauldronImmersion;
+        return config.useCauldronImmersive;
     }
 
     private void possiblySetCooldown(Player player, InteractionResult res) {

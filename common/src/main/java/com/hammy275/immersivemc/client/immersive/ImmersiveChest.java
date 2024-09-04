@@ -10,7 +10,6 @@ import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
-import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
@@ -68,7 +67,7 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
 
     @Override
     public int handleHitboxInteract(ChestInfo info, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
-        if (!VRPluginVerify.clientInVR() && !ActiveConfig.active().rightClickChest) return -1;
+        if (!VRPluginVerify.clientInVR() && !ActiveConfig.active().rightClickChestInteractions) return -1;
         if (!info.isOpen) return -1;
         Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), hitboxIndex, hand));
         return ClientConstants.defaultCooldownTicks;
@@ -182,7 +181,7 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
             }
         }
 
-        if (openCloseCooldown <= 0 && !ActiveConfig.active().rightClickChest) {
+        if (openCloseCooldown <= 0 && !ActiveConfig.active().rightClickChestInteractions) {
             if (VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(Minecraft.getInstance().player)
                     && info.openCloseHitboxes != null) {
                 Vec3 current0 = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController0().position();
@@ -238,7 +237,9 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
 
     @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
-        return ClientUtil.createConfigScreenInfo("chest", () -> new ItemStack(Items.CHEST), ImmersiveMCConfig.useChestImmersion);
+        return ClientUtil.createConfigScreenInfo("chest", () -> new ItemStack(Items.CHEST),
+                config -> config.useChestImmersive,
+                (config, newVal) -> config.useChestImmersive = newVal);
     }
 
     @Override

@@ -199,7 +199,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
 
     @Override
     public boolean enabledInConfig() {
-        return ActiveConfig.active().useBackpack;
+        return ActiveConfig.active().useBagImmersive;
     }
 
     @Override
@@ -262,7 +262,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     }
 
     public static Model getBackpackModel() {
-        switch (ActiveConfig.active().backpackMode) {
+        switch (ActiveConfig.active().bagMode) {
             case BUNDLE, BUNDLE_COLORABLE -> {
                 return bundleModel;
             }
@@ -277,7 +277,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     }
 
     public static ResourceLocation getBackpackTexture() {
-        switch (ActiveConfig.active().backpackMode) {
+        switch (ActiveConfig.active().bagMode) {
             case BUNDLE -> {
                 return BackpackBundleModel.textureLocation;
             }
@@ -295,9 +295,9 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     }
 
     public static Vector3f getBackpackColor() {
-        if (ActiveConfig.active().backpackMode.colorable) {
-            Vector3f rgb = new Vector3f(ActiveConfig.active().backpackColor >> 16, ActiveConfig.active().backpackColor >> 8 & 255,
-                    ActiveConfig.active().backpackColor & 255);
+        if (ActiveConfig.active().bagMode.colorable) {
+            Vector3f rgb = new Vector3f(ActiveConfig.active().bagColor >> 16, ActiveConfig.active().bagColor >> 8 & 255,
+                    ActiveConfig.active().bagColor & 255);
             rgb.mul(1f/255f);
             return rgb;
         } else {
