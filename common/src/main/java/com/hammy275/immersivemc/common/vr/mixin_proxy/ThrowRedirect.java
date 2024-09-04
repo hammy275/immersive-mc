@@ -60,7 +60,7 @@ public class ThrowRedirect {
         // Add an extra modifier based on how much faster we are than the throw
         double extraMod = 0;
 
-        if (ActiveConfig.FILE.allowThrowingBeyondMax) {
+        if (ActiveConfig.FILE_SERVER.allowThrowingBeyondVanillaMaxRange) {
             extraMod = (controllerVelocity - mediumThrowingVelocity) / 4;
             extraMod = Math.min(extraMod, 0.05);
         }

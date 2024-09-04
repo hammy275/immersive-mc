@@ -57,7 +57,7 @@ public class CraftingHandler extends ItemWorldStorageHandler<CraftingTableStorag
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useCraftingImmersion;
+        return ActiveConfig.getActiveConfigCommon(player).useCraftingTableImmersive;
     }
 
     @Override

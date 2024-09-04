@@ -58,7 +58,7 @@ public class SmithingTableHandler extends ItemWorldStorageHandler<SmithingTableS
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useSmithingTableImmersion;
+        return ActiveConfig.getActiveConfigCommon(player).useSmithingTableImmersive;
     }
 
     @Override

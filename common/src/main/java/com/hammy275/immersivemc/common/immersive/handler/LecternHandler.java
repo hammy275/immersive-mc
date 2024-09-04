@@ -57,7 +57,7 @@ public class LecternHandler implements WorldStorageHandler<BookData> {
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useLecternImmersion;
+        return ActiveConfig.getActiveConfigCommon(player).useLecternImmersive;
     }
 
     @Override

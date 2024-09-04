@@ -19,7 +19,7 @@ public class ServerPlayerGameModeMixin {
     at=@At("STORE"), index = 9, ordinal = 1)
     // Matches bl2
     public boolean isCrouchingCondition(boolean value, ServerPlayer serverPlayer, Level level, ItemStack itemStack, InteractionHand interactionHand, BlockHitResult blockHitResult) {
-        if (!ActiveConfig.getConfigForPlayer(serverPlayer).crouchBypassImmersion) return value;
+        if (!ActiveConfig.getConfigForPlayer(serverPlayer).crouchingBypassesImmersives) return value;
         if (blockHitResult != null) {
             if (Util.isHittingImmersive(blockHitResult, serverPlayer.level())) {
                 return false;
