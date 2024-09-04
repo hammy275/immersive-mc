@@ -6,7 +6,6 @@ import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.info.HitboxItemPair;
 import com.hammy275.immersivemc.client.immersive.info.RepeaterInfo;
-import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.network.Network;
@@ -42,7 +41,9 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo, NullStora
 
     @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
-        return ClientUtil.createConfigScreenInfo("repeater", () -> new ItemStack(Items.REPEATER), ImmersiveMCConfig.useRepeaterImmersion);
+        return ClientUtil.createConfigScreenInfo("repeater", () -> new ItemStack(Items.REPEATER),
+                config -> config.useRepeaterImmersive,
+                (config, newVal) -> config.useRepeaterImmersive = newVal);
     }
 
     @Override

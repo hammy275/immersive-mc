@@ -62,10 +62,10 @@ public class CampfireTracker extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        if (!ActiveConfig.FILE.useCampfireImmersion) return false;
+        if (!ActiveConfig.FILE_SERVER.useCampfireImmersive) return false;
         if (!VRPluginVerify.hasAPI) return false;
         if (!VRPlugin.API.playerInVR(player)) return false;
-        if (!ActiveConfig.getConfigForPlayer(player).useCampfireImmersion) return false;
+        if (!ActiveConfig.getConfigForPlayer(player).useCampfireImmersive) return false;
         IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
         boolean mainRes = false;
         boolean offRes = false;

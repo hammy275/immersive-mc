@@ -16,7 +16,7 @@ public class BackpackTrackerMixin {
     @Inject(method = "isActive(Lnet/minecraft/client/player/LocalPlayer;)Z", at = @At("HEAD"), cancellable = true,
     require = 1)
     public void notActiveIfUsingBagPreHotswitch(LocalPlayer p, CallbackInfoReturnable<Boolean> cir) {
-        if (ActiveConfig.active().reachBehindBackpackMode.usesOverShoulder()) {
+        if (ActiveConfig.active().reachBehindBagMode.usesOverShoulder()) {
             cir.setReturnValue(false);
         }
     }

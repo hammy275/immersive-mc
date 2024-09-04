@@ -106,7 +106,7 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
      *
      */
     public void placeItem(Player player, InteractionHand hand, int amountToPlace, int slot) {
-        boolean shouldReturnItems = ActiveConfig.getConfigForPlayer(player).returnItems;
+        boolean shouldReturnItems = ActiveConfig.getConfigForPlayer(player).returnItemsWhenLeavingImmersives;
         ItemStack toHand;
         ItemStack toImmersive;
         ItemStack leftovers;

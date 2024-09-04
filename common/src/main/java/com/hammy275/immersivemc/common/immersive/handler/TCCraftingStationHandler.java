@@ -79,7 +79,7 @@ public class TCCraftingStationHandler extends ContainerHandler<ListOfItemsStorag
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useTinkersConstructCraftingStationImmersion;
+        return ActiveConfig.getActiveConfigCommon(player).useTinkersConstructCraftingStationImmersive;
     }
 
     @Override

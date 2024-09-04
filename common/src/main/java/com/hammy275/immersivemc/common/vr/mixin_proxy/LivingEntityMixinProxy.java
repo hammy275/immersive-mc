@@ -19,7 +19,7 @@ public class LivingEntityMixinProxy {
 
     private static boolean isImmersiveBlocking(LivingEntity living) {
         if (living instanceof Player player &&
-                ActiveConfig.getActiveConfigCommon(player).immersiveShield && VRPlugin.API.playerInVR(player)
+                ActiveConfig.getActiveConfigCommon(player).useShieldImmersive && VRPlugin.API.playerInVR(player)
                 && player.getUseItem().isEmpty()) {
             for (InteractionHand iHand : InteractionHand.values()) {
                 if (player.getItemInHand(iHand).getUseAnimation() == UseAnim.BLOCK) {
@@ -34,7 +34,7 @@ public class LivingEntityMixinProxy {
     @Nullable
     public static ItemStack isDamageSourceBlocked(LivingEntity living, DamageSource damageSource) {
         if (living instanceof Player player &&
-                ActiveConfig.getActiveConfigCommon(player).immersiveShield && VRPlugin.API.playerInVR(player) && isImmersiveBlocking(player)) {
+                ActiveConfig.getActiveConfigCommon(player).useShieldImmersive && VRPlugin.API.playerInVR(player) && isImmersiveBlocking(player)) {
             // Don't block if on cooldown
             // Guaranteed to not block piercing arrows
             if (damageSource.getDirectEntity() instanceof AbstractArrow arrow) {

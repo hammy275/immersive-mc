@@ -19,7 +19,7 @@ public class BarrelHandler extends ChestLikeHandler {
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useBarrelImmersion;
+        return ActiveConfig.getActiveConfigCommon(player).useBarrelImmersive;
     }
 
     @Override

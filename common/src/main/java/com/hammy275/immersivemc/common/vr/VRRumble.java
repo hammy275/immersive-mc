@@ -9,9 +9,9 @@ import net.minecraft.world.entity.player.Player;
 public class VRRumble {
     private static boolean rumbleInVRConfigCheck(Player player) {
         if (player instanceof ServerPlayer) {
-            return ActiveConfig.getConfigForPlayer(player).doRumble;
+            return ActiveConfig.getConfigForPlayer(player).doVRControllerRumble;
         } else {
-            return ActiveConfig.FILE.doRumble;
+            return ActiveConfig.FILE_CLIENT.doVRControllerRumble;
         }
     }
 
