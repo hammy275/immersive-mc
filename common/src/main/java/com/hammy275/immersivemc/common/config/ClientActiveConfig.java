@@ -72,30 +72,4 @@ public final class ClientActiveConfig extends ActiveConfig {
         disableVanillaGUIs = false;
         reachBehindBackpackMode = ReachBehindBackpackMode.BEHIND_BACK;
     }
-
-    @Override
-    public void loadFromFile() {
-        super.loadFromFile();
-        crouchBypassImmersion = ImmersiveMCConfig.crouchBypassImmersion.get();
-        doRumble = ImmersiveMCConfig.doRumble.get();
-        returnItems = ImmersiveMCConfig.returnItems.get();
-        disableOutsideVR = ImmersiveMCConfig.disableOutsideVR.get();
-        backpackColor = ImmersiveMCConfig.backpackColor.get();
-        rightClickChest = ImmersiveMCConfig.rightClickChest.get();
-        autoCenterFurnace = ImmersiveMCConfig.autoCenterFurnace.get();
-        autoCenterBrewing = ImmersiveMCConfig.autoCenterBrewing.get();
-        backpackMode = BackpackMode.values()[ImmersiveMCConfig.backpackMode.get()];
-        placementGuideMode = PlacementGuideMode.values()[ImmersiveMCConfig.placementGuideMode.get()];
-        placementMode = PlacementMode.fromInt(ImmersiveMCConfig.itemPlacementMode.get());
-        spinCraftingOutput = ImmersiveMCConfig.spinCraftingOutput.get();
-        rightClickInVR = ImmersiveMCConfig.rightClickInVR.get();
-        resourcePack3dCompat = ImmersiveMCConfig.resourcePack3dCompat.get();
-        itemGuideSize = ImmersiveMCConfig.itemGuideSize.get();
-        itemGuideSelectedSize = ImmersiveMCConfig.itemGuideSelectedSize.get();
-        itemGuideColor = new RGBA(ImmersiveMCConfig.itemGuideColor.get());
-        itemGuideSelectedColor = new RGBA(ImmersiveMCConfig.itemGuideSelectedColor.get());
-        rangedGrabColor = new RGBA(ImmersiveMCConfig.rangedGrabColor.get());
-        disableVanillaGUIs = ImmersiveMCConfig.disableVanillaGUIs.get();
-        reachBehindBackpackMode = ReachBehindBackpackMode.values()[ImmersiveMCConfig.reachBehindBackpackMode.get()];
-    }
 }

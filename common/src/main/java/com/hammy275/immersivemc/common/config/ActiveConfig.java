@@ -1,13 +1,21 @@
 package com.hammy275.immersivemc.common.config;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import dev.architectury.platform.Platform;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -35,6 +43,8 @@ public class ActiveConfig implements Cloneable {
     public static int fieldsHash = 0;
 
     protected static final Gson GSON = new Gson();
+    protected static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();
+    protected static final File CONFIG_FILE = Paths.get(Platform.getConfigFolder().toString(), "immersive_mc.json").toFile();
 
     public boolean useAnvilImmersion = true;
     public boolean useBrewingImmersion = true;
@@ -74,8 +84,7 @@ public class ActiveConfig implements Cloneable {
         DISABLED.setDisabled();
         FROM_SERVER = new ClientActiveConfig();
         FROM_SERVER.setDisabled();
-        ActiveConfig.FILE = new ClientActiveConfig();
-        ActiveConfig.FILE.loadFromFile();
+        loadFileToMemory();
         ACTIVE = new ClientActiveConfig();
         Field[] fieldsArr = ActiveConfig.class.getDeclaredFields();
         // Java doesn't guarantee order of getDeclaredFields(), so we sort it.
@@ -138,12 +147,41 @@ public class ActiveConfig implements Cloneable {
 
     }
 
+    public static ClientActiveConfig readConfigFile() {
+        if (!CONFIG_FILE.exists() || !CONFIG_FILE.canRead()) {
+            return new ClientActiveConfig();
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(CONFIG_FILE))) {
+            return GSON.fromJson(reader, ClientActiveConfig.class);
+        } catch (IOException ignored) {
+            return new ClientActiveConfig();
+        }
+    }
+
+    public boolean writeConfigFile() {
+        try {
+            if (!CONFIG_FILE.exists()) {
+                boolean createdFile = CONFIG_FILE.createNewFile();
+                if (!createdFile) {
+                    return false;
+                }
+            }
+            if (CONFIG_FILE.canWrite()) {
+                try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
+                    writer.write(GSON_PRETTY.toJson(this));
+                    return true;
+                }
+            }
+        } catch (IOException ignored) {}
+        return false;
+    }
+
     /**
      * Set ACTIVE config to be the merge of the FILE config and the FROM_SERVER config if connected to a server.
      * Should only be called by the client.
      */
     public static void loadActive() {
-        FILE.loadFromFile();
+        loadFileToMemory();
         ACTIVE = ((ClientActiveConfig) FILE.clone());
         ACTIVE.mergeWithServer(FROM_SERVER);
     }
@@ -248,40 +286,8 @@ public class ActiveConfig implements Cloneable {
     /**
      * Loads the config from the config file into this ActiveConfig instance.
      */
-    public void loadFromFile() {
-        useAnvilImmersion = ImmersiveMCConfig.useAnvilImmersion.get();
-        useBrewingImmersion = ImmersiveMCConfig.useBrewingImmersion.get();
-        useChestImmersion = ImmersiveMCConfig.useChestImmersion.get();
-        useCraftingImmersion = ImmersiveMCConfig.useCraftingImmersion.get();
-        useFurnaceImmersion = ImmersiveMCConfig.useFurnaceImmersion.get();
-        useJukeboxImmersion = ImmersiveMCConfig.useJukeboxImmersion.get();
-        useRangedGrab = ImmersiveMCConfig.useRangedGrab.get();
-        useButton = ImmersiveMCConfig.useButton.get();
-        useETableImmersion = ImmersiveMCConfig.useETableImmersion.get();
-        useCampfireImmersion = ImmersiveMCConfig.useCampfireImmersion.get();
-        useLever = ImmersiveMCConfig.useLever.get();
-        useBackpack = ImmersiveMCConfig.useBackpack.get();
-        useRepeaterImmersion = ImmersiveMCConfig.useRepeaterImmersion.get();
-        useDoorImmersion = ImmersiveMCConfig.useDoorImmersion.get();
-        canPet = ImmersiveMCConfig.canPet.get();
-        useArmorImmersion = ImmersiveMCConfig.useArmorImmersion.get();
-        canFeedAnimals = ImmersiveMCConfig.canFeedAnimals.get();
-        useShulkerImmersion = ImmersiveMCConfig.useShulkerImmersion.get();
-        canPetAnyLiving = ImmersiveMCConfig.canPetAnyLiving.get();
-        immersiveShield = ImmersiveMCConfig.immersiveShield.get();
-        rangedGrabRange = ImmersiveMCConfig.rangedGrabRange.get();
-        useBeaconImmersion = ImmersiveMCConfig.useBeaconImmersion.get();
-        useBarrelImmersion = ImmersiveMCConfig.useBarrelImmersion.get();
-        useThrowing = ImmersiveMCConfig.useThrowing.get();
-        allowThrowingBeyondMax = ImmersiveMCConfig.allowThrowingBeyondMax.get();
-        useHopperImmersion = ImmersiveMCConfig.useHopperImmersion.get();
-        useSmithingTableImmersion = ImmersiveMCConfig.useSmithingTableImmersion.get();
-        useChiseledBookshelfImmersion = ImmersiveMCConfig.useChiseledBookshelfImmersion.get();
-        useWrittenBookImmersion = ImmersiveMCConfig.useWrittenBookImmersion.get();
-        useCauldronImmersion = ImmersiveMCConfig.useCauldronImmersion.get();
-        useIronFurnacesFurnaceImmersion = ImmersiveMCConfig.useIronFurnacesFurnaceImmersion.get();
-        useTinkersConstructCraftingStationImmersion = ImmersiveMCConfig.useTinkersConstructCraftingStationImmersion.get();
-        useLecternImmersion = ImmersiveMCConfig.useLecternImmersion.get();
+    public static void loadFileToMemory() {
+        FILE = readConfigFile();
     }
 
     /**

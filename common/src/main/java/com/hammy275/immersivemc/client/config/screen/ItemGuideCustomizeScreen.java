@@ -5,7 +5,6 @@ import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.model.Cube1x1;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.util.RGBA;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -123,8 +122,6 @@ public class ItemGuideCustomizeScreen extends Screen {
                     (guideMode -> Component.translatable("config.immersivemc.placement_guide_mode.desc")),
                     () -> ActiveConfig.FILE.placementGuideMode,
                     (newModeIndex, newMode) -> {
-                        ImmersiveMCConfig.placementGuideMode.set(newModeIndex);
-                        // We don't use loadConfigFromFile here so that other guide values aren't accidentally overwritten
                         ActiveConfig.FILE.placementGuideMode = newMode;
                     }
         ));
@@ -139,7 +136,6 @@ public class ItemGuideCustomizeScreen extends Screen {
                                 sizeKey, (value) -> Component.literal(I18n.get(sizeKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
                                 0, 100, () -> (int)(ActiveConfig.FILE.itemGuideSize * 100),
                                  (newVal) -> {
-                                     ImmersiveMCConfig.itemGuideSize.set(newVal / 100.0d);
                                      ActiveConfig.FILE.itemGuideSize = newVal / 100.0d;
                                  }
                         )
@@ -150,7 +146,6 @@ public class ItemGuideCustomizeScreen extends Screen {
                                 sizeKey, (value) -> Component.literal(I18n.get(sizeKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
                                 0, 100, () -> (int)(ActiveConfig.FILE.itemGuideSelectedSize * 100),
                                 (newVal) -> {
-                                    ImmersiveMCConfig.itemGuideSelectedSize.set(newVal / 100.0d);
                                     ActiveConfig.FILE.itemGuideSelectedSize = newVal / 100.0d;
                                 }
                         )
@@ -167,16 +162,7 @@ public class ItemGuideCustomizeScreen extends Screen {
                         compKey, (value) ->
                                 Component.literal(I18n.get(compKey) + ": " + value),
                         0, 255, () -> color.getColor(c),
-                        (newVal) -> {
-                            color.setColor(c, newVal);
-                            if (finalI == 0) {
-                                ImmersiveMCConfig.itemGuideColor.set(ActiveConfig.FILE.itemGuideColor.toLong());
-                            } else if (finalI == 1) {
-                                ImmersiveMCConfig.itemGuideSelectedColor.set(ActiveConfig.FILE.itemGuideSelectedColor.toLong());
-                            } else {
-                                ImmersiveMCConfig.rangedGrabColor.set(ActiveConfig.FILE.rangedGrabColor.toLong());
-                            }
-                        }
+                        (newVal) -> color.setColor(c, newVal)
                 ));
             }
         }
@@ -192,6 +178,7 @@ public class ItemGuideCustomizeScreen extends Screen {
 
     @Override
     public void onClose() {
+        ActiveConfig.FILE.writeConfigFile();
         Minecraft.getInstance().setScreen(this.lastScreen);
     }
 }

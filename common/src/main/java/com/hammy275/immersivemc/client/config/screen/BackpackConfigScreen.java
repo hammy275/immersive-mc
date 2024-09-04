@@ -4,7 +4,6 @@ import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.BackpackMode;
-import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.config.ReachBehindBackpackMode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -64,7 +63,6 @@ public class BackpackConfigScreen extends Screen {
                     () -> ActiveConfig.FILE.backpackMode,
                     (newModeIndex, newMode) -> {
                         BackpackMode oldMode = ActiveConfig.FILE.backpackMode;
-                        ImmersiveMCConfig.backpackMode.set(newMode.ordinal());
                         ActiveConfig.FILE.backpackMode = newMode;
                         // Also set ACTIVE mode since that's what getBackpackModel() looks at in renderBackpack()
                         ActiveConfig.activeRaw().backpackMode = newMode;
@@ -80,10 +78,7 @@ public class BackpackConfigScreen extends Screen {
                     (reachBehindBackpackMode) -> Component.translatable("config.immersivemc.reach_behind_backpack_mode." + reachBehindBackpackMode.ordinal()),
                     (reachBehindBackpackMode) -> Component.translatable("config.immersivemc.reach_behind_backpack_mode." + reachBehindBackpackMode.ordinal() + ".desc"),
                     () -> ActiveConfig.FILE.reachBehindBackpackMode,
-                    (newModeIndex, newMode) -> {
-                        ImmersiveMCConfig.reachBehindBackpackMode.set(newMode.ordinal());
-                        ActiveConfig.FILE.reachBehindBackpackMode = newMode;
-                    }
+                    (newModeIndex, newMode) -> ActiveConfig.FILE.reachBehindBackpackMode = newMode
             ));
 
         if (ActiveConfig.FILE.backpackMode.colorable) {
@@ -150,6 +145,7 @@ public class BackpackConfigScreen extends Screen {
 
     @Override
     public void onClose() {
+        ActiveConfig.FILE.writeConfigFile();
         Minecraft.getInstance().setScreen(parentScreen);
     }
 
@@ -173,7 +169,6 @@ public class BackpackConfigScreen extends Screen {
             rgb = new Vec3i(rgb.getX(), rgb.getY(), newVal);
         }
         int newColor = (rgb.getX() << 16) + (rgb.getY() << 8) + (rgb.getZ());
-        ImmersiveMCConfig.backpackColor.set(newColor);
         ActiveConfig.FILE.backpackColor = newColor;
         // Also set ACTIVE mode since that's what getBackpackModel() looks at in renderBackpack()
         ActiveConfig.activeRaw().backpackColor = newColor;

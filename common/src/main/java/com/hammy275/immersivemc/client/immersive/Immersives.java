@@ -1,7 +1,14 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
-import com.hammy275.immersivemc.api.client.immersive.*;
+import com.hammy275.immersivemc.api.client.immersive.BuiltImmersive;
+import com.hammy275.immersivemc.api.client.immersive.ForcedUpDownRenderDir;
+import com.hammy275.immersivemc.api.client.immersive.HitboxPositioningMode;
+import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfo;
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveBuilder;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.RelativeHitboxInfoBuilder;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveMCClientRegistrationImpl;
 import com.hammy275.immersivemc.client.config.ClientConstants;
@@ -10,7 +17,6 @@ import com.hammy275.immersivemc.client.immersive.info.AnvilData;
 import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
@@ -63,7 +69,9 @@ public class Immersives {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
                 return ClientConstants.defaultCooldownTicks;
             })
-            .setConfigScreenInfo(createConfigScreenInfo("anvil", () -> new ItemStack(Items.ANVIL), ImmersiveMCConfig.useAnvilImmersion))
+            .setConfigScreenInfo(createConfigScreenInfo("anvil", () -> new ItemStack(Items.ANVIL),
+                    config -> config.useAnvilImmersion,
+                    (config, newVal) -> config.useAnvilImmersion = newVal))
             .build();
     public static final ImmersiveBackpack immersiveBackpack = new ImmersiveBackpack();
     public static final BuiltImmersive<ChestLikeData,?> immersiveBarrel = ImmersiveBuilder.create(ImmersiveHandlers.barrelHandler, ChestLikeData.class)
@@ -95,7 +103,9 @@ public class Immersives {
             .setOnRemove((info) -> {
                 ((ChestLikeData) info.getExtraData()).forceClose(info.getBlockPosition());
             })
-            .setConfigScreenInfo(createConfigScreenInfo("barrel", () -> new ItemStack(Items.BARREL), ImmersiveMCConfig.useBarrelImmersion))
+            .setConfigScreenInfo(createConfigScreenInfo("barrel", () -> new ItemStack(Items.BARREL),
+                    config -> config.useBarrelImmersion,
+                    (config, newVal) -> config.useBarrelImmersion = newVal))
             .build();
     public static final ImmersiveBeacon immersiveBeacon = new ImmersiveBeacon();
     public static final BuiltImmersive<?,?> immersiveBrewing = ImmersiveBuilder.create(ImmersiveHandlers.brewingStandHandler)
@@ -116,7 +126,9 @@ public class Immersives {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
                 return ClientConstants.defaultCooldownTicks;
             })
-            .setConfigScreenInfo(createConfigScreenInfo("brewing", () -> new ItemStack(Items.BREWING_STAND), ImmersiveMCConfig.useBrewingImmersion))
+            .setConfigScreenInfo(createConfigScreenInfo("brewing", () -> new ItemStack(Items.BREWING_STAND),
+                    config -> config.useBrewingImmersion,
+                    (config, newVal) -> config.useBrewingImmersion = newVal))
             .build();
     public static final ImmersiveChest immersiveChest = new ImmersiveChest();
     public static final BuiltImmersive<?,?> immersiveChiseledBookshelf = ImmersiveBuilder.create(ImmersiveHandlers.chiseledBookshelfHandler)
@@ -134,7 +146,9 @@ public class Immersives {
                 return ClientConstants.defaultCooldownTicks;
             })
             .setVROnly(true)
-            .setConfigScreenInfo(createConfigScreenInfo("chiseled_bookshelf", () -> new ItemStack(Items.CHISELED_BOOKSHELF), ImmersiveMCConfig.useChiseledBookshelfImmersion))
+            .setConfigScreenInfo(createConfigScreenInfo("chiseled_bookshelf", () -> new ItemStack(Items.CHISELED_BOOKSHELF),
+                    config -> config.useChiseledBookshelfImmersion,
+                    (config, newVal) -> config.useChiseledBookshelfImmersion = newVal))
             .build();
     public static final BuiltImmersive<?,?> immersiveCrafting = ImmersiveBuilder.create(ImmersiveHandlers.craftingHandler)
             .setConfigChecker(() -> ActiveConfig.active().useCraftingImmersion)
@@ -151,7 +165,9 @@ public class Immersives {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
                 return ClientConstants.defaultCooldownTicks;
             })
-            .setConfigScreenInfo(createConfigScreenInfo("crafting", () -> new ItemStack(Items.CRAFTING_TABLE), ImmersiveMCConfig.useCraftingImmersion))
+            .setConfigScreenInfo(createConfigScreenInfo("crafting", () -> new ItemStack(Items.CRAFTING_TABLE),
+                    config -> config.useCraftingImmersion,
+                    (config, newVal) -> config.useCraftingImmersion = newVal))
             .build();
     public static final BuiltImmersive<?,?> immersiveETable = ImmersiveBuilder.create(ImmersiveHandlers.enchantingTableHandler, EnchantingData.class)
             .setConfigChecker(() -> ActiveConfig.active().useETableImmersion)
@@ -234,7 +250,9 @@ public class Immersives {
                     info.setFakeItem(i, item);
                 }
             })
-            .setConfigScreenInfo(createConfigScreenInfo("enchanting_table", () -> new ItemStack(Items.ENCHANTING_TABLE), ImmersiveMCConfig.useETableImmersion))
+            .setConfigScreenInfo(createConfigScreenInfo("enchanting_table", () -> new ItemStack(Items.ENCHANTING_TABLE),
+                    config -> config.useETableImmersion,
+                    (config, newVal) -> config.useETableImmersion = newVal))
             .build();
     public static final BuiltImmersive<?,?> immersiveFurnace = ImmersiveBuilder.create(ImmersiveHandlers.furnaceHandler)
             .setConfigChecker(() -> ActiveConfig.active().useFurnaceImmersion)
@@ -289,7 +307,9 @@ public class Immersives {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
                 return ClientConstants.defaultCooldownTicks;
             })
-            .setConfigScreenInfo(createConfigScreenInfo("furnace", () -> new ItemStack(Items.FURNACE), ImmersiveMCConfig.useFurnaceImmersion))
+            .setConfigScreenInfo(createConfigScreenInfo("furnace", () -> new ItemStack(Items.FURNACE),
+                    config -> config.useFurnaceImmersion,
+                    (config, newVal) -> config.useFurnaceImmersion = newVal))
             .build();
     public static final ImmersiveHitboxes immersiveHitboxes = new ImmersiveHitboxes();
     public static final BuiltImmersive<?,?> immersiveHopper = ImmersiveBuilder.create(ImmersiveHandlers.hopperHandler)
@@ -328,7 +348,9 @@ public class Immersives {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
                 return ClientConstants.defaultCooldownTicks;
             })
-            .setConfigScreenInfo(createConfigScreenInfo("hopper", () -> new ItemStack(Items.HOPPER), ImmersiveMCConfig.useHopperImmersion))
+            .setConfigScreenInfo(createConfigScreenInfo("hopper", () -> new ItemStack(Items.HOPPER),
+                    config -> config.useHopperImmersion,
+                    (config, newVal) -> config.useHopperImmersion = newVal))
             .build();
     public static final BuiltImmersive<?,?> immersiveJukebox = ImmersiveBuilder.create(ImmersiveHandlers.jukeboxHandler)
             .setConfigChecker(() -> ActiveConfig.active().useJukeboxImmersion)
@@ -339,7 +361,9 @@ public class Immersives {
                 return ClientConstants.defaultCooldownTicks;
             })
             .setVROnly(true)
-            .setConfigScreenInfo(createConfigScreenInfo("jukebox", () -> new ItemStack(Items.JUKEBOX), ImmersiveMCConfig.useJukeboxImmersion))
+            .setConfigScreenInfo(createConfigScreenInfo("jukebox", () -> new ItemStack(Items.JUKEBOX),
+                    config -> config.useJukeboxImmersion,
+                    (config, newVal) -> config.useJukeboxImmersion = newVal))
             .build();
 
     public static final ImmersiveLectern immersiveLectern = new ImmersiveLectern();
@@ -372,7 +396,9 @@ public class Immersives {
                 ChestLikeData extra = (ChestLikeData) info.getExtraData();
                 return slot >= extra.currentRow * 9 && slot < (extra.currentRow + 1) * 9;
             })
-            .setConfigScreenInfo(createConfigScreenInfo("shulker", () -> new ItemStack(Items.SHULKER_BOX), ImmersiveMCConfig.useShulkerImmersion))
+            .setConfigScreenInfo(createConfigScreenInfo("shulker", () -> new ItemStack(Items.SHULKER_BOX),
+                    config -> config.useShulkerImmersion,
+                    (config, newVal) -> config.useShulkerImmersion = newVal))
             .build();
 
     public static final BuiltImmersive<?,?> immersiveSmithingTable = ImmersiveBuilder.create(ImmersiveHandlers.smithingTableHandler)
@@ -387,7 +413,9 @@ public class Immersives {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
                 return ClientConstants.defaultCooldownTicks;
             })
-            .setConfigScreenInfo(createConfigScreenInfo("smithing_table", () -> new ItemStack(Items.SMITHING_TABLE), ImmersiveMCConfig.useSmithingTableImmersion))
+            .setConfigScreenInfo(createConfigScreenInfo("smithing_table", () -> new ItemStack(Items.SMITHING_TABLE),
+                    config -> config.useSmithingTableImmersion,
+                    (config, newVal) -> config.useSmithingTableImmersion = newVal))
             .build();
 
 

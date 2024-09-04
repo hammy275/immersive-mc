@@ -10,7 +10,6 @@ import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
-import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
@@ -238,7 +237,9 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
 
     @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
-        return ClientUtil.createConfigScreenInfo("chest", () -> new ItemStack(Items.CHEST), ImmersiveMCConfig.useChestImmersion);
+        return ClientUtil.createConfigScreenInfo("chest", () -> new ItemStack(Items.CHEST),
+                config -> config.useChestImmersion,
+                (config, newVal) -> config.useChestImmersion = newVal);
     }
 
     @Override

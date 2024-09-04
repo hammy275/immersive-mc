@@ -5,7 +5,6 @@ import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersi
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
-import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -98,13 +97,13 @@ public class ConfigScreen extends Screen {
                 BUTTON_WIDTH, BUTTON_HEIGHT,
                 "config.immersivemc.reset",
                 (button) -> {
-                    ImmersiveMCConfig.resetToDefault();
+                    ActiveConfig.FILE = new ClientActiveConfig();
                     ActiveConfig.loadActive();
                     button.active = false;
                 }
         ));
 
-        this.addRenderableWidget(ScreenUtils.createOption("disable_outside_vr", ImmersiveMCConfig.disableOutsideVR)
+        this.addRenderableWidget(ScreenUtils.createOption("disable_outside_vr", config -> config.disableOutsideVR, (config, newVal) -> config.disableOutsideVR = newVal)
                 .createButton(Minecraft.getInstance().options, (this.width - BUTTON_WIDTH) / 2 - (BUTTON_WIDTH / 2) - 8, this.height - 32 - BUTTON_HEIGHT, BUTTON_WIDTH));
 
     }
@@ -126,8 +125,8 @@ public class ConfigScreen extends Screen {
     }
 
     public static void onClientConfigChange() {
+        ActiveConfig.FILE.writeConfigFile();
         boolean isSingleplayerHost = Minecraft.getInstance().hasSingleplayerServer();
-        ActiveConfig.FILE.loadFromFile();
         if (isSingleplayerHost) {
             ActiveConfig.FROM_SERVER = (ClientActiveConfig) ClientActiveConfig.FILE.clone();
         }
