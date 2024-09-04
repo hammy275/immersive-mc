@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveMCClientRegistration;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
+import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
@@ -36,6 +37,19 @@ public class ClientUtil {
 
     public static final int maxLight = LightTexture.pack(15, 15);
     public static int immersiveLeftClickCooldown = 0;
+
+    public static void clearDisabledImmersives() {
+        for (Immersive<?, ?> immersive : Immersives.IMMERSIVES) {
+            if (!immersive.getHandler().enabledInConfig(Minecraft.getInstance().player)) {
+                immersive.getTrackedObjects().clear();
+            }
+        }
+        for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
+            if (!immersive.enabledInConfig()) {
+                immersive.clearImmersives();
+            }
+        }
+    }
 
     public static ImmersiveConfigScreenInfo createConfigScreenInfo(String keyName, Supplier<ItemStack> optionItem,
                                                                    Function<ActiveConfig, Boolean> configGetter,

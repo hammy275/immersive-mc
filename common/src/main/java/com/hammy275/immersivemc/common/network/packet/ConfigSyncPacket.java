@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.common.network.packet;
 
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
@@ -69,6 +70,7 @@ public class ConfigSyncPacket {
                 // Load server config
                 ActiveConfig.FROM_SERVER = message.config;
                 ActiveConfig.loadActive();
+                ClientUtil.clearDisabledImmersives();
                 // Send server our config
                 Network.INSTANCE.sendToServer(new ConfigSyncPacket(ActiveConfig.FILE_CLIENT));
             } else { // C2S sending us a config
