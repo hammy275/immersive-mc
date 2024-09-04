@@ -94,9 +94,11 @@ public class CompatModule<T> implements InvocationHandler {
     }
 
     public static void handleDisableServer(String friendlyName, BiConsumer<ActiveConfig, Boolean> configSetter, MinecraftServer server) {
-        configSetter.accept(ActiveConfig.FILE, false);
-        Network.INSTANCE.sendToPlayers(server.getPlayerList().getPlayers(), new ConfigSyncPacket(ActiveConfig.FILE, null));
-        server.sendMessage(getErrorMessage(friendlyName), server.getPlayerList().getPlayers().get(0).getUUID());
+        configSetter.accept(ActiveConfig.FILE_SERVER, false);
+        Network.INSTANCE.sendToPlayers(server.getPlayerList().getPlayers(), new ConfigSyncPacket(ActiveConfig.FILE_SERVER, null));
+        if (!server.getPlayerList().getPlayers().isEmpty()) {
+            server.sendMessage(getErrorMessage(friendlyName), server.getPlayerList().getPlayers().get(0).getUUID());
+        }
         server.getPlayerList().getPlayers().forEach(player -> player.sendMessage(getErrorMessage(friendlyName), player.getUUID()));
     }
 

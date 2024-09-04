@@ -60,7 +60,7 @@ public class JukeboxHandler implements ImmersiveHandler<NullStorage> {
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useJukeboxImmersion;
+        return ActiveConfig.getActiveConfigCommon(player).useJukeboxImmersive;
     }
 
     @Override

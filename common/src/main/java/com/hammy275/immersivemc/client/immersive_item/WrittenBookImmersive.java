@@ -39,7 +39,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
 
     @Override
     public boolean isEnabled() {
-        return ActiveConfig.active().useWrittenBookImmersion;
+        return ActiveConfig.active().useWrittenBookImmersive;
     }
 
     @Override

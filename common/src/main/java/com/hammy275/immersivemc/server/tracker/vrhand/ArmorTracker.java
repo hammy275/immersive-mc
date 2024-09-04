@@ -58,6 +58,6 @@ public class ArmorTracker extends AbstractVRHandTracker {
 
     @Override
     public boolean isEnabledInConfig(ActiveConfig config) {
-        return config.useArmorImmersion;
+        return config.useArmorImmersive;
     }
 }

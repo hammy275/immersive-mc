@@ -1,6 +1,14 @@
 package com.hammy275.immersivemc.common.util;
 
-public class RGBA {
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import java.io.IOException;
+
+@JsonAdapter(RGBA.class)
+public class RGBA extends TypeAdapter<RGBA> {
 
     public int r;
     public int g;
@@ -8,6 +16,7 @@ public class RGBA {
     public int a;
 
     public RGBA(long argb) {
+        argb = argb < 0 ? 0 : Math.min(argb, 0xFFFFFFFFL);
         this.a = (int) (argb >> 24);
         this.r = (int) (argb >> 16 & 255);
         this.g = (int) (argb >> 8 & 255);
@@ -57,5 +66,15 @@ public class RGBA {
     @Override
     public String toString() {
         return "R: %d\tG: %d\tB: %d\ta: %d".formatted(this.r, this.g, this.b, this.a);
+    }
+
+    @Override
+    public void write(JsonWriter out, RGBA value) throws IOException {
+        out.value(value.toLong());
+    }
+
+    @Override
+    public RGBA read(JsonReader in) throws IOException {
+        return new RGBA(in.nextLong());
     }
 }

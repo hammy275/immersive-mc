@@ -5,6 +5,8 @@ import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveMCClientRegistration;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
+import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
@@ -24,9 +26,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeConfigSpec;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ClientUtil {
@@ -35,15 +38,27 @@ public class ClientUtil {
     public static final int maxLight = LightTexture.pack(15, 15);
     public static int immersiveLeftClickCooldown = 0;
 
+    public static void clearDisabledImmersives() {
+        for (Immersive<?, ?> immersive : Immersives.IMMERSIVES) {
+            if (!immersive.getHandler().enabledInConfig(Minecraft.getInstance().player)) {
+                immersive.getTrackedObjects().clear();
+            }
+        }
+        for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
+            if (!immersive.enabledInConfig()) {
+                immersive.clearImmersives();
+            }
+        }
+    }
+
     public static ImmersiveConfigScreenInfo createConfigScreenInfo(String keyName, Supplier<ItemStack> optionItem,
-                                                                   ForgeConfigSpec.BooleanValue configEntry) {
+                                                                   Function<ActiveConfig, Boolean> configGetter,
+                                                                   BiConsumer<ActiveConfig, Boolean> configSetter) {
         return ImmersiveMCClientRegistration.instance().createConfigScreenInfoOneItem(ImmersiveMC.MOD_ID,
                 "config." + ImmersiveMC.MOD_ID + "." + keyName,
                 optionItem, new TranslatableComponent("config." + ImmersiveMC.MOD_ID + "." + keyName + ".desc"),
-                configEntry::get, (newVal) -> {
-                    configEntry.set(newVal);
-                    ActiveConfig.FILE.loadFromFile();
-                });
+                () -> configGetter.apply(ConfigScreen.getAdjustingConfig()),
+                (newVal) -> configSetter.accept(ConfigScreen.getAdjustingConfig(), newVal));
     }
 
     /**

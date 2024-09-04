@@ -32,7 +32,7 @@ public class RangedGrabTrackerServer extends AbstractTracker {
             if (info.item == null || !info.item.isAlive() || info.tickTime <= 0) {
                 toRemove.add(info);
             } else {
-                if (!ActiveConfig.getConfigForPlayer(info.player).useRangedGrab) return;
+                if (!ActiveConfig.getConfigForPlayer(info.player).useRangedGrabImmersive) return;
                 info.tickTime--;
                 info.item.setPickUpDelay(0);
                 Vec3 baseVelocity = new Vec3(0, 0, 0);
@@ -54,7 +54,7 @@ public class RangedGrabTrackerServer extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        return ActiveConfig.FILE.useRangedGrab && infos.size() > 0;
+        return ActiveConfig.FILE_SERVER.useRangedGrabImmersive && infos.size() > 0;
     }
 
     public static class RangedGrabInfo {

@@ -11,7 +11,6 @@ import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.client.immersive.info.HitboxItemPair;
 import com.hammy275.immersivemc.common.config.CommonConstants;
-import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import com.hammy275.immersivemc.common.network.Network;
@@ -175,7 +174,9 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
 
     @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
-        return ClientUtil.createConfigScreenInfo("beacon", () -> new ItemStack(Items.BEACON), ImmersiveMCConfig.useBeaconImmersion);
+        return ClientUtil.createConfigScreenInfo("beacon", () -> new ItemStack(Items.BEACON),
+                config -> config.useBeaconImmersive,
+                (config, newVal) -> config.useBeaconImmersive = newVal);
     }
 
     @Override

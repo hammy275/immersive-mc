@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.mixin.OptionMixinAccessor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.architectury.platform.Platform;
@@ -58,26 +57,30 @@ public class ImmersivesConfigScreen extends Screen {
         List<CycleOption<Boolean>> options = new ArrayList<>();
         if (this.type.isNonVR()) {
             if (Platform.isModLoaded("tconstruct")) {
-                options.add(ScreenUtils.createOption("tinkers_construct_crafting_station", ImmersiveMCConfig.useTinkersConstructCraftingStationImmersion));
+                options.add(ScreenUtils.createOption("tinkers_construct_crafting_station",
+                        config -> config.useTinkersConstructCraftingStationImmersive,
+                        (config, newVal) -> config.useTinkersConstructCraftingStationImmersive = newVal));
             }
             if (Platform.isModLoaded("ironfurnaces")) {
-                options.add(ScreenUtils.createOption("iron_furnaces_furnace", ImmersiveMCConfig.useIronFurnacesFurnaceImmersion));
+                options.add(ScreenUtils.createOption("iron_furnaces_furnace",
+                        config -> config.useIronFurnacesFurnaceImmersive,
+                        (config, newVal) -> config.useIronFurnacesFurnaceImmersive = newVal));
             }
         }
 
         if (this.type.isVR()) {
-            options.add(ScreenUtils.createOption("animals", ImmersiveMCConfig.canFeedAnimals));
-            options.add(ScreenUtils.createOption("armor", ImmersiveMCConfig.useArmorImmersion));
-            options.add(ScreenUtils.createOption("backpack_button", ImmersiveMCConfig.useBackpack));
-            options.add(ScreenUtils.createOption("button", ImmersiveMCConfig.useButton));
-            options.add(ScreenUtils.createOption("campfire", ImmersiveMCConfig.useCampfireImmersion));
-            options.add(ScreenUtils.createOption("cauldron", ImmersiveMCConfig.useCauldronImmersion));
-            options.add(ScreenUtils.createOption("door", ImmersiveMCConfig.useDoorImmersion));
-            options.add(ScreenUtils.createOption("pet", ImmersiveMCConfig.canPet));
-            options.add(ScreenUtils.createOption("ranged_grab", ImmersiveMCConfig.useRangedGrab));
-            options.add(ScreenUtils.createOption("shield", ImmersiveMCConfig.immersiveShield));
-            options.add(ScreenUtils.createOption("throw", ImmersiveMCConfig.useThrowing));
-            options.add(ScreenUtils.createOption("written_book", ImmersiveMCConfig.useWrittenBookImmersion));
+            options.add(ScreenUtils.createOption("animals", config -> config.useFeedingAnimalsImmersive, (config, newVal) -> config.useFeedingAnimalsImmersive = newVal));
+            options.add(ScreenUtils.createOption("armor",config -> config.useArmorImmersive, (config, newVal) -> config.useArmorImmersive = newVal));
+            options.add(ScreenUtils.createOption("backpack_button", config -> config.useBagImmersive, (config, newVal) -> config.useBagImmersive = newVal));
+            options.add(ScreenUtils.createOption("button", config -> config.useButtonImmersive, (config, newVal) -> config.useButtonImmersive = newVal));
+            options.add(ScreenUtils.createOption("campfire", config -> config.useCampfireImmersive, (config, newVal) -> config.useCampfireImmersive = newVal));
+            options.add(ScreenUtils.createOption("cauldron", config -> config.useCauldronImmersive, (config, newVal) -> config.useCauldronImmersive = newVal));
+            options.add(ScreenUtils.createOption("door", config -> config.useDoorImmersive, (config, newVal) -> config.useDoorImmersive = newVal));
+            options.add(ScreenUtils.createOption("pet", config -> config.allowPetting, (config, newVal) -> config.allowPetting = newVal));
+            options.add(ScreenUtils.createOption("ranged_grab", config -> config.useRangedGrabImmersive, (config, newVal) -> config.useRangedGrabImmersive = newVal));
+            options.add(ScreenUtils.createOption("shield", config -> config.useShieldImmersive, (config, newVal) -> config.useShieldImmersive = newVal));
+            options.add(ScreenUtils.createOption("throw", config -> config.useThrowingImmersive, (config, newVal) -> config.useThrowingImmersive = newVal));
+            options.add(ScreenUtils.createOption("written_book", config -> config.useWrittenBookImmersive, (config, newVal) -> config.useWrittenBookImmersive = newVal));
         }
 
         Immersives.IMMERSIVES.stream()
@@ -115,6 +118,7 @@ public class ImmersivesConfigScreen extends Screen {
 
     @Override
     public void onClose() {
+        ConfigScreen.writeAdjustingConfig();
         Minecraft.getInstance().setScreen(lastScreen);
     }
 

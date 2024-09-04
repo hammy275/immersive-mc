@@ -48,7 +48,7 @@ public class BeaconHandler extends ItemWorldStorageHandler<BeaconStorage> {
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useBeaconImmersion;
+        return ActiveConfig.getActiveConfigCommon(player).useBeaconImmersive;
     }
 
     @Override
