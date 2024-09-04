@@ -298,6 +298,7 @@ public class ActiveConfig implements Cloneable {
         if (Platform.getEnvironment() == Env.CLIENT) {
             FILE_CLIENT = (ClientActiveConfig) readConfigFile(ConfigType.CLIENT);
         }
+        ConfigConverter.maybeDoConversion();
     }
 
     /**
