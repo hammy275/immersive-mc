@@ -57,7 +57,7 @@ public class BrewingStandHandler extends ContainerHandler<ListOfItemsStorage> {
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useBrewingImmersion;
+        return ActiveConfig.getActiveConfigCommon(player).useBrewingStandImmersive;
     }
 
     @Override

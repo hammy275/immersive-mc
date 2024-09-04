@@ -38,7 +38,7 @@ public class ThrowPacket {
         ctx.get().queue(() -> {
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             packet.dir = packet.dir.normalize(); // Just in case we get something non-normalized from the client
-            if (player != null && ActiveConfig.FILE.useThrowing) {
+            if (player != null && ActiveConfig.FILE_SERVER.useThrowingImmersive) {
                 ItemStack itemInHand = player.getItemInHand(InteractionHand.MAIN_HAND);
                 if (Util.isThrowableItem(itemInHand.getItem())) {
                     if (itemInHand.getItem() instanceof FishingRodItem && player.fishing != null) return;

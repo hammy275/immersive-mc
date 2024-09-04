@@ -20,6 +20,7 @@ import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
 import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
 import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
@@ -76,7 +77,7 @@ public class ClientLogicSubscriber {
         boolean currentVRState = VRPluginVerify.clientInVR();
         if (currentVRState != lastVRState) {
             lastVRState = currentVRState;
-            if (!currentVRState && ActiveConfig.FILE.disableOutsideVR) {
+            if (!currentVRState && ActiveConfig.FILE_CLIENT.disableImmersiveMCOutsideVR) {
                 for (Immersive<?, ?> immersive : Immersives.IMMERSIVES) {
                     immersive.getTrackedObjects().clear();
                 }
@@ -91,7 +92,7 @@ public class ClientLogicSubscriber {
         }
 
         // Stop ticking operations if not in VR and we don't want to use ImmersiveMC outside VR
-        if (!currentVRState && ActiveConfig.FILE.disableOutsideVR) return;
+        if (!currentVRState && ActiveConfig.FILE_CLIENT.disableImmersiveMCOutsideVR) return;
 
         if (ClientUtil.immersiveLeftClickCooldown > 0) {
             ClientUtil.immersiveLeftClickCooldown--;
@@ -179,7 +180,7 @@ public class ClientLogicSubscriber {
     public static boolean onClick(int button) {
         // Don't run code if we're on spectator mode
         if ((Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSpectator()) ||
-                (!VRPluginVerify.clientInVR() && ActiveConfig.FILE.disableOutsideVR)) return false;
+                (!VRPluginVerify.clientInVR() && ActiveConfig.FILE_CLIENT.disableImmersiveMCOutsideVR)) return false;
         if (button == 1) {
             int cooldown = handleRightClick(Minecraft.getInstance().player);
             if (cooldown > 0) {
@@ -189,7 +190,7 @@ public class ClientLogicSubscriber {
 
             // Check for cancelling right click if interacting with immersive-enabled block
             HitResult looking = Minecraft.getInstance().hitResult;
-            if (looking != null && looking.getType() == HitResult.Type.BLOCK && ActiveConfig.active().disableVanillaGUIs) {
+            if (looking != null && looking.getType() == HitResult.Type.BLOCK && ActiveConfig.active().disableVanillaInteractionsForSupportedImmersives) {
                 BlockPos pos = ((BlockHitResult) looking).getBlockPos();
                 // No similar check for AbstractPlayerAttachmentImmersive, since those aren't tied to blocks
                 for (Immersive<? extends ImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
@@ -229,7 +230,7 @@ public class ClientLogicSubscriber {
         for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
             singleton.clearImmersives();
         }
-        ActiveConfig.FROM_SERVER = (ActiveConfig) ActiveConfig.DISABLED.clone();
+        ActiveConfig.FROM_SERVER = (ClientActiveConfig) ClientActiveConfig.DISABLED.clone();
         alreadyInServer = false;
         // Cleared so leaving and re-joining a singleplayer world doesn't keep the lid open
         ChestToOpenSet.clear();
@@ -258,7 +259,7 @@ public class ClientLogicSubscriber {
                                 info.getAllHitboxes().stream().map((box) -> box != null ? box.getHitbox() : null).toList()).orElse(-1), i);
                     }
                 }
-                if (!VRPluginVerify.clientInVR() || ActiveConfig.active().rightClickInVR) {
+                if (!VRPluginVerify.clientInVR() || ActiveConfig.active().rightClickImmersiveInteractionsInVR) {
                     Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
                     info.setSlotHovered(Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(), info.getAllHitboxes()).orElse(-1), 0);
                     info.setSlotHovered(-1, 1);
@@ -309,7 +310,7 @@ public class ClientLogicSubscriber {
                             info.triggerHitboxSlotHovered = -1;
                         }
                     }
-                    if (!VRPluginVerify.clientInVR() || (ActiveConfig.active().rightClickInVR && !inBox)) {
+                    if (!VRPluginVerify.clientInVR() || (ActiveConfig.active().rightClickImmersiveInteractionsInVR && !inBox)) {
                         Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
                         info.slotHovered = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
                                 info.getAllHitboxes()).orElse(-1);
@@ -348,7 +349,7 @@ public class ClientLogicSubscriber {
     }
 
     public static boolean handleLeftClick(Player player) {
-        if (Minecraft.getInstance().player == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE.disableOutsideVR)) return false;
+        if (Minecraft.getInstance().player == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE_CLIENT.disableImmersiveMCOutsideVR)) return false;
 
         boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
         if (inVR) {
@@ -442,11 +443,11 @@ public class ClientLogicSubscriber {
     }
 
     public static int handleRightClick(Player player) {
-        if (Minecraft.getInstance().gameMode == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE.disableOutsideVR)) return 0;
+        if (Minecraft.getInstance().gameMode == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE_CLIENT.disableImmersiveMCOutsideVR)) return 0;
         boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
         HitResult looking = Minecraft.getInstance().hitResult;
 
-        if (ActiveConfig.active().crouchBypassImmersion &&
+        if (ActiveConfig.active().crouchingBypassesImmersives &&
                 looking != null && looking.getType() == HitResult.Type.BLOCK &&
                 Minecraft.getInstance().player.isSecondaryUseActive()) {
             if (Util.isHittingImmersive((BlockHitResult) looking, Minecraft.getInstance().level)) {
@@ -458,7 +459,7 @@ public class ClientLogicSubscriber {
         Vec3 start = startAndEnd.getA();
         Vec3 end = startAndEnd.getB();
 
-        if (!inVR || ActiveConfig.active().rightClickInVR) { // Don't handle right clicks for VR players, they have hands (unless they config to!)!
+        if (!inVR || ActiveConfig.active().rightClickImmersiveInteractionsInVR) { // Don't handle right clicks for VR players, they have hands (unless they config to!)!
             for (Immersive<?, ?> singleton : Immersives.IMMERSIVES) {
                 if (singleton.isVROnly() && !inVR) continue;
                 Integer fromInfos = handleRightClickInfos(singleton, start, end);
@@ -516,7 +517,7 @@ public class ClientLogicSubscriber {
 
         BlockPos pos = ((BlockHitResult) looking).getBlockPos();
         BlockState state = player.level.getBlockState(pos);
-        if (ActiveConfig.active().rightClickChest && ActiveConfig.active().useChestImmersion) {
+        if (ActiveConfig.active().rightClickChestInteractions && ActiveConfig.active().useChestImmersive) {
             boolean isChest = state.getBlock() instanceof AbstractChestBlock && player.level.getBlockEntity(pos) instanceof ChestBlockEntity;
             boolean isEnderChest = state.getBlock() instanceof EnderChestBlock && player.level.getBlockEntity(pos) instanceof EnderChestBlockEntity;
             if (isChest || isEnderChest) {
@@ -528,7 +529,7 @@ public class ClientLogicSubscriber {
             }
         }
         // Direction check is so we only open when right-clicking the front of the barrel
-        if (ActiveConfig.active().useBarrelImmersion &&
+        if (ActiveConfig.active().useBarrelImmersive &&
                 ImmersiveHandlers.barrelHandler.isValidBlock(pos, player.level) &&
                 ((BlockHitResult) looking).getDirection() == state.getValue(BlockStateProperties.FACING)) {
             BuiltImmersiveInfo<ChestLikeData> info = ClientUtil.findImmersive(Immersives.immersiveBarrel, pos);
@@ -537,7 +538,7 @@ public class ClientLogicSubscriber {
                 return 6;
             }
         }
-        if (ActiveConfig.active().useShulkerImmersion &&
+        if (ActiveConfig.active().useShulkerImmersive &&
                 ImmersiveHandlers.shulkerBoxHandler.isValidBlock(pos, player.level)) {
             for (BuiltImmersiveInfo<ChestLikeData> info : Immersives.immersiveShulker.getTrackedObjects()) {
                 if (info.getBlockPosition().equals(pos)) {

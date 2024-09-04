@@ -30,7 +30,7 @@ public class SetRepeaterPacket {
 
     public static void handle(SetRepeaterPacket message, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
-            if (!ActiveConfig.FILE.useRepeaterImmersion) return;
+            if (!ActiveConfig.FILE_SERVER.useRepeaterImmersive) return;
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (NetworkUtil.safeToRun(message.pos, player)) {
                 if (message.newDelay >= 1 && message.newDelay <= 4) {
