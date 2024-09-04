@@ -1,6 +1,8 @@
 package com.hammy275.immersivemc.common.network.packet;
 
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
@@ -45,8 +47,7 @@ public class ConfigSyncPacket {
     }
 
     public static ConfigSyncPacket decode(FriendlyByteBuf buffer) {
-        ActiveConfig incoming = new ActiveConfig();
-        incoming.decode(buffer);
+        ActiveConfig incoming = ActiveConfig.decode(buffer);
         List<ResourceLocation> handlerIDs = null;
         int numIDs = buffer.readInt();
         if (numIDs > 0) {
@@ -69,11 +70,12 @@ public class ConfigSyncPacket {
                 // Load server config
                 ActiveConfig.FROM_SERVER = message.config;
                 ActiveConfig.loadActive();
+                ClientUtil.clearDisabledImmersives();
                 // Send server our config
-                Network.INSTANCE.sendToServer(new ConfigSyncPacket(ActiveConfig.FILE));
+                Network.INSTANCE.sendToServer(new ConfigSyncPacket(ActiveConfig.FILE_CLIENT));
             } else { // C2S sending us a config
-                message.config.mergeWithOther(ActiveConfig.FILE);
-                ActiveConfig.registerPlayerConfig(ctx.get().getPlayer(), message.config);
+                message.config.mergeWithServer(ActiveConfig.FILE_SERVER);
+                ActiveConfig.registerPlayerConfig(ctx.get().getPlayer(), (ClientActiveConfig) message.config);
                 TrackedImmersives.clearForPlayer(player);
             }
         });

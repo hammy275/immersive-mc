@@ -8,10 +8,6 @@ loom {
 
 repositories {
     maven {
-        name = "Fuzs Mod Resources"
-        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
-    }
-    maven {
         url = "https://cursemaven.com"
     }
 }
@@ -23,7 +19,6 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury:${rootProject.architectury_version}"
 
-    modApi "net.minecraftforge:forgeconfigapiport-fabric:4.2.6"
     modApi "curse.maven:mcvrapi-591092:4548158"
 
     modCompileOnly "curse.maven:vivecraft-667903:4160376"

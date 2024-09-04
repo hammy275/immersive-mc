@@ -21,7 +21,7 @@ public class CompatModuleClient {
     }
 
     private static void handleDisableClient(String friendlyName, BiConsumer<ActiveConfig, Boolean> configSetter) {
-        configSetter.accept(ActiveConfig.FILE, false);
+        configSetter.accept(ActiveConfig.FILE_CLIENT, false);
         ConfigScreen.onClientConfigChange();
         Minecraft.getInstance().player.sendSystemMessage(CompatModule.getErrorMessage(friendlyName));
     }

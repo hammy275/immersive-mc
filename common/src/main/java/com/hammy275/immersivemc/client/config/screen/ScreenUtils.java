@@ -2,6 +2,8 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.ClientActiveConfig;
+import com.hammy275.immersivemc.common.config.ConfigType;
 import dev.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
@@ -9,7 +11,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.common.ForgeConfigSpec;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -31,15 +32,13 @@ public class ScreenUtils {
                 valueGetter.get(), valueSetter);
     }
 
-    public static OptionInstance<Boolean> createOption(String keyName, ForgeConfigSpec.BooleanValue configEntry) {
+    public static OptionInstance<Boolean> createOption(String keyName, Function<ActiveConfig, Boolean> valueGetter,
+                                                       BiConsumer<ActiveConfig, Boolean> valueSetter) {
         return OptionInstance.createBoolean(
                 "config." + ImmersiveMC.MOD_ID + "." + keyName,
                 OptionInstance.cachedConstantTooltip(Component.translatable("config." + ImmersiveMC.MOD_ID + "." + keyName + ".desc")),
-                configEntry.get(),
-                (newVal) -> {
-                    configEntry.set(newVal);
-                    ActiveConfig.FILE.loadFromFile();
-                }
+                valueGetter.apply(ConfigScreen.getAdjustingConfig()),
+                (newVal) -> valueSetter.accept(ConfigScreen.getAdjustingConfig(), newVal)
         );
     }
 
@@ -81,17 +80,38 @@ public class ScreenUtils {
     }
 
     public static Button createButton(int x, int y, int width, int height, String translationString, Consumer<Button> clickHandler) {
-        return new Button(x, y, width, height, Component.translatable(translationString), clickHandler::accept);
+        return createButton(x, y, width, height, translationString, null, clickHandler);
     }
 
-    public static void addOptionIfModLoaded(String modId, String keyName, ForgeConfigSpec.BooleanValue configEntry, OptionsList list) {
+    public static Button createButton(int x, int y, int width, int height, String translationString, String tooltipTranslationString, Consumer<Button> clickHandler) {
+        if (tooltipTranslationString == null) {
+            return new Button(x, y, width, height, Component.translatable(translationString), clickHandler::accept);
+        } else {
+            return new Button(x, y, width, height, Component.translatable(translationString), clickHandler::accept,
+                    (button, stack, i, j) -> Minecraft.getInstance().screen.renderTooltip(stack, Component.translatable(tooltipTranslationString), i, j));
+        }
+
+
+    }
+
+    public static void addOptionIfModLoaded(String modId, String keyName, Function<ActiveConfig, Boolean> valueGetter,
+                                            BiConsumer<ActiveConfig, Boolean> valueSetter, OptionsList list) {
         if (Platform.isModLoaded(modId)) {
-            addOption(keyName, configEntry, list);
+            addOption(keyName, valueGetter, valueSetter, list);
         }
     }
 
-    public static void addOption(String keyName, ForgeConfigSpec.BooleanValue configEntry, OptionsList list) {
-        list.addBig(createOption(keyName, configEntry));
+    public static void addOption(String keyName, Function<ActiveConfig, Boolean> valueGetter,
+                                 BiConsumer<ActiveConfig, Boolean> valueSetter, OptionsList list) {
+        list.addBig(createOption(keyName, valueGetter, valueSetter));
+    }
+
+    public static void addOptionIfClient(String keyName, Function<ClientActiveConfig, Boolean> valueGetter,
+                                 BiConsumer<ClientActiveConfig, Boolean> valueSetter, OptionsList list) {
+        if (ConfigScreen.getAdjustingConfigType() == ConfigType.CLIENT) {
+            list.addBig(createOption(keyName, ac -> valueGetter.apply((ClientActiveConfig) ac),
+                    (ac, newVal) -> valueSetter.accept((ClientActiveConfig) ac, newVal)));
+        }
     }
 
     public static boolean mouseInBox(int mouseX, int mouseY, int leftX, int bottomY, int rightX, int topY) {

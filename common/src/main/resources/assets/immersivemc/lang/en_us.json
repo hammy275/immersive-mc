@@ -16,6 +16,10 @@
   "config.immersivemc.open_wiki_message": "Would you like to open the ImmersiveMC wiki, copy it to your clipboard, or cancel?",
   "config.immersivemc.disable_outside_vr": "Disable ImmersiveMC Unless in VR",
   "config.immersivemc.disable_outside_vr.desc": "Disables all of ImmersiveMC unless you're in VR.",
+  "config.immersivemc.edit_config_type.client": "Currently Adjusting: Your Config",
+  "config.immersivemc.edit_config_type.client.desc": "In the current mode, the settings changed will only impact you. Any disabled Immersives will only be disabled for you.",
+  "config.immersivemc.edit_config_type.server": "Currently Adjusting: Server Config",
+  "config.immersivemc.edit_config_type.server.desc": "In the current mode, the settings changed will impact all players. Players may disable any enabled Immersives individually, but any disabled Immersives will be disabled for all players.",
 
   "screen.immersivemc.backpack_config.title": "Bag Customization",
   "config.immersivemc.backpack_mode": "Bag Type",

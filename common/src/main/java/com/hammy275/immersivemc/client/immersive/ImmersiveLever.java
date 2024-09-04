@@ -6,7 +6,6 @@ import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.info.HitboxItemPair;
 import com.hammy275.immersivemc.client.immersive.info.LeverInfo;
-import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.network.Network;
@@ -41,7 +40,9 @@ public class ImmersiveLever extends AbstractImmersive<LeverInfo, NullStorage> {
 
     @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
-        return ClientUtil.createConfigScreenInfo("lever", () -> new ItemStack(Items.LEVER), ImmersiveMCConfig.useLever);
+        return ClientUtil.createConfigScreenInfo("lever", () -> new ItemStack(Items.LEVER),
+                config -> config.useLeverImmersive,
+                (config, newVal) -> config.useLeverImmersive = newVal);
     }
 
     @Override

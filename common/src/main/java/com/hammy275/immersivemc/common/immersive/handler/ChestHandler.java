@@ -81,7 +81,7 @@ public class ChestHandler extends ChestLikeHandler implements MultiblockImmersiv
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useChestImmersion;
+        return ActiveConfig.getActiveConfigCommon(player).useChestImmersive;
     }
 
     @Override

@@ -26,7 +26,7 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
 
     @Override
     public boolean isEnabledInConfig(ActiveConfig config) {
-        return config.canFeedAnimals;
+        return config.useFeedingAnimalsImmersive;
     }
 
     @Override
