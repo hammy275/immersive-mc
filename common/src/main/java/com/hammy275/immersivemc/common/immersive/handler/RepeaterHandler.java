@@ -41,7 +41,7 @@ public class RepeaterHandler implements ImmersiveHandler<NullStorage> {
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useRepeaterImmersion;
+        return ActiveConfig.getActiveConfigCommon(player).useRepeaterImmersive;
     }
 
     @Override

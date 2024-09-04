@@ -7,27 +7,27 @@ public final class ClientActiveConfig extends ActiveConfig {
 
     public static final ClientActiveConfig DISABLED = new ClientActiveConfig();
 
-    public boolean crouchBypassImmersion = false;
-    public boolean doRumble = true;
-    public boolean returnItems = true;
-    public boolean disableOutsideVR = false;
-    public int backpackColor = 11901820;
-    public boolean rightClickChest = false;
-    public boolean autoCenterFurnace = false;
-    public boolean autoCenterBrewing = false;
-    public BackpackMode backpackMode = BackpackMode.BUNDLE;
+    public boolean crouchingBypassesImmersives = false;
+    public boolean doVRControllerRumble = true;
+    public boolean returnItemsWhenLeavingImmersives = true;
+    public boolean disableImmersiveMCOutsideVR = false;
+    public int bagColor = 11901820;
+    public boolean rightClickChestInteractions = false;
+    public boolean autoCenterFurnaceImmersive = false;
+    public boolean autoCenterBrewingStandImmersive = false;
+    public BackpackMode bagMode = BackpackMode.BUNDLE;
     public PlacementGuideMode placementGuideMode = PlacementGuideMode.CUBE;
     public PlacementMode placementMode = PlacementMode.PLACE_ONE;
-    public boolean spinCraftingOutput = true;
-    public boolean rightClickInVR = false;
-    public boolean resourcePack3dCompat = false;
+    public boolean spinSomeImmersiveOutputs = true;
+    public boolean rightClickImmersiveInteractionsInVR = false;
+    public boolean compatFor3dResourcePacks = false;
     public double itemGuideSize = 1.0;
     public double itemGuideSelectedSize = 1.0;
     public RGBA itemGuideColor = new RGBA(0x3300ffffL);
     public RGBA itemGuideSelectedColor = new RGBA(0x3300ff00L);
     public RGBA rangedGrabColor = new RGBA(0xff00ffffL);
-    public boolean disableVanillaGUIs = false;
-    public ReachBehindBackpackMode reachBehindBackpackMode = ReachBehindBackpackMode.BEHIND_BACK;
+    public boolean disableVanillaInteractionsForSupportedImmersives = false;
+    public ReachBehindBackpackMode reachBehindBagMode = ReachBehindBackpackMode.BEHIND_BACK;
 
     static {
         DISABLED.setDisabled();
@@ -37,8 +37,8 @@ public final class ClientActiveConfig extends ActiveConfig {
     public void validateConfig() {
         super.validateConfig();
         // NOTE: RGBAs are validated during deserialization, so no need to cover that here. Only need to null check.
-        backpackColor = Mth.clamp(backpackColor, 0, 0xFFFFFF);
-        backpackMode = firstEnumIfNull(backpackMode, BackpackMode.class);
+        bagColor = Mth.clamp(bagColor, 0, 0xFFFFFF);
+        bagMode = firstEnumIfNull(bagMode, BackpackMode.class);
         placementGuideMode = firstEnumIfNull(placementGuideMode, PlacementGuideMode.class);
         placementMode = firstEnumIfNull(placementMode, PlacementMode.class);
         itemGuideSize = Mth.clamp(itemGuideSize, 0, 1);
@@ -46,32 +46,32 @@ public final class ClientActiveConfig extends ActiveConfig {
         itemGuideColor = defaultIfNull(itemGuideColor, new RGBA(0x3300ffffL));
         itemGuideSelectedColor = defaultIfNull(itemGuideSelectedColor, new RGBA(0x3300ff00L));
         rangedGrabColor = defaultIfNull(rangedGrabColor, new RGBA(0xff00ffffL));
-        reachBehindBackpackMode = firstEnumIfNull(reachBehindBackpackMode, ReachBehindBackpackMode.class);
+        reachBehindBagMode = firstEnumIfNull(reachBehindBagMode, ReachBehindBackpackMode.class);
     }
 
     @Override
     public void setDisabled() {
         super.setDisabled();
-        crouchBypassImmersion = false;
-        doRumble = false;
-        returnItems = false;
-        disableOutsideVR = false;
-        backpackColor = 11901820;
-        rightClickChest = false;
-        autoCenterFurnace = false;
-        autoCenterBrewing = false;
-        backpackMode = BackpackMode.BUNDLE;
+        crouchingBypassesImmersives = false;
+        doVRControllerRumble = false;
+        returnItemsWhenLeavingImmersives = false;
+        disableImmersiveMCOutsideVR = false;
+        bagColor = 11901820;
+        rightClickChestInteractions = false;
+        autoCenterFurnaceImmersive = false;
+        autoCenterBrewingStandImmersive = false;
+        bagMode = BackpackMode.BUNDLE;
         placementGuideMode = PlacementGuideMode.CUBE;
         placementMode = PlacementMode.PLACE_ONE;
-        spinCraftingOutput = true;
-        rightClickInVR = false;
-        resourcePack3dCompat = false;
+        spinSomeImmersiveOutputs = true;
+        rightClickImmersiveInteractionsInVR = false;
+        compatFor3dResourcePacks = false;
         itemGuideSize = 1.0;
         itemGuideSelectedSize = 1.0;
         itemGuideColor = new RGBA(0x3300ffffL);
         itemGuideSelectedColor = new RGBA(0x3300ff00L);
         rangedGrabColor = new RGBA(0xff00ffffL);
-        disableVanillaGUIs = false;
-        reachBehindBackpackMode = ReachBehindBackpackMode.BEHIND_BACK;
+        disableVanillaInteractionsForSupportedImmersives = false;
+        reachBehindBagMode = ReachBehindBackpackMode.BEHIND_BACK;
     }
 }

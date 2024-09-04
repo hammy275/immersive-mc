@@ -175,8 +175,8 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
     @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
         return ClientUtil.createConfigScreenInfo("beacon", () -> new ItemStack(Items.BEACON),
-                config -> config.useBeaconImmersion,
-                (config, newVal) -> config.useBeaconImmersion = newVal);
+                config -> config.useBeaconImmersive,
+                (config, newVal) -> config.useBeaconImmersive = newVal);
     }
 
     @Override

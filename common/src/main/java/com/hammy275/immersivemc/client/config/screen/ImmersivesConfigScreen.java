@@ -55,29 +55,29 @@ public class ImmersivesConfigScreen extends Screen {
         if (this.type.isNonVR()) {
             if (Platform.isModLoaded("tconstruct")) {
                 options.add(ScreenUtils.createOption("tinkers_construct_crafting_station",
-                        config -> config.useTinkersConstructCraftingStationImmersion,
-                        (config, newVal) -> config.useTinkersConstructCraftingStationImmersion = newVal));
+                        config -> config.useTinkersConstructCraftingStationImmersive,
+                        (config, newVal) -> config.useTinkersConstructCraftingStationImmersive = newVal));
             }
             if (Platform.isModLoaded("ironfurnaces")) {
                 options.add(ScreenUtils.createOption("iron_furnaces_furnace",
-                        config -> config.useIronFurnacesFurnaceImmersion,
-                        (config, newVal) -> config.useIronFurnacesFurnaceImmersion = newVal));
+                        config -> config.useIronFurnacesFurnaceImmersive,
+                        (config, newVal) -> config.useIronFurnacesFurnaceImmersive = newVal));
             }
         }
 
         if (this.type.isVR()) {
-            options.add(ScreenUtils.createOption("animals", config -> config.canFeedAnimals, (config, newVal) -> config.canFeedAnimals = newVal));
-            options.add(ScreenUtils.createOption("armor",config -> config.useArmorImmersion, (config, newVal) -> config.useArmorImmersion = newVal));
-            options.add(ScreenUtils.createOption("backpack_button", config -> config.useBackpack, (config, newVal) -> config.useBackpack = newVal));
-            options.add(ScreenUtils.createOption("button", config -> config.useButton, (config, newVal) -> config.useButton = newVal));
-            options.add(ScreenUtils.createOption("campfire", config -> config.useCampfireImmersion, (config, newVal) -> config.useCampfireImmersion = newVal));
-            options.add(ScreenUtils.createOption("cauldron", config -> config.useCauldronImmersion, (config, newVal) -> config.useCauldronImmersion = newVal));
-            options.add(ScreenUtils.createOption("door", config -> config.useDoorImmersion, (config, newVal) -> config.useDoorImmersion = newVal));
-            options.add(ScreenUtils.createOption("pet", config -> config.canPet, (config, newVal) -> config.canPet = newVal));
-            options.add(ScreenUtils.createOption("ranged_grab", config -> config.useRangedGrab, (config, newVal) -> config.useRangedGrab = newVal));
-            options.add(ScreenUtils.createOption("shield", config -> config.immersiveShield, (config, newVal) -> config.immersiveShield = newVal));
-            options.add(ScreenUtils.createOption("throw", config -> config.useThrowing, (config, newVal) -> config.useThrowing = newVal));
-            options.add(ScreenUtils.createOption("written_book", config -> config.useWrittenBookImmersion, (config, newVal) -> config.useWrittenBookImmersion = newVal));
+            options.add(ScreenUtils.createOption("animals", config -> config.useFeedingAnimalsImmersive, (config, newVal) -> config.useFeedingAnimalsImmersive = newVal));
+            options.add(ScreenUtils.createOption("armor",config -> config.useArmorImmersive, (config, newVal) -> config.useArmorImmersive = newVal));
+            options.add(ScreenUtils.createOption("backpack_button", config -> config.useBagImmersive, (config, newVal) -> config.useBagImmersive = newVal));
+            options.add(ScreenUtils.createOption("button", config -> config.useButtonImmersive, (config, newVal) -> config.useButtonImmersive = newVal));
+            options.add(ScreenUtils.createOption("campfire", config -> config.useCampfireImmersive, (config, newVal) -> config.useCampfireImmersive = newVal));
+            options.add(ScreenUtils.createOption("cauldron", config -> config.useCauldronImmersive, (config, newVal) -> config.useCauldronImmersive = newVal));
+            options.add(ScreenUtils.createOption("door", config -> config.useDoorImmersive, (config, newVal) -> config.useDoorImmersive = newVal));
+            options.add(ScreenUtils.createOption("pet", config -> config.allowPetting, (config, newVal) -> config.allowPetting = newVal));
+            options.add(ScreenUtils.createOption("ranged_grab", config -> config.useRangedGrabImmersive, (config, newVal) -> config.useRangedGrabImmersive = newVal));
+            options.add(ScreenUtils.createOption("shield", config -> config.useShieldImmersive, (config, newVal) -> config.useShieldImmersive = newVal));
+            options.add(ScreenUtils.createOption("throw", config -> config.useThrowingImmersive, (config, newVal) -> config.useThrowingImmersive = newVal));
+            options.add(ScreenUtils.createOption("written_book", config -> config.useWrittenBookImmersive, (config, newVal) -> config.useWrittenBookImmersive = newVal));
         }
 
         Immersives.IMMERSIVES.stream()

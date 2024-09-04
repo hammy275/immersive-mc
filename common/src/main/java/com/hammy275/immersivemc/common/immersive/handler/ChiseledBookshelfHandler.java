@@ -48,7 +48,7 @@ public class ChiseledBookshelfHandler extends ContainerHandler<NullStorage> {
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useChiseledBookshelfImmersion;
+        return ActiveConfig.getActiveConfigCommon(player).useChiseledBookshelfImmersive;
     }
 
     @Override

@@ -42,8 +42,8 @@ public class ImmersiveRepeater extends AbstractImmersive<RepeaterInfo, NullStora
     @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
         return ClientUtil.createConfigScreenInfo("repeater", () -> new ItemStack(Items.REPEATER),
-                config -> config.useRepeaterImmersion,
-                (config, newVal) -> config.useRepeaterImmersion = newVal);
+                config -> config.useRepeaterImmersive,
+                (config, newVal) -> config.useRepeaterImmersive = newVal);
     }
 
     @Override

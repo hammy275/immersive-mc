@@ -47,39 +47,39 @@ public class ActiveConfig implements Cloneable {
     protected static final Gson GSON = new Gson();
     protected static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();
 
-    public boolean useAnvilImmersion = true;
-    public boolean useBrewingImmersion = true;
-    public boolean useChestImmersion = true;
-    public boolean useCraftingImmersion = true;
-    public boolean useFurnaceImmersion = true;
-    public boolean useJukeboxImmersion = true;
-    public boolean useRangedGrab = true;
-    public boolean useButton = true;
-    public boolean useETableImmersion = true;
-    public boolean useCampfireImmersion = true;
-    public boolean useLever = true;
-    public boolean useBackpack = true;
-    public boolean useRepeaterImmersion = true;
-    public boolean useDoorImmersion = true;
-    public boolean canPet = true;
-    public boolean useArmorImmersion = true;
-    public boolean canFeedAnimals = true;
-    public boolean useShulkerImmersion = true;
-    public boolean canPetAnyLiving = false;
-    public boolean immersiveShield = true;
-    public int rangedGrabRange = 0;
-    public boolean useBeaconImmersion = true;
-    public boolean useBarrelImmersion = true;
-    public boolean useThrowing = true;
-    public boolean allowThrowingBeyondMax = true;
-    public boolean useHopperImmersion = true;
-    public boolean useSmithingTableImmersion = true;
-    public boolean useChiseledBookshelfImmersion = true;
-    public boolean useWrittenBookImmersion = true;
-    public boolean useCauldronImmersion = true;
-    public boolean useIronFurnacesFurnaceImmersion = true;
-    public boolean useTinkersConstructCraftingStationImmersion = true;
-    public boolean useLecternImmersion = true;
+    public boolean useAnvilImmersive = true;
+    public boolean useBrewingStandImmersive = true;
+    public boolean useChestImmersive = true;
+    public boolean useCraftingTableImmersive = true;
+    public boolean useFurnaceImmersive = true;
+    public boolean useJukeboxImmersive = true;
+    public boolean useRangedGrabImmersive = true;
+    public boolean useButtonImmersive = true;
+    public boolean useEnchantingTableImmersive = true;
+    public boolean useCampfireImmersive = true;
+    public boolean useLeverImmersive = true;
+    public boolean useBagImmersive = true;
+    public boolean useRepeaterImmersive = true;
+    public boolean useDoorImmersive = true;
+    public boolean allowPetting = true;
+    public boolean useArmorImmersive = true;
+    public boolean useFeedingAnimalsImmersive = true;
+    public boolean useShulkerImmersive = true;
+    public boolean allowPettingAnythingLiving = false;
+    public boolean useShieldImmersive = true;
+    public int rangedGrabRange = 8;
+    public boolean useBeaconImmersive = true;
+    public boolean useBarrelImmersive = true;
+    public boolean useThrowingImmersive = true;
+    public boolean allowThrowingBeyondVanillaMaxRange = true;
+    public boolean useHopperImmersive = true;
+    public boolean useSmithingTableImmersive = true;
+    public boolean useChiseledBookshelfImmersive = true;
+    public boolean useWrittenBookImmersive = true;
+    public boolean useCauldronImmersive = true;
+    public boolean useIronFurnacesFurnaceImmersive = true;
+    public boolean useTinkersConstructCraftingStationImmersive = true;
+    public boolean useLecternImmersive = true;
 
     static {
         DISABLED.setDisabled();
@@ -108,7 +108,7 @@ public class ActiveConfig implements Cloneable {
     public static ClientActiveConfig getConfigForPlayer(Player player) {
         ClientActiveConfig config = CLIENTS.getOrDefault(player.getUUID(), ClientActiveConfig.DISABLED);
         // If not in VR and user wants ImmersiveMC disabled outside VR, return DISABLED config.
-        if (config.disableOutsideVR && !VRPluginVerify.playerInVR((ServerPlayer) player)) {
+        if (config.disableImmersiveMCOutsideVR && !VRPluginVerify.playerInVR((ServerPlayer) player)) {
             return ClientActiveConfig.DISABLED;
         }
         return config;
@@ -120,7 +120,7 @@ public class ActiveConfig implements Cloneable {
      * outside VR is enabled.
      */
     public static ClientActiveConfig active() {
-        if (FILE_CLIENT.disableOutsideVR && !VRPluginVerify.clientInVR()) {
+        if (FILE_CLIENT.disableImmersiveMCOutsideVR && !VRPluginVerify.clientInVR()) {
             return ClientActiveConfig.DISABLED;
         }
         return ACTIVE;
@@ -215,39 +215,39 @@ public class ActiveConfig implements Cloneable {
      * @param other The other config
      */
     public void mergeWithServer(ActiveConfig other) {
-        useAnvilImmersion = useAnvilImmersion && other.useAnvilImmersion;
-        useBrewingImmersion = useBrewingImmersion && other.useBrewingImmersion;
-        useChestImmersion = useChestImmersion && other.useChestImmersion;
-        useCraftingImmersion = useCraftingImmersion && other.useCraftingImmersion;
-        useFurnaceImmersion = useFurnaceImmersion && other.useFurnaceImmersion;
-        useJukeboxImmersion = useJukeboxImmersion && other.useJukeboxImmersion;
-        useRangedGrab = useRangedGrab && other.useRangedGrab;
-        useButton = useButton && other.useButton;
-        useETableImmersion = useETableImmersion && other.useETableImmersion;
-        useCampfireImmersion = useCampfireImmersion && other.useCampfireImmersion;
-        useLever = useLever && other.useLever;
-        useBackpack = useBackpack && other.useBackpack;
-        useRepeaterImmersion = useRepeaterImmersion && other.useRepeaterImmersion;
-        useDoorImmersion = useDoorImmersion && other.useDoorImmersion;
-        canPet = canPet && other.canPet;
-        useArmorImmersion = useArmorImmersion && other.useArmorImmersion;
-        canFeedAnimals = canFeedAnimals && other.canFeedAnimals;
-        useShulkerImmersion = useShulkerImmersion && other.useShulkerImmersion;
-        canPetAnyLiving = canPetAnyLiving && other.canPetAnyLiving;
-        immersiveShield = immersiveShield && other.immersiveShield;
+        useAnvilImmersive = useAnvilImmersive && other.useAnvilImmersive;
+        useBrewingStandImmersive = useBrewingStandImmersive && other.useBrewingStandImmersive;
+        useChestImmersive = useChestImmersive && other.useChestImmersive;
+        useCraftingTableImmersive = useCraftingTableImmersive && other.useCraftingTableImmersive;
+        useFurnaceImmersive = useFurnaceImmersive && other.useFurnaceImmersive;
+        useJukeboxImmersive = useJukeboxImmersive && other.useJukeboxImmersive;
+        useRangedGrabImmersive = useRangedGrabImmersive && other.useRangedGrabImmersive;
+        useButtonImmersive = useButtonImmersive && other.useButtonImmersive;
+        useEnchantingTableImmersive = useEnchantingTableImmersive && other.useEnchantingTableImmersive;
+        useCampfireImmersive = useCampfireImmersive && other.useCampfireImmersive;
+        useLeverImmersive = useLeverImmersive && other.useLeverImmersive;
+        useBagImmersive = useBagImmersive && other.useBagImmersive;
+        useRepeaterImmersive = useRepeaterImmersive && other.useRepeaterImmersive;
+        useDoorImmersive = useDoorImmersive && other.useDoorImmersive;
+        allowPetting = allowPetting && other.allowPetting;
+        useArmorImmersive = useArmorImmersive && other.useArmorImmersive;
+        useFeedingAnimalsImmersive = useFeedingAnimalsImmersive && other.useFeedingAnimalsImmersive;
+        useShulkerImmersive = useShulkerImmersive && other.useShulkerImmersive;
+        allowPettingAnythingLiving = allowPettingAnythingLiving && other.allowPettingAnythingLiving;
+        useShieldImmersive = useShieldImmersive && other.useShieldImmersive;
         rangedGrabRange = Math.min(rangedGrabRange, other.rangedGrabRange);
-        useBeaconImmersion = useBeaconImmersion && other.useBeaconImmersion;
-        useBarrelImmersion = useBarrelImmersion && other.useBarrelImmersion;
-        useThrowing = useThrowing && other.useThrowing;
-        allowThrowingBeyondMax = allowThrowingBeyondMax && other.allowThrowingBeyondMax;
-        useHopperImmersion = useHopperImmersion && other.useHopperImmersion;
-        useSmithingTableImmersion = useSmithingTableImmersion && other.useSmithingTableImmersion;
-        useChiseledBookshelfImmersion = useChiseledBookshelfImmersion && other.useChiseledBookshelfImmersion;
-        useWrittenBookImmersion = useWrittenBookImmersion && other.useWrittenBookImmersion;
-        useCauldronImmersion = useCauldronImmersion && other.useCauldronImmersion;
-        useIronFurnacesFurnaceImmersion = useIronFurnacesFurnaceImmersion && other.useIronFurnacesFurnaceImmersion;
-        useTinkersConstructCraftingStationImmersion = useTinkersConstructCraftingStationImmersion && other.useTinkersConstructCraftingStationImmersion;
-        useLecternImmersion = useLecternImmersion && other.useLecternImmersion;
+        useBeaconImmersive = useBeaconImmersive && other.useBeaconImmersive;
+        useBarrelImmersive = useBarrelImmersive && other.useBarrelImmersive;
+        useThrowingImmersive = useThrowingImmersive && other.useThrowingImmersive;
+        allowThrowingBeyondVanillaMaxRange = allowThrowingBeyondVanillaMaxRange && other.allowThrowingBeyondVanillaMaxRange;
+        useHopperImmersive = useHopperImmersive && other.useHopperImmersive;
+        useSmithingTableImmersive = useSmithingTableImmersive && other.useSmithingTableImmersive;
+        useChiseledBookshelfImmersive = useChiseledBookshelfImmersive && other.useChiseledBookshelfImmersive;
+        useWrittenBookImmersive = useWrittenBookImmersive && other.useWrittenBookImmersive;
+        useCauldronImmersive = useCauldronImmersive && other.useCauldronImmersive;
+        useIronFurnacesFurnaceImmersive = useIronFurnacesFurnaceImmersive && other.useIronFurnacesFurnaceImmersive;
+        useTinkersConstructCraftingStationImmersive = useTinkersConstructCraftingStationImmersive && other.useTinkersConstructCraftingStationImmersive;
+        useLecternImmersive = useLecternImmersive && other.useLecternImmersive;
     }
 
     /**
@@ -255,39 +255,39 @@ public class ActiveConfig implements Cloneable {
      */
     public void setDisabled() {
         // Synced values
-        useAnvilImmersion = false;
-        useBrewingImmersion = false;
-        useChestImmersion = false;
-        useCraftingImmersion = false;
-        useFurnaceImmersion = false;
-        useJukeboxImmersion = false;
-        useRangedGrab = false;
-        useButton = false;
-        useETableImmersion = false;
-        useCampfireImmersion = false;
-        useLever = false;
-        useBackpack = false;
-        useRepeaterImmersion = false;
-        useDoorImmersion = false;
-        canPet = false;
-        useArmorImmersion = false;
-        canFeedAnimals = false;
-        useShulkerImmersion = false;
-        canPetAnyLiving = false;
-        immersiveShield = false;
+        useAnvilImmersive = false;
+        useBrewingStandImmersive = false;
+        useChestImmersive = false;
+        useCraftingTableImmersive = false;
+        useFurnaceImmersive = false;
+        useJukeboxImmersive = false;
+        useRangedGrabImmersive = false;
+        useButtonImmersive = false;
+        useEnchantingTableImmersive = false;
+        useCampfireImmersive = false;
+        useLeverImmersive = false;
+        useBagImmersive = false;
+        useRepeaterImmersive = false;
+        useDoorImmersive = false;
+        allowPetting = false;
+        useArmorImmersive = false;
+        useFeedingAnimalsImmersive = false;
+        useShulkerImmersive = false;
+        allowPettingAnythingLiving = false;
+        useShieldImmersive = false;
         rangedGrabRange = 0;
-        useBeaconImmersion = false;
-        useBarrelImmersion = false;
-        useThrowing = false;
-        allowThrowingBeyondMax = false;
-        useHopperImmersion = false;
-        useSmithingTableImmersion = false;
-        useChiseledBookshelfImmersion = false;
-        useWrittenBookImmersion = false;
-        useCauldronImmersion = false;
-        useIronFurnacesFurnaceImmersion = false;
-        useTinkersConstructCraftingStationImmersion = false;
-        useLecternImmersion = false;
+        useBeaconImmersive = false;
+        useBarrelImmersive = false;
+        useThrowingImmersive = false;
+        allowThrowingBeyondVanillaMaxRange = false;
+        useHopperImmersive = false;
+        useSmithingTableImmersive = false;
+        useChiseledBookshelfImmersive = false;
+        useWrittenBookImmersive = false;
+        useCauldronImmersive = false;
+        useIronFurnacesFurnaceImmersive = false;
+        useTinkersConstructCraftingStationImmersive = false;
+        useLecternImmersive = false;
     }
 
     /**

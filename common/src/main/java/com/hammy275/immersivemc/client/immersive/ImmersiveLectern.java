@@ -88,8 +88,8 @@ public class ImmersiveLectern implements Immersive<LecternInfo, BookData> {
     @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
         return ClientUtil.createConfigScreenInfo("lectern", () -> new ItemStack(Items.LECTERN),
-                config -> config.useLecternImmersion,
-                (config, newVal) -> config.useLecternImmersion = newVal);
+                config -> config.useLecternImmersive,
+                (config, newVal) -> config.useLecternImmersive = newVal);
     }
 
     @Override

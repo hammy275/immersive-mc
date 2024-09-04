@@ -67,7 +67,7 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
 
     @Override
     public int handleHitboxInteract(ChestInfo info, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
-        if (!VRPluginVerify.clientInVR() && !ActiveConfig.active().rightClickChest) return -1;
+        if (!VRPluginVerify.clientInVR() && !ActiveConfig.active().rightClickChestInteractions) return -1;
         if (!info.isOpen) return -1;
         Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), hitboxIndex, hand));
         return ClientConstants.defaultCooldownTicks;
@@ -181,7 +181,7 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
             }
         }
 
-        if (openCloseCooldown <= 0 && !ActiveConfig.active().rightClickChest) {
+        if (openCloseCooldown <= 0 && !ActiveConfig.active().rightClickChestInteractions) {
             if (VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(Minecraft.getInstance().player)
                     && info.openCloseHitboxes != null) {
                 Vec3 current0 = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController0().position();
@@ -238,8 +238,8 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
     @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
         return ClientUtil.createConfigScreenInfo("chest", () -> new ItemStack(Items.CHEST),
-                config -> config.useChestImmersion,
-                (config, newVal) -> config.useChestImmersion = newVal);
+                config -> config.useChestImmersive,
+                (config, newVal) -> config.useChestImmersive = newVal);
     }
 
     @Override

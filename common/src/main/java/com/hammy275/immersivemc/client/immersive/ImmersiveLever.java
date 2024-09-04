@@ -41,8 +41,8 @@ public class ImmersiveLever extends AbstractImmersive<LeverInfo, NullStorage> {
     @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
         return ClientUtil.createConfigScreenInfo("lever", () -> new ItemStack(Items.LEVER),
-                config -> config.useLever,
-                (config, newVal) -> config.useLever = newVal);
+                config -> config.useLeverImmersive,
+                (config, newVal) -> config.useLeverImmersive = newVal);
     }
 
     @Override

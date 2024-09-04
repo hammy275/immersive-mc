@@ -16,7 +16,7 @@ public class HopperHandler extends ChestLikeHandler {
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useHopperImmersion;
+        return ActiveConfig.getActiveConfigCommon(player).useHopperImmersive;
     }
 
     @Override

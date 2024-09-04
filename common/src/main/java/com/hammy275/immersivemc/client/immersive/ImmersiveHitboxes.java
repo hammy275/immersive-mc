@@ -44,7 +44,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
     @Override
     protected void renderTick(ImmersiveHitboxesInfo info, boolean isInVR) {
         super.renderTick(info, isInVR);
-        if (ActiveConfig.active().reachBehindBackpackMode.usesBehindBack() && VRPluginVerify.clientInVR()) {
+        if (ActiveConfig.active().reachBehindBagMode.usesBehindBack() && VRPluginVerify.clientInVR()) {
             // centerPos is the center of the back of the player
             IVRData hmdData = Platform.isDevelopmentEnvironment() ? null : VRPlugin.API.getRenderVRPlayer().getHMD();
             Vec3 centerPos = hmdData != null ?
@@ -74,7 +74,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
             info.setHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX, null);
         }
 
-        if (ActiveConfig.active().reachBehindBackpackMode.usesOverShoulder() && VRPluginVerify.clientInVR()) {
+        if (ActiveConfig.active().reachBehindBagMode.usesOverShoulder() && VRPluginVerify.clientInVR()) {
             IVRData hmdData = Platform.isDevelopmentEnvironment() ?
                     VRPlugin.API.getVRPlayer(mc.player).getHMD() :
                     VRPlugin.API.getRenderVRPlayer().getHMD();
