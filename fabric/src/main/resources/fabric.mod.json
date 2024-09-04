@@ -25,8 +25,7 @@
   "depends": {
     "fabric": "*",
     "minecraft": ">=1.20.2",
-    "architectury": ">=11.0.11",
-    "forgeconfigapiport": ">=20.4.3"
+    "architectury": ">=11.0.11"
   },
   "mixins": [
     "mixins.immersivemc.json"
