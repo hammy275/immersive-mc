@@ -41,7 +41,7 @@ public class LeverHandler implements ImmersiveHandler<NullStorage> {
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useLever;
+        return ActiveConfig.getActiveConfigCommon(player).useLeverImmersive;
     }
 
     @Override

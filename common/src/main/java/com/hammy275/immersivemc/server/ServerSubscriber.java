@@ -36,7 +36,7 @@ public class ServerSubscriber {
     }
 
     public static void onPlayerTick(Player playerIn) {
-        if (playerIn.level().isClientSide || (!VRPluginVerify.playerInVR((ServerPlayer) playerIn) && ActiveConfig.FILE.disableOutsideVR)) return;
+        if (playerIn.level().isClientSide) return;
         ServerPlayer player = (ServerPlayer) playerIn;
         for (AbstractTracker tracker : ServerTrackerInit.playerTrackers) {
             tracker.doTick(player);
@@ -55,7 +55,7 @@ public class ServerSubscriber {
     public static void onPlayerJoin(Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
             Network.INSTANCE.sendToPlayer(serverPlayer,
-                    new ConfigSyncPacket(ActiveConfig.FILE,
+                    new ConfigSyncPacket(ActiveConfig.FILE_SERVER,
                             ImmersiveHandlers.HANDLERS.stream()
                                     .filter((handler) -> !handler.clientAuthoritative())
                                     .map(ImmersiveHandler::getID)

@@ -73,14 +73,14 @@ public class PetTracker extends AbstractVRHandTracker {
 
     @Override
     public boolean isEnabledInConfig(ActiveConfig config) {
-        return config.canPet;
+        return config.allowPetting;
     }
 
     protected List<LivingEntity> getPlayerPetsNearby(Player player) {
         List<LivingEntity> pets = new LinkedList<>();
         List<Entity> ents = player.level().getEntities(player, AABB.ofSize(player.position(), 10, 10, 10));
         for (Entity e : ents) {
-            if (ActiveConfig.getConfigForPlayer(player).canPetAnyLiving) {
+            if (ActiveConfig.getConfigForPlayer(player).allowPettingAnythingLiving) {
                 if (e instanceof LivingEntity le) {
                     pets.add(le);
                 }

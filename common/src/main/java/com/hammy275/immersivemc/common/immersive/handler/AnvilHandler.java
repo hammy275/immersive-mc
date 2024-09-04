@@ -60,7 +60,7 @@ public class AnvilHandler extends ItemWorldStorageHandler<AnvilStorage> {
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useAnvilImmersion;
+        return ActiveConfig.getActiveConfigCommon(player).useAnvilImmersive;
     }
 
     @Override

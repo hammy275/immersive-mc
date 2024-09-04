@@ -34,7 +34,7 @@ public class GrabItemPacket {
 
     public static void handle(final GrabItemPacket packet, Supplier<NetworkManager.PacketContext> ctx) {
         ctx.get().queue(() -> {
-            if (!ActiveConfig.FILE.useRangedGrab) return;
+            if (!ActiveConfig.FILE_SERVER.useRangedGrabImmersive) return;
             ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
             if (player != null) {
                 Entity ent = player.level().getEntity(packet.entityId);

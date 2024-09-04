@@ -57,10 +57,3 @@ mandatory = true
 versionRange = "[10.0.11,)"
 ordering = "AFTER"
 side = "BOTH"
-
-[[dependencies.immersivemc]]
-modId = "forgeconfigapiport"
-mandatory = true
-versionRange = "[20.2.4,)"
-ordering = "AFTER"
-side = "BOTH"

@@ -19,10 +19,6 @@ loom {
 
 repositories {
     maven {
-        name = "Fuzs Mod Resources"
-        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
-    }
-    maven {
         url = "https://cursemaven.com"
     }
 }
@@ -39,7 +35,6 @@ dependencies {
     neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
-    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-neoforge:20.2.6"
     modApi "curse.maven:mcvrapi-591092:5032472"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }

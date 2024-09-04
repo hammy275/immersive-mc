@@ -1,13 +1,11 @@
 package com.hammy275.immersivemc_forge;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.common.config.ImmersiveMCConfig;
 import dev.architectury.platform.forge.EventBuses;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
@@ -21,8 +19,6 @@ public class ImmersiveMCForge {
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ClientSetup.doClientSetup();
         }
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ImmersiveMCConfig.GENERAL_SPEC,
-                "immersive_mc.toml");
     }
 
 
