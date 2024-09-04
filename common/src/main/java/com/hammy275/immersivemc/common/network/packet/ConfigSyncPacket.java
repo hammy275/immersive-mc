@@ -72,7 +72,7 @@ public class ConfigSyncPacket {
                 // Send server our config
                 Network.INSTANCE.sendToServer(new ConfigSyncPacket(ActiveConfig.FILE));
             } else { // C2S sending us a config
-                message.config.mergeWithOther(ActiveConfig.FILE);
+                message.config.mergeWithServer(ActiveConfig.FILE);
                 ActiveConfig.registerPlayerConfig(ctx.get().getPlayer(), message.config);
                 TrackedImmersives.clearForPlayer(player);
             }

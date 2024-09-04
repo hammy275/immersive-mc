@@ -18,7 +18,7 @@ public final class ActiveConfig implements Cloneable {
     // The settings for this server/client before combining. This is a direct reflection of the config file.
     public static ActiveConfig FILE = new ActiveConfig();
     // The settings from the server. Only used by the client.
-    public static ActiveConfig FROM_SERVER = (ActiveConfig) DISABLED.clone();
+    public static ActiveConfig FROM_SERVER = new ActiveConfig();
     // The settings to actually use in-game. Only used by the client.
     private static ActiveConfig ACTIVE = new ActiveConfig();
     // The settings to actually use in-game for each player. Only used by the server.
@@ -28,48 +28,46 @@ public final class ActiveConfig implements Cloneable {
     // Basic sanity check to make sure server and client have compatible configs.
     public static int fieldsHash = 0;
 
-    // Synced values
-    public boolean useAnvilImmersion = false;
-    public boolean useBrewingImmersion = false;
-    public boolean useChestImmersion = false;
-    public boolean useCraftingImmersion = false;
-    public boolean useFurnaceImmersion = false;
-    public boolean useJukeboxImmersion = false;
-    public boolean useRangedGrab = false;
-    public boolean useButton = false;
-    public boolean useETableImmersion = false;
-    public boolean useCampfireImmersion = false;
-    public boolean useLever = false;
-    public boolean useBackpack = false;
-    public boolean useRepeaterImmersion = false;
-    public boolean useDoorImmersion = false;
-    public boolean canPet = false;
-    public boolean useArmorImmersion = false;
-    public boolean canFeedAnimals = false;
-    public boolean useShulkerImmersion = false;
+    // Server authoritative
+    public boolean useAnvilImmersion = true;
+    public boolean useBrewingImmersion = true;
+    public boolean useChestImmersion = true;
+    public boolean useCraftingImmersion = true;
+    public boolean useFurnaceImmersion = true;
+    public boolean useJukeboxImmersion = true;
+    public boolean useRangedGrab = true;
+    public boolean useButton = true;
+    public boolean useETableImmersion = true;
+    public boolean useCampfireImmersion = true;
+    public boolean useLever = true;
+    public boolean useBackpack = true;
+    public boolean useRepeaterImmersion = true;
+    public boolean useDoorImmersion = true;
+    public boolean canPet = true;
+    public boolean useArmorImmersion = true;
+    public boolean canFeedAnimals = true;
+    public boolean useShulkerImmersion = true;
     public boolean canPetAnyLiving = false;
-    public boolean immersiveShield = false;
+    public boolean immersiveShield = true;
     public int rangedGrabRange = 0;
-    public boolean useBeaconImmersion = false;
-    public boolean useBarrelImmersion = false;
-    public boolean useThrowing = false;
-    public boolean allowThrowingBeyondMax = false;
-    public boolean useHopperImmersion = false;
-    public boolean useSmithingTableImmersion = false;
-    public boolean useChiseledBookshelfImmersion = false;
-    public boolean useWrittenBookImmersion = false;
-    public boolean useCauldronImmersion = false;
-    public boolean useIronFurnacesFurnaceImmersion = false;
-    public boolean useTinkersConstructCraftingStationImmersion = false;
-    public boolean useLecternImmersion = false;
+    public boolean useBeaconImmersion = true;
+    public boolean useBarrelImmersion = true;
+    public boolean useThrowing = true;
+    public boolean allowThrowingBeyondMax = true;
+    public boolean useHopperImmersion = true;
+    public boolean useSmithingTableImmersion = true;
+    public boolean useChiseledBookshelfImmersion = true;
+    public boolean useWrittenBookImmersion = true;
+    public boolean useCauldronImmersion = true;
+    public boolean useIronFurnacesFurnaceImmersion = true;
+    public boolean useTinkersConstructCraftingStationImmersion = true;
+    public boolean useLecternImmersion = true;
 
-    // C2S Synced values
+    // Client authoritative
     public boolean crouchBypassImmersion = false;
-    public boolean doRumble = false;
-    public boolean returnItems = false;
+    public boolean doRumble = true;
+    public boolean returnItems = true;
     public boolean disableOutsideVR = false;
-
-    // Non-synced values
     public int backpackColor = 11901820;
     public boolean rightClickChest = false;
     public boolean autoCenterFurnace = false;
@@ -89,6 +87,8 @@ public final class ActiveConfig implements Cloneable {
     public ReachBehindBackpackMode reachBehindBackpackMode = ReachBehindBackpackMode.BEHIND_BACK;
 
     static {
+        DISABLED.setDisabled();
+        FROM_SERVER.setDisabled();
         Field[] fieldsArr = ActiveConfig.class.getDeclaredFields();
         // Java doesn't guarantee order of getDeclaredFields(), so we sort it.
         fields = Arrays.stream(fieldsArr)
@@ -158,7 +158,7 @@ public final class ActiveConfig implements Cloneable {
      */
     public static void loadActive() {
         ACTIVE = ((ActiveConfig) FILE.clone());
-        ACTIVE.mergeWithOther(FROM_SERVER);
+        ACTIVE.mergeWithServer(FROM_SERVER);
     }
 
     /**
@@ -182,7 +182,7 @@ public final class ActiveConfig implements Cloneable {
      * The values in the other config will never change.
      * @param other The other config
      */
-    public void mergeWithOther(ActiveConfig other) {
+    public void mergeWithServer(ActiveConfig other) {
         useAnvilImmersion = useAnvilImmersion && other.useAnvilImmersion;
         useBrewingImmersion = useBrewingImmersion && other.useBrewingImmersion;
         useChestImmersion = useChestImmersion && other.useChestImmersion;
@@ -219,10 +219,72 @@ public final class ActiveConfig implements Cloneable {
     }
 
     /**
+     * Sets this config to its disabled form.
+     */
+    public void setDisabled() {
+        // Synced values
+        useAnvilImmersion = false;
+        useBrewingImmersion = false;
+        useChestImmersion = false;
+        useCraftingImmersion = false;
+        useFurnaceImmersion = false;
+        useJukeboxImmersion = false;
+        useRangedGrab = false;
+        useButton = false;
+        useETableImmersion = false;
+        useCampfireImmersion = false;
+        useLever = false;
+        useBackpack = false;
+        useRepeaterImmersion = false;
+        useDoorImmersion = false;
+        canPet = false;
+        useArmorImmersion = false;
+        canFeedAnimals = false;
+        useShulkerImmersion = false;
+        canPetAnyLiving = false;
+        immersiveShield = false;
+        rangedGrabRange = 0;
+        useBeaconImmersion = false;
+        useBarrelImmersion = false;
+        useThrowing = false;
+        allowThrowingBeyondMax = false;
+        useHopperImmersion = false;
+        useSmithingTableImmersion = false;
+        useChiseledBookshelfImmersion = false;
+        useWrittenBookImmersion = false;
+        useCauldronImmersion = false;
+        useIronFurnacesFurnaceImmersion = false;
+        useTinkersConstructCraftingStationImmersion = false;
+        useLecternImmersion = false;
+
+        // Client authoritative
+        crouchBypassImmersion = false;
+        doRumble = false;
+        returnItems = false;
+        disableOutsideVR = false;
+        backpackColor = 11901820;
+        rightClickChest = false;
+        autoCenterFurnace = false;
+        autoCenterBrewing = false;
+        backpackMode = BackpackMode.BUNDLE;
+        placementGuideMode = PlacementGuideMode.CUBE;
+        placementMode = PlacementMode.PLACE_ONE;
+        spinCraftingOutput = true;
+        rightClickInVR = false;
+        resourcePack3dCompat = false;
+        itemGuideSize = 1.0;
+        itemGuideSelectedSize = 1.0;
+        itemGuideColor = new RGBA(0x3300ffffL);
+        itemGuideSelectedColor = new RGBA(0x3300ff00L);
+        rangedGrabColor = new RGBA(0xff00ffffL);
+        disableVanillaGUIs = false;
+        reachBehindBackpackMode = ReachBehindBackpackMode.BEHIND_BACK;
+    }
+
+    /**
      * Loads the config from the config file into this ActiveConfig instance.
      */
     public void loadFromFile() {
-        // Synced values
         useAnvilImmersion = ImmersiveMCConfig.useAnvilImmersion.get();
         useBrewingImmersion = ImmersiveMCConfig.useBrewingImmersion.get();
         useChestImmersion = ImmersiveMCConfig.useChestImmersion.get();
@@ -257,13 +319,10 @@ public final class ActiveConfig implements Cloneable {
         useTinkersConstructCraftingStationImmersion = ImmersiveMCConfig.useTinkersConstructCraftingStationImmersion.get();
         useLecternImmersion = ImmersiveMCConfig.useLecternImmersion.get();
 
-        // C2S synced values
         crouchBypassImmersion = ImmersiveMCConfig.crouchBypassImmersion.get();
         doRumble = ImmersiveMCConfig.doRumble.get();
         returnItems = ImmersiveMCConfig.returnItems.get();
         disableOutsideVR = ImmersiveMCConfig.disableOutsideVR.get();
-
-        // Not synced values
         backpackColor = ImmersiveMCConfig.backpackColor.get();
         rightClickChest = ImmersiveMCConfig.rightClickChest.get();
         autoCenterFurnace = ImmersiveMCConfig.autoCenterFurnace.get();
@@ -360,64 +419,6 @@ public final class ActiveConfig implements Cloneable {
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Failed to decode config!", e);
         }
-    }
-
-    public String asString() {
-        String stringOut = "Use anvil immersion: " + useAnvilImmersion + "\n" +
-                "Use brewing immersion: " + useBrewingImmersion + "\n" +
-                "Use chest immersion: " + useChestImmersion + "\n" +
-                "Use crafting immersion: " + useCraftingImmersion + "\n" +
-                "Use furnace immersion: " + useFurnaceImmersion + "\n" +
-                "Use jukebox immersion: " + useJukeboxImmersion + "\n" +
-                "Use ranged grab: " + useRangedGrab + "\n" +
-                "Use button: " + useButton + "\n" +
-                "Use enchanting table: " + useETableImmersion + "\n" +
-                "Use campfire immersion: " + useCampfireImmersion + "\n" +
-                "Use lever: " + useLever + "\n" +
-                "Use backpack: " + useBackpack + "\n" +
-                "Backpack color: " + backpackColor + "\n" +
-                "Use right click chest: " + rightClickChest + "\n" +
-                "Use repeater immersion: " + useRepeaterImmersion + "\n" +
-                "Auto-center furnace: " + autoCenterFurnace + "\n" +
-                "Auto-center brewing: " + autoCenterBrewing + "\n" +
-                "Backpack mode: " + backpackMode + "\n" +
-                "Placement Guide mode: " + placementGuideMode + "\n" +
-                "Placement mode: " + placementMode + "\n" +
-                "Use door immersion: " + useDoorImmersion + "\n" +
-                "Spin crafting output: " + spinCraftingOutput + "\n" +
-                "Can pet: " + canPet + "\n" +
-                "Use armor immersion: " + useArmorImmersion + "\n" +
-                "Can feed animals: " + canFeedAnimals + "\n" +
-                "Use Shulker Box Immersion: " + useShulkerImmersion + "\n" +
-                "Can pet any living: " + canPetAnyLiving + "\n" +
-                "Use immersive shield: " + immersiveShield + "\n" +
-                "Ranged grab range: " + rangedGrabRange + "\n" +
-                "Right click in VR: " + rightClickInVR + "\n" +
-                "3D resource pack compatability: " + resourcePack3dCompat + "\n" +
-                "Use beacon immersion: " + useBeaconImmersion + "\n" +
-                "Crouch bypass immersion: " + crouchBypassImmersion + "\n" +
-                "Use barrel immersion: " + useBarrelImmersion + "\n" +
-                "Use throwing: " + useThrowing + "\n" +
-                "Allow throwing beyond max: " + allowThrowingBeyondMax + "\n" +
-                "Item Guide Size: " + itemGuideSize + '\n' +
-                "Hovered Over Item Guide Size: " + itemGuideSelectedSize + '\n' +
-                "Item Guide Color: " + itemGuideColor + "\n" +
-                "Item Guide Selected Color: " + itemGuideSelectedColor + "\n" +
-                "Ranged Grab Color: " + rangedGrabColor + "\n" +
-                "Use Hopper Immersion: " + useHopperImmersion + "\n" +
-                "Disable Vanilla GUIs: " + disableVanillaGUIs + "\n" +
-                "Use Smithing Table Immersion: " + useSmithingTableImmersion + "\n" +
-                "Do Rumble: " + doRumble + "\n" +
-                "Return Items: " + returnItems + "\n" +
-                "Use Chiseled Bookshelf Immersion: " + useChiseledBookshelfImmersion + "\n" +
-                "Use Written Book Immersion: " + useWrittenBookImmersion + "\n" +
-                "Use Cauldron Immersion: " + useCauldronImmersion + "\n" +
-                "Reach Behind Backpack Mode: " + reachBehindBackpackMode + "\n" +
-                "Use Iron Furnaces Furnace Immersion: " + useIronFurnacesFurnaceImmersion + "\n" +
-                "Use Tinkers' Construct Crafting Station Immersion: " + useTinkersConstructCraftingStationImmersion + "\n" +
-                "Disable ImmersiveMC When not in VR: " + disableOutsideVR + "\n" +
-                "Use Lectern Immersion: " + useLecternImmersion;
-        return stringOut;
     }
 
     @Override
