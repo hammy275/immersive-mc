@@ -9,10 +9,6 @@ architectury {
 
 repositories {
     maven {
-        name = "Fuzs Mod Resources"
-        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
-    }
-    maven {
         url = "https://cursemaven.com"
     }
     maven { url "https://maven.terraformersmc.com/releases/" }
@@ -36,7 +32,6 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
-    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:20.4.3"
     modApi "curse.maven:mcvrapi-591092:5360321"
 
     modApi "com.terraformersmc:modmenu:9.0.0"
