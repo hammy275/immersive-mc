@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.common.config;
 
 import com.hammy275.immersivemc.common.util.RGBA;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.Mth;
 
 public final class ClientActiveConfig extends ActiveConfig {
 
@@ -46,6 +47,21 @@ public final class ClientActiveConfig extends ActiveConfig {
         return GSON.fromJson(buffer.readUtf(), ClientActiveConfig.class);
     }
 
+    @Override
+    public void validateConfig() {
+        super.validateConfig();
+        // NOTE: RGBAs are validated during deserialization, so no need to cover that here. Only need to null check.
+        backpackColor = Mth.clamp(backpackColor, 0, 0xFFFFFF);
+        backpackMode = firstEnumIfNull(backpackMode, BackpackMode.class);
+        placementGuideMode = firstEnumIfNull(placementGuideMode, PlacementGuideMode.class);
+        placementMode = firstEnumIfNull(placementMode, PlacementMode.class);
+        itemGuideSize = Mth.clamp(itemGuideSize, 0, 1);
+        itemGuideSelectedSize = Mth.clamp(itemGuideSelectedSize, 0, 1);
+        itemGuideColor = defaultIfNull(itemGuideColor, new RGBA(0x3300ffffL));
+        itemGuideSelectedColor = defaultIfNull(itemGuideSelectedColor, new RGBA(0x3300ff00L));
+        rangedGrabColor = defaultIfNull(rangedGrabColor, new RGBA(0xff00ffffL));
+        reachBehindBackpackMode = firstEnumIfNull(reachBehindBackpackMode, ReachBehindBackpackMode.class);
+    }
 
     @Override
     public void setDisabled() {

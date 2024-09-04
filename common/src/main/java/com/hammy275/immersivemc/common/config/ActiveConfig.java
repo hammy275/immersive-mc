@@ -2,10 +2,12 @@ package com.hammy275.immersivemc.common.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import dev.architectury.platform.Platform;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
 import java.io.BufferedReader;
@@ -152,8 +154,10 @@ public class ActiveConfig implements Cloneable {
             return new ClientActiveConfig();
         }
         try (BufferedReader reader = new BufferedReader(new FileReader(CONFIG_FILE))) {
-            return GSON.fromJson(reader, ClientActiveConfig.class);
-        } catch (IOException ignored) {
+            ClientActiveConfig config = GSON.fromJson(reader, ClientActiveConfig.class);
+            config.validateConfig();
+            return config;
+        } catch (IOException | JsonParseException ignored) {
             return new ClientActiveConfig();
         }
     }
@@ -312,6 +316,13 @@ public class ActiveConfig implements Cloneable {
         return GSON.fromJson(buffer.readUtf(), ActiveConfig.class);
     }
 
+    /**
+     * Modifies the config to ensure all values are within valid ranges.
+     */
+    public void validateConfig() {
+        rangedGrabRange = Mth.clamp(rangedGrabRange, -1, 12);
+    }
+
     @Override
     public Object clone() {
         try {
@@ -319,5 +330,13 @@ public class ActiveConfig implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected <T extends Enum<T>> T firstEnumIfNull(T val, Class<T> clazz) {
+        return val == null ? clazz.getEnumConstants()[0] : val;
+    }
+
+    protected <T> T defaultIfNull(T val, T def) {
+        return val == null ? def : val;
     }
 }
