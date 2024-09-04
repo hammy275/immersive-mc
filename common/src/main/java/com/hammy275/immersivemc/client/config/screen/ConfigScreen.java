@@ -149,42 +149,42 @@ public class ConfigScreen extends Screen {
 
     public static void onClientConfigChange() {
         writeAdjustingConfig();
-        boolean isSingleplayerHost = Minecraft.getInstance().hasSingleplayerServer();
-        if (isSingleplayerHost) {
-            ActiveConfig.FROM_SERVER = (ActiveConfig) ActiveConfig.FILE_SERVER.clone();
-        }
-        ActiveConfig.loadActive();
-        // Clear all immersives in-case we disabled one
+        // Clear all immersives in-case we disabled one or adjusted a setting for one
         for (Immersive<?, ?> immersive : Immersives.IMMERSIVES) {
             immersive.getTrackedObjects().clear();
         }
         for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
             immersive.clearImmersives();
         }
-        if (isSingleplayerHost) {
+        if (currentConfigAdjusting == ConfigType.SERVER) {
             // If host of a LAN server or playing in singleplayer, send the new config state to other players
-            ActiveConfig.registerPlayerConfig(Minecraft.getInstance().player, ActiveConfig.activeRaw()); // Register our config in the server map
-
-            // Propagate config to other players on the server
-            IntegratedServer server = Minecraft.getInstance().getSingleplayerServer();
-            if (server != null && server.isPublished()) {
-                List<ServerPlayer> allButHost = server.getPlayerList().getPlayers().stream()
-                        .filter((player) -> !player.getUUID().equals(Minecraft.getInstance().player.getUUID()))
-                        .toList();
-                Network.INSTANCE.sendToPlayers(allButHost, new ConfigSyncPacket(ActiveConfig.FILE_SERVER));
+            if (Minecraft.getInstance().hasSingleplayerServer()) {
+                ActiveConfig.FROM_SERVER = (ActiveConfig) ActiveConfig.FILE_SERVER.clone();
+                ActiveConfig.loadActive();
+                ActiveConfig.registerPlayerConfig(Minecraft.getInstance().player, ActiveConfig.activeRaw());
+                // Propagate config to other players on the server
+                IntegratedServer server = Minecraft.getInstance().getSingleplayerServer();
+                if (server != null && server.isPublished()) {
+                    List<ServerPlayer> allButHost = server.getPlayerList().getPlayers().stream()
+                            .filter((player) -> !player.getUUID().equals(Minecraft.getInstance().player.getUUID()))
+                            .toList();
+                    Network.INSTANCE.sendToPlayers(allButHost, new ConfigSyncPacket(ActiveConfig.FILE_SERVER));
+                }
+                TrackedImmersives.clearForPlayer(Minecraft.getInstance().getSingleplayerServer().getPlayerList().getPlayer(Minecraft.getInstance().player.getUUID()));
             }
-            TrackedImmersives.clearForPlayer(Minecraft.getInstance().getSingleplayerServer().getPlayerList().getPlayer(Minecraft.getInstance().player.getUUID()));
         } else if (Minecraft.getInstance().level != null) {
-            // Let server know of our new config state
+            // Load config into active, and let server know of our new config state
+            ActiveConfig.loadActive();
             Network.INSTANCE.sendToServer(new ConfigSyncPacket(ActiveConfig.FILE_CLIENT));
         }
+
     }
 
     /**
      * Switch between adjusting the client and server configuration.
      */
     private static void changeConfigAdjusting() {
-        writeAdjustingConfig();
+        onClientConfigChange();
         currentConfigAdjusting = currentConfigAdjusting == ConfigType.CLIENT ? ConfigType.SERVER : ConfigType.CLIENT;
         Screen current = Minecraft.getInstance().screen;
         if (current instanceof ConfigScreen cs) {
