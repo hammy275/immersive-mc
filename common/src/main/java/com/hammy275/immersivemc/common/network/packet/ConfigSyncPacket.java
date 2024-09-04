@@ -24,15 +24,15 @@ import java.util.function.Supplier;
  */
 public class ConfigSyncPacket {
 
-    public final ClientActiveConfig config;
+    public final ActiveConfig config;
     @Nullable
     public final List<ResourceLocation> handlerIDs;
 
-    public ConfigSyncPacket(ClientActiveConfig config) {
+    public ConfigSyncPacket(ActiveConfig config) {
         this(config, null);
     }
 
-    public ConfigSyncPacket(ClientActiveConfig config, @Nullable List<ResourceLocation> handlerIDs) {
+    public ConfigSyncPacket(ActiveConfig config, @Nullable List<ResourceLocation> handlerIDs) {
         this.config = config;
         this.handlerIDs = handlerIDs;
     }
@@ -46,7 +46,7 @@ public class ConfigSyncPacket {
     }
 
     public static ConfigSyncPacket decode(FriendlyByteBuf buffer) {
-        ClientActiveConfig incoming = ClientActiveConfig.decode(buffer);
+        ActiveConfig incoming = ActiveConfig.decode(buffer);
         List<ResourceLocation> handlerIDs = null;
         int numIDs = buffer.readInt();
         if (numIDs > 0) {
@@ -70,10 +70,10 @@ public class ConfigSyncPacket {
                 ActiveConfig.FROM_SERVER = message.config;
                 ActiveConfig.loadActive();
                 // Send server our config
-                Network.INSTANCE.sendToServer(new ConfigSyncPacket(ActiveConfig.FILE));
+                Network.INSTANCE.sendToServer(new ConfigSyncPacket(ActiveConfig.FILE_CLIENT));
             } else { // C2S sending us a config
-                message.config.mergeWithServer(ActiveConfig.FILE);
-                ActiveConfig.registerPlayerConfig(ctx.get().getPlayer(), message.config);
+                message.config.mergeWithServer(ActiveConfig.FILE_SERVER);
+                ActiveConfig.registerPlayerConfig(ctx.get().getPlayer(), (ClientActiveConfig) message.config);
                 TrackedImmersives.clearForPlayer(player);
             }
         });

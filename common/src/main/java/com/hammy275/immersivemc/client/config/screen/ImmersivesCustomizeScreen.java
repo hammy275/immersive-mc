@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.client.config.screen;
 
-import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.ConfigType;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -30,41 +30,42 @@ public class ImmersivesCustomizeScreen extends Screen {
         this.list = new OptionsList(Minecraft.getInstance(),
                 this.width, this.height - 64, 32, 24);
 
-        ScreenUtils.addOption("disable_vanilla_guis", config -> config.disableVanillaGUIs, (config, newVal) -> config.disableOutsideVR = newVal, this.list);
-        ScreenUtils.addOption("return_items", config -> config.returnItems, (config, newVal) -> config.returnItems = newVal, this.list);
-        ScreenUtils.addOption("do_rumble", config -> config.doRumble, (config, newVal) -> config.doRumble = newVal, this.list);
-        ScreenUtils.addOption("center_brewing", config -> config.autoCenterBrewing, (config, newVal) -> config.autoCenterBrewing = newVal, this.list);
-        ScreenUtils.addOption("center_furnace", config -> config.autoCenterFurnace, (config, newVal) -> config.autoCenterFurnace = newVal, this.list);
-        ScreenUtils.addOption("right_click_chest", config -> config.rightClickChest, (config, newVal) -> config.rightClickChest = newVal, this.list);
-        ScreenUtils.addOption("spin_crafting_output", config -> config.spinCraftingOutput, (config, newVal) -> config.spinCraftingOutput = newVal, this.list);
+        ScreenUtils.addOptionIfClient("disable_vanilla_guis", config -> config.disableVanillaGUIs, (config, newVal) -> config.disableOutsideVR = newVal, this.list);
+        ScreenUtils.addOptionIfClient("return_items", config -> config.returnItems, (config, newVal) -> config.returnItems = newVal, this.list);
+        ScreenUtils.addOptionIfClient("do_rumble", config -> config.doRumble, (config, newVal) -> config.doRumble = newVal, this.list);
+        ScreenUtils.addOptionIfClient("center_brewing", config -> config.autoCenterBrewing, (config, newVal) -> config.autoCenterBrewing = newVal, this.list);
+        ScreenUtils.addOptionIfClient("center_furnace", config -> config.autoCenterFurnace, (config, newVal) -> config.autoCenterFurnace = newVal, this.list);
+        ScreenUtils.addOptionIfClient("right_click_chest", config -> config.rightClickChest, (config, newVal) -> config.rightClickChest = newVal, this.list);
+        ScreenUtils.addOptionIfClient("spin_crafting_output", config -> config.spinCraftingOutput, (config, newVal) -> config.spinCraftingOutput = newVal, this.list);
         ScreenUtils.addOption("pet_any_living", config -> config.canPetAnyLiving, (config, newVal) -> config.canPetAnyLiving = newVal, this.list);
-        ScreenUtils.addOption("right_click_in_vr", config -> config.rightClickInVR, (config, newVal) -> config.rightClickInVR = newVal, this.list);
-        ScreenUtils.addOption("3d_compat", config -> config.resourcePack3dCompat, (config, newVal) -> config.resourcePack3dCompat = newVal, this.list);
-        ScreenUtils.addOption("crouch_bypass_immersion", config -> config.crouchBypassImmersion, (config, newVal) -> config.crouchBypassImmersion = newVal, this.list);
+        ScreenUtils.addOptionIfClient("right_click_in_vr", config -> config.rightClickInVR, (config, newVal) -> config.rightClickInVR = newVal, this.list);
+        ScreenUtils.addOptionIfClient("3d_compat", config -> config.resourcePack3dCompat, (config, newVal) -> config.resourcePack3dCompat = newVal, this.list);
+        ScreenUtils.addOptionIfClient("crouch_bypass_immersion", config -> config.crouchBypassImmersion, (config, newVal) -> config.crouchBypassImmersion = newVal, this.list);
 
-        this.list.addBig(
-            ScreenUtils.createEnumOption(PlacementMode.class,
-                    "config.immersivemc.placement_mode",
-                    (placementMode) -> Component.translatable("config.immersivemc.placement_mode." + placementMode.ordinal()),
-                    (placementMode) -> Component.translatable("config.immersivemc.placement_mode.desc",
-                            I18n.get("config.immersivemc.placement_mode." + placementMode.ordinal()).toLowerCase()),
-                    () -> ActiveConfig.FILE.placementMode,
-                    (newModeIndex, newMode) -> ActiveConfig.FILE.placementMode = newMode
+        if (ConfigScreen.getAdjustingConfigType() == ConfigType.CLIENT) {
+            this.list.addBig(
+                    ScreenUtils.createEnumOption(PlacementMode.class,
+                            "config.immersivemc.placement_mode",
+                            (placementMode) -> Component.translatable("config.immersivemc.placement_mode." + placementMode.ordinal()),
+                            (placementMode) -> Component.translatable("config.immersivemc.placement_mode.desc",
+                                    I18n.get("config.immersivemc.placement_mode." + placementMode.ordinal()).toLowerCase()),
+                            () -> ConfigScreen.getClientConfigIfAdjusting().placementMode,
+                            (newModeIndex, newMode) -> ConfigScreen.getClientConfigIfAdjusting().placementMode = newMode
 
+                    ));
+
+            this.list.addBig(ScreenUtils.createIntSlider(
+                    "config.immersivemc.ranged_grab_range",
+                    (val) -> {
+                        if (val == -1) {
+                            return Component.translatable("config.immersivemc.use_pick_range");
+                        }
+                        return Component.literal(I18n.get("config.immersivemc.ranged_grab_range") + ": " + val);
+                    },
+                    -1, 12,
+                    () -> ConfigScreen.getClientConfigIfAdjusting().rangedGrabRange, (newVal) -> ConfigScreen.getClientConfigIfAdjusting().rangedGrabRange = newVal
             ));
-
-        this.list.addBig(ScreenUtils.createIntSlider(
-                "config.immersivemc.ranged_grab_range",
-                (val) -> {
-                    if (val == -1) {
-                        return Component.translatable("config.immersivemc.use_pick_range");
-                    }
-                    return Component.literal(I18n.get("config.immersivemc.ranged_grab_range") + ": " + val);
-                },
-                -1, 12,
-                () -> ActiveConfig.FILE.rangedGrabRange, (newVal) -> ActiveConfig.FILE.rangedGrabRange = newVal
-        ));
-
+        }
 
         this.addRenderableWidget(this.list);
 
@@ -88,7 +89,7 @@ public class ImmersivesCustomizeScreen extends Screen {
 
     @Override
     public void onClose() {
-        ActiveConfig.FILE.writeConfigFile();
+        ConfigScreen.writeAdjustingConfig();
         Minecraft.getInstance().setScreen(lastScreen);
     }
 }

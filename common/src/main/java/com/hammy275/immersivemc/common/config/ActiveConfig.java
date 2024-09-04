@@ -5,19 +5,18 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import dev.architectury.platform.Platform;
+import dev.architectury.utils.Env;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -30,11 +29,12 @@ public class ActiveConfig implements Cloneable {
     public static final ActiveConfig DISABLED = new ActiveConfig();
 
 
-    // The settings for this server/client before combining. This is a direct reflection of the config file.
-    // TODO: Migrate server-only configurations to be normal ActiveConfigs
-    public static ClientActiveConfig FILE;
+    // The settings from the server config file. Used by both the server and client.
+    public static ActiveConfig FILE_SERVER;
+    // The settings from the client config file. Only used by the client.
+    public static ClientActiveConfig FILE_CLIENT;
     // The settings from the server. Only used by the client.
-    public static ClientActiveConfig FROM_SERVER;
+    public static ActiveConfig FROM_SERVER;
     // The settings to actually use in-game. Only used by the client.
     private static ClientActiveConfig ACTIVE;
     // The settings to actually use in-game for each player. Only used by the server.
@@ -46,7 +46,6 @@ public class ActiveConfig implements Cloneable {
 
     protected static final Gson GSON = new Gson();
     protected static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();
-    protected static final File CONFIG_FILE = Paths.get(Platform.getConfigFolder().toString(), "immersive_mc.json").toFile();
 
     public boolean useAnvilImmersion = true;
     public boolean useBrewingImmersion = true;
@@ -86,7 +85,7 @@ public class ActiveConfig implements Cloneable {
         DISABLED.setDisabled();
         FROM_SERVER = new ClientActiveConfig();
         FROM_SERVER.setDisabled();
-        loadFileToMemory();
+        loadFilesToMemory();
         ACTIVE = new ClientActiveConfig();
         Field[] fieldsArr = ActiveConfig.class.getDeclaredFields();
         // Java doesn't guarantee order of getDeclaredFields(), so we sort it.
@@ -121,7 +120,7 @@ public class ActiveConfig implements Cloneable {
      * outside VR is enabled.
      */
     public static ClientActiveConfig active() {
-        if (FILE.disableOutsideVR && !VRPluginVerify.clientInVR()) {
+        if (FILE_CLIENT.disableOutsideVR && !VRPluginVerify.clientInVR()) {
             return ClientActiveConfig.DISABLED;
         }
         return ACTIVE;
@@ -145,16 +144,20 @@ public class ActiveConfig implements Cloneable {
         CLIENTS.put(player.getUUID(), config);
     }
 
+    public static ActiveConfig getFileConfig(ConfigType type) {
+        return type == ConfigType.CLIENT ? FILE_CLIENT : FILE_SERVER;
+    }
+
     public ActiveConfig() {
 
     }
 
-    public static ClientActiveConfig readConfigFile() {
-        if (!CONFIG_FILE.exists() || !CONFIG_FILE.canRead()) {
+    public static ActiveConfig readConfigFile(ConfigType type) {
+        if (!type.configFile.exists() || !type.configFile.canRead()) {
             return new ClientActiveConfig();
         }
-        try (BufferedReader reader = new BufferedReader(new FileReader(CONFIG_FILE))) {
-            ClientActiveConfig config = GSON.fromJson(reader, ClientActiveConfig.class);
+        try (BufferedReader reader = new BufferedReader(new FileReader(type.configFile))) {
+            ActiveConfig config = GSON.fromJson(reader, type.configClass);
             config.validateConfig();
             return config;
         } catch (IOException | JsonParseException ignored) {
@@ -162,16 +165,16 @@ public class ActiveConfig implements Cloneable {
         }
     }
 
-    public boolean writeConfigFile() {
+    public boolean writeConfigFile(ConfigType type) {
         try {
-            if (!CONFIG_FILE.exists()) {
-                boolean createdFile = CONFIG_FILE.createNewFile();
+            if (!type.configFile.exists()) {
+                boolean createdFile = type.configFile.createNewFile();
                 if (!createdFile) {
                     return false;
                 }
             }
-            if (CONFIG_FILE.canWrite()) {
-                try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
+            if (type.configFile.canWrite()) {
+                try (FileWriter writer = new FileWriter(type.configFile)) {
                     writer.write(GSON_PRETTY.toJson(this));
                     return true;
                 }
@@ -185,8 +188,8 @@ public class ActiveConfig implements Cloneable {
      * Should only be called by the client.
      */
     public static void loadActive() {
-        loadFileToMemory();
-        ACTIVE = ((ClientActiveConfig) FILE.clone());
+        loadFilesToMemory();
+        ACTIVE = ((ClientActiveConfig) FILE_CLIENT.clone());
         ACTIVE.mergeWithServer(FROM_SERVER);
     }
 
@@ -288,10 +291,13 @@ public class ActiveConfig implements Cloneable {
     }
 
     /**
-     * Loads the config from the config file into this ActiveConfig instance.
+     * Loads the configs from the config files.
      */
-    public static void loadFileToMemory() {
-        FILE = readConfigFile();
+    public static void loadFilesToMemory() {
+        FILE_SERVER = readConfigFile(ConfigType.SERVER);
+        if (Platform.getEnvironment() == Env.CLIENT) {
+            FILE_CLIENT = (ClientActiveConfig) readConfigFile(ConfigType.CLIENT);
+        }
     }
 
     /**
@@ -299,21 +305,23 @@ public class ActiveConfig implements Cloneable {
      * @param buffer Buffer to encode into.
      */
     public void encode(FriendlyByteBuf buffer) {
+        buffer.writeBoolean(this instanceof ClientActiveConfig);
         buffer.writeInt(fieldsHash);
         buffer.writeUtf(GSON.toJson(this));
     }
 
     /**
-     * Decodes a buffer into an ActiveConfig instance.
+     * Decodes a buffer into a (Client)ActiveConfig instance.
      * @param buffer Buffer to decode from.
      */
     public static ActiveConfig decode(FriendlyByteBuf buffer) {
+        Class<? extends ActiveConfig> configClass = buffer.readBoolean() ? ClientActiveConfig.class : ActiveConfig.class;
         int hashFromBuffer = buffer.readInt();
         if (hashFromBuffer != fieldsHash) {
             // Version mismatch, return disabled clone.
             return (ActiveConfig) DISABLED.clone();
         }
-        return GSON.fromJson(buffer.readUtf(), ActiveConfig.class);
+        return GSON.fromJson(buffer.readUtf(), configClass);
     }
 
     /**

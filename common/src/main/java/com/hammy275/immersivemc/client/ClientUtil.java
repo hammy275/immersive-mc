@@ -5,9 +5,9 @@ import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveMCClientRegistration;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.util.Util;
@@ -38,13 +38,13 @@ public class ClientUtil {
     public static int immersiveLeftClickCooldown = 0;
 
     public static ImmersiveConfigScreenInfo createConfigScreenInfo(String keyName, Supplier<ItemStack> optionItem,
-                                                                   Function<ClientActiveConfig, Boolean> configGetter,
-                                                                   BiConsumer<ClientActiveConfig, Boolean> configSetter) {
+                                                                   Function<ActiveConfig, Boolean> configGetter,
+                                                                   BiConsumer<ActiveConfig, Boolean> configSetter) {
         return ImmersiveMCClientRegistration.instance().createConfigScreenInfoOneItem(ImmersiveMC.MOD_ID,
                 "config." + ImmersiveMC.MOD_ID + "." + keyName,
                 optionItem, Component.translatable("config." + ImmersiveMC.MOD_ID + "." + keyName + ".desc"),
-                () -> configGetter.apply(ActiveConfig.FILE),
-                (newVal) -> configSetter.accept(ActiveConfig.FILE, newVal));
+                () -> configGetter.apply(ConfigScreen.getAdjustingConfig()),
+                (newVal) -> configSetter.accept(ConfigScreen.getAdjustingConfig(), newVal));
     }
 
     /**

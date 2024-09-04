@@ -1,7 +1,6 @@
 package com.hammy275.immersivemc.common.config;
 
 import com.hammy275.immersivemc.common.util.RGBA;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 
 public final class ClientActiveConfig extends ActiveConfig {
@@ -32,19 +31,6 @@ public final class ClientActiveConfig extends ActiveConfig {
 
     static {
         DISABLED.setDisabled();
-    }
-
-    /**
-     * Decodes a buffer into a ClientActiveConfig instance.
-     * @param buffer Buffer to decode from.
-     */
-    public static ClientActiveConfig decode(FriendlyByteBuf buffer) {
-        int hashFromBuffer = buffer.readInt();
-        if (hashFromBuffer != fieldsHash) {
-            // Version mismatch, return disabled clone.
-            return (ClientActiveConfig) DISABLED.clone();
-        }
-        return GSON.fromJson(buffer.readUtf(), ClientActiveConfig.class);
     }
 
     @Override

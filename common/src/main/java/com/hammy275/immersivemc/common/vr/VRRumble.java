@@ -11,7 +11,7 @@ public class VRRumble {
         if (player instanceof ServerPlayer) {
             return ActiveConfig.getConfigForPlayer(player).doRumble;
         } else {
-            return ActiveConfig.FILE.doRumble;
+            return ActiveConfig.FILE_CLIENT.doRumble;
         }
     }
 

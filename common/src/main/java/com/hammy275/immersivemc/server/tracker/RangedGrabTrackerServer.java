@@ -54,7 +54,7 @@ public class RangedGrabTrackerServer extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        return ActiveConfig.FILE.useRangedGrab && infos.size() > 0;
+        return ActiveConfig.FILE_SERVER.useRangedGrab && infos.size() > 0;
     }
 
     public static class RangedGrabInfo {

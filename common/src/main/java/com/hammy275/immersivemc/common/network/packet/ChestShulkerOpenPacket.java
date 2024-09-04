@@ -44,7 +44,7 @@ public class ChestShulkerOpenPacket {
                     BlockEntity tileEnt = player.level().getBlockEntity(message.pos);
                     boolean maybeMarkOpen = true;
                     if (tileEnt instanceof ChestBlockEntity) {
-                        if (!ActiveConfig.FILE.useChestImmersion) return;
+                        if (!ActiveConfig.FILE_SERVER.useChestImmersion) return;
                         ChestBlockEntity chest = (ChestBlockEntity) tileEnt;
                         ChestBlockEntity other = Util.getOtherChest(chest);
                         if (message.isOpen) {
@@ -64,7 +64,7 @@ public class ChestShulkerOpenPacket {
                             }
                         }
                     } else if (tileEnt instanceof EnderChestBlockEntity) {
-                        if (!ActiveConfig.FILE.useChestImmersion) return;
+                        if (!ActiveConfig.FILE_SERVER.useChestImmersion) return;
                         EnderChestBlockEntity chest = (EnderChestBlockEntity) tileEnt;
                         if (message.isOpen) {
                             chest.startOpen(player);
@@ -76,14 +76,14 @@ public class ChestShulkerOpenPacket {
                         }
                         maybeMarkOpen = false; // Never bother to attempt to mark ender chests as opened for Lootr
                     } else if (tileEnt instanceof ShulkerBoxBlockEntity shulkerBox) {
-                        if (!ActiveConfig.FILE.useShulkerImmersion) return;
+                        if (!ActiveConfig.FILE_SERVER.useShulkerImmersion) return;
                         if (message.isOpen) {
                             shulkerBox.startOpen(player);
                         } else {
                             shulkerBox.stopOpen(player);
                         }
                     } else if (tileEnt instanceof BarrelBlockEntity barrel) {
-                        if (!ActiveConfig.FILE.useBarrelImmersion) return;
+                        if (!ActiveConfig.FILE_SERVER.useBarrelImmersion) return;
                         if (message.isOpen) {
                             barrel.startOpen(player);
                             ChestToOpenSet.openChest(player, barrel.getBlockPos());

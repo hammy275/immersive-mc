@@ -77,7 +77,7 @@ public class ClientLogicSubscriber {
         boolean currentVRState = VRPluginVerify.clientInVR();
         if (currentVRState != lastVRState) {
             lastVRState = currentVRState;
-            if (!currentVRState && ActiveConfig.FILE.disableOutsideVR) {
+            if (!currentVRState && ActiveConfig.FILE_CLIENT.disableOutsideVR) {
                 for (Immersive<?, ?> immersive : Immersives.IMMERSIVES) {
                     immersive.getTrackedObjects().clear();
                 }
@@ -92,7 +92,7 @@ public class ClientLogicSubscriber {
         }
 
         // Stop ticking operations if not in VR and we don't want to use ImmersiveMC outside VR
-        if (!currentVRState && ActiveConfig.FILE.disableOutsideVR) return;
+        if (!currentVRState && ActiveConfig.FILE_CLIENT.disableOutsideVR) return;
 
         if (ClientUtil.immersiveLeftClickCooldown > 0) {
             ClientUtil.immersiveLeftClickCooldown--;
@@ -180,7 +180,7 @@ public class ClientLogicSubscriber {
     public static boolean onClick(int button) {
         // Don't run code if we're on spectator mode
         if ((Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSpectator()) ||
-                (!VRPluginVerify.clientInVR() && ActiveConfig.FILE.disableOutsideVR)) return false;
+                (!VRPluginVerify.clientInVR() && ActiveConfig.FILE_CLIENT.disableOutsideVR)) return false;
         if (button == 1) {
             int cooldown = handleRightClick(Minecraft.getInstance().player);
             if (cooldown > 0) {
@@ -349,7 +349,7 @@ public class ClientLogicSubscriber {
     }
 
     public static boolean handleLeftClick(Player player) {
-        if (Minecraft.getInstance().player == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE.disableOutsideVR)) return false;
+        if (Minecraft.getInstance().player == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE_CLIENT.disableOutsideVR)) return false;
 
         boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
         if (inVR) {
@@ -443,7 +443,7 @@ public class ClientLogicSubscriber {
     }
 
     public static int handleRightClick(Player player) {
-        if (Minecraft.getInstance().gameMode == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE.disableOutsideVR)) return 0;
+        if (Minecraft.getInstance().gameMode == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE_CLIENT.disableOutsideVR)) return 0;
         boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
         HitResult looking = Minecraft.getInstance().hitResult;
 

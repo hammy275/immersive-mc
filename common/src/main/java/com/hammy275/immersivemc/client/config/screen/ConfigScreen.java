@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersi
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
+import com.hammy275.immersivemc.common.config.ConfigType;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -12,6 +13,7 @@ import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.server.IntegratedServer;
@@ -24,6 +26,8 @@ import java.util.List;
 public class ConfigScreen extends Screen {
 
     protected final Screen lastScreen;
+
+    private static ConfigType currentConfigAdjusting = ConfigType.CLIENT; // The current type of config being adjusted.
 
     protected static int BUTTON_WIDTH = 200;
     protected static int BUTTON_HEIGHT = 20;
@@ -40,19 +44,21 @@ public class ConfigScreen extends Screen {
         ActiveConfig.loadActive(); // Load config so we're working with our current values when changing them
         super.init();
 
-        this.addRenderableWidget(ScreenUtils.createScreenButton(
-                (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 72,
-                BUTTON_WIDTH, BUTTON_HEIGHT,
-                "config.immersivemc.customize_item_guides",
-                new ItemGuideCustomizeScreen(this)
-        ));
+        if (currentConfigAdjusting == ConfigType.CLIENT) {
+            this.addRenderableWidget(ScreenUtils.createScreenButton(
+                    (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 72,
+                    BUTTON_WIDTH, BUTTON_HEIGHT,
+                    "config.immersivemc.customize_item_guides",
+                    new ItemGuideCustomizeScreen(this)
+            ));
 
-        this.addRenderableWidget(ScreenUtils.createScreenButton(
-                (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 40,
-                BUTTON_WIDTH, BUTTON_HEIGHT,
-                "config.immersivemc.backpack",
-                new BackpackConfigScreen(this)
-        ));
+            this.addRenderableWidget(ScreenUtils.createScreenButton(
+                    (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 40,
+                    BUTTON_WIDTH, BUTTON_HEIGHT,
+                    "config.immersivemc.backpack",
+                    new BackpackConfigScreen(this)
+            ));
+        }
 
         this.addRenderableWidget(ScreenUtils.createScreenButton(
                 (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 8,
@@ -66,12 +72,12 @@ public class ConfigScreen extends Screen {
                 BUTTON_WIDTH, BUTTON_HEIGHT,
                 "config.immersivemc.immersives",
                 new ImmersivesConfigScreen(this,
-                        VRPluginVerify.clientInVR() ?
+                        VRPluginVerify.clientInVR() || currentConfigAdjusting == ConfigType.SERVER ?
                                 ImmersivesConfigScreen.ScreenType.BOTH : ImmersivesConfigScreen.ScreenType.NONVR)
         ));
 
         this.addRenderableWidget(ScreenUtils.createScreenButton(
-                (this.width - BUTTON_WIDTH) / 2, this.height - 40 - BUTTON_HEIGHT * 2,
+                (this.width - BUTTON_WIDTH) / 2 - (BUTTON_WIDTH / 2) - 8, this.height - 32 - BUTTON_HEIGHT,
                 BUTTON_WIDTH, BUTTON_HEIGHT,
                 "config.immersivemc.wiki_button",
                 new ConfirmLinkScreen((clickedYes) -> {
@@ -97,14 +103,30 @@ public class ConfigScreen extends Screen {
                 BUTTON_WIDTH, BUTTON_HEIGHT,
                 "config.immersivemc.reset",
                 (button) -> {
-                    ActiveConfig.FILE = new ClientActiveConfig();
+                    if (currentConfigAdjusting == ConfigType.CLIENT) {
+                        ActiveConfig.FILE_CLIENT = new ClientActiveConfig();
+                    } else {
+                        ActiveConfig.FILE_SERVER = new ActiveConfig();
+                    }
                     ActiveConfig.loadActive();
                     button.active = false;
                 }
         ));
 
-        this.addRenderableWidget(ScreenUtils.createOption("disable_outside_vr", config -> config.disableOutsideVR, (config, newVal) -> config.disableOutsideVR = newVal)
-                .createButton(Minecraft.getInstance().options, (this.width - BUTTON_WIDTH) / 2 - (BUTTON_WIDTH / 2) - 8, this.height - 32 - BUTTON_HEIGHT, BUTTON_WIDTH));
+        String configTypeButtonTranslationKey = "config.immersivemc.edit_config_type.server";
+        if (currentConfigAdjusting == ConfigType.CLIENT) {
+            this.addRenderableWidget(ScreenUtils.createOption("disable_outside_vr", config -> ((ClientActiveConfig) config).disableOutsideVR, (config, newVal) -> ((ClientActiveConfig) config).disableOutsideVR = newVal)
+                    .createButton(Minecraft.getInstance().options, (this.width - BUTTON_WIDTH) / 2, this.height - 48 - BUTTON_HEIGHT * 3, BUTTON_WIDTH));
+            configTypeButtonTranslationKey = "config.immersivemc.edit_config_type.client";
+        }
+        Button configTypeButton = ScreenUtils.createButton((this.width - BUTTON_WIDTH) / 2, this.height - 40 - BUTTON_HEIGHT * 2,
+                BUTTON_WIDTH, BUTTON_HEIGHT,
+                configTypeButtonTranslationKey,
+                configTypeButtonTranslationKey + ".desc",
+                button -> changeConfigAdjusting());
+        configTypeButton.active = Minecraft.getInstance().player == null ||
+                Minecraft.getInstance().hasSingleplayerServer();
+        this.addRenderableWidget(configTypeButton);
 
     }
 
@@ -122,13 +144,14 @@ public class ConfigScreen extends Screen {
     public void onClose() {
         onClientConfigChange();
         Minecraft.getInstance().setScreen(lastScreen);
+        currentConfigAdjusting = ConfigType.CLIENT;
     }
 
     public static void onClientConfigChange() {
-        ActiveConfig.FILE.writeConfigFile();
+        writeAdjustingConfig();
         boolean isSingleplayerHost = Minecraft.getInstance().hasSingleplayerServer();
         if (isSingleplayerHost) {
-            ActiveConfig.FROM_SERVER = (ClientActiveConfig) ClientActiveConfig.FILE.clone();
+            ActiveConfig.FROM_SERVER = (ActiveConfig) ActiveConfig.FILE_SERVER.clone();
         }
         ActiveConfig.loadActive();
         // Clear all immersives in-case we disabled one
@@ -148,12 +171,56 @@ public class ConfigScreen extends Screen {
                 List<ServerPlayer> allButHost = server.getPlayerList().getPlayers().stream()
                         .filter((player) -> !player.getUUID().equals(Minecraft.getInstance().player.getUUID()))
                         .toList();
-                Network.INSTANCE.sendToPlayers(allButHost, new ConfigSyncPacket(ActiveConfig.FILE));
+                Network.INSTANCE.sendToPlayers(allButHost, new ConfigSyncPacket(ActiveConfig.FILE_SERVER));
             }
             TrackedImmersives.clearForPlayer(Minecraft.getInstance().getSingleplayerServer().getPlayerList().getPlayer(Minecraft.getInstance().player.getUUID()));
         } else if (Minecraft.getInstance().level != null) {
             // Let server know of our new config state
-            Network.INSTANCE.sendToServer(new ConfigSyncPacket(ActiveConfig.FILE));
+            Network.INSTANCE.sendToServer(new ConfigSyncPacket(ActiveConfig.FILE_CLIENT));
         }
+    }
+
+    /**
+     * Switch between adjusting the client and server configuration.
+     */
+    private static void changeConfigAdjusting() {
+        writeAdjustingConfig();
+        currentConfigAdjusting = currentConfigAdjusting == ConfigType.CLIENT ? ConfigType.SERVER : ConfigType.CLIENT;
+        Screen current = Minecraft.getInstance().screen;
+        if (current instanceof ConfigScreen cs) {
+            Minecraft.getInstance().setScreen(new ConfigScreen(cs.lastScreen));
+        }
+    }
+
+    /**
+     * @return The current configuration being adjusted.
+     */
+    public static ActiveConfig getAdjustingConfig() {
+        return ActiveConfig.getFileConfig(currentConfigAdjusting);
+    }
+
+    /**
+     * @return The current type of config being adjusted.
+     */
+    public static ConfigType getAdjustingConfigType() {
+        return currentConfigAdjusting;
+    }
+
+    /**
+     * Gets the client file config if it's being adjusted, or throws an exception if it's not being adjusted.
+     * <br>
+     * Better to use this than to directly get {@link ActiveConfig#FILE_CLIENT}, so we can verify the config screens
+     * behave correctly when editing the server config.
+     * @return The client file config.
+     */
+    public static ClientActiveConfig getClientConfigIfAdjusting() {
+        if (currentConfigAdjusting == ConfigType.CLIENT) {
+            return (ClientActiveConfig) ActiveConfig.getFileConfig(ConfigType.CLIENT);
+        }
+        throw new IllegalStateException("Not currently adjusting client config!");
+    }
+
+    public static boolean writeAdjustingConfig() {
+        return ActiveConfig.getFileConfig(currentConfigAdjusting).writeConfigFile(currentConfigAdjusting);
     }
 }

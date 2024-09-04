@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.config.screen;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
+import com.hammy275.immersivemc.common.config.ConfigType;
 import dev.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
@@ -32,13 +33,13 @@ public class ScreenUtils {
                 valueGetter.get(), valueSetter);
     }
 
-    public static OptionInstance<Boolean> createOption(String keyName, Function<ClientActiveConfig, Boolean> valueGetter,
-                                                       BiConsumer<ClientActiveConfig, Boolean> valueSetter) {
+    public static OptionInstance<Boolean> createOption(String keyName, Function<ActiveConfig, Boolean> valueGetter,
+                                                       BiConsumer<ActiveConfig, Boolean> valueSetter) {
         return OptionInstance.createBoolean(
                 "config." + ImmersiveMC.MOD_ID + "." + keyName,
                 OptionInstance.cachedConstantTooltip(Component.translatable("config." + ImmersiveMC.MOD_ID + "." + keyName + ".desc")),
-                valueGetter.apply(ActiveConfig.FILE),
-                (newVal) -> valueSetter.accept(ActiveConfig.FILE, newVal)
+                valueGetter.apply(ConfigScreen.getAdjustingConfig()),
+                (newVal) -> valueSetter.accept(ConfigScreen.getAdjustingConfig(), newVal)
         );
     }
 
@@ -79,22 +80,35 @@ public class ScreenUtils {
     }
 
     public static Button createButton(int x, int y, int width, int height, String translationString, Consumer<Button> clickHandler) {
+        return createButton(x, y, width, height, translationString, null, clickHandler);
+    }
+
+    public static Button createButton(int x, int y, int width, int height, String translationString, String tooltipTranslationString, Consumer<Button> clickHandler) {
         return Button.builder(Component.translatable(translationString), clickHandler::accept)
                 .size(width, height)
                 .pos(x, y)
+                .tooltip(tooltipTranslationString == null ? null : Tooltip.create(Component.translatable(tooltipTranslationString)))
                 .build();
     }
 
-    public static void addOptionIfModLoaded(String modId, String keyName, Function<ClientActiveConfig, Boolean> valueGetter,
-                                            BiConsumer<ClientActiveConfig, Boolean> valueSetter, OptionsList list) {
+    public static void addOptionIfModLoaded(String modId, String keyName, Function<ActiveConfig, Boolean> valueGetter,
+                                            BiConsumer<ActiveConfig, Boolean> valueSetter, OptionsList list) {
         if (Platform.isModLoaded(modId)) {
             addOption(keyName, valueGetter, valueSetter, list);
         }
     }
 
-    public static void addOption(String keyName, Function<ClientActiveConfig, Boolean> valueGetter,
-                                 BiConsumer<ClientActiveConfig, Boolean> valueSetter, OptionsList list) {
+    public static void addOption(String keyName, Function<ActiveConfig, Boolean> valueGetter,
+                                 BiConsumer<ActiveConfig, Boolean> valueSetter, OptionsList list) {
         list.addBig(createOption(keyName, valueGetter, valueSetter));
+    }
+
+    public static void addOptionIfClient(String keyName, Function<ClientActiveConfig, Boolean> valueGetter,
+                                 BiConsumer<ClientActiveConfig, Boolean> valueSetter, OptionsList list) {
+        if (ConfigScreen.getAdjustingConfigType() == ConfigType.CLIENT) {
+            list.addBig(createOption(keyName, ac -> valueGetter.apply((ClientActiveConfig) ac),
+                    (ac, newVal) -> valueSetter.accept((ClientActiveConfig) ac, newVal)));
+        }
     }
 
     public static boolean mouseInBox(int mouseX, int mouseY, int leftX, int bottomY, int rightX, int topY) {

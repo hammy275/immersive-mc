@@ -50,7 +50,7 @@ public class ButtonPushTracker extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        return ActiveConfig.FILE.useButton &&
+        return ActiveConfig.FILE_SERVER.useButton &&
                 VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player) && VRPlugin.API.apiActive(player)
                 && ActiveConfig.getConfigForPlayer(player).useButton;
     }
