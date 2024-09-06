@@ -224,17 +224,24 @@ public class ClientLogicSubscriber {
     }
 
     public static void onDisconnect(Player player) {
-        for (Immersive<? extends ImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
-            singleton.getTrackedObjects().clear();
+        // LAN hosts call this whenever any player disconnects, so make sure the host is the one leaving (#448).
+        // I don't trust Minecraft's player to exist under all leaving conditions (whether it does or not under all
+        // conditions is untested), so we check if it's either null or the player leaving is us. Have to do a check
+        // against UUID though, since the incoming player is a ServerPlayer, while Minecraft.getInstance().player is
+        // a local player (of course).
+        if (Minecraft.getInstance().player == null ||
+                Minecraft.getInstance().player.getGameProfile().getId().equals(player.getGameProfile().getId())) {
+            for (Immersive<? extends ImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
+                singleton.getTrackedObjects().clear();
+            }
+            for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+                singleton.clearImmersives();
+            }
+            ActiveConfig.FROM_SERVER = (ClientActiveConfig) ClientActiveConfig.DISABLED.clone();
+            alreadyInServer = false;
+            // Cleared so leaving and re-joining a singleplayer world doesn't keep the lid open
+            ChestToOpenSet.clear();
         }
-        for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
-            singleton.clearImmersives();
-        }
-        ActiveConfig.FROM_SERVER = (ClientActiveConfig) ClientActiveConfig.DISABLED.clone();
-        alreadyInServer = false;
-        // Cleared so leaving and re-joining a singleplayer world doesn't keep the lid open
-        ChestToOpenSet.clear();
-
     }
 
     protected static <I extends ImmersiveInfo> void tickInfos(Immersive<I, ?> singleton, Player player) {
