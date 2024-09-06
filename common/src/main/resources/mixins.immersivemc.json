@@ -12,6 +12,7 @@
     "AnvilMenuMixin",
     "BeaconBlockEntityMixin",
     "ButtonBlockMixin",
+    "ChestLidControllerAccessor",
     "ChiseledBookShelfBlockMixin",
     "ContainerOpenersCounterMixin",
     "DoorBlockMixin",
