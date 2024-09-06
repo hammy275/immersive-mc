@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.compat.lootr.LootrCompat;
 import com.hammy275.immersivemc.common.compat.lootr.LootrNullImpl;
 import com.hammy275.immersivemc.common.compat.util.CompatModule;
+import com.hammy275.immersivemc.mixin.ChestLidControllerAccessor;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,7 +23,20 @@ import noobanidus.mods.lootr.block.entities.LootrChestBlockEntity;
 import noobanidus.mods.lootr.block.entities.LootrShulkerBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
+
 public class LootrCompatImpl implements LootrCompat {
+
+    private static final Field chestChestLidController;
+
+    static {
+        Field chestLidControllerField = null;
+        try {
+            chestLidControllerField = LootrChestBlockEntity.class.getDeclaredField("chestLidController");
+            chestLidControllerField.setAccessible(true);
+        } catch (NoSuchFieldException ignored) {}
+        chestChestLidController = chestLidControllerField;
+    }
 
     private LootrCompatImpl() {}
 
@@ -104,8 +118,10 @@ public class LootrCompatImpl implements LootrCompat {
             return !lsbe.isClosed();
         } else if (be instanceof LootrBarrelBlockEntity) {
             return player.level().getBlockState(pos).getValue(BarrelBlock.OPEN);
-        } else if (be instanceof LootrChestBlockEntity lcbe) {
-            return lcbe.getOpenNess(1f) > 0;
+        } else if (be instanceof LootrChestBlockEntity) {
+            try {
+                return ((ChestLidControllerAccessor) chestChestLidController.get(be)).getShouldBeOpen();
+            } catch (IllegalAccessException ignored) {}
         }
         return false;
     }
