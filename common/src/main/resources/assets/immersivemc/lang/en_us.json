@@ -87,6 +87,8 @@
   "config.immersivemc.iron_furnaces_furnace.desc": "Enables/disables the ability to use the Iron Furnaces' furnace immersive.",
   "config.immersivemc.jukebox": "Use Jukebox Immersion [VR Only]",
   "config.immersivemc.jukebox.desc": "Enables/disables the ability for VR players to physically put discs in the jukebox.",
+  "config.immersivemc.lectern": "Use Lectern Immersion",
+  "config.immersivemc.lectern.desc": "Enables/disables showing the contents of a book directly on lecterns.",
   "config.immersivemc.lever": "Use Lever Immersion [VR Only]",
   "config.immersivemc.lever.desc": "Enables/disables the ability for VR players to physically flick levers.",
   "config.immersivemc.pet": "Can Pet Pets [VR Only]",
