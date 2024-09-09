@@ -63,6 +63,10 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
 
     /**
      * The method called when a player interacts with a hitbox.
+     * <br>
+     * If multiple hitboxes are being interacted with at the same time, only the first hitbox in iteration order from
+     * {@link ImmersiveInfo#getAllHitboxes()} that is being interacted with will have this function called.
+     *
      * @param info The info containing the hitbox that was interacted with.
      * @param player The player that interacted with the hitbox. This player is always the player currently controlling
      *               the game window.
