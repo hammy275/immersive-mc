@@ -400,6 +400,7 @@ public class Immersives {
                     (config, newVal) -> config.useSmithingTableImmersive = newVal))
             .build();
 
+    public static final Immersive<?, ?> immersiveTrapdoor = new TrapdoorImmersive();
 
     public static final BuiltImmersive<?,?> immersiveIronFurnacesFurnace = immersiveFurnace.getBuilderClone(ImmersiveHandlers.ironFurnacesFurnaceHandler)
             .setConfigChecker(() -> ActiveConfig.active().useIronFurnacesFurnaceImmersive)

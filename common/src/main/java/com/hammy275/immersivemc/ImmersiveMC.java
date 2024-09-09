@@ -53,7 +53,8 @@ public class ImmersiveMC {
                     ImmersiveHandlers.craftingHandler, ImmersiveHandlers.enchantingTableHandler, ImmersiveHandlers.furnaceHandler,
                     ImmersiveHandlers.hopperHandler, ImmersiveHandlers.ironFurnacesFurnaceHandler, ImmersiveHandlers.jukeboxHandler,
                     ImmersiveHandlers.leverHandler, ImmersiveHandlers.repeaterHandler, ImmersiveHandlers.shulkerBoxHandler,
-                    ImmersiveHandlers.smithingTableHandler, ImmersiveHandlers.tcCraftingStationHandler, ImmersiveHandlers.lecternHandler
+                    ImmersiveHandlers.smithingTableHandler, ImmersiveHandlers.tcCraftingStationHandler, ImmersiveHandlers.lecternHandler,
+                    ImmersiveHandlers.trapdoorHandler
             );
 
     public ImmersiveMC() {
