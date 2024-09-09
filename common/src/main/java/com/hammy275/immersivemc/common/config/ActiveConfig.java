@@ -61,6 +61,7 @@ public class ActiveConfig implements Cloneable {
     public boolean useBagImmersive = true;
     public boolean useRepeaterImmersive = true;
     public boolean useDoorImmersive = true;
+    public boolean useTrapdoorImmersive = true;
     public boolean allowPetting = true;
     public boolean useArmorImmersive = true;
     public boolean useFeedingAnimalsImmersive = true;
@@ -228,6 +229,7 @@ public class ActiveConfig implements Cloneable {
         useBagImmersive = useBagImmersive && other.useBagImmersive;
         useRepeaterImmersive = useRepeaterImmersive && other.useRepeaterImmersive;
         useDoorImmersive = useDoorImmersive && other.useDoorImmersive;
+        useTrapdoorImmersive = useTrapdoorImmersive && other.useTrapdoorImmersive;
         allowPetting = allowPetting && other.allowPetting;
         useArmorImmersive = useArmorImmersive && other.useArmorImmersive;
         useFeedingAnimalsImmersive = useFeedingAnimalsImmersive && other.useFeedingAnimalsImmersive;
@@ -268,6 +270,7 @@ public class ActiveConfig implements Cloneable {
         useBagImmersive = false;
         useRepeaterImmersive = false;
         useDoorImmersive = false;
+        useTrapdoorImmersive = false;
         allowPetting = false;
         useArmorImmersive = false;
         useFeedingAnimalsImmersive = false;
