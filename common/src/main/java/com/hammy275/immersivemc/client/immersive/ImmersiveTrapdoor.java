@@ -2,8 +2,11 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfoFactory;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.info.DragImmersiveInfo;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.UsePacket;
 import com.hammy275.immersivemc.common.util.Util;
@@ -23,9 +26,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class TrapdoorImmersive extends AbstractDragImmersive {
+public class ImmersiveTrapdoor extends AbstractDragImmersive {
 
-    private static final AutoDragSettings settings = new AutoDragSettings(List.of(2), false);
+    private static final AutoDragSettings settings = new AutoDragSettings(List.of(2), true);
 
     @Override
     protected void hitboxDragged(DragImmersiveInfo info, int controller, int oldIndex, int newIndex) {
@@ -36,7 +39,7 @@ public class TrapdoorImmersive extends AbstractDragImmersive {
     }
 
     @Override
-    protected @Nullable AutoDragSettings autoDraggingData() {
+    protected AutoDragSettings autoDragSettings() {
         return settings;
     }
 
@@ -49,6 +52,11 @@ public class TrapdoorImmersive extends AbstractDragImmersive {
         info.startingHitboxIndex = 0;
         makeHitboxes(info, level);
         return info;
+    }
+
+    @Override
+    public ImmersiveHandler<NullStorage> getHandler() {
+        return ImmersiveHandlers.trapdoorHandler;
     }
 
     @Override
