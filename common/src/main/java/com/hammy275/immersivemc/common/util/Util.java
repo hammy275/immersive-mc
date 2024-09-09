@@ -8,6 +8,7 @@ import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.ImmersiveChecker;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -297,6 +298,14 @@ public class Util {
         if (ImmersiveCheckers.isLever(pos, player.level())) {
             BlockState lever = player.level().getBlockState(pos);
             lever.use(player.level(), player, InteractionHand.MAIN_HAND,
+                    new BlockHitResult(Vec3.atCenterOf(pos), Direction.NORTH, pos, true));
+        }
+    }
+
+    public static void useTrapdoor(Player player, Level level, BlockPos pos) {
+        if (ImmersiveHandlers.trapdoorHandler.isValidBlock(pos, level)) {
+            BlockState trapdoor = level.getBlockState(pos);
+            trapdoor.use(level, player, InteractionHand.MAIN_HAND,
                     new BlockHitResult(Vec3.atCenterOf(pos), Direction.NORTH, pos, true));
         }
     }

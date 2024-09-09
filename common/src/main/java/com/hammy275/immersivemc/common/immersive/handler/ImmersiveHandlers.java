@@ -37,6 +37,7 @@ public class ImmersiveHandlers {
     public static final ImmersiveHandler<NullStorage> repeaterHandler = new RepeaterHandler();
     public static final ImmersiveHandler<?> shulkerBoxHandler = new ShulkerBoxHandler();
     public static final WorldStorageHandler<SmithingTableStorage> smithingTableHandler = new SmithingTableHandler();
+    public static final ImmersiveHandler<NullStorage> trapdoorHandler = new TrapdoorHandler();
     public static final ImmersiveHandler<?> tcCraftingStationHandler = new TCCraftingStationHandler();
 
     static {
