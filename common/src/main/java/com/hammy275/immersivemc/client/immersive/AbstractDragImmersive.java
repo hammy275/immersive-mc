@@ -3,9 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.immersive.info.DragImmersiveInfo;
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
@@ -15,7 +13,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,34 +38,26 @@ public abstract class AbstractDragImmersive implements Immersive<DragImmersiveIn
 
     /**
      * Configures auto-dragging.
-     * <br>
-     * When this returns null, auto-dragging does not occur; no special behavior.
-     * <br>
-     * When this returns non-null, auto-dragging will occur. Auto-dragging does the following:
      * <ul>
-     *     <li>If updateStartingIndex is true, {@link DragImmersiveInfo#startingHitboxIndex} is updated to be whatever
-     *     the last dragged to hitbox is, meaning it does not need to be set manually in
-     *     {@link #hitboxDragged(DragImmersiveInfo, int, int, int)} or similar.</li>
      *     <li>All integers in nonInteractable represent indexes into {@link DragImmersiveInfo#hitboxes} which
      *     <i>will</i> count for dragging but will <i>never</i> be passed to
      *     {@link #hitboxDragged(DragImmersiveInfo, int, int, int)} as either the old or new index. This is mainly
      *     intended for when you want to allow dragging between some hitboxes, but need an outer hitbox that keeps the
      *     dragging going; this function should return the index for that outer hitbox.</li>
+     *     <li>makeHitboxesEveryTick determines whether {@link #makeHitboxes(DragImmersiveInfo, Level)} is called
+     *     every tick.</li>
      * </ul>
-     *  The
-     * integers
      * @return Whether to use auto-dragging.
      */
-    @Nullable
-    protected abstract AutoDragSettings autoDraggingData();
+    protected abstract AutoDragSettings autoDragSettings();
 
     /**
-     * Add/set hitboxes into the info instance. Called automatically on each tick, since the underlying block may
-     * change state non-Immersively.
+     * Add/set hitboxes into the info instance. Called automatically on each tick if
+     * {@link AutoDragSettings#makeHitboxesEveryTick} is true. Otherwise, it's not called.
      * @param info Info to set hitboxes into.
      * @param level The current level.
      */
-    protected abstract void makeHitboxes(DragImmersiveInfo info, Level level);
+    protected void makeHitboxes(DragImmersiveInfo info, Level level) {}
 
     @Override
     public Collection<DragImmersiveInfo> getTrackedObjects() {
@@ -89,38 +78,33 @@ public abstract class AbstractDragImmersive implements Immersive<DragImmersiveIn
     public void render(DragImmersiveInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
         for (int i = 0; i < info.hitboxes.size(); i++) {
             HitboxInfo hitbox = info.hitboxes.get(i);
-            AutoDragSettings autoDrag = autoDraggingData();
-            float red = autoDrag == null || !autoDrag.nonInteractables.contains(i) ? 1 : 0;
-            helpers.renderHitbox(stack, hitbox.getHitbox(), false, red, 1, 1);
+            AutoDragSettings autoDrag = autoDragSettings();
+            float blue = info.startingHitboxIndex != i ? 1 : 0;
+            float red = !autoDrag.nonInteractables.contains(i) ? blue : 0;
+            helpers.renderHitbox(stack, hitbox.getHitbox(), false, red, 1, blue);
         }
     }
 
     @Override
     public void tick(DragImmersiveInfo info) {
+        AutoDragSettings autoDrag = autoDragSettings();
         info.ticksExisted++;
-        makeHitboxes(info, Minecraft.getInstance().level);
-        AutoDragSettings autoDrag = autoDraggingData();
+        if (autoDrag.makeHitboxesEveryTick) {
+            makeHitboxes(info, Minecraft.getInstance().level);
+        }
         for (int c = 0; c <= 1; c++) {
             IVRData hand = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(c);
             int lastGrabbed = info.grabbedBox[c];
             int grabbed = Util.getFirstIntersect(hand.position(), info.getAllHitboxes().stream().map(HitboxInfo::getHitbox).toList()).orElse(-1);
             if ((lastGrabbed == info.startingHitboxIndex || info.startingHitboxIndex == -1) && grabbed > -1 && lastGrabbed != grabbed) {
-                if (autoDrag == null || !autoDrag.nonInteractables.contains(grabbed)) {
+                if (!autoDrag.nonInteractables.contains(grabbed)) {
                     hitboxDragged(info, c, lastGrabbed, grabbed);
-                    if (autoDrag != null && autoDrag.updateStartingIndex) {
-                        info.startingHitboxIndex = grabbed;
-                    }
                 }
             }
-            if (autoDrag == null || !autoDrag.nonInteractables.contains(grabbed)) {
+            if (!autoDrag.nonInteractables.contains(grabbed)) {
                 info.grabbedBox[c] = grabbed;
             }
         }
-    }
-
-    @Override
-    public ImmersiveHandler<NullStorage> getHandler() {
-        return ImmersiveHandlers.trapdoorHandler;
     }
 
     @Override
@@ -138,5 +122,6 @@ public abstract class AbstractDragImmersive implements Immersive<DragImmersiveIn
         return true;
     }
 
-    public record AutoDragSettings(Collection<Integer> nonInteractables, boolean updateStartingIndex) {}
+    public record AutoDragSettings(Collection<Integer> nonInteractables,
+                                   boolean makeHitboxesEveryTick) {}
 }
