@@ -104,6 +104,7 @@ public class ClientBookData extends BookData {
         stack.mulPose(Axis.YN.rotationDegrees(hand.getYaw() + 90f));
         stack.mulPose(Axis.ZP.rotationDegrees(90f));
         stack.mulPose(Axis.ZP.rotationDegrees(hand.getPitch()));
+        stack.mulPose(Axis.YN.rotationDegrees(hand.getRoll()));
 
         float bookOpenAmount = 1.1f;
 
@@ -157,6 +158,7 @@ public class ClientBookData extends BookData {
         stack.mulPose(Axis.ZP.rotationDegrees(hand.getPitch()));
         stack.mulPose(Axis.XP.rotationDegrees(90f + (leftPage ? pageTilt : -pageTilt)));
         stack.mulPose(Axis.ZP.rotationDegrees(270f));
+        stack.mulPose(Axis.YP.rotationDegrees(hand.getRoll()));
         stack.scale(textStackScaleSize, textStackScaleSize, textStackScaleSize);
 
         Font font = Minecraft.getInstance().font;
@@ -339,7 +341,7 @@ public class ClientBookData extends BookData {
                     OBBFactory.instance().create(AABB.ofSize(centerPos, length, 0.04 * scaleSize, 0.02 * scaleSize),
                             Math.toRadians(hand.getPitch()),
                             Math.toRadians(hand.getYaw()),
-                            isLeft ? leftPageRot : -leftPageRot),
+                            (isLeft ? leftPageRot : -leftPageRot) + Math.toRadians(hand.getRoll())),
                     style));
         }
     }
