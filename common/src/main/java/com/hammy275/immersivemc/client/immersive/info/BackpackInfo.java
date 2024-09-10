@@ -25,6 +25,7 @@ public class BackpackInfo extends AbstractPlayerAttachmentInfo {
     public Vec3 downVec = Vec3.ZERO;
     public float handPitch = 0;
     public float handYaw = 0;
+    public float handRoll = 0;
     public Vec3 backVec = Vec3.ZERO;
     public Vector3f rgb = new Vector3f(0, 0, 0);
     public int topRow = 0;
