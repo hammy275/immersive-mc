@@ -41,13 +41,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * This uses a hack when rendering where we re-calculate all the positions and hitboxes
- * based on the render player rather than the post-tick player (like everything else uses) into a separate info.
- *
- * From there, we render that info, using the regular tick-based info in appropriate spots (mainly for getting
- * stored items in crafting and stuff).
- */
 public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<BackpackInfo, NullStorage> {
     public static final BackpackBundleModel bundleModel =
             new BackpackBundleModel(Minecraft.getInstance().getEntityModels().bakeLayer(BackpackBundleModel.LAYER_LOCATION));
@@ -155,18 +148,14 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
         stack.translate(-cameraInfo.getPosition().x + pos.x,
                 -cameraInfo.getPosition().y + pos.y,
                 -cameraInfo.getPosition().z + pos.z);
+
         stack.scale(0.5f, 0.5f, 0.5f);
-
-        stack.translate(0, 1.5, 0); // Translate origin to our hand
-
+        
         stack.mulPose(Vector3f.YN.rotation(info.handYaw));
         stack.mulPose(Vector3f.XN.rotation(info.handPitch));
-        stack.mulPose(Vector3f.ZP.rotation((float) Math.PI)); // Rotate
+        stack.mulPose(Vector3f.ZP.rotation((float) Math.PI + info.handRoll)); // Rotate
 
-        stack.translate(0, -1.5, 0); // Move back to where we started
-
-        // Basically move the model to the side of the origin
-        stack.translate(leftHanded ? -0.5 : 0.5, 0, 0);
+        stack.translate(0, -3, 0); // Move model up since the model center is not the visual center
 
         // Render the model (finally!)
         getBackpackModel().renderToBuffer(stack,
@@ -304,51 +293,54 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
         }
     }
 
+    private Vec3 getRightVec(BackpackInfo info) {
+        Vector3f leftF = new Vector3f(0, 0, 1); // +Z is the default forward vector
+        leftF.transform(Vector3f.YN.rotation((float) Math.PI / 2f));
+        leftF.transform(Vector3f.ZP.rotation(info.handRoll));
+        leftF.transform(Vector3f.XN.rotation(info.handPitch));
+        leftF.transform(Vector3f.YN.rotation(info.handYaw));
+        return new Vec3(leftF.x(), leftF.y(), leftF.z());
+    }
+
     private void calculatePositions(BackpackInfo info, IVRPlayer vrPlayer) {
         IVRData backpackController = vrPlayer.getController(1);
         info.handPos = backpackController.position();
         info.handPitch = (float) Math.toRadians(backpackController.getPitch());
         info.handYaw = (float) Math.toRadians(backpackController.getYaw());
+        info.handRoll = (float) Math.toRadians(backpackController.getRoll());
         info.lookVec = backpackController.getLookAngle();
 
+        Vec3 rightVec = getRightVec(info).scale(0.25);
+        if (VRPlugin.API.isLeftHanded(Minecraft.getInstance().player)) {
+            // Means we can imagine for right-handed players, and the code will work for left-handed players
+            rightVec = rightVec.scale(-1);
+        }
+        Vec3 leftVec = rightVec.scale(-1);
+
+        Vector3f downVecF = new Vector3f(0, -1, 0);
+        downVecF.transform(Vector3f.ZP.rotation(info.handRoll));
+        downVecF.transform(Vector3f.XN.rotation(info.handPitch));
+        downVecF.transform(Vector3f.YN.rotation(info.handYaw));
+        info.downVec = new Vec3(downVecF.x(), downVecF.y(), downVecF.z());
+
         // Render backpack closer to the player, and attached to the inner-side of the arm
-        info.backVec = info.lookVec.normalize().multiply(-1, -1, -1);
-        info.renderPos = info.handPos.add(0, -0.75, 0);
-        info.renderPos = info.renderPos.add(info.backVec.multiply(1d/6d, 1d/6d, 1d/6d));
+        info.backVec = info.lookVec.scale(-1);
+        info.renderPos = info.handPos.add(info.downVec.scale(0.75));
+        info.renderPos = info.renderPos.add(info.backVec.scale(1d/6d));
+        info.renderPos = info.renderPos.add(rightVec.scale(0.75));
 
         info.rgb = getBackpackColor();
 
-        info.centerTopPos = info.handPos.add(0, -0.05, 0);
-        info.centerTopPos = info.centerTopPos.add(info.backVec.multiply(1d/6d, 1d/6d, 1d/6d)); // Back on arm
-        // Multiply massively so the < 1E-4D check from .normalize() rarely kicks in
-        Vec3 rightVec = info.lookVec.multiply(1E16D, 0, 1E16D).normalize();
-        if (VRPlugin.API.isLeftHanded(Minecraft.getInstance().player)) {
-            rightVec = new Vec3(rightVec.z, 0, -rightVec.x).multiply(0.25, 0, 0.25);
-        } else {
-            rightVec = new Vec3(-rightVec.z, 0, rightVec.x).multiply(0.25, 0, 0.25);
-        }
+        info.centerTopPos = info.renderPos.add(info.downVec.scale(-0.7)).add(leftVec);
         info.centerTopPos = info.centerTopPos.add(rightVec);
 
-
-        Vec3 leftVec = rightVec.multiply(-1, 0, -1);
-
-        // Note: rightVec and leftVec refer to the vectors for right-handed people. Swap the names if referring to
-        // left-handed guys, gals, and non-binary pals.
-
-        Vector3f downVecF = new Vector3f(0, -1, 0);
-        downVecF.transform(Vector3f.XN.rotation(info.handPitch));
-        downVecF.transform(Vector3f.YN.rotation(info.handYaw));
-        info.downVec = new Vec3(downVecF.x(), downVecF.y(), downVecF.z()).normalize();
-
         // Item hitboxes and positions
-        Vec3 leftOffset = new Vec3(
-                leftVec.x * spacing, leftVec.y * spacing, leftVec.z * spacing);
-        Vec3 rightOffset = new Vec3(
-                rightVec.x * spacing, rightVec.y * spacing, rightVec.z * spacing);
+        Vec3 leftOffset = leftVec.scale(spacing);
+        Vec3 rightOffset = rightVec.scale(spacing);
 
         double tbSpacing = spacing / 4d;
-        Vec3 topOffset = info.lookVec.multiply(tbSpacing, tbSpacing, tbSpacing);
-        Vec3 botOffset = info.backVec.multiply(tbSpacing, tbSpacing, tbSpacing);
+        Vec3 topOffset = info.lookVec.scale(tbSpacing);
+        Vec3 botOffset = info.backVec.scale(tbSpacing);
 
         Vec3 pos = info.centerTopPos;
         Vec3[] positions = new Vec3[]{
@@ -371,36 +363,36 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
             Vec3 slotPos = posRaw;
             slotPos = slotPos.add(yDown);
             info.setPosition(i, slotPos);
-            info.setHitbox(i, OBBFactory.instance().create(AABB.ofSize(info.getPosition(i), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, 0));
+            info.setHitbox(i, OBBFactory.instance().create(AABB.ofSize(info.getPosition(i), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, info.handRoll));
         }
 
-        Vec3 upVec = info.downVec.multiply(-1, -1, -1);
+        Vec3 upVec = info.downVec.scale(-1);
 
         double upMult = 0.05;
 
         // Multiply these by 4 since rightVec is multiplied by 0.25 above
-        Vec3 leftCraftingPos = info.centerTopPos.add(rightVec.multiply(0.3125*4, 0.3125*4, 0.3125*4))
-                .add(upVec.multiply(upMult, upMult, upMult));
-        Vec3 rightCraftingPos = info.centerTopPos.add(rightVec.multiply(0.4375*4, 0.4375*4, 0.4375*4))
-                .add(upVec.multiply(upMult, upMult, upMult));
-        Vec3 centerCraftingPos = info.centerTopPos.add(rightVec.multiply(0.375*4, 0.375*4, 0.375*4))
-                .add(upVec.multiply(upMult, upMult, upMult));
+        Vec3 leftCraftingPos = info.centerTopPos.add(rightVec.scale(0.3125*4))
+                .add(upVec.scale(upMult));
+        Vec3 rightCraftingPos = info.centerTopPos.add(rightVec.scale(0.4375*4))
+                .add(upVec.scale(upMult));
+        Vec3 centerCraftingPos = info.centerTopPos.add(rightVec.scale(0.375*4))
+                .add(upVec.scale(upMult));
 
         double craftingOffset = 0.625;
         Vec3[] craftingPositions = new Vec3[]{
-                leftCraftingPos.add(topOffset.multiply(craftingOffset, craftingOffset, craftingOffset)),
-                rightCraftingPos.add(topOffset.multiply(craftingOffset, craftingOffset, craftingOffset)),
-                leftCraftingPos.add(botOffset.multiply(craftingOffset, craftingOffset, craftingOffset)),
-                rightCraftingPos.add(botOffset.multiply(craftingOffset, craftingOffset, craftingOffset))
+                leftCraftingPos.add(topOffset.scale(craftingOffset)),
+                rightCraftingPos.add(topOffset.scale(craftingOffset)),
+                leftCraftingPos.add(botOffset.scale(craftingOffset)),
+                rightCraftingPos.add(botOffset.scale(craftingOffset))
         };
 
         for (int i = 27; i <= 30; i++) {
             info.setPosition(i, craftingPositions[i - 27]);
-            info.setHitbox(i, OBBFactory.instance().create(AABB.ofSize(info.getPosition(i), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, 0));
+            info.setHitbox(i, OBBFactory.instance().create(AABB.ofSize(info.getPosition(i), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, info.handRoll));
         }
 
-        info.setPosition(31, centerCraftingPos.add(upVec.multiply(0.125, 0.125, 0.125)));
-        info.setHitbox(31, OBBFactory.instance().create(AABB.ofSize(info.getPosition(31), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, 0));
+        info.setPosition(31, centerCraftingPos.add(upVec.scale(0.125)));
+        info.setHitbox(31, OBBFactory.instance().create(AABB.ofSize(info.getPosition(31), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, info.handRoll));
 
         info.setInputSlots();
     }
