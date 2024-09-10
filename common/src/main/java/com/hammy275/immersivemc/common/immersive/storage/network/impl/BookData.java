@@ -152,12 +152,12 @@ public class BookData implements NetworkStorage, WorldStorage {
 
         // Boxes to start a page turn are a box on the page edge to generally capture the hand
         pageTurnBoxes[0] = OBBFactory.instance().create(AABB.ofSize(positions[0], 0.2, 0.2, pageHalfHeight * 2),
-                pitch, yaw, 0);
+                pitch, yaw, Math.toRadians(hand.getRoll()));
         pageTurnBoxes[1] = OBBFactory.instance().create(AABB.ofSize(positions[1], 0.2, 0.2, pageHalfHeight * 2),
-                pitch, yaw, 0);
+                pitch, yaw, Math.toRadians(hand.getRoll()));
         // Box to continue a page turn
         pageTurnBoxes[2] = OBBFactory.instance().create(AABB.ofSize(upCenter, singlePageWidth * 11d/3d, singlePageWidth * 2d, pageHalfHeight * 2.25),
-                pitch, yaw, 0);
+                pitch, yaw, Math.toRadians(hand.getRoll()));
 
         // Automatic page turning
         // Note that the next page/last page on the info is done as the animation starts, so the text is loaded
@@ -277,11 +277,12 @@ public class BookData implements NetworkStorage, WorldStorage {
     }
 
     protected Vec3 getLeftRight(PosRot hand, boolean left) {
-        Vec3 look = hand.getLookAngle();
-        Vector3f leftF = new Vector3f((float) look.x(), 0, (float) look.z());
-        leftF.normalize();
-        leftF.transform(Vector3f.YN.rotationDegrees(left ? 270 : 90));
-        return new Vec3(leftF.x(), Math.abs(leftF.y()), leftF.z());
+        Vector3f leftF = new Vector3f(0, 0, 1); // +Z is the default forward vector
+        leftF.transform(Vector3f.YN.rotationDegrees(left ? 270  : 90));
+        leftF.transform(Vector3f.ZP.rotationDegrees(hand.getRoll()));
+        leftF.transform(Vector3f.XN.rotationDegrees(hand.getPitch()));
+        leftF.transform(Vector3f.YN.rotationDegrees(hand.getYaw()));
+        return new Vec3(leftF.x(), leftF.y(), leftF.z());
     }
 
     /**
@@ -292,6 +293,7 @@ public class BookData implements NetworkStorage, WorldStorage {
      */
     protected Vec3 getAway(PosRot hand) {
         Vector3f awayFromBookF = new Vector3f(0, 1, 0);
+        awayFromBookF.transform(Vector3f.ZP.rotationDegrees(hand.getRoll()));
         awayFromBookF.transform(Vector3f.XN.rotationDegrees(hand.getPitch()));
         awayFromBookF.transform(Vector3f.YN.rotationDegrees(hand.getYaw()));
         return new Vec3(awayFromBookF.x(), awayFromBookF.y(), awayFromBookF.z());
