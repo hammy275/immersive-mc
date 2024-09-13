@@ -1,12 +1,11 @@
 package com.hammy275.immersivemc.common.compat.util;
 
+import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.client.compat.CompatModuleClient;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.server.ServerSubscriber;
-import dev.architectury.platform.Platform;
-import dev.architectury.utils.Env;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
@@ -68,7 +67,7 @@ public class CompatModule<T> implements InvocationHandler {
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             System.out.println(sw);
-            if (Platform.getEnvironment() == Env.CLIENT) {
+            if (Platform.isClient()) {
                 // Running on the client. Could be singleplayer/LAN host or could be on a multiplayer server.
                 CompatModuleClient.disableClient(friendlyName, configSetter);
             } else {

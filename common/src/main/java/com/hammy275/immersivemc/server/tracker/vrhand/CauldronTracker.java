@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.server.tracker.vrhand;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.mixin.AbstractCauldronBlockAccessor;
+import com.hammy275.immersivemc.mixin.BucketItemAccessor;
 import com.hammy275.immersivemc.server.data.LastTickData;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
@@ -65,13 +66,13 @@ public class CauldronTracker extends AbstractVRHandTracker {
         if (interaction == null) return;
 
         // If holding an empty bucket or glass bottle, see if we can fill it.
-        if (inCauldronBlock && (handItem instanceof BottleItem || (handItem instanceof BucketItem bucketItem && bucketItem.arch$getFluid().isSame(Fluids.EMPTY)))) {
+        if (inCauldronBlock && (handItem instanceof BottleItem || (handItem instanceof BucketItem bucketItem && ((BucketItemAccessor) bucketItem).getFluid().isSame(Fluids.EMPTY)))) {
             // Pointing up in any way
             if (Math.abs(data.getRoll()) < 90) {
                 possiblySetCooldown(player, interaction.interact(cauldron, player.level, cauldronPos, player, hand, handStack));
             }
         } else if ((handItem instanceof PotionItem && heldPotion == Potions.WATER) ||
-                (handItem instanceof BucketItem bucketItem && !bucketItem.arch$getFluid().isSame(Fluids.EMPTY)) ||
+                (handItem instanceof BucketItem bucketItem && !((BucketItemAccessor) bucketItem).getFluid().isSame(Fluids.EMPTY)) ||
                 handItem instanceof SolidBucketItem) {
             // 20-degrees in either direction from straight down
             if (Math.abs(data.getRoll()) > 160) {

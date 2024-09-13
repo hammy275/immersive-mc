@@ -4,12 +4,9 @@ import com.hammy275.immersivemc.api.server.WorldStorages;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-
-import java.util.function.Supplier;
 
 public class PageTurnPacket {
 
@@ -43,25 +40,22 @@ public class PageTurnPacket {
         return new PageTurnPacket(buffer.readBlockPos(), buffer.readInt(), buffer.readBoolean());
     }
 
-    public static void handle(PageTurnPacket message, Supplier<NetworkManager.PacketContext> ctx) {
-        ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
-            if (NetworkUtil.safeToRun(message.pos, player)) {
-                BookData storage = (BookData) WorldStorages.instance().getOrCreate(message.pos, player.getLevel());
-                if (storage != null && !storage.book.isEmpty() && storage.pageTurner == null) {
-                    if (message.forcedPageIndex == -1) {
-                        if (!VRPluginVerify.playerInVR(player) &&
-                                (message.clickedRight ? !storage.onLastPage() : !storage.onFirstPage())) {
-                            storage.startPageTurnAnim(player, message.clickedRight);
-                        } else if (VRPluginVerify.playerInVR(player)) {
-                            // Let the VR player have control of page turning
-                            storage.pageTurner = player;
-                        }
-                    } else {
-                        storage.setPage(message.forcedPageIndex);
+    public static void handle(PageTurnPacket message, ServerPlayer player) {
+        if (NetworkUtil.safeToRun(message.pos, player)) {
+            BookData storage = (BookData) WorldStorages.instance().getOrCreate(message.pos, player.getLevel());
+            if (storage != null && !storage.book.isEmpty() && storage.pageTurner == null) {
+                if (message.forcedPageIndex == -1) {
+                    if (!VRPluginVerify.playerInVR(player) &&
+                            (message.clickedRight ? !storage.onLastPage() : !storage.onFirstPage())) {
+                        storage.startPageTurnAnim(player, message.clickedRight);
+                    } else if (VRPluginVerify.playerInVR(player)) {
+                        // Let the VR player have control of page turning
+                        storage.pageTurner = player;
                     }
+                } else {
+                    storage.setPage(message.forcedPageIndex);
                 }
             }
-        });
+        }
     }
 }

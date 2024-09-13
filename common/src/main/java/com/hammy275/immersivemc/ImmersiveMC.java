@@ -22,12 +22,6 @@ import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.network.packet.ThrowPacket;
 import com.hammy275.immersivemc.common.network.packet.UsePacket;
 import com.hammy275.immersivemc.common.subscribe.CommonSubscriber;
-import dev.architectury.event.events.client.ClientLifecycleEvent;
-import dev.architectury.event.events.client.ClientTickEvent;
-import dev.architectury.event.events.common.PlayerEvent;
-import dev.architectury.event.events.common.TickEvent;
-import dev.architectury.platform.Platform;
-import dev.architectury.utils.Env;
 import com.hammy275.immersivemc.server.ServerSubscriber;
 import net.minecraft.client.KeyMapping;
 import org.apache.logging.log4j.LogManager;
@@ -61,23 +55,23 @@ public class ImmersiveMC {
     }
 
     public static void init() {
-        if (Platform.getEnvironment() == Env.CLIENT) {
+        if (Platform.isClient()) {
             // ClientLogic
-            ClientLifecycleEvent.CLIENT_LEVEL_LOAD.register(ClientLogicSubscriber::onClientLogin);
-            ClientTickEvent.CLIENT_POST.register(ClientLogicSubscriber::onClientTick);
-            PlayerEvent.PLAYER_QUIT.register(ClientLogicSubscriber::onDisconnect);
-            ClientTickEvent.CLIENT_LEVEL_POST.register(CommonSubscriber::globalTick);
+            PlatformClient.registerOnClientJoinListener(ClientLogicSubscriber::onClientLogin);
+            PlatformClient.registerOnClientTickListener(ClientLogicSubscriber::onClientTick);
+            PlatformClient.registerOnClientDisconnectListener(ClientLogicSubscriber::onDisconnect);
+            PlatformClient.registerOnClientTickListener(CommonSubscriber::globalTick);
         }
 
         // ServerSubscriber
-        TickEvent.SERVER_POST.register(ServerSubscriber::onServerTick);
-        TickEvent.PLAYER_POST.register(ServerSubscriber::onPlayerTick);
-        PlayerEvent.PLAYER_JOIN.register(ServerSubscriber::onPlayerJoin);
-        PlayerEvent.PLAYER_QUIT.register(ServerSubscriber::onPlayerLeave);
-        TickEvent.PLAYER_POST.register(CommonSubscriber::onPlayerTick);
-        TickEvent.SERVER_POST.register(CommonSubscriber::globalTick);
+        Platform.registerServerPostTickListener(ServerSubscriber::onServerTick);
+        Platform.registerServerPlayerPostTickListener(ServerSubscriber::onPlayerTick);
+        Platform.registerServerPlayerJoinListener(ServerSubscriber::onPlayerJoin);
+        Platform.registerServerPlayerLeaveListener(ServerSubscriber::onPlayerLeave);
+        Platform.registerServerPlayerPostTickListener(CommonSubscriber::onPlayerTick);
+        Platform.registerServerPostTickListener(CommonSubscriber::globalTick);
 
-        if (Platform.getEnvironment() == Env.CLIENT) {
+        if (Platform.isClient()) {
             ImmersiveMCClient.init();
         }
         networkSetup();

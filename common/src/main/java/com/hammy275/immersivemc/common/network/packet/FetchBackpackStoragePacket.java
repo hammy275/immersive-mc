@@ -3,14 +3,12 @@ package com.hammy275.immersivemc.common.network.packet;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class FetchBackpackStoragePacket {
 
@@ -46,16 +44,13 @@ public class FetchBackpackStoragePacket {
         }
     }
 
-    public static void handle(FetchBackpackStoragePacket message, Supplier<NetworkManager.PacketContext> ctx) {
-        ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
-            if (player == null) { // Server to client
-                handleClient(message);
-            } else { // Client to server
-                Network.INSTANCE.sendToPlayer(player,
-                        new FetchBackpackStoragePacket(ImmersiveMCPlayerStorages.getBackpackCraftingStorage(player)));
-            }
-        });
+    public static void handle(FetchBackpackStoragePacket message, ServerPlayer player) {
+        if (player == null) { // Server to client
+            handleClient(message);
+        } else { // Client to server
+            Network.INSTANCE.sendToPlayer(player,
+                    new FetchBackpackStoragePacket(ImmersiveMCPlayerStorages.getBackpackCraftingStorage(player)));
+        }
     }
 
     public static void handleClient(FetchBackpackStoragePacket message) {

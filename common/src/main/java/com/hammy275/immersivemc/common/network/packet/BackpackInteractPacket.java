@@ -5,12 +5,9 @@ import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.server.api_impl.ItemSwapAmountImpl;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import com.hammy275.immersivemc.server.swap.Swap;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-
-import java.util.function.Supplier;
 
 public class BackpackInteractPacket {
 
@@ -40,15 +37,12 @@ public class BackpackInteractPacket {
                 buffer.readEnum(PlacementMode.class));
     }
 
-    public static void handle(final BackpackInteractPacket message, Supplier<NetworkManager.PacketContext> ctx) {
-        ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
-            if (player != null) {
-                // -27 below since 0-26 are inventory slots
-                Swap.handleBackpackCraftingSwap(message.slot - 27, message.hand,
-                        ImmersiveMCPlayerStorages.getBackpackCraftingStorage(player), player, new ItemSwapAmountImpl(message.placementMode));
-            }
-        });
+    public static void handle(final BackpackInteractPacket message, ServerPlayer player) {
+        if (player != null) {
+            // -27 below since 0-26 are inventory slots
+            Swap.handleBackpackCraftingSwap(message.slot - 27, message.hand,
+                    ImmersiveMCPlayerStorages.getBackpackCraftingStorage(player), player, new ItemSwapAmountImpl(message.placementMode));
+        }
         
     }
 

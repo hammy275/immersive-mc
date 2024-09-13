@@ -9,8 +9,6 @@ import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
 import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.client.model.Cube1x1;
 import com.mojang.blaze3d.platform.InputConstants;
-import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
-import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import net.minecraft.client.KeyMapping;
 import org.lwjgl.glfw.GLFW;
 
@@ -37,14 +35,14 @@ public class ImmersiveMCClient {
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_COMMA, ImmersiveMC.globalKeyCategory);
         ImmersiveMC.RANGED_GRAB_KEY = new KeyMapping("key." + ImmersiveMC.MOD_ID + ".ranged_grab",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F24, ImmersiveMC.vrKeyCategory);
-        KeyMappingRegistry.register(ImmersiveMC.SUMMON_BACKPACK);
-        KeyMappingRegistry.register(ImmersiveMC.OPEN_SETTINGS);
-        KeyMappingRegistry.register(ImmersiveMC.RANGED_GRAB_KEY);
+        PlatformClient.registerKeyMapping(ImmersiveMC.SUMMON_BACKPACK);
+        PlatformClient.registerKeyMapping(ImmersiveMC.OPEN_SETTINGS);
+        PlatformClient.registerKeyMapping(ImmersiveMC.RANGED_GRAB_KEY);
 
-        EntityModelLayerRegistry.register(BackpackCraftingModel.LAYER_LOCATION, BackpackCraftingModel::createBodyLayer);
-        EntityModelLayerRegistry.register(BackpackLowDetailModel.LAYER_LOCATION, BackpackLowDetailModel::createBodyLayer);
-        EntityModelLayerRegistry.register(BackpackModel.LAYER_LOCATION, BackpackModel::createBodyLayer);
-        EntityModelLayerRegistry.register(BackpackBundleModel.LAYER_LOCATION, BackpackBundleModel::createBodyLayer);
-        EntityModelLayerRegistry.register(Cube1x1.LAYER_LOCATION, Cube1x1::createBodyLayer);
+        PlatformClient.registerEntityModelLayer(BackpackCraftingModel.LAYER_LOCATION, BackpackCraftingModel::createBodyLayer);
+        PlatformClient.registerEntityModelLayer(BackpackLowDetailModel.LAYER_LOCATION, BackpackLowDetailModel::createBodyLayer);
+        PlatformClient.registerEntityModelLayer(BackpackModel.LAYER_LOCATION, BackpackModel::createBodyLayer);
+        PlatformClient.registerEntityModelLayer(BackpackBundleModel.LAYER_LOCATION, BackpackBundleModel::createBodyLayer);
+        PlatformClient.registerEntityModelLayer(Cube1x1.LAYER_LOCATION, Cube1x1::createBodyLayer);
     }
 }
