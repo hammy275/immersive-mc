@@ -6,7 +6,7 @@ logoFile= "immersivemc_logo.png"
 
 [[mods]]
 modId = "immersivemc"
-version = "2.0.0"
+version = "${version}"
 displayName = "ImmersiveMC"
 displayURL = "https://hammy275.com/immersivemcwiki"
 authors = "hammy275"
