@@ -24,8 +24,7 @@
   },
   "depends": {
     "fabric": "*",
-    "minecraft": ">=1.18.2",
-    "architectury": ">=6.2.46"
+    "minecraft": ">=1.18.2"
   },
   "mixins": [
     "mixins.immersivemc.json"

@@ -47,10 +47,3 @@ mandatory = true
 versionRange = "[1.19.2,)"
 ordering = "NONE"
 side = "BOTH"
-
-[[dependencies.immersivemc]]
-modId = "architectury"
-mandatory = true
-versionRange = "[6.2.46,)"
-ordering = "AFTER"
-side = "BOTH"
