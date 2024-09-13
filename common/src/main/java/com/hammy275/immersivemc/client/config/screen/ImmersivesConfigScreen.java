@@ -1,8 +1,8 @@
 package com.hammy275.immersivemc.client.config.screen;
 
+import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
-import dev.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.GuiGraphics;

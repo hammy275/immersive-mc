@@ -10,6 +10,7 @@
     "AbstractCauldronBlockAccessor",
     "AnvilMenuMixin",
     "BeaconBlockEntityMixin",
+    "BucketItemAccessor",
     "ButtonBlockMixin",
     "ChiseledBookShelfBlockMixin",
     "ContainerOpenersCounterMixin",

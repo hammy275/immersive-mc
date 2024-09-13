@@ -1,8 +1,7 @@
 package com.hammy275.immersivemc.common.config;
 
+import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.util.RGBA;
-import dev.architectury.platform.Platform;
-import net.fabricmc.api.EnvType;
 
 import java.io.File;
 import java.io.IOException;
@@ -104,7 +103,7 @@ public class ConfigConverter {
         } finally {
             OLD_CONFIG_FILE.delete();
             ActiveConfig.FILE_SERVER.writeConfigFile(ConfigType.SERVER);
-            if (Platform.getEnv() == EnvType.CLIENT) {
+            if (Platform.isClient()) {
                 ActiveConfig.FILE_CLIENT.writeConfigFile(ConfigType.CLIENT);
             } else {
                 ActiveConfig.FILE_CLIENT = null; // Was set before since conversion assumes client. Make it null again.

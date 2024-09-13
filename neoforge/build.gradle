@@ -33,9 +33,7 @@ configurations {
 
 dependencies {
     neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
-    // Remove the next line if you don't want to depend on the API
-    modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
-    modApi "curse.maven:mcvrapi-591092:5032472"
+    modApi "curse.maven:mcvrapi-591092:5720555"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive = false }

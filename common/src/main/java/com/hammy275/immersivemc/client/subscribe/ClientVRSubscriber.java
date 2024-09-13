@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.subscribe;
 
+import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.client.config.ClientConstants;
@@ -8,10 +9,8 @@ import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
-import dev.architectury.platform.Platform;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
-import net.fabricmc.api.EnvType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -31,7 +30,7 @@ public class ClientVRSubscriber {
     }
 
     public static void immersiveTickVR(Player player) {
-        if (Platform.getEnv() != EnvType.CLIENT) return;
+        if (!Platform.isClient()) return;
         if (Minecraft.getInstance().gameMode == null) return;
         if (!VRPlugin.API.playerInVR(player)) return;
         IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
