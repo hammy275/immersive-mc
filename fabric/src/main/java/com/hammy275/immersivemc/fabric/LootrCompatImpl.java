@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc_fabric;
+package com.hammy275.immersivemc.fabric;
 
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.compat.lootr.LootrCompat;

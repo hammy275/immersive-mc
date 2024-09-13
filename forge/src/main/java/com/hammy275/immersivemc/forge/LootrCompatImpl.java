@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc_forge;
+package com.hammy275.immersivemc.forge;
 
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.compat.lootr.LootrCompat;

@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc_quilt;
+package com.hammy275.immersivemc.fabric;
 
 import net.blf02.vrapi.api.IVRAPI;
 import net.fabricmc.loader.api.FabricLoader;
