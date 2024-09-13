@@ -32,7 +32,7 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
-    modApi "curse.maven:mcvrapi-591092:5360321"
+    modApi "curse.maven:mcvrapi-591092:5719498"
 
     modApi "com.terraformersmc:modmenu:9.0.0"
     modApi "curse.maven:lootr-615106:5124828"
