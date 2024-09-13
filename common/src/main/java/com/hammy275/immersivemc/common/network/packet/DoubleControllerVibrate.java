@@ -1,11 +1,8 @@
 package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-
-import java.util.function.Supplier;
 
 public class DoubleControllerVibrate {
     private final float duration;
@@ -22,13 +19,9 @@ public class DoubleControllerVibrate {
         return new DoubleControllerVibrate(buffer.readFloat());
     }
 
-    public static void handle(final DoubleControllerVibrate message, Supplier<NetworkManager.PacketContext> ctx) {
-        ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
-            if (player == null) { // Do vibrate
-                NetworkClientHandlers.doDoubleRumble(message.duration);
-            }
-        });
-
+    public static void handle(final DoubleControllerVibrate message, ServerPlayer player) {
+        if (player == null) { // Do vibrate
+            NetworkClientHandlers.doDoubleRumble(message.duration);
+        }
     }
 }

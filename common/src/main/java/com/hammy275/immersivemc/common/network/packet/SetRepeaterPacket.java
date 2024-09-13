@@ -6,9 +6,6 @@ import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import dev.architectury.networking.NetworkManager;
-
-import java.util.function.Supplier;
 
 public class SetRepeaterPacket {
 
@@ -28,16 +25,12 @@ public class SetRepeaterPacket {
         return new SetRepeaterPacket(buffer.readBlockPos(), buffer.readInt());
     }
 
-    public static void handle(SetRepeaterPacket message, Supplier<NetworkManager.PacketContext> ctx) {
-        ctx.get().queue(() -> {
-            if (!ActiveConfig.FILE_SERVER.useRepeaterImmersive) return;
-            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
-            if (NetworkUtil.safeToRun(message.pos, player)) {
-                if (message.newDelay >= 1 && message.newDelay <= 4) {
-                    Util.setRepeater(player.level(), message.pos, message.newDelay);
-                }
+    public static void handle(SetRepeaterPacket message, ServerPlayer player) {
+        if (!ActiveConfig.FILE_SERVER.useRepeaterImmersive) return;
+        if (NetworkUtil.safeToRun(message.pos, player)) {
+            if (message.newDelay >= 1 && message.newDelay <= 4) {
+                Util.setRepeater(player.level(), message.pos, message.newDelay);
             }
-        });
-        
+        }
     }
 }

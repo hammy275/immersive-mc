@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.config;
 
-import dev.architectury.platform.Platform;
+
+import com.hammy275.immersivemc.Platform;
 
 import java.io.File;
 import java.nio.file.Paths;
