@@ -11,6 +11,7 @@
     "AbstractCauldronBlockAccessor",
     "AnvilMenuMixin",
     "BeaconBlockEntityMixin",
+    "BucketItemAccessor",
     "ButtonBlockMixin",
     "ChestLidControllerAccessor",
     "ChiseledBookShelfBlockMixin",

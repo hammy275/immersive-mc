@@ -1,16 +1,13 @@
 package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-
-import java.util.function.Supplier;
 
 public class FetchInventoryPacket<S extends NetworkStorage> {
 
@@ -50,13 +47,10 @@ public class FetchInventoryPacket<S extends NetworkStorage> {
         return new FetchInventoryPacket<>(handlerToSet, storage, pos);
     }
 
-    public static <NS extends NetworkStorage> void handle(final FetchInventoryPacket<NS> message, Supplier<NetworkManager.PacketContext> ctx) {
-        ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
-            if (player == null) {
-                NetworkClientHandlers.handleReceiveInvData(message.storage, message.pos, message.handler);
-            }
-        });
+    public static <NS extends NetworkStorage> void handle(final FetchInventoryPacket<NS> message, ServerPlayer player) {
+        if (player == null) {
+            NetworkClientHandlers.handleReceiveInvData(message.storage, message.pos, message.handler);
+        }
         
     }
 }

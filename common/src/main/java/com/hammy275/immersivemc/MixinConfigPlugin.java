@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc;
 
-import dev.architectury.platform.Platform;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -32,7 +31,7 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
 
     @Override
     public List<String> getMixins() {
-        if (!Platform.isForge()) {
+        if (!Platform.isForgeLike()) {
             List<String> extraMixins = new LinkedList<>();
             extraMixins.add("FenceGateBlockMixin");
             return extraMixins;

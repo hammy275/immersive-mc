@@ -4,7 +4,6 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,8 +12,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
-
-import java.util.function.Supplier;
 
 public class BeaconConfirmPacket {
 
@@ -36,29 +33,27 @@ public class BeaconConfirmPacket {
         return new BeaconConfirmPacket(buffer.readBlockPos(), buffer.readInt(), buffer.readInt());
     }
 
-    public static void handle(final BeaconConfirmPacket message, Supplier<NetworkManager.PacketContext> ctx) {
-        ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
-            if (NetworkUtil.safeToRun(message.pos, player)) {
-                if (player.level().getBlockEntity(message.pos) instanceof BeaconBlockEntity beacon) {
-                    ContainerData data = ((BeaconBlockEntityMixin) beacon).getBeaconData();
-                    BeaconStorage beaconStorage = (BeaconStorage) WorldStoragesImpl.getOrCreateS(message.pos, player.serverLevel());
-                    int secondId = message.secondaryId;
-                    if (data.get(0) == 4 && message.secondaryId == -1) {
-                        secondId = message.primaryId;
-                    }
-                    if (!beaconStorage.getItem(0).isEmpty() &&
-                            isValidForBeacon(data.get(0), message.primaryId, secondId)) {
-                        beaconStorage.setItem(0, ItemStack.EMPTY);
-                        data.set(1, message.primaryId);
-                        data.set(2, secondId);
-                        beaconStorage.setDirty(player.serverLevel());
-                        player.level().blockEntityChanged(beacon.getBlockPos());
-                    }
+    public static void handle(final BeaconConfirmPacket message, ServerPlayer player) {
+        if (NetworkUtil.safeToRun(message.pos, player)) {
+            if (player.level().getBlockEntity(message.pos) instanceof BeaconBlockEntity beacon) {
+                ContainerData data = ((BeaconBlockEntityMixin) beacon).getBeaconData();
+                BeaconStorage beaconStorage = (BeaconStorage) WorldStoragesImpl.getOrCreateS(message.pos, player.serverLevel());
+                int secondId = message.secondaryId;
+                if (data.get(0) == 4 && message.secondaryId == -1) {
+                    secondId = message.primaryId;
+                }
+                if (!beaconStorage.getItem(0).isEmpty() &&
+                        isValidForBeacon(data.get(0), message.primaryId, secondId)) {
+                    beaconStorage.setItem(0, ItemStack.EMPTY);
+                    data.set(1, message.primaryId);
+                    data.set(2, secondId);
+                    beaconStorage.setDirty(player.serverLevel());
+                    player.level().blockEntityChanged(beacon.getBlockPos());
                 }
             }
-        });
+        }
     }
+
     private static boolean isValidForBeacon(int beaconLevel, int primaryId, int secondaryId) {
         if (beaconLevel < 1 || (beaconLevel < 4 && secondaryId != -1)) {
             return false;

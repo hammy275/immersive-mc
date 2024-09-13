@@ -29,10 +29,8 @@ configurations {
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-    // Remove the next line if you don't want to depend on the API
-    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
-    modApi "curse.maven:mcvrapi-591092:4633771"
+    modApi "curse.maven:mcvrapi-591092:5720551"
     modApi "curse.maven:lootr-615106:4608507" // lootr before package rename (.blocks.)
     //modApi "curse.maven:lootr-615106:5639247" // lootr after package rename (.block.)
     modApi "curse.maven:clothconfigapi-348521:4973440" // lootr dependency

@@ -6,7 +6,6 @@ import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * Syncs config data and information about the ImmersiveMC state between the server and client.
@@ -59,25 +57,22 @@ public class ConfigSyncPacket {
         return new ConfigSyncPacket(incoming, handlerIDs);
     }
 
-    public static void handle(final ConfigSyncPacket message, Supplier<NetworkManager.PacketContext> ctx) {
-        ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
-            if (player == null) { // S2C
-                if (message.handlerIDs != null) {
-                    // Check handlers and kick on mismatch
-                    NetworkClientHandlers.checkHandlerMatch(message.handlerIDs);
-                }
-                // Load server config
-                ActiveConfig.FROM_SERVER = message.config;
-                ActiveConfig.loadActive();
-                ClientUtil.clearDisabledImmersives();
-                // Send server our config
-                Network.INSTANCE.sendToServer(new ConfigSyncPacket(ActiveConfig.FILE_CLIENT));
-            } else { // C2S sending us a config
-                message.config.mergeWithServer(ActiveConfig.FILE_SERVER);
-                ActiveConfig.registerPlayerConfig(ctx.get().getPlayer(), (ClientActiveConfig) message.config);
-                TrackedImmersives.clearForPlayer(player);
+    public static void handle(final ConfigSyncPacket message, ServerPlayer player) {
+        if (player == null) { // S2C
+            if (message.handlerIDs != null) {
+                // Check handlers and kick on mismatch
+                NetworkClientHandlers.checkHandlerMatch(message.handlerIDs);
             }
-        });
+            // Load server config
+            ActiveConfig.FROM_SERVER = message.config;
+            ActiveConfig.loadActive();
+            ClientUtil.clearDisabledImmersives();
+            // Send server our config
+            Network.INSTANCE.sendToServer(new ConfigSyncPacket(ActiveConfig.FILE_CLIENT));
+        } else { // C2S sending us a config
+            message.config.mergeWithServer(ActiveConfig.FILE_SERVER);
+            ActiveConfig.registerPlayerConfig(player, (ClientActiveConfig) message.config);
+            TrackedImmersives.clearForPlayer(player);
+        }
     }
 }

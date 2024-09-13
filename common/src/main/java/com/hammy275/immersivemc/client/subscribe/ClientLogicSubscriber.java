@@ -31,7 +31,6 @@ import com.hammy275.immersivemc.server.ChestToOpenSet;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
@@ -60,7 +59,7 @@ public class ClientLogicSubscriber {
     private static boolean alreadyInServer = false;
     private static boolean lastVRState = VRPluginVerify.clientInVR();
 
-    public static void onClientLogin(ClientLevel level) {
+    public static void onClientLogin(Minecraft minecraft) {
         if (!alreadyInServer) { // Only run if we're actually joining a new level, rather than changing dimensions
             ActiveConfig.loadDisabled(); // Load "disabled" config, so stuff is disabled if the server isn't running ImmersiveMC
             alreadyInServer = true;
