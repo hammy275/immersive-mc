@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc_forge;
+package com.hammy275.immersivemc.forge;
 
 import net.blf02.forge.VRAPIPlugin;
 import net.blf02.forge.VRAPIPluginProvider;
