@@ -9,7 +9,6 @@ pluginManagement {
 
 include("common")
 include("fabric")
-//include("quilt") Commented out until QFAPI 1.20.2
 include("forge")
 include("neoforge")
 

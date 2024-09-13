@@ -16,10 +16,10 @@
   },
   "entrypoints": {
     "main": [
-      "com.hammy275.immersivemc_fabric.ImmersiveMCFabric"
+      "com.hammy275.immersivemc.fabric.ImmersiveMCFabric"
     ],
     "modmenu": [
-      "com.hammy275.immersivemc_fabric.ModMenuIntegration"
+      "com.hammy275.immersivemc.fabric.ModMenuIntegration"
     ]
   },
   "depends": {

@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc_neoforge;
+package com.hammy275.immersivemc.neoforge;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import net.neoforged.api.distmarker.Dist;

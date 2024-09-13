@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc_neoforge;
+package com.hammy275.immersivemc.neoforge;
 
 import net.blf02.neoforge.VRAPIPlugin;
 import net.blf02.neoforge.VRAPIPluginProvider;
