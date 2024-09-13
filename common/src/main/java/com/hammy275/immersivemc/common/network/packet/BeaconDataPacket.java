@@ -3,15 +3,12 @@ package com.hammy275.immersivemc.common.network.packet;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
-
-import java.util.function.Supplier;
 
 public class BeaconDataPacket {
 
@@ -68,17 +65,14 @@ public class BeaconDataPacket {
         return new BeaconDataPacket(buffer.readBlockPos(), buffer.readInt(), buffer.readBoolean());
     }
 
-    public static void handle(final BeaconDataPacket packet, Supplier<NetworkManager.PacketContext> ctx) {
-        ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
-            if (player == null) { // S2C (got info from server)
-                NetworkClientHandlers.setBeaconData(packet);
-            } else { // C2S (asking for info)
-                if (player.getLevel().getBlockEntity(packet.pos) instanceof BeaconBlockEntity beacon) {
-                    Network.INSTANCE.sendToPlayer(player,
-                            BeaconDataPacket.fromBeacon(beacon));
-                }
+    public static void handle(final BeaconDataPacket packet, ServerPlayer player) {
+        if (player == null) { // S2C (got info from server)
+            NetworkClientHandlers.setBeaconData(packet);
+        } else { // C2S (asking for info)
+            if (player.getLevel().getBlockEntity(packet.pos) instanceof BeaconBlockEntity beacon) {
+                Network.INSTANCE.sendToPlayer(player,
+                        BeaconDataPacket.fromBeacon(beacon));
             }
-        });
+        }
     }
 }

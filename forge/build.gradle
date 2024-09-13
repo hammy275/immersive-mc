@@ -33,9 +33,7 @@ configurations {
 
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.forge_version}"
-    // Remove the next line if you don't want to depend on the API
-    modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
-    modApi "curse.maven:mcvrapi-591092:4548164"
+    modApi "curse.maven:mcvrapi-591092:5720550"
     modApi "curse.maven:ironfurnaces-237664:4796731"
     modApi "curse.maven:lootr-361276:4596370"
 

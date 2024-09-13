@@ -8,9 +8,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import dev.architectury.networking.NetworkManager;
-
-import java.util.function.Supplier;
 
 public class GrabItemPacket {
 
@@ -32,27 +29,22 @@ public class GrabItemPacket {
         return new GrabItemPacket(buffer.readInt());
     }
 
-    public static void handle(final GrabItemPacket packet, Supplier<NetworkManager.PacketContext> ctx) {
-        ctx.get().queue(() -> {
-            if (!ActiveConfig.FILE_SERVER.useRangedGrabImmersive) return;
-            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
-            if (player != null) {
-                Entity ent = player.level.getEntity(packet.entityId);
-                ActiveConfig playerConfig = ActiveConfig.getConfigForPlayer(player);
-                int range;
-                if (playerConfig.rangedGrabRange == -1) {
-                    range = 5;
-                } else {
-                    range = (playerConfig.rangedGrabRange + 1) * 2;
-                }
-                if (ent instanceof ItemEntity && player.distanceToSqr(ent) <= range * range &&
-                        Util.canPickUpItem((ItemEntity) ent, player)) {
-                    ItemEntity item = (ItemEntity) ent;
-                    ServerTrackerInit.rangedGrabTracker.infos.add(new RangedGrabTrackerServer.RangedGrabInfo(item, player));
-                }
+    public static void handle(final GrabItemPacket packet, ServerPlayer player) {
+        if (player != null) {
+            Entity ent = player.level.getEntity(packet.entityId);
+            ActiveConfig playerConfig = ActiveConfig.getConfigForPlayer(player);
+            int range;
+            if (playerConfig.rangedGrabRange == -1) {
+                range = 5;
+            } else {
+                range = (playerConfig.rangedGrabRange + 1) * 2;
             }
-        });
-        
+            if (ent instanceof ItemEntity && player.distanceToSqr(ent) <= range * range &&
+                    Util.canPickUpItem((ItemEntity) ent, player)) {
+                ItemEntity item = (ItemEntity) ent;
+                ServerTrackerInit.rangedGrabTracker.infos.add(new RangedGrabTrackerServer.RangedGrabInfo(item, player));
+            }
+        }
     }
 
 

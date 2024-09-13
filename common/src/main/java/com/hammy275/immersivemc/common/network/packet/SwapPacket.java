@@ -7,15 +7,12 @@ import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.api_impl.ItemSwapAmountImpl;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.function.Supplier;
 
 public class SwapPacket {
 
@@ -45,21 +42,17 @@ public class SwapPacket {
         return packet;
     }
 
-    public static void handle(final SwapPacket message, Supplier<NetworkManager.PacketContext> ctx) {
-        ctx.get().queue(() -> {
-            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
-            if (NetworkUtil.safeToRun(message.block, player)) {
-                BlockEntity tileEnt = player.level.getBlockEntity(message.block);
-                BlockState state = player.level.getBlockState(message.block);
-                for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
-                    if (handler.enabledInConfig(player) && Util.isValidBlocks(handler, message.block, player.level)) {
-                        handler.swap(message.slot, message.hand, message.block, player, new ItemSwapAmountImpl(message.placementMode));
-                        break;
-                    }
+    public static void handle(final SwapPacket message, ServerPlayer player) {
+        if (NetworkUtil.safeToRun(message.block, player)) {
+            BlockEntity tileEnt = player.level.getBlockEntity(message.block);
+            BlockState state = player.level.getBlockState(message.block);
+            for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
+                if (handler.enabledInConfig(player) && Util.isValidBlocks(handler, message.block, player.level)) {
+                    handler.swap(message.slot, message.hand, message.block, player, new ItemSwapAmountImpl(message.placementMode));
+                    break;
                 }
             }
-        });
-        
+        }
     }
 
 

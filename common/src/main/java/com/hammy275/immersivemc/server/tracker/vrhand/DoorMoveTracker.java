@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.server.tracker.vrhand;
 
+import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.vr.VRRumble;
@@ -7,7 +8,6 @@ import com.hammy275.immersivemc.mixin.DoorBlockMixin;
 import com.hammy275.immersivemc.mixin.FenceGateBlockMixin;
 import com.hammy275.immersivemc.server.LastTickVRData;
 import com.hammy275.immersivemc.server.data.LastTickData;
-import dev.architectury.platform.Platform;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -80,7 +80,7 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
                 SoundEvent sound = null;
                 if (blockState.getBlock() instanceof FenceGateBlock fence) {
                     // Forge uses the old SoundEvent system. Haven't found a good way to deal with that.
-                    if (!Platform.isForge()) {
+                    if (!Platform.isForgeLike()) {
                         FenceGateBlockMixin accessor = (FenceGateBlockMixin) fence;
                         sound = isNowOpen ? accessor.getType().fenceGateOpen() : accessor.getType().fenceGateClose();
                     }

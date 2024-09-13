@@ -7,9 +7,6 @@ import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import dev.architectury.networking.NetworkManager;
-
-import java.util.function.Supplier;
 
 public class InventorySwapPacket {
 
@@ -31,14 +28,10 @@ public class InventorySwapPacket {
         return packet;
     }
 
-    public static void handle(InventorySwapPacket message, Supplier<NetworkManager.PacketContext> ctx) {
-        ctx.get().queue(() -> {
-            if (!ActiveConfig.FILE_SERVER.useBagImmersive) return;
-            ServerPlayer player = ctx.get().getPlayer() instanceof ServerPlayer ? (ServerPlayer) ctx.get().getPlayer() : null;
-            if (player != null) {
-                Swap.handleInventorySwap(player, message.slot, InteractionHand.MAIN_HAND);
-            }
-        });
-        
+    public static void handle(InventorySwapPacket message, ServerPlayer player) {
+        if (!ActiveConfig.FILE_SERVER.useBagImmersive) return;
+        if (player != null) {
+            Swap.handleInventorySwap(player, message.slot, InteractionHand.MAIN_HAND);
+        }
     }
 }
