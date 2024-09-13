@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc_neoforge;
+package com.hammy275.immersivemc.neoforge;
 
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
 import net.neoforged.fml.ModLoadingContext;
