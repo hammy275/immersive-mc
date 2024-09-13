@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.api_impl;
 
+import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
@@ -15,7 +16,6 @@ import com.hammy275.immersivemc.mixin.DragonFireballRendererMixin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import dev.architectury.platform.Platform;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;

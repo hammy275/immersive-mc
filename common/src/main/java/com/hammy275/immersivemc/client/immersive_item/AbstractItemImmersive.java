@@ -1,10 +1,10 @@
 package com.hammy275.immersivemc.client.immersive_item;
 
+import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.client.immersive_item.info.AbstractItemInfo;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.architectury.platform.Platform;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Minecraft;

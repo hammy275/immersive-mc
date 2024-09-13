@@ -3,9 +3,8 @@ package com.hammy275.immersivemc.common.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
-import dev.architectury.platform.Platform;
-import dev.architectury.utils.Env;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -296,7 +295,7 @@ public class ActiveConfig implements Cloneable {
      */
     public static void loadFilesToMemory() {
         FILE_SERVER = readConfigFile(ConfigType.SERVER);
-        if (Platform.getEnvironment() == Env.CLIENT) {
+        if (Platform.isClient()) {
             FILE_CLIENT = (ClientActiveConfig) readConfigFile(ConfigType.CLIENT);
         }
         ConfigConverter.maybeDoConversion();

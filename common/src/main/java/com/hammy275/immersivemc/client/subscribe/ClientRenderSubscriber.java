@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.subscribe;
 
+import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
@@ -18,7 +19,6 @@ import com.hammy275.immersivemc.common.util.ShieldUtil;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.architectury.platform.Platform;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Camera;
