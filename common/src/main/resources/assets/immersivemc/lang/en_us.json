@@ -59,6 +59,8 @@
   "config.immersivemc.barrel.desc": "Enables/disables the ability to use the barrel immersive.",
   "config.immersivemc.beacon": "Use Beacon Immersion",
   "config.immersivemc.beacon.desc": "Enables/disables the ability to use the beacon immersive.",
+  "config.immersivemc.bottle_bucket": "Use Bottle and Bucket Immersion [VR Only]",
+  "config.immersivemc.bottle_bucket.desc": "Enables/disables the ability to scoop water into glass bottles and liquids into buckets.",
   "config.immersivemc.brewing": "Use Brewing Immersion",
   "config.immersivemc.brewing.desc": "Enables/disables the ability to use the brewing stand immersive.",
   "config.immersivemc.button": "Use Button Immersion [VR Only]",
