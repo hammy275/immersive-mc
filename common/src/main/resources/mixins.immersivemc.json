@@ -16,6 +16,7 @@
     "ChestLidControllerAccessor",
     "ContainerOpenersCounterMixin",
     "DoorBlockMixin",
+    "ItemMixin",
     "LevelMixin",
     "LivingEntityMixin",
     "ProjectileAccessor",
