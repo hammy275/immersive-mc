@@ -80,6 +80,7 @@ public class ActiveConfig implements Cloneable {
     public boolean useIronFurnacesFurnaceImmersive = true;
     public boolean useTinkersConstructCraftingStationImmersive = true;
     public boolean useLecternImmersive = true;
+    public boolean useBucketAndBottleImmersive = true;
 
     static {
         DISABLED.setDisabled();
@@ -248,6 +249,7 @@ public class ActiveConfig implements Cloneable {
         useIronFurnacesFurnaceImmersive = useIronFurnacesFurnaceImmersive && other.useIronFurnacesFurnaceImmersive;
         useTinkersConstructCraftingStationImmersive = useTinkersConstructCraftingStationImmersive && other.useTinkersConstructCraftingStationImmersive;
         useLecternImmersive = useLecternImmersive && other.useLecternImmersive;
+        useBucketAndBottleImmersive = useBucketAndBottleImmersive && other.useBucketAndBottleImmersive;
     }
 
     /**
@@ -288,6 +290,7 @@ public class ActiveConfig implements Cloneable {
         useIronFurnacesFurnaceImmersive = false;
         useTinkersConstructCraftingStationImmersive = false;
         useLecternImmersive = false;
+        useBucketAndBottleImmersive = false;
     }
 
     /**

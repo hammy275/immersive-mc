@@ -15,6 +15,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -31,6 +32,19 @@ import net.minecraft.world.phys.Vec3;
 import java.util.*;
 
 public class Util {
+
+    public static UseInfo activeUseInfo = null;
+
+    public static InteractionResultHolder<ItemStack> doUse(Player player, InteractionHand hand, BlockPos pos) {
+        InteractionResultHolder<ItemStack> result;
+        try {
+            activeUseInfo = new UseInfo(player, hand, pos);
+            result = player.getItemInHand(hand).use(player.level, player, hand);
+        } finally {
+            activeUseInfo = null;
+        }
+        return result;
+    }
 
     /**
      * Gets a look angle from pitch/yaw.
@@ -458,6 +472,12 @@ public class Util {
         @Override
         public String toString() {
             return "Merged Into: " + this.mergedInto + "\n" + "Merged From: " + this.mergedFrom;
+        }
+    }
+
+    public record UseInfo(Player player, InteractionHand hand, BlockPos pos) {
+        public Vec3 getVec3Pos() {
+            return Vec3.atCenterOf(pos);
         }
     }
 }

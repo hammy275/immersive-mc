@@ -17,6 +17,7 @@
     "ContainerOpenersCounterMixin",
     "DoorBlockMixin",
     "FenceGateBlockMixin",
+    "ItemMixin",
     "LevelMixin",
     "LivingEntityMixin",
     "ProjectileAccessor",
