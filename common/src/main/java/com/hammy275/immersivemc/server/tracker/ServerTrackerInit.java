@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.server.tracker;
 
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
+import com.hammy275.immersivemc.common.tracker.BottleAndBucketTracker;
 import com.hammy275.immersivemc.server.tracker.vrhand.*;
 
 import java.util.LinkedList;
@@ -21,4 +22,9 @@ public class ServerTrackerInit {
     public static final ArmorTracker armorTracker = new ArmorTracker();
     public static final FeedAnimalsTracker feedAnimalsTracker = new FeedAnimalsTracker();
     public static final CauldronTracker cauldronTracker = new CauldronTracker();
+    public static final BottleAndBucketTracker bottleAndBucketTracker = new BottleAndBucketTracker();
+
+    static {
+        playerTrackers.add(bottleAndBucketTracker);
+    }
 }
