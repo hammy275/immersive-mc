@@ -8,12 +8,8 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.resources.ResourceLocation;
 
 public class ImmersiveMCFabric implements ModInitializer {
-
-    public static final ResourceLocation S2C = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "s2c");
-    public static final ResourceLocation C2S = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "c2s");
 
     @Override
     public void onInitialize() {

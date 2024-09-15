@@ -31,8 +31,6 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 
 public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
 
@@ -233,13 +231,11 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
         VertexConsumer vertexConsumer =
                 Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.entityCutoutNoCull(imageLocation));
         PoseStack.Pose pose = stack.last();
-        Matrix4f matrix4f = pose.pose();
-        Matrix3f matrix3f = pose.normal();
 
-        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, light, 0f, 0, 0, 1);
-        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, light, 1f, 0, 1, 1);
-        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, light, 1f, 1, 1, 0);
-        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, light, 0f, 1, 0, 0);
+        DragonFireballRendererMixin.doVertex(vertexConsumer, pose, light, 0f, 0, 0, 1);
+        DragonFireballRendererMixin.doVertex(vertexConsumer, pose, light, 1f, 0, 1, 1);
+        DragonFireballRendererMixin.doVertex(vertexConsumer, pose, light, 1f, 1, 1, 0);
+        DragonFireballRendererMixin.doVertex(vertexConsumer, pose, light, 0f, 1, 0, 0);
 
         stack.popPose();
     }

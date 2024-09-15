@@ -12,7 +12,6 @@
     "BeaconBlockEntityMixin",
     "BucketItemAccessor",
     "ButtonBlockMixin",
-    "ChestLidControllerAccessor",
     "ChiseledBookShelfBlockMixin",
     "ContainerOpenersCounterMixin",
     "DoorBlockMixin",
@@ -38,7 +37,6 @@
     "MinecraftMixin",
     "MinecraftMixinAccessor",
     "MultiPlayerGameModeMixin",
-    "ScreenMixin",
     "throw_render_helpers.vivecraft.VivecraftItemRenderingHotswitchMixin",
     "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin"
   ]

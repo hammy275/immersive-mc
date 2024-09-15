@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.mixin;
 
+import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
@@ -13,10 +14,10 @@ public interface BeaconBlockEntityMixin {
     public int getLevels();
 
     @Accessor("primaryPower")
-    public MobEffect getPrimaryPower();
+    public Holder<MobEffect> getPrimaryPower();
 
     @Accessor("secondaryPower")
-    public MobEffect getSecondaryPower();
+    public Holder<MobEffect> getSecondaryPower();
 
     @Accessor("dataAccess")
     public ContainerData getBeaconData();

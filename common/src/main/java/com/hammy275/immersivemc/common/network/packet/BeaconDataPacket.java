@@ -25,7 +25,7 @@ public class BeaconDataPacket {
 
     public static BeaconDataPacket fromBeacon(BeaconBlockEntity beacon) {
         BeaconBlockEntityMixin accessor = (BeaconBlockEntityMixin) beacon;
-        int primaryId = BuiltInRegistries.MOB_EFFECT.getId(accessor.getPrimaryPower());
+        int primaryId = BuiltInRegistries.MOB_EFFECT.getId(accessor.getPrimaryPower().value());
 
         int powerIndex = -1;
         if (primaryId == speedId) {
@@ -41,7 +41,7 @@ public class BeaconDataPacket {
         }
 
         return new BeaconDataPacket(beacon.getBlockPos(),
-                powerIndex, BuiltInRegistries.MOB_EFFECT.getId(accessor.getSecondaryPower()) == regenId);
+                powerIndex, BuiltInRegistries.MOB_EFFECT.getId(accessor.getSecondaryPower().value()) == regenId);
     }
 
     public BeaconDataPacket(BlockPos pos, int powerIndex, boolean useRegen) {

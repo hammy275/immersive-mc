@@ -3,33 +3,23 @@ package com.hammy275.immersivemc.client.config.screen;
 import com.hammy275.immersivemc.common.config.ConfigType;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 
-public class ImmersivesCustomizeScreen extends Screen {
-
-    protected final Screen lastScreen;
-    protected OptionsList list;
+public class ImmersivesCustomizeScreen extends OptionsSubScreen {
 
     protected static int BUTTON_WIDTH = 256;
     protected static int BUTTON_HEIGHT = 20;
 
 
     public ImmersivesCustomizeScreen(Screen lastScreen) {
-        super(Component.translatable("screen.immersivemc.immersives_customize.title"));
-        this.lastScreen = lastScreen;
+        super(lastScreen, Minecraft.getInstance().options, Component.translatable("screen.immersivemc.immersives_customize.title"));
     }
 
     @Override
-    protected void init() {
-        super.init();
-
-        this.list = new OptionsList(Minecraft.getInstance(),
-                this.width, this.height - 64, 32, 24);
-
+    protected void addOptions() {
         ScreenUtils.addOptionIfClient("disable_vanilla_guis", config -> config.disableVanillaInteractionsForSupportedImmersives, (config, newVal) -> config.disableImmersiveMCOutsideVR = newVal, this.list);
         ScreenUtils.addOptionIfClient("return_items", config -> config.returnItemsWhenLeavingImmersives, (config, newVal) -> config.returnItemsWhenLeavingImmersives = newVal, this.list);
         ScreenUtils.addOptionIfClient("do_rumble", config -> config.doVRControllerRumble, (config, newVal) -> config.doVRControllerRumble = newVal, this.list);
@@ -66,30 +56,11 @@ public class ImmersivesCustomizeScreen extends Screen {
                     () -> ConfigScreen.getClientConfigIfAdjusting().rangedGrabRange, (newVal) -> ConfigScreen.getClientConfigIfAdjusting().rangedGrabRange = newVal
             ));
         }
-
-        this.addRenderableWidget(this.list);
-
-        this.addRenderableWidget(ScreenUtils.createDoneButton(
-                (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT,
-                this
-        ));
-    }
-
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(graphics, mouseX, mouseY, partialTicks);
-
-        super.render(graphics, mouseX, mouseY, partialTicks);
-
-        graphics.drawCenteredString(this.font, this.title.getString(),
-                this.width / 2, 8, 0xFFFFFF);
-
     }
 
     @Override
     public void onClose() {
         ConfigScreen.writeAdjustingConfig();
-        Minecraft.getInstance().setScreen(lastScreen);
+        super.onClose();
     }
 }

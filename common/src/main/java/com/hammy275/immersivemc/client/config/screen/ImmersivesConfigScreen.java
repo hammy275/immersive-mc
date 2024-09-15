@@ -6,8 +6,8 @@ import com.hammy275.immersivemc.client.immersive.Immersives;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
@@ -15,42 +15,21 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class ImmersivesConfigScreen extends Screen {
+public class ImmersivesConfigScreen extends OptionsSubScreen {
 
     protected final ScreenType type;
-
-    protected final Screen lastScreen;
-    protected OptionsList list;
 
 
     protected static int BUTTON_WIDTH = 128;
     protected static int BUTTON_HEIGHT = 20;
 
     public ImmersivesConfigScreen(Screen screen, ScreenType type) {
-        super(Component.translatable("screen.immersivemc.immersives_config.title"));
-        this.lastScreen = screen;
+        super(screen, Minecraft.getInstance().options, Component.translatable("screen.immersivemc.immersives_config.title"));
         this.type = type;
     }
 
     @Override
-    protected void init() {
-        super.init();
-
-        this.list = new OptionsList(Minecraft.getInstance(),
-                this.width, this.height - 64, 32, 24);
-
-        initOptionsList();
-
-        this.addRenderableWidget(this.list);
-
-        this.addRenderableWidget(ScreenUtils.createDoneButton(
-                (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT,
-                this
-        ));
-    }
-
-    protected void initOptionsList() {
+    protected void addOptions() {
         List<OptionInstance<Boolean>> options = new ArrayList<>();
         if (this.type.isNonVR()) {
             if (Platform.isModLoaded("tconstruct")) {
@@ -97,20 +76,16 @@ public class ImmersivesConfigScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(graphics, mouseX, mouseY, partialTicks);
-
         super.render(graphics, mouseX, mouseY, partialTicks);
 
-        graphics.drawCenteredString(this.font, this.title.getString(),
-                this.width / 2, 8, 0xFFFFFF);
         graphics.drawCenteredString(this.font, Component.translatable("screen.immersivemc.immersives_config.subtitle"),
-                this.width / 2, 8 + this.font.lineHeight, 0xFFFFFF);
+                this.width / 2, this.font.lineHeight + 13, 0xFFFFFF);
     }
 
     @Override
     public void onClose() {
         ConfigScreen.writeAdjustingConfig();
-        Minecraft.getInstance().setScreen(lastScreen);
+        super.onClose();
     }
 
     public enum ScreenType {

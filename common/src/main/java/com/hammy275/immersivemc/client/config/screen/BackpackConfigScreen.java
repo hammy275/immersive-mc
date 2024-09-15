@@ -9,14 +9,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
-import org.joml.Vector3f;
 
 import java.time.Instant;
 
@@ -24,37 +23,17 @@ import java.time.Instant;
 Thanks to https://leo3418.github.io/2021/03/31/forge-mod-config-screen-1-16.html for a guide that was very
 helpful in writing this.
 */
-public class BackpackConfigScreen extends Screen {
-
-    protected final Screen parentScreen;
-    protected OptionsList list;
+public class BackpackConfigScreen extends OptionsSubScreen {
 
     protected static int BUTTON_WIDTH = 128;
     protected static int BUTTON_HEIGHT = 20;
 
     public BackpackConfigScreen(Screen lastScreen) {
-        super(Component.translatable("screen." + ImmersiveMC.MOD_ID + ".backpack_config.title"));
-        this.parentScreen = lastScreen;
+        super(lastScreen, Minecraft.getInstance().options, Component.translatable("screen." + ImmersiveMC.MOD_ID + ".backpack_config.title"));
     }
 
     @Override
-    protected void init() {
-        this.list = new OptionsList(Minecraft.getInstance(),
-                this.width * 3 / 4, this.height - 64, 32, 24);
-
-        initOptionsList();
-
-        this.addRenderableWidget(this.list);
-
-        this.addRenderableWidget(ScreenUtils.createDoneButton(
-                (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT,
-                this
-        ));
-    }
-
-    protected void initOptionsList() {
-
+    protected void addOptions() {
         this.list.addBig(
             ScreenUtils.createEnumOption(BackpackMode.class,
                     "config.immersivemc.backpack_mode",
@@ -67,7 +46,7 @@ public class BackpackConfigScreen extends Screen {
                         // Also set ACTIVE mode since that's what getBackpackModel() looks at in renderBackpack()
                         ActiveConfig.activeRaw().bagMode = newMode;
                         if (oldMode.colorable != newMode.colorable) {
-                            Minecraft.getInstance().setScreen(new BackpackConfigScreen(parentScreen));
+                            Minecraft.getInstance().setScreen(new BackpackConfigScreen(lastScreen));
                         }
                     }
         ));
@@ -105,15 +84,8 @@ public class BackpackConfigScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(graphics, mouseX, mouseY, partialTicks);
-
         super.render(graphics, mouseX, mouseY, partialTicks);
-
-        graphics.drawCenteredString(this.font, this.title.getString(),
-                this.width / 2, 8, 0xFFFFFF);
-
         renderBackpack(graphics.pose());
-
     }
 
     protected void renderBackpack(PoseStack stack) {
@@ -145,7 +117,7 @@ public class BackpackConfigScreen extends Screen {
     @Override
     public void onClose() {
         ConfigScreen.writeAdjustingConfig();
-        Minecraft.getInstance().setScreen(parentScreen);
+        super.onClose();
     }
 
     protected int getRGB(char type) {

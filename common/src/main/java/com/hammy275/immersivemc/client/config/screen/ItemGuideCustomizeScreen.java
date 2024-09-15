@@ -10,9 +10,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -23,32 +23,21 @@ import net.minecraft.world.phys.Vec3;
 
 import java.time.Instant;
 
-public class ItemGuideCustomizeScreen extends Screen {
+public class ItemGuideCustomizeScreen extends OptionsSubScreen {
 
     private static final String[] types = new String[]{"item_guide", "item_guide_selected", "ranged_grab"};
     private static final char[] rgba = new char[]{'r', 'g', 'b', 'a'};
-
-    private final Screen lastScreen;
-
-    protected OptionsList list;
 
     protected static int BUTTON_WIDTH = 128;
     protected static int BUTTON_HEIGHT = 20;
 
     public ItemGuideCustomizeScreen(Screen lastScreen) {
-        super(Component.translatable("screen." + ImmersiveMC.MOD_ID + ".item_guide_customize_screen"));
-        this.lastScreen = lastScreen;
+        super(lastScreen, Minecraft.getInstance().options, Component.translatable("screen." + ImmersiveMC.MOD_ID + ".item_guide_customize_screen"));
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(graphics, mouseX, mouseY, partialTicks);
-
         super.render(graphics, mouseX, mouseY, partialTicks);
-
-        graphics.drawCenteredString(this.font, this.title.getString(),
-                this.width / 2, 8, 0xFFFFFF);
-
         renderPreview(graphics.pose(), ConfigScreen.getClientConfigIfAdjusting().itemGuideColor, 0.25f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSize);
         renderPreview(graphics.pose(), ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedColor, 0.5f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize);
         // Render square for particle color by using our cube model lol
@@ -109,21 +98,17 @@ public class ItemGuideCustomizeScreen extends Screen {
     }
 
     @Override
-    protected void init() {
-        this.list = new OptionsList(Minecraft.getInstance(),
-                this.width * 3 / 4, this.height - 64, 32, 24);
-
-
+    protected void addOptions() {
         this.list.addBig(
-            ScreenUtils.createEnumOption(PlacementGuideMode.class,
-                    "config.immersivemc.placement_guide_mode",
-                    (guideMode) -> Component.translatable("config.immersivemc.placement_guide_mode." + guideMode.ordinal()),
-                    (guideMode -> Component.translatable("config.immersivemc.placement_guide_mode.desc")),
-                    () -> ConfigScreen.getClientConfigIfAdjusting().placementGuideMode,
-                    (newModeIndex, newMode) -> {
-                        ConfigScreen.getClientConfigIfAdjusting().placementGuideMode = newMode;
-                    }
-        ));
+                ScreenUtils.createEnumOption(PlacementGuideMode.class,
+                        "config.immersivemc.placement_guide_mode",
+                        (guideMode) -> Component.translatable("config.immersivemc.placement_guide_mode." + guideMode.ordinal()),
+                        (guideMode -> Component.translatable("config.immersivemc.placement_guide_mode.desc")),
+                        () -> ConfigScreen.getClientConfigIfAdjusting().placementGuideMode,
+                        (newModeIndex, newMode) -> {
+                            ConfigScreen.getClientConfigIfAdjusting().placementGuideMode = newMode;
+                        }
+                ));
 
 
         for (int i = 0; i < types.length; i++) {
@@ -134,7 +119,7 @@ public class ItemGuideCustomizeScreen extends Screen {
                 this.list.addBig(ScreenUtils.createIntSlider(
                                 sizeKey, (value) -> Component.literal(I18n.get(sizeKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
                                 0, 100, () -> (int) (ConfigScreen.getClientConfigIfAdjusting().itemGuideSize * 100),
-                                 (newVal) -> ConfigScreen.getClientConfigIfAdjusting().itemGuideSize = newVal / 100.0d
+                                (newVal) -> ConfigScreen.getClientConfigIfAdjusting().itemGuideSize = newVal / 100.0d
                         )
                 );
             } else if (i == 1) {
@@ -161,19 +146,11 @@ public class ItemGuideCustomizeScreen extends Screen {
                 ));
             }
         }
-
-        this.addRenderableWidget(this.list);
-        this.addRenderableWidget(ScreenUtils.createDoneButton(
-                (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT,
-                this
-        ));
-
     }
 
     @Override
     public void onClose() {
         ConfigScreen.writeAdjustingConfig();
-        Minecraft.getInstance().setScreen(this.lastScreen);
+        super.onClose();
     }
 }
