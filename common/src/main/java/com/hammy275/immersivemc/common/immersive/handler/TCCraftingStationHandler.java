@@ -84,6 +84,6 @@ public class TCCraftingStationHandler extends ContainerHandler<ListOfItemsStorag
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "tinkers_construct_crafting_station");
+        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "tinkers_construct_crafting_station");
     }
 }

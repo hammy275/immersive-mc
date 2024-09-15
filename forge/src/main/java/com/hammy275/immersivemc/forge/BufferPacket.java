@@ -1,31 +1,29 @@
 package com.hammy275.immersivemc.forge;
 
-import com.hammy275.immersivemc.common.network.Network;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import com.hammy275.immersivemc.ImmersiveMC;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
-public class BufferPacket {
+public record BufferPacket(RegistryFriendlyByteBuf buffer) implements CustomPacketPayload {
 
-    private final FriendlyByteBuf buffer;
+    public static final Type<BufferPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "network"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, BufferPacket> CODEC =
+            CustomPacketPayload.codec(BufferPacket::write, BufferPacket::read);
 
-    public BufferPacket(FriendlyByteBuf buffer) {
-        this.buffer = buffer;
+    public static BufferPacket read(RegistryFriendlyByteBuf buffer) {
+        return new BufferPacket(new RegistryFriendlyByteBuf(buffer.readBytes(buffer.readInt()), buffer.registryAccess()));
     }
 
-    public static void encode(BufferPacket message, FriendlyByteBuf buffer) {
-        buffer.writeInt(message.buffer.readableBytes());
-        buffer.writeBytes(message.buffer);
-        message.buffer.resetReaderIndex();
+    public void write(RegistryFriendlyByteBuf buffer) {
+        buffer.writeInt(this.buffer.readableBytes());
+        buffer.writeBytes(this.buffer);
+        this.buffer.resetReaderIndex();
     }
 
-    public static BufferPacket decode(FriendlyByteBuf buffer) {
-        return new BufferPacket(new FriendlyByteBuf(buffer.readBytes(buffer.readInt())));
-    }
-
-    public static void handle(BufferPacket message, CustomPayloadEvent.Context ctx) {
-        ctx.enqueueWork(() -> {
-            Network.INSTANCE.doReceive(ctx.getSender(), message.buffer);
-        });
-        ctx.setPacketHandled(true);
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return ID;
     }
 }

@@ -25,10 +25,10 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -244,7 +244,7 @@ public class Immersives {
                     if (item != null && !item.isEmpty()) {
                         item = item.is(Items.BOOK) ? new ItemStack(Items.ENCHANTED_BOOK) : item.copy();
                         if (data.isPresent()) {
-                            EnchantmentHelper.setEnchantments(ClientConstants.fakeEnch, item);
+                            item.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
                         }
                     }
                     info.setFakeItem(i, item);

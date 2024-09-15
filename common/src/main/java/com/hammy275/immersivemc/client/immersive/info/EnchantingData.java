@@ -1,5 +1,8 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.enchantment.Enchantment;
 
@@ -18,10 +21,11 @@ public class EnchantingData {
         }
 
         public void set(int xpLevels, int enchHint, int levelHint) {
-            Enchantment ench = Enchantment.byId(enchHint);
+            Registry<Enchantment> enchantments = Minecraft.getInstance().level.registryAccess().registry(Registries.ENCHANTMENT).get();
+            Enchantment ench = enchantments.byId(enchHint);
             if (ench != null) {
                 this.levelsNeeded = xpLevels;
-                this.textPreview = Component.literal(ench.getFullname(levelHint).getString() + "...?");
+                this.textPreview = Component.literal(Enchantment.getFullname(enchantments.wrapAsHolder(ench), levelHint).getString() + "...?");
             } else {
                 this.textPreview = null;
             }

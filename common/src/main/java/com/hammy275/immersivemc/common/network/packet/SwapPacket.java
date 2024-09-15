@@ -8,7 +8,7 @@ import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.api_impl.ItemSwapAmountImpl;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -27,14 +27,14 @@ public class SwapPacket {
         this.hand = hand;
     }
 
-    public static void encode(SwapPacket packet, FriendlyByteBuf buffer) {
+    public static void encode(SwapPacket packet, RegistryFriendlyByteBuf buffer) {
         buffer.writeEnum(packet.placementMode);
         buffer.writeBlockPos(packet.block);
         buffer.writeInt(packet.slot);
         buffer.writeInt(packet.hand == InteractionHand.MAIN_HAND ? 0 : 1);
     }
 
-    public static SwapPacket decode(FriendlyByteBuf buffer) {
+    public static SwapPacket decode(RegistryFriendlyByteBuf buffer) {
         PlacementMode mode = buffer.readEnum(PlacementMode.class);
         SwapPacket packet = new SwapPacket(buffer.readBlockPos(), buffer.readInt(),
                 buffer.readInt() == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);

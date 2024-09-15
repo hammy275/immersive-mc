@@ -13,11 +13,11 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 public class Cube1x1 extends Model {
-    public static final ResourceLocation textureLocation = new ResourceLocation(ImmersiveMC.MOD_ID,
+    public static final ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID,
             "cube.png");
 
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(ImmersiveMC.MOD_ID, "cube"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "cube"), "main");
     private final ModelPart bb_main;
 
     public Cube1x1(ModelPart root) {
@@ -34,15 +34,16 @@ public class Cube1x1 extends Model {
         return LayerDefinition.create(meshdefinition, 16, 16);
     }
 
-    @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-    }
-
-    public void render(PoseStack stack, VertexConsumer consumer, float red, float green, float blue, float alpha, float size, int light) {
+    public void render(PoseStack stack, VertexConsumer consumer, int color, float size, int light) {
         stack.pushPose();
         stack.scale(size * 16f, size * 16f, size * 16f);
-        renderToBuffer(stack, consumer, light, OverlayTexture.NO_OVERLAY, red, green, blue, alpha);
+        renderToBuffer(stack, consumer, light, OverlayTexture.NO_OVERLAY, color);
         stack.popPose();
+    }
+
+    @Override
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+
     }
 }

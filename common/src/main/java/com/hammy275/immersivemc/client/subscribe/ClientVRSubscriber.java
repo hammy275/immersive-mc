@@ -36,7 +36,7 @@ public class ClientVRSubscriber {
         IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
 
         // Track things the HMD is looking at (cursor is already covered in ClientLogicSubscriber)
-        double dist = Minecraft.getInstance().gameMode.getPickRange();
+        double dist = Minecraft.getInstance().player.blockInteractionRange();
         Vec3 start = vrPlayer.getHMD().position();
         Vec3 look = vrPlayer.getHMD().getLookAngle();
         Vec3 end = vrPlayer.getHMD().position().add(look.x * dist, look.y * dist, look.z * dist);

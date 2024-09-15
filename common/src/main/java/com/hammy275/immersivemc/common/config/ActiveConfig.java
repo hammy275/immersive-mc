@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -309,7 +309,7 @@ public class ActiveConfig implements Cloneable {
      * Encodes this ActiveConfig instance into the buffer.
      * @param buffer Buffer to encode into.
      */
-    public void encode(FriendlyByteBuf buffer) {
+    public void encode(RegistryFriendlyByteBuf buffer) {
         buffer.writeBoolean(this instanceof ClientActiveConfig);
         buffer.writeInt(fieldsHash);
         buffer.writeUtf(GSON.toJson(this));
@@ -319,7 +319,7 @@ public class ActiveConfig implements Cloneable {
      * Decodes a buffer into a (Client)ActiveConfig instance.
      * @param buffer Buffer to decode from.
      */
-    public static ActiveConfig decode(FriendlyByteBuf buffer) {
+    public static ActiveConfig decode(RegistryFriendlyByteBuf buffer) {
         Class<? extends ActiveConfig> configClass = buffer.readBoolean() ? ClientActiveConfig.class : ActiveConfig.class;
         int hashFromBuffer = buffer.readInt();
         if (hashFromBuffer != fieldsHash) {

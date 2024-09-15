@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.FishingRodItem;
@@ -11,11 +11,11 @@ public class ReelFishPacket {
 
     }
 
-    public static void encode(ReelFishPacket message, FriendlyByteBuf buffer) {
+    public static void encode(ReelFishPacket message, RegistryFriendlyByteBuf buffer) {
 
     }
 
-    public static ReelFishPacket decode(FriendlyByteBuf buffer) {
+    public static ReelFishPacket decode(RegistryFriendlyByteBuf buffer) {
         return new ReelFishPacket();
     }
 

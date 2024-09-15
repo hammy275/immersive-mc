@@ -53,7 +53,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     public static final BackpackCraftingModel craftingModel =
             new BackpackCraftingModel(Minecraft.getInstance().getEntityModels().bakeLayer(BackpackCraftingModel.LAYER_LOCATION));
 
-    private static final Vector3f maxColor = new Vector3f(1f, 1f, 1f);
+    private static final int maxColor = 0xFFFFFFFF;
 
     private final double spacing = 3d/8d;
 
@@ -163,7 +163,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderType.entityCutout(getBackpackTexture())),
                 info.light, OverlayTexture.NO_OVERLAY,
-                info.rgb.x(), info.rgb.y(), info.rgb.z(), 1);
+                info.argb);
 
         // Translate and render the crafting on the side of the backpack and down a bit
         // (yes, positive y in this context moves it down lol)
@@ -172,7 +172,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderType.entityCutout(BackpackCraftingModel.textureLocation)),
                 info.light, OverlayTexture.NO_OVERLAY,
-                1, 1, 1, 1);
+                0xFFFFFFFF);
 
         stack.popPose();
 
@@ -283,12 +283,9 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
         }
     }
 
-    public static Vector3f getBackpackColor() {
+    public static int getBackpackColor() {
         if (ActiveConfig.active().bagMode.colorable) {
-            Vector3f rgb = new Vector3f(ActiveConfig.active().bagColor >> 16, ActiveConfig.active().bagColor >> 8 & 255,
-                    ActiveConfig.active().bagColor & 255);
-            rgb.mul(1f/255f);
-            return rgb;
+            return ActiveConfig.active().bagColor | 0xFF000000;
         } else {
             return maxColor;
         }
@@ -330,7 +327,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
         info.renderPos = info.renderPos.add(info.backVec.scale(1d/6d));
         info.renderPos = info.renderPos.add(rightVec.scale(0.75));
 
-        info.rgb = getBackpackColor();
+        info.argb = getBackpackColor();
 
         info.centerTopPos = info.renderPos.add(info.downVec.scale(-0.7)).add(leftVec);
         info.centerTopPos = info.centerTopPos.add(rightVec);

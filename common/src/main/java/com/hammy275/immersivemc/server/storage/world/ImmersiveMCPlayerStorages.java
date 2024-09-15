@@ -1,12 +1,19 @@
 package com.hammy275.immersivemc.server.storage.world;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.SavedData;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Uses SavedData to hold player storage
@@ -46,7 +53,7 @@ public class ImmersiveMCPlayerStorages extends SavedData {
         throw new IllegalArgumentException("Can only access storage on server-side!");
     }
 
-    public static ImmersiveMCPlayerStorages load(CompoundTag nbt) {
+    public static ImmersiveMCPlayerStorages load(CompoundTag nbt, HolderLookup.Provider provider) {
         ImmersiveMCPlayerStorages playerStorage = new ImmersiveMCPlayerStorages();
         nbt = maybeUpgradeNBT(nbt);
         Set<String> keys = nbt.getAllKeys();
@@ -55,7 +62,7 @@ public class ImmersiveMCPlayerStorages extends SavedData {
             CompoundTag bagItems = nbt.getCompound(uuidStr).getCompound("bagItems");
             List<ItemStack> items = new ArrayList<>();
             for (int i = 0; i <= 4; i++) {
-                items.add(ItemStack.of(bagItems.getCompound(String.valueOf(i))));
+                items.add(ItemStack.parseOptional(provider, bagItems.getCompound(String.valueOf(i))));
             }
             playerStorage.backpackCraftingItemsMap.put(uuid, items);
         }
@@ -63,17 +70,17 @@ public class ImmersiveMCPlayerStorages extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag nbt) {
+    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) {
         for (Map.Entry<UUID, List<ItemStack>> entry : backpackCraftingItemsMap.entrySet()) {
             CompoundTag playerData = new CompoundTag();
             CompoundTag bagData = new CompoundTag();
             List<ItemStack> items = entry.getValue();
             for (int i = 0; i <= 4; i++) {
-                CompoundTag itemData = new CompoundTag();
+                Tag itemData;
                 if (i >= items.size()) {
-                    itemData = ItemStack.EMPTY.save(itemData);
+                    itemData = ItemStack.EMPTY.saveOptional(provider);
                 } else {
-                    itemData = items.get(i).save(itemData);
+                    itemData = items.get(i).saveOptional(provider);
                 }
                 bagData.put(String.valueOf(i), itemData);
             }

@@ -77,6 +77,6 @@ public class FurnaceHandler extends ContainerHandler<ListOfItemsStorage> {
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "furnace");
+        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "furnace");
     }
 }

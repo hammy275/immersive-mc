@@ -7,13 +7,19 @@ import com.hammy275.immersivemc.server.data.LastTickData;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.cauldron.CauldronInteraction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BottleItem;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.SolidBucketItem;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -60,7 +66,7 @@ public class CauldronTracker extends AbstractVRHandTracker {
         boolean inCauldronBlock = handState.getBlock() instanceof AbstractCauldronBlock;
         ItemStack handStack = player.getItemInHand(hand);
         Item handItem = handStack.getItem();
-        Potion heldPotion = PotionUtils.getPotion(handStack);
+        Holder<Potion> heldPotion = handStack.get(DataComponents.POTION_CONTENTS).potion().orElse(null);
         CauldronInteraction interaction = ((AbstractCauldronBlockAccessor) cauldronBlock).getInteractions().map().get(handItem);
 
         if (interaction == null) return;
@@ -90,7 +96,7 @@ public class CauldronTracker extends AbstractVRHandTracker {
         return config.useCauldronImmersive;
     }
 
-    private void possiblySetCooldown(Player player, InteractionResult res) {
+    private void possiblySetCooldown(Player player, ItemInteractionResult res) {
         if (res.consumesAction()) {
             cooldown.put(player.getUUID(), 5);
         }

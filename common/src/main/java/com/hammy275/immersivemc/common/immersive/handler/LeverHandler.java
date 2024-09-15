@@ -51,6 +51,6 @@ public class LeverHandler implements ImmersiveHandler<NullStorage> {
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "lever");
+        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "lever");
     }
 }

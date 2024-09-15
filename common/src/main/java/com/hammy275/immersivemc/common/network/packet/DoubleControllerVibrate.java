@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 
 public class DoubleControllerVibrate {
@@ -11,11 +11,11 @@ public class DoubleControllerVibrate {
         this.duration = duration;
     }
 
-    public static void encode(DoubleControllerVibrate packet, FriendlyByteBuf buffer) {
+    public static void encode(DoubleControllerVibrate packet, RegistryFriendlyByteBuf buffer) {
         buffer.writeFloat(packet.duration);
     }
 
-    public static DoubleControllerVibrate decode(FriendlyByteBuf buffer) {
+    public static DoubleControllerVibrate decode(RegistryFriendlyByteBuf buffer) {
         return new DoubleControllerVibrate(buffer.readFloat());
     }
 

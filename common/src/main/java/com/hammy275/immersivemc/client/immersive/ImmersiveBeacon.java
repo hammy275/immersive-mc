@@ -44,15 +44,15 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
     private static final double displayHitboxSize = 0.2;
     private static final double effectCircleRadius = 0.2;
     private static final ResourceLocation[] effectLocations = new ResourceLocation[]{
-            new ResourceLocation("textures/mob_effect/speed.png"),
-            new ResourceLocation("textures/mob_effect/haste.png"),
-            new ResourceLocation("textures/mob_effect/resistance.png"),
-            new ResourceLocation("textures/mob_effect/jump_boost.png"),
-            new ResourceLocation("textures/mob_effect/strength.png")
+            ResourceLocation.withDefaultNamespace("textures/mob_effect/speed.png"),
+            ResourceLocation.withDefaultNamespace("textures/mob_effect/haste.png"),
+            ResourceLocation.withDefaultNamespace("textures/mob_effect/resistance.png"),
+            ResourceLocation.withDefaultNamespace("textures/mob_effect/jump_boost.png"),
+            ResourceLocation.withDefaultNamespace("textures/mob_effect/strength.png")
     };
-    private static final ResourceLocation regenerationLocation = new ResourceLocation("textures/mob_effect/regeneration.png");
-    private static final ResourceLocation confirmLocation = new ResourceLocation(ImmersiveMC.MOD_ID, "confirm.png");
-    private static final ResourceLocation addLocation = new ResourceLocation(ImmersiveMC.MOD_ID, "add.png");
+    private static final ResourceLocation regenerationLocation = ResourceLocation.withDefaultNamespace("textures/mob_effect/regeneration.png");
+    private static final ResourceLocation confirmLocation = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "confirm.png");
+    private static final ResourceLocation addLocation = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "add.png");
 
     @Override
     public BeaconInfo buildInfo(BlockPos pos, Level level) {
@@ -72,7 +72,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
             info.regenSelected = false;
         } else if (hitboxIndex == 7) {
             Network.INSTANCE.sendToServer(new BeaconConfirmPacket(info.getBlockPosition(), info.getEffectId(),
-                    info.regenSelected ? BuiltInRegistries.MOB_EFFECT.getId(MobEffects.REGENERATION) : -1));
+                    info.regenSelected ? BuiltInRegistries.MOB_EFFECT.getId(MobEffects.REGENERATION.value()) : -1));
             VRRumble.rumbleIfVR(Minecraft.getInstance().player, 0, CommonConstants.vibrationTimeWorldInteraction);
         } else {
             Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), 0, hand));

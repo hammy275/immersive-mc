@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.vivecraft.gameplay.trackers.BackpackTracker;
+import org.vivecraft.client_vr.gameplay.trackers.BackpackTracker;
 
 // targets is the post-hotswitch version
 @Pseudo // Allows compiling even though targets can't be found due to being in hotswitch version

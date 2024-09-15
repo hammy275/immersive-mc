@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -51,11 +51,11 @@ public class Platform {
 
     // Networking
     @ExpectPlatform
-    public static void sendToServer(FriendlyByteBuf message) {
+    public static void sendToServer(RegistryFriendlyByteBuf message) {
         throw new RuntimeException("@ExpectPlatform should have replaced this");
     }
     @ExpectPlatform
-    public static void sendToPlayer(ServerPlayer player, FriendlyByteBuf message) {
+    public static void sendToPlayer(ServerPlayer player, RegistryFriendlyByteBuf message) {
         throw new RuntimeException("@ExpectPlatform should have replaced this");
     }
 }

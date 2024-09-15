@@ -32,6 +32,6 @@ public class BarrelHandler extends ChestLikeHandler {
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "barrel");
+        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "barrel");
     }
 }

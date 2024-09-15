@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.server.api_impl.ItemSwapAmountImpl;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import com.hammy275.immersivemc.server.swap.Swap;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 
@@ -25,13 +25,13 @@ public class BackpackInteractPacket {
         this.placementMode = placementMode;
     }
 
-    public static void encode(BackpackInteractPacket packet, FriendlyByteBuf buffer) {
+    public static void encode(BackpackInteractPacket packet, RegistryFriendlyByteBuf buffer) {
         buffer.writeInt(packet.slot);
         buffer.writeInt(packet.hand == InteractionHand.MAIN_HAND ? 0 : 1);
         buffer.writeEnum(packet.placementMode);
     }
 
-    public static BackpackInteractPacket decode(FriendlyByteBuf buffer) {
+    public static BackpackInteractPacket decode(RegistryFriendlyByteBuf buffer) {
         return new BackpackInteractPacket(buffer.readInt(),
                 buffer.readInt() == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND,
                 buffer.readEnum(PlacementMode.class));

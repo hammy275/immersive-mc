@@ -43,6 +43,6 @@ public class ShulkerBoxHandler extends ChestLikeHandler {
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "shulker_box");
+        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "shulker_box");
     }
 }

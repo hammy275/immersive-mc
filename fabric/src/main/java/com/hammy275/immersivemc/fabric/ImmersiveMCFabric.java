@@ -6,34 +6,37 @@ import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.network.Network;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.resources.ResourceLocation;
 
 public class ImmersiveMCFabric implements ModInitializer {
 
-    public static final ResourceLocation S2C = new ResourceLocation(ImmersiveMC.MOD_ID, "s2c");
-    public static final ResourceLocation C2S = new ResourceLocation(ImmersiveMC.MOD_ID, "c2s");
+    public static final ResourceLocation S2C = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "s2c");
+    public static final ResourceLocation C2S = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "c2s");
 
     @Override
     public void onInitialize() {
-        ServerPlayNetworking.registerGlobalReceiver(C2S, (server, player, handler, buf, responseSender) -> {
-            buf.retain();
-            server.execute(() -> {
+        PayloadTypeRegistry.playS2C().register(BufferPacket.ID, BufferPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(BufferPacket.ID, BufferPacket.CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(BufferPacket.ID, ((payload, context) -> {
+            payload.buffer().retain();
+            context.server().execute(() -> {
                 try {
-                    Network.INSTANCE.doReceive(player, buf);
+                    Network.INSTANCE.doReceive(context.player(), payload.buffer());
                 } finally {
-                    buf.release();
+                    payload.buffer().release();
                 }
             });
-        });
+        }));
         if (Platform.isClient()) {
-            ClientPlayNetworking.registerGlobalReceiver(S2C, (client, handler, buf, responseSender) -> {
-                buf.retain();
-                client.execute(() -> {
+            ClientPlayNetworking.registerGlobalReceiver(BufferPacket.ID, (payload, context) -> {
+                payload.buffer().retain();
+                context.client().execute(() -> {
                     try {
-                        Network.INSTANCE.doReceive(null, buf);
+                        Network.INSTANCE.doReceive(null, payload.buffer());
                     } finally {
-                        buf.release();
+                        payload.buffer().release();
                     }
                 });
             });

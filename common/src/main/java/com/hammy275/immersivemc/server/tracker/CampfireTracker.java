@@ -11,12 +11,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CampfireCookingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -41,7 +41,7 @@ public class CampfireTracker extends AbstractTracker {
         for (int c = 0; c <= 1; c++) {
             ItemStack toSmelt = c == 0 ? player.getItemInHand(InteractionHand.MAIN_HAND) : player.getItemInHand(InteractionHand.OFF_HAND);
             Optional<RecipeHolder<CampfireCookingRecipe>> recipe =
-                    player.level().getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SimpleContainer(toSmelt), player.level());
+                    player.level().getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SingleRecipeInput(toSmelt), player.level());
             if (recipe.isPresent() && info.get(c) >= recipe.get().value().getCookingTime() / 2) { // Smelt the held controller's item if we reach cook time.
                 toSmelt.shrink(1);
                 boolean didGive = player.getInventory().add(recipe.get().value().getResultItem(player.level().registryAccess()).copy());

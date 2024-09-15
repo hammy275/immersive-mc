@@ -89,7 +89,7 @@ public class ClientRenderSubscriber {
             }
             for (I info : singleton.getTrackedObjects()) {
                 if (singleton.shouldRender(info)) {
-                    singleton.render(info, stack, ImmersiveRenderHelpers.instance(), Minecraft.getInstance().getFrameTime());
+                    singleton.render(info, stack, ImmersiveRenderHelpers.instance(), Minecraft.getInstance().getTimer().getGameTimeDeltaTicks());
                 }
             }
         } catch (ConcurrentModificationException ignored) {
@@ -130,7 +130,7 @@ public class ClientRenderSubscriber {
                     OBBClientUtil.rotateStackForOBB(stack, hitbox.asOBB());
                 }
                 cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
-                        color.redF(), color.greenF(), color.blueF(), color.alphaF(), size / 2, light);
+                        (int) color.toLong(), size / 2, light);
                 stack.popPose();
             } else if (ActiveConfig.active().placementGuideMode == PlacementGuideMode.OUTLINE) {
                 if (hitbox.isAABB()) {

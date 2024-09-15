@@ -17,9 +17,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
 public class BackpackBundleModel extends EntityModel<Entity> {
-    public static final ResourceLocation textureLocation = new ResourceLocation(ImmersiveMC.MOD_ID, "nahnotfox_bundle_bag.png");
-    public static final ResourceLocation textureLocationColorable = new ResourceLocation(ImmersiveMC.MOD_ID, "nahnotfox_bundle_bag_colorable.png");
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(ImmersiveMC.MOD_ID, "bundle_backpack"), "main");
+    public static final ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "nahnotfox_bundle_bag.png");
+    public static final ResourceLocation textureLocationColorable = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "nahnotfox_bundle_bag_colorable.png");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "bundle_backpack"), "main");
     private final ModelPart bone;
 
     public BackpackBundleModel(ModelPart root) {
@@ -44,12 +44,12 @@ public class BackpackBundleModel extends EntityModel<Entity> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        bone.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void setupAnim(Entity entity, float f, float g, float h, float i, float j) {
+
     }
 
     @Override
-    public void setupAnim(Entity entity, float f, float g, float h, float i, float j) {
-
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        bone.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 }

@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.common.immersive.storage.dual.impl;
 
 import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
 public class SmithingTableStorage extends ItemStorage {
@@ -15,8 +16,8 @@ public class SmithingTableStorage extends ItemStorage {
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    public void load(CompoundTag nbt, HolderLookup.Provider provider) {
+        super.load(nbt, provider);
         if (nbt.getInt("numOfItems") == 3) { // Converting from 1.19 to 1.20
             convertFrom119();
         }

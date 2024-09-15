@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.immersive.storage.network.impl;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class ETableStorage extends ListOfItemsStorage {
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
+    public void encode(RegistryFriendlyByteBuf buffer) {
         super.encode(buffer);
         for (int xpLevel : xpLevels) {
             buffer.writeInt(xpLevel);
@@ -33,7 +33,7 @@ public class ETableStorage extends ListOfItemsStorage {
     }
 
     @Override
-    public void decode(FriendlyByteBuf buffer) {
+    public void decode(RegistryFriendlyByteBuf buffer) {
         super.decode(buffer);
         this.xpLevels = new int[]{buffer.readInt(), buffer.readInt(), buffer.readInt()};
         this.enchantHints = new int[]{buffer.readInt(), buffer.readInt(), buffer.readInt()};

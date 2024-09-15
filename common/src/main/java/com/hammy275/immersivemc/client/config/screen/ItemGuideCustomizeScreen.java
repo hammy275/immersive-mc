@@ -95,10 +95,10 @@ public class ItemGuideCustomizeScreen extends Screen {
                 stack.translate(0, 64f * color.alphaF(), 0);
                 stack.scale(color.alphaF(), color.alphaF(), color.alphaF());
             }
-            float alpha = renderSquare ? 1f : color.alphaF();
+            RGBA renderColor = renderSquare ? new RGBA(color.toLong() | 0xFF000000L) : color;
             ClientRenderSubscriber.cubeModel.render(stack,
                     buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
-                    color.redF(), color.greenF(), color.blueF(), alpha, 64f * (float)size, ClientUtil.maxLight);
+                    (int) renderColor.toLong(), 64f * (float)size, ClientUtil.maxLight);
         } else if (ConfigScreen.getClientConfigIfAdjusting().placementGuideMode == PlacementGuideMode.OUTLINE) {
             LevelRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
                     AABB.ofSize(Vec3.ZERO, 128 * size, 128 * size, 128 * size),

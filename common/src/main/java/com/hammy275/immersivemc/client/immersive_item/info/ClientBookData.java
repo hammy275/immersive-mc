@@ -42,7 +42,7 @@ import java.util.Optional;
 
 public class ClientBookData extends BookData {
     public static final BookModel bookModel = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
-    public static final ResourceLocation writtenBookTexture = new ResourceLocation(ImmersiveMC.MOD_ID, "nahnotfox_written_book.png");
+    public static final ResourceLocation writtenBookTexture = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "nahnotfox_written_book.png");
     
     
     public FormattedText left = FormattedText.EMPTY;
@@ -118,7 +118,7 @@ public class ClientBookData extends BookData {
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderType.entitySolid(writtenBookTexture)),
                 15728880, OverlayTexture.NO_OVERLAY,
-                1, 1, 1, 1);
+                0xFFFFFFFF);
 
         stack.popPose();
 

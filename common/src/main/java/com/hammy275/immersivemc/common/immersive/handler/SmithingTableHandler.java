@@ -63,7 +63,7 @@ public class SmithingTableHandler extends ItemWorldStorageHandler<SmithingTableS
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "smithing_table");
+        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "smithing_table");
     }
 
     @Override

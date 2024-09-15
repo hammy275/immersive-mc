@@ -17,6 +17,7 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.DisconnectionDetails;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -47,8 +48,8 @@ public class NetworkClientHandlers {
             serverOnly.forEach((id) -> missingModIDs.add(id.getNamespace()));
             clientOnly.forEach((id) -> missingModIDs.add(id.getNamespace()));
 
-            Minecraft.getInstance().getConnection().onDisconnect(Component.translatable("message.immersivemc.missing_immersives",
-                    String.join(", ", missingModIDs)));
+            Minecraft.getInstance().getConnection().onDisconnect(new DisconnectionDetails(Component.translatable("message.immersivemc.missing_immersives",
+                    String.join(", ", missingModIDs))));
         }
     }
 

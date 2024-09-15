@@ -19,6 +19,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
@@ -37,6 +38,10 @@ public class ClientUtil {
 
     public static final int maxLight = LightTexture.pack(15, 15);
     public static int immersiveLeftClickCooldown = 0;
+
+    public static RegistryAccess getRegistryAccess() {
+        return Minecraft.getInstance().level.registryAccess();
+    }
 
     public static void clearDisabledImmersives() {
         for (Immersive<?, ?> immersive : Immersives.IMMERSIVES) {
@@ -66,11 +71,11 @@ public class ClientUtil {
      * @return Player position while accounting for partial ticks
      */
     public static Vec3 playerPos() {
-        return Minecraft.getInstance().player.getPosition(Minecraft.getInstance().getFrameTime());
+        return Minecraft.getInstance().player.getPosition(Minecraft.getInstance().getTimer().getGameTimeDeltaTicks());
     }
 
     public static Tuple<Vec3, Vec3> getStartAndEndOfLookTrace(Player player) {
-        double dist = Minecraft.getInstance().gameMode.getPickRange();
+        double dist = Minecraft.getInstance().player.blockInteractionRange();
         Vec3 start;
         Vec3 viewVec;
         Vec3 end;

@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface LootrCompat {
 
-    public static final TagKey<Block> BLOCK_TAG = TagKey.create(Registries.BLOCK, new ResourceLocation("lootr", "containers"));
+    public static final TagKey<Block> BLOCK_TAG = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("lootr", "containers"));
 
     /**
      * Gets the container Lootr-handled block, or returns null if the target isn't a Lootr-handled block.

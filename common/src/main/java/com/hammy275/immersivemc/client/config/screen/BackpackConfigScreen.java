@@ -119,7 +119,7 @@ public class BackpackConfigScreen extends Screen {
     protected void renderBackpack(PoseStack stack) {
         stack.pushPose();
 
-        Vector3f rgb = ImmersiveBackpack.getBackpackColor();
+        int rgb = ImmersiveBackpack.getBackpackColor();
 
         float size = 96f;
         stack.translate(this.width * 0.875, this.height / 2f - size * 1.5f, 0);
@@ -136,8 +136,7 @@ public class BackpackConfigScreen extends Screen {
         ImmersiveBackpack.getBackpackModel().renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderType.entityCutout(ImmersiveBackpack.getBackpackTexture())),
-                15728880, OverlayTexture.NO_OVERLAY,
-                rgb.x(),rgb.y(), rgb.z(), 1);
+                15728880, OverlayTexture.NO_OVERLAY, rgb);
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
 
         stack.popPose();

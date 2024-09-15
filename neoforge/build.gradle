@@ -33,9 +33,10 @@ configurations {
 
 dependencies {
     neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
-    modApi "curse.maven:mcvrapi-591092:5720558"
+    modApi "curse.maven:mcvrapi-591092:5720565"
 
-    modApi "curse.maven:lootr-361276:5044725"
+    modApi "curse.maven:lootr-361276:5709012"
+    modApi "curse.maven:ironfurnaces-237664:5582440"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive = false }
@@ -44,7 +45,7 @@ dependencies {
 processResources {
     inputs.property "version", project.version
 
-    filesMatching("META-INF/mods.toml") {
+    filesMatching("META-INF/neoforge.mods.toml") {
         expand "version": project.version
     }
 }

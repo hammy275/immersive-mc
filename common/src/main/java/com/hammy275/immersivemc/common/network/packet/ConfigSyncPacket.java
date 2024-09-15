@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +36,7 @@ public class ConfigSyncPacket {
         this.handlerIDs = handlerIDs;
     }
 
-    public static void encode(ConfigSyncPacket packet, FriendlyByteBuf buffer) {
+    public static void encode(ConfigSyncPacket packet, RegistryFriendlyByteBuf buffer) {
         packet.config.encode(buffer);
         buffer.writeInt(packet.handlerIDs == null ? 0 : packet.handlerIDs.size());
         if (packet.handlerIDs != null) {
@@ -44,7 +44,7 @@ public class ConfigSyncPacket {
         }
     }
 
-    public static ConfigSyncPacket decode(FriendlyByteBuf buffer) {
+    public static ConfigSyncPacket decode(RegistryFriendlyByteBuf buffer) {
         ActiveConfig incoming = ActiveConfig.decode(buffer);
         List<ResourceLocation> handlerIDs = null;
         int numIDs = buffer.readInt();

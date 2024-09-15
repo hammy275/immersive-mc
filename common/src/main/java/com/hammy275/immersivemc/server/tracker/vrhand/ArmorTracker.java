@@ -7,7 +7,6 @@ import com.hammy275.immersivemc.server.data.LastTickData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
@@ -22,8 +21,8 @@ public class ArmorTracker extends AbstractVRHandTracker {
     @Override
     protected void runForHand(Player player, InteractionHand hand, ItemStack stackInHand, IVRPlayer currentVRData, LastTickData lastVRData) {
         boolean shouldEquip;
-        EquipmentSlot slot = Mob.getEquipmentSlotForItem(stackInHand);
-        if (slot == EquipmentSlot.MAINHAND || slot == EquipmentSlot.OFFHAND) return;
+        EquipmentSlot slot = player.getEquipmentSlotForItem(stackInHand);
+        if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) return;
         if (!player.getInventory().armor.get(slot.getIndex()).isEmpty()) return;
         switch (slot) {
             case HEAD:

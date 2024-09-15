@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 
 public class PageTurnPacket {
@@ -32,11 +32,11 @@ public class PageTurnPacket {
         this.clickedRight = clickedRight;
     }
 
-    public static void encode(PageTurnPacket packet, FriendlyByteBuf buffer) {
+    public static void encode(PageTurnPacket packet, RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos).writeInt(packet.forcedPageIndex).writeBoolean(packet.clickedRight);
     }
 
-    public static PageTurnPacket decode(FriendlyByteBuf buffer) {
+    public static PageTurnPacket decode(RegistryFriendlyByteBuf buffer) {
         return new PageTurnPacket(buffer.readBlockPos(), buffer.readInt(), buffer.readBoolean());
     }
 

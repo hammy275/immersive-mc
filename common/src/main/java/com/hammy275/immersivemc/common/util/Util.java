@@ -311,7 +311,7 @@ public class Util {
     public static void useLever(Player player, BlockPos pos) {
         if (ImmersiveCheckers.isLever(pos, player.level())) {
             BlockState lever = player.level().getBlockState(pos);
-            lever.use(player.level(), player, InteractionHand.MAIN_HAND,
+            lever.useWithoutItem(player.level(), player,
                     new BlockHitResult(Vec3.atCenterOf(pos), Direction.NORTH, pos, true));
         }
     }
@@ -319,7 +319,7 @@ public class Util {
     public static void useTrapdoor(Player player, Level level, BlockPos pos) {
         if (ImmersiveHandlers.trapdoorHandler.isValidBlock(pos, level)) {
             BlockState trapdoor = level.getBlockState(pos);
-            trapdoor.use(level, player, InteractionHand.MAIN_HAND,
+            trapdoor.useWithoutItem(level, player,
                     new BlockHitResult(Vec3.atCenterOf(pos), Direction.NORTH, pos, true));
         }
     }
@@ -355,7 +355,7 @@ public class Util {
 
     public static ResourceLocation getResourceLocation(CompoundTag nbt, String key) {
         CompoundTag subTag = nbt.getCompound(key);
-        return new ResourceLocation(subTag.getString("namespace"), subTag.getString("path"));
+        return ResourceLocation.fromNamespaceAndPath(subTag.getString("namespace"), subTag.getString("path"));
     }
 
     public static List<BlockPos> allPositionsWithAABB(AABB box) {

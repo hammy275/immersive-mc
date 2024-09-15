@@ -51,6 +51,6 @@ public class TrapdoorHandler implements ImmersiveHandler<NullStorage> {
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "trapdoor");
+        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "trapdoor");
     }
 }

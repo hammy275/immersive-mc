@@ -15,6 +15,6 @@ public class IronFurnacesFurnaceHandler extends FurnaceHandler {
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "iron_furnaces_furnace");
+        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "iron_furnaces_furnace");
     }
 }

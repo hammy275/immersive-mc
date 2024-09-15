@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
@@ -25,11 +25,11 @@ public class ChestShulkerOpenPacket {
         this.isOpen = isOpenPacket;
     }
 
-    public static void encode(ChestShulkerOpenPacket packet, FriendlyByteBuf buffer) {
+    public static void encode(ChestShulkerOpenPacket packet, RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos).writeBoolean(packet.isOpen);
     }
 
-    public static ChestShulkerOpenPacket decode(FriendlyByteBuf buffer) {
+    public static ChestShulkerOpenPacket decode(RegistryFriendlyByteBuf buffer) {
         return new ChestShulkerOpenPacket(buffer.readBlockPos(), buffer.readBoolean());
     }
 

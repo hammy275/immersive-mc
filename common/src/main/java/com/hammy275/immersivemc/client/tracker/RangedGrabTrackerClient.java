@@ -46,7 +46,7 @@ public class RangedGrabTrackerClient extends AbstractTracker {
 
         if (cooldown <= 0) {
             double dist = ActiveConfig.active().rangedGrabRange == -1 ?
-                    Minecraft.getInstance().gameMode.getPickRange() : ActiveConfig.active().rangedGrabRange;
+                    Minecraft.getInstance().player.blockInteractionRange() : ActiveConfig.active().rangedGrabRange;
 
             if (last != null) {
                 if (Minecraft.getInstance().options.keyAttack.isDown() ||

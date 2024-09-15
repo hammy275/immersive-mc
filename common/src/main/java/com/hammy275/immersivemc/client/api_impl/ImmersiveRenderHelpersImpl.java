@@ -246,7 +246,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
 
     @Override
     public float getTransitionMultiplier(long ticksExisted) {
-        return Math.min(1, ClientConstants.transitionMult * (ticksExisted + Minecraft.getInstance().getFrameTime()));
+        return Math.min(1, ClientConstants.transitionMult * (ticksExisted + Minecraft.getInstance().getTimer().getGameTimeDeltaTicks()));
     }
 
     @Override

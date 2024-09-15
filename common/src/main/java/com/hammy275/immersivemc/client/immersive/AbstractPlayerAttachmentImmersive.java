@@ -265,7 +265,7 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractPlayer
         boolean inVR = VRPluginVerify.clientInVR();
         Vec3 vrHitStart = inVR ? VRPlugin.API.getVRPlayer(player).getHMD().position() : null;
         Vec3 vrLook = inVR ? VRPlugin.API.getVRPlayer(player).getHMD().getLookAngle() : null;
-        Vec3 vrHitEnd = inVR ? vrHitStart.add(vrLook.scale(Minecraft.getInstance().gameMode.getPickRange())) : null;
+        Vec3 vrHitEnd = inVR ? vrHitStart.add(vrLook.scale(Minecraft.getInstance().player.blockInteractionRange())) : null;
         HitResult vrHit = inVR ? player.level().clip(new ClipContext(vrHitStart, vrHitEnd, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player)) : null;
         return (hit != null && hit.getType() == HitResult.Type.BLOCK &&
                 ((BlockHitResult) hit).getBlockPos().equals(info.getBlockPosition()))

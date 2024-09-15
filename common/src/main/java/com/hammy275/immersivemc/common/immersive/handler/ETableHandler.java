@@ -20,9 +20,9 @@ import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.EnchantmentTableBlock;
+import net.minecraft.world.level.block.EnchantingTableBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
+import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
 
 import java.util.Arrays;
 
@@ -34,7 +34,7 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
 
         if (worldStorage.getItem(0) != null && !worldStorage.getItem(0).isEmpty()) {
             BlockEntity tileEnt = player.level().getBlockEntity(pos);
-            if (tileEnt instanceof EnchantmentTableBlockEntity) {
+            if (tileEnt instanceof EnchantingTableBlockEntity) {
                 EnchantmentMenu container = new EnchantmentMenu(-1,
                         player.getInventory(), ContainerLevelAccess.create(player.level(), pos));
                 container.setItem(1, 0, new ItemStack(Items.LAPIS_LAZULI, 64));
@@ -73,7 +73,7 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
 
     @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
-        return level.getBlockState(pos).getBlock() instanceof EnchantmentTableBlock;
+        return level.getBlockState(pos).getBlock() instanceof EnchantingTableBlock;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "enchanting_table");
+        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "enchanting_table");
     }
 
     @Override

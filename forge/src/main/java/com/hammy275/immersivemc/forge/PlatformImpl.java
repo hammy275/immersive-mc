@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.forge;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -64,10 +64,10 @@ public class PlatformImpl {
     }
 
     // Networking
-    public static void sendToServer(FriendlyByteBuf message) {
+    public static void sendToServer(RegistryFriendlyByteBuf message) {
         ImmersiveMCForge.NETWORK.send(new BufferPacket(message), PacketDistributor.SERVER.noArg());
     }
-    public static void sendToPlayer(ServerPlayer player, FriendlyByteBuf message) {
+    public static void sendToPlayer(ServerPlayer player, RegistryFriendlyByteBuf message) {
         ImmersiveMCForge.NETWORK.send(new BufferPacket(message), PacketDistributor.PLAYER.with(player));
     }
 }

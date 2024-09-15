@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -21,14 +21,14 @@ public class FetchInventoryPacket<S extends NetworkStorage> {
         this.pos = pos;
     }
 
-    public static <NS extends NetworkStorage> void encode(FetchInventoryPacket<NS> packet, FriendlyByteBuf buffer) {
+    public static <NS extends NetworkStorage> void encode(FetchInventoryPacket<NS> packet, RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos);
         buffer.writeResourceLocation(packet.handler.getID());
         packet.storage.encode(buffer);
     }
 
     @SuppressWarnings("unchecked")
-    public static <NS extends NetworkStorage> FetchInventoryPacket<NS> decode(FriendlyByteBuf buffer) {
+    public static <NS extends NetworkStorage> FetchInventoryPacket<NS> decode(RegistryFriendlyByteBuf buffer) {
         BlockPos pos = buffer.readBlockPos();
         ImmersiveHandler<NS> handlerToSet = null;
         NS storage = null;

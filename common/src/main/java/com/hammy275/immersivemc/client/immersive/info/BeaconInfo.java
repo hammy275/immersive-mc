@@ -46,11 +46,11 @@ public class BeaconInfo extends AbstractImmersiveInfo {
 
     public int getEffectId() {
         return switch (this.effectSelected) {
-            case 0 -> BuiltInRegistries.MOB_EFFECT.getId(MobEffects.MOVEMENT_SPEED);
-            case 1 -> BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DIG_SPEED);
-            case 2 -> BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DAMAGE_RESISTANCE);
-            case 3 -> BuiltInRegistries.MOB_EFFECT.getId(MobEffects.JUMP);
-            case 4 -> BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DAMAGE_BOOST);
+            case 0 -> BuiltInRegistries.MOB_EFFECT.getId(MobEffects.MOVEMENT_SPEED.value());
+            case 1 -> BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DIG_SPEED.value());
+            case 2 -> BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DAMAGE_RESISTANCE.value());
+            case 3 -> BuiltInRegistries.MOB_EFFECT.getId(MobEffects.JUMP.value());
+            case 4 -> BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DAMAGE_BOOST.value());
             default -> -1;
         };
     }

@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.api.server;
 import com.google.common.annotations.Beta;
 import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
 /**
@@ -16,15 +17,17 @@ public interface WorldStorage {
     /**
      * Load from the NBT tag into this object.
      * @param nbt NBT tag to load from.
+     * @param provider Provider for registry access.
      */
-    public void load(CompoundTag nbt);
+    public void load(CompoundTag nbt, HolderLookup.Provider provider);
 
     /**
      * Save this object into the NBT tag.
      * @param nbt NBT tag to save to.
+     * @param provider Provider for registry access.
      * @return The same NBT tag as provided to this method.
      */
-    public CompoundTag save(CompoundTag nbt);
+    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider);
 
     /**
      * @return Handler for this type of WorldStorage.

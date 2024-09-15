@@ -49,7 +49,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
             IVRData hmdData = Platform.isDevelopmentEnvironment() ? null : VRPlugin.API.getRenderVRPlayer().getHMD();
             Vec3 centerPos = hmdData != null ?
                     hmdData.position().add(0, -0.5, 0).add(hmdData.getLookAngle().scale(-0.15)) :
-                    mc.player.getEyePosition(mc.getFrameTime()).add(0, -0.5, 0).add(mc.player.getLookAngle().scale(-0.15));
+                    mc.player.getEyePosition(mc.getTimer().getGameTimeDeltaTicks()).add(0, -0.5, 0).add(mc.player.getLookAngle().scale(-0.15));
             double yaw;
             Vec3 headLook;
             if (VRPluginVerify.clientInVR() && VRPlugin.API.playerInVR(mc.player)

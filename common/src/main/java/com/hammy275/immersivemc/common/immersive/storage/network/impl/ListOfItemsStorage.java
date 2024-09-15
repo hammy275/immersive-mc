@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.common.immersive.storage.network.impl;
 
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -36,19 +36,19 @@ public class ListOfItemsStorage implements NetworkStorage {
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
+    public void encode(RegistryFriendlyByteBuf buffer) {
         buffer.writeInt(this.items.size());
         for (ItemStack item : this.items) {
-            buffer.writeItem(item);
+            ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, item);
         }
     }
 
     @Override
-    public void decode(FriendlyByteBuf buffer) {
+    public void decode(RegistryFriendlyByteBuf buffer) {
         this.items.clear();
         int size = buffer.readInt();
         for (int i = 0; i < size; i++) {
-            this.items.add(buffer.readItem());
+            this.items.add(ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer));
         }
     }
 }

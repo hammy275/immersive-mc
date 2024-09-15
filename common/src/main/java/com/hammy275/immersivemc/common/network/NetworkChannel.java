@@ -2,8 +2,10 @@ package com.hammy275.immersivemc.common.network;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.client.ClientUtil;
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.Nullable;
@@ -16,17 +18,17 @@ import java.util.function.Function;
 public class NetworkChannel {
     private final List<NetworkRegistrationData<?>> packets = new ArrayList<>();
 
-    public <T> void register(Class<T> clazz, BiConsumer<T, FriendlyByteBuf> encoder,
-                             Function<FriendlyByteBuf, T> decoder, BiConsumer<T, ServerPlayer> handler) {
+    public <T> void register(Class<T> clazz, BiConsumer<T, RegistryFriendlyByteBuf> encoder,
+                             Function<RegistryFriendlyByteBuf, T> decoder, BiConsumer<T, ServerPlayer> handler) {
         packets.add(new NetworkRegistrationData<>(packets.size(), clazz, encoder, decoder, handler));
     }
 
     public <T> void sendToServer(T message) {
-        Platform.sendToServer(encode(message));
+        Platform.sendToServer(encode(message, ClientUtil.getRegistryAccess()));
     }
 
     public <T> void sendToPlayer(ServerPlayer player, T message) {
-        Platform.sendToPlayer(player, encode(message));
+        Platform.sendToPlayer(player, encode(message, player.registryAccess()));
     }
 
     public <T> void sendToPlayers(Iterable<ServerPlayer> players, T message) {
@@ -34,7 +36,7 @@ public class NetworkChannel {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> void doReceive(@Nullable ServerPlayer player, FriendlyByteBuf buffer) {
+    public <T> void doReceive(@Nullable ServerPlayer player, RegistryFriendlyByteBuf buffer) {
         NetworkRegistrationData<T> data = (NetworkRegistrationData<T>) packets.get(buffer.readInt());
         T message;
         try {
@@ -46,9 +48,9 @@ public class NetworkChannel {
         data.handler.accept(message, player);
     }
 
-    private <T> FriendlyByteBuf encode(T message) {
+    private <T> RegistryFriendlyByteBuf encode(T message, RegistryAccess access) {
         NetworkRegistrationData<T> data = getData(message);
-        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+        RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), access);
         buffer.writeInt(data.id());
         data.encoder().accept(message, buffer);
         return buffer;
@@ -65,6 +67,6 @@ public class NetworkChannel {
         return data;
     }
 
-    public record NetworkRegistrationData<T>(int id, Class<T> clazz, BiConsumer<T, FriendlyByteBuf> encoder,
-                                             Function<FriendlyByteBuf, T> decoder, BiConsumer<T, ServerPlayer> handler) {}
+    public record NetworkRegistrationData<T>(int id, Class<T> clazz, BiConsumer<T, RegistryFriendlyByteBuf> encoder,
+                                             Function<RegistryFriendlyByteBuf, T> decoder, BiConsumer<T, ServerPlayer> handler) {}
 }

@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.common.network.packet;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.data.AboutToThrowData;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.FishingRodItem;
@@ -21,12 +21,12 @@ public class ThrowPacket {
         this.dir = dir;
     }
 
-    public static void encode(ThrowPacket packet, FriendlyByteBuf buffer) {
+    public static void encode(ThrowPacket packet, RegistryFriendlyByteBuf buffer) {
         buffer.writeDouble(packet.velocity.x).writeDouble(packet.velocity.y).writeDouble(packet.velocity.z)
                 .writeDouble(packet.dir.x).writeDouble(packet.dir.y).writeDouble(packet.dir.z);
     }
 
-    public static ThrowPacket decode(FriendlyByteBuf buffer) {
+    public static ThrowPacket decode(RegistryFriendlyByteBuf buffer) {
         return new ThrowPacket(new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble()),
                 new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble()));
     }

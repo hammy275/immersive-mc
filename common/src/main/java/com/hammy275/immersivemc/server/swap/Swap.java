@@ -25,12 +25,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -150,10 +153,8 @@ public class Swap {
 
     public static ItemStack getRecipeOutput(ServerPlayer player, ItemStack[] stacksIn) {
         int invDim = stacksIn.length >= 9 ? 3 : 2;
-        CraftingContainer inv = new TransientCraftingContainer(new NullContainer(), invDim, invDim);
-        for (int i = 0; i < stacksIn.length - 1; i++) {
-            inv.setItem(i, stacksIn[i]);
-        }
+        List<ItemStack> stacks = new ArrayList<>(Arrays.asList(stacksIn).subList(0, invDim * invDim + 1));
+        CraftingInput inv = CraftingInput.of(invDim, invDim, stacks);
 
         Optional<RecipeHolder<CraftingRecipe>> res = player.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING,
                 inv, player.level());

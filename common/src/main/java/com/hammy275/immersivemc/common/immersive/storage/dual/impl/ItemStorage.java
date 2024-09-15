@@ -4,9 +4,11 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.api.server.WorldStorage;
+import com.hammy275.immersivemc.server.ServerSubscriber;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -198,11 +200,11 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
     }
     
     @Override
-    public void load(CompoundTag nbt) {
+    public void load(CompoundTag nbt, HolderLookup.Provider provider) {
         int length = nbt.getInt("numOfItems");
         this.items = new ItemStack[length];
         for (int i = 0; i < length; i++) {
-            this.items[i] = ItemStack.of(nbt.getCompound("item" + i));
+            this.items[i] = ItemStack.parseOptional(ServerSubscriber.server.registryAccess(), nbt.getCompound("item" + i));
         }
         itemCounts = new LinkedList[length];
         for (int i = 0; i < length; i++) {
@@ -221,10 +223,10 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
     }
 
     @Override
-    public CompoundTag save(CompoundTag nbt) {
+    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.putInt("numOfItems", items.length);
         for (int i = 0; i < items.length; i++) {
-            nbt.put("item" + i, items[i].save(new CompoundTag()));
+            nbt.put("item" + i, items[i].saveOptional(ServerSubscriber.server.registryAccess()));
         }
         CompoundTag rootCounts = new CompoundTag();
         for (int slot = 0; slot < itemCounts.length; slot++) {
@@ -276,16 +278,16 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
+    public void encode(RegistryFriendlyByteBuf buffer) {
         for (ItemStack item : this.items) {
-            buffer.writeItem(item);
+            ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, item);
         }
     }
 
     @Override
-    public void decode(FriendlyByteBuf buffer) {
+    public void decode(RegistryFriendlyByteBuf buffer) {
         for (int i = 0; i < this.items.length; i++) {
-            this.items[i] = buffer.readItem();
+            this.items[i] = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
         }
     }
 

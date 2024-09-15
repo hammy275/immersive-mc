@@ -4,7 +4,7 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 
 public class SetRepeaterPacket {
@@ -17,11 +17,11 @@ public class SetRepeaterPacket {
         this.newDelay = newDelay;
     }
 
-    public static void encode(SetRepeaterPacket packet, FriendlyByteBuf buffer) {
+    public static void encode(SetRepeaterPacket packet, RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos).writeInt(packet.newDelay);
     }
 
-    public static SetRepeaterPacket decode(FriendlyByteBuf buffer) {
+    public static SetRepeaterPacket decode(RegistryFriendlyByteBuf buffer) {
         return new SetRepeaterPacket(buffer.readBlockPos(), buffer.readInt());
     }
 

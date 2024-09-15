@@ -14,10 +14,10 @@ import net.minecraft.resources.ResourceLocation;
 // 99% exported from BlockBench
 public class BackpackModel extends Model {
 
-    public static final ResourceLocation textureLocation = new ResourceLocation("textures/block/white_wool.png");
+    public static final ResourceLocation textureLocation = ResourceLocation.withDefaultNamespace("textures/block/white_wool.png");
 
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(ImmersiveMC.MOD_ID, "backpack"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "backpack"), "main");
     private final ModelPart wall;
     private final ModelPart bb_main;
 
@@ -53,8 +53,8 @@ public class BackpackModel extends Model {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        wall.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        wall.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 }

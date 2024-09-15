@@ -1,12 +1,11 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
-import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.client.config.ClientConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 import java.util.Arrays;
 
@@ -27,7 +26,7 @@ public class BackpackInfo extends AbstractPlayerAttachmentInfo {
     public float handYaw = 0;
     public float handRoll = 0;
     public Vec3 backVec = Vec3.ZERO;
-    public Vector3f rgb = new Vector3f(0, 0, 0);
+    public int argb = 0;
     public int topRow = 0;
     public ItemStack[] craftingInput = new ItemStack[]{ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
     public ItemStack craftingOutput = ItemStack.EMPTY;

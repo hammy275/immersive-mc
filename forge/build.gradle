@@ -33,8 +33,7 @@ configurations {
 
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.forge_version}"
-    modApi "curse.maven:mcvrapi-591092:5720557"
-    modApi "curse.maven:ironfurnaces-237664:4796731"
+    modApi "curse.maven:mcvrapi-591092:5720564"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }

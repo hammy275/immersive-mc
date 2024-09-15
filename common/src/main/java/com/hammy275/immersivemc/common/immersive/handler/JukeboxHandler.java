@@ -8,10 +8,10 @@ import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -34,7 +34,7 @@ public class JukeboxHandler implements ImmersiveHandler<NullStorage> {
         if (player.level().getBlockEntity(pos) instanceof JukeboxBlockEntity jukebox) {
             ItemStack playerItem = player.getItemInHand(hand);
             if (jukebox.getTheItem().isEmpty() &&
-                    playerItem.is(ItemTags.MUSIC_DISCS)) {
+                    playerItem.has(DataComponents.JUKEBOX_PLAYABLE)) {
                 jukebox.setTheItem(playerItem.copyWithCount(1));
                 playerItem.shrink(1);
                 player.awardStat(Stats.PLAY_RECORD);
@@ -65,6 +65,6 @@ public class JukeboxHandler implements ImmersiveHandler<NullStorage> {
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "jukebox");
+        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "jukebox");
     }
 }

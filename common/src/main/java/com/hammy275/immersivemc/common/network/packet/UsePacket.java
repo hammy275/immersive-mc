@@ -4,7 +4,7 @@ import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 
@@ -16,11 +16,11 @@ public class UsePacket {
         this.pos = pos;
     }
 
-    public static void encode(UsePacket message, FriendlyByteBuf buffer) {
+    public static void encode(UsePacket message, RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(message.pos);
     }
 
-    public static UsePacket decode(FriendlyByteBuf buffer) {
+    public static UsePacket decode(RegistryFriendlyByteBuf buffer) {
         return new UsePacket(buffer.readBlockPos());
     }
 

@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -46,10 +46,10 @@ public class PlatformImpl {
     }
 
     // Networking
-    public static void sendToServer(FriendlyByteBuf message) {
-        ClientPlayNetworking.send(ImmersiveMCFabric.C2S, message);
+    public static void sendToServer(RegistryFriendlyByteBuf message) {
+        ClientPlayNetworking.send(new BufferPacket(message));
     }
-    public static void sendToPlayer(ServerPlayer player, FriendlyByteBuf message) {
-        ServerPlayNetworking.send(player, ImmersiveMCFabric.S2C, message);
+    public static void sendToPlayer(ServerPlayer player, RegistryFriendlyByteBuf message) {
+        ServerPlayNetworking.send(player, new BufferPacket(message));
     }
 }

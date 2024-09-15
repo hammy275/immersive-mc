@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.neoforge;
+package com.hammy275.immersivemc.fabric;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import net.minecraft.network.RegistryFriendlyByteBuf;

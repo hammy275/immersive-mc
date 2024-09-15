@@ -51,6 +51,6 @@ public class RepeaterHandler implements ImmersiveHandler<NullStorage> {
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "repeater");
+        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "repeater");
     }
 }

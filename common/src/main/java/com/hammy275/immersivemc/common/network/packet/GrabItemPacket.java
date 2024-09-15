@@ -4,7 +4,7 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.tracker.RangedGrabTrackerServer;
 import com.hammy275.immersivemc.server.tracker.ServerTrackerInit;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -21,11 +21,11 @@ public class GrabItemPacket {
         this.entityId = entityId;
     }
 
-    public static void encode(GrabItemPacket packet, FriendlyByteBuf buffer) {
+    public static void encode(GrabItemPacket packet, RegistryFriendlyByteBuf buffer) {
         buffer.writeInt(packet.entityId);
     }
 
-    public static GrabItemPacket decode(FriendlyByteBuf buffer) {
+    public static GrabItemPacket decode(RegistryFriendlyByteBuf buffer) {
         return new GrabItemPacket(buffer.readInt());
     }
 

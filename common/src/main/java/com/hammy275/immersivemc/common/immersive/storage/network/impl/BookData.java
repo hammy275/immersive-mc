@@ -14,14 +14,16 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.VRUtil;
+import com.hammy275.immersivemc.server.ServerSubscriber;
 import com.mojang.math.Axis;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.WrittenBookItem;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -220,15 +222,16 @@ public class BookData implements NetworkStorage, WorldStorage {
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
-        buffer.writeItem(book).writeInt(leftPageIndex).writeEnum(pageChangeState)
+    public void encode(RegistryFriendlyByteBuf buffer) {
+        ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, book);
+        buffer.writeInt(leftPageIndex).writeEnum(pageChangeState)
                 .writeFloat(leftPageTurn).writeFloat(rightPageTurn);
 
     }
 
     @Override
-    public void decode(FriendlyByteBuf buffer) {
-        this.book = buffer.readItem();
+    public void decode(RegistryFriendlyByteBuf buffer) {
+        this.book = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
         this.leftPageIndex = buffer.readInt();
         this.pageChangeState = buffer.readEnum(PageChangeState.class);
         this.leftPageTurn = buffer.readFloat();
@@ -274,7 +277,12 @@ public class BookData implements NetworkStorage, WorldStorage {
 
     protected int getPageCount() {
         if (book.isEmpty()) return 0;
-        return WrittenBookItem.getPageCount(book);
+        if (book.has(DataComponents.WRITTEN_BOOK_CONTENT)) {
+            book.get(DataComponents.WRITTEN_BOOK_CONTENT).pages().size();
+        } else if (book.has(DataComponents.WRITABLE_BOOK_CONTENT)) {
+            book.get(DataComponents.WRITABLE_BOOK_CONTENT).pages().size();
+        }
+        return 0;
     }
 
     protected Vec3 getLeftRight(PosRot hand, boolean left) {
@@ -333,14 +341,14 @@ public class BookData implements NetworkStorage, WorldStorage {
 
     // Book is saved and loaded so setPage() has the max page number to work with.
     @Override
-    public void load(CompoundTag nbt) {
-        this.book = ItemStack.of(nbt.getCompound("book"));
+    public void load(CompoundTag nbt, HolderLookup.Provider provider) {
+        this.book = ItemStack.parseOptional(ServerSubscriber.server.registryAccess(), nbt.getCompound("book"));
         setPage(nbt.getInt("leftPageIndex"));
     }
 
     @Override
-    public CompoundTag save(CompoundTag nbt) {
-        nbt.put("book", book.save(new CompoundTag()));
+    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) {
+        nbt.put("book", book.saveOptional(ServerSubscriber.server.registryAccess()));
         nbt.putInt("leftPageIndex", leftPageIndex);
         return nbt;
     }

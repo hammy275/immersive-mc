@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.common.network.packet;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
@@ -23,20 +23,20 @@ public class FetchBackpackStoragePacket {
         this.backpackCraftingItems = items;
     }
 
-    public static void encode(FetchBackpackStoragePacket packet, FriendlyByteBuf buffer) {
+    public static void encode(FetchBackpackStoragePacket packet, RegistryFriendlyByteBuf buffer) {
         buffer.writeBoolean(packet.backpackCraftingItems != null);
         if (packet.backpackCraftingItems != null) {
             buffer.writeInt(packet.backpackCraftingItems.size());
-            packet.backpackCraftingItems.forEach(buffer::writeItem);
+            packet.backpackCraftingItems.forEach(item -> ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, item));
         }
     }
 
-    public static FetchBackpackStoragePacket decode(FriendlyByteBuf buffer) {
+    public static FetchBackpackStoragePacket decode(RegistryFriendlyByteBuf buffer) {
         if (buffer.readBoolean()) {
             int numItems = buffer.readInt();
             List<ItemStack> items = new ArrayList<>(numItems);
             for (int i = 0; i < numItems; i++) {
-                items.add(buffer.readItem());
+                items.add(ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer));
             }
             return new FetchBackpackStoragePacket(items);
         } else {

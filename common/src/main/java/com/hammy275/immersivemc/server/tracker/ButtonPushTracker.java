@@ -32,7 +32,7 @@ public class ButtonPushTracker extends AbstractTracker {
             BlockState state = player.level().getBlockState(pos);
             if (state.getBlock() instanceof ButtonBlock && !state.getValue(ButtonBlock.POWERED)) {
                 ButtonBlock button = (ButtonBlock) state.getBlock();
-                VoxelShape shape = button.getShape(state, player.level(), pos,
+                VoxelShape shape = state.getShape(player.level(), pos,
                         CollisionContext.of(player));
                 // Start and end vectors need to be slightly different, so we just give a bit extra on the y axis
                 BlockHitResult res = shape.clip(
@@ -40,7 +40,7 @@ public class ButtonPushTracker extends AbstractTracker {
                         controller.position().add(0, 0.01, 0),
                         pos);
                 if (res != null && res.getBlockPos().equals(pos)) {
-                    button.press(state, player.level(), pos);
+                    button.press(state, player.level(), pos, null);
                     ((ButtonBlockMixin) button).playButtonSound(null, player.level(), pos, true);
                     VRRumble.rumbleIfVR(player, i, CommonConstants.vibrationTimeWorldInteraction);
                 }

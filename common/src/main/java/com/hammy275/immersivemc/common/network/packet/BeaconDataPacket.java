@@ -5,19 +5,19 @@ import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 
 public class BeaconDataPacket {
 
-    private static final int speedId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.MOVEMENT_SPEED);
-    private static final int hasteId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DIG_SPEED);
-    private static final int resistId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DAMAGE_RESISTANCE);
-    private static final int jumpId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.JUMP);
-    private static final int strengthId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DAMAGE_BOOST);
-    private static final int regenId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.REGENERATION);
+    private static final int speedId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.MOVEMENT_SPEED.value());
+    private static final int hasteId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DIG_SPEED.value());
+    private static final int resistId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DAMAGE_RESISTANCE.value());
+    private static final int jumpId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.JUMP.value());
+    private static final int strengthId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DAMAGE_BOOST.value());
+    private static final int regenId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.REGENERATION.value());
 
     public final BlockPos pos;
     public final int powerIndex;
@@ -57,11 +57,11 @@ public class BeaconDataPacket {
         this.useRegen = false;
     }
 
-    public static void encode(BeaconDataPacket packet, FriendlyByteBuf buffer) {
+    public static void encode(BeaconDataPacket packet, RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos).writeInt(packet.powerIndex).writeBoolean(packet.useRegen);
     }
 
-    public static BeaconDataPacket decode(FriendlyByteBuf buffer) {
+    public static BeaconDataPacket decode(RegistryFriendlyByteBuf buffer) {
         return new BeaconDataPacket(buffer.readBlockPos(), buffer.readInt(), buffer.readBoolean());
     }
 

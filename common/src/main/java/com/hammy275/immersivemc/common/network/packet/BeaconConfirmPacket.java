@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
@@ -26,11 +26,11 @@ public class BeaconConfirmPacket {
         this.secondaryId = secondaryId;
     }
 
-    public static void encode(BeaconConfirmPacket packet, FriendlyByteBuf buffer) {
+    public static void encode(BeaconConfirmPacket packet, RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos).writeInt(packet.primaryId).writeInt(packet.secondaryId);
     }
 
-    public static BeaconConfirmPacket decode(FriendlyByteBuf buffer) {
+    public static BeaconConfirmPacket decode(RegistryFriendlyByteBuf buffer) {
         return new BeaconConfirmPacket(buffer.readBlockPos(), buffer.readInt(), buffer.readInt());
     }
 

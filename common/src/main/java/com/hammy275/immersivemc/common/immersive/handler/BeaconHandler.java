@@ -53,7 +53,7 @@ public class BeaconHandler extends ItemWorldStorageHandler<BeaconStorage> {
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "beacon");
+        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "beacon");
     }
 
     @Override

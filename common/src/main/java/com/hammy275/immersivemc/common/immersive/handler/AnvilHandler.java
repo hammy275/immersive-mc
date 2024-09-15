@@ -65,7 +65,7 @@ public class AnvilHandler extends ItemWorldStorageHandler<AnvilStorage> {
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "anvil");
+        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "anvil");
     }
 
     @Override
