@@ -10,6 +10,8 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.server.ServerUtil;
+import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -143,7 +145,9 @@ public class ImmersiveMCLevelStorage extends SavedData {
 
     public static ImmersiveMCLevelStorage load(CompoundTag nbt, HolderLookup.Provider provider) {
         ImmersiveMCLevelStorage levelStorage = new ImmersiveMCLevelStorage();
-        nbt = maybeUpgradeNBT(nbt, provider);
+        // Use 3700 for 1.20.4 (most recent Minecraft version with ImmersiveMC before this was added) or the current Minecraft data version, whichever is lower.
+        int lastVanillaDataVersion = nbt.contains("lastVanillaDataVersion") ? nbt.getInt("lastVanillaDataVersion") : Math.min(3700, SharedConstants.getCurrentVersion().getDataVersion().getVersion());
+        nbt = maybeUpgradeNBT(nbt, provider, lastVanillaDataVersion);
         Map<BlockPos, WorldStorage> storageMap = levelStorage.storageMap;
         storageMap.clear();
         int numOfStorages = nbt.getInt("numOfStorages");
@@ -161,7 +165,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
             for (ImmersiveHandler<?> handlerMaybeWS : ImmersiveHandlers.HANDLERS) {
                 if (handlerMaybeWS.getID().equals(id) && handlerMaybeWS instanceof WorldStorageHandler<?> handler) {
                     storage = handler.getEmptyWorldStorage();
-                    storage.load(storageInfo.getCompound("data"), provider);
+                    storage.load(storageInfo.getCompound("data"), provider, lastVanillaDataVersion);
                     break;
                 }
             }
@@ -175,6 +179,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
 
     @Override
     public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) {
+        nbt.putInt("lastVanillaDataVersion", SharedConstants.getCurrentVersion().getDataVersion().getVersion());
         nbt.putInt("version", LEVEL_STORAGE_VERSION);
         nbt.putInt("numOfStorages", storageMap.size());
         CompoundTag storages = new CompoundTag();
@@ -200,9 +205,10 @@ public class ImmersiveMCLevelStorage extends SavedData {
      * Upgrades NBT tag to something this version of ImmersiveMC can understand.
      * @param nbtIn NBT to upgrade. This may be modified in any way.
      * @param provider Provider for registry access.
+     * @param lastVanillaDataVersion The last vanilla data version this saved data was loaded in.
      * @return A converted NBT, that isn't necessarily the same object as the nbt going into this function.
      */
-    private static CompoundTag maybeUpgradeNBT(CompoundTag nbtIn, HolderLookup.Provider provider) {
+    private static CompoundTag maybeUpgradeNBT(CompoundTag nbtIn, HolderLookup.Provider provider, int lastVanillaDataVersion) {
         int version = 1;
         if (nbtIn.contains("version")) { // Version 1 didn't store a version int
             version = nbtIn.getInt("version");
@@ -228,7 +234,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
                         id = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "anvil");
                     } else if (numItems == 1) {
                         // Need to decode the item to figure out if this is an enchanting table or a beacon.
-                        ItemStack item = ItemStack.parseOptional(provider, itemsData.getCompound("item0"));
+                        ItemStack item = ServerUtil.parseItem(provider, itemsData.getCompound("item0"), lastVanillaDataVersion);
                         if (item.is(ItemTags.BEACON_PAYMENT_ITEMS)) {
                             id = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "beacon");
                         } else {

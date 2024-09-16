@@ -20,8 +20,8 @@ public class AnvilStorage extends ItemStorage {
     }
 
     @Override
-    public void load(CompoundTag nbt, HolderLookup.Provider provider) {
-        super.load(nbt, provider);
+    public void load(CompoundTag nbt, HolderLookup.Provider provider, int lastVanillaDataVersion) {
+        super.load(nbt, provider, lastVanillaDataVersion);
         this.xpLevels = nbt.getInt("xpLevels");
     }
 

@@ -16,10 +16,12 @@ public interface WorldStorage {
 
     /**
      * Load from the NBT tag into this object.
+     *
      * @param nbt NBT tag to load from.
      * @param provider Provider for registry access.
+     * @param lastVanillaDataVersion The last vanilla data version this storage was loaded in.
      */
-    public void load(CompoundTag nbt, HolderLookup.Provider provider);
+    public void load(CompoundTag nbt, HolderLookup.Provider provider, int lastVanillaDataVersion);
 
     /**
      * Save this object into the NBT tag.

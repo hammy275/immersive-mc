@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.api.server.WorldStorage;
 import com.hammy275.immersivemc.server.ServerSubscriber;
+import com.hammy275.immersivemc.server.ServerUtil;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -200,11 +201,11 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
     }
     
     @Override
-    public void load(CompoundTag nbt, HolderLookup.Provider provider) {
+    public void load(CompoundTag nbt, HolderLookup.Provider provider, int lastVanillaDataVersion) {
         int length = nbt.getInt("numOfItems");
         this.items = new ItemStack[length];
         for (int i = 0; i < length; i++) {
-            this.items[i] = ItemStack.parseOptional(ServerSubscriber.server.registryAccess(), nbt.getCompound("item" + i));
+            this.items[i] = ServerUtil.parseItem(ServerSubscriber.server.registryAccess(), nbt.getCompound("item" + i), lastVanillaDataVersion);
         }
         itemCounts = new LinkedList[length];
         for (int i = 0; i < length; i++) {
