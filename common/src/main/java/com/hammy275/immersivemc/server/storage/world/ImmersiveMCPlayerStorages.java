@@ -1,5 +1,8 @@
 package com.hammy275.immersivemc.server.storage.world;
 
+import com.hammy275.immersivemc.server.ServerUtil;
+import net.minecraft.SharedConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -48,14 +51,16 @@ public class ImmersiveMCPlayerStorages extends SavedData {
 
     public static ImmersiveMCPlayerStorages load(CompoundTag nbt) {
         ImmersiveMCPlayerStorages playerStorage = new ImmersiveMCPlayerStorages();
-        nbt = maybeUpgradeNBT(nbt);
+        // Use 3700 for 1.20.4 (most recent Minecraft version with ImmersiveMC before this was added) or the current Minecraft data version, whichever is lower.
+        int lastVanillaDataVersion = nbt.contains("lastVanillaDataVersion") ? nbt.getInt("lastVanillaDataVersion") : Math.min(3700, SharedConstants.getCurrentVersion().getDataVersion().getVersion());
+        nbt = maybeUpgradeNBT(nbt, lastVanillaDataVersion);
         Set<String> keys = nbt.getAllKeys();
         for (String uuidStr : keys) {
             UUID uuid = UUID.fromString(uuidStr);
             CompoundTag bagItems = nbt.getCompound(uuidStr).getCompound("bagItems");
             List<ItemStack> items = new ArrayList<>();
             for (int i = 0; i <= 4; i++) {
-                items.add(ItemStack.of(bagItems.getCompound(String.valueOf(i))));
+                items.add(ServerUtil.parseItem(bagItems.getCompound(String.valueOf(i)), lastVanillaDataVersion));
             }
             playerStorage.backpackCraftingItemsMap.put(uuid, items);
         }
@@ -64,6 +69,7 @@ public class ImmersiveMCPlayerStorages extends SavedData {
 
     @Override
     public CompoundTag save(CompoundTag nbt) {
+        nbt.putInt("lastVanillaDataVersion", SharedConstants.getCurrentVersion().getDataVersion().getVersion());
         for (Map.Entry<UUID, List<ItemStack>> entry : backpackCraftingItemsMap.entrySet()) {
             CompoundTag playerData = new CompoundTag();
             CompoundTag bagData = new CompoundTag();
@@ -86,9 +92,10 @@ public class ImmersiveMCPlayerStorages extends SavedData {
     /**
      * Upgrades NBT tag to something this version of ImmersiveMC can understand.
      * @param nbtIn NBT to upgrade. This may be modified in any way.
+     * @param lastVanillaDataVersion The last vanilla data version this saved data was saved in.
      * @return A converted NBT, that isn't necessarily the same object as the nbt going into this function.
      */
-    private static CompoundTag maybeUpgradeNBT(CompoundTag nbtIn) {
+    private static CompoundTag maybeUpgradeNBT(CompoundTag nbtIn, int lastVanillaDataVersion) {
         int version = 1;
         if (nbtIn.contains("version")) { // Version 1 didn't store a version int
             version = nbtIn.getInt("version");
