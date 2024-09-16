@@ -15,6 +15,7 @@ import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.VRUtil;
 import com.mojang.math.Vector3f;
+import com.hammy275.immersivemc.server.ServerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -332,8 +333,8 @@ public class BookData implements NetworkStorage, WorldStorage {
 
     // Book is saved and loaded so setPage() has the max page number to work with.
     @Override
-    public void load(CompoundTag nbt) {
-        this.book = ItemStack.of(nbt.getCompound("book"));
+    public void load(CompoundTag nbt, int lastVanillaDataVersion) {
+        this.book = ServerUtil.parseItem(nbt.getCompound("book"), lastVanillaDataVersion);
         setPage(nbt.getInt("leftPageIndex"));
     }
 
