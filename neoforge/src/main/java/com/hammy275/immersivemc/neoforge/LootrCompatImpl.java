@@ -34,7 +34,11 @@ public class LootrCompatImpl implements LootrCompat {
     @Override
     public @Nullable Container getContainer(ServerPlayer player, BlockPos pos) {
         Level level = player.level();
-        return LootrAPI.getInventory(ILootrInfoProvider.of(pos, level), player, DefaultLootFiller.getInstance());
+        ILootrInfoProvider provider = ILootrInfoProvider.of(pos, level);
+        if (provider == null) {
+            return null;
+        }
+        return LootrAPI.getInventory(provider, player, DefaultLootFiller.getInstance());
     }
 
     @Override
