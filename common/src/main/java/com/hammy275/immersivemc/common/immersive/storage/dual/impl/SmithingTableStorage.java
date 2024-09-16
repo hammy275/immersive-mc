@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.common.immersive.storage.dual.impl;
 
 import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.server.ServerUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
@@ -16,13 +17,13 @@ public class SmithingTableStorage extends ItemStorage {
     }
 
     @Override
-    public void load(CompoundTag nbt) {
+    public void load(CompoundTag nbt, int lastVanillaDataVersion) {
         // Fix bug in ImmersiveMC 1.5.0 Alpha 2 where we did conversions for 1.19->1.20 when it's still 1.19
         int numOfItems = nbt.getInt("numOfItems");
         if (numOfItems == 4) {
             ItemStack[] items = new ItemStack[4];
             for (int i = 0; i < items.length; i++) {
-                items[i] = ItemStack.of(nbt.getCompound("item" + i));
+                items[i] = ServerUtil.parseItem(nbt.getCompound("item" + i), lastVanillaDataVersion);
             }
             if (items[0].isEmpty() && (!items[1].isEmpty() || !items[2].isEmpty())) {
                 // At this point, it's extremely likely we suffered the bug from 1.5.0 Alpha 2.
@@ -39,6 +40,6 @@ public class SmithingTableStorage extends ItemStorage {
             nbt.remove("item3");
             nbt.putInt("numOfItems", 3);
         }
-        super.load(nbt);
+        super.load(nbt, lastVanillaDataVersion);
     }
 }
