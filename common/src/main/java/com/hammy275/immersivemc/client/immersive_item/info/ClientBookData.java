@@ -82,7 +82,7 @@ public class ClientBookData extends BookData {
 
     @Override
     protected int getPageCount() {
-        if (book.isEmpty()) return 0;
+        if (book.isEmpty()) return -1;
         return BookViewScreen.BookAccess.fromItem(book).getPageCount();
     }
 
@@ -176,6 +176,7 @@ public class ClientBookData extends BookData {
 
     @Override
     public void tick(PosRot hand, PosRot... others) {
+        if (getPageCount() < 0) return;
         super.tick(hand, others);
         // Get page contents. Can change at random, whether due to command blocks or due to editing for a book and quill
         BookViewScreen.BookAccess access = BookViewScreen.BookAccess.fromItem(book);

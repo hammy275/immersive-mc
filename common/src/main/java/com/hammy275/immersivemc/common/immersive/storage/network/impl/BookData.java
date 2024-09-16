@@ -141,6 +141,7 @@ public class BookData implements NetworkStorage, WorldStorage {
     }
 
     public void tick(PosRot hand, PosRot... others) {
+        if (getPageCount() < 0) return;
         Vec3 left = getLeftRight(hand, true);
         Vec3 right = getLeftRight(hand, false);
         Vec3 away = getAway(hand);
@@ -276,11 +277,11 @@ public class BookData implements NetworkStorage, WorldStorage {
     }
 
     protected int getPageCount() {
-        if (book.isEmpty()) return 0;
+        if (book.isEmpty()) return -1;
         if (book.has(DataComponents.WRITTEN_BOOK_CONTENT)) {
-            book.get(DataComponents.WRITTEN_BOOK_CONTENT).pages().size();
+            return book.get(DataComponents.WRITTEN_BOOK_CONTENT).pages().size();
         } else if (book.has(DataComponents.WRITABLE_BOOK_CONTENT)) {
-            book.get(DataComponents.WRITABLE_BOOK_CONTENT).pages().size();
+            return book.get(DataComponents.WRITABLE_BOOK_CONTENT).pages().size();
         }
         return 0;
     }
