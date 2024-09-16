@@ -197,7 +197,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
                 -renderInfo.getPosition().y + pos.y,
                 -renderInfo.getPosition().z + pos.z);
         stack.mulPose(renderInfo.rotation());
-        stack.scale(-textSize, -textSize, -textSize);
+        stack.scale(textSize, -textSize, textSize);
         Font font = Minecraft.getInstance().font;
         float size = -font.width(text) / 2f;
         font.drawInBatch(text, size, 0, 0xFFFFFFFF, false,
