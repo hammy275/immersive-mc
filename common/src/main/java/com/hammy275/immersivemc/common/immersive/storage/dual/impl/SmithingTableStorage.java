@@ -15,8 +15,8 @@ public class SmithingTableStorage extends ItemStorage {
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    public void load(CompoundTag nbt, int lastVanillaDataVersion) {
+        super.load(nbt, lastVanillaDataVersion);
         if (nbt.getInt("numOfItems") == 3) { // Converting from 1.19 to 1.20
             convertFrom119();
         }
