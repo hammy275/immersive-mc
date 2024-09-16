@@ -94,10 +94,12 @@ public class BackpackConfigScreen extends OptionsSubScreen {
         int rgb = ImmersiveBackpack.getBackpackColor();
 
         float size = 96f;
-        stack.translate(this.width * 0.875, this.height / 2f - size * 1.5f, 0);
-        stack.scale(-size, -size, -size); // Negative multiplications here to turn it back from being inside-out
 
         stack.mulPose(Axis.XN.rotationDegrees(205));
+
+        // Z here both moves the bag forward from the background and moves it down
+        stack.translate(this.width * 0.875, this.height / 2f - size, -548);
+        stack.scale(size, -size, size); // Negative multiplications here to turn it back from being inside-out
 
         long currentTimeMilli = Instant.now().toEpochMilli();
         long millisPerRot = 8000;
