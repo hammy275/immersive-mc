@@ -15,9 +15,11 @@ public interface WorldStorage {
 
     /**
      * Load from the NBT tag into this object.
+     *
      * @param nbt NBT tag to load from.
+     * @param lastVanillaDataVersion The last vanilla data version this storage was loaded in.
      */
-    public void load(CompoundTag nbt);
+    public void load(CompoundTag nbt, int lastVanillaDataVersion);
 
     /**
      * Save this object into the NBT tag.
