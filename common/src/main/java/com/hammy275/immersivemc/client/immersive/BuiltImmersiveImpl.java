@@ -86,7 +86,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             // if it hasn't been calculated yet, if slots can change whether they're active, or if they need
             // to detect VR hand movements.
             if (!hitbox.constantOffset || differentDirs || !hitbox.calcDone() || builder.slotActive != null
-                || hitbox.vrMovementInfo != null) {
+                || hitbox.vrMovementInfo != null || hitbox.textSupplier != null) {
                 if (builder.slotActive == null || builder.slotActive.apply(info, i)) {
                     hitbox.recalculate(Minecraft.getInstance().level, builder.positioningMode, info);
                 } else {
