@@ -32,7 +32,8 @@ public class FurnaceHandler extends ContainerHandler<ListOfItemsStorage> {
 
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        WorldlyContainer furnace = (AbstractFurnaceBlockEntity) player.level().getBlockEntity(pos);
+        // Cast is done to WorldlyContainer to handle Iron Furnaces
+        WorldlyContainer furnace = (WorldlyContainer) player.level().getBlockEntity(pos);
         ItemStack furnaceItem = furnace.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand).copy();
         if (slot != 2) {
