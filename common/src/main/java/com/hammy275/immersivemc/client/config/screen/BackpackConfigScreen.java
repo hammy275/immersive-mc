@@ -42,7 +42,7 @@ public class BackpackConfigScreen extends Screen {
 
     @Override
     protected void init() {
-        this.list = new OptionsList(Minecraft.getInstance(), this.width * 3 / 4, this.height,
+        this.list = new OptionsList(Minecraft.getInstance(), this.width, this.height,
                 32, this.height - 32, 24);
 
         initOptionsList();
@@ -129,17 +129,19 @@ public class BackpackConfigScreen extends Screen {
 
         Vector3f rgb = ImmersiveBackpack.getBackpackColor();
 
-        float size = 96f;
-        stack.translate(this.width * 0.875, this.height / 2f - size * 1.5f, 0);
-        stack.scale(-size, -size, -size); // Negative multiplications here to turn it back from being inside-out
+        float size = 72f;
 
-        stack.mulPose(Vector3f.XN.rotationDegrees(205));
+        stack.translate(this.width * 0.9325, this.height / 2f, 548);
+        stack.scale(0.5f, 0.5f, 0.5f);
 
         long currentTimeMilli = Instant.now().toEpochMilli();
         long millisPerRot = 8000;
         float rot = (((float) (currentTimeMilli % millisPerRot)) / millisPerRot) *
                 (2f * (float) Math.PI);
+        stack.mulPose(Vector3f.XN.rotationDegrees(205f));
         stack.mulPose(Vector3f.YN.rotation(rot));
+        stack.translate(0, size * 1.75, 0);
+        stack.scale(size, -size, size); // Negative multiplications here to turn it back from being inside-out
 
         ImmersiveBackpack.getBackpackModel().renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()

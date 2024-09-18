@@ -30,6 +30,8 @@ public class ConfigScreen extends Screen {
 
     protected static int BUTTON_WIDTH = 200;
     protected static int BUTTON_HEIGHT = 20;
+    protected static int BUTTON_SPACING = BUTTON_HEIGHT + BUTTON_HEIGHT / 5;
+    protected static int BUTTON_START_HEIGHT = 24;
 
     protected static final String WIKI_URL = "https://hammy275.com/immersivemcwiki";
 
@@ -45,14 +47,14 @@ public class ConfigScreen extends Screen {
 
         if (currentConfigAdjusting == ConfigType.CLIENT) {
             this.addRenderableWidget(ScreenUtils.createScreenButton(
-                    (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 72,
+                    (this.width - BUTTON_WIDTH) / 2, BUTTON_START_HEIGHT,
                     BUTTON_WIDTH, BUTTON_HEIGHT,
                     "config.immersivemc.customize_item_guides",
                     new ItemGuideCustomizeScreen(this)
             ));
 
             this.addRenderableWidget(ScreenUtils.createScreenButton(
-                    (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 40,
+                    (this.width - BUTTON_WIDTH) / 2, BUTTON_START_HEIGHT + BUTTON_SPACING,
                     BUTTON_WIDTH, BUTTON_HEIGHT,
                     "config.immersivemc.backpack",
                     new BackpackConfigScreen(this)
@@ -60,14 +62,14 @@ public class ConfigScreen extends Screen {
         }
 
         this.addRenderableWidget(ScreenUtils.createScreenButton(
-                (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT - 8,
+                (this.width - BUTTON_WIDTH) / 2, BUTTON_START_HEIGHT + BUTTON_SPACING * 2,
                 BUTTON_WIDTH, BUTTON_HEIGHT,
                 "config.immersivemc.immersives_customize",
                 new ImmersivesCustomizeScreen(this)
         ));
 
         this.addRenderableWidget(ScreenUtils.createScreenButton(
-                (this.width - BUTTON_WIDTH) / 2, this.height / 2 - BUTTON_HEIGHT + 24,
+                (this.width - BUTTON_WIDTH) / 2, BUTTON_START_HEIGHT + BUTTON_SPACING * 3,
                 BUTTON_WIDTH, BUTTON_HEIGHT,
                 "config.immersivemc.immersives",
                 new ImmersivesConfigScreen(this,
@@ -76,7 +78,7 @@ public class ConfigScreen extends Screen {
         ));
 
         this.addRenderableWidget(ScreenUtils.createScreenButton(
-                (this.width - BUTTON_WIDTH) / 2 - (BUTTON_WIDTH / 2) - 8, this.height - 32 - BUTTON_HEIGHT,
+                (this.width - BUTTON_WIDTH) / 2 - (BUTTON_WIDTH / 2) - 8, this.height - BUTTON_SPACING * 2,
                 BUTTON_WIDTH, BUTTON_HEIGHT,
                 "config.immersivemc.wiki_button",
                 new ConfirmLinkScreen((clickedYes) -> {
@@ -88,13 +90,13 @@ public class ConfigScreen extends Screen {
         ));
 
         this.addRenderableWidget(ScreenUtils.createDoneButton(
-                (this.width - BUTTON_WIDTH) / 2, this.height - 26,
+                (this.width - BUTTON_WIDTH) / 2, this.height - BUTTON_SPACING,
                 BUTTON_WIDTH, BUTTON_HEIGHT,
                 this
         ));
 
         this.addRenderableWidget(ScreenUtils.createButton(
-                (this.width - BUTTON_WIDTH) / 2 + (BUTTON_WIDTH / 2) + 8, this.height - 32 - BUTTON_HEIGHT,
+                (this.width - BUTTON_WIDTH) / 2 + (BUTTON_WIDTH / 2) + 8, this.height - BUTTON_SPACING * 2,
                 BUTTON_WIDTH, BUTTON_HEIGHT,
                 "config.immersivemc.reset",
                 (button) -> {
@@ -111,10 +113,10 @@ public class ConfigScreen extends Screen {
         String configTypeButtonTranslationKey = "config.immersivemc.edit_config_type.server";
         if (currentConfigAdjusting == ConfigType.CLIENT) {
             this.addRenderableWidget(ScreenUtils.createOption("disable_outside_vr", config -> ((ClientActiveConfig) config).disableImmersiveMCOutsideVR, (config, newVal) -> ((ClientActiveConfig) config).disableImmersiveMCOutsideVR = newVal)
-                    .createButton(Minecraft.getInstance().options, (this.width - BUTTON_WIDTH) / 2, this.height - 48 - BUTTON_HEIGHT * 3, BUTTON_WIDTH));
+                    .createButton(Minecraft.getInstance().options, (this.width - BUTTON_WIDTH) / 2, this.height - BUTTON_SPACING * 4, BUTTON_WIDTH));
             configTypeButtonTranslationKey = "config.immersivemc.edit_config_type.client";
         }
-        Button configTypeButton = ScreenUtils.createButton((this.width - BUTTON_WIDTH) / 2, this.height - 40 - BUTTON_HEIGHT * 2,
+        Button configTypeButton = ScreenUtils.createButton((this.width - BUTTON_WIDTH) / 2, this.height - BUTTON_SPACING * 3,
                 BUTTON_WIDTH, BUTTON_HEIGHT,
                 configTypeButtonTranslationKey,
                 configTypeButtonTranslationKey + ".desc",
@@ -128,11 +130,10 @@ public class ConfigScreen extends Screen {
     @Override
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
+        super.render(stack, mouseX, mouseY, partialTicks);
 
         drawCenteredString(stack, this.font, this.title.getString(),
                 this.width / 2, 8, 0xFFFFFF);
-
-        super.render(stack, mouseX, mouseY, partialTicks);
     }
 
     @Override
