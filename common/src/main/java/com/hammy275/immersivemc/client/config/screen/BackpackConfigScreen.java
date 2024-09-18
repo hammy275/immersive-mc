@@ -93,19 +93,19 @@ public class BackpackConfigScreen extends OptionsSubScreen {
 
         int rgb = ImmersiveBackpack.getBackpackColor();
 
-        float size = 96f;
+        float size = 72f;
 
-        stack.mulPose(Axis.XN.rotationDegrees(205));
-
-        // Z here both moves the bag forward from the background and moves it down
-        stack.translate(this.width * 0.875, this.height / 2f - size, -548);
-        stack.scale(size, -size, size); // Negative multiplications here to turn it back from being inside-out
+        stack.translate(this.width * 0.9325, this.height / 2f, 548);
+        stack.scale(0.5f, 0.5f, 0.5f);
 
         long currentTimeMilli = Instant.now().toEpochMilli();
         long millisPerRot = 8000;
         float rot = (((float) (currentTimeMilli % millisPerRot)) / millisPerRot) *
                 (2f * (float) Math.PI);
+        stack.mulPose(Axis.XN.rotationDegrees(205f));
         stack.mulPose(Axis.YN.rotation(rot));
+        stack.translate(0, size * 1.75, 0);
+        stack.scale(size, -size, size); // Negative multiplications here to turn it back from being inside-out
 
         ImmersiveBackpack.getBackpackModel().renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()

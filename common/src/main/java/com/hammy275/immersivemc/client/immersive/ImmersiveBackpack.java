@@ -325,12 +325,11 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
         info.backVec = info.lookVec.scale(-1);
         info.renderPos = info.handPos.add(info.downVec.scale(0.75));
         info.renderPos = info.renderPos.add(info.backVec.scale(1d/6d));
-        info.renderPos = info.renderPos.add(rightVec.scale(0.75));
+        info.renderPos = info.renderPos.add(rightVec);
 
         info.argb = getBackpackColor();
 
-        info.centerTopPos = info.renderPos.add(info.downVec.scale(-0.7)).add(leftVec);
-        info.centerTopPos = info.centerTopPos.add(rightVec);
+        info.centerTopPos = info.renderPos.add(info.downVec.scale(-0.7));
 
         // Item hitboxes and positions
         Vec3 leftOffset = leftVec.scale(spacing);
