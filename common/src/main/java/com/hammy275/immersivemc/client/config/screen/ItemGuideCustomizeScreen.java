@@ -40,44 +40,40 @@ public class ItemGuideCustomizeScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float f) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
 
-        super.render(stack, mouseX, mouseY, f);
-
+        super.render(stack, mouseX, mouseY, partialTicks);
         drawCenteredString(stack, this.font, this.title.getString(),
                 this.width / 2, 8, 0xFFFFFF);
 
-        renderPreview(stack, ConfigScreen.getClientConfigIfAdjusting().itemGuideColor, 0.25f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSize);
-        renderPreview(stack, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedColor, 0.5f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize);
+        renderPreview(stack, ConfigScreen.getClientConfigIfAdjusting().itemGuideColor, 0.225f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSize);
+        renderPreview(stack, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedColor, 0.475f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize);
         // Render square for particle color by using our cube model lol
-        renderPreview(stack, ConfigScreen.getClientConfigIfAdjusting().rangedGrabColor, 0.75f, true, 1.0f);
+        renderPreview(stack, ConfigScreen.getClientConfigIfAdjusting().rangedGrabColor, 0.725f, true, 1.0f);
 
-        if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 7 / 8 - 16,
-                this.height * 1 / 4 - 16, this.width * 7 / 8 + 16, this.height * 1 / 4 + 16)) {
+        if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
+                this.height * 225 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 225 / 1000 + 16)) {
             renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide.desc")),
                     mouseX, mouseY);
         }
 
-        if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 7 / 8 - 16,
-                this.height * 1 / 2 - 16, this.width * 7 / 8 + 16, this.height * 1 / 2 + 16)) {
+        if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
+                this.height * 475 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 475 / 1000 + 16)) {
             renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide_selected.desc")),
                     mouseX, mouseY);
         }
 
-        RGBA color = ConfigScreen.getClientConfigIfAdjusting().rangedGrabColor;
-
-        if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 7 / 8 - 16,
-                this.height * 3 / 4 - 16 + (int) (16f * color.alphaF()), this.width * 7 / 8 + 16, this.height * 3 / 4 + 16 + (int) (16f * color.alphaF()))) {
+        if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
+                this.height * 725 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 725 / 1000 + 16)) {
             renderTooltip(stack, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.ranged_grab_color.desc")),
                     mouseX, mouseY);
         }
     }
-
     private void renderPreview(PoseStack stack, RGBA color, float heightMult, boolean renderSquare, double size) {
         stack.pushPose();
-        stack.translate(this.width * 0.875, this.height * heightMult, 0);
-        stack.scale(0.25f, 0.25f, 0.25f);
+        stack.translate(this.width * 0.95, this.height * heightMult - 16f, 0);
+        stack.scale(0.225f, 0.225f, 0.225f);
 
         if (!renderSquare) {
             long currentTimeMilli = Instant.now().toEpochMilli();
@@ -89,10 +85,11 @@ public class ItemGuideCustomizeScreen extends Screen {
 
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
         if (ConfigScreen.getClientConfigIfAdjusting().placementGuideMode == PlacementGuideMode.CUBE || renderSquare) {
-            stack.translate(0, 64f * size, 0);
             if (renderSquare) {
                 stack.translate(0, 64f * color.alphaF(), 0);
                 stack.scale(color.alphaF(), color.alphaF(), color.alphaF());
+            } else {
+                stack.translate(0, 64f * size, 0);
             }
             float alpha = renderSquare ? 1f : color.alphaF();
             ClientRenderSubscriber.cubeModel.render(stack,
@@ -109,7 +106,7 @@ public class ItemGuideCustomizeScreen extends Screen {
 
     @Override
     protected void init() {
-        this.list = new OptionsList(Minecraft.getInstance(), this.width * 3 / 4, this.height,
+        this.list = new OptionsList(Minecraft.getInstance(), this.width, this.height,
                 32, this.height - 32, 24);
 
 
