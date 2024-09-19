@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -14,6 +15,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChiseledBookShelfBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class ChiseledBookshelfHandler extends ContainerHandler<NullStorage> {
     // Used for ChiseledBookShelfBlock to mixin for our redirection
@@ -38,10 +41,12 @@ public class ChiseledBookshelfHandler extends ContainerHandler<NullStorage> {
             bookshelfBlockHandOverride = hand;
 
             ItemStack stack = player.getItemInHand(hand);
+            // Hit below gets overriden by mixins, but we need a valid one for some vanilla code that comes first.
+            BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(pos), Direction.NORTH, pos, false);
             if (stack.isEmpty()) {
-                state.useWithoutItem(player.level(), player, null);
+                state.useWithoutItem(player.level(), player, hit);
             } else {
-                state.useItemOn(stack, player.level(), player, hand, null);
+                state.useItemOn(stack, player.level(), player, hand, hit);
             }
 
             bookshelfBlockSlotOverride = -1;
