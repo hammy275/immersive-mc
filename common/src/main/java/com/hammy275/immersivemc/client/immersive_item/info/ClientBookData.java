@@ -5,7 +5,6 @@ import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.OBB;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
-import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.workaround.ClickHandlerScreen;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
 import com.hammy275.immersivemc.common.network.Network;
@@ -89,7 +88,7 @@ public class ClientBookData extends BookData {
      * Pitch is 0 forward, with 30 up and -30 down
      * Yaw is just point direction
      */
-    public void render(PoseStack stack, PosRot hand) {
+    public void render(PoseStack stack, PosRot hand, int light) {
         stack.pushPose();
 
         Vec3 pos = hand.position();
@@ -116,14 +115,14 @@ public class ClientBookData extends BookData {
         bookModel.render(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderType.entitySolid(writtenBookTexture)),
-                15728880, OverlayTexture.NO_OVERLAY,
+                light, OverlayTexture.NO_OVERLAY,
                 1, 1, 1, 1);
 
         stack.popPose();
 
         if (pageChangeState == PageChangeState.NONE) {
-            renderPage(stack, hand, left, true);
-            renderPage(stack, hand, right, false);
+            renderPage(stack, hand, left, true, light);
+            renderPage(stack, hand, right, false, light);
         }
 
         if (pageChangeState == PageChangeState.NONE) {
@@ -139,7 +138,7 @@ public class ClientBookData extends BookData {
         }
     }
 
-    protected void renderPage(PoseStack stack, PosRot hand, FormattedText textRaw, boolean leftPage) {
+    protected void renderPage(PoseStack stack, PosRot hand, FormattedText textRaw, boolean leftPage, int light) {
         stack.pushPose();
 
         Vec3 awayFromBookUp = getAway(hand);
@@ -167,7 +166,7 @@ public class ClientBookData extends BookData {
             // -56f is used to make the text left-aligned.
             font.drawInBatch(seq, -56f, 32 + lineNum++ * 9, 0xFF000000, false,
                     stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(),
-                    false, 0, ClientUtil.maxLight);
+                    false, 0, light);
         }
 
         stack.popPose();
