@@ -6,6 +6,7 @@ import net.minecraft.world.item.ItemStack;
 public class WrittenBookInfo extends AbstractItemInfo {
 
     public ClientBookData bookData;
+    public int light = -1;
 
     public WrittenBookInfo(ItemStack item, InteractionHand hand) {
         super(item, hand);
