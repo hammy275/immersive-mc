@@ -1,10 +1,12 @@
 package com.hammy275.immersivemc.client.immersive_item;
 
+import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.vr.VRUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.vrapi.api.data.IVRData;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -13,11 +15,14 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
 
     @Override
     protected void render(WrittenBookInfo info, PoseStack stack, IVRData hand) {
-        info.bookData.render(stack, VRUtil.posRot(hand));
+        if (info.light > -1) {
+            info.bookData.render(stack, VRUtil.posRot(hand), info.light);
+        }
     }
 
     @Override
     protected void tick(WrittenBookInfo info, IVRData hand, IVRData other) {
+        info.light = ImmersiveClientLogicHelpers.instance().getLight(BlockPos.containing(hand.position()));
         info.bookData.tick(VRUtil.posRot(hand), VRUtil.posRot(other));
     }
 
