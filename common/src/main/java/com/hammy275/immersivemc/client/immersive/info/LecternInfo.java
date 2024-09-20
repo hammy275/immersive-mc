@@ -15,6 +15,7 @@ public class LecternInfo implements ImmersiveInfo {
 
     public ClientBookData bookData = new ClientBookData(false);
     public long tickCount = 0;
+    public int light = -1;
 
     public LecternInfo(BlockPos pos) {
         bookData.pos = pos;
