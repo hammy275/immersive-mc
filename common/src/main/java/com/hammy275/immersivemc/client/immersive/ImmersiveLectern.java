@@ -60,18 +60,20 @@ public class ImmersiveLectern implements Immersive<LecternInfo, BookData> {
 
     @Override
     public boolean shouldRender(LecternInfo info) {
-        return !info.bookData.book.isEmpty() && info.bookData.pageTurnBoxes[2] != null && info.bookData.lecternPosRot != null;
+        return !info.bookData.book.isEmpty() && info.bookData.pageTurnBoxes[2] != null && info.bookData.lecternPosRot != null
+                && info.light > -1;
     }
 
     @Override
     public void render(LecternInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
-        info.bookData.render(stack, info.bookData.lecternPosRot);
+        info.bookData.render(stack, info.bookData.lecternPosRot, info.light);
     }
 
     @Override
     public void tick(LecternInfo info) {
         info.tickCount++;
         info.bookData.lecternPlayerTick(Minecraft.getInstance().player, info.getBlockPosition());
+        info.light = ImmersiveClientLogicHelpers.instance().getLight(info.getBlockPosition().above());
         if (VRPluginVerify.clientInVR() && Minecraft.getInstance().options.keyAttack.isDown()) {
             boolean didInteract = info.bookData.doPageInteract(0);
             if (didInteract) {
