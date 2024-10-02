@@ -18,6 +18,7 @@
     "DoorBlockMixin",
     "FenceGateBlockMixin",
     "ItemMixin",
+    "LecternBlockEntityAccessor",
     "LevelMixin",
     "LivingEntityMixin",
     "ProjectileAccessor",
