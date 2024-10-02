@@ -8,7 +8,6 @@ import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
-import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.ServerUtil;
 import net.minecraft.SharedConstants;
@@ -23,9 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -112,21 +109,6 @@ public class ImmersiveMCLevelStorage extends SavedData {
 
         // Storage wasn't in-memory, and we couldn't make a new one. Return null.
         return null;
-    }
-
-    public static List<BookData> getAllBookDatas(MinecraftServer server) {
-        List<BookData> datas = new ArrayList<>();
-        for (ServerLevel level : server.getAllLevels()) {
-            ImmersiveMCLevelStorage storage = level.getDataStorage().get(factory, DATA_KEY);
-            if (storage != null) {
-                storage.storageMap.forEach((pos, ws) -> {
-                    if (ws instanceof BookData bd) {
-                        datas.add(bd);
-                    }
-                });
-            }
-        }
-        return datas;
     }
 
     public static void unmarkAllItemStoragesDirty(MinecraftServer server) {
