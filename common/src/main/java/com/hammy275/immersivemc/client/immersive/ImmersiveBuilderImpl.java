@@ -22,7 +22,6 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     ImmersiveHandler<S> handler;
 
     // -- Optional --
-    Supplier<Boolean> enabledInConfigSupplier = () -> true;
     float renderSize = ClientConstants.defaultItemScaleSize;
     List<RelativeHitboxInfoImpl> hitboxes = new ArrayList<>();
     List<Vec3i> lightPositionOffsets = new ArrayList<>();
@@ -105,17 +104,6 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     @Override
     public ImmersiveBuilderImpl<E,S> setPositioningMode(HitboxPositioningMode newMode) {
         this.positioningMode = newMode;
-        return this;
-    }
-
-    /**
-     * Sets a function used to retrieve the config value for whether this immersive is enabled.
-     * @param checker Checker to retrieve config value. Something such as () -> ActiveConfig.active().myConfigValue works here.
-     * @return Builder object.
-     */
-    @Override
-    public ImmersiveBuilderImpl<E,S> setConfigChecker(Supplier<Boolean> checker) {
-        this.enabledInConfigSupplier = checker;
         return this;
     }
 
@@ -260,7 +248,6 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     @Override
     public <T extends NetworkStorage> ImmersiveBuilderImpl<E, T> copy(ImmersiveHandler<T> newHandler) {
         ImmersiveBuilderImpl<E, T> clone = new ImmersiveBuilderImpl<>(newHandler, this.extraInfoDataClazz);
-        clone.enabledInConfigSupplier = this.enabledInConfigSupplier;
         clone.renderSize = this.renderSize;
         clone.hitboxes = new ArrayList<>(this.hitboxes);
         clone.lightPositionOffsets = new ArrayList<>(this.lightPositionOffsets);
@@ -281,7 +268,6 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     @Override
     public <F, T extends NetworkStorage> ImmersiveBuilderImpl<F, T> copy(ImmersiveHandler<T> newHandler, Class<F> newExtraInfoDataClass) {
         ImmersiveBuilderImpl<F, T> clone = new ImmersiveBuilderImpl<>(newHandler, newExtraInfoDataClass);
-        clone.enabledInConfigSupplier = this.enabledInConfigSupplier;
         clone.renderSize = this.renderSize;
         clone.hitboxes = new ArrayList<>(this.hitboxes);
         clone.lightPositionOffsets = new ArrayList<>(this.lightPositionOffsets);
