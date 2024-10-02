@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.server;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
@@ -25,14 +26,14 @@ public class ServerSubscriber {
 
     public static void onServerTick(MinecraftServer server) {
         ServerSubscriber.server = server; // Not a fan of this, but no better way to hold onto the server instance.
-        ImmersiveMCLevelStorage.getAllBookDatas(server).forEach(BookData::lecternServerTick);
+        SharedNetworkStorages.instance().getAll(BookData.class).forEach(BookData::lecternServerTick);
         for (AbstractTracker tracker : ServerTrackerInit.globalTrackers) {
             tracker.doTick(null);
         }
         TrackedImmersives.tick(server);
         DirtyTracker.unmarkAllDirty(); // Remove dirtiness for block entities
         ImmersiveMCLevelStorage.unmarkAllItemStoragesDirty(server);
-        ImmersiveMCLevelStorage.getAllBookDatas(server).forEach(BookData::markNoLongerDirty);
+        SharedNetworkStorages.instance().getAll(BookData.class).forEach(BookData::markNoLongerDirty);
     }
 
     public static void onPlayerTick(Player playerIn) {

@@ -3,9 +3,6 @@ package com.hammy275.immersivemc.common.immersive.storage.network.impl;
 import com.hammy275.immersivemc.api.common.hitbox.OBB;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
-import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
-import com.hammy275.immersivemc.api.server.WorldStorage;
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.PageTurnPacket;
 import com.hammy275.immersivemc.common.util.PageChangeState;
@@ -14,22 +11,22 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.VRUtil;
-import com.hammy275.immersivemc.server.ServerSubscriber;
-import com.hammy275.immersivemc.server.ServerUtil;
+import com.hammy275.immersivemc.mixin.LecternBlockEntityAccessor;
 import com.mojang.math.Axis;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.WrittenBookItem;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.LecternBlockEntity;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
-public class BookData implements NetworkStorage, WorldStorage {
+public class BookData implements NetworkStorage {
 
     /*
         Notes:
@@ -72,6 +69,7 @@ public class BookData implements NetworkStorage, WorldStorage {
     private transient boolean isDirty = false;
     public transient boolean authoritative = false;
     public transient BlockPos pos = BlockPos.ZERO;
+    public transient Level serverLecternLevel = null;
 
     public BookData() {
 
@@ -83,16 +81,25 @@ public class BookData implements NetworkStorage, WorldStorage {
 
 
     public void setPage(int newPageIndex) {
-        if (newPageIndex % 2 != 0) {
-            newPageIndex--;
+        setPage(newPageIndex, true);
+    }
+
+    public void setPage(int newPageIndex, boolean updateLecternBlock) {
+        if (!book.isEmpty()) {
+            if (newPageIndex % 2 != 0) {
+                newPageIndex--;
+            }
+            if (newPageIndex > maxLeftPageIndex()) {
+                newPageIndex = maxLeftPageIndex();
+            } else if (newPageIndex < 0) {
+                newPageIndex = 0;
+            }
+            leftPageIndex = newPageIndex;
+            if (updateLecternBlock && serverLecternLevel != null && pos != null && serverLecternLevel.getBlockEntity(pos) instanceof LecternBlockEntity lectern) {
+                ((LecternBlockEntityAccessor) lectern).immersiveMC$setPage(newPageIndex);
+            }
+            setDirty();
         }
-        if (newPageIndex > maxLeftPageIndex()) {
-            newPageIndex = maxLeftPageIndex();
-        } else if (newPageIndex < 0) {
-            newPageIndex = 0;
-        }
-        leftPageIndex = newPageIndex;
-        setDirty();
     }
 
     public void nextPage() {
@@ -135,6 +142,12 @@ public class BookData implements NetworkStorage, WorldStorage {
     }
 
     public void lecternServerTick() {
+        if (serverLecternLevel != null && pos != null && serverLecternLevel.getBlockEntity(pos) instanceof LecternBlockEntity lectern) {
+            int lecternPageNumber = lectern.getPage();
+            if (lecternPageNumber != leftPageIndex && lecternPageNumber != leftPageIndex + 1) {
+                setPage(lecternPageNumber, false);
+            }
+        }
         if (pageTurner != null) {
             lecternPlayerTick(pageTurner, pos);
         }
@@ -331,24 +344,5 @@ public class BookData implements NetworkStorage, WorldStorage {
 
     public int getRightPageIndex() {
         return getLeftPageIndex() + 1;
-    }
-
-    // Book is saved and loaded so setPage() has the max page number to work with.
-    @Override
-    public void load(CompoundTag nbt, int lastVanillaDataVersion) {
-        this.book = ServerUtil.parseItem(nbt.getCompound("book"), lastVanillaDataVersion);
-        setPage(nbt.getInt("leftPageIndex"));
-    }
-
-    @Override
-    public CompoundTag save(CompoundTag nbt) {
-        nbt.put("book", book.save(new CompoundTag()));
-        nbt.putInt("leftPageIndex", leftPageIndex);
-        return nbt;
-    }
-
-    @Override
-    public WorldStorageHandler<? extends NetworkStorage> getHandler() {
-        return ImmersiveHandlers.lecternHandler;
     }
 }
