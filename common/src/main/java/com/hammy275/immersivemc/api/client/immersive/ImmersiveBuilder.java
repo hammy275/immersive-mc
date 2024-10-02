@@ -74,13 +74,6 @@ public interface ImmersiveBuilder<E, S extends NetworkStorage> {
     public ImmersiveBuilder<E,S> setPositioningMode(HitboxPositioningMode newMode);
 
     /**
-     * Sets a function used to retrieve the config value for whether this immerisve is enabled.
-     * @param checker Checker to retrieve config value. Something such as () -> ActiveConfig.active().myConfigValue works here.
-     * @return Builder object.
-     */
-    public ImmersiveBuilder<E,S> setConfigChecker(Supplier<Boolean> checker);
-
-    /**
      * Sets what should happen when a hitbox is interacted with.
      * @param handler Function that takes an info instance, a player doing the interaction, the slot being interacted
      *                with, and the hand being interacted with. This function should return a number denoting the
