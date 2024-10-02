@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.network.packet;
 
-import com.hammy275.immersivemc.api.server.WorldStorages;
+import com.hammy275.immersivemc.api.server.SharedNetworkStorages;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -42,7 +43,7 @@ public class PageTurnPacket {
 
     public static void handle(PageTurnPacket message, ServerPlayer player) {
         if (NetworkUtil.safeToRun(message.pos, player)) {
-            BookData storage = (BookData) WorldStorages.instance().getOrCreate(message.pos, player.getLevel());
+            BookData storage = SharedNetworkStorages.instance().getOrCreate(player.level, message.pos, ImmersiveHandlers.lecternHandler);
             if (storage != null && !storage.book.isEmpty() && storage.pageTurner == null) {
                 if (message.forcedPageIndex == -1) {
                     if (!VRPluginVerify.playerInVR(player) &&
