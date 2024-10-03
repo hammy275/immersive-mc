@@ -42,8 +42,7 @@ public class TrackedImmersives {
 
     public static void maybeTrackImmersive(ServerPlayer player, BlockPos pos) {
         for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
-            if (!handler.clientAuthoritative() && Util.isValidBlocks(handler, pos, player.level())
-                && handler.enabledInConfig(player)) {
+            if (!handler.clientAuthoritative() && handler.enabledInConfig(player) && Util.isValidBlocks(handler, pos, player.level())) {
                 trackImmersive(player, handler, pos);
                 return;
             }
