@@ -48,6 +48,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -159,8 +160,9 @@ public class ClientLogicSubscriber {
     public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         // No similar loop for AbstractPlayerAttachmentImmersive since those don't run from blocks
         for (Immersive<?, ?> immersive : Immersives.IMMERSIVES) {
-            if (Util.isValidBlocks(immersive.getHandler(), pos, level) && immersive.getHandler().clientAuthoritative() &&
-            immersive.getHandler().enabledInConfig(Minecraft.getInstance().player)) {
+            if (immersive.getHandler().clientAuthoritative() &&
+                    immersive.getHandler().enabledInConfig(Minecraft.getInstance().player) &&
+                    Util.isValidBlocks(immersive.getHandler(), pos, level)) {
                 doTrackIfNotTrackingAlready(immersive, pos, level);
             }
         }
@@ -255,23 +257,28 @@ public class ClientLogicSubscriber {
         singleton.globalTick();
         Collection<I> infos = singleton.getTrackedObjects();
 
-        for (I info : infos) {
-            singleton.tick(info);
-            if (info.hasHitboxes()) {
-                if (VRPluginVerify.clientInVR()) {
-                    IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
-                    for (int i = 0; i <= 1; i++) {
-                        info.setSlotHovered(Util.getFirstIntersect(vrPlayer.getController(i).position(),
-                                info.getAllHitboxes().stream().map((box) -> box != null ? box.getHitbox() : null).toList()).orElse(-1), i);
+        try {
+            for (I info : infos) {
+                singleton.tick(info);
+                if (info.hasHitboxes()) {
+                    if (VRPluginVerify.clientInVR()) {
+                        IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
+                        for (int i = 0; i <= 1; i++) {
+                            info.setSlotHovered(Util.getFirstIntersect(vrPlayer.getController(i).position(),
+                                    info.getAllHitboxes().stream().map((box) -> box != null ? box.getHitbox() : null).toList()).orElse(-1), i);
+                        }
+                    }
+                    if (!VRPluginVerify.clientInVR() || ActiveConfig.active().rightClickImmersiveInteractionsInVR) {
+                        Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
+                        info.setSlotHovered(Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(), info.getAllHitboxes()).orElse(-1), 0);
+                        info.setSlotHovered(-1, 1);
                     }
                 }
-                if (!VRPluginVerify.clientInVR() || ActiveConfig.active().rightClickImmersiveInteractionsInVR) {
-                    Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
-                    info.setSlotHovered(Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(), info.getAllHitboxes()).orElse(-1), 0);
-                    info.setSlotHovered(-1, 1);
-                }
             }
-        }
+        // Happens when clearing Immersives due to a mod compatibility issue on the client. Only skips this singleton
+        // (which just got disabled), so nothing lasting happens because of this.
+        } catch (ConcurrentModificationException ignored) {}
+
     }
 
     protected static <I extends AbstractPlayerAttachmentInfo> void tickInfos(AbstractPlayerAttachmentImmersive<I, ?> singleton, Player player) {
