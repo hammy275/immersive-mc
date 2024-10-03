@@ -42,7 +42,7 @@ public class TrackedImmersives {
 
     public static void maybeTrackImmersive(ServerPlayer player, BlockPos pos) {
         for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
-            if (Util.isValidBlocks(handler, pos, player.level)
+            if (!handler.clientAuthoritative() && Util.isValidBlocks(handler, pos, player.level)
                 && handler.enabledInConfig(player)) {
                 trackImmersive(player, handler, pos);
                 return;
@@ -73,6 +73,8 @@ public class TrackedImmersives {
     }
 
     private static void syncDataToClient(ServerPlayer player, TrackedImmersiveData<?> data) {
-        Network.INSTANCE.sendToPlayer(player, data.getSyncPacket(player));
+        if (!data.getHandler().clientAuthoritative()) {
+            Network.INSTANCE.sendToPlayer(player, data.getSyncPacket(player));
+        }
     }
 }
