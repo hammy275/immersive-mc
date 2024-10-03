@@ -16,6 +16,9 @@ import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentIn
 import com.hammy275.immersivemc.client.immersive.info.AnvilData;
 import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
+import com.hammy275.immersivemc.common.compat.IronFurnaces;
+import com.hammy275.immersivemc.common.compat.TinkersConstruct;
+import com.hammy275.immersivemc.common.compat.util.CompatModule;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
@@ -390,12 +393,18 @@ public class Immersives {
 
     public static final Immersive<?, ?> immersiveTrapdoor = new ImmersiveTrapdoor();
 
-    public static final BuiltImmersive<?,?> immersiveIronFurnacesFurnace = immersiveFurnace.getBuilderClone(ImmersiveHandlers.ironFurnacesFurnaceHandler)
-            .build();
+    public static final BuiltImmersive<?,?> immersiveIronFurnacesFurnace = CompatModule.create(
+            immersiveFurnace.getBuilderClone(ImmersiveHandlers.ironFurnacesFurnaceHandler).build(),
+            BuiltImmersive.class,
+            IronFurnaces.compatData);
 
-    public static final BuiltImmersive<?,?> immersiveTinkersConstructCraftingStation = immersiveCrafting.getBuilderClone(ImmersiveHandlers.tcCraftingStationHandler)
+    public static final BuiltImmersive<?,?> immersiveTinkersConstructCraftingStation = CompatModule.create(
+            immersiveCrafting.getBuilderClone(ImmersiveHandlers.tcCraftingStationHandler)
             .modifyHitboxes(0, 8, (hitbox) -> hitbox.renderItem(false).build())
-            .build();
+            .build(),
+            BuiltImmersive.class,
+            TinkersConstruct.compatData
+            );
 
     static {
         ImmersiveMCClientRegistrationImpl.doImmersiveRegistration((immersive) -> {
