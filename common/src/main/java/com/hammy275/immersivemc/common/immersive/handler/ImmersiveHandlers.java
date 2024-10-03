@@ -3,6 +3,9 @@ package com.hammy275.immersivemc.common.immersive.handler;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveMCRegistrationImpl;
+import com.hammy275.immersivemc.common.compat.IronFurnaces;
+import com.hammy275.immersivemc.common.compat.TinkersConstruct;
+import com.hammy275.immersivemc.common.compat.util.CompatModule;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.CraftingTableStorage;
@@ -29,7 +32,7 @@ public class ImmersiveHandlers {
     public static final WorldStorageHandler<ETableStorage> enchantingTableHandler = new ETableHandler();
     public static final ImmersiveHandler<?> furnaceHandler = new FurnaceHandler();
     public static final ImmersiveHandler<?> hopperHandler = new HopperHandler();
-    public static final ImmersiveHandler<?> ironFurnacesFurnaceHandler = new IronFurnacesFurnaceHandler();
+    public static final ImmersiveHandler<?> ironFurnacesFurnaceHandler = CompatModule.create(new IronFurnacesFurnaceHandler(), IronFurnaces.compatData);
     public static final ImmersiveHandler<?> jukeboxHandler = new JukeboxHandler();
     public static final ImmersiveHandler<BookData> lecternHandler = new LecternHandler();
     public static final ImmersiveHandler<NullStorage> leverHandler = new LeverHandler();
@@ -37,7 +40,7 @@ public class ImmersiveHandlers {
     public static final ImmersiveHandler<?> shulkerBoxHandler = new ShulkerBoxHandler();
     public static final WorldStorageHandler<SmithingTableStorage> smithingTableHandler = new SmithingTableHandler();
     public static final ImmersiveHandler<NullStorage> trapdoorHandler = new TrapdoorHandler();
-    public static final ImmersiveHandler<?> tcCraftingStationHandler = new TCCraftingStationHandler();
+    public static final ImmersiveHandler<?> tcCraftingStationHandler = CompatModule.create(new TCCraftingStationHandler(), TinkersConstruct.compatData);
 
     static {
         ImmersiveMCRegistrationImpl.doImmersiveRegistration((handler) -> {
