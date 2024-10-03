@@ -69,7 +69,8 @@ public interface ImmersiveHandler<S extends NetworkStorage> {
 
     /**
      * Whether blocks matching this Immersive should be initiated by the client. If this is true, the server should
-     * not send any data to the client about this Immersive.
+     * not send any data to the client about this Immersive, and will never track that a client isn't tracking the
+     * Immersive or {@link #makeInventoryContents(ServerPlayer, BlockPos)} for it.
      * @return Whether this immersive should have tracking initiated by the client. The same value should always be
      *         returned by this method.
      */
