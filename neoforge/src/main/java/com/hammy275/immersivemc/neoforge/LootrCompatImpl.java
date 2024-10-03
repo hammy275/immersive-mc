@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.neoforge;
 
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.compat.lootr.LootrCompat;
-import com.hammy275.immersivemc.common.compat.lootr.LootrNullImpl;
 import com.hammy275.immersivemc.common.compat.util.CompatModule;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
 import net.minecraft.core.BlockPos;
@@ -25,10 +24,7 @@ public class LootrCompatImpl implements LootrCompat {
     private LootrCompatImpl() {}
 
     public static LootrCompat makeCompatImpl() {
-        return CompatModule.create(new LootrCompatImpl(), LootrCompat.class, "Lootr",
-                (config, newValue) -> {
-                    Lootr.lootrImpl = new LootrNullImpl();
-                });
+        return CompatModule.create(new LootrCompatImpl(), LootrCompat.class, Lootr.compatData);
     }
 
     @Override

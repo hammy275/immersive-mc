@@ -205,6 +205,13 @@ public class ActiveConfig implements Cloneable {
     }
 
     /**
+     * Re-merges all player configs with the server config. Should only be called by the server.
+     */
+    public static void remergeAllConfigs() {
+        CLIENTS.values().forEach(config -> config.mergeWithServer(FILE_SERVER));
+    }
+
+    /**
      * Merges this config with the config provided.
      * This will only update values that both the client and server get a say in (Synced values). For example, both the
      * server and the client can declare useAnvilImmersion to be false. If at least one of them declares it such, it
