@@ -1,8 +1,5 @@
 package com.hammy275.immersivemc.mixin;
 
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
@@ -23,11 +20,7 @@ public class LevelMixin {
         BlockEntity blockEntity = me.getBlockEntity(blockPos);
         // Lecterns hold items, but aren't directly Containers
         if (!me.isClientSide && blockEntity instanceof Container || blockEntity instanceof LecternBlockEntity) {
-            for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
-                if (Util.isValidBlocks(handler, blockPos, me)) {
-                    DirtyTracker.markDirty(me, blockPos);
-                }
-            }
+            DirtyTracker.markDirty(me, blockPos);
         }
     }
 }

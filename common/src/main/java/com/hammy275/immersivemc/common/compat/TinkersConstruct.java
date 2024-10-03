@@ -6,4 +6,6 @@ public class TinkersConstruct {
 
     public static final Class<?> craftingStation =
             CompatUtils.getClazz("slimeknights.tconstruct.tables.block.entity.table.CraftingStationBlockEntity");
+    public static final CompatData compatData = new CompatData("Tinkers Construct's Crafting Station",
+            (config, newVal) -> config.useTinkersConstructCraftingStationImmersive = newVal);
 }

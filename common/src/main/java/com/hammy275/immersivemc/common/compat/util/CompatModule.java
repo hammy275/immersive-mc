@@ -1,7 +1,10 @@
 package com.hammy275.immersivemc.common.compat.util;
 
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.compat.CompatModuleClient;
+import com.hammy275.immersivemc.common.compat.CompatData;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
@@ -17,7 +20,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 /**
  * Compatibility module to allow us to easily add mod integration that fails gracefully.
@@ -26,16 +28,14 @@ import java.util.function.BiConsumer;
 public class CompatModule<T> implements InvocationHandler {
 
     private final T module;
-    private final String friendlyName;
-    private final BiConsumer<ActiveConfig, Boolean> configSetter;
+    private final CompatData compatData;
 
     private final Map<String, Method> methods = new HashMap<>();
 
-    private CompatModule(T module, String friendlyName, BiConsumer<ActiveConfig, Boolean> configSetter) {
+    private CompatModule(T module, CompatData compatData) {
         this.module = module;
-        this.friendlyName = friendlyName;
-        this.configSetter = configSetter;
-        for (Method method : module.getClass().getDeclaredMethods()) {
+        this.compatData = compatData;
+        for (Method method : module.getClass().getMethods()) {
             methods.put(method.getName(), method);
         }
     }
@@ -44,16 +44,27 @@ public class CompatModule<T> implements InvocationHandler {
      * Creates a compatibility module.
      * @param module The module to wrap.
      * @param interfaceClass The interface that module implements.
-     * @param friendlyName A name to use for errors.
-     * @param configSetter A function that handles config setting to disable the compatibility on an error.
+     * @param compatData Compatibility data.
      * @return The module wrapped in compatibility.
      * @param <T> Object type for compatibility module.
      */
     @SuppressWarnings("unchecked")
-    public static <T extends I, I> I create(T module, Class<I> interfaceClass, String friendlyName, BiConsumer<ActiveConfig, Boolean> configSetter) {
+    public static <T extends I, I> I create(T module, Class<I> interfaceClass, CompatData compatData) {
         return (T) Proxy.newProxyInstance(CompatModule.class.getClassLoader(),
                 new Class[]{interfaceClass},
-                new CompatModule<>(module, friendlyName, configSetter));
+                new CompatModule<>(module, compatData));
+    }
+
+    /**
+     * Creates a compatibility module for an {@link ImmersiveHandler}.
+     * @param handler ImmersiveHandler to wrap.
+     * @param compatData Compatibility data.
+     * @return The ImmersiveHandler wrapped in compatibility.
+     * @param <S> The NetworkStorage type of the ImmersiveHandler.
+     */
+    @SuppressWarnings("unchecked")
+    public static <S extends NetworkStorage> ImmersiveHandler<S> create(ImmersiveHandler<S> handler, CompatData compatData) {
+        return create(handler, ImmersiveHandler.class, compatData);
     }
 
     @Override
@@ -68,14 +79,16 @@ public class CompatModule<T> implements InvocationHandler {
             System.out.println(sw);
             if (Platform.isClient()) {
                 // Running on the client. Could be singleplayer/LAN host or could be on a multiplayer server.
-                CompatModuleClient.disableClient(friendlyName, configSetter);
+                CompatModuleClient.disableClient(compatData);
             } else {
                 // Definitely running on the server. Disable for all players globally.
-                handleDisableServer(friendlyName, configSetter, ServerSubscriber.server);
+                handleDisableServer(compatData, ServerSubscriber.server);
             }
             // Give some sane return type without throwing.
             Class<?> returnType = method.getReturnType();
-            if (returnType.isPrimitive()) {
+            if (returnType == Void.TYPE) {
+                return null;
+            } else if (returnType.isPrimitive()) {
                 // Get the "default" primitive value (false for boolean, etc.)
                 return Array.get(Array.newInstance(returnType, 1), 0);
             } else if (returnType.isEnum()) {
@@ -91,11 +104,12 @@ public class CompatModule<T> implements InvocationHandler {
         }
     }
 
-    public static void handleDisableServer(String friendlyName, BiConsumer<ActiveConfig, Boolean> configSetter, MinecraftServer server) {
-        configSetter.accept(ActiveConfig.FILE_SERVER, false);
+    public static void handleDisableServer(CompatData compatData, MinecraftServer server) {
+        compatData.configSetter().accept(ActiveConfig.FILE_SERVER, false);
+        ActiveConfig.remergeAllConfigs();
         Network.INSTANCE.sendToPlayers(server.getPlayerList().getPlayers(), new ConfigSyncPacket(ActiveConfig.FILE_SERVER, null));
-        server.sendSystemMessage(getErrorMessage(friendlyName));
-        server.getPlayerList().getPlayers().forEach(player -> player.sendSystemMessage(getErrorMessage(friendlyName)));
+        server.sendSystemMessage(getErrorMessage(compatData.friendlyName()));
+        server.getPlayerList().getPlayers().forEach(player -> player.sendSystemMessage(getErrorMessage(compatData.friendlyName())));
     }
 
     public static Component getErrorMessage(String friendlyName) {
