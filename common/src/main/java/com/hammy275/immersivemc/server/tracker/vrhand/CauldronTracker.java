@@ -20,6 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.SolidBucketItem;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -66,7 +67,9 @@ public class CauldronTracker extends AbstractVRHandTracker {
         boolean inCauldronBlock = handState.getBlock() instanceof AbstractCauldronBlock;
         ItemStack handStack = player.getItemInHand(hand);
         Item handItem = handStack.getItem();
-        Holder<Potion> heldPotion = handStack.get(DataComponents.POTION_CONTENTS).potion().orElse(null);
+        PotionContents contents = handStack.get(DataComponents.POTION_CONTENTS);
+        if (contents == null) return;
+        Holder<Potion> heldPotion = contents.potion().orElse(null);
         CauldronInteraction interaction = ((AbstractCauldronBlockAccessor) cauldronBlock).getInteractions().map().get(handItem);
 
         if (interaction == null) return;
