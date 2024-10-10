@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.api.server.WorldStorage;
+import com.hammy275.immersivemc.server.api_impl.ConstantItemSwapAmount;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -37,7 +38,7 @@ public class BeaconHandler extends ItemWorldStorageHandler<BeaconStorage> {
             Util.placeLeftovers(player, beaconItem);
             beaconStorage.setItem(0, ItemStack.EMPTY);
         }
-        beaconStorage.placeItem(player, hand, 1, 0);
+        beaconStorage.placeItem(player, hand, 0, new ConstantItemSwapAmount(1));
         beaconStorage.setDirty(player.getLevel());
     }
 
