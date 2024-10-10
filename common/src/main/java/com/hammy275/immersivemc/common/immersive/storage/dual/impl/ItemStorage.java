@@ -1,21 +1,30 @@
 package com.hammy275.immersivemc.common.immersive.storage.dual.impl;
 
-import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
-import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.api.server.ItemSwapAmount;
+import com.hammy275.immersivemc.api.server.SwapResult;
 import com.hammy275.immersivemc.api.server.WorldStorage;
+import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.ServerSubscriber;
 import com.hammy275.immersivemc.server.ServerUtil;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
+import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Stack;
+import java.util.UUID;
 
 /**
  * Functions both as WorldStorage for saving server side and as a NetworkStorage for sending items
@@ -106,56 +115,40 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
      * @param player Player to get items from
      * @param hand Hand to get item from
      * @param slot Slot to merge into
+     * @param amount Amount of items to swap
      *
      */
-    public void placeItem(Player player, InteractionHand hand, int amountToPlace, int slot) {
-        boolean shouldReturnItems = ActiveConfig.getConfigForPlayer(player).returnItemsWhenLeavingImmersives;
-        ItemStack toHand;
-        ItemStack toImmersive;
-        ItemStack leftovers;
-        ItemStack handStack = player.getItemInHand(hand);
-        ItemStack immersiveStack = this.items[slot];
-        if (Util.stacksEqualBesidesCount(handStack, this.items[slot]) && !handStack.isEmpty()) {
-            ItemStack handStackToPlace = handStack.copy();
-            handStackToPlace.setCount(amountToPlace);
-            int oldImmersiveCount = immersiveStack.getCount();
-            Util.ItemStackMergeResult mergeResult = Util.mergeStacks(immersiveStack, handStackToPlace, false);
-            toImmersive = immersiveStack;
-            toHand = handStack.copy();
-            toHand.shrink(amountToPlace);
-            // Add anything that wasn't transferred due to stack size back
-            toHand.grow(mergeResult.mergedFrom.getCount());
-            leftovers = ItemStack.EMPTY;
-            // Always place only in last slot. If Player A places, then Player B, then A places again, order is
-            // A-B-A, rather than all of A then B.
-            PlayerItemCounts last = this.itemCounts[slot].get(this.itemCounts[slot].size() - 1);
-            int itemsMoved = immersiveStack.getCount() - oldImmersiveCount;
-            if (shouldReturnItems && last.uuid.isPresent() && last.uuid.get().equals(player.getUUID())) {
-                last.count += itemsMoved;
-            } else if (shouldReturnItems) {
-                this.itemCounts[slot].add(new PlayerItemCounts(Optional.of(player.getUUID()), itemsMoved));
-            } else if (last.uuid.isEmpty()) {
-                last.count += itemsMoved;
-            } else {
-                this.itemCounts[slot].add(new PlayerItemCounts(Optional.empty(), itemsMoved));
-            }
-        } else if (handStack.isEmpty()) {
-            toHand = immersiveStack;
-            toImmersive = ItemStack.EMPTY;
-            leftovers = ItemStack.EMPTY;
-            this.itemCounts[slot].clear();
-        } else { // Slots contain different item types and hand isn't air (place new stack in and old items go somewhere)
-            toHand = handStack.copy();
-            toHand.shrink(amountToPlace);
-            toImmersive = handStack.copy();
-            toImmersive.setCount(amountToPlace);
-            leftovers = immersiveStack.copy();
-            this.itemCounts[slot].add(
-                    new PlayerItemCounts(Optional.ofNullable(shouldReturnItems ? player.getUUID() : null), amountToPlace));
+    public void placeItem(Player player, InteractionHand hand, int slot, ItemSwapAmount amount) {
+        ItemStack playerStack = player.getItemInHand(hand);
+        ItemStack otherStack = this.getItem(slot);
+        SwapResult result = Swap.swapItems(playerStack, otherStack, amount,
+                incrementAmount -> incrementCountForPlayer(player, incrementAmount, slot),
+                ignored -> this.itemCounts[slot].clear());
+        result.giveToPlayer(player, hand);
+        this.items[slot] = result.immersiveStack(); // Set without clearing item counts, since those are updated above
+        if (player instanceof ServerPlayer sp) {
+            setDirty(sp.serverLevel());
         }
-        this.items[slot] = toImmersive;
-        player.setItemInHand(hand, toHand);
-        Util.placeLeftovers(player, leftovers);
+    }
+
+    /**
+     * Increments the return item count for the provided player.
+     * @param player Player to increment for.
+     * @param amount Amount to increment.
+     * @param slot Slot to increment in.
+     */
+    public void incrementCountForPlayer(Player player, int amount, int slot) {
+        boolean shouldReturnItems = ActiveConfig.getConfigForPlayer(player).returnItemsWhenLeavingImmersives;
+        ItemStorage.PlayerItemCounts last = this.itemCounts[slot].isEmpty() ? null : this.itemCounts[slot].getLast();
+        if (last != null && shouldReturnItems && last.uuid.isPresent() && last.uuid.get().equals(player.getUUID())) {
+            last.count += amount;
+        } else if (shouldReturnItems) {
+            this.itemCounts[slot].add(new ItemStorage.PlayerItemCounts(Optional.of(player.getUUID()), amount));
+        } else if (last != null && last.uuid.isEmpty()) {
+            last.count += amount;
+        } else {
+            this.itemCounts[slot].add(new ItemStorage.PlayerItemCounts(Optional.empty(), amount));
+        }
     }
 
     public ItemStack getItem(int slot) {
