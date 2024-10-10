@@ -7,7 +7,6 @@ import com.hammy275.immersivemc.api.server.SwapResult;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,9 +38,8 @@ public class FurnaceHandler extends ContainerHandler<ListOfItemsStorage> {
         if (slot != 2) {
             if (slot != 1 || furnace.canPlaceItem(1, playerItem) || playerItem.isEmpty()) {
                 SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, furnaceItem, amount);
-                Swap.givePlayerItemSwap(result.playerHandStack(), playerItem, player, hand);
+                result.giveToPlayer(player, hand);
                 furnace.setItem(slot, result.immersiveStack());
-                Util.placeLeftovers(player, result.leftoverStack());
             }
         } else {
             boolean itemTaken = false;
