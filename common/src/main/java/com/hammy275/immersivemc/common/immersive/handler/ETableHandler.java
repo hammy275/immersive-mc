@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.api.server.WorldStorage;
+import com.hammy275.immersivemc.server.api_impl.ConstantItemSwapAmount;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.storage.world.impl.ETableWorldStorage;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -61,7 +62,7 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
         if (slot == 0) {
             ItemStack toEnchant = player.getItemInHand(hand);
             if (!toEnchant.isEmpty() && !toEnchant.isEnchantable()) return;
-            enchStorage.placeItem(player, hand, 1, slot);
+            enchStorage.placeItem(player, hand, slot, new ConstantItemSwapAmount(1));
         } else if (player.getItemInHand(hand).isEmpty()) {
             boolean res = Swap.doEnchanting(slot, pos, player, hand);
             if (res) {
