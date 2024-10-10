@@ -35,7 +35,7 @@ public class AnvilHandler extends ItemWorldStorageHandler<AnvilStorage> {
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
         AnvilStorage storage = (AnvilStorage) WorldStoragesImpl.getOrCreateS(pos, player.getLevel());
         if (slot != 2) {
-            storage.placeItem(player, hand, amount.getNumItemsToSwap(player.getItemInHand(hand).getCount()), slot);
+            storage.placeItem(player, hand, slot, amount);
             storage.setItem(2, ItemStack.EMPTY);
             storage.xpLevels = 0;
             if (!storage.getItem(0).isEmpty() && !storage.getItem(1).isEmpty()) {
