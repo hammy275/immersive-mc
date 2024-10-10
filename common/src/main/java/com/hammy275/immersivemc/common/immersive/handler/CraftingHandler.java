@@ -32,9 +32,7 @@ public class CraftingHandler extends ItemWorldStorageHandler<CraftingTableStorag
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
         CraftingTableStorage storage = (CraftingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.getLevel());
         if (slot < 9) {
-            storage.placeItem(player, hand,
-                    amount.getNumItemsToSwap(player.getItemInHand(hand).getCount()),
-                    slot);
+            storage.placeItem(player, hand, slot, amount);
             storage.setItem(9, Swap.getRecipeOutput(player, storage.getItemsRaw()));
         } else {
             Swap.handleDoCraft(player, storage.getItemsRaw(), pos);
