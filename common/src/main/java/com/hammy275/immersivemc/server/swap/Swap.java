@@ -5,10 +5,12 @@ import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.api.server.SwapResult;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
 import com.hammy275.immersivemc.common.util.NullContainer;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.mixin.AnvilMenuMixin;
+import com.hammy275.immersivemc.server.api_impl.SwapResultImpl;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.storage.world.impl.ETableWorldStorage;
@@ -20,7 +22,13 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.EnchantmentMenu;
+import net.minecraft.world.inventory.ItemCombinerMenu;
+import net.minecraft.world.inventory.SmithingMenu;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -28,12 +36,70 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 
 public class Swap {
+
+    /**
+     * Swap items. This is the logic for
+     * {@link ImmersiveLogicHelpers#swapItems(ItemStack, ItemStack, ItemSwapAmount)},
+     * but also has callbacks for incrementing or clearing the item counts for the purposes of {@link ItemStorage}. See
+     * the above-mentioned method for details of this method.
+     * @param itemCountIncrementer Callback to run when the amount of items in this Immersive is increased
+     * @param itemCountClearer Callback to run when the amount of items in this Immersive is decreased
+     */
+    public static SwapResult swapItems(ItemStack handStack, ItemStack immersiveStack, ItemSwapAmount swapAmount,
+                                       @Nullable Consumer<Integer> itemCountIncrementer, @Nullable Consumer<Void> itemCountClearer) {
+        ItemStack toHand;
+        ItemStack toImmersive;
+        ItemStack leftovers;
+        int amountToPlace = swapAmount.getNumItemsToSwap(handStack.getCount());
+        boolean handAndImmersiveStackMatch = Util.stacksEqualBesidesCount(handStack, immersiveStack);
+        boolean immersiveStackAtMax = immersiveStack.getCount() == immersiveStack.getMaxStackSize();
+        // Both stacks are the same item and the immersive stack can hold some more items
+        if (handAndImmersiveStackMatch && !handStack.isEmpty() && !immersiveStackAtMax) {
+            ItemStack handStackToPlace = handStack.copy();
+            handStackToPlace.setCount(amountToPlace);
+            int oldImmersiveCount = immersiveStack.getCount();
+            Util.ItemStackMergeResult mergeResult = Util.mergeStacks(immersiveStack, handStackToPlace, false);
+            toImmersive = immersiveStack;
+            toHand = handStack.copy();
+            toHand.shrink(amountToPlace);
+            // Add anything that wasn't transferred due to stack size back
+            toHand.grow(mergeResult.mergedFrom.getCount());
+            leftovers = ItemStack.EMPTY;
+            // Always place only in last slot. If Player A places, then Player B, then A places again, order is
+            // A-B-A, rather than all of A then B.
+            int itemsMoved = immersiveStack.getCount() - oldImmersiveCount;
+            if (itemCountIncrementer != null) {
+                itemCountIncrementer.accept(itemsMoved);
+            }
+        } else if (handStack.isEmpty() || (immersiveStackAtMax && handAndImmersiveStackMatch)) { // Taking item from Immersive
+            // Prioritize leftovers over toHand, since we likely don't care about the items anymore, and we don't
+            // want to fill the hotbar with item grabs
+            toHand = handStack.isEmpty() ? ItemStack.EMPTY : immersiveStack.copy();
+            toImmersive = ItemStack.EMPTY;
+            leftovers = handStack.isEmpty() ? immersiveStack.copy() : handStack.copy();
+            if (itemCountClearer != null) {
+                itemCountClearer.accept(null);
+            }
+        } else { // Slots contain different item types and hand isn't air (place new stack in and old items go somewhere)
+            toHand = handStack.copy();
+            toHand.shrink(amountToPlace);
+            toImmersive = handStack.copy();
+            toImmersive.setCount(amountToPlace);
+            leftovers = immersiveStack.copy();
+            if (itemCountIncrementer != null) {
+                itemCountIncrementer.accept(amountToPlace);
+            }
+        }
+        return new SwapResultImpl(toHand, toImmersive, leftovers);
+    }
 
     public static boolean doEnchanting(int slot, BlockPos pos, ServerPlayer player, InteractionHand hand) {
         // NOTE: slot is 1-3, depending on which enchantment the player is going for.
@@ -86,8 +152,7 @@ public class Swap {
             ItemStack tableItem = itemArray[slot];
             SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, tableItem, amount);
             itemArray[slot] = result.immersiveStack();
-            givePlayerItemSwap(result.playerHandStack(), playerItem, player, hand);
-            Util.placeLeftovers(player, result.leftoverStack());
+            result.giveToPlayer(player, hand);
             itemArray[4] = getRecipeOutput(player, itemArray);
         } else {
             handleDoCraft(player, itemArray, null);
@@ -300,25 +365,4 @@ public class Swap {
                 throw new IllegalArgumentException("Unhandled placement mode " + mode);
         }
     }
-
-    public static void givePlayerItemSwap(ItemStack toPlayer, ItemStack fromPlayer, Player player, InteractionHand hand) {
-        if (fromPlayer.isEmpty() && toPlayer.getMaxStackSize() > 1) {
-            Util.addStackToInventory(player, toPlayer);
-        } else {
-            player.setItemInHand(hand, toPlayer);
-        }
-    }
-
-
-    public static class SwapResultOld {
-        public final ItemStack toHand;
-        public final ItemStack toOther;
-        public final ItemStack leftovers;
-        public SwapResultOld(ItemStack toHand, ItemStack toOther, ItemStack leftovers) {
-            this.toHand = toHand;
-            this.toOther = toOther;
-            this.leftovers = leftovers;
-        }
-    }
-
 }
