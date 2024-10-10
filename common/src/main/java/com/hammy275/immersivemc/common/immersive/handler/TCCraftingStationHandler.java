@@ -7,7 +7,6 @@ import com.hammy275.immersivemc.api.server.SwapResult;
 import com.hammy275.immersivemc.common.compat.TinkersConstruct;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
-import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -55,9 +54,8 @@ public class TCCraftingStationHandler extends ContainerHandler<ListOfItemsStorag
             // Just place the item in. Recipe result is calculated in makeInventoryContents() to show the client
             // and at actual crafting time (else block below).
             SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, craftingItem, amount);
-            Swap.givePlayerItemSwap(result.playerHandStack(), playerItem, player, hand);
+            result.giveToPlayer(player, hand);
             table.setItem(slot, result.immersiveStack());
-            Util.placeLeftovers(player, result.leftoverStack());
         } else {
             // Get the items into an array, do the craft, then put the items back.
             ItemStack[] items = new ItemStack[10];
