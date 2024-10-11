@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.immersive_item;
 
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
+import com.hammy275.immersivemc.client.immersive.book.WrittenBookHelpers;
 import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.vr.VRUtil;
@@ -16,13 +17,17 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     @Override
     protected void render(WrittenBookInfo info, PoseStack stack, IVRData hand) {
         if (info.light > -1) {
-            info.bookData.render(stack, VRUtil.posRot(hand), info.light);
+            info.bookData.render(stack, info.light, VRUtil.posRot(hand));
         }
     }
 
     @Override
     protected void tick(WrittenBookInfo info, IVRData hand, IVRData other) {
+        info.didClick = false;
         info.light = ImmersiveClientLogicHelpers.instance().getLight(new BlockPos(hand.position()));
+        info.bookData.interactables.clear();
+        WrittenBookHelpers.addInteractablesForThisTick(info, VRUtil.posRot(hand), true);
+        WrittenBookHelpers.addInteractablesForThisTick(info, VRUtil.posRot(hand), false);
         info.bookData.tick(VRUtil.posRot(hand), VRUtil.posRot(other));
     }
 
@@ -43,6 +48,6 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
 
     @Override
     public boolean onLeftClick(WrittenBookInfo info, IVRData hand, IVRData other) {
-        return info.bookData.doPageInteract(0);
+        return info.didClick;
     }
 }

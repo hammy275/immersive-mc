@@ -5,7 +5,8 @@ import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.api.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
+import com.hammy275.immersivemc.common.immersive.CommonBookData;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternData;
 import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -15,39 +16,39 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
 
-public class LecternHandler implements ImmersiveHandler<BookData> {
+public class LecternHandler implements ImmersiveHandler<LecternData<CommonBookData>> {
     @Override
-    public BookData makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        BookData storage = SharedNetworkStorages.instance().getOrCreate(player.level, pos, this);
-        storage.authoritative = true;
-        storage.book = ((LecternBlockEntity) player.level.getBlockEntity(pos)).getBook();
+    public LecternData<CommonBookData> makeInventoryContents(ServerPlayer player, BlockPos pos) {
+        LecternData<CommonBookData> storage = SharedNetworkStorages.instance().getOrCreate(player.level, pos, this);
+        LecternBlockEntity lectern = (LecternBlockEntity) player.level.getBlockEntity(pos);
+        storage.setBook(lectern.getBook(), lectern);
         storage.pos = pos;
-        storage.serverLecternLevel = player.level;
+        storage.level = player.level;
         return storage;
     }
 
     @Override
-    public BookData getEmptyNetworkStorage() {
-        return new BookData(true);
+    public LecternData<CommonBookData> getEmptyNetworkStorage() {
+        return new LecternData<>(new CommonBookData());
     }
 
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        BookData storage = SharedNetworkStorages.instance().getOrCreate(player.level, pos, this);
+        LecternData<CommonBookData> storage = SharedNetworkStorages.instance().get(player.level, pos, this);
         if (storage != null && !storage.book.isEmpty()) {
             if (slot == 0) {
-                storage.lastPage();
+                storage.bookData.lastPage();
             } else {
-                storage.nextPage();
+                storage.bookData.nextPage();
             }
         }
     }
 
     @Override
     public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        BookData storage = SharedNetworkStorages.instance().getOrCreate(player.level, pos, this);
+        LecternData<CommonBookData> storage = SharedNetworkStorages.instance().get(player.level, pos, this);
         return DirtyTracker.isDirty(player.level, pos) ||
-                storage != null && storage.isDirty();
+                storage != null && storage.bookData.isDirty();
     }
 
     @Override
