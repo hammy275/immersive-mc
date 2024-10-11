@@ -64,4 +64,11 @@ public class SharedNetworkStoragesImpl implements SharedNetworkStorages {
                 .map(storage -> (S) storage)
                 .toList();
     }
+
+    /**
+     * Clears all storages. Used by clients disconnecting to clear storages for singleplayer worlds.
+     */
+    public void clear() {
+        storages.clear();
+    }
 }

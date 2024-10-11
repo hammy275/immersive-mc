@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.api.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternData;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
@@ -26,14 +26,14 @@ public class ServerSubscriber {
 
     public static void onServerTick(MinecraftServer server) {
         ServerSubscriber.server = server; // Not a fan of this, but no better way to hold onto the server instance.
-        SharedNetworkStorages.instance().getAll(BookData.class).forEach(BookData::lecternServerTick);
+        SharedNetworkStorages.instance().getAll(LecternData.class).forEach(data -> data.tick(null));
         for (AbstractTracker tracker : ServerTrackerInit.globalTrackers) {
             tracker.doTick(null);
         }
         TrackedImmersives.tick(server);
         DirtyTracker.unmarkAllDirty(); // Remove dirtiness for block entities
         ImmersiveMCLevelStorage.unmarkAllItemStoragesDirty(server);
-        SharedNetworkStorages.instance().getAll(BookData.class).forEach(BookData::markNoLongerDirty);
+        SharedNetworkStorages.instance().getAll(LecternData.class).forEach(data -> data.bookData.setNoLongerDirty());
     }
 
     public static void onPlayerTick(Player playerIn) {
