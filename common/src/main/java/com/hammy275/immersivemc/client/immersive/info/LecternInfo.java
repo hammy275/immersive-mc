@@ -3,47 +3,65 @@ package com.hammy275.immersivemc.client.immersive.info;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfoFactory;
-import com.hammy275.immersivemc.client.immersive_item.info.ClientBookData;
+import com.hammy275.immersivemc.client.immersive.book.ClientBookData;
+import com.hammy275.immersivemc.client.immersive.book.WrittenBookDataHolder;
+import com.hammy275.immersivemc.client.immersive.book.WrittenBookHelpers;
+import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.packet.PageTurnPacket;
 import com.hammy275.immersivemc.common.util.PageChangeState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class LecternInfo implements ImmersiveInfo {
+public class LecternInfo implements ImmersiveInfo, WrittenBookDataHolder {
 
-    public ClientBookData bookData = new ClientBookData(false);
+    public ClientLecternData lecternData = new ClientLecternData();
     public long tickCount = 0;
     public int light = -1;
+    public boolean didClick = false;
 
     public LecternInfo(BlockPos pos) {
-        bookData.pos = pos;
+        lecternData.pos = pos;
+        lecternData.bookData.startVRPageTurnCallback = ignored -> Network.INSTANCE.sendToServer(new PageTurnPacket(pos));
+        lecternData.level = Minecraft.getInstance().level;
+    }
+
+    public void setBook(ItemStack book) {
+        if (book.isEmpty()) {
+            this.lecternData.bookData.renderables.clear();
+            this.lecternData.bookData.interactables.clear();
+        } else {
+            lecternData.setBook(book, null);
+            lecternData.bookData = WrittenBookHelpers.makeClientBookData(this);
+        }
     }
 
     @Override
     public List<? extends HitboxInfo> getAllHitboxes() {
-        List<HitboxInfo> hitboxes = new ArrayList<>(Arrays.stream(bookData.pageTurnBoxes)
+        List<HitboxInfo> hitboxes = new ArrayList<>(lecternData.bookData.getPageTurnHitboxes().stream()
                 .map(obb -> HitboxInfoFactory.instance().interactHitbox(obb))
                 .toList());
-        if (bookData.pageChangeState == PageChangeState.NONE || bookData.pageChangeState.isAnim) {
+        if (lecternData.bookData.pageChangeState == PageChangeState.NONE || lecternData.bookData.pageChangeState.isAnim) {
             // Set hitbox 2 to null when not doing a page turn to prevent it being intersected before clickInfos
             hitboxes.set(2, null);
         }
-        hitboxes.addAll(bookData.clickInfos.stream()
-                .map(bookClickInfo -> HitboxInfoFactory.instance().triggerHitbox(bookClickInfo.obb()))
+        hitboxes.addAll(lecternData.bookData.getInteractableHitboxes().stream()
+                .map(obb -> HitboxInfoFactory.instance().triggerHitbox(obb))
                 .toList());
         return hitboxes;
     }
 
     @Override
     public boolean hasHitboxes() {
-        return bookData.pageTurnBoxes[2] != null;
+        return true;
     }
 
     @Override
     public BlockPos getBlockPosition() {
-        return bookData.pos;
+        return lecternData.pos;
     }
 
     @Override
@@ -59,5 +77,21 @@ public class LecternInfo implements ImmersiveInfo {
     @Override
     public long getTicksExisted() {
         return tickCount;
+    }
+
+    @Override
+    public ClientBookData getData() {
+        return lecternData.bookData;
+    }
+
+    @Override
+    public ItemStack getBook() {
+        return lecternData.book;
+    }
+
+    @Override
+    public void onPageChangeStyleClick(int newPage) {
+        Network.INSTANCE.sendToServer(new PageTurnPacket(getBlockPosition(), newPage));
+        didClick = true;
     }
 }

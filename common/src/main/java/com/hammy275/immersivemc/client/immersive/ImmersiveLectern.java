@@ -7,11 +7,14 @@ import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
+import com.hammy275.immersivemc.client.immersive.book.WrittenBookHelpers;
 import com.hammy275.immersivemc.client.immersive.info.LecternInfo;
+import com.hammy275.immersivemc.common.immersive.CommonBookData;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternData;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.PageTurnPacket;
+import com.hammy275.immersivemc.common.util.PosRot;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -27,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ImmersiveLectern implements Immersive<LecternInfo, BookData> {
+public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<CommonBookData>> {
 
     protected final List<LecternInfo> infos = new ArrayList<>();
 
@@ -52,7 +55,8 @@ public class ImmersiveLectern implements Immersive<LecternInfo, BookData> {
             }
         } else if (!VRPluginVerify.clientInVR()) {
             // Text interaction is done in tick() instead for VR players
-            info.bookData.doPageInteract(info.bookData.clickInfos.get(hitboxIndex - 3));
+            info.lecternData.bookData.interactables.get(hitboxIndex - 3).interact(info.lecternData.bookData,
+                    info.lecternData.getLecternPosRot(info.getBlockPosition()), null);
             return ClientConstants.defaultCooldownTicks;
         }
         return -1;
@@ -60,30 +64,31 @@ public class ImmersiveLectern implements Immersive<LecternInfo, BookData> {
 
     @Override
     public boolean shouldRender(LecternInfo info) {
-        return !info.bookData.book.isEmpty() && info.bookData.pageTurnBoxes[2] != null && info.bookData.lecternPosRot != null
-                && info.light > -1;
+        return !info.lecternData.book.isEmpty() && info.light > -1 && getHandler().isValidBlock(info.getBlockPosition(), Minecraft.getInstance().level);
     }
 
     @Override
     public void render(LecternInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
-        info.bookData.render(stack, info.bookData.lecternPosRot, info.light);
+        info.lecternData.bookData.render(stack, info.light, info.lecternData.getLecternPosRot(info.getBlockPosition()));
     }
 
     @Override
     public void tick(LecternInfo info) {
         info.tickCount++;
-        info.bookData.lecternPlayerTick(Minecraft.getInstance().player, info.getBlockPosition());
+        info.lecternData.bookData.interactables.clear();
+        PosRot lecternPosRot = info.lecternData.getLecternPosRot(info.getBlockPosition());
+        WrittenBookHelpers.addInteractablesForThisTick(info, lecternPosRot, true);
+        WrittenBookHelpers.addInteractablesForThisTick(info, lecternPosRot, false);
+        info.lecternData.tick(Minecraft.getInstance().player);
         info.light = ImmersiveClientLogicHelpers.instance().getLight(info.getBlockPosition().above());
-        if (VRPluginVerify.clientInVR() && Minecraft.getInstance().options.keyAttack.isDown()) {
-            boolean didInteract = info.bookData.doPageInteract(0);
-            if (didInteract) {
-                ImmersiveClientLogicHelpers.instance().setCooldown((int) (ClientConstants.defaultCooldownTicks * ClientConstants.cooldownVRMultiplier));
-            }
+        if (info.didClick) {
+            ImmersiveClientLogicHelpers.instance().setCooldown((int) (ClientConstants.defaultCooldownTicks * ClientConstants.cooldownVRMultiplier));
+            info.didClick = false;
         }
     }
 
     @Override
-    public ImmersiveHandler<BookData> getHandler() {
+    public ImmersiveHandler<LecternData<CommonBookData>> getHandler() {
         return ImmersiveHandlers.lecternHandler;
     }
 
@@ -100,8 +105,9 @@ public class ImmersiveLectern implements Immersive<LecternInfo, BookData> {
     }
 
     @Override
-    public void processStorageFromNetwork(LecternInfo info, BookData storage) {
-        info.bookData.processFromNetwork(storage);
+    public void processStorageFromNetwork(LecternInfo info, LecternData<CommonBookData> storage) {
+        info.setBook(storage.book);
+        info.lecternData.mergeFromServer(storage);
     }
 
     @Override
