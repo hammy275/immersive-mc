@@ -94,6 +94,9 @@ public class Swap {
             toImmersive = handStack.copy();
             toImmersive.setCount(amountToPlace);
             leftovers = immersiveStack.copy();
+            if (itemCountClearer != null) {
+                itemCountClearer.accept(null);
+            }
             if (itemCountIncrementer != null) {
                 itemCountIncrementer.accept(amountToPlace);
             }
