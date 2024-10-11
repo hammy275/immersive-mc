@@ -1,8 +1,9 @@
 package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.api.server.SharedNetworkStorages;
+import com.hammy275.immersivemc.common.immersive.CommonBookData;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.common.immersive.storage.network.impl.BookData;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternData;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.core.BlockPos;
@@ -43,18 +44,18 @@ public class PageTurnPacket {
 
     public static void handle(PageTurnPacket message, ServerPlayer player) {
         if (NetworkUtil.safeToRun(message.pos, player)) {
-            BookData storage = SharedNetworkStorages.instance().getOrCreate(player.level, message.pos, ImmersiveHandlers.lecternHandler);
-            if (storage != null && !storage.book.isEmpty() && storage.pageTurner == null) {
+            LecternData<CommonBookData> storage = SharedNetworkStorages.instance().get(player.level, message.pos, ImmersiveHandlers.lecternHandler);
+            if (storage != null && !storage.book.isEmpty() && storage.bookData.pageTurner == null) {
                 if (message.forcedPageIndex == -1) {
                     if (!VRPluginVerify.playerInVR(player) &&
-                            (message.clickedRight ? !storage.onLastPage() : !storage.onFirstPage())) {
-                        storage.startPageTurnAnim(player, message.clickedRight);
+                            (message.clickedRight ? !storage.bookData.onLastPage() : !storage.bookData.onFirstPage())) {
+                        storage.bookData.startNonVRPageTurnAnim(player, message.clickedRight);
                     } else if (VRPluginVerify.playerInVR(player)) {
                         // Let the VR player have control of page turning
-                        storage.pageTurner = player;
+                        storage.bookData.pageTurner = player;
                     }
                 } else {
-                    storage.setPage(message.forcedPageIndex);
+                    storage.bookData.setPage(message.forcedPageIndex);
                 }
             }
         }
