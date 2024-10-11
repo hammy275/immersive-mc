@@ -28,6 +28,7 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
+import com.hammy275.immersivemc.server.api_impl.SharedNetworkStoragesImpl;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Minecraft;
@@ -242,6 +243,7 @@ public class ClientLogicSubscriber {
             alreadyInServer = false;
             // Cleared so leaving and re-joining a singleplayer world doesn't keep the lid open
             ChestToOpenSet.clear();
+            SharedNetworkStoragesImpl.INSTANCE.clear(); // Clear so these don't persist between singleplayer worlds
         }
     }
 
