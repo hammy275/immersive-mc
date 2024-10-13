@@ -134,10 +134,11 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
             ItemTransforms.TransformType type = facing == null ? ItemTransforms.TransformType.GROUND :
                     ItemTransforms.TransformType.FIXED;
 
-            Minecraft.getInstance().getItemRenderer().renderStatic(item, type,
-                    light,
-                    OverlayTexture.NO_OVERLAY,
-                    stack, Minecraft.getInstance().renderBuffers().bufferSource(), 0);
+            Minecraft.getInstance().getItemRenderer().renderStatic(Minecraft.getInstance().player,
+                    item, type, false,
+                    stack, Minecraft.getInstance().renderBuffers().bufferSource(),
+                    Minecraft.getInstance().level,
+                    light, OverlayTexture.NO_OVERLAY, 0);
 
             stack.popPose();
 
