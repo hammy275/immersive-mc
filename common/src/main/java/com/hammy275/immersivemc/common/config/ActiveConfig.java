@@ -184,10 +184,18 @@ public class ActiveConfig implements Cloneable {
         return false;
     }
 
-    /**
-     * Set ACTIVE config to be the merge of the FILE config and the FROM_SERVER config if connected to a server.
-     * Should only be called by the client.
-     */
+    public static void createDefaultConfigFilesIfNotFound() {
+        for (ConfigType type : ConfigType.values()) {
+            if (type.neededOnSide() && !type.configFile.exists()) {
+                type.getDefaultConfig().writeConfigFile(type);
+            }
+        }
+    }
+
+        /**
+         * Set ACTIVE config to be the merge of the FILE config and the FROM_SERVER config if connected to a server.
+         * Should only be called by the client.
+         */
     public static void loadActive() {
         ACTIVE = ((ClientActiveConfig) FILE_CLIENT.clone());
         ACTIVE.mergeWithServer(FROM_SERVER);
