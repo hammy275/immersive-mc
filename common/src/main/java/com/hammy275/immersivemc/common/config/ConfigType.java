@@ -17,4 +17,22 @@ public enum ConfigType {
         this.configFile = configFile;
         this.configClass = configClass;
     }
+
+    /**
+     * @return The default config for this ConfigType.
+     */
+    public ActiveConfig getDefaultConfig() {
+        try {
+            return configClass.getConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * @return Whether this ConfigType is used on the current Platform side (client or dedicated server)
+     */
+    public boolean neededOnSide() {
+        return Platform.isClient() || this == SERVER;
+    }
 }
