@@ -3,6 +3,7 @@ package com.hammy275.immersivemc;
 import com.hammy275.immersivemc.api.common.ImmersiveMCRegistrationEvent;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.subscribe.ClientLogicSubscriber;
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.BackpackInteractPacket;
@@ -75,6 +76,7 @@ public class ImmersiveMC {
             ImmersiveMCClient.init();
         }
         networkSetup();
+        ActiveConfig.createDefaultConfigFilesIfNotFound();
     }
 
     protected static void networkSetup() {
