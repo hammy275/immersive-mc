@@ -9,5 +9,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface BucketItemAccessor {
 
     @Accessor("content")
-    public Fluid getFluid();
+    public Fluid immersiveMC$getFluid();
 }

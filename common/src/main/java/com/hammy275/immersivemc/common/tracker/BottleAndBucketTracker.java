@@ -64,7 +64,7 @@ public class BottleAndBucketTracker extends AbstractTracker {
 
     private boolean stackMatches(ItemStack stackInHand) {
         return stackInHand.is(Items.GLASS_BOTTLE) ||
-                stackInHand.getItem() instanceof BucketItem bucketItem && ((BucketItemAccessor) bucketItem).getFluid().isSame(Fluids.EMPTY);
+                stackInHand.getItem() instanceof BucketItem bucketItem && ((BucketItemAccessor) bucketItem).immersiveMC$getFluid().isSame(Fluids.EMPTY);
     }
 
 
