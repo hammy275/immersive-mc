@@ -175,6 +175,9 @@ public class WrittenBookHelpers {
     }
 
     private record BookTextRenderer(Function<Boolean, FormattedText> textSupplier) implements BookRenderable {
+
+        private static final Vec3 offset = new Vec3(0, 1, 0);
+
         @Override
         public void render(PoseStack stack, ClientBookData data, boolean leftPage, int light, PosRot bookPosRot) {
             stack.scale(textStackScaleSize, textStackScaleSize, textStackScaleSize);
@@ -189,6 +192,11 @@ public class WrittenBookHelpers {
                         stack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(),
                         Font.DisplayMode.NORMAL, 0, light);
             }
+        }
+
+        @Override
+        public Vec3 getStartOffset(ClientBookData data, boolean leftPage, PosRot bookPosRot) {
+            return offset;
         }
     }
 
