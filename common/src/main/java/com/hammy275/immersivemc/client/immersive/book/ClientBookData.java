@@ -33,10 +33,18 @@ public class ClientBookData extends CommonBookData {
     public final List<BookRenderable> renderables = new ArrayList<>();
 
     protected final List<OBB> obbs = new ArrayList<>();
+    protected final float bookOpenAmount;
+    protected final float pageTilt;
 
     public ClientBookData() {
+        this(1.1f, 11f);
+    }
+
+    public ClientBookData(float bookOpenAmount, float pageTilt) {
         super();
         this.pageTurner = Minecraft.getInstance().player;
+        this.bookOpenAmount = bookOpenAmount;
+        this.pageTilt = pageTilt;
     }
 
     /**
@@ -92,8 +100,6 @@ public class ClientBookData extends CommonBookData {
         stack.mulPose(Axis.ZP.rotationDegrees(90f));
         stack.mulPose(Axis.ZP.rotationDegrees(bookPosRot.getPitch()));
         stack.mulPose(Axis.YN.rotationDegrees(bookPosRot.getRoll()));
-
-        float bookOpenAmount = 1.1f;
 
         bookModel.setupAnim(
                 0, // Partial tick time is always 0 to have page stay in one constant spot

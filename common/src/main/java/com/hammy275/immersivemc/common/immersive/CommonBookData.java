@@ -38,7 +38,6 @@ public class CommonBookData implements NetworkStorage {
     public static final double textInteractDistanceSqr = (textUpAmount * 1.2) * (textUpAmount * 1.2);
 
     // Helpful constants
-    public static final float pageTilt = 11f;
     public static final int linesPerPage = 14;
     public static final int pixelsPerLine = 114;
     public static final double leftPageRot = Math.toRadians(15);
