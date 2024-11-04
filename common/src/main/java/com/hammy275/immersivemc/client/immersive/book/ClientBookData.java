@@ -148,29 +148,31 @@ public class ClientBookData extends CommonBookData {
     }
 
     protected void renderPage(PoseStack stack, PosRot bookPosRot, boolean leftPage, int light) {
-        stack.pushPose();
-
         Vec3 awayFromBookUp = getAwayVector(bookPosRot);
 
         Vec3 pageUp = bookPosRot.getLookAngle();
         Vec3 left = getLeftRightVector(bookPosRot, leftPage); // Should be called "right" for right page
-        Vec3 pos = bookPosRot.position().add(pageUp.scale(pageHalfHeight)).add(left.scale(singlePageWidth / 2d))
+        Vec3 posBase = bookPosRot.position().add(left.scale(singlePageWidth / 2d))
                 .add(awayFromBookUp.scale(textUpAmount));
 
         Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
-        stack.translate(-cameraInfo.getPosition().x + pos.x,
-                -cameraInfo.getPosition().y + pos.y,
-                -cameraInfo.getPosition().z + pos.z);
-        stack.mulPose(Vector3f.YN.rotationDegrees(bookPosRot.getYaw() + 90f));
-        stack.mulPose(Vector3f.ZP.rotationDegrees(bookPosRot.getPitch()));
-        stack.mulPose(Vector3f.XP.rotationDegrees(90f + (leftPage ? pageTilt : -pageTilt)));
-        stack.mulPose(Vector3f.ZP.rotationDegrees(270f));
-        stack.mulPose(Vector3f.YP.rotationDegrees(bookPosRot.getRoll()));
 
         for (BookRenderable renderable : renderables) {
+            stack.pushPose();
+            Vec3 renderableOffset = renderable.getStartOffset(this, leftPage, bookPosRot);
+            Vec3 pos = posBase.add(pageUp.scale(pageHalfHeight * renderableOffset.y))
+                    .add(left.scale(singlePageWidth / -2d * renderableOffset.x))
+                    .add(awayFromBookUp.scale(textUpAmount * renderableOffset.z));
+            stack.translate(-cameraInfo.getPosition().x + pos.x,
+                    -cameraInfo.getPosition().y + pos.y,
+                    -cameraInfo.getPosition().z + pos.z);
+            stack.mulPose(Vector3f.YN.rotationDegrees(bookPosRot.getYaw() + 90f));
+            stack.mulPose(Vector3f.ZP.rotationDegrees(bookPosRot.getPitch()));
+            stack.mulPose(Vector3f.XP.rotationDegrees(90f + (leftPage ? pageTilt : -pageTilt)));
+            stack.mulPose(Vector3f.ZP.rotationDegrees(270f));
+            stack.mulPose(Vector3f.YP.rotationDegrees(bookPosRot.getRoll()));
             renderable.render(stack, this, leftPage, light, bookPosRot);
+            stack.popPose();
         }
-
-        stack.popPose();
     }
 }
