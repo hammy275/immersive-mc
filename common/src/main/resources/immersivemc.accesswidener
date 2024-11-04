@@ -1,1 +1,2 @@
 accessWidener   v2  named
+accessible method net/minecraft/client/gui/GuiGraphics <init> (Lnet/minecraft/client/Minecraft;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V

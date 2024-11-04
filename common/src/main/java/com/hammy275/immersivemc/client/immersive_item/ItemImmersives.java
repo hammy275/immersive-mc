@@ -7,9 +7,11 @@ public class ItemImmersives {
 
     public static final List<AbstractItemImmersive<?>> ITEM_IMMERSIVES = new ArrayList<>();
 
+    public static final ScreenBookImmersive screenBookImmersive = new ScreenBookImmersive();
     public static final WrittenBookImmersive writtenBookImmersive = new WrittenBookImmersive();
 
     static {
+        ITEM_IMMERSIVES.add(screenBookImmersive);
         ITEM_IMMERSIVES.add(writtenBookImmersive);
     }
 }
