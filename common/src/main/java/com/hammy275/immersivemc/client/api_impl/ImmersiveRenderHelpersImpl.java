@@ -12,7 +12,6 @@ import com.hammy275.immersivemc.common.obb.OBBRotList;
 import com.hammy275.immersivemc.common.obb.RotType;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
-import com.hammy275.immersivemc.mixin.DragonFireballRendererMixin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -210,6 +209,13 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
     @Override
     public void renderImage(PoseStack stack, ResourceLocation imageLocation, Vec3 pos, float size, int light,
                             @Nullable Direction facing) {
+        renderImage(stack, imageLocation, 0, 0, 1, 1, pos, size, light, facing);
+    }
+
+    @Override
+    public void renderImage(PoseStack stack, ResourceLocation imageLocation, float minImageU, float minImageV,
+                            float maxImageU, float maxImageV, Vec3 pos, float size, int light,
+                            @Nullable Direction facing) {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.pushPose();
         stack.translate(-renderInfo.getPosition().x + pos.x,
@@ -229,14 +235,34 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
             stack.mulPose(Axis.YP.rotationDegrees(180));
         }
 
-        VertexConsumer vertexConsumer =
+        VertexConsumer consumer =
                 Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.entityCutoutNoCull(imageLocation));
         PoseStack.Pose pose = stack.last();
 
-        DragonFireballRendererMixin.doVertex(vertexConsumer, pose, light, 0f, 0, 0, 1);
-        DragonFireballRendererMixin.doVertex(vertexConsumer, pose, light, 1f, 0, 1, 1);
-        DragonFireballRendererMixin.doVertex(vertexConsumer, pose, light, 1f, 1, 1, 0);
-        DragonFireballRendererMixin.doVertex(vertexConsumer, pose, light, 0f, 1, 0, 0);
+        consumer.addVertex(pose, -0.5f, -0.25f, 0)
+                .setColor(0xFFFFFFFF)
+                .setUv(minImageU, maxImageV)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(0, 1, 0);
+        consumer.addVertex(pose, 0.5f, -0.25f, 0)
+                .setColor(0xFFFFFFFF)
+                .setUv(maxImageU, maxImageV)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(0, 1, 0);
+        consumer.addVertex(pose, 0.5f, 0.75f, 0)
+                .setColor(0xFFFFFFFF)
+                .setUv(maxImageU, minImageV)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(0, 1, 0);
+        consumer.addVertex(pose, -0.5f, 0.75f, 0)
+                .setColor(0xFFFFFFFF)
+                .setUv(minImageU, minImageV)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(0, 1, 0);
 
         stack.popPose();
     }
