@@ -31,7 +31,6 @@
   ],
   "client": [
     "BackpackTrackerMixin",
-    "DragonFireballRendererMixin",
     "ItemInHandRendererMixin",
     "LecternRendererMixin",
     "LevelRendererMixin",
