@@ -12,7 +12,6 @@ import com.hammy275.immersivemc.common.obb.OBBRotList;
 import com.hammy275.immersivemc.common.obb.RotType;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
-import com.hammy275.immersivemc.mixin.DragonFireballRendererMixin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix3f;
@@ -213,6 +212,13 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
     @Override
     public void renderImage(PoseStack stack, ResourceLocation imageLocation, Vec3 pos, float size, int light,
                             @Nullable Direction facing) {
+        renderImage(stack, imageLocation, 0, 0, 1, 1, pos, size, light, facing);
+    }
+
+    @Override
+    public void renderImage(PoseStack stack, ResourceLocation imageLocation, float minImageU, float minImageV,
+                            float maxImageU, float maxImageV, Vec3 pos, float size, int light,
+                            @Nullable Direction facing) {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.pushPose();
         stack.translate(-renderInfo.getPosition().x + pos.x,
@@ -232,16 +238,40 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
             stack.mulPose(Vector3f.YP.rotationDegrees(180));
         }
 
-        VertexConsumer vertexConsumer =
+        VertexConsumer consumer =
                 Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.entityCutoutNoCull(imageLocation));
-        PoseStack.Pose pose = stack.last();
-        Matrix4f matrix4f = pose.pose();
-        Matrix3f matrix3f = pose.normal();
+        PoseStack.Pose lastPose = stack.last();
+        Matrix4f pose = lastPose.pose();
+        Matrix3f normal = lastPose.normal();
 
-        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, light, 0f, 0, 0, 1);
-        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, light, 1f, 0, 1, 1);
-        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, light, 1f, 1, 1, 0);
-        DragonFireballRendererMixin.doVertex(vertexConsumer, matrix4f, matrix3f, light, 0f, 1, 0, 0);
+        consumer.vertex(pose, -0.5f, -0.25f, 0)
+                .color(255, 255, 255, 255)
+                .uv(minImageU, maxImageV)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normal, 0, 1, 0)
+                .endVertex();
+        consumer.vertex(pose, 0.5f, -0.25f, 0)
+                .color(255, 255, 255, 255)
+                .uv(maxImageU, maxImageV)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normal, 0, 1, 0)
+                .endVertex();
+        consumer.vertex(pose, 0.5f, 0.75f, 0)
+                .color(255, 255, 255, 255)
+                .uv(maxImageU, minImageV)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normal, 0, 1, 0)
+                .endVertex();
+        consumer.vertex(pose, -0.5f, 0.75f, 0)
+                .color(255, 255, 255, 255)
+                .uv(minImageU, minImageV)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normal, 0, 1, 0)
+                .endVertex();
 
         stack.popPose();
     }
