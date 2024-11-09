@@ -2,11 +2,14 @@ package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.server.ItemSwapAmount;
+import com.hammy275.immersivemc.api.server.WorldStorage;
+import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
+import com.hammy275.immersivemc.common.compat.apotheosis.ApothStats;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRRumble;
-import com.hammy275.immersivemc.api.server.WorldStorage;
 import com.hammy275.immersivemc.server.api_impl.ConstantItemSwapAmount;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.storage.world.impl.ETableWorldStorage;
@@ -26,6 +29,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
     @Override
@@ -36,18 +40,36 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
         if (worldStorage.getItem(0) != null && !worldStorage.getItem(0).isEmpty()) {
             BlockEntity tileEnt = player.level.getBlockEntity(pos);
             if (tileEnt instanceof EnchantmentTableBlockEntity) {
-                EnchantmentMenu container = new EnchantmentMenu(-1,
-                        player.getInventory(), ContainerLevelAccess.create(player.level, pos));
-                container.setItem(1, 0, new ItemStack(Items.LAPIS_LAZULI, 64));
-                container.setItem(0, 0, worldStorage.getItem(0));
-
-                storage.xpLevels = container.costs;
-                storage.enchantHints = container.enchantClue;
-                storage.levelHints = container.levelClue;
+                if (Apoth.apothImpl.enchantModuleEnabled()) {
+                    // Null checking is done here in case of an exception causing CompatModule to give us a null value
+                    ETableStorage.SlotData[] slots = Apoth.apothImpl.getEnchData(player, pos, worldStorage.getItem(0));
+                    if (slots != null) storage.slots = slots;
+                    ApothStats stats = Apoth.apothImpl.getStats(player.level, pos, worldStorage.getItem(0).getItem().getEnchantmentValue());
+                    if (stats != null) storage.apothStats = stats;
+                } else {
+                    EnchantmentMenu container = new EnchantmentMenu(-1,
+                            player.getInventory(), ContainerLevelAccess.create(player.level, pos));
+                    container.setItem(1, 0, new ItemStack(Items.LAPIS_LAZULI, 64));
+                    container.setItem(0, 0, worldStorage.getItem(0));
+                    for (int i = 0; i <= 2; i++) {
+                        storage.slots[i] = new ETableStorage.SlotData(container.costs[i], List.of(container.enchantClue[i]), List.of(container.levelClue[i]));
+                    }
+                }
             }
         }
 
         return storage;
+    }
+
+    @Override
+    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
+        if (Apoth.apothImpl.enchantModuleEnabled()) {
+            WorldStorage storage = WorldStoragesImpl.getS(pos, player.getLevel());
+            if (storage instanceof ETableWorldStorage ews) {
+                ews.setDirtyFromApothStats(Apoth.apothImpl.getStats(player.level, pos, 1));
+            }
+        }
+        return super.isDirtyForClientSync(player, pos);
     }
 
     @Override
@@ -61,8 +83,14 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
         ETableWorldStorage enchStorage = (ETableWorldStorage) WorldStoragesImpl.getOrCreateS(pos, player.getLevel());
         if (slot == 0) {
             ItemStack toEnchant = player.getItemInHand(hand);
-            if (!toEnchant.isEmpty() && !toEnchant.isEnchantable()) return;
-            enchStorage.placeItem(player, hand, slot, new ConstantItemSwapAmount(1));
+            // Apotheosis allows placing any item in
+            if (!toEnchant.isEmpty() && (!toEnchant.isEnchantable() && !Apoth.apothImpl.enchantModuleEnabled())) return;
+            if (enchStorage.getItem(0).isEmpty()) {
+                enchStorage.placeItem(player, hand, slot, new ConstantItemSwapAmount(1));
+            } else {
+                Util.placeLeftovers(player, enchStorage.getItem(0));
+                enchStorage.setItem(0, ItemStack.EMPTY);
+            }
         } else if (player.getItemInHand(hand).isEmpty()) {
             boolean res = Swap.doEnchanting(slot, pos, player, hand);
             if (res) {
@@ -79,7 +107,8 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
 
     @Override
     public boolean enabledInConfig(Player player) {
-        return ActiveConfig.getActiveConfigCommon(player).useEnchantingTableImmersive;
+        return (ActiveConfig.getActiveConfigCommon(player).useEnchantingTableImmersive && !Apoth.apothImpl.suppressVanillaEnchanting()) ||
+                (ActiveConfig.getActiveConfigCommon(player).useApotheosisEnchantmentTableImmersive && Apoth.apothImpl.suppressVanillaEnchanting());
     }
 
     @Override
