@@ -14,6 +14,7 @@ loom {
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
         mixinConfig "mixins.immersivemc.json"
+        mixinConfig "mixins.forge.immersivemc.json"
     }
 }
 
@@ -38,6 +39,9 @@ dependencies {
     modApi "curse.maven:mantle-74924:5339977" // Tinkers' Construct Dep.
     modApi "curse.maven:tinkersconstruct-74072:5358052"
     modApi "curse.maven:lootr-361276:5060114"
+    modApi "curse.maven:apotheosis-313970:5753172"
+    modApi "curse.maven:placebo-283644:5180198" // Apotheosis requirement
+    modApi "curse.maven:patchouli-306770:4031402" // Apotheosis requirement
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
