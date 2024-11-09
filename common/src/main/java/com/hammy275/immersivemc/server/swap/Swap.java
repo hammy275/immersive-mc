@@ -4,10 +4,12 @@ import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.api.server.SwapResult;
 import com.hammy275.immersivemc.common.compat.Lootr;
+import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
 import com.hammy275.immersivemc.common.util.NullContainer;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.mixin.AnvilMenuMixin;
@@ -48,14 +50,15 @@ public class Swap {
      * @param itemCountIncrementer Callback to run when the amount of items in this Immersive is increased
      * @param itemCountClearer Callback to run when the amount of items in this Immersive is decreased
      */
-    public static SwapResult swapItems(ItemStack handStack, ItemStack immersiveStack, ItemSwapAmount swapAmount,
+    public static SwapResult swapItems(ItemStack handStack, ItemStack immersiveStack, ItemSwapAmount swapAmount, int forcedMaxImmersiveStackSize,
                                        @Nullable Consumer<Integer> itemCountIncrementer, @Nullable Consumer<Void> itemCountClearer) {
         ItemStack toHand;
         ItemStack toImmersive;
         ItemStack leftovers;
-        int amountToPlace = swapAmount.getNumItemsToSwap(handStack.getCount());
+        int immersiveMaxStackSize = forcedMaxImmersiveStackSize == -1 ? immersiveStack.getMaxStackSize() : forcedMaxImmersiveStackSize;
+        int amountToPlace = Math.min(swapAmount.getNumItemsToSwap(handStack.getCount()), immersiveMaxStackSize);
         boolean handAndImmersiveStackMatch = Util.stacksEqualBesidesCount(handStack, immersiveStack);
-        boolean immersiveStackAtMax = immersiveStack.getCount() == immersiveStack.getMaxStackSize();
+        boolean immersiveStackAtMax = immersiveStack.getCount() == immersiveMaxStackSize;
         // Both stacks are the same item and the immersive stack can hold some more items
         if (handAndImmersiveStackMatch && !handStack.isEmpty() && !immersiveStackAtMax) {
             ItemStack handStackToPlace = handStack.copy();
@@ -113,12 +116,32 @@ public class Swap {
             }
         }
         if (lapisInInventory < slot && !player.getAbilities().instabuild) return false;
+        if ((player.experienceLevel < slot) && !player.getAbilities().instabuild) return false;
+        boolean doApoth = Apoth.apothImpl.enchantModuleEnabled();
 
-        EnchantmentMenu container = new EnchantmentMenu(-1,
-                player.getInventory(), ContainerLevelAccess.create(player.level, pos));
-        container.setItem(1, 0, new ItemStack(Items.LAPIS_LAZULI, 64));
-        container.setItem(0, 0, toEnchantItem);
-        if (container.clickMenuButton(player, slot - 1)) {
+        boolean takeLapis = false;
+        if (doApoth) {
+            ETableStorage.SlotData[] stats = Apoth.apothImpl.getEnchData(player, pos, toEnchantItem);
+            // No creative mode check since Apotheosis doesn't either, and enchanting requires having enough XP to run
+            if (player.experienceLevel < stats[slot - 1].xpLevel()) return false;
+            takeLapis = true;
+            ItemStack out = Apoth.apothImpl.doEnchant(player, pos, slot - 1, toEnchantItem);
+            if (out == null) out = toEnchantItem; // Happens on Apotheosis compat crash
+            player.setItemInHand(hand, out);
+            storage.setItem(0, ItemStack.EMPTY);
+        } else {
+            EnchantmentMenu container = new EnchantmentMenu(-1,
+                    player.getInventory(), ContainerLevelAccess.create(player.level, pos));
+            container.setItem(1, 0, new ItemStack(Items.LAPIS_LAZULI, 64));
+            container.setItem(0, 0, toEnchantItem);
+            if (container.clickMenuButton(player, slot - 1)) {
+                takeLapis = true;
+                player.setItemInHand(hand, container.getSlot(0).getItem());
+                storage.setItem(0, ItemStack.EMPTY);
+            }
+        }
+
+        if (takeLapis) {
             int lapisToTake = slot;
             for (int i = 0; i < player.getInventory().items.size(); i++) {
                 if (player.getInventory().getItem(i).getItem() == Items.LAPIS_LAZULI) {
@@ -132,11 +155,8 @@ public class Swap {
                     break;
                 }
             }
-            player.setItemInHand(hand, container.getSlot(0).getItem());
-            storage.setItem(0, ItemStack.EMPTY);
-            return true;
         }
-        return false;
+        return takeLapis;
     }
 
     public static void handleBackpackCraftingSwap(int slot, InteractionHand hand, List<ItemStack> items,

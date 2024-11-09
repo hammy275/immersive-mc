@@ -49,7 +49,7 @@ public class WrittenBookHelpers {
         bookData.renderables.add(new BookTextRenderer(isLeftPage -> {
             int rightMod = isLeftPage ? 0 : 1;
             return access.getPage(dataHolder.getData().getLeftPageIndex() + rightMod);
-        }));
+        }, textStackScaleSize, new Vec3(0, 1, 0)));
         bookData.setMaxLeftPageIndex(access.getPageCount());
         return bookData;
     }
@@ -174,9 +174,7 @@ public class WrittenBookHelpers {
         }
     }
 
-    private record BookTextRenderer(Function<Boolean, FormattedText> textSupplier) implements BookRenderable {
-
-        private static final Vec3 offset = new Vec3(0, 1, 0);
+    public record BookTextRenderer(Function<Boolean, FormattedText> textSupplier, float textStackScaleSize, Vec3 offset) implements BookRenderable {
 
         @Override
         public void render(PoseStack stack, ClientBookData data, boolean leftPage, int light, PosRot bookPosRot) {

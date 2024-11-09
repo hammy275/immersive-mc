@@ -284,16 +284,30 @@ public class Util {
      * If no merge takes place, the returned result just contains the inputted ItemStacks.
      */
     public static ItemStackMergeResult mergeStacks(ItemStack mergeIntoIn, ItemStack mergeFromIn, boolean useCopy) {
-        if (!stacksEqualBesidesCount(mergeIntoIn, mergeFromIn) || mergeIntoIn.getMaxStackSize() <= 1) {
+        return mergeStacks(mergeIntoIn, mergeFromIn, useCopy, -1);
+    }
+
+    /**
+     * Merges two ItemStacks together
+     * @param mergeIntoIn ItemStack to merge into
+     * @param mergeFromIn ItemStack to merge from
+     * @param useCopy Whether or not to use copies of the ItemStacks supplied
+     * @param forcedMaxMergeIntoSize A force maximum stack size for mergeIntoIn, or -1 to not force.
+     * @return An ItemStackMergeResult containing the results post-merge.
+     * If no merge takes place, the returned result just contains the inputted ItemStacks.
+     */
+    public static ItemStackMergeResult mergeStacks(ItemStack mergeIntoIn, ItemStack mergeFromIn, boolean useCopy, int forcedMaxMergeIntoSize) {
+        int mergeIntoMaxStackSize = forcedMaxMergeIntoSize == -1 ? mergeIntoIn.getMaxStackSize() : forcedMaxMergeIntoSize;
+        if (!stacksEqualBesidesCount(mergeIntoIn, mergeFromIn) || mergeIntoMaxStackSize <= 1) {
             return new ItemStackMergeResult(mergeIntoIn, mergeFromIn);
         }
         ItemStack into = useCopy ? mergeIntoIn.copy() : mergeIntoIn;
         ItemStack from = useCopy ? mergeFromIn.copy() : mergeFromIn;
         int totalCount = into.getCount() + from.getCount();
         int fromAmount = 0;
-        if (totalCount > into.getMaxStackSize()) {
-            fromAmount = totalCount - into.getMaxStackSize();
-            totalCount = into.getMaxStackSize();
+        if (totalCount > mergeIntoMaxStackSize) {
+            fromAmount = totalCount - mergeIntoMaxStackSize;
+            totalCount = mergeIntoMaxStackSize;
         }
         into.setCount(totalCount);
         from.setCount(fromAmount);
@@ -340,8 +354,12 @@ public class Util {
     }
 
     public static void placeLeftovers(Player player, ItemStack leftovers) {
+        placeLeftovers(player, leftovers, player.position());
+    }
+
+    public static void placeLeftovers(Player player, ItemStack leftovers, Vec3 pos) {
         if (!leftovers.isEmpty()) {
-            ItemEntity item = new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), leftovers);
+            ItemEntity item = new ItemEntity(player.level, pos.x, pos.y, pos.z, leftovers);
             player.level.addFreshEntity(item);
         }
     }
