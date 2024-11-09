@@ -5,18 +5,28 @@ import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChiseledBookShelfBlock;
+import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class ChiseledBookshelfHandler extends ContainerHandler<NullStorage> {
-    // Used for ChiseledBookShelfBlock to mixin for our redirection
-    public static int bookshelfBlockSlotOverride = -1;
-    public static InteractionHand bookshelfBlockHandOverride = null;
+    public static final Vec3[] slotOffsets = new Vec3[]{
+            new Vec3(-0.3125, 0.25, 0),
+            new Vec3(0.03125, 0.25, 0),
+            new Vec3(0.34375, 0.25, 0),
+            new Vec3(-0.3125, -0.25, 0),
+            new Vec3(0.03125, -0.25, 0),
+            new Vec3(0.34375, -0.25, 0)
+    };
 
     @Override
     public NullStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
@@ -30,20 +40,32 @@ public class ChiseledBookshelfHandler extends ContainerHandler<NullStorage> {
 
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        if (player.level().getBlockState(pos).getBlock() instanceof ChiseledBookShelfBlock block) {
-            bookshelfBlockSlotOverride = slot;
-            bookshelfBlockHandOverride = hand;
-
-            block.use(player.level().getBlockState(pos), player.level(), pos, player, hand, null);
-
-            bookshelfBlockSlotOverride = -1;
-            bookshelfBlockHandOverride = null;
+        BlockState state = player.level().getBlockState(pos);
+        if (state.getBlock() instanceof ChiseledBookShelfBlock block) {
+            Direction blockFacing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
+            Vec3 blockEdgePos = Vec3.atBottomCenterOf(pos).add(Vec3.atLowerCornerOf(blockFacing.getNormal()).scale(0.5)).add(0, 0.5, 0);
+            // Change the offsets based on block facing:
+            // +Z (south) = do not touch
+            // -Z (north) = swap x/z signs
+            // +X (east) = swap x/z signs and x/z axes
+            // -X (west)  = swap x/z axes
+            Vec3 offset = slotOffsets[slot];
+            // Swap signs
+            if (blockFacing == Direction.NORTH || blockFacing == Direction.EAST) {
+                offset = offset.multiply(-1, 1, -1);
+            }
+            // Swap axes
+            if (blockFacing.getAxis() == Direction.Axis.X) {
+                offset = new Vec3(offset.z, offset.y, offset.x);
+            }
+            block.use(player.level().getBlockState(pos), player.level(), pos, player, hand,
+                    new BlockHitResult(blockEdgePos.add(offset), blockFacing, pos, false));
         }
     }
 
     @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
-        return level.getBlockState(pos).getBlock() == Blocks.CHISELED_BOOKSHELF;
+        return level.getBlockEntity(pos) instanceof ChiseledBookShelfBlockEntity;
     }
 
     @Override

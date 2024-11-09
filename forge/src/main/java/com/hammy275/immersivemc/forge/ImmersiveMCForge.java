@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.forge;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.compat.Lootr;
+import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.IExtensionPoint;
@@ -32,6 +33,9 @@ public class ImmersiveMCForge {
         }
         if (Platform.isModLoaded("lootr")) {
             Lootr.lootrImpl = LootrCompatImpl.makeCompatImpl();
+        }
+        if (Platform.isModLoaded("apotheosis")) {
+            Apoth.apothImpl = ApothCompatImpl.makeCompatImpl();
         }
     }
 

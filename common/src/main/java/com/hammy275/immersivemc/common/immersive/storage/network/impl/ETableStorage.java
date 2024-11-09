@@ -1,14 +1,15 @@
 package com.hammy275.immersivemc.common.immersive.storage.network.impl;
 
+import com.hammy275.immersivemc.common.compat.apotheosis.ApothStats;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ETableStorage extends ListOfItemsStorage {
-    public int[] xpLevels = new int[]{-1, -1, -1};
-    public int[] enchantHints = new int[]{-1, -1, -1};
-    public int[] levelHints = new int[]{-1, -1, -1};
+    public SlotData[] slots = new SlotData[]{SlotData.DEFAULT, SlotData.DEFAULT, SlotData.DEFAULT};
+    public ApothStats apothStats = ApothStats.EMPTY;
 
     public ETableStorage(List<ItemStack> items) {
         super(items, 1);
@@ -21,22 +22,49 @@ public class ETableStorage extends ListOfItemsStorage {
     @Override
     public void encode(FriendlyByteBuf buffer) {
         super.encode(buffer);
-        for (int xpLevel : xpLevels) {
-            buffer.writeInt(xpLevel);
+        for (int i = 0; i < slots.length; i++) {
+            slots[i].encode(buffer);
         }
-        for (int enchantHint : enchantHints) {
-            buffer.writeInt(enchantHint);
-        }
-        for (int levelHint : levelHints) {
-            buffer.writeInt(levelHint);
+        buffer.writeBoolean(apothStats != ApothStats.EMPTY);
+        if (apothStats != ApothStats.EMPTY) {
+            apothStats.encode(buffer);
         }
     }
 
     @Override
     public void decode(FriendlyByteBuf buffer) {
         super.decode(buffer);
-        this.xpLevels = new int[]{buffer.readInt(), buffer.readInt(), buffer.readInt()};
-        this.enchantHints = new int[]{buffer.readInt(), buffer.readInt(), buffer.readInt()};
-        this.levelHints = new int[]{buffer.readInt(), buffer.readInt(), buffer.readInt()};
+        for (int i = 0; i < slots.length; i++) {
+            slots[i] = SlotData.decode(buffer);
+        }
+        if (buffer.readBoolean()) {
+            apothStats = ApothStats.decode(buffer);
+        }
+    }
+
+    public record SlotData(int xpLevel, List<Integer> enchantmentHints, List<Integer> enchantmentHintLevels) {
+
+        public static final SlotData DEFAULT = new SlotData(0, List.of(), List.of());
+
+        public void encode(FriendlyByteBuf buffer) {
+            buffer.writeInt(xpLevel);
+            buffer.writeInt(enchantmentHints.size());
+            enchantmentHints.forEach(buffer::writeInt);
+            enchantmentHintLevels.forEach(buffer::writeInt);
+        }
+
+        public static SlotData decode(FriendlyByteBuf buffer) {
+            int xpLevel = buffer.readInt();
+            int numHints = buffer.readInt();
+            List<Integer> hints = new ArrayList<>(numHints);
+            for (int i = 0; i < numHints; i++) {
+                hints.add(buffer.readInt());
+            }
+            List<Integer> hintLevels = new ArrayList<>(numHints);
+            for (int i = 0; i < numHints; i++) {
+                hintLevels.add(buffer.readInt());
+            }
+            return new SlotData(xpLevel, hints, hintLevels);
+        }
     }
 }

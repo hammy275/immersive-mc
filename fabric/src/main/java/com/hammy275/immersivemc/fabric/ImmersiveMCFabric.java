@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.fabric;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.compat.Lootr;
+import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.network.Network;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -47,6 +48,9 @@ public class ImmersiveMCFabric implements ModInitializer {
         }
         if (Platform.isModLoaded("lootr")) {
             Lootr.lootrImpl = LootrCompatImpl.makeCompatImpl();
+        }
+        if (Platform.isModLoaded("zenith")) {
+            Apoth.apothImpl = ZenithCompatImpl.makeCompatImpl();
         }
     }
 }

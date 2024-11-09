@@ -29,6 +29,11 @@ public class ImmersiveLogicHelpersImpl implements ImmersiveLogicHelpers {
 
     @Override
     public SwapResult swapItems(ItemStack stackFromPlayer, ItemStack stackInImmersive, ItemSwapAmount swapAmount) {
-        return Swap.swapItems(stackFromPlayer, stackInImmersive, swapAmount, null, null);
+        return swapItems(stackFromPlayer, stackInImmersive, swapAmount, -1);
+    }
+
+    @Override
+    public SwapResult swapItems(ItemStack stackFromPlayer, ItemStack stackInImmersive, ItemSwapAmount swapAmount, int forcedMaxImmersiveStackSize) {
+        return Swap.swapItems(stackFromPlayer, stackInImmersive, swapAmount, forcedMaxImmersiveStackSize, null, null);
     }
 }

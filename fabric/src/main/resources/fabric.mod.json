@@ -27,6 +27,7 @@
     "minecraft": ">=1.19.3"
   },
   "mixins": [
-    "mixins.immersivemc.json"
+    "mixins.immersivemc.json",
+    "mixins.fabric.immersivemc.json"
   ]
 }
