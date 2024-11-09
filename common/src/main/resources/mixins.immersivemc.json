@@ -12,7 +12,6 @@
     "BeaconBlockEntityMixin",
     "BucketItemAccessor",
     "ButtonBlockMixin",
-    "ChiseledBookShelfBlockMixin",
     "ContainerOpenersCounterMixin",
     "DoorBlockMixin",
     "ItemMixin",
@@ -31,6 +30,7 @@
   ],
   "client": [
     "BackpackTrackerMixin",
+    "EnchantTableRendererMixin",
     "ItemInHandRendererMixin",
     "LecternRendererMixin",
     "LevelRendererMixin",

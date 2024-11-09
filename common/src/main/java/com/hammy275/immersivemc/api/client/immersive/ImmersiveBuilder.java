@@ -137,6 +137,13 @@ public interface ImmersiveBuilder<E, S extends NetworkStorage> {
     public ImmersiveBuilder<E,S> setConfigScreenInfo(ImmersiveConfigScreenInfo info);
 
     /**
+     * Set an extra function to run when rendering.
+     * @param renderer Extra function to run when rendering, taking the info and the light for the Immersive.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder<E,S> setExtraRenderer(ExtraRenderer<E> renderer);
+
+    /**
      * Overwrites hitbox at index with a new hitbox. Useful when cloning.
      * @param index Index to overwrite.
      * @param relativeHitboxInfo New hitbox information.

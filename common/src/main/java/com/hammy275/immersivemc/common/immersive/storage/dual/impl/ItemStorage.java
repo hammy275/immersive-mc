@@ -44,7 +44,7 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
     /**
      * Whether this storage has changed since the last sync to the client.
      */
-    private boolean isDirtyForClientSync = false;
+    protected boolean isDirtyForClientSync = false;
     /**
      * The index of the last item in the items array that is an input item.
      */
@@ -119,9 +119,22 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
      *
      */
     public void placeItem(Player player, InteractionHand hand, int slot, ItemSwapAmount amount) {
+        placeItem(player, hand, slot, amount, -1);
+    }
+
+    /**
+     * Attempts to merge contents of hand into the given slot, returning any leftovers or a new handStack.
+     * @param player Player to get items from
+     * @param hand Hand to get item from
+     * @param slot Slot to merge into
+     * @param amount Amount of items to swap
+     * @param forcedMaxImmersiveStackSize A forced maximum stack size for the slot in the Immersive, or -1 to use the item's stack size.
+     *
+     */
+    public void placeItem(Player player, InteractionHand hand, int slot, ItemSwapAmount amount, int forcedMaxImmersiveStackSize) {
         ItemStack playerStack = player.getItemInHand(hand);
         ItemStack otherStack = this.getItem(slot);
-        SwapResult result = Swap.swapItems(playerStack, otherStack, amount,
+        SwapResult result = Swap.swapItems(playerStack, otherStack, amount, forcedMaxImmersiveStackSize,
                 incrementAmount -> incrementCountForPlayer(player, incrementAmount, slot),
                 ignored -> this.itemCounts[slot].clear());
         result.giveToPlayer(player, hand);

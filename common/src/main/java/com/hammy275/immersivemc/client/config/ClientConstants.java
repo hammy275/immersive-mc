@@ -27,6 +27,7 @@ public class ClientConstants {
     public static final float itemScaleSizeBarrel = 0.2f;
     public static final float itemScaleSizeHopper = 0.15f;
     public static final float itemScaleSizeSmithingTable = itemScaleSizeAnvil;
+    public static final float itemScaleSizeApothSalvagingTable = 0.3f;
 
     // Time to transition in ticks
     public static final int transitionTime = 10;
@@ -43,11 +44,11 @@ public class ClientConstants {
     public static final List<Float> eTableYOffsets = new ArrayList<>();
 
     static {
-        float max = 0.25f;
+        float max = 0.1f;
         for (float i = 0; i <= max; i += max / 20f) {
             eTableYOffsets.add(i - (max / 2f));
         }
-        for (float i = 0.25f; i >= 0f; i -= max / 20f) {
+        for (float i = max; i >= 0f; i -= max / 20f) {
             eTableYOffsets.add(i - (max / 2f));
         }
 

@@ -5,11 +5,13 @@ import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveMCRegistrationImpl;
 import com.hammy275.immersivemc.common.compat.IronFurnaces;
 import com.hammy275.immersivemc.common.compat.TinkersConstruct;
+import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.compat.util.CompatModule;
 import com.hammy275.immersivemc.common.immersive.CommonBookData;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.CraftingTableStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ApothSalvagingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternData;
@@ -25,6 +27,7 @@ public class ImmersiveHandlers {
 
 
     public static final WorldStorageHandler<AnvilStorage> anvilHandler = new AnvilHandler();
+    public static final WorldStorageHandler<ApothSalvagingTableStorage> apothSalvagingTableHandler = CompatModule.create(new ApothSalvagingTableHandler(), WorldStorageHandler.class, Apoth.compatData);
     public static final ImmersiveHandler<?> barrelHandler = new BarrelHandler();
     public static final WorldStorageHandler<BeaconStorage> beaconHandler = new BeaconHandler();
     public static final ImmersiveHandler<?> brewingStandHandler = new BrewingStandHandler();

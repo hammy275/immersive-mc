@@ -81,6 +81,8 @@ public class ActiveConfig implements Cloneable {
     public boolean useTinkersConstructCraftingStationImmersive = true;
     public boolean useLecternImmersive = true;
     public boolean useBucketAndBottleImmersive = true;
+    public boolean useApotheosisEnchantmentTableImmersive = true;
+    public boolean useApotheosisSalvagingTableImmersive = true;
 
     static {
         DISABLED.setDisabled();
@@ -265,6 +267,8 @@ public class ActiveConfig implements Cloneable {
         useTinkersConstructCraftingStationImmersive = useTinkersConstructCraftingStationImmersive && other.useTinkersConstructCraftingStationImmersive;
         useLecternImmersive = useLecternImmersive && other.useLecternImmersive;
         useBucketAndBottleImmersive = useBucketAndBottleImmersive && other.useBucketAndBottleImmersive;
+        useApotheosisEnchantmentTableImmersive = useApotheosisEnchantmentTableImmersive && other.useApotheosisEnchantmentTableImmersive;
+        useApotheosisSalvagingTableImmersive = useApotheosisSalvagingTableImmersive && other.useApotheosisSalvagingTableImmersive;
     }
 
     /**
@@ -307,6 +311,8 @@ public class ActiveConfig implements Cloneable {
         useTinkersConstructCraftingStationImmersive = false;
         useLecternImmersive = false;
         useBucketAndBottleImmersive = false;
+        useApotheosisEnchantmentTableImmersive = false;
+        useApotheosisSalvagingTableImmersive = false;
     }
 
     /**
