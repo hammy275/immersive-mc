@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.components.OptionsList;
@@ -62,6 +63,14 @@ public class ImmersivesConfigScreen extends Screen {
                 options.add(ScreenUtils.createOption("iron_furnaces_furnace",
                         config -> config.useIronFurnacesFurnaceImmersive,
                         (config, newVal) -> config.useIronFurnacesFurnaceImmersive = newVal));
+            }
+            if (Platform.isModLoaded("apotheosis") && Apoth.apothImpl.enchantModuleEnabled()) {
+                options.add(ScreenUtils.createOption("enchanting_table_apoth",
+                        config -> config.useApotheosisEnchantmentTableImmersive,
+                        (config, newVal) -> config.useApotheosisEnchantmentTableImmersive = newVal));
+                options.add(ScreenUtils.createOption("apoth_salvaging_table",
+                        config -> config.useApotheosisSalvagingTableImmersive,
+                        (config, newVal) -> config.useApotheosisSalvagingTableImmersive = newVal));
             }
         }
 

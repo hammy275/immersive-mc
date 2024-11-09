@@ -3,7 +3,6 @@
   "minVersion": "0.8.5",
   "package": "com.hammy275.immersivemc.mixin",
   "compatibilityLevel": "JAVA_17",
-  "refmap": "immersivemc-common-refmap.json",
   "plugin": "com.hammy275.immersivemc.MixinConfigPlugin",
   "mixins": [
     "AABBBoundingBoxImplMixin",
@@ -33,6 +32,7 @@
   ],
   "client": [
     "BackpackTrackerMixin",
+    "EnchantTableRendererMixin",
     "ItemInHandRendererMixin",
     "LecternRendererMixin",
     "LevelRendererMixin",

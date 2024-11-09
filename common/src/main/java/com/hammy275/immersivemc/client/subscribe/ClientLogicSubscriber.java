@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.subscribe;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
@@ -429,6 +430,17 @@ public class ClientLogicSubscriber {
                     if (data.isOpen) {
                         data.nextRow();
                         return true;
+                    }
+                }
+            } else if (ImmersiveHandlers.apothSalvagingTableHandler.isValidBlock(pos, player.level)) {
+                BuiltImmersiveInfo<?> info = ClientUtil.findImmersive(Immersives.immersiveApothSalvagingTable, pos);
+                if (info != null) {
+                    int numHitboxes = info.getAllHitboxes().size();
+                    for (int i = 0; i < numHitboxes; i++) {
+                        if (!info.getItem(i).isEmpty()) {
+                            ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), 9, InteractionHand.MAIN_HAND);
+                            return true;
+                        }
                     }
                 }
             }
