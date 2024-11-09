@@ -134,7 +134,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             }
 
         }
-
+        builder.extraRenderer.render(infoIn, stack, helpers, partialTicks, info.light);
     }
 
     @Override

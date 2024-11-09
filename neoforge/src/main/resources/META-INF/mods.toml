@@ -36,6 +36,8 @@ Thanks to the guide from leo3418 for the original config screen implementation!
 
 [[mixins]]
 config = "mixins.immersivemc.json"
+[[mixins]]
+config = "mixins.neoforge.immersivemc.json"
 
 [[dependencies.immersivemc]]
 modId = "neoforge"
