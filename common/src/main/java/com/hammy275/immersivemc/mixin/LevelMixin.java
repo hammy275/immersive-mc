@@ -2,10 +2,7 @@ package com.hammy275.immersivemc.mixin;
 
 import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.Container;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.LecternBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,11 +13,9 @@ public class LevelMixin {
 
     @Inject(method = "blockEntityChanged", at = @At("RETURN"))
     private void blockEntityChanged(BlockPos blockPos, CallbackInfo ci) {
-        Level me = (Level) (Object) this;
-        BlockEntity blockEntity = me.getBlockEntity(blockPos);
-        // Lecterns hold items, but aren't directly Containers
-        if (!me.isClientSide && blockEntity instanceof Container || blockEntity instanceof LecternBlockEntity) {
-            DirtyTracker.markDirty(me, blockPos);
-        }
+        // Dirtiness is cleared at the end of each tick, and getting the BlockEntity at the position
+        // both introduces performance overhead and can cause unloading BlockEntities to be kept loaded (#498), so
+        // we just mark any changes as dirty for us.
+        DirtyTracker.markDirty((Level) (Object) this, blockPos);
     }
 }
