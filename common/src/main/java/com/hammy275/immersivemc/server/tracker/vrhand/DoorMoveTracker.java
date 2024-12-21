@@ -82,11 +82,11 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
                     // Forge uses the old SoundEvent system. Haven't found a good way to deal with that.
                     if (!Platform.isForgeLike()) {
                         FenceGateBlockMixin accessor = (FenceGateBlockMixin) fence;
-                        sound = isNowOpen ? accessor.getType().fenceGateOpen() : accessor.getType().fenceGateClose();
+                        sound = isNowOpen ? accessor.immersiveMC$getType().fenceGateOpen() : accessor.immersiveMC$getType().fenceGateClose();
                     }
                 } else if (blockState.getBlock() instanceof DoorBlock door) {
                     DoorBlockMixin accessor = (DoorBlockMixin) door;
-                    sound = isNowOpen ? accessor.getType().doorOpen() : accessor.getType().doorClose();
+                    sound = isNowOpen ? accessor.immersiveMC$getType().doorOpen() : accessor.immersiveMC$getType().doorClose();
                 }
                 if (sound != null && player instanceof ServerPlayer sPlayer) {
                     sPlayer.connection.send(new ClientboundSoundPacket(

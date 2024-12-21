@@ -41,7 +41,7 @@ public class ButtonPushTracker extends AbstractTracker {
                         pos);
                 if (res != null && res.getBlockPos().equals(pos)) {
                     button.press(state, player.level(), pos, null);
-                    ((ButtonBlockMixin) button).playButtonSound(null, player.level(), pos, true);
+                    ((ButtonBlockMixin) button).immersiveMC$playButtonSound(null, player.level(), pos, true);
                     VRRumble.rumbleIfVR(player, i, CommonConstants.vibrationTimeWorldInteraction);
                 }
             }

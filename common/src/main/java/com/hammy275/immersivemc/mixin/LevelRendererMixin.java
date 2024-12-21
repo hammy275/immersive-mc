@@ -20,7 +20,7 @@ public class LevelRendererMixin {
 
     @Inject(method="renderLevel", at=
             @At(value = "INVOKE_STRING", args="ldc=particles", target="Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V"))
-    private void renderLevelWithParticles(DeltaTracker deltaTracker, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f frustumMatrix, Matrix4f projectionMatrix, CallbackInfo ci) {
+    private void immersiveMC$renderLevelWithParticles(DeltaTracker deltaTracker, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f frustumMatrix, Matrix4f projectionMatrix, CallbackInfo ci) {
         Minecraft.getInstance().getProfiler().popPush(ImmersiveMC.MOD_ID);
         PoseStack poseStack = new PoseStack();
         ClientRenderSubscriber.onWorldRender(poseStack);

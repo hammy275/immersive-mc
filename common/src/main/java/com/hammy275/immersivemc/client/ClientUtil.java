@@ -94,7 +94,7 @@ public class ClientUtil {
     }
 
     public static void setRightClickCooldown(int amount) {
-        ((MinecraftMixinAccessor) Minecraft.getInstance()).setRightClickDelay(amount);
+        ((MinecraftMixinAccessor) Minecraft.getInstance()).immersiveMC$setRightClickDelay(amount);
     }
 
     public static PlacementMode getPlacementModeIndirect() {

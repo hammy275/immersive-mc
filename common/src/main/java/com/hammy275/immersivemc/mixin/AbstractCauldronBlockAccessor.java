@@ -9,5 +9,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface AbstractCauldronBlockAccessor {
 
     @Accessor("interactions")
-    public CauldronInteraction.InteractionMap getInteractions();
+    public CauldronInteraction.InteractionMap immersiveMC$getInteractions();
 }

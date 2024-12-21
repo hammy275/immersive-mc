@@ -11,14 +11,14 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface BeaconBlockEntityMixin {
 
     @Accessor("levels")
-    public int getLevels();
+    public int immersiveMC$getLevels();
 
     @Accessor("primaryPower")
-    public Holder<MobEffect> getPrimaryPower();
+    public Holder<MobEffect> immersiveMC$getPrimaryPower();
 
     @Accessor("secondaryPower")
-    public Holder<MobEffect> getSecondaryPower();
+    public Holder<MobEffect> immersiveMC$getSecondaryPower();
 
     @Accessor("dataAccess")
-    public ContainerData getBeaconData();
+    public ContainerData immersiveMC$getBeaconData();
 }
