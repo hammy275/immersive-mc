@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface DoorBlockMixin {
 
     @Invoker("getOpenSound")
-    public int openSound();
+    public int immersiveMC$openSound();
 
     @Invoker("getCloseSound")
-    public int closeSound();
+    public int immersiveMC$closeSound();
 }

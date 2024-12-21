@@ -14,7 +14,7 @@ public class EggRedirect {
     @Redirect(method= "use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResultHolder;",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/world/entity/projectile/ThrownEgg;shootFromRotation(Lnet/minecraft/world/entity/Entity;FFFFF)V"))
-    public void shootFromRotation(ThrownEgg projectile, Entity shooter, float xAngle, float yAngle, float unknown, float velocity, float inaccuracy) {
+    public void immersiveMC$shootFromRotation(ThrownEgg projectile, Entity shooter, float xAngle, float yAngle, float unknown, float velocity, float inaccuracy) {
         if (VRPluginVerify.hasAPI) {
             ThrowRedirect.shootFromRotation(projectile, shooter, xAngle, yAngle, unknown, velocity, inaccuracy);
         } else {

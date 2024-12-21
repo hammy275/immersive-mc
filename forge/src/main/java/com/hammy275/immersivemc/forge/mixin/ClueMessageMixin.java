@@ -16,7 +16,7 @@ import java.util.List;
 public class ClueMessageMixin {
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void captureClueData(int slot, List<EnchantmentInstance> clues, boolean all, CallbackInfo ci) {
+    private void immersiveMC$captureClueData(int slot, List<EnchantmentInstance> clues, boolean all, CallbackInfo ci) {
         if (clues != null) {
             ApothCompatImpl.slotsToSend[slot] = new ETableStorage.SlotData(-1,
                     clues.stream().map(clue -> Registry.ENCHANTMENT.getId(clue.enchantment)).toList(),

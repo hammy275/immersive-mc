@@ -36,7 +36,7 @@ public class BeaconConfirmPacket {
     public static void handle(final BeaconConfirmPacket message, ServerPlayer player) {
         if (NetworkUtil.safeToRun(message.pos, player)) {
             if (player.level.getBlockEntity(message.pos) instanceof BeaconBlockEntity beacon) {
-                ContainerData data = ((BeaconBlockEntityMixin) beacon).getBeaconData();
+                ContainerData data = ((BeaconBlockEntityMixin) beacon).immersiveMC$getBeaconData();
                 BeaconStorage beaconStorage = (BeaconStorage) WorldStoragesImpl.getOrCreateS(message.pos, player.getLevel());
                 int secondId = message.secondaryId;
                 if (data.get(0) == 4 && message.secondaryId == -1) {

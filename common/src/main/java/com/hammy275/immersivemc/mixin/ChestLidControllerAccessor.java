@@ -8,5 +8,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface ChestLidControllerAccessor {
 
     @Accessor("shouldBeOpen")
-    public boolean getShouldBeOpen();
+    public boolean immersiveMC$getShouldBeOpen();
 }
