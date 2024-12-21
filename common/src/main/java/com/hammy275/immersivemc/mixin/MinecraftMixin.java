@@ -21,7 +21,7 @@ public class MinecraftMixin {
     @Inject(method="startUseItem", at=@At(value = "INVOKE",
             target = "Lnet/minecraft/client/player/LocalPlayer;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;"),
             cancellable = true)
-    public void preRightClick(CallbackInfo ci) {
+    public void immersiveMC$preRightClick(CallbackInfo ci) {
         boolean doCancel = ClientLogicSubscriber.onClick(1);
         if (doCancel) {
             this.player.swing(InteractionHand.MAIN_HAND);

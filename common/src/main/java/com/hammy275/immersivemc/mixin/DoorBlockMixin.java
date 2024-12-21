@@ -9,5 +9,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface DoorBlockMixin {
 
     @Accessor("type")
-    public BlockSetType getType();
+    public BlockSetType immersiveMC$getType();
 }

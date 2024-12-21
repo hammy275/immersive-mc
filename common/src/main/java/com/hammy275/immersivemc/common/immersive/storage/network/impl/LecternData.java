@@ -50,7 +50,7 @@ public class LecternData<T extends CommonBookData> implements NetworkStorage {
             this.bookData.setMaxLeftPageIndex(findMaxLeftPageIndex());
             if (lecternServerSide != null) {
                 this.bookData.setPage(lecternServerSide.getPage());
-                this.bookData.onSetPageCallback = newPage -> ((LecternBlockEntityAccessor) lecternServerSide).immersiveMC$setPage(newPage);
+                this.bookData.onSetPageCallback = newPage -> ((LecternBlockEntityAccessor) lecternServerSide).immersiveMC$immersiveMC$setPage(newPage);
             }
         }
     }

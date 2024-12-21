@@ -8,5 +8,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface LecternBlockEntityAccessor {
 
     @Invoker("setPage")
-    public void immersiveMC$setPage(int page);
+    public void immersiveMC$immersiveMC$setPage(int page);
 }
