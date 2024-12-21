@@ -9,5 +9,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface AnvilMenuMixin {
 
     @Accessor("cost")
-    public DataSlot getCost();
+    public DataSlot immersiveMC$getCost();
 }

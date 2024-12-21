@@ -18,7 +18,7 @@ public abstract class LivingEntityMixin {
 
     @Redirect(method = "hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isDamageSourceBlocked(Lnet/minecraft/world/damagesource/DamageSource;)Z"))
-    public boolean isDamageSourceBlocked(LivingEntity shieldHolder, DamageSource damageSource, DamageSource damageSourceAgain, float damage) {
+    public boolean immersiveMC$isDamageSourceBlocked(LivingEntity shieldHolder, DamageSource damageSource, DamageSource damageSourceAgain, float damage) {
         if (VRPluginVerify.hasAPI) {
             ItemStack stackSource = LivingEntityMixinProxy.isDamageSourceBlocked((LivingEntity) (Object) this,
                     damageSource);

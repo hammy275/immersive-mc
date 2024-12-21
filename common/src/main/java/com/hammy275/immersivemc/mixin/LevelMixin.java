@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class LevelMixin {
 
     @Inject(method = "blockEntityChanged", at = @At("RETURN"))
-    private void blockEntityChanged(BlockPos blockPos, CallbackInfo ci) {
+    private void immersiveMC$blockEntityChanged(BlockPos blockPos, CallbackInfo ci) {
         // Dirtiness is cleared at the end of each tick, and getting the BlockEntity at the position
         // both introduces performance overhead and can cause unloading BlockEntities to be kept loaded (#498), so
         // we just mark any changes as dirty for us.
