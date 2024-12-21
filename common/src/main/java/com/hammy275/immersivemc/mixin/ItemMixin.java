@@ -15,7 +15,7 @@ public class ItemMixin {
      * Used to allow the using of items at an arbitrary position, rather than where the player is looking.
      */
     @Redirect(method = "getPlayerPOVHitResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getEyePosition()Lnet/minecraft/world/phys/Vec3;"))
-    private static Vec3 changeEyePosition(Player player) {
+    private static Vec3 immersiveMC$changeEyePosition(Player player) {
         if (Util.activeUseInfo != null) {
             return Util.activeUseInfo.getVec3Pos();
         }

@@ -15,7 +15,7 @@ public class LecternRendererMixin {
 
     @Inject(method = "render(Lnet/minecraft/world/level/block/entity/LecternBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
     at = @At("HEAD"), cancellable = true)
-    private void onRenderStart(LecternBlockEntity lecternBlockEntity, float f, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, CallbackInfo ci) {
+    private void immersiveMC$onRenderStart(LecternBlockEntity lecternBlockEntity, float f, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, CallbackInfo ci) {
         if (Immersives.immersiveLectern.getTrackedObjects().stream()
                 .anyMatch(info -> info.getBlockPosition().equals(lecternBlockEntity.getBlockPos()))) {
             ci.cancel();

@@ -17,7 +17,7 @@ import java.util.List;
 public class ClueMessageMixin {
 
     @Inject(method = "sendTo", at = @At("HEAD"))
-    private static void captureClueData(int slot, List<EnchantmentInstance> clues, boolean all, Player p, CallbackInfo ci) {
+    private static void immersiveMC$captureClueData(int slot, List<EnchantmentInstance> clues, boolean all, Player p, CallbackInfo ci) {
         ZenithCompatImpl.slotsToSend[slot] = new ETableStorage.SlotData(-1,
                 clues.stream().map(clue -> BuiltInRegistries.ENCHANTMENT.getId(clue.enchantment)).toList(),
                 clues.stream().map(clue -> clue.level).toList());
