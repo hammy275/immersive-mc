@@ -232,7 +232,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
 
             info.effectSelectedDisplayPos = center.add(0, 0.125, 0).add(leftVec.scale(-1d/3d));
 
-            int beaconLevel = ((BeaconBlockEntityMixin) beacon).getLevels();
+            int beaconLevel = ((BeaconBlockEntityMixin) beacon).immersiveMC$getLevels();
             if (info.lastLevel > beaconLevel) { // Beacon downgraded, potentially clear selected
                 if (beaconLevel == 1 && info.effectSelected > 1) {
                     info.effectSelected = -1;

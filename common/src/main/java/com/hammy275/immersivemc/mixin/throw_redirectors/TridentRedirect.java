@@ -16,7 +16,7 @@ public class TridentRedirect {
     @Redirect(method= "releaseUsing(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;I)V",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/world/entity/projectile/ThrownTrident;shootFromRotation(Lnet/minecraft/world/entity/Entity;FFFFF)V"))
-    public void shootFromRotation(ThrownTrident projectile, Entity shooter, float xAngle, float yAngle, float unknown, float velocity, float inaccuracy) {
+    public void immersiveMC$shootFromRotation(ThrownTrident projectile, Entity shooter, float xAngle, float yAngle, float unknown, float velocity, float inaccuracy) {
         if (VRPluginVerify.hasAPI) {
             ThrowRedirect.shootFromRotation(projectile, shooter, xAngle, yAngle, unknown, velocity, inaccuracy);
         } else {

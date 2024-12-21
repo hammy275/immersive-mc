@@ -8,5 +8,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface AbstractArrowAccessor {
 
     @Accessor("inGround")
-    public boolean getInGround();
+    public boolean immersiveMC$getInGround();
 }

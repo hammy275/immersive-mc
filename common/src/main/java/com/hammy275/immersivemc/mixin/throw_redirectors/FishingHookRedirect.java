@@ -15,7 +15,7 @@ public class FishingHookRedirect {
 
     @Inject(method = "<init>(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;II)V",
     at = @At("RETURN"))
-    public void atEndOfConstruction(Player player, Level level, int i, int j, CallbackInfo ci) {
+    public void immersiveMC$atEndOfConstruction(Player player, Level level, int i, int j, CallbackInfo ci) {
         // Sadly, it makes more sense to undo Vanilla's work and handle shooting ourselves here
         if (VRPluginVerify.hasAPI) {
             FishingHook me = (FishingHook) (Object) this;

@@ -360,7 +360,7 @@ public class Swap {
         container.setItem(1, 0, mid);
         container.createResult();
         ItemStack res = container.getSlot(2).getItem();
-        int level = ((AnvilMenuMixin) container).getCost().get();
+        int level = ((AnvilMenuMixin) container).immersiveMC$getCost().get();
         return new Pair<>(res, level);
     }
 

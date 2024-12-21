@@ -17,7 +17,7 @@ public class ItemInHandRendererMixin {
 
     @ModifyVariable(method = "renderArmWithItem(Lnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/InteractionHand;FLnet/minecraft/world/item/ItemStack;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
                     at = @At("HEAD"), index = 6, ordinal = 0, argsOnly = true)
-    private ItemStack overwriteItemStack(ItemStack stack, AbstractClientPlayer player, float f, float g, InteractionHand hand) {
+    private ItemStack immersiveMC$overwriteItemStack(ItemStack stack, AbstractClientPlayer player, float f, float g, InteractionHand hand) {
         if (player == Minecraft.getInstance().player && VRPluginVerify.clientInVR()) {
             for (AbstractItemImmersive<?> immersive : ItemImmersives.ITEM_IMMERSIVES) {
                 if (immersive.isEnabled() && immersive.itemMatches(stack)) {

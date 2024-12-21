@@ -15,7 +15,7 @@ public class ScreenMixin {
     @Inject(method = "confirmLink(Z)V",
     at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;setScreen(Lnet/minecraft/client/gui/screens/Screen;)V"),
     cancellable = true)
-    public void dontOpenThisScreenAfterURLHandle(boolean bl, CallbackInfo ci) {
+    public void immersiveMC$dontOpenThisScreenAfterURLHandle(boolean bl, CallbackInfo ci) {
         if (((Object) this) instanceof ClickHandlerScreen) {
             Minecraft.getInstance().setScreen(null);
             ci.cancel();

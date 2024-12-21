@@ -130,7 +130,7 @@ public class LootrCompatImpl implements LootrCompat {
             return player.level().getBlockState(pos).getValue(BarrelBlock.OPEN);
         } else if (lootrChestBlockEntityClass.isInstance(be)) {
             try {
-                return ((ChestLidControllerAccessor) chestChestLidController.get(be)).getShouldBeOpen();
+                return ((ChestLidControllerAccessor) chestChestLidController.get(be)).immersiveMC$getShouldBeOpen();
             } catch (IllegalAccessException ignored) {}
         }
         return false;
