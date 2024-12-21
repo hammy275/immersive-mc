@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface MinecraftMixinAccessor {
 
     @Accessor("rightClickDelay")
-    public void setRightClickDelay(int newAmount);
+    public void immersiveMC$setRightClickDelay(int newAmount);
 
 
 

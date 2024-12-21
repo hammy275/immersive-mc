@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface FenceGateBlockMixin {
 
     @Accessor("openSound")
-    public SoundEvent getOpenSound();
+    public SoundEvent immersiveMC$getOpenSound();
 
     @Accessor("closeSound")
-    public SoundEvent getCloseSound();
+    public SoundEvent immersiveMC$getCloseSound();
 }

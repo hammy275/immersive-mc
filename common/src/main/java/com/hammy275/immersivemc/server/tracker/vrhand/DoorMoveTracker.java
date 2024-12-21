@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.server.tracker.vrhand;
 
-import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.vr.VRRumble;
@@ -80,10 +79,10 @@ public class DoorMoveTracker extends AbstractVRHandTracker {
                 SoundEvent sound = null;
                 if (blockState.getBlock() instanceof FenceGateBlock fence) {
                     FenceGateBlockMixin accessor = (FenceGateBlockMixin) fence;
-                    sound = isNowOpen ? accessor.getOpenSound() : accessor.getCloseSound();
+                    sound = isNowOpen ? accessor.immersiveMC$getOpenSound() : accessor.immersiveMC$getCloseSound();
                 } else if (blockState.getBlock() instanceof DoorBlock door) {
                     DoorBlockMixin accessor = (DoorBlockMixin) door;
-                    sound = isNowOpen ? accessor.openSound() : accessor.closeSound();
+                    sound = isNowOpen ? accessor.immersiveMC$openSound() : accessor.immersiveMC$closeSound();
                 }
                 if (sound != null && player instanceof ServerPlayer sPlayer) {
                     sPlayer.connection.send(new ClientboundSoundPacket(

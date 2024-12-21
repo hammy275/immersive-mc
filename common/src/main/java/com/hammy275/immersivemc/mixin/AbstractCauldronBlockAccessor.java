@@ -12,5 +12,5 @@ import java.util.Map;
 public interface AbstractCauldronBlockAccessor {
 
     @Accessor("interactions")
-    public Map<Item, CauldronInteraction> getInteractions();
+    public Map<Item, CauldronInteraction> immersiveMC$getInteractions();
 }

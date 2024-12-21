@@ -9,5 +9,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface ProjectileAccessor {
 
     @Invoker("onHit")
-    public void onHitRes(HitResult hitResult);
+    public void immersiveMC$onHitRes(HitResult hitResult);
 }

@@ -11,7 +11,7 @@ import org.vivecraft.gameplay.trackers.BackpackTracker;
 @Mixin(BackpackTracker.class)
 public class BackpackTrackerMixin {
     @Inject(method = "isActive", at = @At("HEAD"), cancellable = true)
-    public void notActiveIfUsingBag(LocalPlayer p, CallbackInfoReturnable<Boolean> cir) {
+    public void immersiveMC$notActiveIfUsingBag(LocalPlayer p, CallbackInfoReturnable<Boolean> cir) {
         if (ActiveConfig.active().reachBehindBagMode.usesOverShoulder()) {
             cir.setReturnValue(false);
         }

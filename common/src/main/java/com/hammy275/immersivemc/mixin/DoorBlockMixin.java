@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface DoorBlockMixin {
 
     @Accessor("openSound")
-    public SoundEvent openSound();
+    public SoundEvent immersiveMC$openSound();
 
     @Accessor("closeSound")
-    public SoundEvent closeSound();
+    public SoundEvent immersiveMC$closeSound();
 }
