@@ -9,5 +9,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface OptionMixinAccessor {
 
     @Accessor("caption")
-    public Component getCaption();
+    public Component immersiveMC$getCaption();
 }

@@ -16,7 +16,7 @@ public class MultiPlayerGameModeMixin {
     @ModifyVariable(method= "useItemOn(Lnet/minecraft/client/player/LocalPlayer;Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;",
             at=@At("STORE"), index = 9, ordinal = 1)
     // Matches bl2
-    public boolean isCrouchingCondition(boolean value) {
+    public boolean immersiveMC$isCrouchingCondition(boolean value) {
         if (!ActiveConfig.active().crouchingBypassesImmersives) return value;
         HitResult rawResult = Minecraft.getInstance().hitResult;
         if (rawResult != null && rawResult instanceof BlockHitResult result) {

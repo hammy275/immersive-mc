@@ -15,7 +15,7 @@ public class VivecraftItemRenderingMixin {
 
     @Redirect(method = "applyFirstPersonItemTransforms(Lcom/mojang/blaze3d/vertex/PoseStack;Lorg/vivecraft/render/VivecraftItemRendering$VivecraftItemTransformType;ZLnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;)V",
     at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;isUsingItem()Z"))
-    private static boolean isUsingItemRedirect(AbstractClientPlayer player) {
+    private static boolean immersiveMC$isUsingItemRedirect(AbstractClientPlayer player) {
         if (player == Minecraft.getInstance().player && player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof TridentItem
         && Minecraft.getInstance().options.keyAttack.isDown() && ClientTrackerInit.throwTracker.readyToThrow()) {
             return true;
@@ -25,7 +25,7 @@ public class VivecraftItemRenderingMixin {
 
     @Redirect(method = "applyFirstPersonItemTransforms(Lcom/mojang/blaze3d/vertex/PoseStack;Lorg/vivecraft/render/VivecraftItemRendering$VivecraftItemTransformType;ZLnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;getUseItemRemainingTicks()I"))
-    private static int getUseItemRemainingTicks(AbstractClientPlayer player) {
+    private static int immersiveMC$getUseItemRemainingTicks(AbstractClientPlayer player) {
         if (player == Minecraft.getInstance().player && player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof TridentItem
                 && Minecraft.getInstance().options.keyAttack.isDown() && ClientTrackerInit.throwTracker.readyToThrow()) {
             return 72000 - 21;
@@ -35,7 +35,7 @@ public class VivecraftItemRenderingMixin {
 
     @Redirect(method = "applyFirstPersonItemTransforms(Lcom/mojang/blaze3d/vertex/PoseStack;Lorg/vivecraft/render/VivecraftItemRendering$VivecraftItemTransformType;ZLnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;getUsedItemHand()Lnet/minecraft/world/InteractionHand;"))
-    private static InteractionHand getUsedItemHandMixin(AbstractClientPlayer player) {
+    private static InteractionHand immersiveMC$getUsedItemHandMixin(AbstractClientPlayer player) {
         if (player == Minecraft.getInstance().player && player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof TridentItem
                 && Minecraft.getInstance().options.keyAttack.isDown() && ClientTrackerInit.throwTracker.readyToThrow()) {
             return InteractionHand.MAIN_HAND;

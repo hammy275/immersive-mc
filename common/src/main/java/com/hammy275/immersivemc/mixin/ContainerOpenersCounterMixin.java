@@ -14,7 +14,7 @@ public class ContainerOpenersCounterMixin {
 
     @ModifyVariable(method = "recheckOpeners(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V",
     at = @At("STORE"), index = 4, ordinal = 0)
-    public int openCountI(int originalI, Level level, BlockPos blockPos, BlockState blockState) {
+    public int immersiveMC$openCountI(int originalI, Level level, BlockPos blockPos, BlockState blockState) {
         return originalI + ChestToOpenSet.getOpenCount(blockPos, level);
     }
 }

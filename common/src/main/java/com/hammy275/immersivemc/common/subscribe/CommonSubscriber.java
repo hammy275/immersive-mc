@@ -12,7 +12,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 
 import java.util.HashMap;
@@ -51,7 +50,7 @@ public class CommonSubscriber {
                             // Note that this will effectively have things that bypass shields hurt us "early",
                             // but I can't seem to work around that, since we need a damage source, and we don't
                             // know our damage source until we're hit.
-                            ((ProjectileAccessor) proj).onHitRes(new EntityHitResult(player));
+                            ((ProjectileAccessor) proj).immersiveMC$onHitRes(new EntityHitResult(player));
                             proj.setPos(ShieldUtil.getShieldPos(player, hand, iHand));
                         }
                     }
@@ -63,7 +62,7 @@ public class CommonSubscriber {
     private static boolean shouldProjAttemptHit(Projectile proj) {
         if (proj instanceof AbstractArrow arrow) {
             AbstractArrowAccessor aaa = (AbstractArrowAccessor) arrow;
-            if (aaa.getInGround()) {
+            if (aaa.immersiveMC$getInGround()) {
                 return false;
             }
         }

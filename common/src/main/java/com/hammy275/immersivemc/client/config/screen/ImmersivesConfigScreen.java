@@ -102,7 +102,7 @@ public class ImmersivesConfigScreen extends Screen {
                 .forEach(options::add);
 
         options.stream()
-                .sorted(Comparator.comparing(option -> ((OptionMixinAccessor) option).getCaption().getString()))
+                .sorted(Comparator.comparing(option -> ((OptionMixinAccessor) option).immersiveMC$getCaption().getString()))
                 .forEach((option) -> this.list.addBig(option));
 
     }

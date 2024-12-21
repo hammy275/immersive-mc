@@ -61,7 +61,7 @@ public class CauldronTracker extends AbstractVRHandTracker {
         ItemStack handStack = player.getItemInHand(hand);
         Item handItem = handStack.getItem();
         Potion heldPotion = PotionUtils.getPotion(handStack);
-        CauldronInteraction interaction = ((AbstractCauldronBlockAccessor) cauldronBlock).getInteractions().get(handItem);
+        CauldronInteraction interaction = ((AbstractCauldronBlockAccessor) cauldronBlock).immersiveMC$getInteractions().get(handItem);
 
         if (interaction == null) return;
 
