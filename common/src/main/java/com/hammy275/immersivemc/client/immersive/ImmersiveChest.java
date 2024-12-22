@@ -66,10 +66,10 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
     }
 
     @Override
-    public int handleHitboxInteract(ChestInfo info, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
+    public int handleHitboxInteract(ChestInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand) {
         if (!VRPluginVerify.clientInVR() && !ActiveConfig.active().rightClickChestInteractions) return -1;
         if (!info.isOpen) return -1;
-        ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(hitboxIndex), hand);
+        ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), hitboxIndices, hand);
         return ClientConstants.defaultCooldownTicks;
     }
 

@@ -64,7 +64,8 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
     }
 
     @Override
-    public int handleHitboxInteract(BeaconInfo info, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
+    public int handleHitboxInteract(BeaconInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand) {
+        int hitboxIndex = hitboxIndices.get(0);
         if (hitboxIndex <= 4) {
             info.effectSelected = hitboxIndex;
         } else if (hitboxIndex == 5) {

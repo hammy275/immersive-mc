@@ -180,9 +180,9 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
     }
 
     @Override
-    public int handleHitboxInteract(BuiltImmersiveInfo<E> infoIn, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
+    public int handleHitboxInteract(BuiltImmersiveInfo<E> infoIn, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand) {
         BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
-        return builder.hitboxInteractHandler.apply(info, player, hitboxIndex, hand);
+        return builder.hitboxInteractHandler.apply(info, player, hitboxIndices, hand);
     }
 
     private boolean airCheck(BuiltImmersiveInfo<E> infoIn) {

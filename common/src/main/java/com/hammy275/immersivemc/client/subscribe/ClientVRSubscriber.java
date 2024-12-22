@@ -18,6 +18,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ClientVRSubscriber {
@@ -72,7 +73,7 @@ public class ClientVRSubscriber {
                     Optional<Integer> hit = Util.getFirstIntersect(pos, info.getAllHitboxes());
                     if (hit.isPresent() &&
                             (Minecraft.getInstance().options.keyAttack.isDown() || !info.getAllHitboxes().get(hit.get()).isTriggerHitbox())) {
-                        int cooldownFromInfo = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, hit.get(),
+                        int cooldownFromInfo = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(hit.get()),
                                 c == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
                         if (cooldownFromInfo >= 0) {
                             if (Minecraft.getInstance().options.keyAttack.isDown()) {

@@ -65,7 +65,7 @@ public abstract class AbstractDragImmersive implements Immersive<DragImmersiveIn
     }
 
     @Override
-    public int handleHitboxInteract(DragImmersiveInfo info, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
+    public int handleHitboxInteract(DragImmersiveInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand) {
         return -1; // Cooldown isn't handled by Immersive system since we interact with hitboxes nonstop
     }
 

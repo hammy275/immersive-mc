@@ -530,7 +530,7 @@ public class ClientLogicSubscriber {
             if (info.hasHitboxes()) {
                 Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
                 if (closest.isPresent()) {
-                    int res = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, closest.get(), InteractionHand.MAIN_HAND);
+                    int res = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(closest.get()), InteractionHand.MAIN_HAND);
                     return res >= 0 ? res : null;
                 }
             }
