@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
@@ -16,7 +17,6 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.BeaconConfirmPacket;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
-import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -37,6 +37,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
+import java.util.List;
 
 public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage> {
 
@@ -75,7 +76,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
                     info.regenSelected ? BuiltInRegistries.MOB_EFFECT.getId(MobEffects.REGENERATION.value()) : -1));
             VRRumble.rumbleIfVR(Minecraft.getInstance().player, 0, CommonConstants.vibrationTimeWorldInteraction);
         } else {
-            Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), 0, hand));
+            ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(0), hand);
         }
         return ClientConstants.defaultCooldownTicks;
     }

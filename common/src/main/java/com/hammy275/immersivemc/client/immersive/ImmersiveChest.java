@@ -14,7 +14,6 @@ import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
-import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -36,6 +35,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 
 public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStorage> {
@@ -69,7 +69,7 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
     public int handleHitboxInteract(ChestInfo info, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
         if (!VRPluginVerify.clientInVR() && !ActiveConfig.active().rightClickChestInteractions) return -1;
         if (!info.isOpen) return -1;
-        Network.INSTANCE.sendToServer(new SwapPacket(info.getBlockPosition(), hitboxIndex, hand));
+        ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(hitboxIndex), hand);
         return ClientConstants.defaultCooldownTicks;
     }
 

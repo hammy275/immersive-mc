@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.subscribe.ClientVRSubscriber;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveLogicHelpersImpl;
+import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import net.minecraft.client.Minecraft;
@@ -11,6 +12,8 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.LightLayer;
+
+import java.util.List;
 
 public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl implements ImmersiveClientLogicHelpers {
 
@@ -23,8 +26,8 @@ public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl i
     }
 
     @Override
-    public void sendSwapPacket(BlockPos pos, int slot, InteractionHand hand) {
-        Network.INSTANCE.sendToServer(new SwapPacket(pos, slot, hand));
+    public void sendSwapPacket(BlockPos pos, List<Integer> slots, InteractionHand hand) {
+        Network.INSTANCE.sendToServer(new SwapPacket(pos, slots, hand, PlacementMode.SINGLE));
     }
 
     @Override

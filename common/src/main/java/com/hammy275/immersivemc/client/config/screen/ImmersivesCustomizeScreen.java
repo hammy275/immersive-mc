@@ -1,7 +1,6 @@
 package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.common.config.ConfigType;
-import com.hammy275.immersivemc.common.config.PlacementMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
@@ -33,17 +32,6 @@ public class ImmersivesCustomizeScreen extends OptionsSubScreen {
         ScreenUtils.addOptionIfClient("crouch_bypass_immersion", config -> config.crouchingBypassesImmersives, (config, newVal) -> config.crouchingBypassesImmersives = newVal, this.list);
 
         if (ConfigScreen.getAdjustingConfigType() == ConfigType.CLIENT) {
-            this.list.addBig(
-                    ScreenUtils.createEnumOption(PlacementMode.class,
-                            "config.immersivemc.placement_mode",
-                            (placementMode) -> Component.translatable("config.immersivemc.placement_mode." + placementMode.ordinal()),
-                            (placementMode) -> Component.translatable("config.immersivemc.placement_mode.desc",
-                                    I18n.get("config.immersivemc.placement_mode." + placementMode.ordinal()).toLowerCase()),
-                            () -> ConfigScreen.getClientConfigIfAdjusting().placementMode,
-                            (newModeIndex, newMode) -> ConfigScreen.getClientConfigIfAdjusting().placementMode = newMode
-
-                    ));
-
             this.list.addBig(ScreenUtils.createIntSlider(
                     "config.immersivemc.ranged_grab_range",
                     (val) -> {

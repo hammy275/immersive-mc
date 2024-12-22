@@ -11,6 +11,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 
+import java.util.List;
+
 /**
  * {@link ImmersiveLogicHelpers}, but the player is always assumed to be the local player, and the world/level is
  * the one that player occupies. This also contains methods not found in {@link ImmersiveLogicHelpers}, as they
@@ -40,11 +42,12 @@ public interface ImmersiveClientLogicHelpers extends ImmersiveLogicHelpers {
      * {@link com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler#swap(int, InteractionHand, BlockPos, ServerPlayer, com.hammy275.immersivemc.api.server.ItemSwapAmount)}
      * for the provided block at the given position. You usually should call this when a hitbox is right-clicked in your
      * Immersive.
-     * @param pos The position of the block that a swap is being performed at.
-     * @param slot The slot number that the right-click is taking place.
-     * @param hand The hand which is performing the swap.
+     *
+     * @param pos   The position of the block that a swap is being performed at.
+     * @param slots The slot number that the right-click is taking place.
+     * @param hand  The hand which is performing the swap.
      */
-    public void sendSwapPacket(BlockPos pos, int slot, InteractionHand hand);
+    public void sendSwapPacket(BlockPos pos, List<Integer> slots, InteractionHand hand);
 
     /**
      * Given the local player and the position of an immersive block, returns the best direction the block should face

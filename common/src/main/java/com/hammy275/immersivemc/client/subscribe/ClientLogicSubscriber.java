@@ -438,7 +438,7 @@ public class ClientLogicSubscriber {
                     int numHitboxes = info.getAllHitboxes().size();
                     for (int i = 0; i < numHitboxes; i++) {
                         if (!info.getItem(i).isEmpty()) {
-                            ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), 9, InteractionHand.MAIN_HAND);
+                            ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(9), InteractionHand.MAIN_HAND);
                             return true;
                         }
                     }

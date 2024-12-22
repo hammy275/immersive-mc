@@ -78,7 +78,7 @@ public class Immersives {
             })
             .setPositioningMode(HitboxPositioningMode.TOP_BLOCK_FACING)
             .setHitboxInteractHandler((info, player, slot, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(slot), hand);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setConfigScreenInfo(createConfigScreenInfo("anvil", () -> new ItemStack(Items.ANVIL),
@@ -101,7 +101,7 @@ public class Immersives {
             .setPositioningMode(HitboxPositioningMode.BLOCK_FACING_NEG_X)
             .setHitboxInteractHandler((info, player, slot, hand) -> {
                 if (slot < 27) {
-                    ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
+                    ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(slot), hand);
                     return ClientConstants.defaultCooldownTicks;
                 }
                 return -1;
@@ -133,7 +133,7 @@ public class Immersives {
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
             .setHitboxInteractHandler((info, player, slot, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(slot), hand);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setConfigScreenInfo(createConfigScreenInfo("brewing", () -> new ItemStack(Items.BREWING_STAND),
@@ -151,7 +151,7 @@ public class Immersives {
             .addHitbox(RelativeHitboxInfoBuilder.create(ChiseledBookshelfHandler.slotOffsets[5], 0.3125, 0.5, 0.25).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_BLOCK_FACING)
             .setHitboxInteractHandler((info, player, slot, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(slot), hand);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setVROnly(true)
@@ -170,7 +170,7 @@ public class Immersives {
                     .forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
             .setHitboxInteractHandler((info, player, slot, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(slot), hand);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setConfigScreenInfo(createConfigScreenInfo("crafting", () -> new ItemStack(Items.CRAFTING_TABLE),
@@ -251,7 +251,7 @@ public class Immersives {
             }).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
             .setHitboxInteractHandler((info, player, slot, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(slot), hand);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setExtraStorageConsumer((storage, info) -> {
@@ -351,7 +351,7 @@ public class Immersives {
                         }
                     }
                 }
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(slot), hand);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setConfigScreenInfo(createConfigScreenInfo("furnace", () -> new ItemStack(Items.FURNACE),
@@ -391,7 +391,7 @@ public class Immersives {
             }, ClientConstants.itemScaleSizeHopper).build())
             .setPositioningMode(HitboxPositioningMode.PLAYER_FACING_NO_DOWN)
             .setHitboxInteractHandler((info, player, slot, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(slot), hand);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setConfigScreenInfo(createConfigScreenInfo("hopper", () -> new ItemStack(Items.HOPPER),
@@ -402,7 +402,7 @@ public class Immersives {
             .addHitbox(RelativeHitboxInfoBuilder.create(Vec3.ZERO, 0.125, 0.125, 0.625).build())
             .setPositioningMode(HitboxPositioningMode.TOP_LITERAL)
             .setHitboxInteractHandler((info, player, slot, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), 0, hand);
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(0), hand);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setVROnly(true)
@@ -431,7 +431,7 @@ public class Immersives {
             }, 0.14f).build(), 0.15)
             .setPositioningMode(HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING)
             .setHitboxInteractHandler((info, player, slot, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(slot), hand);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setSlotActiveFunction((info, slot) -> ((ChestLikeData) info.getExtraData()).isOpen)
@@ -453,7 +453,7 @@ public class Immersives {
             .addHitbox(RelativeHitboxInfoBuilder.create((info) -> info.getItem(3).isEmpty() ? null : new Vec3(0, 0, 0.5), ClientConstants.itemScaleSizeSmithingTable / 1.025).holdsItems(true).triggerHitbox(true).itemSpins(true).itemRenderSizeMultiplier(1.5f).forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
             .setHitboxInteractHandler((info, player, slot, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(slot), hand);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setConfigScreenInfo(createConfigScreenInfo("smithing_table", () -> new ItemStack(Items.SMITHING_TABLE),
@@ -483,7 +483,7 @@ public class Immersives {
                             ClientConstants.itemScaleSizeApothSalvagingTable)
                     .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
                     .setHitboxInteractHandler((info, player, slot, hand) -> {
-                        ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slot, hand);
+                        ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(slot), hand);
                         return ClientConstants.defaultCooldownTicks;
                     })
                     .build(),

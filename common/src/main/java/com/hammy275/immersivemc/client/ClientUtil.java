@@ -10,7 +10,6 @@ import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersi
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
-import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
@@ -95,15 +94,6 @@ public class ClientUtil {
 
     public static void setRightClickCooldown(int amount) {
         ((MinecraftMixinAccessor) Minecraft.getInstance()).immersiveMC$setRightClickDelay(amount);
-    }
-
-    public static PlacementMode getPlacementModeIndirect() {
-        return getPlacementModeIndirect(false);
-    }
-
-    public static PlacementMode getPlacementModeIndirect(boolean leftClickAlreadyDoesSomething) {
-        return Minecraft.getInstance().options.keyAttack.isDown() &&
-                !leftClickAlreadyDoesSomething ? PlacementMode.PLACE_ALL : ActiveConfig.active().placementMode;
     }
 
     /**
