@@ -96,6 +96,11 @@ public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<Comm
     }
 
     @Override
+    public boolean isInputHitbox(LecternInfo info, int hitboxIndex) {
+        return true;
+    }
+
+    @Override
     public ImmersiveHandler<LecternData<CommonBookData>> getHandler() {
         return ImmersiveHandlers.lecternHandler;
     }

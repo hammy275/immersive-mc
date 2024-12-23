@@ -3,9 +3,9 @@ package com.hammy275.immersivemc.client.subscribe;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
-import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
@@ -15,10 +15,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.List;
 import java.util.Optional;
 
 public class ClientVRSubscriber {
@@ -28,6 +28,10 @@ public class ClientVRSubscriber {
 
     public static void setCooldown(int cooldown) {
         ClientVRSubscriber.cooldown = Math.max(ClientVRSubscriber.cooldown, cooldown);
+    }
+
+    public static int getCooldown() {
+        return cooldown;
     }
 
     public static void immersiveTickVR(Player player) {
@@ -48,12 +52,19 @@ public class ClientVRSubscriber {
 
         if (cooldown > 0) {
             cooldown--;
-        } else {
+        }
+
+        for (int c = 0; c <= 1; c++) {
             for (Immersive<?, ?> singleton : Immersives.IMMERSIVES) {
-                if (handleInfos(singleton, vrPlayer)) {
+                if (handleInfos(singleton, vrPlayer, c)) {
                     return;
                 }
             }
+            SwapTracker swapTracker = c == 0 ? SwapTracker.c0 : SwapTracker.c1;
+            swapTracker.tick(null, null, -1, false);
+        }
+
+        if (cooldown <= 0) {
             for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
                 for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
                     if (handleInfo(singleton, info, vrPlayer)) {
@@ -64,31 +75,33 @@ public class ClientVRSubscriber {
         }
     }
 
-    protected static <I extends ImmersiveInfo> boolean handleInfos(Immersive<I, ?> singleton, IVRPlayer vrPlayer) {
+    protected static <I extends ImmersiveInfo> boolean handleInfos(Immersive<I, ?> singleton, IVRPlayer vrPlayer, int c) {
+        I infoWithDragHitbox = null;
+        SwapTracker swapTracker = c == 0 ? SwapTracker.c0 : SwapTracker.c1;
         for (I info : singleton.getTrackedObjects()) {
             if (info.hasHitboxes()) {
-                for (int c = 0; c <= 1; c++) {
-                    IVRData controller = vrPlayer.getController(c);
-                    Vec3 pos = controller.position();
-                    Optional<Integer> hit = Util.getFirstIntersect(pos, info.getAllHitboxes());
-                    if (hit.isPresent() &&
-                            (Minecraft.getInstance().options.keyAttack.isDown() || !info.getAllHitboxes().get(hit.get()).isTriggerHitbox())) {
-                        int cooldownFromInfo = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(hit.get()),
-                                c == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
-                        if (cooldownFromInfo >= 0) {
-                            if (Minecraft.getInstance().options.keyAttack.isDown()) {
-                                // Set longer cooldown if whole stack is placed
-                                cooldown = (int) (cooldownFromInfo * (singleton.isVROnly() ? 1.5 : ClientConstants.cooldownVRMultiplier + 0.5));
-                            } else {
-                                cooldown = (int) (cooldownFromInfo * (singleton.isVROnly() ? 1 : ClientConstants.cooldownVRMultiplier));
-                            }
-                            return true;
-                        }
+                IVRData controller = vrPlayer.getController(c);
+                Vec3 pos = controller.position();
+                Optional<Integer> hit = Util.getFirstIntersect(pos, info.getAllHitboxes());
+                if (hit.isPresent() &&
+                        (Minecraft.getInstance().options.keyAttack.isDown() || !info.getAllHitboxes().get(hit.get()).isTriggerHitbox())) {
+                    if (singleton.isInputHitbox(info, hit.get())) {
+                        swapTracker.tick(singleton, info, hit.get(), true);
+                    } else {
+                        swapTracker.tick(singleton, info, -1, inDragHitbox(singleton, info, pos));
+                    }
+                    return true;
+                } else if (hit.isEmpty()) {
+                    if (inDragHitbox(singleton, info, pos)) {
+                        infoWithDragHitbox = info;
                     }
                 }
             }
         }
-        return false;
+        if (infoWithDragHitbox != null) {
+            swapTracker.tick(singleton, infoWithDragHitbox, -1, true);
+        }
+        return infoWithDragHitbox != null;
     }
 
     protected static boolean handleInfo(AbstractPlayerAttachmentImmersive<?, ?> singleton, AbstractPlayerAttachmentInfo info, IVRPlayer vrPlayer) {
@@ -111,5 +124,10 @@ public class ClientVRSubscriber {
             }
         }
         return false;
+    }
+
+    private static <I extends ImmersiveInfo> boolean inDragHitbox(Immersive<I, ?> singleton, I info, Vec3 pos) {
+        AABB dragHitbox = singleton.getDragHitbox(info);
+        return dragHitbox != null && Util.getFirstIntersect(pos, dragHitbox).isPresent();
     }
 }

@@ -141,6 +141,12 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
     }
 
     @Override
+    public boolean isInputHitbox(BuiltImmersiveInfo<E> infoIn, int hitboxIndex) {
+        BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
+        return info.hitboxes.get(hitboxIndex).isInput;
+    }
+
+    @Override
     public void render(BuiltImmersiveInfo<E> infoIn, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
         BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
         float size = ImmersiveRenderHelpers.instance().getTransitionMultiplier(info.ticksExisted) * builder.renderSize;

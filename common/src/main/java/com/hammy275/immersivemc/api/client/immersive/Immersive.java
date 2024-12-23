@@ -92,10 +92,18 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
 
     /**
      * @return The hitbox that determines whether dragging between multiple slots should continue or not. Can return
-     * null here to not allow dragging.
+     * null here to not allow dragging. If non-null, the hitbox should contain all hitboxes where
+     * {@link #isInputHitbox(ImmersiveInfo, int)} returns true.
      */
     @Nullable
     public AABB getDragHitbox(I info);
+
+    /**
+     * @param info The info being checked with.
+     * @param hitboxIndex The hitbox index being checked.
+     * @return Whether the provided hitbox index is an input, such as for inputting items.
+     */
+    public boolean isInputHitbox(I info, int hitboxIndex);
 
     /**
      * Whether the provided info should render in the world. It's good to return false here if this Immersive

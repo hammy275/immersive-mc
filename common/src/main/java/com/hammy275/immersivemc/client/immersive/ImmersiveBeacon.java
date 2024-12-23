@@ -99,6 +99,11 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
     }
 
     @Override
+    public boolean isInputHitbox(BeaconInfo info, int hitboxIndex) {
+        return true;
+    }
+
+    @Override
     public boolean shouldRender(BeaconInfo info) {
         return info.lastPlayerDir != null && info.areaAboveIsAir && info.hasHitboxes();
     }

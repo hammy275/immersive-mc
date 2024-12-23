@@ -33,7 +33,8 @@ public interface ImmersiveClientLogicHelpers extends ImmersiveLogicHelpers {
      * (if the player is in VR) to some number of ticks. You likely don't need this, as the value returned from
      * {@link Immersive#handleHitboxInteract(ImmersiveInfo, LocalPlayer, List, InteractionHand)} is set as the cooldown
      * where appropriate. This is mainly useful if you're working outside of ImmersiveMC's hitbox system.
-     * @param cooldown The cooldown to set in ticks.
+     * @param cooldown The cooldown to set in ticks. This will be increased for VR players, see the aforementioned
+     *                 method for more info.
      */
     public void setCooldown(int cooldown);
 

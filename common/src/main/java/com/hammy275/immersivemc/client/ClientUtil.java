@@ -96,6 +96,10 @@ public class ClientUtil {
         ((MinecraftMixinAccessor) Minecraft.getInstance()).immersiveMC$setRightClickDelay(amount);
     }
 
+    public static int getRightClickCooldown() {
+        return ((MinecraftMixinAccessor) Minecraft.getInstance()).immersiveMC$getRightClickDelay();
+    }
+
     /**
      * Get Direction best represented by the velocity of a controller
      * @param velocity Velocity from getVelocity()

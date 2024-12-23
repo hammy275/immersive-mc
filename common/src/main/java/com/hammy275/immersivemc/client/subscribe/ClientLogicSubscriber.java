@@ -12,6 +12,7 @@ import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersi
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
 import com.hammy275.immersivemc.client.immersive.ImmersiveChest;
 import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
@@ -45,6 +46,7 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -74,6 +76,10 @@ public class ClientLogicSubscriber {
         Player player = Minecraft.getInstance().player;
         if (player == null) return;
         minecraft.getProfiler().push(ImmersiveMC.MOD_ID);
+
+        if (!VRPluginVerify.clientInVR()) {
+            SwapTracker.c0.maybeIdleTick();
+        }
 
         // Clear all immersives if switching out of VR and we disable ImmersiveMC outside of VR
         boolean currentVRState = VRPluginVerify.clientInVR();
@@ -494,6 +500,10 @@ public class ClientLogicSubscriber {
                     return fromInfos;
                 }
             }
+            if (!inVR) {
+                // This is done in ClientVRSubscriber for VR players
+                SwapTracker.c0.tick(null, null, -1, false);
+            }
             for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
                 if (singleton.isVROnly() && !inVR) continue;
                 for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
@@ -522,20 +532,34 @@ public class ClientLogicSubscriber {
         if (rayTraceCooldown > 0) {
             return rayTraceCooldown;
         }
-        return 0;
+        return -1;
     }
 
     private static <I extends ImmersiveInfo> Integer handleRightClickInfos(Immersive<I, ?> singleton, Vec3 start, Vec3 end) {
+        Integer cooldownOut = null;
+        I infoToSwapTick = null;
         for (I info : singleton.getTrackedObjects()) {
             if (info.hasHitboxes()) {
                 Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
                 if (closest.isPresent()) {
-                    int res = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(closest.get()), InteractionHand.MAIN_HAND);
-                    return res >= 0 ? res : null;
+                    if (singleton.isInputHitbox(info, closest.get())) {
+                        SwapTracker.c0.tick(singleton, info, closest.get(), true);
+                        return 1;
+                    } else {
+                        SwapTracker.c0.tick(null, null, -1, inDragHitbox(singleton, info, start, end));
+                        int res = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(closest.get()), InteractionHand.MAIN_HAND);
+                        return res >= 0 ? res : null;
+                    }
+                } else if (inDragHitbox(singleton, info, start, end)) {
+                    infoToSwapTick = info;
+                    cooldownOut = 1;
                 }
             }
         }
-        return null;
+        if (infoToSwapTick != null) {
+            SwapTracker.c0.tick(singleton, infoToSwapTick, -1, true);
+        }
+        return cooldownOut;
     }
 
     protected static int handleRightClickBlockRayTrace(Player player) {
@@ -578,5 +602,9 @@ public class ClientLogicSubscriber {
         return 0; // Still here in case if we need it later
     }
 
+    private static <I extends ImmersiveInfo> boolean inDragHitbox(Immersive<I, ?> singleton, I info, Vec3 rayStart, Vec3 rayEnd) {
+        AABB dragHitbox = singleton.getDragHitbox(info);
+        return dragHitbox != null && Util.rayTraceClosest(rayStart, rayEnd, dragHitbox).isPresent();
+    }
 
 }

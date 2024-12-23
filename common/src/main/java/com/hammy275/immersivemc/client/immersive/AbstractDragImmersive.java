@@ -116,6 +116,11 @@ public abstract class AbstractDragImmersive implements Immersive<DragImmersiveIn
     }
 
     @Override
+    public boolean isInputHitbox(DragImmersiveInfo info, int hitboxIndex) {
+        return true;
+    }
+
+    @Override
     public boolean shouldDisableRightClicksWhenVanillaInteractionsDisabled(DragImmersiveInfo info) {
         return true;
     }

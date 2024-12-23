@@ -237,6 +237,11 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
     }
 
     @Override
+    public boolean isInputHitbox(ChestInfo info, int hitboxIndex) {
+        return true;
+    }
+
+    @Override
     public ImmersiveHandler<ListOfItemsStorage> getHandler() {
         return ImmersiveHandlers.chestHandler;
     }
