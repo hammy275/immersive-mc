@@ -24,6 +24,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -86,6 +87,12 @@ public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<Comm
             ImmersiveClientLogicHelpers.instance().setCooldown((int) (ClientConstants.defaultCooldownTicks * ClientConstants.cooldownVRMultiplier));
             info.didClick = false;
         }
+    }
+
+    @Override
+    @Nullable
+    public AABB getDragHitbox(LecternInfo info) {
+        return null;
     }
 
     @Override

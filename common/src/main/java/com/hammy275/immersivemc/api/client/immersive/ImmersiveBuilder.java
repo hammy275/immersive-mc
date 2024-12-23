@@ -4,6 +4,8 @@ import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBuilderImpl;
+import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.*;
 
@@ -167,6 +169,23 @@ public interface ImmersiveBuilder<E, S extends NetworkStorage> {
      * @return Builder object.
      */
     public ImmersiveBuilder<E,S> modifyHitboxes(int startIndex, int endIndex, Function<RelativeHitboxInfoBuilder, RelativeHitboxInfo> modifier);
+
+    /**
+     * Sets the function used to generate the drag hitbox. See {@link Immersive#getDragHitbox(ImmersiveInfo)} for info
+     * about what the drag hitbox is.
+     * @param dragHitboxCreator The drag hitbox creator or null (the default) to let ImmersiveMC generate one for you.
+     * @return Builder object.
+     */
+    public ImmersiveBuilder<E,S> setDragHitboxCreator(@Nullable Function<BuiltImmersiveInfo<E>, AABB> dragHitboxCreator);
+
+    /**
+     * Sets the drag hitbox creator to a creator such that this Immersive never has a drag hitbox. This is equivalent
+     * to setting the drag hitbox creator to a function that always returns null, such as {@code info -> null}.
+     * @return Builder object.
+     */
+    default ImmersiveBuilder<E,S> setNoDragHitbox() {
+        return setDragHitboxCreator(info -> null);
+    }
 
     /**
      * Create a copy of this ImmersiveBuilder, setting the extra storage consumer and the Immersive config info to null

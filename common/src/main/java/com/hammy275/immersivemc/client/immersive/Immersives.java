@@ -81,6 +81,7 @@ public class Immersives {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
                 return ClientConstants.defaultCooldownTicks;
             })
+            .setNoDragHitbox()
             .setConfigScreenInfo(createConfigScreenInfo("anvil", () -> new ItemStack(Items.ANVIL),
                     config -> config.useAnvilImmersive,
                     (config, newVal) -> config.useAnvilImmersive = newVal))
@@ -115,6 +116,7 @@ public class Immersives {
             .setOnRemove((info) -> {
                 ((ChestLikeData) info.getExtraData()).forceClose(info.getBlockPosition());
             })
+            .setNoDragHitbox()
             .setConfigScreenInfo(createConfigScreenInfo("barrel", () -> new ItemStack(Items.BARREL),
                     config -> config.useBarrelImmersive,
                     (config, newVal) -> config.useBarrelImmersive = newVal))
@@ -137,6 +139,7 @@ public class Immersives {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
                 return ClientConstants.defaultCooldownTicks;
             })
+            .setNoDragHitbox()
             .setConfigScreenInfo(createConfigScreenInfo("brewing", () -> new ItemStack(Items.BREWING_STAND),
                     config -> config.useBrewingStandImmersive,
                     (config, newVal) -> config.useBrewingStandImmersive = newVal))
@@ -277,6 +280,7 @@ public class Immersives {
                     }
                 }
             })
+            .setNoDragHitbox()
             .setConfigScreenInfo(createConfigScreenInfo("enchanting_table", () -> new ItemStack(Items.ENCHANTING_TABLE),
                     config -> config.useEnchantingTableImmersive,
                     (config, newVal) -> config.useEnchantingTableImmersive = newVal))
@@ -356,6 +360,7 @@ public class Immersives {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
                 return ClientConstants.defaultCooldownTicks;
             })
+            .setNoDragHitbox()
             .setConfigScreenInfo(createConfigScreenInfo("furnace", () -> new ItemStack(Items.FURNACE),
                     config -> config.useFurnaceImmersive,
                     (config, newVal) -> config.useFurnaceImmersive = newVal))
@@ -407,6 +412,7 @@ public class Immersives {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(0), hand);
                 return ClientConstants.defaultCooldownTicks;
             })
+            .setNoDragHitbox()
             .setVROnly(true)
             .setConfigScreenInfo(createConfigScreenInfo("jukebox", () -> new ItemStack(Items.JUKEBOX),
                     config -> config.useJukeboxImmersive,
@@ -442,6 +448,7 @@ public class Immersives {
                 ChestLikeData extra = (ChestLikeData) info.getExtraData();
                 return slot >= extra.currentRow * 9 && slot < (extra.currentRow + 1) * 9;
             })
+            .setNoDragHitbox()
             .setConfigScreenInfo(createConfigScreenInfo("shulker", () -> new ItemStack(Items.SHULKER_BOX),
                     config -> config.useShulkerImmersive,
                     (config, newVal) -> config.useShulkerImmersive = newVal))
@@ -458,6 +465,7 @@ public class Immersives {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
                 return ClientConstants.defaultCooldownTicks;
             })
+            .setNoDragHitbox()
             .setConfigScreenInfo(createConfigScreenInfo("smithing_table", () -> new ItemStack(Items.SMITHING_TABLE),
                     config -> config.useSmithingTableImmersive,
                     (config, newVal) -> config.useSmithingTableImmersive = newVal))
@@ -488,6 +496,7 @@ public class Immersives {
                         ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
                         return ClientConstants.defaultCooldownTicks;
                     })
+                    .setNoDragHitbox()
                     .build(),
             BuiltImmersive.class,
             Apoth.compatData

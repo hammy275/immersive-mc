@@ -231,6 +231,12 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
     }
 
     @Override
+    @Nullable
+    public AABB getDragHitbox(ChestInfo info) {
+        return null;
+    }
+
+    @Override
     public ImmersiveHandler<ListOfItemsStorage> getHandler() {
         return ImmersiveHandlers.chestHandler;
     }

@@ -9,6 +9,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -88,6 +89,13 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
      * @param info The info being ticked.
      */
     public void tick(I info);
+
+    /**
+     * @return The hitbox that determines whether dragging between multiple slots should continue or not. Can return
+     * null here to not allow dragging.
+     */
+    @Nullable
+    public AABB getDragHitbox(I info);
 
     /**
      * Whether the provided info should render in the world. It's good to return false here if this Immersive

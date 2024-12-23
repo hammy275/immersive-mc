@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import net.minecraft.core.Vec3i;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,6 +39,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     BiFunction<BuiltImmersiveInfo<E>, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
     ImmersiveConfigScreenInfo configScreenInfo = null;
     ExtraRenderer<E> extraRenderer = (info, stack, helpers, partialTicks, light) -> {};
+    Function<BuiltImmersiveInfo<E>, AABB> dragHitboxCreator = null;
 
     public ImmersiveBuilderImpl(ImmersiveHandler<S> handler, @Nullable Class<E> extraInfoDataClazz) {
         this.handler = handler;
@@ -241,6 +243,12 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
         for (int i = startIndex; i <= endIndex; i++) {
             overwriteHitbox(i, modifier.apply(hitboxes.get(i).getBuilderClone()));
         }
+        return this;
+    }
+
+    @Override
+    public ImmersiveBuilder<E, S> setDragHitboxCreator(@Nullable Function<BuiltImmersiveInfo<E>, AABB> dragHitboxCreator) {
+        this.dragHitboxCreator = dragHitboxCreator;
         return this;
     }
 

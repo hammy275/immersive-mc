@@ -93,6 +93,12 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
     }
 
     @Override
+    @Nullable
+    public AABB getDragHitbox(BeaconInfo info) {
+        return null;
+    }
+
+    @Override
     public boolean shouldRender(BeaconInfo info) {
         return info.lastPlayerDir != null && info.areaAboveIsAir && info.hasHitboxes();
     }

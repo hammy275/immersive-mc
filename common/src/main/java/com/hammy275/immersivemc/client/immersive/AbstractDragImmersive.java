@@ -13,6 +13,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -105,6 +107,12 @@ public abstract class AbstractDragImmersive implements Immersive<DragImmersiveIn
                 info.grabbedBox[c] = grabbed;
             }
         }
+    }
+
+    @Override
+    @Nullable
+    public AABB getDragHitbox(DragImmersiveInfo info) {
+        return null;
     }
 
     @Override
