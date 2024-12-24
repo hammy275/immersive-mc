@@ -193,7 +193,7 @@ public class ClientLogicSubscriber {
         if (button == 1) {
             int cooldown = handleRightClick(Minecraft.getInstance().player);
             if (cooldown > 0) {
-                ClientUtil.setRightClickCooldown(cooldown);
+                SwapTracker.c0.setCooldown(cooldown);
                 return true;
             }
 
@@ -504,6 +504,7 @@ public class ClientLogicSubscriber {
                 // This is done in ClientVRSubscriber for VR players
                 SwapTracker.c0.tick(null, null, -1, false);
             }
+            if (SwapTracker.c0.getCooldown() > 0) return SwapTracker.c0.getCooldown();
             for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
                 if (singleton.isVROnly() && !inVR) continue;
                 for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
@@ -532,7 +533,7 @@ public class ClientLogicSubscriber {
         if (rayTraceCooldown > 0) {
             return rayTraceCooldown;
         }
-        return -1;
+        return SwapTracker.c0.getCooldown();
     }
 
     private static <I extends ImmersiveInfo> Integer handleRightClickInfos(Immersive<I, ?> singleton, Vec3 start, Vec3 end) {

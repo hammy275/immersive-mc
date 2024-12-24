@@ -28,7 +28,7 @@ public class SwapTracker {
     protected final Set<Integer> queuedPlacements = new LinkedHashSet<>(); // LinkedHashSet to remember order
     protected boolean leftClickWasDown = false;
     protected boolean lastTickWasIdle = false;
-    protected int rightClickCooldown = 0; // Needs to be kept here, since Minecraft sets the cooldown before interactions
+    protected int rightClickCooldown = 0; // Needs to be kept here, since Minecraft messes with it in ways that don't work for us
 
     public SwapTracker(InteractionHand hand) {
         this.hand = hand;
@@ -96,6 +96,14 @@ public class SwapTracker {
         } else if (this.state == SwapState.DRAG && inputHitbox >= 0) {
             queuedPlacements.add(inputHitbox);
         }
+    }
+
+    public void setCooldown(int newCooldown) {
+        this.rightClickCooldown = Math.max(newCooldown, rightClickCooldown);
+    }
+
+    public int getCooldown() {
+        return rightClickCooldown;
     }
 
     protected void setState(SwapState newState, int newHitbox) {

@@ -13,7 +13,6 @@ import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
-import com.hammy275.immersivemc.mixin.MinecraftMixinAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
@@ -90,14 +89,6 @@ public class ClientUtil {
         }
         end = start.add(viewVec.x * dist, viewVec.y * dist, viewVec.z * dist);
         return new Tuple<>(start, end);
-    }
-
-    public static void setRightClickCooldown(int amount) {
-        ((MinecraftMixinAccessor) Minecraft.getInstance()).immersiveMC$setRightClickDelay(amount);
-    }
-
-    public static int getRightClickCooldown() {
-        return ((MinecraftMixinAccessor) Minecraft.getInstance()).immersiveMC$getRightClickDelay();
     }
 
     /**
