@@ -66,14 +66,18 @@ public class SwapTracker {
         }
 
         if (this.state == SwapState.NONE && inputHitbox >= 0) {
-            setState(SwapState.PLACE, inputHitbox);
+            if (Minecraft.getInstance().options.keyAttack.isDown()) {
+                setState(SwapState.DRAG, inputHitbox);
+            } else {
+                setState(SwapState.PLACE, inputHitbox);
+            }
         } else if (!inDragHitbox) {
             setState(SwapState.NONE, -1);
         } else if (this.state != SwapState.DRAG && Minecraft.getInstance().options.keyAttack.isDown()) {
             setState(SwapState.DRAG, inputHitbox);
         } else if (this.state == SwapState.PLACE && inDragHitbox && inputHitbox != this.mostRecentHitbox) {
             setState(SwapState.DRAG, inputHitbox);
-        } else if (this.state == SwapState.DRAG && this.ticksInMostRecent == 8) {
+        } else if (this.state == SwapState.DRAG && this.ticksInMostRecent >= 8 && this.mostRecentHitbox == inputHitbox) {
             setState(SwapState.PLACE, inputHitbox);
         } else if (this.state == SwapState.DRAG && !Minecraft.getInstance().options.keyAttack.isDown() && this.leftClickWasDown) {
             setState(SwapState.PLACE, inputHitbox);
@@ -88,7 +92,7 @@ public class SwapTracker {
             this.lastImmersive = newLI;
         }
         if (this.state == SwapState.PLACE) {
-            this.rightClickCooldown = this.lastImmersive.doHitboxInteract(List.of(inputHitbox), this.hand, this.rightClickCooldown);
+            this.rightClickCooldown = this.lastImmersive.doHitboxInteract(List.of(inputHitbox), this.hand, this.rightClickCooldown, Minecraft.getInstance().options.keyAttack.isDown());
         } else if (this.state == SwapState.DRAG && inputHitbox >= 0) {
             queuedPlacements.add(inputHitbox);
         }
@@ -114,7 +118,7 @@ public class SwapTracker {
     protected void maybeDoDragPlace() {
         if (this.state == SwapState.DRAG && !this.queuedPlacements.isEmpty()) {
             // Drag place passes 0 for the cooldown so placement always happens
-            this.rightClickCooldown = this.lastImmersive.doHitboxInteract(this.queuedPlacements.stream().toList(), this.hand, 0);
+            this.rightClickCooldown = this.lastImmersive.doHitboxInteract(this.queuedPlacements.stream().toList(), this.hand, 0, this.leftClickWasDown);
             this.queuedPlacements.clear();
         }
     }
@@ -127,11 +131,11 @@ public class SwapTracker {
 
     protected record LastImmersive<I extends ImmersiveInfo>(Immersive<I, ?> immersive, I info) {
 
-        public int doHitboxInteract(List<Integer> slots, InteractionHand hand, int rightClickCooldown) {
+        public int doHitboxInteract(List<Integer> slots, InteractionHand hand, int rightClickCooldown, boolean leftClickDown) {
             int currentCooldown = VRPluginVerify.clientInVR() && !ActiveConfig.active().rightClickImmersiveInteractionsInVR
                     ? ClientVRSubscriber.getCooldown() : rightClickCooldown;
             if (currentCooldown <= 0) {
-                int cooldown = immersive.handleHitboxInteract(info, Minecraft.getInstance().player, slots, hand);
+                int cooldown = immersive.handleHitboxInteract(info, Minecraft.getInstance().player, slots, hand, leftClickDown);
                 ImmersiveClientLogicHelpers.instance().setCooldown(cooldown);
                 return cooldown;
             }

@@ -444,7 +444,7 @@ public class ClientLogicSubscriber {
                     int numHitboxes = info.getAllHitboxes().size();
                     for (int i = 0; i < numHitboxes; i++) {
                         if (!info.getItem(i).isEmpty()) {
-                            ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(9), InteractionHand.MAIN_HAND);
+                            ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(9), InteractionHand.MAIN_HAND, false);
                             return true;
                         }
                     }
@@ -547,7 +547,7 @@ public class ClientLogicSubscriber {
                         return 1;
                     } else {
                         SwapTracker.c0.tick(null, null, -1, inDragHitbox(singleton, info, start, end));
-                        int res = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(closest.get()), InteractionHand.MAIN_HAND);
+                        int res = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(closest.get()), InteractionHand.MAIN_HAND, Minecraft.getInstance().options.keyAttack.isDown());
                         return res >= 0 ? res : null;
                     }
                 } else if (inDragHitbox(singleton, info, start, end)) {

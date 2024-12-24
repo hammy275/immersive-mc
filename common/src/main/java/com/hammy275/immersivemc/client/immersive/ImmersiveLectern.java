@@ -46,7 +46,7 @@ public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<Comm
     }
 
     @Override
-    public int handleHitboxInteract(LecternInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand) {
+    public int handleHitboxInteract(LecternInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
         int hitboxIndex = hitboxIndices.get(0);
         if (hitboxIndex <= 2) {
             if (VRPluginVerify.clientInVR()) { // Page turning handled in ClientBookData#tick() for VR players

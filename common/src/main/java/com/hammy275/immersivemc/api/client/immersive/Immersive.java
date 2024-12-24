@@ -75,6 +75,8 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
      * @param hitboxIndices The indices into {@link ImmersiveInfo#getAllHitboxes()} that were interacted with. The list
      *                      is guaranteed to contain at least one element and all elements are not null.
      * @param hand The hand used for interaction.
+     * @param modifierPressed Whether the modifier key (usually the button mapped to breaking blocks) was held for the
+     *                        interaction.
      * @return A number representing the number of ticks of cooldown to apply before the player can interact with
      *         any Immersive again, or a negative number to denote no actual interaction has happened, such as
      *         obtaining items from an output slot of an Immersive when the output slot has no items. This cooldown
@@ -82,7 +84,7 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
      *         cooldown for VR users if {@link #isVROnly()} returns true. ImmersiveMC will modify this cooldown time
      *         to accommodate situations, such as VR users requiring an increased cooldown time.
      */
-    public int handleHitboxInteract(I info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand);
+    public int handleHitboxInteract(I info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed);
 
     /**
      * This method is called once per game tick. This is where you should, for example, recalculate hitboxes if needed.

@@ -64,8 +64,8 @@ public class Swap {
         ItemStack toHand;
         ItemStack toImmersive;
         ItemStack leftovers;
-        int immersiveMaxStackSize = forcedMaxImmersiveStackSize == -1 ? immersiveStack.getMaxStackSize() : forcedMaxImmersiveStackSize;
-        int amountToPlace = Math.min(swapAmount.getNumItemsToSwap(handStack.getCount()), immersiveMaxStackSize);
+        int immersiveMaxStackSize = forcedMaxImmersiveStackSize == -1 ? handStack.getMaxStackSize() : forcedMaxImmersiveStackSize;
+        int amountToPlace = Math.min(swapAmount.getNumItemsToSwap(), immersiveMaxStackSize);
         boolean handAndImmersiveStackMatch = Util.stacksEqualBesidesCount(handStack, immersiveStack);
         boolean immersiveStackAtMax = immersiveStack.getCount() == immersiveMaxStackSize;
         // Both stacks are the same item and the immersive stack can hold some more items

@@ -28,7 +28,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     List<Vec3i> lightPositionOffsets = new ArrayList<>();
     HitboxPositioningMode positioningMode = HitboxPositioningMode.HORIZONTAL_BLOCK_FACING;
     Function<BuiltImmersiveInfo<E>, Boolean> extraRenderReady = (info) -> true;
-    HitboxInteractHandler<E> hitboxInteractHandler = (a, b, c, d) -> -1;
+    HitboxInteractHandler<E> hitboxInteractHandler = (a, b, c, d, e) -> -1;
     boolean vrOnly = false;
     List<Vec3i> airCheckPositionOffsets = new ArrayList<>();
     Class<E> extraInfoDataClazz;
@@ -288,7 +288,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
         clone.lightPositionOffsets = new ArrayList<>(this.lightPositionOffsets);
         clone.positioningMode = this.positioningMode;
         clone.extraRenderReady = (info) -> true;
-        clone.hitboxInteractHandler = (a, b, c, d) -> -1;
+        clone.hitboxInteractHandler = (a, b, c, d, modifierPressed) -> -1;
         clone.vrOnly = this.vrOnly;
         clone.airCheckPositionOffsets = new ArrayList<>(this.airCheckPositionOffsets);
         clone.extraStorageConsumer = null;

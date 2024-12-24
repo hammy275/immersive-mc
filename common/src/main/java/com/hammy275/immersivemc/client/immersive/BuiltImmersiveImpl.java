@@ -111,7 +111,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             double maxY = Double.NEGATIVE_INFINITY;
             double maxZ = Double.NEGATIVE_INFINITY;
             for (RelativeHitboxInfoImpl hitbox : info.hitboxes) {
-                if (hitbox.hasAABB()) {
+                if (hitbox.hasAABB() && hitbox.isInput) {
                     AABB aabb = hitbox.getAABB();
                     minX = Math.min(minX, aabb.minX);
                     minY = Math.min(minY, aabb.minY);
@@ -228,9 +228,9 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
     }
 
     @Override
-    public int handleHitboxInteract(BuiltImmersiveInfo<E> infoIn, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand) {
+    public int handleHitboxInteract(BuiltImmersiveInfo<E> infoIn, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
         BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
-        return builder.hitboxInteractHandler.apply(info, player, hitboxIndices, hand);
+        return builder.hitboxInteractHandler.apply(info, player, hitboxIndices, hand, modifierPressed);
     }
 
     private boolean airCheck(BuiltImmersiveInfo<E> infoIn) {

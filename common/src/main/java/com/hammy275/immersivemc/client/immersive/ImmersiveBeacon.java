@@ -64,7 +64,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
     }
 
     @Override
-    public int handleHitboxInteract(BeaconInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand) {
+    public int handleHitboxInteract(BeaconInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
         int hitboxIndex = hitboxIndices.get(0);
         if (hitboxIndex <= 4) {
             info.effectSelected = hitboxIndex;
@@ -77,7 +77,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
                     info.regenSelected ? BuiltInRegistries.MOB_EFFECT.getId(MobEffects.REGENERATION.value()) : -1));
             VRRumble.rumbleIfVR(Minecraft.getInstance().player, 0, CommonConstants.vibrationTimeWorldInteraction);
         } else {
-            ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(0), hand);
+            ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(0), hand, false);
         }
         return ClientConstants.defaultCooldownTicks;
     }

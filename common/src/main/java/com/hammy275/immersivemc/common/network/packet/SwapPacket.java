@@ -64,14 +64,15 @@ public class SwapPacket {
     }
 
     public static void handle(final SwapPacket message, ServerPlayer player) {
+        int handStackSize = player.getItemInHand(message.hand).getCount();
         switch (message.destination) {
             case POS -> {
                 if (NetworkUtil.safeToRun(message.block, player)) {
                     for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
                         if (handler.enabledInConfig(player) && Util.isValidBlocks(handler, message.block, player.level())) {
-                            ItemSwapAmount swapAmount = new ItemSwapAmountImpl(message.mode, message.slots.size());
-                            for (int slot : message.slots) {
-                                handler.swap(slot, message.hand, message.block, player, swapAmount);
+                            for (int i = 0; i < message.slots.size(); i++) {
+                                ItemSwapAmount swapAmount = new ItemSwapAmountImpl(message.mode, message.slots.size(), handStackSize, i);
+                                handler.swap(message.slots.get(i), message.hand, message.block, player, swapAmount);
                             }
                             break;
                         }
@@ -89,9 +90,9 @@ public class SwapPacket {
             case BAG_CRAFTING -> {
                 if (player != null) {
                     // -27 below since 0-26 are inventory slots
-                    ItemSwapAmount swapAmount = new ItemSwapAmountImpl(message.mode, message.slots.size());
-                    for (int slot : message.slots) {
-                        Swap.handleBackpackCraftingSwap(slot - 27, message.hand,
+                    for (int i = 0; i < message.slots.size(); i++) {
+                        ItemSwapAmount swapAmount = new ItemSwapAmountImpl(message.mode, message.slots.size(), handStackSize, i);
+                        Swap.handleBackpackCraftingSwap(message.slots.get(i) - 27, message.hand,
                                 ImmersiveMCPlayerStorages.getBackpackCraftingStorage(player), player, swapAmount);
                     }
                 }

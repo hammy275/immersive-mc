@@ -77,8 +77,8 @@ public class Immersives {
                 data.anvilCost = aStorage.xpLevels;
             })
             .setPositioningMode(HitboxPositioningMode.TOP_BLOCK_FACING)
-            .setHitboxInteractHandler((info, player, slots, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
+            .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setNoDragHitbox()
@@ -100,10 +100,10 @@ public class Immersives {
                     }))
                     .build())
             .setPositioningMode(HitboxPositioningMode.BLOCK_FACING_NEG_X)
-            .setHitboxInteractHandler((info, player, slots, hand) -> {
+            .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
                 slots = slots.stream().filter(slot -> slot < 27).toList();
                 if (!slots.isEmpty()) {
-                    ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
+                    ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
                     return ClientConstants.defaultCooldownTicks;
                 }
                 return -1;
@@ -135,8 +135,8 @@ public class Immersives {
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput((info) -> ActiveConfig.active().autoCenterBrewingStandImmersive ? new Vec3(0, 0.35, 0) : new Vec3(-0.25, 0.25, 0),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
-            .setHitboxInteractHandler((info, player, slots, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
+            .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setNoDragHitbox()
@@ -154,8 +154,8 @@ public class Immersives {
             .addHitbox(RelativeHitboxInfoBuilder.create(ChiseledBookshelfHandler.slotOffsets[4], 0.3125, 0.5, 0.25).build())
             .addHitbox(RelativeHitboxInfoBuilder.create(ChiseledBookshelfHandler.slotOffsets[5], 0.3125, 0.5, 0.25).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_BLOCK_FACING)
-            .setHitboxInteractHandler((info, player, slots, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
+            .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setVROnly(true)
@@ -173,8 +173,8 @@ public class Immersives {
                     .itemSpins(true).itemRenderSizeMultiplier(3f).triggerHitbox(true)
                     .forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
-            .setHitboxInteractHandler((info, player, slots, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
+            .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setConfigScreenInfo(createConfigScreenInfo("crafting", () -> new ItemStack(Items.CRAFTING_TABLE),
@@ -254,8 +254,8 @@ public class Immersives {
                 return texts;
             }).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
-            .setHitboxInteractHandler((info, player, slots, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
+            .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setExtraStorageConsumer((storage, info) -> {
@@ -343,7 +343,7 @@ public class Immersives {
                 }},
                     ClientConstants.itemScaleSizeFurnace / 1.5d).holdsItems(true).needs3DResourcePackCompat(true).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_BLOCK_FACING)
-            .setHitboxInteractHandler((info, player, slots, hand) -> {
+            .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
                 if (ActiveConfig.active().autoCenterFurnaceImmersive) {
                     int slot = slots.get(0);
                     if (info.getAllHitboxes().get(0).getHitbox() == null && slot == 2) {
@@ -357,7 +357,7 @@ public class Immersives {
                         }
                     }
                 }
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setNoDragHitbox()
@@ -397,8 +397,8 @@ public class Immersives {
                 }
             }, ClientConstants.itemScaleSizeHopper).build())
             .setPositioningMode(HitboxPositioningMode.PLAYER_FACING_NO_DOWN)
-            .setHitboxInteractHandler((info, player, slots, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
+            .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setConfigScreenInfo(createConfigScreenInfo("hopper", () -> new ItemStack(Items.HOPPER),
@@ -408,8 +408,8 @@ public class Immersives {
     public static final BuiltImmersive<?,?> immersiveJukebox = ImmersiveBuilder.create(ImmersiveHandlers.jukeboxHandler)
             .addHitbox(RelativeHitboxInfoBuilder.create(Vec3.ZERO, 0.125, 0.125, 0.625).build())
             .setPositioningMode(HitboxPositioningMode.TOP_LITERAL)
-            .setHitboxInteractHandler((info, player, slots, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(0), hand);
+            .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(0), hand, modifierPressed);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setNoDragHitbox()
@@ -438,8 +438,8 @@ public class Immersives {
                 return new Vec3(0, 0.25, -1d/3d * extra.offsetIn(2));
             }, 0.14f).build(), 0.15)
             .setPositioningMode(HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING)
-            .setHitboxInteractHandler((info, player, slots, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
+            .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setSlotActiveFunction((info, slot) -> ((ChestLikeData) info.getExtraData()).isOpen)
@@ -461,8 +461,8 @@ public class Immersives {
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(1d/3d, 0, 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
             .addHitbox(RelativeHitboxInfoBuilder.create((info) -> info.getItem(3).isEmpty() ? null : new Vec3(0, 0, 0.5), ClientConstants.itemScaleSizeSmithingTable / 1.025).holdsItems(true).triggerHitbox(true).itemSpins(true).itemRenderSizeMultiplier(1.5f).forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
-            .setHitboxInteractHandler((info, player, slots, hand) -> {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
+            .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
                 return ClientConstants.defaultCooldownTicks;
             })
             .setNoDragHitbox()
@@ -492,8 +492,8 @@ public class Immersives {
                     .add3x3Grid(RelativeHitboxInfoBuilder.createItemInput(Vec3.ZERO, ClientConstants.itemScaleSizeApothSalvagingTable).build(),
                             ClientConstants.itemScaleSizeApothSalvagingTable)
                     .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
-                    .setHitboxInteractHandler((info, player, slots, hand) -> {
-                        ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand);
+                    .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
+                        ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
                         return ClientConstants.defaultCooldownTicks;
                     })
                     .setNoDragHitbox()

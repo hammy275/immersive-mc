@@ -27,8 +27,8 @@ public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl i
     }
 
     @Override
-    public void sendSwapPacket(BlockPos pos, List<Integer> slots, InteractionHand hand) {
-        Network.INSTANCE.sendToServer(new SwapPacket(pos, slots, hand, PlacementMode.SINGLE));
+    public void sendSwapPacket(BlockPos pos, List<Integer> slots, InteractionHand hand, boolean modifierPressed) {
+        Network.INSTANCE.sendToServer(new SwapPacket(pos, slots, hand, modifierPressed ? PlacementMode.SPLIT : PlacementMode.SINGLE));
     }
 
     @Override

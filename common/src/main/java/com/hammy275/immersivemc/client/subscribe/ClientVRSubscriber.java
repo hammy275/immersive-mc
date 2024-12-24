@@ -19,6 +19,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ClientVRSubscriber {
@@ -89,6 +90,11 @@ public class ClientVRSubscriber {
                         swapTracker.tick(singleton, info, hit.get(), true);
                     } else {
                         swapTracker.tick(singleton, info, -1, inDragHitbox(singleton, info, pos));
+                        int cooldown = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(hit.get()), InteractionHand.values()[c], Minecraft.getInstance().options.keyAttack.isDown());
+                        if (singleton.isVROnly()) {
+                            cooldown = (int) (cooldown / 1.5);
+                        }
+                        setCooldown(cooldown);
                     }
                     return true;
                 } else if (hit.isEmpty()) {
