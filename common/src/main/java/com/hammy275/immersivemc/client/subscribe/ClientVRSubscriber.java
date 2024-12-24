@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.subscribe;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
@@ -15,7 +16,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -127,7 +127,7 @@ public class ClientVRSubscriber {
     }
 
     private static <I extends ImmersiveInfo> boolean inDragHitbox(Immersive<I, ?> singleton, I info, Vec3 pos) {
-        AABB dragHitbox = singleton.getDragHitbox(info);
+        BoundingBox dragHitbox = singleton.getDragHitbox(info);
         return dragHitbox != null && Util.getFirstIntersect(pos, dragHitbox).isPresent();
     }
 }

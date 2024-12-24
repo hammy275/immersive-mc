@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.api.client.immersive;
 
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -9,7 +10,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -96,7 +96,7 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
      * {@link #isInputHitbox(ImmersiveInfo, int)} returns true.
      */
     @Nullable
-    public AABB getDragHitbox(I info);
+    public BoundingBox getDragHitbox(I info);
 
     /**
      * @param info The info being checked with.

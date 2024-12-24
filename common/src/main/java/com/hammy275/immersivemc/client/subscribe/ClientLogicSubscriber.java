@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
@@ -46,7 +47,6 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -603,7 +603,7 @@ public class ClientLogicSubscriber {
     }
 
     private static <I extends ImmersiveInfo> boolean inDragHitbox(Immersive<I, ?> singleton, I info, Vec3 rayStart, Vec3 rayEnd) {
-        AABB dragHitbox = singleton.getDragHitbox(info);
+        BoundingBox dragHitbox = singleton.getDragHitbox(info);
         return dragHitbox != null && Util.rayTraceClosest(rayStart, rayEnd, dragHitbox).isPresent();
     }
 
