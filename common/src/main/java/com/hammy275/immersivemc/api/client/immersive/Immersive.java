@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.api.client.immersive;
 
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Represents the client-side implementation of a block-based Immersive implementation.
@@ -70,8 +72,11 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
      * @param info The info containing the hitbox that was interacted with.
      * @param player The player that interacted with the hitbox. This player is always the player currently controlling
      *               the game window.
-     * @param hitboxIndex The index into {@link ImmersiveInfo#getAllHitboxes()} that was interacted with.
+     * @param hitboxIndices The indices into {@link ImmersiveInfo#getAllHitboxes()} that were interacted with. The list
+     *                      is guaranteed to contain at least one element and all elements are not null.
      * @param hand The hand used for interaction.
+     * @param modifierPressed Whether the modifier key (usually the button mapped to breaking blocks) was held for the
+     *                        interaction.
      * @return A number representing the number of ticks of cooldown to apply before the player can interact with
      *         any Immersive again, or a negative number to denote no actual interaction has happened, such as
      *         obtaining items from an output slot of an Immersive when the output slot has no items. This cooldown
@@ -79,13 +84,28 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
      *         cooldown for VR users if {@link #isVROnly()} returns true. ImmersiveMC will modify this cooldown time
      *         to accommodate situations, such as VR users requiring an increased cooldown time.
      */
-    public int handleHitboxInteract(I info, LocalPlayer player, int hitboxIndex, InteractionHand hand);
+    public int handleHitboxInteract(I info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed);
 
     /**
      * This method is called once per game tick. This is where you should, for example, recalculate hitboxes if needed.
      * @param info The info being ticked.
      */
     public void tick(I info);
+
+    /**
+     * @return The hitbox that determines whether dragging between multiple slots should continue or not. Can return
+     * null here to not allow dragging. If non-null, the hitbox should contain all hitboxes where
+     * {@link #isInputHitbox(ImmersiveInfo, int)} returns true.
+     */
+    @Nullable
+    public BoundingBox getDragHitbox(I info);
+
+    /**
+     * @param info The info being checked with.
+     * @param hitboxIndex The hitbox index being checked.
+     * @return Whether the provided hitbox index is an input, such as for inputting items.
+     */
+    public boolean isInputHitbox(I info, int hitboxIndex);
 
     /**
      * Whether the provided info should render in the world. It's good to return false here if this Immersive

@@ -10,6 +10,9 @@ public interface MinecraftMixinAccessor {
     @Accessor("rightClickDelay")
     public void immersiveMC$setRightClickDelay(int newAmount);
 
+    @Accessor("rightClickDelay")
+    public int immersiveMC$getRightClickDelay();
+
 
 
 
