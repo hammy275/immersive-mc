@@ -11,6 +11,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 
+import java.util.List;
+
 /**
  * {@link ImmersiveLogicHelpers}, but the player is always assumed to be the local player, and the world/level is
  * the one that player occupies. This also contains methods not found in {@link ImmersiveLogicHelpers}, as they
@@ -29,9 +31,10 @@ public interface ImmersiveClientLogicHelpers extends ImmersiveLogicHelpers {
     /**
      * Sets both the vanilla, right-click cooldown and ImmersiveMC's VR cooldown for interacting with Immersives
      * (if the player is in VR) to some number of ticks. You likely don't need this, as the value returned from
-     * {@link Immersive#handleHitboxInteract(ImmersiveInfo, LocalPlayer, int, InteractionHand)} is set as the cooldown
+     * {@link Immersive#handleHitboxInteract(ImmersiveInfo, LocalPlayer, List, InteractionHand, boolean)} is set as the cooldown
      * where appropriate. This is mainly useful if you're working outside of ImmersiveMC's hitbox system.
-     * @param cooldown The cooldown to set in ticks.
+     * @param cooldown The cooldown to set in ticks. This will be increased for VR players, see the aforementioned
+     *                 method for more info.
      */
     public void setCooldown(int cooldown);
 
@@ -40,11 +43,14 @@ public interface ImmersiveClientLogicHelpers extends ImmersiveLogicHelpers {
      * {@link com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler#swap(int, InteractionHand, BlockPos, ServerPlayer, com.hammy275.immersivemc.api.server.ItemSwapAmount)}
      * for the provided block at the given position. You usually should call this when a hitbox is right-clicked in your
      * Immersive.
+     *
      * @param pos The position of the block that a swap is being performed at.
-     * @param slot The slot number that the right-click is taking place.
+     * @param slots The slot numbers that the right-click is taking place for.
      * @param hand The hand which is performing the swap.
+     * @param modifierPressed Whether the modifier key (usually the button mapped to breaking blocks) was held for the
+     *                        interaction.
      */
-    public void sendSwapPacket(BlockPos pos, int slot, InteractionHand hand);
+    public void sendSwapPacket(BlockPos pos, List<Integer> slots, InteractionHand hand, boolean modifierPressed);
 
     /**
      * Given the local player and the position of an immersive block, returns the best direction the block should face

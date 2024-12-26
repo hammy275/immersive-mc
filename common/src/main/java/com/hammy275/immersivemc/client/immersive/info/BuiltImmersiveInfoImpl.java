@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.client.immersive.RelativeHitboxInfoImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public final class BuiltImmersiveInfoImpl<E> implements BuiltImmersiveInfo<E> {
     public int[] slotsHovered = new int[]{-1, -1};
     public int light = ClientUtil.maxLight;
     public long ticksExisted = 0;
+    public AABB dragHitbox = null;
 
     public BuiltImmersiveInfoImpl(List<RelativeHitboxInfoImpl> hitboxes, BlockPos pos, Class<E> extraDataClazz) {
         this.hitboxes = new ArrayList<>(hitboxes.size());
