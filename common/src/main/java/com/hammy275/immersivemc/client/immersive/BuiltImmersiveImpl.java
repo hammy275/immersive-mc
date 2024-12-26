@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -80,6 +81,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
         boolean differentDirs = info.immersiveDir != currentDir;
         info.immersiveDir = currentDir;
 
+        boolean didRecalc = false;
         for (int i = 0; i < info.hitboxes.size(); i++) {
             RelativeHitboxInfoImpl hitbox = info.hitboxes.get(i);
             // Update hitbox if its offset isn't constant, the current direction isn't the same as the last,
@@ -87,6 +89,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             // to detect VR hand movements.
             if (!hitbox.constantOffset || differentDirs || !hitbox.calcDone() || builder.slotActive != null
                 || hitbox.vrMovementInfo != null || hitbox.textSupplier != null) {
+                didRecalc = true;
                 if (builder.slotActive == null || builder.slotActive.apply(info, i)) {
                     hitbox.recalculate(Minecraft.getInstance().level, builder.positioningMode, info);
                 } else {
@@ -97,8 +100,50 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             }
         }
 
+        if (builder.dragHitboxCreator != null) {
+            info.dragHitbox = builder.dragHitboxCreator.apply(info);
+        } else if (didRecalc) {
+            boolean validBox = false;
+            double minX = Double.POSITIVE_INFINITY;
+            double minY = Double.POSITIVE_INFINITY;
+            double minZ = Double.POSITIVE_INFINITY;
+            double maxX = Double.NEGATIVE_INFINITY;
+            double maxY = Double.NEGATIVE_INFINITY;
+            double maxZ = Double.NEGATIVE_INFINITY;
+            for (RelativeHitboxInfoImpl hitbox : info.hitboxes) {
+                if (hitbox.hasAABB() && hitbox.isInput) {
+                    AABB aabb = hitbox.getAABB();
+                    minX = Math.min(minX, aabb.minX);
+                    minY = Math.min(minY, aabb.minY);
+                    minZ = Math.min(minZ, aabb.minZ);
+                    maxX = Math.max(maxX, aabb.maxX);
+                    maxY = Math.max(maxY, aabb.maxY);
+                    maxZ = Math.max(maxZ, aabb.maxZ);
+                    validBox = true;
+                }
+            }
+            if (validBox) {
+                double maxDiff = Math.max(Math.max(maxX - minX, maxY - minY), maxZ - minZ);
+                info.dragHitbox = new AABB(minX, minY, minZ, maxX, maxY, maxZ).inflate(maxDiff * 0.2);
+            } else {
+                info.dragHitbox = null;
+            }
+        }
+
         info.airCheckPassed = airCheck(info);
         info.light = ImmersiveClientLogicHelpers.instance().getLight(getLightPositions(info));
+    }
+
+    @Override
+    @Nullable
+    public AABB getDragHitbox(BuiltImmersiveInfo<E> info) {
+        return asImpl(info).dragHitbox;
+    }
+
+    @Override
+    public boolean isInputHitbox(BuiltImmersiveInfo<E> infoIn, int hitboxIndex) {
+        BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
+        return info.hitboxes.get(hitboxIndex).isInput;
     }
 
     @Override
@@ -133,6 +178,9 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
                 }
             }
 
+        }
+        if (info.dragHitbox != null) {
+            helpers.renderHitbox(stack, info.dragHitbox, false, 0, 1, 1);
         }
         builder.extraRenderer.render(infoIn, stack, helpers, partialTicks, info.light);
     }
@@ -180,9 +228,9 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
     }
 
     @Override
-    public int handleHitboxInteract(BuiltImmersiveInfo<E> infoIn, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
+    public int handleHitboxInteract(BuiltImmersiveInfo<E> infoIn, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
         BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
-        return builder.hitboxInteractHandler.apply(info, player, hitboxIndex, hand);
+        return builder.hitboxInteractHandler.apply(info, player, hitboxIndices, hand, modifierPressed);
     }
 
     private boolean airCheck(BuiltImmersiveInfo<E> infoIn) {

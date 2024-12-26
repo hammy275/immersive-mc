@@ -18,8 +18,7 @@ public class MinecraftMixin {
     @Shadow protected int missTime;
     @Shadow public LocalPlayer player;
 
-    @Inject(method="startUseItem", at=@At(value = "INVOKE",
-            target = "Lnet/minecraft/client/player/LocalPlayer;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;"),
+    @Inject(method="startUseItem", at=@At("HEAD"),
             cancellable = true)
     public void immersiveMC$preRightClick(CallbackInfo ci) {
         boolean doCancel = ClientLogicSubscriber.onClick(1);

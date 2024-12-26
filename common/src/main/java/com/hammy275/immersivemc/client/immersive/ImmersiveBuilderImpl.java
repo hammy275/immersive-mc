@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import net.minecraft.core.Vec3i;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +28,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     List<Vec3i> lightPositionOffsets = new ArrayList<>();
     HitboxPositioningMode positioningMode = HitboxPositioningMode.HORIZONTAL_BLOCK_FACING;
     Function<BuiltImmersiveInfo<E>, Boolean> extraRenderReady = (info) -> true;
-    HitboxInteractHandler<E> hitboxInteractHandler = (a, b, c, d) -> -1;
+    HitboxInteractHandler<E> hitboxInteractHandler = (a, b, c, d, e) -> -1;
     boolean vrOnly = false;
     List<Vec3i> airCheckPositionOffsets = new ArrayList<>();
     Class<E> extraInfoDataClazz;
@@ -38,6 +39,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     BiFunction<BuiltImmersiveInfo<E>, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
     ImmersiveConfigScreenInfo configScreenInfo = null;
     ExtraRenderer<E> extraRenderer = (info, stack, helpers, partialTicks, light) -> {};
+    Function<BuiltImmersiveInfo<E>, AABB> dragHitboxCreator = null;
 
     public ImmersiveBuilderImpl(ImmersiveHandler<S> handler, @Nullable Class<E> extraInfoDataClazz) {
         this.handler = handler;
@@ -244,6 +246,12 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
         return this;
     }
 
+    @Override
+    public ImmersiveBuilder<E, S> setDragHitboxCreator(@Nullable Function<BuiltImmersiveInfo<E>, AABB> dragHitboxCreator) {
+        this.dragHitboxCreator = dragHitboxCreator;
+        return this;
+    }
+
     public BuiltImmersiveImpl<E, S> build() {
         return new BuiltImmersiveImpl<>(this);
     }
@@ -280,7 +288,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
         clone.lightPositionOffsets = new ArrayList<>(this.lightPositionOffsets);
         clone.positioningMode = this.positioningMode;
         clone.extraRenderReady = (info) -> true;
-        clone.hitboxInteractHandler = (a, b, c, d) -> -1;
+        clone.hitboxInteractHandler = (a, b, c, d, modifierPressed) -> -1;
         clone.vrOnly = this.vrOnly;
         clone.airCheckPositionOffsets = new ArrayList<>(this.airCheckPositionOffsets);
         clone.extraStorageConsumer = null;
