@@ -24,6 +24,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -45,7 +46,8 @@ public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<Comm
     }
 
     @Override
-    public int handleHitboxInteract(LecternInfo info, LocalPlayer player, int hitboxIndex, InteractionHand hand) {
+    public int handleHitboxInteract(LecternInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
+        int hitboxIndex = hitboxIndices.get(0);
         if (hitboxIndex <= 2) {
             if (VRPluginVerify.clientInVR()) { // Page turning handled in ClientBookData#tick() for VR players
                 return 0;
@@ -85,6 +87,17 @@ public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<Comm
             ImmersiveClientLogicHelpers.instance().setCooldown((int) (ClientConstants.defaultCooldownTicks * ClientConstants.cooldownVRMultiplier));
             info.didClick = false;
         }
+    }
+
+    @Override
+    @Nullable
+    public AABB getDragHitbox(LecternInfo info) {
+        return null;
+    }
+
+    @Override
+    public boolean isInputHitbox(LecternInfo info, int hitboxIndex) {
+        return true;
     }
 
     @Override

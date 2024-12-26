@@ -39,7 +39,7 @@ public interface ImmersiveHandler<S extends NetworkStorage> {
      * @param pos Position of block being swapped with.
      * @param player Player who is swapping.
      * @param amount An object representing the amount of items to swap. Use
-     *               {@link ItemSwapAmount#getNumItemsToSwap(int)}, passing in the item stack size of the item in the
+     *               {@link ItemSwapAmount#getNumItemsToSwap()}, passing in the item stack size of the item in the
      *               player's hand to get the amount of items to swap.
      */
     void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount);

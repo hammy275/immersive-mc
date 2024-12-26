@@ -6,7 +6,6 @@ import com.hammy275.immersivemc.client.subscribe.ClientLogicSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.BackpackInteractPacket;
 import com.hammy275.immersivemc.common.network.packet.BeaconConfirmPacket;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
@@ -15,7 +14,6 @@ import com.hammy275.immersivemc.common.network.packet.DoubleControllerVibrate;
 import com.hammy275.immersivemc.common.network.packet.FetchBackpackStoragePacket;
 import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
 import com.hammy275.immersivemc.common.network.packet.GrabItemPacket;
-import com.hammy275.immersivemc.common.network.packet.InventorySwapPacket;
 import com.hammy275.immersivemc.common.network.packet.PageTurnPacket;
 import com.hammy275.immersivemc.common.network.packet.ReelFishPacket;
 import com.hammy275.immersivemc.common.network.packet.SetRepeaterPacket;
@@ -90,12 +88,8 @@ public class ImmersiveMC {
                 GrabItemPacket::decode, GrabItemPacket::handle);
         Network.INSTANCE.register(ConfigSyncPacket.class, ConfigSyncPacket::encode,
                 ConfigSyncPacket::decode, ConfigSyncPacket::handle);
-        Network.INSTANCE.register(InventorySwapPacket.class, InventorySwapPacket::encode,
-                InventorySwapPacket::decode, InventorySwapPacket::handle);
         Network.INSTANCE.register(SetRepeaterPacket.class, SetRepeaterPacket::encode,
                 SetRepeaterPacket::decode, SetRepeaterPacket::handle);
-        Network.INSTANCE.register(BackpackInteractPacket.class, BackpackInteractPacket::encode,
-                BackpackInteractPacket::decode, BackpackInteractPacket::handle);
         Network.INSTANCE.register(FetchBackpackStoragePacket.class, FetchBackpackStoragePacket::encode,
                 FetchBackpackStoragePacket::decode, FetchBackpackStoragePacket::handle);
         Network.INSTANCE.register(BeaconConfirmPacket.class, BeaconConfirmPacket::encode,

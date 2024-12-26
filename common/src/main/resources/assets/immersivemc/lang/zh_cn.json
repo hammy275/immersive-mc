@@ -64,12 +64,6 @@
   "config.immersivemc.show_placement_guide.desc": "当启用时，使用青色的盒子来显示可以与沉浸式装置进行互动的地方。",
   "config.immersivemc.spin_crafting_output": "工作台输出物品自旋转",
   "config.immersivemc.spin_crafting_output.desc": "显示在工作台上方的输出物品是否应缓慢旋转。",
-  "config.immersivemc.placement_mode": "沉浸式放置模式",
-  "config.immersivemc.placement_mode.0": "放置一个物品",
-  "config.immersivemc.placement_mode.1": "放置四分之一的物品",
-  "config.immersivemc.placement_mode.2": "放置一半的物品",
-  "config.immersivemc.placement_mode.3": "放置全部物品",
-  "config.immersivemc.placement_mode.desc": "当右键单击或将物品放入沉浸式容器时，从你手中的物品堆中取出 %s 放入沉浸器。",
 
   "immersivemc.immersive.etable.no_ench": "没有附魔！",
   "immersivemc.immersive.anvil.levels_needed": "需要的等级: %d"

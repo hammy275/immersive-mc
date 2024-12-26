@@ -5,7 +5,6 @@ import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.api.server.SwapResult;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
-import com.hammy275.immersivemc.common.config.PlacementMode;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
@@ -55,8 +54,8 @@ public class Swap {
         ItemStack toHand;
         ItemStack toImmersive;
         ItemStack leftovers;
-        int immersiveMaxStackSize = forcedMaxImmersiveStackSize == -1 ? immersiveStack.getMaxStackSize() : forcedMaxImmersiveStackSize;
-        int amountToPlace = Math.min(swapAmount.getNumItemsToSwap(handStack.getCount()), immersiveMaxStackSize);
+        int immersiveMaxStackSize = forcedMaxImmersiveStackSize == -1 ? handStack.getMaxStackSize() : forcedMaxImmersiveStackSize;
+        int amountToPlace = Math.min(swapAmount.getNumItemsToSwap(), immersiveMaxStackSize);
         boolean handAndImmersiveStackMatch = Util.stacksEqualBesidesCount(handStack, immersiveStack);
         boolean immersiveStackAtMax = immersiveStack.getCount() == immersiveMaxStackSize;
         // Both stacks are the same item and the immersive stack can hold some more items
@@ -362,24 +361,5 @@ public class Swap {
         container.createResult();
         ItemStack res = container.getSlot(2).getItem();
         return res;
-    }
-
-    public static int getPlaceAmount(ItemStack handIn, PlacementMode mode) {
-        return getPlaceAmount(handIn.getCount(), mode);
-    }
-
-    public static int getPlaceAmount(int handInSize, PlacementMode mode) {
-        switch (mode) {
-            case PLACE_ONE:
-                return 1;
-            case PLACE_QUARTER:
-                return (int) Math.max(handInSize / 4d, 1);
-            case PLACE_HALF:
-                return (int) Math.max(handInSize / 2d, 1);
-            case PLACE_ALL:
-                return handInSize;
-            default:
-                throw new IllegalArgumentException("Unhandled placement mode " + mode);
-        }
     }
 }
