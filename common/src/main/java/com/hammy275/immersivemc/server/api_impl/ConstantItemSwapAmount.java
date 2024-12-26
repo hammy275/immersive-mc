@@ -11,7 +11,7 @@ public class ConstantItemSwapAmount implements ItemSwapAmount {
     }
 
     @Override
-    public int getNumItemsToSwap(int stackSize) {
+    public int getNumItemsToSwap() {
         return amountToSwap;
     }
 }

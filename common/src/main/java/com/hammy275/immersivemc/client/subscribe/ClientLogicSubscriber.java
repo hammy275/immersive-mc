@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
@@ -12,6 +13,7 @@ import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersi
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
 import com.hammy275.immersivemc.client.immersive.ImmersiveChest;
 import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
@@ -74,6 +76,10 @@ public class ClientLogicSubscriber {
         Player player = Minecraft.getInstance().player;
         if (player == null) return;
         minecraft.getProfiler().push(ImmersiveMC.MOD_ID);
+
+        if (!VRPluginVerify.clientInVR()) {
+            SwapTracker.c0.maybeIdleTick();
+        }
 
         // Clear all immersives if switching out of VR and we disable ImmersiveMC outside of VR
         boolean currentVRState = VRPluginVerify.clientInVR();
@@ -187,7 +193,7 @@ public class ClientLogicSubscriber {
         if (button == 1) {
             int cooldown = handleRightClick(Minecraft.getInstance().player);
             if (cooldown > 0) {
-                ClientUtil.setRightClickCooldown(cooldown);
+                SwapTracker.c0.setCooldown(cooldown);
                 return true;
             }
 
@@ -438,7 +444,7 @@ public class ClientLogicSubscriber {
                     int numHitboxes = info.getAllHitboxes().size();
                     for (int i = 0; i < numHitboxes; i++) {
                         if (!info.getItem(i).isEmpty()) {
-                            ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), 9, InteractionHand.MAIN_HAND);
+                            ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(9), InteractionHand.MAIN_HAND, false);
                             return true;
                         }
                     }
@@ -494,6 +500,11 @@ public class ClientLogicSubscriber {
                     return fromInfos;
                 }
             }
+            if (!inVR) {
+                // This is done in ClientVRSubscriber for VR players
+                SwapTracker.c0.tick(null, null, -1, false);
+            }
+            if (SwapTracker.c0.getCooldown() > 0) return SwapTracker.c0.getCooldown();
             for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
                 if (singleton.isVROnly() && !inVR) continue;
                 for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
@@ -522,20 +533,34 @@ public class ClientLogicSubscriber {
         if (rayTraceCooldown > 0) {
             return rayTraceCooldown;
         }
-        return 0;
+        return SwapTracker.c0.getCooldown();
     }
 
     private static <I extends ImmersiveInfo> Integer handleRightClickInfos(Immersive<I, ?> singleton, Vec3 start, Vec3 end) {
+        Integer cooldownOut = null;
+        I infoToSwapTick = null;
         for (I info : singleton.getTrackedObjects()) {
             if (info.hasHitboxes()) {
                 Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
                 if (closest.isPresent()) {
-                    int res = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, closest.get(), InteractionHand.MAIN_HAND);
-                    return res >= 0 ? res : null;
+                    if (singleton.isInputHitbox(info, closest.get())) {
+                        SwapTracker.c0.tick(singleton, info, closest.get(), true);
+                        return 1;
+                    } else {
+                        SwapTracker.c0.tick(null, null, -1, inDragHitbox(singleton, info, start, end));
+                        int res = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(closest.get()), InteractionHand.MAIN_HAND, Minecraft.getInstance().options.keyAttack.isDown());
+                        return res >= 0 ? res : null;
+                    }
+                } else if (inDragHitbox(singleton, info, start, end)) {
+                    infoToSwapTick = info;
+                    cooldownOut = 1;
                 }
             }
         }
-        return null;
+        if (infoToSwapTick != null) {
+            SwapTracker.c0.tick(singleton, infoToSwapTick, -1, true);
+        }
+        return cooldownOut;
     }
 
     protected static int handleRightClickBlockRayTrace(Player player) {
@@ -578,5 +603,9 @@ public class ClientLogicSubscriber {
         return 0; // Still here in case if we need it later
     }
 
+    private static <I extends ImmersiveInfo> boolean inDragHitbox(Immersive<I, ?> singleton, I info, Vec3 rayStart, Vec3 rayEnd) {
+        BoundingBox dragHitbox = singleton.getDragHitbox(info);
+        return dragHitbox != null && Util.rayTraceClosest(rayStart, rayEnd, dragHitbox).isPresent();
+    }
 
 }
