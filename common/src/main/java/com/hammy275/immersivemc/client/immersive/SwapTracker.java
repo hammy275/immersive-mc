@@ -92,7 +92,7 @@ public class SwapTracker {
             this.lastImmersive = newLI;
         }
         if (this.state == SwapState.PLACE) {
-            this.rightClickCooldown = this.lastImmersive.doHitboxInteract(List.of(inputHitbox), this.hand, this.rightClickCooldown, Minecraft.getInstance().options.keyAttack.isDown());
+            this.rightClickCooldown = this.lastImmersive.doHitboxInteract(List.of(inputHitbox), this.hand, getCooldownToPass(), Minecraft.getInstance().options.keyAttack.isDown());
         } else if (this.state == SwapState.DRAG && inputHitbox >= 0) {
             queuedPlacements.add(inputHitbox);
         }
@@ -131,6 +131,11 @@ public class SwapTracker {
         }
     }
 
+    protected int getCooldownToPass() {
+        return VRPluginVerify.clientInVR() && !ActiveConfig.active().rightClickImmersiveInteractionsInVR
+                ? ClientVRSubscriber.getCooldown() : rightClickCooldown;
+    }
+
     protected enum SwapState {
         NONE,
         PLACE,
@@ -139,9 +144,7 @@ public class SwapTracker {
 
     protected record LastImmersive<I extends ImmersiveInfo>(Immersive<I, ?> immersive, I info) {
 
-        public int doHitboxInteract(List<Integer> slots, InteractionHand hand, int rightClickCooldown, boolean leftClickDown) {
-            int currentCooldown = VRPluginVerify.clientInVR() && !ActiveConfig.active().rightClickImmersiveInteractionsInVR
-                    ? ClientVRSubscriber.getCooldown() : rightClickCooldown;
+        public int doHitboxInteract(List<Integer> slots, InteractionHand hand, int currentCooldown, boolean leftClickDown) {
             if (currentCooldown <= 0) {
                 int cooldown = immersive.handleHitboxInteract(info, Minecraft.getInstance().player, slots, hand, leftClickDown);
                 ImmersiveClientLogicHelpers.instance().setCooldown(cooldown);
