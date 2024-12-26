@@ -160,7 +160,6 @@ public class ConfigConverter {
         addClientConversion("center_brewing", Boolean.class, (config, val) -> config.autoCenterBrewingStandImmersive = val);
         addClientConversion("bag_mode", Integer.class, (config, val) -> config.bagMode = BackpackMode.values()[val]);
         addClientConversion("placement_guide_mode", Integer.class, (config, val) -> config.placementGuideMode = PlacementGuideMode.values()[val]);
-        addClientConversion("placement_mode", Integer.class, (config, val) -> config.placementMode = PlacementMode.values()[val]);
         addClientConversion("spin_crafting_output", Boolean.class, (config, val) -> config.spinSomeImmersiveOutputs = val);
         addClientConversion("right_click_in_vr", Boolean.class, (config, val) -> config.rightClickImmersiveInteractionsInVR = val);
         addClientConversion("resource_pack_3d_compat", Boolean.class, (config, val) -> config.compatFor3dResourcePacks = val);
