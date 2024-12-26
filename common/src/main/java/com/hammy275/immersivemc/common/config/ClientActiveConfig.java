@@ -17,7 +17,6 @@ public final class ClientActiveConfig extends ActiveConfig {
     public boolean autoCenterBrewingStandImmersive = false;
     public BackpackMode bagMode = BackpackMode.BUNDLE;
     public PlacementGuideMode placementGuideMode = PlacementGuideMode.CUBE;
-    public PlacementMode placementMode = PlacementMode.PLACE_ONE;
     public boolean spinSomeImmersiveOutputs = true;
     public boolean rightClickImmersiveInteractionsInVR = false;
     public boolean compatFor3dResourcePacks = false;
@@ -40,7 +39,6 @@ public final class ClientActiveConfig extends ActiveConfig {
         bagColor = Mth.clamp(bagColor, 0, 0xFFFFFF);
         bagMode = firstEnumIfNull(bagMode, BackpackMode.class);
         placementGuideMode = firstEnumIfNull(placementGuideMode, PlacementGuideMode.class);
-        placementMode = firstEnumIfNull(placementMode, PlacementMode.class);
         itemGuideSize = Mth.clamp(itemGuideSize, 0, 1);
         itemGuideSelectedSize = Mth.clamp(itemGuideSelectedSize, 0, 1);
         itemGuideColor = defaultIfNull(itemGuideColor, new RGBA(0x3300ffffL));
@@ -62,7 +60,6 @@ public final class ClientActiveConfig extends ActiveConfig {
         autoCenterBrewingStandImmersive = false;
         bagMode = BackpackMode.BUNDLE;
         placementGuideMode = PlacementGuideMode.CUBE;
-        placementMode = PlacementMode.PLACE_ONE;
         spinSomeImmersiveOutputs = true;
         rightClickImmersiveInteractionsInVR = false;
         compatFor3dResourcePacks = false;
