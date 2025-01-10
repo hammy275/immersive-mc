@@ -22,9 +22,9 @@ public final class ClientActiveConfig extends ActiveConfig {
     public boolean compatFor3dResourcePacks = false;
     public double itemGuideSize = 1.0;
     public double itemGuideSelectedSize = 1.0;
-    public RGBA itemGuideColor = new RGBA(0x3300ffffL);
-    public RGBA itemGuideSelectedColor = new RGBA(0x3300ff00L);
-    public RGBA rangedGrabColor = new RGBA(0xff00ffffL);
+    public RGBA itemGuideColor = new RGBA(0x638b8b8bL);
+    public RGBA itemGuideSelectedColor = new RGBA(0x7fc5c5c5L);
+    public RGBA rangedGrabColor = new RGBA(0xffc5c5c5L);
     public boolean disableVanillaInteractionsForSupportedImmersives = false;
     public ReachBehindBackpackMode reachBehindBagMode = ReachBehindBackpackMode.BEHIND_BACK;
 
@@ -41,9 +41,9 @@ public final class ClientActiveConfig extends ActiveConfig {
         placementGuideMode = firstEnumIfNull(placementGuideMode, PlacementGuideMode.class);
         itemGuideSize = Mth.clamp(itemGuideSize, 0, 1);
         itemGuideSelectedSize = Mth.clamp(itemGuideSelectedSize, 0, 1);
-        itemGuideColor = defaultIfNull(itemGuideColor, new RGBA(0x3300ffffL));
-        itemGuideSelectedColor = defaultIfNull(itemGuideSelectedColor, new RGBA(0x3300ff00L));
-        rangedGrabColor = defaultIfNull(rangedGrabColor, new RGBA(0xff00ffffL));
+        itemGuideColor = defaultIfNull(itemGuideColor, new RGBA(0x638b8b8bL));
+        itemGuideSelectedColor = defaultIfNull(itemGuideSelectedColor, new RGBA(0x7fc5c5c5L));
+        rangedGrabColor = defaultIfNull(rangedGrabColor, new RGBA(0xffc5c5c5L));
         reachBehindBagMode = firstEnumIfNull(reachBehindBagMode, ReachBehindBackpackMode.class);
     }
 
@@ -65,9 +65,9 @@ public final class ClientActiveConfig extends ActiveConfig {
         compatFor3dResourcePacks = false;
         itemGuideSize = 1.0;
         itemGuideSelectedSize = 1.0;
-        itemGuideColor = new RGBA(0x3300ffffL);
-        itemGuideSelectedColor = new RGBA(0x3300ff00L);
-        rangedGrabColor = new RGBA(0xff00ffffL);
+        itemGuideColor = new RGBA(0x638b8b8bL);
+        itemGuideSelectedColor = new RGBA(0x7fc5c5c5L);
+        rangedGrabColor = new RGBA(0xffc5c5c5L);
         disableVanillaInteractionsForSupportedImmersives = false;
         reachBehindBagMode = ReachBehindBackpackMode.BEHIND_BACK;
     }
