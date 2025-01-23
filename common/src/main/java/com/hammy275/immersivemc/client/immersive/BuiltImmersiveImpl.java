@@ -258,8 +258,14 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             }
         }
         for (BlockPos pos : positions) {
-            if (!Minecraft.getInstance().level.getBlockState(pos).canBeReplaced()) {
-                return false;
+            BlockState state = Minecraft.getInstance().level.getBlockState(pos);
+            if (state.canBeReplaced()) {
+                continue; // Replaceable blocks never block immersives.
+            }
+            AABB shape = state.getShape(Minecraft.getInstance().level, pos).bounds();
+            double volume = shape.getXsize() * shape.getYsize() * shape.getZsize();
+            if (volume > 1d/3d) {
+                return false; // Blocks with bounding boxes larger than 1/3 of a block cause blocking.
             }
         }
         return true;
