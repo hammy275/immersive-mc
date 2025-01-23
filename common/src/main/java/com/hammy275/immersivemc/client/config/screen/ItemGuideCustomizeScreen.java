@@ -46,25 +46,25 @@ public class ItemGuideCustomizeScreen extends Screen {
         drawCenteredString(stack, this.font, this.title.getString(),
                 this.width / 2, 8, 0xFFFFFF);
 
-        renderPreview(stack, ConfigScreen.getClientConfigIfAdjusting().itemGuideColor, 0.225f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSize);
-        renderPreview(stack, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedColor, 0.475f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize);
+        renderPreview(stack, ConfigScreen.getClientConfigIfAdjusting().itemGuideColor, 0.25f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSize);
+        renderPreview(stack, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedColor, 0.5f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize);
         // Render square for particle color by using our cube model lol
-        renderPreview(stack, ConfigScreen.getClientConfigIfAdjusting().rangedGrabColor, 0.725f, true, 1.0f);
+        renderPreview(stack, ConfigScreen.getClientConfigIfAdjusting().rangedGrabColor, 0.75f, true, 1.0f);
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
-                this.height * 225 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 225 / 1000 + 16)) {
+                this.height * 250 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 250 / 1000 + 16)) {
             renderTooltip(stack, Minecraft.getInstance().font.split(Component.translatable("config.immersivemc.item_guide.desc"), 170),
                     mouseX, mouseY);
         }
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
-                this.height * 475 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 475 / 1000 + 16)) {
+                this.height * 500 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 500 / 1000 + 16)) {
             renderTooltip(stack, Minecraft.getInstance().font.split(Component.translatable("config.immersivemc.item_guide_selected.desc"), 170),
                     mouseX, mouseY);
         }
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
-                this.height * 725 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 725 / 1000 + 16)) {
+                this.height * 750 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 750 / 1000 + 16)) {
             renderTooltip(stack, Minecraft.getInstance().font.split(Component.translatable("config.immersivemc.ranged_grab_color.desc"), 170),
                     mouseX, mouseY);
         }
