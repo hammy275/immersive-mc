@@ -338,6 +338,14 @@ public class Util {
         }
     }
 
+    public static void useDoor(Player player, Level level, BlockPos pos) {
+        if (ImmersiveHandlers.doorHandler.isValidBlock(pos, level)) {
+            BlockState door = level.getBlockState(pos);
+            door.use(level, player, InteractionHand.MAIN_HAND,
+                    new BlockHitResult(Vec3.atCenterOf(pos), Direction.NORTH, pos, true));
+        }
+    }
+
     public static Vec3 getPlayerVelocity(Vec3 lastTickPos, Vec3 currentTickPos) {
         return new Vec3(currentTickPos.x - lastTickPos.x, currentTickPos.y - lastTickPos.y,
                 currentTickPos.z - lastTickPos.z);

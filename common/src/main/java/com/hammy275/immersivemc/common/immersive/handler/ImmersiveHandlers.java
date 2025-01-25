@@ -34,6 +34,7 @@ public class ImmersiveHandlers {
     public static final ImmersiveHandler<ListOfItemsStorage> chestHandler = new ChestHandler();
     public static final ImmersiveHandler<?> chiseledBookshelfHandler = new ChiseledBookshelfHandler();
     public static final WorldStorageHandler<CraftingTableStorage> craftingHandler = new CraftingHandler();
+    public static final ImmersiveHandler<NullStorage> doorHandler = new DoorHandler();
     public static final WorldStorageHandler<ETableStorage> enchantingTableHandler = new ETableHandler();
     public static final ImmersiveHandler<?> furnaceHandler = new FurnaceHandler();
     public static final ImmersiveHandler<?> hopperHandler = new HopperHandler();
