@@ -13,7 +13,6 @@
     "BucketItemAccessor",
     "ButtonBlockMixin",
     "ContainerOpenersCounterMixin",
-    "DoorBlockMixin",
     "ItemMixin",
     "LecternBlockEntityAccessor",
     "LevelMixin",
