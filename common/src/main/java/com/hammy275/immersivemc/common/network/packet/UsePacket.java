@@ -31,6 +31,8 @@ public class UsePacket {
                 Util.useLever(player, packet.pos);
             } else if (ImmersiveHandlers.trapdoorHandler.isValidBlock(packet.pos, level)) {
                 Util.useTrapdoor(player, level, packet.pos);
+            } else if (ImmersiveHandlers.doorHandler.isValidBlock(packet.pos, level)) {
+                Util.useDoor(player, level, packet.pos);
             }
         }
     }
