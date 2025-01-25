@@ -17,7 +17,6 @@ public class ServerTrackerInit {
     public static final ButtonPushTracker buttonPushTracker = new ButtonPushTracker();
     public static final CampfireTracker campfireTracker = new CampfireTracker();
 
-    public static final DoorMoveTracker doorTracker = new DoorMoveTracker();
     public static final PetTracker petTracker = new PetTracker();
     public static final ArmorTracker armorTracker = new ArmorTracker();
     public static final FeedAnimalsTracker feedAnimalsTracker = new FeedAnimalsTracker();

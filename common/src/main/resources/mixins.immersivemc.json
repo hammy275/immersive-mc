@@ -14,7 +14,6 @@
     "ButtonBlockMixin",
     "ChestLidControllerAccessor",
     "ContainerOpenersCounterMixin",
-    "DoorBlockMixin",
     "ItemMixin",
     "LecternBlockEntityAccessor",
     "LevelMixin",
