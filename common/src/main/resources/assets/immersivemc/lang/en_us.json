@@ -142,6 +142,8 @@
   "config.immersivemc.3d_compat.desc": "Moves the item areas for immersives to increase compatability with resource packs such as Classic 3D (16x).",
   "config.immersivemc.crouch_bypass_immersion": "Bypass Immersion While Crouching",
   "config.immersivemc.crouch_bypass_immersion.desc": "When crouching, right-clicks bypass immersions and open vanilla interfaces.",
+  "config.immersivemc.text_scale": "Text Scaling",
+  "config.immersivemc.text_scale_val": "Text Scale: %sx",
 
   "screen.immersivemc.item_guide_customize_screen": "Customize Item Guides. Hover over a preview for more info!",
   "config.immersivemc.placement_guide_mode": "Placement Guide Mode",
