@@ -27,6 +27,7 @@ public final class ClientActiveConfig extends ActiveConfig {
     public RGBA rangedGrabColor = new RGBA(0xffc5c5c5L);
     public boolean disableVanillaInteractionsForSupportedImmersives = false;
     public ReachBehindBackpackMode reachBehindBagMode = ReachBehindBackpackMode.BEHIND_BACK;
+    public float textScale = 1f;
 
     static {
         DISABLED.setDisabled();
@@ -45,6 +46,7 @@ public final class ClientActiveConfig extends ActiveConfig {
         itemGuideSelectedColor = defaultIfNull(itemGuideSelectedColor, new RGBA(0x7fc5c5c5L));
         rangedGrabColor = defaultIfNull(rangedGrabColor, new RGBA(0xffc5c5c5L));
         reachBehindBagMode = firstEnumIfNull(reachBehindBagMode, ReachBehindBackpackMode.class);
+        textScale = Mth.clamp(textScale, 0.5f, 2f);
     }
 
     @Override
@@ -70,5 +72,6 @@ public final class ClientActiveConfig extends ActiveConfig {
         rangedGrabColor = new RGBA(0xffc5c5c5L);
         disableVanillaInteractionsForSupportedImmersives = false;
         reachBehindBagMode = ReachBehindBackpackMode.BEHIND_BACK;
+        textScale = 1f;
     }
 }

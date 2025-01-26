@@ -43,6 +43,15 @@ public class ImmersivesCustomizeScreen extends OptionsSubScreen {
                     -1, 12,
                     () -> ConfigScreen.getClientConfigIfAdjusting().rangedGrabRange, (newVal) -> ConfigScreen.getClientConfigIfAdjusting().rangedGrabRange = newVal
             ));
+            this.list.addBig(ScreenUtils.createIntSlider(
+                    "config.immersivemc.text_scale",
+                    // Need to do the format below before passing to Minecraft as Minecraft doesn't seem to handle
+                    // forcing a certain decimal length.
+                    val -> Component.translatable("config.immersivemc.text_scale_val", String.format("%.2f", val / 20f)),
+                    10, 40,
+                    () -> (int) (ConfigScreen.getClientConfigIfAdjusting().textScale * 20),
+                    newVal -> ConfigScreen.getClientConfigIfAdjusting().textScale = newVal / 20f
+            ));
         }
     }
 

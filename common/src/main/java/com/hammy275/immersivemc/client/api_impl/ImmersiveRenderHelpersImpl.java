@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.obb.OBBRotList;
 import com.hammy275.immersivemc.common.obb.RotType;
@@ -192,6 +193,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
     @Override
     public void renderText(Component text, PoseStack stack, Vec3 pos, int light, float textSize) {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+        textSize *= ActiveConfig.active().textScale;
         stack.pushPose();
         stack.translate(-renderInfo.getPosition().x + pos.x,
                 -renderInfo.getPosition().y + pos.y,
