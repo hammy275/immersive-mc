@@ -2,6 +2,10 @@ package com.hammy275.immersivemc.common.config;
 
 public class CommonConstants {
 
+    // ImmersiveMC API Versioning
+    public static final int API_MAJOR_VERSION = 2;
+    public static final int API_MINOR_VERSION = 0;
+
     public static final int distanceToRemoveImmersive = 16; // Distance to stop tracking immersives from
     public static final int distanceSquaredToRemoveImmersive = distanceToRemoveImmersive * distanceToRemoveImmersive;
     public static final int registerImmersivePickRange = distanceToRemoveImmersive - 1;
