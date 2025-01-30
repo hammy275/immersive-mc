@@ -12,7 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.level.LightLayer;
 
 import java.util.List;
 
@@ -34,8 +33,7 @@ public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl i
     @Override
     public int getLight(BlockPos pos) {
         // TODO: Return maxLight here if full bright in ImmersiveMC settings
-        return LightTexture.pack(Minecraft.getInstance().level.getBrightness(LightLayer.BLOCK, pos),
-                Minecraft.getInstance().level.getBrightness(LightLayer.SKY, pos));
+        return Minecraft.getInstance().levelRenderer.getLightColor(Minecraft.getInstance().level, pos);
     }
 
     @Override
@@ -48,12 +46,13 @@ public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl i
                 continue;
             }
 
-            int blockLight = Minecraft.getInstance().level.getBrightness(LightLayer.BLOCK, pos);
+            int packedLight = getLight(pos);
+            int blockLight = LightTexture.block(packedLight);
+            int skyLight = LightTexture.sky(packedLight);
+
             if (blockLight > maxBlock) {
                 maxBlock = blockLight;
             }
-
-            int skyLight = Minecraft.getInstance().level.getBrightness(LightLayer.SKY, pos);
             if (skyLight > maxSky) {
                 maxSky = skyLight;
             }
