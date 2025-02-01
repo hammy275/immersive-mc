@@ -28,6 +28,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.inventory.ItemCombinerMenu;
 import net.minecraft.world.inventory.SmithingMenu;
@@ -178,7 +179,8 @@ public class Swap {
             result.giveToPlayer(player, hand);
             itemArray[4] = getRecipeOutput(player, itemArray);
         } else {
-            handleDoCraft(player, itemArray, null);
+            itemArray = handleDoCraft(player, itemArray, null);
+            if (itemArray == null) return;
         }
         for (int i = 0; i <= 4; i++) {
             items.set(i, itemArray[i]);
@@ -249,32 +251,28 @@ public class Swap {
         return ItemStack.EMPTY;
     }
 
-    public static void handleDoCraft(ServerPlayer player, ItemStack[] stacksIn,
+    @Nullable // Returns null if no recipe
+    public static ItemStack[] handleDoCraft(ServerPlayer player, ItemStack[] stacksIn,
                                      BlockPos tablePos) {
         boolean isBackpack = stacksIn.length == 5;
-        int invDim = isBackpack ? 2 : 3;
-        CraftingContainer inv = new TransientCraftingContainer(new NullContainer(), invDim, invDim);
-        for (int i = 0; i < stacksIn.length - 1; i++) { // -1 from length since we skip the last index since it's the output
-            inv.setItem(i, stacksIn[i]);
-        }
         ItemStack stackOut = getRecipeOutput(player, stacksIn);
+        ItemStack[] newSlotsState = new ItemStack[stacksIn.length];
         if (!stackOut.isEmpty()) {
+            // Perform the craft in an actual crafting menu
+            CraftingMenu menu = new CraftingMenu(-1, player.getInventory());
+            for (int i = 0; i < stacksIn.length - 1; i++) { // -1 from length since we skip the last index since it's the output
+                // Slot 0 is the output
+                menu.setItem(i + 1, 0, stacksIn[i].copy());
+            }
+            menu.getSlot(0).set(stackOut);
+            menu.getSlot(0).onTake(player, stackOut);
             // Give our item to us, remove items from crafting inventory, and show new recipe
             stackOut.onCraftedBy(player.level(), player, stackOut.getCount());
-            for (int i = 0; i < stacksIn.length - 1; i++) {
-                if (stacksIn[i].getItem().hasCraftingRemainingItem()) {
-                    if (stacksIn[i].getCount() == 1) {
-                        stacksIn[i] = new ItemStack(stacksIn[i].getItem().getCraftingRemainingItem());
-                    } else {
-                        Util.placeLeftovers(player, new ItemStack(stacksIn[i].getItem().getCraftingRemainingItem()));
-                    }
-
-                } else {
-                    stacksIn[i].shrink(1);
-                }
+            for (int i = 0; i < newSlotsState.length - 1; i++) {
+                newSlotsState[i] = menu.getSlot(i + 1).getItem();
             }
-            ItemStack newOutput = getRecipeOutput(player, stacksIn);
-            stacksIn[stacksIn.length - 1] = newOutput;
+            ItemStack newOutput = getRecipeOutput(player, newSlotsState);
+            newSlotsState[newSlotsState.length - 1] = newOutput;
             ItemStack handStack = player.getItemInHand(InteractionHand.MAIN_HAND);
             ItemStack toGive = ItemStack.EMPTY;
             if (!handStack.isEmpty() && Util.stacksEqualBesidesCount(stackOut, handStack)) {
@@ -299,7 +297,10 @@ public class Swap {
                         ThreadLocalRandom.current().nextFloat() -
                                 ThreadLocalRandom.current().nextFloat() * 1.4f + 2f);
             }
+        } else {
+            return null;
         }
+        return newSlotsState;
     }
 
     public static void handleInventorySwap(Player player, int slot, InteractionHand hand) {
