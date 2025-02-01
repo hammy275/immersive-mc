@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.CraftingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.api.server.WorldStorage;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
@@ -35,12 +36,20 @@ public class CraftingHandler extends ItemWorldStorageHandler<CraftingTableStorag
             storage.placeItem(player, hand, slot, amount);
             storage.setItem(9, Swap.getRecipeOutput(player, storage.getItemsRaw()));
         } else {
-            Swap.handleDoCraft(player, storage.getItemsRaw(), pos);
+            ItemStack[] newSlots = Swap.handleDoCraft(player, storage.getItemsRaw(), pos);
+            if (newSlots == null) return;
             for (int i = 0; i <= 8; i++) {
-                if (!storage.getItem(i).isEmpty()) {
-                    storage.shrinkCountsOnly(i, 1);
+                ItemStack storageItem = storage.getItem(i);
+                if (!storageItem.isEmpty()) {
+                    if (Util.stacksEqualBesidesCount(storageItem, newSlots[i])) {
+                        int diff = storageItem.getCount() - newSlots[i].getCount();
+                        storage.shrinkSlot(i, diff);
+                    } else {
+                        storage.setItem(i, newSlots[i], player);
+                    }
                 }
             }
+            storage.setItem(9, newSlots[9]);
         }
         storage.setDirty(player.serverLevel());
     }
