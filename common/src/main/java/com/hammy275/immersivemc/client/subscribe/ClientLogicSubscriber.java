@@ -551,8 +551,12 @@ public class ClientLogicSubscriber {
                         return 1;
                     } else {
                         SwapTracker.c0.tick(null, null, -1, inDragHitbox(singleton, info, start, end));
-                        int res = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(closest.get()), InteractionHand.MAIN_HAND, Minecraft.getInstance().options.keyAttack.isDown());
-                        return res >= 0 ? res : null;
+                        if (SwapTracker.c0.getCooldown() <= 0) {
+                            int res = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(closest.get()), InteractionHand.MAIN_HAND, Minecraft.getInstance().options.keyAttack.isDown());
+                            return res >= 0 ? res : null;
+                        } else {
+                            return SwapTracker.c0.getCooldown(); // Return cooldown instead of null so we don't do another SwapTracker tick
+                        }
                     }
                 } else if (inDragHitbox(singleton, info, start, end)) {
                     infoToSwapTick = info;
