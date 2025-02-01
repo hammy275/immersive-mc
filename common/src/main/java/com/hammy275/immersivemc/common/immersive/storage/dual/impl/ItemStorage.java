@@ -84,6 +84,17 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
     }
 
     /**
+     * Directly set stack into slot with player credit for item counting.
+     * @param slot Slot to place into
+     * @param stack Stack to place
+     * @param player Player to credit for placement
+     */
+    public void setItem(int slot, ItemStack stack, Player player) {
+        setItem(slot, stack);
+        incrementCountForPlayer(player, stack.getCount(), slot);
+    }
+
+    /**
      * Shrink slot, adjusting the leftovers along the way.
      * @param slot Slot to shrink from
      * @param amount Amount to shrink by
