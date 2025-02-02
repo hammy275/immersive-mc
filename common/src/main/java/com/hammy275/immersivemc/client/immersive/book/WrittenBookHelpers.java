@@ -50,7 +50,7 @@ public class WrittenBookHelpers {
             int rightMod = isLeftPage ? 0 : 1;
             return access.getPage(dataHolder.getData().getLeftPageIndex() + rightMod);
         }, textStackScaleSize, new Vec3(0, 1, 0)));
-        bookData.setMaxLeftPageIndex(access.getPageCount());
+        bookData.setMaxLeftPageIndex(access.getPageCount() - 1);
         return bookData;
     }
 
