@@ -121,6 +121,8 @@ public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<Comm
     public void processStorageFromNetwork(LecternInfo info, LecternData<CommonBookData> storage) {
         info.setBook(storage.book);
         info.lecternData.mergeFromServer(storage);
+        tick(info); // Do a tick so hitboxes are generated
+        info.tickCount--; // Subtract extra tick count
     }
 
     @Override
