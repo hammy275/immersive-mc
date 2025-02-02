@@ -106,11 +106,7 @@ public class LecternData<T extends CommonBookData> implements NetworkStorage {
 
     protected int findMaxLeftPageIndex() {
         if (book.isEmpty()) return 0;
-        int size = WrittenBookItem.getPageCount(book);
-        if (size % 2 != 0) {
-            size--;
-        }
-        return size;
+        return WrittenBookItem.getPageCount(book) - 1;
     }
 
     @Override
