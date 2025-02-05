@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.config.ClientConstants;
+import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
@@ -41,7 +42,9 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
     @Override
     public void renderItemWithInfo(ItemStack item, PoseStack stack, float size, boolean renderItemCounts, int light, ImmersiveInfo info, boolean shouldRenderItemGuide, int hitboxIndex, @Nullable Float spinDegrees, @Nullable Direction facing, @Nullable Direction upDown) {
         HitboxInfo hitbox = info.getAllHitboxes().get(hitboxIndex);
-        boolean hovered = info.getSlotHovered(0) == hitboxIndex || info.getSlotHovered(1) == hitboxIndex;
+        boolean hovered = info.getSlotHovered(0) == hitboxIndex
+                || info.getSlotHovered(1) == hitboxIndex
+                || SwapTracker.slotHovered(info, hitboxIndex);
         if (item == null || item.isEmpty()) {
             if (shouldRenderItemGuide) {
                 renderItemGuide(stack, hitbox.getHitbox(), hovered, light);
