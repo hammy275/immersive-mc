@@ -30,6 +30,10 @@ public class SwapTracker {
     protected boolean lastTickWasIdle = false;
     protected int rightClickCooldown = 0; // Needs to be kept here, since Minecraft messes with it in ways that don't work for us
 
+    public static boolean slotHovered(ImmersiveInfo info, int slot) {
+        return c0.hasSlotHovered(info, slot) || c1.hasSlotHovered(info, slot);
+    }
+
     public SwapTracker(InteractionHand hand) {
         this.hand = hand;
     }
@@ -104,6 +108,10 @@ public class SwapTracker {
 
     public int getCooldown() {
         return rightClickCooldown;
+    }
+
+    protected boolean hasSlotHovered(ImmersiveInfo info, int slot) {
+        return this.lastImmersive != null && this.lastImmersive.info == info && queuedPlacements.contains(slot);
     }
 
     protected void setState(SwapState newState, int newHitbox) {
