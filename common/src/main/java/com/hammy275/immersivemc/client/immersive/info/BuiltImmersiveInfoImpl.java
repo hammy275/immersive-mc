@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.RelativeHitboxInfoImpl;
+import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -79,7 +80,7 @@ public final class BuiltImmersiveInfoImpl<E> implements BuiltImmersiveInfo<E> {
 
     @Override
     public boolean isSlotHovered(int hitboxIndex) {
-        return slotsHovered[0] == hitboxIndex || slotsHovered[1] == hitboxIndex;
+        return slotsHovered[0] == hitboxIndex || slotsHovered[1] == hitboxIndex || SwapTracker.slotHovered(this, hitboxIndex);
     }
 
     @Override
