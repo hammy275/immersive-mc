@@ -1,17 +1,17 @@
 package com.hammy275.immersivemc.server.api_impl;
 
 import com.hammy275.immersivemc.api.server.ItemSwapAmount;
-import com.hammy275.immersivemc.common.config.PlacementMode;
+import com.hammy275.immersivemc.api.common.immersive.SwapMode;
 
 public class ItemSwapAmountImpl implements ItemSwapAmount {
 
-    private final PlacementMode placementMode;
+    private final SwapMode swapMode;
     private final int numPlacements;
     private final int handStackSize;
     private final int slotIndex;
 
-    public ItemSwapAmountImpl(PlacementMode placementMode, int numPlacements, int handStackSize, int slotIndex) {
-        this.placementMode = placementMode;
+    public ItemSwapAmountImpl(SwapMode swapMode, int numPlacements, int handStackSize, int slotIndex) {
+        this.swapMode = swapMode;
         this.numPlacements = numPlacements;
         this.handStackSize = handStackSize;
         this.slotIndex = slotIndex;
@@ -19,7 +19,7 @@ public class ItemSwapAmountImpl implements ItemSwapAmount {
 
     @Override
     public int getNumItemsToSwap() {
-        return switch (placementMode) {
+        return switch (swapMode) {
             case SINGLE -> 1;
             case SPLIT -> {
                 int amount = handStackSize / numPlacements;
@@ -29,6 +29,13 @@ public class ItemSwapAmountImpl implements ItemSwapAmount {
                 }
                 yield amount;
             }
+            case ALL -> this.handStackSize;
+            case CONSTANT -> throw new IllegalArgumentException("Attempted to swap with CONSTANT type from ItemSwapAmountImpl.");
         };
+    }
+
+    @Override
+    public SwapMode getSwapMode() {
+        return this.swapMode;
     }
 }

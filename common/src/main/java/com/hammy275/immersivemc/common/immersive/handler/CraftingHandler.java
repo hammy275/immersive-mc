@@ -36,7 +36,7 @@ public class CraftingHandler extends ItemWorldStorageHandler<CraftingTableStorag
             storage.placeItem(player, hand, slot, amount);
             storage.setItem(9, Swap.getRecipeOutput(player, storage.getItemsRaw()));
         } else {
-            ItemStack[] newSlots = Swap.handleDoCraft(player, storage.getItemsRaw(), pos);
+            ItemStack[] newSlots = Swap.handleDoCraft(player, storage.getItemsRaw(), pos, amount);
             if (newSlots == null) return;
             for (int i = 0; i <= 8; i++) {
                 ItemStack storageItem = storage.getItem(i);
