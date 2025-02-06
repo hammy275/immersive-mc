@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.client.subscribe.ClientVRSubscriber;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveLogicHelpersImpl;
-import com.hammy275.immersivemc.common.config.PlacementMode;
+import com.hammy275.immersivemc.api.common.immersive.SwapMode;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import net.minecraft.client.Minecraft;
@@ -27,7 +27,17 @@ public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl i
 
     @Override
     public void sendSwapPacket(BlockPos pos, List<Integer> slots, InteractionHand hand, boolean modifierPressed) {
-        Network.INSTANCE.sendToServer(new SwapPacket(pos, slots, hand, modifierPressed ? PlacementMode.SPLIT : PlacementMode.SINGLE));
+        SwapMode mode;
+        if (slots.size() > 1) {
+            mode = modifierPressed ? SwapMode.SPLIT : SwapMode.SINGLE;
+        } else {
+            if ((Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCrouching()) || modifierPressed) {
+                mode = SwapMode.ALL;
+            } else {
+                mode = SwapMode.SINGLE;
+            }
+        }
+        Network.INSTANCE.sendToServer(new SwapPacket(pos, slots, hand, mode));
     }
 
     @Override

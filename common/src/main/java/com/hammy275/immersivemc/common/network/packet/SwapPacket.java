@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.common.network.packet;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.config.PlacementMode;
+import com.hammy275.immersivemc.api.common.immersive.SwapMode;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
 import com.hammy275.immersivemc.common.util.Util;
@@ -23,14 +23,14 @@ public class SwapPacket {
     public final BlockPos block;
     public final List<Integer> slots;
     public final InteractionHand hand;
-    public final PlacementMode mode;
+    public final SwapMode mode;
     public final SwapDestination destination;
 
-    public SwapPacket(BlockPos block, List<Integer> slots, InteractionHand hand, PlacementMode mode) {
+    public SwapPacket(BlockPos block, List<Integer> slots, InteractionHand hand, SwapMode mode) {
         this(block, slots, hand, mode, SwapDestination.POS);
     }
 
-    public SwapPacket(BlockPos block, List<Integer> slots, InteractionHand hand, PlacementMode mode, SwapDestination destination) {
+    public SwapPacket(BlockPos block, List<Integer> slots, InteractionHand hand, SwapMode mode, SwapDestination destination) {
         this.block = block;
         this.slots = slots;
         this.hand = hand;
@@ -58,7 +58,7 @@ public class SwapPacket {
         }
         SwapPacket ret = new SwapPacket(buffer.readBlockPos(), slots,
                 buffer.readInt() == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND,
-                buffer.readEnum(PlacementMode.class),
+                buffer.readEnum(SwapMode.class),
                 buffer.readEnum(SwapDestination.class));
         return ret;
     }

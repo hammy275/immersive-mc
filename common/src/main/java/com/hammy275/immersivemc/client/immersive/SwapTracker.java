@@ -135,6 +135,7 @@ public class SwapTracker {
         if (this.state == SwapState.DRAG && !this.queuedPlacements.isEmpty()) {
             // Drag place passes 0 for the cooldown so placement always happens
             this.rightClickCooldown = this.lastImmersive.doHitboxInteract(this.queuedPlacements.stream().toList(), this.hand, 0, this.leftClickWasDown);
+            this.ticksInMostRecent = 0;
             this.queuedPlacements.clear();
         }
     }

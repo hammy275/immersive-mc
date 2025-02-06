@@ -62,7 +62,7 @@ public class TCCraftingStationHandler extends ContainerHandler<ListOfItemsStorag
             for (int i = 0; i <= 8; i++) {
                 items[i] = table.getItem(i).copy();
             }
-            items = Swap.handleDoCraft(player, items, pos);
+            items = Swap.handleDoCraft(player, items, pos, amount);
             if (items == null) return;
             for (int i = 0; i <= 8; i++) {
                 table.setItem(i, items[i]);
