@@ -12,7 +12,7 @@ import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
 import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
-import com.hammy275.immersivemc.common.config.PlacementMode;
+import com.hammy275.immersivemc.api.common.immersive.SwapMode;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.FetchBackpackStoragePacket;
@@ -98,10 +98,10 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
 
     public static void onHitboxInteract(Player player, BackpackInfo info, int slot) {
         if (slot <= 26) { // Inventory handle
-            Network.INSTANCE.sendToServer(new SwapPacket(BlockPos.ZERO, List.of(slot + 9), InteractionHand.MAIN_HAND, PlacementMode.SINGLE, SwapPacket.SwapDestination.INVENTORY));
+            Network.INSTANCE.sendToServer(new SwapPacket(BlockPos.ZERO, List.of(slot + 9), InteractionHand.MAIN_HAND, SwapMode.SINGLE, SwapPacket.SwapDestination.INVENTORY));
             Swap.handleInventorySwap(player, slot + 9, InteractionHand.MAIN_HAND); // Do swap on both sides
         } else {
-            Network.INSTANCE.sendToServer(new SwapPacket(BlockPos.ZERO, List.of(slot), InteractionHand.MAIN_HAND, PlacementMode.SINGLE, SwapPacket.SwapDestination.BAG_CRAFTING));
+            Network.INSTANCE.sendToServer(new SwapPacket(BlockPos.ZERO, List.of(slot), InteractionHand.MAIN_HAND, SwapMode.SINGLE, SwapPacket.SwapDestination.BAG_CRAFTING));
             Network.INSTANCE.sendToServer(new FetchBackpackStoragePacket());
         }
     }
