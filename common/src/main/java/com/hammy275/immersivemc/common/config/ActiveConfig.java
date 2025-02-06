@@ -26,6 +26,8 @@ import java.util.UUID;
 public class ActiveConfig implements Cloneable {
     // The settings representing a disabled config.
     public static final ActiveConfig DISABLED = new ActiveConfig();
+    // The settings representing a default config.
+    public static final ActiveConfig DEFAULT = new ActiveConfig();
 
 
     // The settings from the server config file. Used by both the server and client.
@@ -83,6 +85,9 @@ public class ActiveConfig implements Cloneable {
     public boolean useBucketAndBottleImmersive = true;
     public boolean useApotheosisEnchantmentTableImmersive = true;
     public boolean useApotheosisSalvagingTableImmersive = true;
+
+    public int commonConfigVersion = 2;
+    public static final String COMMON_CONFIG_VERSION = "commonConfigVersion";
 
     static {
         DISABLED.setDisabled();
@@ -155,16 +160,39 @@ public class ActiveConfig implements Cloneable {
 
     }
 
+    @SuppressWarnings("unchecked")
     public static ActiveConfig readConfigFile(ConfigType type) {
         if (!type.configFile.exists() || !type.configFile.canRead()) {
             return new ClientActiveConfig();
         }
+        // First, read config as a literal map, and upgrade where appropriate.
+        boolean didUpgrade;
+        Map<Object, Object> json;
+        try (BufferedReader reader = new BufferedReader(new FileReader(type.configFile))) {
+            json = GSON.fromJson(reader, Map.class);
+            didUpgrade = ConfigUpgrader.upgradeCommonIfNeeded(json);
+            if (type == ConfigType.CLIENT) {
+                // Upgrade placed on left-hand side of || so a common upgrade doesn't short-circuit the check
+                didUpgrade = ConfigUpgrader.upgradeClientIfNeeded(json) || didUpgrade;
+            }
+        } catch (IOException | JsonParseException | NullPointerException ignored) {
+            return type == ConfigType.SERVER ? new ActiveConfig() : new ClientActiveConfig();
+        }
+        // If an upgrade happened, write the new config.
+        if (didUpgrade) {
+            try (FileWriter writer = new FileWriter(type.configFile)) {
+                writer.write(GSON_PRETTY.toJson(json));
+            } catch (IOException ignored) {
+                return type == ConfigType.SERVER ? new ActiveConfig() : new ClientActiveConfig();
+            }
+        }
+        // Read the config normally, should be in an up-to-date format at this point.
         try (BufferedReader reader = new BufferedReader(new FileReader(type.configFile))) {
             ActiveConfig config = GSON.fromJson(reader, type.configClass);
             config.validateConfig();
             return config;
-        } catch (IOException | JsonParseException ignored) {
-            return new ClientActiveConfig();
+        } catch (IOException | JsonParseException | NullPointerException ignored) {
+            return type == ConfigType.SERVER ? new ActiveConfig() : new ClientActiveConfig();
         }
     }
 
