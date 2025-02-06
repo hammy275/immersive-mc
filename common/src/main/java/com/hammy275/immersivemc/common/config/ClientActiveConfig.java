@@ -6,6 +6,7 @@ import net.minecraft.util.Mth;
 public final class ClientActiveConfig extends ActiveConfig {
 
     public static final ClientActiveConfig DISABLED = new ClientActiveConfig();
+    public static final ClientActiveConfig DEFAULT = new ClientActiveConfig();
 
     public boolean crouchingBypassesImmersives = false;
     public boolean doVRControllerRumble = true;
@@ -28,6 +29,9 @@ public final class ClientActiveConfig extends ActiveConfig {
     public boolean disableVanillaInteractionsForSupportedImmersives = false;
     public ReachBehindBackpackMode reachBehindBagMode = ReachBehindBackpackMode.BEHIND_BACK;
     public float textScale = 1f;
+
+    public int clientConfigVersion = 2;
+    public static final String CLIENT_CONFIG_VERSION = "clientConfigVersion";
 
     static {
         DISABLED.setDisabled();
