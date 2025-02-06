@@ -1,0 +1,50 @@
+package com.hammy275.immersivemc.common.config;
+
+import java.util.Map;
+
+import static com.hammy275.immersivemc.common.config.ActiveConfig.COMMON_CONFIG_VERSION;
+import static com.hammy275.immersivemc.common.config.ClientActiveConfig.CLIENT_CONFIG_VERSION;
+
+/**
+ * Handles upgrading between config formats for both common and client configs.
+ * Stored here as to not clutter the main config class files.
+ * <br>
+ * IMPORTANT: Since JSON only understands decimal numbers, all integers are doubles.
+ */
+public class ConfigUpgrader {
+
+    public static boolean upgradeCommonIfNeeded(Map<Object, Object> config) {
+        int version = config.containsKey(COMMON_CONFIG_VERSION) ? readInt(config, COMMON_CONFIG_VERSION) : 1;
+        boolean didUpgrade = version < ActiveConfig.DEFAULT.commonConfigVersion;
+        while (version < ActiveConfig.DEFAULT.commonConfigVersion) {
+            if (version == 1) {
+                // Add version value
+                config.put(COMMON_CONFIG_VERSION, 1);
+            }
+
+            version++;
+        }
+        config.put(COMMON_CONFIG_VERSION, version);
+        return didUpgrade;
+    }
+
+    public static boolean upgradeClientIfNeeded(Map<Object, Object> config) {
+        int version = config.containsKey(CLIENT_CONFIG_VERSION) ? readInt(config, CLIENT_CONFIG_VERSION) : 1;
+        boolean didUpgrade = version < ClientActiveConfig.DEFAULT.clientConfigVersion;
+        while (version < ClientActiveConfig.DEFAULT.clientConfigVersion) {
+            if (version == 1) {
+                // Add version value
+                config.put(CLIENT_CONFIG_VERSION, 1);
+            }
+
+            version++;
+        }
+        config.put(CLIENT_CONFIG_VERSION, version);
+        return didUpgrade;
+    }
+
+    private static int readInt(Map<Object, Object> config, String key) {
+        return ((Double) config.get(key)).intValue();
+    }
+
+}
