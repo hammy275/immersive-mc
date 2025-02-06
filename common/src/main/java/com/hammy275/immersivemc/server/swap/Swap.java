@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.server.swap;
 
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
+import com.hammy275.immersivemc.api.common.immersive.SwapMode;
 import com.hammy275.immersivemc.api.server.ItemSwapAmount;
 import com.hammy275.immersivemc.api.server.SwapResult;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
@@ -40,6 +41,8 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -177,7 +180,7 @@ public class Swap {
             result.giveToPlayer(player, hand);
             itemArray[4] = getRecipeOutput(player, itemArray);
         } else {
-            itemArray = handleDoCraft(player, itemArray, null);
+            itemArray = handleDoCraft(player, itemArray, null, amount);
             if (itemArray == null) return;
         }
         for (int i = 0; i <= 4; i++) {
@@ -251,16 +254,21 @@ public class Swap {
 
     @Nullable // Returns null if no recipe
     public static ItemStack[] handleDoCraft(ServerPlayer player, ItemStack[] stacksIn,
-                                     BlockPos tablePos) {
+                                     BlockPos tablePos, ItemSwapAmount amount) {
         boolean isBackpack = stacksIn.length == 5;
+        CraftingMenu menu = new CraftingMenu(-1, player.getInventory());
         ItemStack stackOut = getRecipeOutput(player, stacksIn);
-        ItemStack[] newSlotsState = new ItemStack[stacksIn.length];
-        if (!stackOut.isEmpty()) {
+        ItemStack firstOut = stackOut;
+        ItemStack[] newSlotsState = Arrays.copyOf(stacksIn, stacksIn.length);
+        List<ItemStack> stacksToGive = new ArrayList<>();
+        int itersDone = 0;
+        int iters = amount.getSwapMode() == SwapMode.ALL ? Integer.MAX_VALUE : amount.getNumItemsToSwap();
+        while (itersDone++ < iters && ItemStack.matches(firstOut, stackOut) &&
+                itemStackArraysMatchBesidesCount(stacksIn, newSlotsState, 9)) {
             // Perform the craft in an actual crafting menu
-            CraftingMenu menu = new CraftingMenu(-1, player.getInventory());
-            for (int i = 0; i < stacksIn.length - 1; i++) { // -1 from length since we skip the last index since it's the output
+            for (int i = 0; i < newSlotsState.length - 1; i++) { // -1 from length since we skip the last index since it's the output
                 // Slot 0 is the output
-                menu.setItem(i + 1, 0, stacksIn[i].copy());
+                menu.setItem(i + 1, 0, newSlotsState[i].copy());
             }
             menu.getSlot(0).set(stackOut);
             menu.getSlot(0).onTake(player, stackOut);
@@ -269,18 +277,26 @@ public class Swap {
             for (int i = 0; i < newSlotsState.length - 1; i++) {
                 newSlotsState[i] = menu.getSlot(i + 1).getItem();
             }
-            ItemStack newOutput = getRecipeOutput(player, newSlotsState);
-            newSlotsState[newSlotsState.length - 1] = newOutput;
+            stacksToGive.add(stackOut);
+            stackOut = getRecipeOutput(player, newSlotsState);
+            newSlotsState[newSlotsState.length - 1] = stackOut;
+        }
+
+        if (stacksToGive.isEmpty()) {
+            return null;
+        }
+
+        // Give items
+        boolean playedSound = false;
+        for (ItemStack toGive : stacksToGive) {
             ItemStack handStack = player.getItemInHand(InteractionHand.MAIN_HAND);
-            ItemStack toGive = ItemStack.EMPTY;
-            if (!handStack.isEmpty() && Util.stacksEqualBesidesCount(stackOut, handStack)) {
-                Util.ItemStackMergeResult itemRes = Util.mergeStacks(handStack, stackOut, true);
+            if (!handStack.isEmpty() && Util.stacksEqualBesidesCount(toGive, handStack)) {
+                Util.ItemStackMergeResult itemRes = Util.mergeStacks(handStack, toGive, true);
                 player.setItemInHand(InteractionHand.MAIN_HAND, itemRes.mergedInto);
                 toGive = itemRes.mergedFrom;
             } else if (handStack.isEmpty()) {
-                player.setItemInHand(InteractionHand.MAIN_HAND, stackOut);
-            } else {
-                toGive = stackOut;
+                player.setItemInHand(InteractionHand.MAIN_HAND, toGive);
+                toGive = ItemStack.EMPTY;
             }
             if (!toGive.isEmpty()) {
                 BlockPos posBlock = tablePos != null ? tablePos.above() : player.blockPosition();
@@ -288,15 +304,14 @@ public class Swap {
                 ItemEntity entOut = new ItemEntity(player.level(), pos.x, pos.y, pos.z, toGive);
                 entOut.setDeltaMovement(0, 0, 0);
                 player.level().addFreshEntity(entOut);
-            } else {
+            } else if (!playedSound) {
                 player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                         SoundEvents.ITEM_PICKUP, isBackpack ? SoundSource.PLAYERS : SoundSource.BLOCKS,
                         0.2f,
                         ThreadLocalRandom.current().nextFloat() -
                                 ThreadLocalRandom.current().nextFloat() * 1.4f + 2f);
+                playedSound = true;
             }
-        } else {
-            return null;
         }
         return newSlotsState;
     }
@@ -367,5 +382,19 @@ public class Swap {
         container.createResult();
         ItemStack res = container.getSlot(3).getItem();
         return res;
+    }
+
+    public static boolean itemStackArraysMatchBesidesCount(ItemStack[] a, ItemStack[] b, int numElements) {
+        if (a.length != b.length) {
+            return false;
+        }
+        for (int i = 0; i < numElements; i++) {
+            ItemStack as = a[i];
+            ItemStack bs = b[i];
+            if (as != bs && (as == null || bs == null || !Util.stacksEqualBesidesCount(as, bs))) {
+                return false;
+            }
+        }
+        return true;
     }
 }
