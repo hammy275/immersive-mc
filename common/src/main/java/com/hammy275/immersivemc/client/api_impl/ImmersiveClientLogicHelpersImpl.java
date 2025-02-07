@@ -9,6 +9,7 @@ import com.hammy275.immersivemc.api.common.immersive.SwapMode;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
+import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
@@ -33,7 +34,7 @@ public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl i
             mode = modifierPressed ? SwapMode.SPLIT : SwapMode.SINGLE;
         } else {
             if ((Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCrouching() && ActiveConfig.active().crouchMode.swapAll())
-                    || modifierPressed) {
+                    || (modifierPressed && !VRPluginVerify.clientInVR())) {
                 mode = SwapMode.ALL;
             } else {
                 mode = SwapMode.SINGLE;
