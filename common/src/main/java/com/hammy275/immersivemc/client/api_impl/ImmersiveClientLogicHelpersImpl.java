@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.client.subscribe.ClientVRSubscriber;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveLogicHelpersImpl;
 import com.hammy275.immersivemc.api.common.immersive.SwapMode;
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import net.minecraft.client.Minecraft;
@@ -31,7 +32,8 @@ public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl i
         if (slots.size() > 1) {
             mode = modifierPressed ? SwapMode.SPLIT : SwapMode.SINGLE;
         } else {
-            if ((Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCrouching()) || modifierPressed) {
+            if ((Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCrouching() && ActiveConfig.active().crouchMode.swapAll())
+                    || modifierPressed) {
                 mode = SwapMode.ALL;
             } else {
                 mode = SwapMode.SINGLE;

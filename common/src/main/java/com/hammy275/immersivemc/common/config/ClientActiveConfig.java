@@ -8,7 +8,7 @@ public final class ClientActiveConfig extends ActiveConfig {
     public static final ClientActiveConfig DISABLED = new ClientActiveConfig();
     public static final ClientActiveConfig DEFAULT = new ClientActiveConfig();
 
-    public boolean crouchingBypassesImmersives = false;
+    public CrouchMode crouchMode = CrouchMode.SWAP_ALL;
     public boolean doVRControllerRumble = true;
     public boolean returnItemsWhenLeavingImmersives = true;
     public boolean disableImmersiveMCOutsideVR = false;
@@ -30,7 +30,7 @@ public final class ClientActiveConfig extends ActiveConfig {
     public ReachBehindBackpackMode reachBehindBagMode = ReachBehindBackpackMode.BEHIND_BACK;
     public float textScale = 1f;
 
-    public int clientConfigVersion = 2;
+    public int clientConfigVersion = 3;
     public static final String CLIENT_CONFIG_VERSION = "clientConfigVersion";
 
     static {
@@ -56,7 +56,7 @@ public final class ClientActiveConfig extends ActiveConfig {
     @Override
     public void setDisabled() {
         super.setDisabled();
-        crouchingBypassesImmersives = false;
+        crouchMode = CrouchMode.NONE;
         doVRControllerRumble = false;
         returnItemsWhenLeavingImmersives = false;
         disableImmersiveMCOutsideVR = false;
