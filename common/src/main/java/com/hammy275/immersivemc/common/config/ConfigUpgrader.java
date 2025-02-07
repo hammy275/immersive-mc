@@ -35,6 +35,11 @@ public class ConfigUpgrader {
             if (version == 1) {
                 // Add version value
                 config.put(CLIENT_CONFIG_VERSION, 1);
+            } else if (version == 2) {
+                // Convert up crouchingBypassesImmersives to crouchMode
+                boolean bypassImmersive = (boolean) config.getOrDefault("crouchingBypassesImmersives", false);
+                config.put("crouchMode", bypassImmersive ? CrouchMode.BYPASS_IMMERSIVE.toString() : CrouchMode.SWAP_ALL.toString());
+                config.remove("crouchingBypassesImmersives");
             }
 
             version++;

@@ -118,8 +118,6 @@
   "config.immersivemc.right_click_in_vr.desc": "Sta rechtsklikken in VR toe voor interactie met meeslepende beelden, net als niet-VR-gebruikers.",
   "config.immersivemc.3d_compat": "Compatibiliteit met 3D-bronpakketten",
   "config.immersivemc.3d_compat.desc": "Verplaatst de voorwerpgebieden voor immersives om de compatibiliteit met resourcepakketten zoals klassiek 3D (16x) te vergroten.",
-  "config.immersivemc.crouch_bypass_immersion": "Omzeil onderdompeling tijdens het hurken",
-  "config.immersivemc.crouch_bypass_immersion.desc": "Als je hurkt, omzeil je met de rechtermuisknop onderdompelingen en open je standaardinterfaces.",
 
   "screen.immersivemc.item_guide_customize_screen": "voorwerpgids aanpassen. Beweeg over een voorbeeld voor meer informatie!",
  "config.immersivemc.placement_guide_mode": "Plaatsingsgidsmodus",
