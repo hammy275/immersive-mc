@@ -264,7 +264,8 @@ public class Util {
     }
 
     public static boolean stacksEqualBesidesCount(ItemStack a, ItemStack b) {
-        if ((a.isEmpty() && !b.isEmpty()) || (!a.isEmpty() && b.isEmpty())) return false;
+        if (a.isEmpty() && b.isEmpty()) return true;
+        if (a.isEmpty() || b.isEmpty()) return false;
         int oldCountA = a.getCount();
         int oldCountB = b.getCount();
         a.setCount(1);
