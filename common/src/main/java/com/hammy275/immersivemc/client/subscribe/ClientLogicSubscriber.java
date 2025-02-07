@@ -483,7 +483,7 @@ public class ClientLogicSubscriber {
         boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
         HitResult looking = Minecraft.getInstance().hitResult;
 
-        if (ActiveConfig.active().crouchingBypassesImmersives &&
+        if (ActiveConfig.active().crouchMode.bypassImmersive() &&
                 looking != null && looking.getType() == HitResult.Type.BLOCK &&
                 Minecraft.getInstance().player.isSecondaryUseActive()) {
             if (Util.isHittingImmersive((BlockHitResult) looking, Minecraft.getInstance().level)) {
