@@ -90,9 +90,7 @@
     "config.immersivemc.right_click_in_vr.desc": "Разрешить ПКМ для взаимодействия с иммерсивными предметами.",
     "config.immersivemc.3d_compat": "Совместимость с 3D ресурспаками",
     "config.immersivemc.3d_compat.desc": "Смещает слоты для предметов для улучшения совместимости с объёмными ресурспаками, например Classic 3D (16x).",
-    "config.immersivemc.crouch_bypass_immersion": "Обход иммерсивных функций при приседании",
-    "config.immersivemc.crouch_bypass_immersion.desc": "При приседании ПКМ обходит иммерсивное взаимодействие и открывает ванильный интерфейс.",
-  
+
     "screen.immersivemc.item_guide_customize_screen": "Редактирование внешнего вида слотов. Наведи на предпросмотр для подробностей!",
     "config.immersivemc.placement_guide_mode": "Режим отображения слотов для предметов",
     "config.immersivemc.placement_guide_mode.0": "Прозрачные кубики",

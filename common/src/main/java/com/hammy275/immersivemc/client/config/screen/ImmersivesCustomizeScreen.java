@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.common.config.ConfigType;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.hammy275.immersivemc.common.config.CrouchMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
@@ -43,9 +44,13 @@ public class ImmersivesCustomizeScreen extends Screen {
         ScreenUtils.addOption("pet_any_living", config -> config.allowPettingAnythingLiving, (config, newVal) -> config.allowPettingAnythingLiving = newVal, this.list);
         ScreenUtils.addOptionIfClient("right_click_in_vr", config -> config.rightClickImmersiveInteractionsInVR, (config, newVal) -> config.rightClickImmersiveInteractionsInVR = newVal, this.list);
         ScreenUtils.addOptionIfClient("3d_compat", config -> config.compatFor3dResourcePacks, (config, newVal) -> config.compatFor3dResourcePacks = newVal, this.list);
-        ScreenUtils.addOptionIfClient("crouch_bypass_immersion", config -> config.crouchingBypassesImmersives, (config, newVal) -> config.crouchingBypassesImmersives = newVal, this.list);
 
         if (ConfigScreen.getAdjustingConfigType() == ConfigType.CLIENT) {
+            this.list.addBig(ScreenUtils.createEnumOption(CrouchMode.class, "config.immersivemc.crouch_mode",
+                    mode -> Component.translatable("config.immersivemc.crouch_mode." + mode.ordinal()),
+                    mode -> Component.translatable("config.immersivemc.crouch_mode." + mode.ordinal() + ".desc"),
+                    () -> ConfigScreen.getClientConfigIfAdjusting().crouchMode,
+                    (newModeIndex, newMode) -> ConfigScreen.getClientConfigIfAdjusting().crouchMode = newMode));
             this.list.addBig(ScreenUtils.createIntSlider(
                     "config.immersivemc.ranged_grab_range",
                     (val) -> {
