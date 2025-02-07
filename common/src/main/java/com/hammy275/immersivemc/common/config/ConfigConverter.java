@@ -152,7 +152,7 @@ public class ConfigConverter {
         addBothConversion("smithing_table_immersion", Boolean.class, (config, val) -> config.useSmithingTableImmersive = val);
         addBothConversion("written_book_immersion", Boolean.class, (config, val) -> config.useWrittenBookImmersive = val);
         addBothConversion("cauldron_immersion", Boolean.class, (config, val) -> config.useCauldronImmersive = val);
-        addClientConversion("crouch_bypass_immersion", Boolean.class, (config, val) -> config.crouchingBypassesImmersives = val);
+        addClientConversion("crouch_bypass_immersion", Boolean.class, (config, val) -> config.crouchMode = val ? CrouchMode.BYPASS_IMMERSIVE : CrouchMode.SWAP_ALL);
         addClientConversion("do_rumble", Boolean.class, (config, val) -> config.doVRControllerRumble = val);
         addClientConversion("return_items", Boolean.class, (config, val) -> config.returnItemsWhenLeavingImmersives = val);
         addClientConversion("right_click_chest", Boolean.class, (config, val) -> config.rightClickChestInteractions = val);
