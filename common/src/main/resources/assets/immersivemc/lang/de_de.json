@@ -100,8 +100,6 @@
   "config.immersivemc.right_click_in_vr.desc": "Erlaubt es VR Spielern mit Immersives durch den Rechtsklick zu interagieren, sowie es Nicht-VR Spieler tuen.",
   "config.immersivemc.3d_compat": "3D Ressourcen-Paket Kompatibilität",
   "config.immersivemc.3d_compat.desc": "Platziert die Bereiche für Gegenstände von Immersives so, dass diese besser kompatibel mit Ressource-Pakten wie Classic 3d (16x) sind.",
-  "config.immersivemc.crouch_bypass_immersion": "Umgehe Immersion wenn in der Hocke",
-  "config.immersivemc.crouch_bypass_immersion.desc": "Wenn man in der Hocke (am Schleichen) ist umgeht man das Immersive und öffnet das Vanilla GUI.",
 
   "screen.immersivemc.item_guide_customize_screen": "Gegenstands Hilfsanzeigen anpassen. Bewege den Zeiger über die Felder für mehr Information!",
   "config.immersivemc.placement_guide_mode": "Hilfsanzeigenmodus",
