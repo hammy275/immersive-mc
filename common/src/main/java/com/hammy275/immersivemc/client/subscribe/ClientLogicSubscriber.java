@@ -548,7 +548,7 @@ public class ClientLogicSubscriber {
                 if (closest.isPresent()) {
                     if (singleton.isInputHitbox(info, closest.get())) {
                         SwapTracker.c0.tick(singleton, info, closest.get(), true);
-                        return 1;
+                        return SwapTracker.c0.getCooldown();
                     } else {
                         SwapTracker.c0.tick(null, null, -1, inDragHitbox(singleton, info, start, end));
                         if (SwapTracker.c0.getCooldown() <= 0) {
