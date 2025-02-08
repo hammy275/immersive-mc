@@ -28,6 +28,7 @@ public class ClientVRSubscriber {
     protected static int cooldown = 0;
 
     public static void setCooldown(int cooldown) {
+        cooldown = cooldown == 0 ? 1 : 0; // A cooldown of 0 and 1 are functionally the same
         ClientVRSubscriber.cooldown = Math.max(ClientVRSubscriber.cooldown, cooldown);
     }
 
@@ -88,6 +89,7 @@ public class ClientVRSubscriber {
                         (Minecraft.getInstance().options.keyAttack.isDown() || !info.getAllHitboxes().get(hit.get()).isTriggerHitbox())) {
                     if (singleton.isInputHitbox(info, hit.get())) {
                         swapTracker.tick(singleton, info, hit.get(), true);
+                        return swapTracker.getCooldown() >= 0;
                     } else {
                         swapTracker.tick(singleton, info, -1, inDragHitbox(singleton, info, pos));
                         if (cooldown <= 0) {
@@ -97,8 +99,8 @@ public class ClientVRSubscriber {
                             }
                             setCooldown(cooldown);
                         }
+                        return cooldown >= 0;
                     }
-                    return true;
                 } else if (hit.isEmpty()) {
                     if (inDragHitbox(singleton, info, pos)) {
                         infoWithDragHitbox = info;
