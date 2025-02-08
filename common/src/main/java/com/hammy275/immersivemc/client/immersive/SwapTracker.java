@@ -103,6 +103,7 @@ public class SwapTracker {
     }
 
     public void setCooldown(int newCooldown) {
+        newCooldown = newCooldown == 0 ? 1 : 0; // A cooldown of 0 and 1 are functionally the same
         this.rightClickCooldown = Math.max(newCooldown, rightClickCooldown);
     }
 
