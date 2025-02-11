@@ -28,7 +28,7 @@ public class ClientVRSubscriber {
     protected static int cooldown = 0;
 
     public static void setCooldown(int cooldown) {
-        cooldown = cooldown == 0 ? 1 : 0; // A cooldown of 0 and 1 are functionally the same
+        cooldown = cooldown == 0 ? 1 : cooldown; // A cooldown of 0 and 1 are functionally the same
         ClientVRSubscriber.cooldown = Math.max(ClientVRSubscriber.cooldown, cooldown);
     }
 

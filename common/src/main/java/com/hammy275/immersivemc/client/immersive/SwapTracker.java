@@ -100,10 +100,14 @@ public class SwapTracker {
         } else if (this.state == SwapState.DRAG && inputHitbox >= 0) {
             queuedPlacements.add(inputHitbox);
         }
+
+        if (this.state == SwapState.DRAG) {
+            this.rightClickCooldown = Math.max(1, this.rightClickCooldown);
+        }
     }
 
     public void setCooldown(int newCooldown) {
-        newCooldown = newCooldown == 0 ? 1 : 0; // A cooldown of 0 and 1 are functionally the same
+        newCooldown = newCooldown == 0 ? 1 : newCooldown; // A cooldown of 0 and 1 are functionally the same
         this.rightClickCooldown = Math.max(newCooldown, rightClickCooldown);
     }
 
