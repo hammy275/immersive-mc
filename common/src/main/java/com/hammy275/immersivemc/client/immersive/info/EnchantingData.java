@@ -1,8 +1,5 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
@@ -17,8 +14,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
@@ -26,7 +26,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
@@ -57,34 +56,28 @@ public class EnchantingData {
                     boolean hasItem = !info.getItem(0).isEmpty();
                     return FormattedText.composite(
                             Component.literal("\n"),
-                            translate("gui.apotheosis.enchant.eterna").withStyle(ChatFormatting.GREEN),
+                            translate("gui.apothic_enchanting.enchant.eterna").withStyle(ChatFormatting.GREEN),
                             Component.literal("\n"),
-                            makeStatComponent(apothStats.eterna(), 50f, hasItem, false).withStyle(ChatFormatting.GREEN),
+                            makeStatComponent(apothStats.eterna(), 100f, hasItem, false).withStyle(ChatFormatting.GREEN),
                             Component.literal("\n\n"),
-                            translate("gui.apotheosis.enchant.quanta").withStyle(ChatFormatting.RED),
+                            translate("gui.apothic_enchanting.enchant.quanta").withStyle(ChatFormatting.RED),
                             Component.literal("\n"),
                             makeStatComponent(apothStats.quanta(), 100f, hasItem, true).withStyle(ChatFormatting.RED),
                             Component.literal("\n\n"),
-                            translate("gui.apotheosis.enchant.arcana").withStyle(ChatFormatting.DARK_PURPLE),
+                            translate("gui.apothic_enchanting.enchant.arcana").withStyle(ChatFormatting.DARK_PURPLE),
                             Component.literal("\n"),
-                            makeStatComponent(apothStats.arcana(), 100f, hasItem, true).withStyle(ChatFormatting.DARK_PURPLE),
-                            Component.literal("\n\n"),
-                            translate("gui.apotheosis.enchant.rectification").withStyle(ChatFormatting.YELLOW),
-                            Component.literal("\n"),
-                            makeStatComponent(apothStats.rectification(), 100f, hasItem, true).withStyle(ChatFormatting.YELLOW)
+                            makeStatComponent(apothStats.arcana(), 100f, hasItem, true).withStyle(ChatFormatting.DARK_PURPLE)
                     );
                 } else {
                     return Component.EMPTY;
                 }
             }, textStackScaleSize * 1.5f, new Vec3(0.45, 4d/3d, 0)));
-            bookData.renderables.add(new ApothBarBookRenderable(() -> apothStats.eterna() / 50f, new Vec3(1, 0.5, 0),
+            bookData.renderables.add(new ApothBarBookRenderable(() -> apothStats.eterna() / 100f, new Vec3(1, 0.5, 0),
                     0f, 197f, false, info));
             bookData.renderables.add(new ApothBarBookRenderable(() -> apothStats.quanta() / 100f, new Vec3(1, 0.1, 0),
                     5f, 202f, false, info));
             bookData.renderables.add(new ApothBarBookRenderable(() -> apothStats.arcana() / 100f, new Vec3(1, -0.3, 0),
                     10f, 207f, false, info));
-            bookData.renderables.add(new ApothBarBookRenderable(() -> apothStats.rectification() / 100f, new Vec3(1, -0.7, 0),
-                    15f, 20f, true, info));
         } else if (bookData != null && !Apoth.apothImpl.enchantModuleEnabled()) {
             bookData = null;
         }
@@ -98,7 +91,7 @@ public class EnchantingData {
      */
     private MutableComponent translate(String key) {
         if (Platform.isModLoaded("zenith")) {
-            return Component.translatable(key.replaceFirst("apotheosis", "zenith"));
+            return Component.translatable(key.replaceFirst("apothic_enchanting", "zenith"));
         }
         return Component.translatable(key);
     }
@@ -153,7 +146,7 @@ public class EnchantingData {
         public void render(PoseStack stack, ClientBookData data, boolean leftPage, int light, PosRot bookPosRot) {
             if (leftPage || info.getItem(0).isEmpty()) return;
             if (fullLocation == null) {
-                String modId = Platform.isModLoaded("zenith") ? "zenith" : "apotheosis";
+                String modId = Platform.isModLoaded("zenith") ? "zenith" : "apothic_enchanting";
                 fullLocation = ResourceLocation.fromNamespaceAndPath(modId, "textures/gui/enchanting_table.png");
             }
             renderBar(stack, light, amountFullSupplier.get());

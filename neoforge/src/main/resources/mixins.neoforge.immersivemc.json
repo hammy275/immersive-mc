@@ -4,6 +4,7 @@
   "package": "com.hammy275.immersivemc.neoforge.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "CluePayloadMixin"
   ],
   "client": [
   ]

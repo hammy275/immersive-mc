@@ -38,6 +38,13 @@ dependencies {
     modApi "curse.maven:lootr-361276:5709012"
     modApi "curse.maven:ironfurnaces-237664:5582440"
 
+    modApi "curse.maven:apotheosis-313970:6148732"
+    modApi "curse.maven:apothicenchanting-1063926:6084297" // Apotheosis module
+    modApi "curse.maven:apothicspawners-986583:6148923" // Apotheosis module
+    modApi "curse.maven:placebo-283644:6105436" // Apotheosis requirement
+    modApi "curse.maven:patchouli-306770:6164617" // Apotheosis requirement
+    modApi "curse.maven:apothicattributes-898963:6148951" // Apotheosis requirement
+
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive = false }
 }
