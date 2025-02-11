@@ -195,7 +195,7 @@ public class ClientLogicSubscriber {
                 (!VRPluginVerify.clientInVR() && ActiveConfig.FILE_CLIENT.disableImmersiveMCOutsideVR)) return false;
         if (button == 1) {
             int cooldown = handleRightClick(Minecraft.getInstance().player);
-            if (cooldown > 0) {
+            if (cooldown >= 0) {
                 SwapTracker.c0.setCooldown(cooldown);
                 return true;
             }
@@ -479,7 +479,7 @@ public class ClientLogicSubscriber {
     }
 
     public static int handleRightClick(Player player) {
-        if (Minecraft.getInstance().gameMode == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE_CLIENT.disableImmersiveMCOutsideVR)) return 0;
+        if (Minecraft.getInstance().gameMode == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE_CLIENT.disableImmersiveMCOutsideVR)) return -1;
         boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
         HitResult looking = Minecraft.getInstance().hitResult;
 
@@ -536,7 +536,7 @@ public class ClientLogicSubscriber {
         if (rayTraceCooldown > 0) {
             return rayTraceCooldown;
         }
-        return SwapTracker.c0.getCooldown();
+        return -1;
     }
 
     private static <I extends ImmersiveInfo> Integer handleRightClickInfos(Immersive<I, ?> singleton, Vec3 start, Vec3 end) {
@@ -572,7 +572,7 @@ public class ClientLogicSubscriber {
 
     protected static int handleRightClickBlockRayTrace(Player player) {
         HitResult looking = Minecraft.getInstance().hitResult;
-        if (looking == null || looking.getType() != HitResult.Type.BLOCK) return 0;
+        if (looking == null || looking.getType() != HitResult.Type.BLOCK) return -1;
 
         BlockPos pos = ((BlockHitResult) looking).getBlockPos();
         BlockState state = player.level.getBlockState(pos);
@@ -607,7 +607,7 @@ public class ClientLogicSubscriber {
             }
         }
 
-        return 0; // Still here in case if we need it later
+        return -1; // Still here in case if we need it later
     }
 
     private static <I extends ImmersiveInfo> boolean inDragHitbox(Immersive<I, ?> singleton, I info, Vec3 rayStart, Vec3 rayEnd) {
