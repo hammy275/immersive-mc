@@ -185,7 +185,9 @@ public class CommonBookData implements NetworkStorage {
         if (max % 2 != 0) {
             max--;
         }
-        this.maxLeftPageIndex = max;
+        // Items may have item components with zero pages (or books with zero pages in older versions, maybe).
+        // This ensures the maxLeftPageIndex isn't negative.
+        this.maxLeftPageIndex = Math.max(max, 0);
     }
 
     public boolean isDirty() {
