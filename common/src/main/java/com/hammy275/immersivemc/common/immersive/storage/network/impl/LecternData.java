@@ -112,7 +112,7 @@ public class LecternData<T extends CommonBookData> implements NetworkStorage {
         } else if (book.has(DataComponents.WRITABLE_BOOK_CONTENT)) {
             size = book.get(DataComponents.WRITABLE_BOOK_CONTENT).pages().size();
         }
-        return size - 1;
+        return Math.max(size - 1, 0);
     }
 
     @Override
