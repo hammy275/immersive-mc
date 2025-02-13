@@ -54,11 +54,8 @@ public class FurnaceHandler extends ContainerHandler<ListOfItemsStorage> {
                 furnace.setItem(slot, result.mergedFrom);
                 itemTaken = furnace.getItem(2).isEmpty() || furnace.getItem(2).getCount() < beforeGrabCount;
             }
-
-            // Experience and recipes reward. Given only if at least one item was taken. This is the same as
-            // vanilla behavior.
-            if (itemTaken && furnace instanceof AbstractFurnaceBlockEntity afbe) {
-                afbe.awardUsedRecipesAndPopExperience(player);
+            if (itemTaken) {
+                awardXP(furnace, player);
             }
         }
         furnace.setChanged();
@@ -77,5 +74,13 @@ public class FurnaceHandler extends ContainerHandler<ListOfItemsStorage> {
     @Override
     public ResourceLocation getID() {
         return new ResourceLocation(ImmersiveMC.MOD_ID, "furnace");
+    }
+
+    protected void awardXP(WorldlyContainer furnace, ServerPlayer player) {
+        // Experience and recipes reward. Given only if at least one item was taken. This is the same as
+        // vanilla behavior.
+        if (furnace instanceof AbstractFurnaceBlockEntity afbe) {
+            afbe.awardUsedRecipesAndPopExperience(player);
+        }
     }
 }
