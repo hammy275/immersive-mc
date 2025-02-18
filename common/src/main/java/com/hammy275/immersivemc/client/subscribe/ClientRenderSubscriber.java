@@ -137,7 +137,7 @@ public class ClientRenderSubscriber {
                     ImmersiveRenderHelpers.instance().renderHitbox(stack, AABB.ofSize(aabb.getCenter(), size, size, size), true,
                             color.redF(), color.greenF(), color.blueF(), color.alphaF());
                 } else {
-                    OBBClientUtil.renderOBB(stack, hitbox.asOBB(), false, color.redF(), color.greenF(), color.blueF(), color.alphaF());
+                    OBBClientUtil.renderOBB(stack, hitbox.asOBB(), true, color.redF(), color.greenF(), color.blueF(), color.alphaF());
                 }
             }
         }
