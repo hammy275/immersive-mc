@@ -477,7 +477,6 @@ public class Immersives {
                         ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
                         return ClientConstants.defaultCooldownTicks;
                     })
-                    .setNoDragHitbox()
                     .build(),
             BuiltImmersive.class,
             Apoth.compatData
