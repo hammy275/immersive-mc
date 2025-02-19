@@ -40,6 +40,8 @@
   "config.immersivemc.reach_behind_backpack_mode.2.desc": "Allows opening/closing the bag by reaching behind your back and over your shoulder. When active, disables the selected item switching done via reaching over your shoulder in Vivecraft.",
   "config.immersivemc.reach_behind_backpack_mode.3": "Disabled",
   "config.immersivemc.reach_behind_backpack_mode.3.desc": "Disables the ability to open/close the bag via movement.",
+  "config.immersivemc.swap_bag_hand": "Swap Bag Hand",
+  "config.immersivemc.swap_bag_hand.desc": "Use your configured dominant hand for your bag instead of your configured non-dominant hand.",
   "config.immersivemc.backpack_r": "Bag Red Value",
   "config.immersivemc.backpack_g": "Bag Green Value",
   "config.immersivemc.backpack_b": "Bag Blue Value",
