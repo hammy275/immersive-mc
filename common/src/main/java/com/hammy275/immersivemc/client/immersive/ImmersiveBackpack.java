@@ -88,7 +88,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     @Override
     public BlockPos getLightPos(BackpackInfo info) {
         // Light position is bag position if not in light-blocking block, or HMD position if it is in one.
-        BlockPos c1 = new BlockPos(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1().position());
+        BlockPos c1 = new BlockPos(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(getBagControllerNum()).position());
         if (!Minecraft.getInstance().level.getBlockState(c1).canOcclude()) {
             return c1;
         } else {
@@ -119,7 +119,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
 
     @Override
     protected void render(BackpackInfo info, PoseStack stack, boolean isInVR) {
-        boolean leftHanded = VRPlugin.API.isLeftHanded(Minecraft.getInstance().player);
+        boolean leftHanded = leftHanded();
         for (int i = 0; i <= 31; i++) {
             renderHitbox(stack, info.getHitbox(i));
         }
@@ -303,7 +303,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     }
 
     private void calculatePositions(BackpackInfo info, IVRPlayer vrPlayer) {
-        IVRData backpackController = vrPlayer.getController(1);
+        IVRData backpackController = vrPlayer.getController(getBagControllerNum());
         info.handPos = backpackController.position();
         info.handPitch = (float) Math.toRadians(backpackController.getPitch());
         info.handYaw = (float) Math.toRadians(backpackController.getYaw());
@@ -311,7 +311,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
         info.lookVec = backpackController.getLookAngle();
 
         Vec3 rightVec = getRightVec(info).scale(0.25);
-        if (VRPlugin.API.isLeftHanded(Minecraft.getInstance().player)) {
+        if (leftHanded()) {
             // Means we can imagine for right-handed players, and the code will work for left-handed players
             rightVec = rightVec.scale(-1);
         }
@@ -394,5 +394,15 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
         info.setHitbox(31, OBBFactory.instance().create(AABB.ofSize(info.getPosition(31), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, info.handRoll));
 
         info.setInputSlots();
+    }
+
+    private boolean leftHanded() {
+        boolean vrLeftHanded = VRPlugin.API.isLeftHanded(Minecraft.getInstance().player);
+        boolean useSwappedHands = ActiveConfig.active().swapBagHand;
+        return vrLeftHanded != useSwappedHands; // If both are true or both are false, we're using the right hand.
+    }
+
+    private int getBagControllerNum() {
+        return ActiveConfig.active().swapBagHand ? 0 : 1;
     }
 }

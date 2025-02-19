@@ -29,6 +29,7 @@ public final class ClientActiveConfig extends ActiveConfig {
     public boolean disableVanillaInteractionsForSupportedImmersives = false;
     public ReachBehindBackpackMode reachBehindBagMode = ReachBehindBackpackMode.BEHIND_BACK;
     public float textScale = 1f;
+    public boolean swapBagHand = false;
 
     public int clientConfigVersion = 3;
     public static final String CLIENT_CONFIG_VERSION = "clientConfigVersion";
@@ -77,5 +78,6 @@ public final class ClientActiveConfig extends ActiveConfig {
         disableVanillaInteractionsForSupportedImmersives = false;
         reachBehindBagMode = ReachBehindBackpackMode.BEHIND_BACK;
         textScale = 1f;
+        swapBagHand = false;
     }
 }
