@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.BackpackMode;
+import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.config.ReachBehindBackpackMode;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -80,6 +81,10 @@ public class BackpackConfigScreen extends Screen {
                     () -> ConfigScreen.getClientConfigIfAdjusting().reachBehindBagMode,
                     (newModeIndex, newMode) -> ConfigScreen.getClientConfigIfAdjusting().reachBehindBagMode = newMode
             ));
+
+        this.list.addBig(ScreenUtils.createOption("swap_bag_hand",
+                config -> ((ClientActiveConfig) config).swapBagHand,
+                (config, val) -> ((ClientActiveConfig) config).swapBagHand = val));
 
         if (ConfigScreen.getClientConfigIfAdjusting().bagMode.colorable) {
             this.list.addBig(ScreenUtils.createIntSlider(
