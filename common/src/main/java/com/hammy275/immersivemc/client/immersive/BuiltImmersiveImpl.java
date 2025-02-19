@@ -123,8 +123,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
                 }
             }
             if (validBox) {
-                double maxDiff = Math.max(Math.max(maxX - minX, maxY - minY), maxZ - minZ);
-                info.dragHitbox = new AABB(minX, minY, minZ, maxX, maxY, maxZ).inflate(maxDiff * 0.2);
+                info.dragHitbox = new AABB(minX, minY, minZ, maxX, maxY, maxZ).inflate(0.0625);
             } else {
                 info.dragHitbox = null;
             }
