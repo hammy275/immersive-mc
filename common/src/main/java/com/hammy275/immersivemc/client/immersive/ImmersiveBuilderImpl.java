@@ -277,6 +277,8 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
         clone.blockRightClickWhenGUIClickDisabled = this.blockRightClickWhenGUIClickDisabled;
         clone.slotRendersItemGuide = this.slotRendersItemGuide;
         clone.configScreenInfo = null;
+        clone.extraRenderer = this.extraRenderer;
+        clone.dragHitboxCreator = this.dragHitboxCreator;
         return clone;
     }
 
