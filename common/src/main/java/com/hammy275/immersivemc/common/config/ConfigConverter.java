@@ -21,6 +21,11 @@ public class ConfigConverter {
     private static Map<String, OldConfigData<?, ActiveConfig>> OLD_CONFIG_MAP_SHARED;
     private static Map<String, OldConfigData<?, ClientActiveConfig>> OLD_CONFIG_MAP_CLIENT_ONLY;
 
+    // Temporary storage to read these in from the old config
+    private static long readItemGuideColor = -1;
+    private static long readItemGuideSelectedColor = -1;
+    private static long readRangedGrabColor = -1;
+
     // Used to prevent checking for a conversion if we know we already did one or know we don't need to.
     private static boolean definitelyDontConvert = false;
 
@@ -101,6 +106,17 @@ public class ConfigConverter {
         } catch (IOException ignored) {
             // Intentionally empty
         } finally {
+            // Conversion of item guide colors to new system
+            if (readItemGuideColor == 0x3300ffffL && readItemGuideSelectedColor == 0x3300ff00L && readRangedGrabColor == 0xff00ffffL) {
+                ActiveConfig.FILE_CLIENT.itemGuidePreset = ItemGuidePreset.CLASSIC;
+            } else if (readItemGuideColor == 0x638b8b8bL && readItemGuideSelectedColor == 0x7fc5c5c5L && readRangedGrabColor == 0xffc5c5c5L) {
+                ActiveConfig.FILE_CLIENT.itemGuidePreset = ItemGuidePreset.GRAY;
+            } else if (readItemGuideColor != -1 && readItemGuideSelectedColor != -1 && readRangedGrabColor != -1) {
+                ActiveConfig.FILE_CLIENT.itemGuidePreset = ItemGuidePreset.CUSTOM;
+                ActiveConfig.FILE_CLIENT.itemGuideCustomColorData = ItemGuideColorData.of(() -> new RGBA(readItemGuideColor), () -> new RGBA(readItemGuideSelectedColor), () -> new RGBA(readRangedGrabColor));
+            }
+
+            // Delete old config and save
             OLD_CONFIG_FILE.delete();
             ActiveConfig.FILE_SERVER.writeConfigFile(ConfigType.SERVER);
             if (Platform.isClient()) {
@@ -163,9 +179,9 @@ public class ConfigConverter {
         addClientConversion("spin_crafting_output", Boolean.class, (config, val) -> config.spinSomeImmersiveOutputs = val);
         addClientConversion("right_click_in_vr", Boolean.class, (config, val) -> config.rightClickImmersiveInteractionsInVR = val);
         addClientConversion("resource_pack_3d_compat", Boolean.class, (config, val) -> config.compatFor3dResourcePacks = val);
-        addClientConversion("item_guide_color", Long.class, (config, val) -> config.itemGuideColor = new RGBA(val));
-        addClientConversion("item_guide_selected_color", Long.class, (config, val) -> config.itemGuideSelectedColor = new RGBA(val));
-        addClientConversion("ranged_grab_color", Long.class, (config, val) -> config.rangedGrabColor = new RGBA(val));
+        addClientConversion("item_guide_color", Long.class, (config, val) -> readItemGuideColor = val);
+        addClientConversion("item_guide_selected_color", Long.class, (config, val) -> readItemGuideSelectedColor = val);
+        addClientConversion("ranged_grab_color", Long.class, (config, val) -> readRangedGrabColor = val);
         addClientConversion("disable_vanilla_interactions", Boolean.class, (config, val) -> config.disableVanillaInteractionsForSupportedImmersives = val);
         addClientConversion("reach_behind_bag_mode", Integer.class, (config, val) -> config.reachBehindBagMode = ReachBehindBackpackMode.values()[val]);
         addBothConversion("iron_furnaces_furnace_immersion", Boolean.class, (config, val) -> config.useIronFurnacesFurnaceImmersive = val);
