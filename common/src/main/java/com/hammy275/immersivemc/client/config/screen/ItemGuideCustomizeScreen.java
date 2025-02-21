@@ -4,6 +4,9 @@ import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.model.Cube1x1;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
+import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.ItemGuideColorData;
+import com.hammy275.immersivemc.common.config.ItemGuidePreset;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.util.RGBA;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -22,10 +25,11 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.time.Instant;
+import java.util.List;
 
 public class ItemGuideCustomizeScreen extends Screen {
 
-    private static final String[] types = new String[]{"item_guide", "item_guide_selected", "ranged_grab"};
+    private static final String[] types = new String[]{"item_guide_custom", "item_guide_selected_custom", "ranged_grab_custom"};
     private static final char[] rgba = new char[]{'r', 'g', 'b', 'a'};
 
     private final Screen lastScreen;
@@ -42,16 +46,17 @@ public class ItemGuideCustomizeScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        ClientRenderSubscriber.setRenderColors();
         this.renderBackground(graphics);
 
         super.render(graphics, mouseX, mouseY, partialTicks);
         graphics.drawCenteredString(this.font, this.title.getString(),
                 this.width / 2, 8, 0xFFFFFF);
 
-        renderPreview(graphics.pose(), ConfigScreen.getClientConfigIfAdjusting().itemGuideColor, 0.25f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSize);
-        renderPreview(graphics.pose(), ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedColor, 0.5f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize);
+        renderPreview(graphics.pose(), ClientRenderSubscriber.itemGuideColor(), 0.25f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSize);
+        renderPreview(graphics.pose(), ClientRenderSubscriber.itemGuideSelectedColor(), 0.5f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize);
         // Render square for particle color by using our cube model lol
-        renderPreview(graphics.pose(), ConfigScreen.getClientConfigIfAdjusting().rangedGrabColor, 0.75f, true, 1.0f);
+        renderPreview(graphics.pose(), ClientRenderSubscriber.rangedGrabColor(), 0.75f, true, 1.0f);
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
                 this.height * 250 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 250 / 1000 + 16)) {
@@ -123,40 +128,115 @@ public class ItemGuideCustomizeScreen extends Screen {
                     }
         ));
 
+        this.list.addBig(ScreenUtils.createIntSlider(
+                        "config.immersivemc.item_guide_size", (value) -> Component.literal(I18n.get("config.immersivemc.item_guide_size") + ": " + String.format("%.02f", (float) value / 100.0f)),
+                        0, 100, () -> (int) (ConfigScreen.getClientConfigIfAdjusting().itemGuideSize * 100),
+                        (newVal) -> ConfigScreen.getClientConfigIfAdjusting().itemGuideSize = newVal / 100.0d
+                )
+        );
+        this.list.addBig(ScreenUtils.createIntSlider(
+                        "config.immersivemc.item_guide_selected_size", (value) -> Component.literal(I18n.get("config.immersivemc.item_guide_selected_size") + ": " + String.format("%.02f", (float) value / 100.0f)),
+                        0, 100, () -> (int) (ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize * 100),
+                        (newVal) -> ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize = newVal / 100.0d
+                )
+        );
+        if (ConfigScreen.getClientConfigIfAdjusting().itemGuidePreset != ItemGuidePreset.CUSTOM) {
+            this.list.addBig(ScreenUtils.createIntSlider(
+                            "config.immersivemc.ranged_grab_a", (value) -> Component.literal(I18n.get("config.immersivemc.ranged_grab_a") + ": " + value),
+                            0, 255, () -> ConfigScreen.getClientConfigIfAdjusting().colorPresetRangedGrabSize,
+                            newVal -> ConfigScreen.getClientConfigIfAdjusting().colorPresetRangedGrabSize = newVal
+                    )
+            );
+        }
 
-        for (int i = 0; i < types.length; i++) {
-            RGBA color = i == 0 ? ConfigScreen.getClientConfigIfAdjusting().itemGuideColor : i == 1 ? ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedColor : ConfigScreen.getClientConfigIfAdjusting().rangedGrabColor;
-
-            if (i == 0) {
-                String sizeKey = "config." + ImmersiveMC.MOD_ID + "." + types[i] + "_size";
-                this.list.addBig(ScreenUtils.createIntSlider(
-                                sizeKey, (value) -> Component.literal(I18n.get(sizeKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
-                                0, 100, () -> (int) (ConfigScreen.getClientConfigIfAdjusting().itemGuideSize * 100),
-                                 (newVal) -> ConfigScreen.getClientConfigIfAdjusting().itemGuideSize = newVal / 100.0d
-                        )
-                );
-            } else if (i == 1) {
-                String sizeKey = "config." + ImmersiveMC.MOD_ID + "." + types[i] + "_size";
-                this.list.addBig(ScreenUtils.createIntSlider(
-                                sizeKey, (value) -> Component.literal(I18n.get(sizeKey) + ": " + String.format("%.02f", (float) value / 100.0f)),
-                                0, 100, () -> (int) (ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize * 100),
-                                (newVal) -> ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize = newVal / 100.0d
-                        )
-                );
-            }
-
-
-            for (char c : rgba) {
-                String key = types[i];
-
-                String compKey = "config." + ImmersiveMC.MOD_ID + "." + key + "_" + c;
-                int finalI = i;
-                this.list.addBig(ScreenUtils.createIntSlider(
-                        compKey, (value) ->
-                                Component.literal(I18n.get(compKey) + ": " + value),
-                        0, 255, () -> color.getColor(c),
-                        (newVal) -> color.setColor(c, newVal)
+        this.list.addBig(
+                ScreenUtils.createEnumOption(ItemGuidePreset.class,
+                        "config.immersivemc.item_guide_preset",
+                        preset -> Component.translatable("config.immersivemc.item_guide_preset." + preset.ordinal()),
+                        preset -> Component.literal(I18n.get("config.immersivemc.item_guide_preset.desc") + "\n\n" + I18n.get("config.immersivemc.item_guide_preset." + preset.ordinal() + ".desc")),
+                        () -> ConfigScreen.getClientConfigIfAdjusting().itemGuidePreset,
+                        (newPresetIndex, newPreset) -> {
+                            ConfigScreen.getClientConfigIfAdjusting().itemGuidePreset = newPreset;
+                            Minecraft.getInstance().setScreen(new ItemGuideCustomizeScreen(this.lastScreen));
+                        }
                 ));
+
+        if (ConfigScreen.getClientConfigIfAdjusting().itemGuidePreset == ItemGuidePreset.PRIDE_FLAG) {
+            this.list.addBig(
+                    ScreenUtils.createEnumOption(ItemGuidePreset.PrideFlag.class,
+                            "config.immersivemc.item_guide_preset.pride_flag_option",
+                            flag -> Component.translatable("config.immersivemc.item_guide_preset.pride_flag_option." + flag.name().toLowerCase()),
+                            flag -> Component.empty(),
+                            () -> ConfigScreen.getClientConfigIfAdjusting().itemGuidePrideFlag,
+                            (newFlagIndex, newFlag) -> ConfigScreen.getClientConfigIfAdjusting().itemGuidePrideFlag = newFlag
+                    ));
+        }
+
+        if (ConfigScreen.getClientConfigIfAdjusting().itemGuidePreset.isCustomizablePreset()) {
+            this.list.addBig(ScreenUtils.createIntSlider(
+                    "config.immersivemc.item_guide_a", (value) -> Component.literal(I18n.get("config.immersivemc.item_guide_a") + ": " + value),
+                            0, 255, () -> ConfigScreen.getClientConfigIfAdjusting().colorPresetAlpha,
+                            newVal -> ConfigScreen.getClientConfigIfAdjusting().colorPresetAlpha = newVal
+                    )
+            );
+            this.list.addBig(ScreenUtils.createIntSlider(
+                    "config.immersivemc.item_guide_selected_a", (value) -> Component.literal(I18n.get("config.immersivemc.item_guide_selected_a") + ": " + value),
+                            0, 255, () -> ConfigScreen.getClientConfigIfAdjusting().colorPresetSelectedAlpha,
+                            newVal -> ConfigScreen.getClientConfigIfAdjusting().colorPresetSelectedAlpha = newVal
+                    )
+            );
+        }
+
+        if (ConfigScreen.getClientConfigIfAdjusting().itemGuidePreset.showTransitionConfig()) {
+            this.list.addBig(
+                    ScreenUtils.createIntSlider(
+                            "config.immersivemc.item_guide_transition_time",
+                            value -> Component.translatable("config.immersivemc.item_guide_transition_time_value", String.format("%.02f", (float) value / 1000.0f)),
+                            500, 60000,
+                            () -> ConfigScreen.getClientConfigIfAdjusting().multiColorPresetTransitionTimeMS,
+                            newVal -> {
+                                ConfigScreen.getClientConfigIfAdjusting().multiColorPresetTransitionTimeMS = newVal;
+                                ConfigScreen.getClientConfigIfAdjusting().itemGuideCustomColorData = ConfigScreen.getClientConfigIfAdjusting().itemGuideCustomColorData.withChangedTransitionTime(newVal);
+                            }
+                    ));
+        }
+
+        if (ConfigScreen.getClientConfigIfAdjusting().itemGuidePreset == ItemGuidePreset.CUSTOM) {
+
+            ItemGuideColorData colorData = ActiveConfig.FILE_CLIENT.itemGuideCustomColorData;
+            for (String key : types) {
+                List<RGBA> colors = key.equals(types[0]) ? colorData.colors().get() : key.equals(types[1]) ? colorData.selectedColors().get() : colorData.rangedGrabColors().get();
+                // TODO: Don't just reset the screen when number of custom colors is adjusted
+                this.list.addBig(ScreenUtils.createIntSlider(
+                        "config.immersivemc.num_custom_colors." + key,
+                        value -> Component.literal(I18n.get("config.immersivemc.num_custom_colors." + key) + ": " + value),
+                        1, 10,
+                        colors::size,
+                        newVal -> {
+                            List<RGBA> newColors = colors;
+                            while (newVal > newColors.size()) {
+                                newColors.add(RGBA.random());
+                            }
+                            if (newVal < newColors.size()) {
+                                newColors = newColors.subList(0, newVal);
+                            }
+                            List<RGBA> newColorsFinal = newColors;
+                            if (key.equals(types[0])) {
+                                ActiveConfig.FILE_CLIENT.itemGuideCustomColorData = new ItemGuideColorData(() -> newColorsFinal,
+                                        colorData.selectedColors(), colorData.rangedGrabColors(), colorData.transitionTimeMS());
+                            } else if (key.equals(types[1])) {
+                                ActiveConfig.FILE_CLIENT.itemGuideCustomColorData = new ItemGuideColorData(colorData.colors(),
+                                        () -> newColorsFinal, colorData.rangedGrabColors(), colorData.transitionTimeMS());
+                            } else {
+                                ActiveConfig.FILE_CLIENT.itemGuideCustomColorData = new ItemGuideColorData(colorData.colors(),
+                                        colorData.selectedColors(), () -> newColorsFinal, colorData.transitionTimeMS());
+                            }
+                            // Prevents different cycles from getting out of sync when returning to other modes
+                            ClientRenderSubscriber.resetCycleProgresses();
+                            Minecraft.getInstance().setScreen(new ItemGuideCustomizeScreen(this.lastScreen));
+                        }
+                        ));
+                addColorOptions(colors, key);
             }
         }
 
@@ -166,7 +246,22 @@ public class ItemGuideCustomizeScreen extends Screen {
                 BUTTON_WIDTH, BUTTON_HEIGHT,
                 this
         ));
+    }
 
+    private void addColorOptions(List<RGBA> colors, String key) {
+        for (int i = 0; i < colors.size(); i++) {
+            RGBA color = colors.get(i);
+            for (char c : rgba) {
+                String compKey = "config." + ImmersiveMC.MOD_ID + "." + key + "." + c;
+                int readableColorNum = i + 1;
+                this.list.addBig(ScreenUtils.createIntSlider(
+                        compKey,
+                        value -> Component.translatable(compKey, String.valueOf(readableColorNum), String.valueOf(value)),
+                        0, 255, () -> color.getColor(c),
+                        (newVal) -> color.setColor(c, newVal)
+                ));
+            }
+        }
     }
 
     @Override

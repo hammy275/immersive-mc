@@ -6,6 +6,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
 
 @JsonAdapter(RGBA.class)
 public class RGBA extends TypeAdapter<RGBA> {
@@ -23,8 +24,34 @@ public class RGBA extends TypeAdapter<RGBA> {
         this.b = (int) (argb & 255);
     }
 
+    public RGBA(int rgb, int a) {
+        this.a = a & 255;
+        this.r = rgb >> 16 & 255;
+        this.g = rgb >> 8 & 255;
+        this.b = rgb & 255;
+    }
+
+    public RGBA(int r, int g, int b, int a) {
+        this.a = a;
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    }
+
+    public static RGBA random() {
+        return new RGBA(ThreadLocalRandom.current().nextLong(0xFFFFFFFFL + 1L));
+    }
+
     public long toLong() {
         return (((long) this.a) << 24L) + (((long) this.r) << 16L) + (((long) this.g) << 8L) + this.b;
+    }
+
+    public int getRGB() {
+        return (this.r << 16L) + (this.g << 8L) + this.b;
+    }
+
+    public int getAlpha() {
+        return this.a;
     }
 
     public float redF() {
