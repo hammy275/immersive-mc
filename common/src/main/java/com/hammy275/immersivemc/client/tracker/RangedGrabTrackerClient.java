@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.tracker;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.GrabItemPacket;
@@ -80,7 +81,7 @@ public class RangedGrabTrackerClient extends AbstractTracker {
             }
 
             if (selected != null) {
-                RGBA color = ActiveConfig.active().rangedGrabColor;
+                RGBA color = ClientRenderSubscriber.rangedGrabColor();
                 Vec3 pos = selected.position().add(0, 0.2, 0);
                 selected.level().addParticle(new DustParticleOptions(
                         new Vector3f(color.redF(), color.greenF(), color.blueF()), color.alphaF()),

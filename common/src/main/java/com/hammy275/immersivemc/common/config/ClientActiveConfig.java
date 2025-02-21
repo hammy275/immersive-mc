@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.common.config;
 
-import com.hammy275.immersivemc.common.util.RGBA;
 import net.minecraft.util.Mth;
 
 public final class ClientActiveConfig extends ActiveConfig {
@@ -23,15 +22,19 @@ public final class ClientActiveConfig extends ActiveConfig {
     public boolean compatFor3dResourcePacks = false;
     public double itemGuideSize = 1.0;
     public double itemGuideSelectedSize = 1.0;
-    public RGBA itemGuideColor = new RGBA(0x638b8b8bL);
-    public RGBA itemGuideSelectedColor = new RGBA(0x7fc5c5c5L);
-    public RGBA rangedGrabColor = new RGBA(0xffc5c5c5L);
+    public transient ItemGuidePreset itemGuidePreset = ItemGuidePreset.GRAY;
+    public transient ItemGuidePreset.PrideFlag itemGuidePrideFlag = ItemGuidePreset.PrideFlag.PRIDE;
+    public transient int colorPresetAlpha = 0x7F;
+    public transient int colorPresetSelectedAlpha = 0xCF;
+    public transient int colorPresetRangedGrabSize = 0xFF;
+    public transient int multiColorPresetTransitionTimeMS = 5000;
+    public transient ItemGuideColorData itemGuideCustomColorData = ItemGuideColorData.DEFAULT_CUSTOM;
     public boolean disableVanillaInteractionsForSupportedImmersives = false;
     public ReachBehindBackpackMode reachBehindBagMode = ReachBehindBackpackMode.BEHIND_BACK;
     public float textScale = 1f;
     public boolean swapBagHand = false;
 
-    public int clientConfigVersion = 3;
+    public int clientConfigVersion = 4;
     public static final String CLIENT_CONFIG_VERSION = "clientConfigVersion";
 
     static {
@@ -47,11 +50,15 @@ public final class ClientActiveConfig extends ActiveConfig {
         placementGuideMode = firstEnumIfNull(placementGuideMode, PlacementGuideMode.class);
         itemGuideSize = Mth.clamp(itemGuideSize, 0, 1);
         itemGuideSelectedSize = Mth.clamp(itemGuideSelectedSize, 0, 1);
-        itemGuideColor = defaultIfNull(itemGuideColor, new RGBA(0x638b8b8bL));
-        itemGuideSelectedColor = defaultIfNull(itemGuideSelectedColor, new RGBA(0x7fc5c5c5L));
-        rangedGrabColor = defaultIfNull(rangedGrabColor, new RGBA(0xffc5c5c5L));
         reachBehindBagMode = firstEnumIfNull(reachBehindBagMode, ReachBehindBackpackMode.class);
         textScale = Mth.clamp(textScale, 0.5f, 2f);
+        itemGuidePreset = firstEnumIfNull(itemGuidePreset, ItemGuidePreset.class);
+        itemGuidePrideFlag = firstEnumIfNull(itemGuidePrideFlag, ItemGuidePreset.PrideFlag.class);
+        itemGuideCustomColorData = defaultIfNull(itemGuideCustomColorData, ItemGuideColorData.DEFAULT_CUSTOM);
+        multiColorPresetTransitionTimeMS = Mth.clamp(multiColorPresetTransitionTimeMS, 500, 60000);
+        colorPresetAlpha = Mth.clamp(colorPresetAlpha, 0, 0xFF);
+        colorPresetSelectedAlpha = Mth.clamp(colorPresetSelectedAlpha, 0, 0xFF);
+        colorPresetRangedGrabSize = Mth.clamp(colorPresetRangedGrabSize, 0, 0xFF);
     }
 
     @Override
@@ -72,12 +79,11 @@ public final class ClientActiveConfig extends ActiveConfig {
         compatFor3dResourcePacks = false;
         itemGuideSize = 1.0;
         itemGuideSelectedSize = 1.0;
-        itemGuideColor = new RGBA(0x638b8b8bL);
-        itemGuideSelectedColor = new RGBA(0x7fc5c5c5L);
-        rangedGrabColor = new RGBA(0xffc5c5c5L);
         disableVanillaInteractionsForSupportedImmersives = false;
         reachBehindBagMode = ReachBehindBackpackMode.BEHIND_BACK;
         textScale = 1f;
         swapBagHand = false;
     }
+
+
 }
