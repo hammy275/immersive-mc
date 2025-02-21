@@ -45,8 +45,19 @@ public class ActiveConfig implements Cloneable {
     // Basic sanity check to make sure server and client have compatible configs.
     public static int fieldsHash = 0;
 
-    protected static final Gson GSON = new Gson();
-    protected static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();
+    // transient fields are ones not sent over the network. They are still saved to and loaded from the config file!
+    protected static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(ItemGuideColorData.class, new ItemGuideColorData.GsonHandler())
+            .excludeFieldsWithModifiers(Modifier.STATIC) // Allow transient fields
+            .create();
+    protected static final Gson GSON_NETWORK = new GsonBuilder()
+            .registerTypeAdapter(ItemGuideColorData.class, new ItemGuideColorData.GsonHandler())
+            .create();
+    protected static final Gson GSON_PRETTY = new GsonBuilder()
+            .registerTypeAdapter(ItemGuideColorData.class, new ItemGuideColorData.GsonHandler())
+            .excludeFieldsWithModifiers(Modifier.STATIC) // Allow transient fields
+            .setPrettyPrinting()
+            .create();
 
     public boolean useAnvilImmersive = true;
     public boolean useBrewingStandImmersive = true;
@@ -360,7 +371,7 @@ public class ActiveConfig implements Cloneable {
     public void encode(FriendlyByteBuf buffer) {
         buffer.writeBoolean(this instanceof ClientActiveConfig);
         buffer.writeInt(fieldsHash);
-        buffer.writeUtf(GSON.toJson(this));
+        buffer.writeUtf(GSON_NETWORK.toJson(this));
     }
 
     /**
@@ -374,7 +385,7 @@ public class ActiveConfig implements Cloneable {
             // Version mismatch, return disabled clone.
             return (ActiveConfig) DISABLED.clone();
         }
-        return GSON.fromJson(buffer.readUtf(), configClass);
+        return GSON_NETWORK.fromJson(buffer.readUtf(), configClass);
     }
 
     /**
