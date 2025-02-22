@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.hammy275.immersivemc.common.util.MemoizedSupplier;
 import com.hammy275.immersivemc.common.util.RGBA;
 
 import java.lang.reflect.Type;
@@ -25,9 +26,9 @@ import java.util.function.Supplier;
 public record ItemGuideColorData(Supplier<List<RGBA>> colors, Supplier<List<RGBA>> selectedColors, Supplier<List<RGBA>> rangedGrabColors, Supplier<Integer> transitionTimeMS) {
 
     public static final ItemGuideColorData DEFAULT_CUSTOM = new ItemGuideColorData(
-            () -> ItemGuidePreset.GRAY.colorData.get().colors.get(),
-            () -> ItemGuidePreset.GRAY.colorData.get().selectedColors.get(),
-            () -> ItemGuidePreset.GRAY.colorData.get().rangedGrabColors.get(),
+            new MemoizedSupplier<>(() -> ItemGuidePreset.GRAY.colorData.get().colors.get()),
+            new MemoizedSupplier<>(() -> ItemGuidePreset.GRAY.colorData.get().selectedColors.get()),
+            new MemoizedSupplier<>(() -> ItemGuidePreset.GRAY.colorData.get().rangedGrabColors.get()),
             () -> 5000
     );
 
