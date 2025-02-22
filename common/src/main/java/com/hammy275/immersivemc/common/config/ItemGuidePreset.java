@@ -1,14 +1,16 @@
 package com.hammy275.immersivemc.common.config;
 
+import com.hammy275.immersivemc.common.util.MemoizedSupplier;
 import com.hammy275.immersivemc.common.util.RGBA;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
 public enum ItemGuidePreset {
-    GRAY(ItemGuideColorData.of(() -> new RGBA(0x638b8b8b), () -> new RGBA(0x7fc5c5c5L), () -> new RGBA(0xc5c5c5, ClientActiveConfig.FILE_CLIENT.colorPresetRangedGrabSize))),
-    CLASSIC(ItemGuideColorData.of(() -> new RGBA(0x3300ffffL), () -> new RGBA(0x3300ff00L), () -> new RGBA(0x00ffff, ClientActiveConfig.FILE_CLIENT.colorPresetRangedGrabSize))),
-    PRIDE_FLAG(() -> ClientActiveConfig.FILE_CLIENT.itemGuidePrideFlag.colorData),
+    GRAY(new ItemGuideColorData(new MemoizedSupplier<>(List.of(new RGBA(0x638b8b8b))), new MemoizedSupplier<>(List.of(new RGBA(0x7fc5c5c5L))), new MemoizedSupplier<>(List.of(new RGBA(0x7fc5c5c5L))), () -> ClientActiveConfig.FILE_CLIENT.colorPresetRangedGrabSize)),
+    CLASSIC(new ItemGuideColorData(new MemoizedSupplier<>(List.of(new RGBA(0x3300ffffL))), new MemoizedSupplier<>(List.of(new RGBA(0x3300ff00L))), new MemoizedSupplier<>(List.of(new RGBA(0x00ffff))), () -> ClientActiveConfig.FILE_CLIENT.colorPresetRangedGrabSize)),
+    PRIDE_FLAG(() -> ClientActiveConfig.FILE_CLIENT.itemGuidePrideFlag.multiColorPresetHolder.colorData),
     CUSTOM(() -> ClientActiveConfig.FILE_CLIENT.itemGuideCustomColorData);
 
     public final Supplier<ItemGuideColorData> colorData;
@@ -29,6 +31,55 @@ public enum ItemGuidePreset {
         return this == PRIDE_FLAG;
     }
 
+    /**
+     * Holds data for multi-color presets to not constantly create lists every time colors are retrieved.
+     */
+    public static class MultiColorPresetHolder {
+
+        private final List<RGBA> colors;
+        private final List<RGBA> selectedColors;
+        private final List<RGBA> rangedGrabColors;
+
+        public final ItemGuideColorData colorData;
+
+        private int lastAlpha = -1;
+        private int lastSelectedAlpha = -1;
+        private int lastRangedGrabAlpha = -1;
+
+        public MultiColorPresetHolder(List<RGBA> colors) {
+            this.colors = new ArrayList<>(colors);
+            this.selectedColors = new ArrayList<>(colors);
+            this.rangedGrabColors = new ArrayList<>(colors);
+            this.colorData = new ItemGuideColorData(
+                    () -> {
+                        int newAlpha = ActiveConfig.FILE_CLIENT.colorPresetAlpha;
+                        if (lastAlpha != newAlpha) {
+                            this.colors.replaceAll(color -> new RGBA(color.getRGB(), newAlpha));
+                            lastAlpha = newAlpha;
+                        }
+                        return this.colors;
+                    },
+                    () -> {
+                        int newAlpha = ActiveConfig.FILE_CLIENT.colorPresetSelectedAlpha;
+                        if (lastSelectedAlpha != newAlpha) {
+                            this.selectedColors.replaceAll(color -> new RGBA(color.getRGB(), newAlpha));
+                            lastSelectedAlpha = newAlpha;
+                        }
+                        return this.selectedColors;
+                    },
+                    () -> {
+                        int newAlpha = ActiveConfig.FILE_CLIENT.colorPresetRangedGrabSize;
+                        if (lastRangedGrabAlpha != newAlpha) {
+                            this.rangedGrabColors.replaceAll(color -> new RGBA(color.getRGB(), newAlpha));
+                            lastRangedGrabAlpha = newAlpha;
+                        }
+                        return this.rangedGrabColors;
+                    },
+                    () -> ActiveConfig.FILE_CLIENT.multiColorPresetTransitionTimeMS
+            );
+        }
+    }
+
     public enum PrideFlag {
         PRIDE(List.of(0xE40303, 0xFF8C00, 0xFFED00, 0x008026, 0x24408E, 0x732982)),
         ASEXUAL(List.of(0x000000, 0xA3A3A3, 0xFFFFFF, 0x800080)),
@@ -39,15 +90,10 @@ public enum ItemGuidePreset {
         PANSEXUAL(List.of(0xFF218C, 0xFFD800, 0x21B1FF)),
         TRANSGENDER(List.of(0x5BCEFA, 0xF5A9B8, 0xFFFFFF, 0xF5A9B8, 0x5BCEFA));
 
-        public final ItemGuideColorData colorData;
+        public final MultiColorPresetHolder multiColorPresetHolder;
 
         PrideFlag(List<Integer> colors) {
-            this.colorData = new ItemGuideColorData(
-                    () -> colors.stream().map(color -> new RGBA(color, ActiveConfig.FILE_CLIENT.colorPresetAlpha)).toList(),
-                    () -> colors.stream().map(color -> new RGBA(color, ActiveConfig.FILE_CLIENT.colorPresetSelectedAlpha)).toList(),
-                    () -> colors.stream().map(color -> new RGBA(color, ActiveConfig.FILE_CLIENT.colorPresetRangedGrabSize)).toList(),
-                    () -> ActiveConfig.FILE_CLIENT.multiColorPresetTransitionTimeMS
-            );
+            this.multiColorPresetHolder = new MultiColorPresetHolder(colors.stream().map(RGBA::new).toList());
         }
     }
 }

@@ -23,6 +23,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemGuideCustomizeScreen extends Screen {
@@ -210,7 +211,7 @@ public class ItemGuideCustomizeScreen extends Screen {
                         1, 10,
                         colors::size,
                         newVal -> {
-                            List<RGBA> newColors = colors;
+                            List<RGBA> newColors = new ArrayList<>(colors);
                             while (newVal > newColors.size()) {
                                 newColors.add(RGBA.random());
                             }
