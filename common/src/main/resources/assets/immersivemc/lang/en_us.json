@@ -149,6 +149,8 @@
   "config.immersivemc.crouch_mode.2.desc": "While crouching, ImmersiveMC will not do anything differently than if you were not crouching.",
   "config.immersivemc.text_scale": "Text Scaling",
   "config.immersivemc.text_scale_val": "Text Scale: %sx",
+  "config.immersivemc.grab_beacon": "Use Grab Beacon [VR Only]",
+  "config.immersivemc.grab_beacon.desc": "Whether to grab effects for the Immersive beacon instead of \"clicking\" them.",
 
   "screen.immersivemc.item_guide_customize_screen": "Customize Item Guides. Hover over a preview for more info!",
   "config.immersivemc.placement_guide_mode": "Placement Guide Mode",

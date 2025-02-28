@@ -178,6 +178,26 @@ public interface ImmersiveRenderHelpers {
                             @Nullable Direction facing);
 
     /**
+     * Render an image in the world.
+     * @param stack The pose stack being rendered with.
+     * @param imageLocation The location to the image PNG file.
+     * @param minImageU Minimum U coordinate in the image. Should be in the range [0.0f, 1.0f]
+     * @param minImageV Minimum V coordinate in the image. Should be in the range [0.0f, 1.0f]
+     * @param maxImageU Maximum U coordinate in the image. Should be in the range [0.0f, 1.0f]
+     * @param maxImageV Maximum V coordinate in the image. Should be in the range [0.0f, 1.0f]
+     * @param pos The position in the world to render at.
+     * @param size The size to render this image at.
+     * @param light The packed sky light and block light to render with.
+     * @param roll The roll to render with, in degrees.
+     * @param facing The direction for the item to face. If null, the item will face the camera. This value should not
+     *               be UP or DOWN.
+     */
+    public void renderImage(PoseStack stack, ResourceLocation imageLocation,
+                            float minImageU, float minImageV, float maxImageU, float maxImageV,
+                            Vec3 pos, float size, int light, float roll,
+                            @Nullable Direction facing);
+
+    /**
      * Returns a float between 0 and 1 denoting the multiplier to the size of something being rendered that ImmersiveMC
      * uses to create the initial "growing" animation. If you want to create such an animation, or are using a function
      * that doesn't already handle it for you, use this in case the formula ImmersiveMC uses changes later.

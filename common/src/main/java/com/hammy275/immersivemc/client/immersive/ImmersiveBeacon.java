@@ -11,15 +11,21 @@ import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.client.immersive.info.HitboxItemPair;
+import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
+import com.hammy275.immersivemc.client.immersive_item.info.HeldImageImmersiveInfo;
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.BeaconConfirmPacket;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
+import com.hammy275.immersivemc.common.vr.VRPlugin;
+import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -38,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage> {
 
@@ -65,17 +72,67 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
 
     @Override
     public int handleHitboxInteract(BeaconInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
+        ResourceLocation id = getHandler().getID();
+        BiConsumer<HeldImageImmersiveInfo<Integer>, IVRData> heldItemTicker = !useGrabBeacon() ? null : (imageInfo, handData) -> {
+            if (!Immersives.immersiveBeacon.getTrackedObjects().contains(info)) {
+                imageInfo.shouldRemove = true;
+            }
+        };
         int hitboxIndex = hitboxIndices.get(0);
         if (hitboxIndex <= 4) {
             info.effectSelected = hitboxIndex;
+            if (useGrabBeacon()) {
+                HandImmersives.heldImageImmersive.setHeldImage(hand, effectLocations[hitboxIndex], id, hitboxIndex, 1f/3f, heldItemTicker);
+            }
         } else if (hitboxIndex == 5) {
             info.regenSelected = true;
+            if (useGrabBeacon()) {
+                HandImmersives.heldImageImmersive.setHeldImage(hand, regenerationLocation, id, 5, 1f/3f, heldItemTicker);
+            }
         } else if (hitboxIndex == 6) {
             info.regenSelected = false;
+            if (useGrabBeacon()) {
+                HandImmersives.heldImageImmersive.setHeldImage(hand, addLocation, id, -1, 1f/3f, heldItemTicker);
+            }
         } else if (hitboxIndex == 7) {
-            Network.INSTANCE.sendToServer(new BeaconConfirmPacket(info.getBlockPosition(), info.getEffectId(),
-                    info.regenSelected ? Registry.MOB_EFFECT.getId(MobEffects.REGENERATION) : -1));
-            VRRumble.rumbleIfVR(Minecraft.getInstance().player, 0, CommonConstants.vibrationTimeWorldInteraction);
+            int effectId = -2;
+            int secondaryId = -2;
+            if (useGrabBeacon()) {
+                List<HeldImageImmersiveInfo<?>> heldImages = HandImmersives.heldImageImmersive.getHeldImages(id);
+                if (!heldImages.isEmpty()) {
+                    if (info.lastLevel < 4) {
+                        secondaryId = -1;
+                    } else {
+                        secondaryId = heldImages.stream().filter(imageInfo -> {
+                            int held = (int) imageInfo.heldData;
+                            return (held == 5 || held == -1) && info.hitboxes.get(7).box != null
+                                    && BoundingBox.contains(info.hitboxes.get(7).box, VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(imageInfo.hand.ordinal()).position());
+                        }).findFirst().map(heldImageImmersiveInfo -> (int) heldImageImmersiveInfo.heldData).orElse(-2);
+                        if (secondaryId != -2) {
+                            secondaryId = info.regenSelected ? Registry.MOB_EFFECT.getId(MobEffects.REGENERATION) : -1;
+                        }
+                    }
+                    effectId = heldImages.stream().filter(imageInfo -> {
+                        int held = (int) imageInfo.heldData;
+                        return held >= 0 && held <= 4 && info.hitboxes.get(7).box != null
+                                && BoundingBox.contains(info.hitboxes.get(7).box, VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(imageInfo.hand.ordinal()).position());
+                    }).findFirst().map(heldImageImmersiveInfo -> (int) heldImageImmersiveInfo.heldData).orElse(-2);
+                    if (effectId >= 0) {
+                        info.effectSelected = effectId;
+                    }
+                }
+            } else {
+                effectId = info.effectSelected;
+                secondaryId = info.regenSelected ? Registry.MOB_EFFECT.getId(MobEffects.REGENERATION) : -1;
+            }
+            if (effectId >= 0 && secondaryId != -2 && !info.hitboxes.get(8).item.isEmpty()) {
+                effectId = info.getEffectId();
+                Network.INSTANCE.sendToServer(new BeaconConfirmPacket(info.getBlockPosition(), effectId, secondaryId));
+                VRRumble.rumbleIfVR(Minecraft.getInstance().player, 0, CommonConstants.vibrationTimeWorldInteraction);
+                HandImmersives.heldImageImmersive.removeImages(id);
+            } else {
+                return -1;
+            }
         } else {
             ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(0), hand, false);
         }
@@ -132,7 +189,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
 
         float displaySize = (float) displayHitboxSize * transitionMultiplier;
 
-        if (info.effectSelected != -1) {
+        if (info.effectSelected != -1 && !useGrabBeacon()) {
             helpers.renderImage(stack, effectLocations[info.effectSelected], info.effectSelectedDisplayPos.add(0, -0.05, 0),
                     displaySize, info.light, info.lastPlayerDir);
         }
@@ -149,7 +206,9 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
 
         HitboxItemPair hitbox7 = info.hitboxes.get(7);
         if (hitbox7.box != null && info.isEffectSelected()) {
-            if (info.isReadyForConfirm()) {
+            if (useGrabBeacon()) {
+                helpers.renderHitbox(stack, hitbox7.box);
+            } else if (info.isReadyForConfirm()) {
                 helpers.renderImage(stack, confirmLocation, BoundingBox.getCenter(hitbox7.box).add(0, -0.1, 0),
                         info.isSlotHovered(7) ? ClientConstants.itemScaleSizeBeacon * 1.25f : ClientConstants.itemScaleSizeBeacon,
                         info.light, info.lastPlayerDir);
@@ -163,19 +222,21 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
             } else {
                 xMult = 1;
             }
-            helpers.renderHitbox(stack,
-                    AABB.ofSize(info.effectSelectedDisplayPos, displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
-                    true, 0f, 1f, 0f);
-            if (info.regenSelected && info.hitboxes.get(5).box != null) {
+            if (!useGrabBeacon()) {
                 helpers.renderHitbox(stack,
-                        AABB.ofSize(BoundingBox.getCenter(info.hitboxes.get(5).box),
-                                displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
+                        AABB.ofSize(info.effectSelectedDisplayPos, displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
                         true, 0f, 1f, 0f);
-            } else if (!info.regenSelected && info.hitboxes.get(6).box != null) {
-                helpers.renderHitbox(stack,
-                        AABB.ofSize(BoundingBox.getCenter(info.hitboxes.get(6).box),
-                                displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
-                        true, 0f, 1f, 0f);
+                if (info.regenSelected && info.hitboxes.get(5).box != null) {
+                    helpers.renderHitbox(stack,
+                            AABB.ofSize(BoundingBox.getCenter(info.hitboxes.get(5).box),
+                                    displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
+                            true, 0f, 1f, 0f);
+                } else if (!info.regenSelected && info.hitboxes.get(6).box != null) {
+                    helpers.renderHitbox(stack,
+                            AABB.ofSize(BoundingBox.getCenter(info.hitboxes.get(6).box),
+                                    displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
+                            true, 0f, 1f, 0f);
+                }
             }
         }
     }
@@ -238,12 +299,16 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
                             .add(forwardFromBlockVec.scale(itemHitboxSize / 2d)).add(0, itemHitboxSize / 2d + 0.01, 0)),
                     itemHitboxSize, itemHitboxSize, itemHitboxSize
             );
-            info.hitboxes.get(7).box = AABB.ofSize(
-                    BoundingBox.getCenter(info.hitboxes.get(8).box).add(0, itemHitboxSize / 2d + 0.25, 0),
-                    itemHitboxSize, itemHitboxSize, itemHitboxSize
-            );
+            if (useGrabBeacon()) {
+                info.hitboxes.get(7).box = new AABB(info.getBlockPosition()).inflate(0.001);
+            } else {
+                info.hitboxes.get(7).box = AABB.ofSize(
+                        BoundingBox.getCenter(info.hitboxes.get(8).box).add(0, itemHitboxSize / 2d + 0.25, 0),
+                        itemHitboxSize, itemHitboxSize, itemHitboxSize
+                );
+            }
 
-            info.effectSelectedDisplayPos = center.add(0, 0.125, 0).add(leftVec.scale(-1d/3d));
+            info.effectSelectedDisplayPos = center.add(0, 0.125, 0).add(leftVec.scale(-1d/3d)).add(forwardFromBlockVec.scale(0.45));
 
             int beaconLevel = ((BeaconBlockEntityMixin) beacon).immersiveMC$getLevels();
             if (info.lastLevel > beaconLevel) { // Beacon downgraded, potentially clear selected
@@ -260,7 +325,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
                 long millisPerRot = 9000;
                 // Need to get the direction the player is facing, so opposite the forward (which is immersive's forward)
                 Direction centerDir = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
-                Vec3 forwardPos = center.add(leftVec.scale(0.8)).add(0, effectCircleRadius, 0);
+                Vec3 forwardPos = center.add(leftVec.scale(0.8)).add(0, effectCircleRadius, 0).add(forwardFromBlockVec.scale(0.45));
                 double rot0 = ((double) (timeSinceStartMilli % millisPerRot) / millisPerRot) * 2 * Math.PI;
                 if (beaconLevel == 1) {
                     double rot1 = rot0 + Math.PI;
@@ -326,6 +391,10 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
             }
             info.lastLevel = beaconLevel;
         }
+
+        for (int i = 0; i < info.hitboxes.size(); i++) {
+            info.hitboxes.get(i).isTriggerHitbox = !useGrabBeacon();
+        }
     }
 
     /**
@@ -362,5 +431,9 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
         } else {
             return new Vec3(forwardPos.x, newY, newXZ);
         }
+    }
+
+    public static boolean useGrabBeacon() {
+        return VRPluginVerify.clientInVR() && ActiveConfig.active().useGrabBeaconInVR;
     }
 }
