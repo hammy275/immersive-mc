@@ -8,8 +8,8 @@ import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
-import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
-import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
+import com.hammy275.immersivemc.client.immersive_item.AbstractHandImmersive;
+import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
 import com.hammy275.immersivemc.client.model.Cube1x1;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ItemGuideColorData;
@@ -60,7 +60,7 @@ public class ClientRenderSubscriber {
                 renderInfos(singleton, stack);
             }
             if (VRPluginVerify.clientInVR()) {
-                for (AbstractItemImmersive<?> singleton : ItemImmersives.ITEM_IMMERSIVES) {
+                for (AbstractHandImmersive<?> singleton : HandImmersives.HAND_IMMERSIVES) {
                     singleton.renderAll(stack);
                 }
             }
