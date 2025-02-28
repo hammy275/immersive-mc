@@ -221,6 +221,11 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
     public void renderImage(PoseStack stack, ResourceLocation imageLocation, float minImageU, float minImageV,
                             float maxImageU, float maxImageV, Vec3 pos, float size, int light,
                             @Nullable Direction facing) {
+        renderImage(stack, imageLocation, minImageU, minImageV, maxImageU, maxImageV, pos, size, light, 0, facing);
+    }
+
+    @Override
+    public void renderImage(PoseStack stack, ResourceLocation imageLocation, float minImageU, float minImageV, float maxImageU, float maxImageV, Vec3 pos, float size, int light, float roll, @Nullable Direction facing) {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.pushPose();
         stack.translate(-renderInfo.getPosition().x + pos.x,
@@ -228,6 +233,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
                 -renderInfo.getPosition().z + pos.z);
         stack.scale(size, size, size);
 
+        stack.mulPose(Axis.ZN.rotationDegrees(roll));
         // If north, we're good to go
         if (facing == Direction.WEST) {
             stack.mulPose(Axis.YP.rotationDegrees(90));
