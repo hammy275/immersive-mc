@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.config.screen;
 import com.hammy275.immersivemc.common.config.ConfigType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.hammy275.immersivemc.common.config.CrouchMode;
+import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
@@ -71,6 +72,10 @@ public class ImmersivesCustomizeScreen extends Screen {
                     () -> (int) (ConfigScreen.getClientConfigIfAdjusting().textScale * 20),
                     newVal -> ConfigScreen.getClientConfigIfAdjusting().textScale = newVal / 20f
             ));
+        }
+
+        if (VRPluginVerify.clientInVR()) {
+            ScreenUtils.addOptionIfClient("grab_beacon", config -> config.useGrabBeaconInVR, (config, newVal) -> config.useGrabBeaconInVR = newVal, this.list);
         }
 
         this.addRenderableWidget(this.list);
