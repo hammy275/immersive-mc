@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.mixin;
 
-import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
-import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
+import com.hammy275.immersivemc.client.immersive_item.AbstractHandImmersive;
+import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -19,8 +19,8 @@ public class ItemInHandRendererMixin {
                     at = @At("HEAD"), index = 6, ordinal = 0, argsOnly = true)
     private ItemStack immersiveMC$overwriteItemStack(ItemStack stack, AbstractClientPlayer player, float f, float g, InteractionHand hand) {
         if (player == Minecraft.getInstance().player && VRPluginVerify.clientInVR()) {
-            for (AbstractItemImmersive<?> immersive : ItemImmersives.ITEM_IMMERSIVES) {
-                if (immersive.isEnabled() && immersive.itemMatches(stack)) {
+            for (AbstractHandImmersive<?> immersive : HandImmersives.HAND_IMMERSIVES) {
+                if (immersive.isEnabled() && immersive.activeForHand(hand)) {
                     return ItemStack.EMPTY; // ImmersiveMC handles rendering this item.
                 }
             }

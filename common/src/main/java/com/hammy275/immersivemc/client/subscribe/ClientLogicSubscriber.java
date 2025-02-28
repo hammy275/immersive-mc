@@ -19,8 +19,8 @@ import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
-import com.hammy275.immersivemc.client.immersive_item.AbstractItemImmersive;
-import com.hammy275.immersivemc.client.immersive_item.ItemImmersives;
+import com.hammy275.immersivemc.client.immersive_item.AbstractHandImmersive;
+import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
 import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
@@ -136,11 +136,8 @@ public class ClientLogicSubscriber {
             tickInfos(singleton, player);
         }
         if (VRPluginVerify.clientInVR()) {
-            for (AbstractItemImmersive<?> singleton : ItemImmersives.ITEM_IMMERSIVES) {
-                singleton.registerAndTickAll(
-                        Minecraft.getInstance().player.getMainHandItem(),
-                        Minecraft.getInstance().player.getOffhandItem()
-                );
+            for (AbstractHandImmersive<?> singleton : HandImmersives.HAND_IMMERSIVES) {
+                singleton.registerAndTickAll();
             }
         }
         if (Minecraft.getInstance().gameMode == null || Minecraft.getInstance().level == null) return;
@@ -378,7 +375,7 @@ public class ClientLogicSubscriber {
 
         boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
         if (inVR) {
-            for (AbstractItemImmersive<?> immersive : ItemImmersives.ITEM_IMMERSIVES) {
+            for (AbstractHandImmersive<?> immersive : HandImmersives.HAND_IMMERSIVES) {
                 boolean handledClick = immersive.attemptLeftClickAll();
                 if (handledClick) {
                     return true;
