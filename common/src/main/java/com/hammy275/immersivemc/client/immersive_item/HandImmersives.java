@@ -3,13 +3,13 @@ package com.hammy275.immersivemc.client.immersive_item;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemImmersives {
+public class HandImmersives {
 
-    public static final List<AbstractItemImmersive<?>> ITEM_IMMERSIVES = new ArrayList<>();
+    public static final List<AbstractHandImmersive<?>> HAND_IMMERSIVES = new ArrayList<>();
 
     public static final WrittenBookImmersive writtenBookImmersive = new WrittenBookImmersive();
 
     static {
-        ITEM_IMMERSIVES.add(writtenBookImmersive);
+        HAND_IMMERSIVES.add(writtenBookImmersive);
     }
 }

@@ -35,6 +35,10 @@ public class Util {
 
     public static UseInfo activeUseInfo = null;
 
+    public static InteractionHand otherHand(InteractionHand hand) {
+        return hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+    }
+
     public static InteractionResultHolder<ItemStack> doUse(Player player, InteractionHand hand, BlockPos pos) {
         InteractionResultHolder<ItemStack> result;
         try {
