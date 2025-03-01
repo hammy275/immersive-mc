@@ -181,7 +181,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
                 if (i <= 4) {
                     helpers.renderImage(stack, effectLocations[i],
                             BoundingBox.getCenter(hitbox.box).add(0, -0.05, 0),
-                            info.effectSelected == i ? effectSize * 1.5f : info.isSlotHovered(i) ? effectSize * 1.25f : effectSize,
+                            info.effectSelected == i && !useGrabBeacon() ? effectSize * 1.5f : info.isSlotHovered(i) ? effectSize * 1.25f : effectSize,
                             info.light, info.lastPlayerDir);
                 }
             }
@@ -370,10 +370,18 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
                     info.hitboxes.get(4).box = AABB.ofSize(posToRotatedPos(forwardPos, rot4, centerDir),
                             effectHitboxSize, effectHitboxSize, effectHitboxSize);
                     if (beaconLevel == 4) {
-                        info.hitboxes.get(5).box = AABB.ofSize(info.effectSelectedDisplayPos.add(leftVec.scale(-0.25)),
-                                displayHitboxSize, displayHitboxSize, displayHitboxSize);
-                        info.hitboxes.get(6).box = AABB.ofSize(info.effectSelectedDisplayPos.add(0, -0.25, 0),
-                                displayHitboxSize, displayHitboxSize, displayHitboxSize);
+                        if (useGrabBeacon()) {
+                            Vec3 effectGrabPos = info.effectSelectedDisplayPos.add(leftVec.scale(-0.25)).add(0, -0.1, 0);
+                            info.hitboxes.get(5).box = AABB.ofSize(effectGrabPos.add(leftVec.scale(-0.11)),
+                                    displayHitboxSize, displayHitboxSize, displayHitboxSize);
+                            info.hitboxes.get(6).box = AABB.ofSize(effectGrabPos.add(leftVec.scale(0.11)),
+                                    displayHitboxSize, displayHitboxSize, displayHitboxSize);
+                        } else {
+                            info.hitboxes.get(5).box = AABB.ofSize(info.effectSelectedDisplayPos.add(leftVec.scale(-0.25)),
+                                    displayHitboxSize, displayHitboxSize, displayHitboxSize);
+                            info.hitboxes.get(6).box = AABB.ofSize(info.effectSelectedDisplayPos.add(0, -0.25, 0),
+                                    displayHitboxSize, displayHitboxSize, displayHitboxSize);
+                        }
                     } else {
                         for (int i = 5; i < info.hitboxes.size() - 2; i++) {
                             info.hitboxes.get(i).box = null;
