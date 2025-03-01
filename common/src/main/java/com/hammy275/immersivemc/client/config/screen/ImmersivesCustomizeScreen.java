@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.config.screen;
 
+import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ConfigType;
 import com.hammy275.immersivemc.common.config.CrouchMode;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -43,7 +44,16 @@ public class ImmersivesCustomizeScreen extends Screen {
         ScreenUtils.addOptionIfClient("center_furnace", config -> config.autoCenterFurnaceImmersive, (config, newVal) -> config.autoCenterFurnaceImmersive = newVal, this.list);
         ScreenUtils.addOptionIfClient("right_click_chest", config -> config.rightClickChestInteractions, (config, newVal) -> config.rightClickChestInteractions = newVal, this.list);
         ScreenUtils.addOptionIfClient("spin_crafting_output", config -> config.spinSomeImmersiveOutputs, (config, newVal) -> config.spinSomeImmersiveOutputs = newVal, this.list);
-        ScreenUtils.addOption("pet_any_living", config -> config.allowPettingAnythingLiving, (config, newVal) -> config.allowPettingAnythingLiving = newVal, this.list);
+        ScreenUtils.addOption("pet_any_living", config -> config.allowPettingAnythingLiving, (config, newVal) -> {
+            config.allowPettingAnythingLiving = newVal;
+            if (ConfigScreen.getAdjustingConfigType() == ConfigType.CLIENT && newVal) {
+                // If setting to true, also set it to true on server and save.
+                // Prevents unintuitive behavior when only adjusting the client config.
+                ActiveConfig server = ActiveConfig.getFileConfig(ConfigType.SERVER);
+                server.allowPettingAnythingLiving = true;
+                server.writeConfigFile(ConfigType.SERVER);
+            }
+        }, this.list);
         ScreenUtils.addOptionIfClient("right_click_in_vr", config -> config.rightClickImmersiveInteractionsInVR, (config, newVal) -> config.rightClickImmersiveInteractionsInVR = newVal, this.list);
         ScreenUtils.addOptionIfClient("3d_compat", config -> config.compatFor3dResourcePacks, (config, newVal) -> config.compatFor3dResourcePacks = newVal, this.list);
 
