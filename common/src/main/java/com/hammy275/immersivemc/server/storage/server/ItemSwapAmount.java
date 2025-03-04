@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.api.server;
+package com.hammy275.immersivemc.server.storage.server;
 
 import com.hammy275.immersivemc.api.common.immersive.SwapMode;
 

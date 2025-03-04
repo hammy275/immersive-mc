@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.api.client.immersive.BuiltImmersive;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.ForcedUpDownRenderDir;
 import com.hammy275.immersivemc.api.client.immersive.HitboxPositioningMode;
-import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfo;
+import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfoBuilder;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveBuilder;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
@@ -92,11 +92,15 @@ public class Immersives {
             .add3x3Grid(RelativeHitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
             .add3x3Grid(RelativeHitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
             .addHitbox(RelativeHitboxInfoBuilder.create(new Vec3(0.25, 1d/16d, 0.15), 0.35, 0.35, 0.5)
-                    .setVRMovementInfo(new HitboxVRMovementInfo(Direction.Axis.Z, new double[]{0.05},
-                            HitboxVRMovementInfo.ControllerMode.EITHER, (info) -> {
-                        ChestLikeData extra = (ChestLikeData) info.getExtraData();
-                        extra.toggleOpen(info.getBlockPosition());
-                    }))
+                    .setVRMovementInfo(HitboxVRMovementInfoBuilder.create()
+                            .axis(Direction.Axis.Z)
+                            .threshold(0.05)
+                            .controllerMode(HitboxVRMovementInfoBuilder.ControllerMode.EITHER)
+                            .actionConsumer(info -> {
+                                ChestLikeData extra = (ChestLikeData) info.getExtraData();
+                                extra.toggleOpen(info.getBlockPosition());
+                            })
+                            .build())
                     .build())
             .setPositioningMode(HitboxPositioningMode.BLOCK_FACING_NEG_X)
             .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
