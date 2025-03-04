@@ -232,23 +232,23 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
                     Vec3 velocityMask = vrMovementInfo.relativeAxis() == Direction.Axis.X ? xVec :
                             vrMovementInfo.relativeAxis() == Direction.Axis.Y ? yVec : zVec;
                     if (posThreshold != 0) {
-                        passed[c] = velocity.multiply(velocityMask).lengthSqr() >= posThreshold * posThreshold;
+                        passed[c] = getNonZeroComponent(velocity.multiply(velocityMask)) >= posThreshold;
                     }
                     if (negThreshold != 0) {
-                        passed[c] = passed[c] || velocity.multiply(velocityMask).lengthSqr() <= negThreshold * negThreshold;
+                        passed[c] = passed[c] || getNonZeroComponent(velocity.multiply(velocityMask)) <= negThreshold;
                     }
                 }
             }
             boolean passedOverall;
             switch (vrMovementInfo.controllerMode()) {
-                case C0 -> passedOverall = passed[0];
-                case C1 -> passedOverall = passed[1];
+                case PRIMARY -> passedOverall = passed[0];
+                case SECONDARY -> passedOverall = passed[1];
                 case EITHER -> passedOverall = passed[0] || passed[1];
                 case BOTH -> passedOverall = passed[0] && passed[1];
                 default -> throw new IllegalArgumentException("Invalid controllerMOde for HitboxVRMovementInfo.");
             }
             if (passedOverall) {
-                vrMovementInfo.action().accept(info);
+                vrMovementInfo.actionConsumer().accept(info);
             }
         }
         didCalc = true;
@@ -352,6 +352,15 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
                 }
             }
         }
+    }
+
+    /**
+     * Gets the first found non-zero component in the vector. Useful for when two of the components are known to be zero.
+     * @param vec Vector to get non-zero component from.
+     * @return A number from the component that isn't zero, or zero if all values are zero.
+     */
+    private double getNonZeroComponent(Vec3 vec) {
+        return vec.x != 0 ? vec.x : vec.y != 0 ? vec.y : vec.z;
     }
 
     /**

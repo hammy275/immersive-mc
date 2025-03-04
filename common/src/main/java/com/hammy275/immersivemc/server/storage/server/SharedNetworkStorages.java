@@ -1,6 +1,5 @@
-package com.hammy275.immersivemc.api.server;
+package com.hammy275.immersivemc.server.storage.server;
 
-import com.google.common.annotations.Beta;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.server.api_impl.SharedNetworkStoragesImpl;
@@ -14,11 +13,7 @@ import java.util.List;
  * A place to keep {@link NetworkStorage} instances. These are not saved to disk, but are kept as long as the
  * immersive block exists and is tracked by at least one player. Useful for keeping shared state that can
  * be synced to players if they start tracking an Immersive.
- * <br>
- * Note: This API is currently untested. Beyond just the @Beta annotation, this API may contain more bugs than
- * other parts of the ImmersiveMC API.
  */
-@Beta
 public interface SharedNetworkStorages {
 
     /**

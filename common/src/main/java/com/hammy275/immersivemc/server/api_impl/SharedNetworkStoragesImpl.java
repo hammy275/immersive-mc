@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.server.api_impl;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
-import com.hammy275.immersivemc.api.server.SharedNetworkStorages;
+import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;

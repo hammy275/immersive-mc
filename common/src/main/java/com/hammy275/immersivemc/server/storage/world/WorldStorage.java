@@ -1,8 +1,7 @@
-package com.hammy275.immersivemc.api.server;
+package com.hammy275.immersivemc.server.storage.world;
 
-import com.google.common.annotations.Beta;
-import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
+import com.hammy275.immersivemc.common.immersive.handler.WorldStorageHandler;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
@@ -11,7 +10,6 @@ import net.minecraft.nbt.CompoundTag;
  * items and persist them between world shutdowns if the block doesn't already handle holding items. For example,
  * ImmersiveMC uses this for vanilla crafting tables, since crafting tables can't hold items on their own.
  */
-@Beta
 public interface WorldStorage {
 
     /**

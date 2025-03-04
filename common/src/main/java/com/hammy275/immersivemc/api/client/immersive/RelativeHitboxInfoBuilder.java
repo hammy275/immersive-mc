@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.api.client.immersive;
 
-import com.google.common.annotations.Beta;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.immersive.RelativeHitboxInfoBuilderImpl;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfoImpl;
@@ -95,7 +94,6 @@ public interface RelativeHitboxInfoBuilder {
      * @param vrMovementInfo How this hitbox should react to VR hand movements.
      * @return This builder object.
      */
-    @Beta
     public RelativeHitboxInfoBuilder setVRMovementInfo(HitboxVRMovementInfo vrMovementInfo);
 
     /**
