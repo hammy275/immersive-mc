@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.server;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.api.server.SharedNetworkStorages;
+import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;

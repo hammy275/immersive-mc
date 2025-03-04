@@ -1,9 +1,9 @@
 package com.hammy275.immersivemc.common.immersive.storage.dual.impl;
 
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
-import com.hammy275.immersivemc.api.server.ItemSwapAmount;
-import com.hammy275.immersivemc.api.server.SwapResult;
-import com.hammy275.immersivemc.api.server.WorldStorage;
+import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
+import com.hammy275.immersivemc.server.storage.server.SwapResult;
+import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.ServerUtil;

@@ -1,8 +1,8 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.api.server.ItemSwapAmount;
-import com.hammy275.immersivemc.api.server.WorldStorage;
+import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
+import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.compat.apotheosis.ApothStats;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
