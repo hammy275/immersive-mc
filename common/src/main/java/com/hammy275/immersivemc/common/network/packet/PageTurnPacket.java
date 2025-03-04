@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.network.packet;
 
-import com.hammy275.immersivemc.api.server.SharedNetworkStorages;
+import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.common.immersive.CommonBookData;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternData;

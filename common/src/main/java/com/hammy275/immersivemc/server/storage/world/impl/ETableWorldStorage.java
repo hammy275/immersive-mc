@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.server.storage.world.impl;
 
-import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
+import com.hammy275.immersivemc.common.immersive.handler.WorldStorageHandler;
 import com.hammy275.immersivemc.common.compat.apotheosis.ApothStats;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
