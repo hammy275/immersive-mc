@@ -1,16 +1,33 @@
 package com.hammy275.immersivemc.api.client.immersive;
 
-import com.google.common.annotations.Beta;
 import net.minecraft.core.Direction;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-@Beta
-public record HitboxVRMovementInfo(@Nullable Direction.Axis relativeAxis, double[] thresholds,
-                                   ControllerMode controllerMode, Consumer<BuiltImmersiveInfo<?>> action) {
+/**
+ * An object representing VR movement detection. These can be built from {@link HitboxVRMovementInfoBuilder}, which you
+ * can see for more info.
+ */
+public interface HitboxVRMovementInfo {
 
-    public enum ControllerMode {
-        C0, C1, EITHER, BOTH
-    }
+    /**
+     * @return The relative axis to detect movements on.
+     */
+    public Direction.Axis relativeAxis();
+
+    /**
+     * @return An array containing the threshold for the positive direction and the threshold for the negative
+     * direction in that order.
+     */
+    public double[] thresholds();
+
+    /**
+     * @return The controller mode.
+     */
+    public HitboxVRMovementInfoBuilder.ControllerMode controllerMode();
+
+    /**
+     * @return The consumer to run when a threshold is met.
+     */
+    public Consumer<BuiltImmersiveInfo<?>> actionConsumer();
 }
