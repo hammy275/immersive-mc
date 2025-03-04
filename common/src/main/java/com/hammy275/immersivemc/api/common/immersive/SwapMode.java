@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.api.common.immersive;
 
 /**
  * The type of swap that should be performed. Found as part of
- * {@link com.hammy275.immersivemc.api.server.ItemSwapAmount} for how many items to swap into and/or out of an
+ * {@link com.hammy275.immersivemc.server.storage.server.ItemSwapAmount} for how many items to swap into and/or out of an
  * Immersive.
  */
 public enum SwapMode {
