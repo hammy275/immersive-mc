@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.immersive.storage.dual.impl;
 
-import com.hammy275.immersivemc.api.common.immersive.WorldStorageHandler;
+import com.hammy275.immersivemc.common.immersive.handler.WorldStorageHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;

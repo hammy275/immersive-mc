@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.server.api_impl;
 
-import com.hammy275.immersivemc.api.server.SwapResult;
+import com.hammy275.immersivemc.server.storage.server.SwapResult;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;

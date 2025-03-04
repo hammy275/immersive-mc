@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.api.server;
+package com.hammy275.immersivemc.server.storage.server;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
