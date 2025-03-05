@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.ForcedUpDownRenderDir;
 import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfo;
 import com.hammy275.immersivemc.api.client.immersive.RelativeHitboxInfoBuilder;
@@ -69,7 +70,11 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
      * For hitboxes containing an item, this forces the item to render facing UP, DOWN, or null instead of
      * the default for the given HitboxPositioningMode.
      */
-    private ForcedUpDownRenderDir forcedUpDown = ForcedUpDownRenderDir.NOT_FORCED;
+    private Function<BuiltImmersiveInfo<?>, ForcedUpDownRenderDir> forcedUpDown = ignored -> ForcedUpDownRenderDir.NOT_FORCED;
+    /**
+     * Whether the function above is constant
+     */
+    private boolean forcedUpDownConstant = true;
     /**
      * If true, this hitbox is offset for 3D Resource Pack compatibility.
      */
@@ -155,7 +160,15 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
     }
 
     public RelativeHitboxInfoBuilderImpl forceUpDownRenderDir(ForcedUpDownRenderDir forcedDir) {
-        this.forcedUpDown = forcedDir;
+        this.forcedUpDown = ignored -> forcedDir;
+        this.forcedUpDownConstant = true;
+        return this;
+    }
+
+    @Override
+    public RelativeHitboxInfoBuilder forceUpDownRenderDir(Function<BuiltImmersiveInfo<?>, ForcedUpDownRenderDir> forcedDirFunction) {
+        this.forcedUpDown = forcedDirFunction;
+        this.forcedUpDownConstant = false;
         return this;
     }
 
@@ -195,7 +208,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
         assert !isInput || holdsItems; // If isInput, must holdsItems
         return new RelativeHitboxInfoImpl(this, centerOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
-                forcedUpDown, constantOffset, needs3dCompat, vrMovementInfo, renderItem, renderItemCount);
+                forcedUpDown, constantOffset, needs3dCompat, vrMovementInfo, renderItem, renderItemCount, forcedUpDownConstant);
     }
 
     public static RelativeHitboxInfoBuilderImpl create(Vec3 centerOffset, double size) {
