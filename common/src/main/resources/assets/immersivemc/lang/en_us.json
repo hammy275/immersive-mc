@@ -89,6 +89,8 @@
   "config.immersivemc.enchanting_table_apoth.desc": "Enables/disables the ability to use the enchanting table immersive with Apotheosis'/Zenith's enchantment module.",
   "config.immersivemc.furnace": "Use Furnace Immersive",
   "config.immersivemc.furnace.desc": "Enables/disables the ability to use the furnace immersive.",
+  "config.immersivemc.grindstone": "Use Grindstone Immersive",
+  "config.immersivemc.grindstone.desc": "Enables/disables the ability to use the grindstone immersive.",
   "config.immersivemc.hopper": "Use Hopper Immersive",
   "config.immersivemc.hopper.desc": "Enables/disables the ability for players to put items into and take items out of hoppers.",
   "config.immersivemc.iron_furnaces_furnace": "Use Iron Furnaces' Furnace Immersive",
@@ -153,6 +155,8 @@
   "config.immersivemc.text_scale_val": "Text Scale: %sx",
   "config.immersivemc.grab_beacon": "Use Grab Beacon [VR Only]",
   "config.immersivemc.grab_beacon.desc": "Whether to grab effects for the Immersive beacon instead of \"clicking\" them.",
+  "config.immersivemc.grind_grindstone": "Use Grinding Grindstone [VR Only]",
+  "config.immersivemc.grind_grindstone.desc": "When enabled, use a grinding/swiping motion on the grindstone to remove enchantments instead of slots.",
 
   "screen.immersivemc.item_guide_customize_screen": "Customize Item Guides. Hover over a preview for more info!",
   "config.immersivemc.placement_guide_mode": "Item Guide Mode",

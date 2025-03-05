@@ -96,6 +96,7 @@ public class ActiveConfig implements Cloneable {
     public boolean useBucketAndBottleImmersive = true;
     public boolean useApotheosisEnchantmentTableImmersive = true;
     public boolean useApotheosisSalvagingTableImmersive = true;
+    public boolean useGrindstoneImmersive = true;
 
     public int commonConfigVersion = 2;
     public static final String COMMON_CONFIG_VERSION = "commonConfigVersion";
@@ -308,6 +309,7 @@ public class ActiveConfig implements Cloneable {
         useBucketAndBottleImmersive = useBucketAndBottleImmersive && other.useBucketAndBottleImmersive;
         useApotheosisEnchantmentTableImmersive = useApotheosisEnchantmentTableImmersive && other.useApotheosisEnchantmentTableImmersive;
         useApotheosisSalvagingTableImmersive = useApotheosisSalvagingTableImmersive && other.useApotheosisSalvagingTableImmersive;
+        useGrindstoneImmersive = useGrindstoneImmersive && other.useGrindstoneImmersive;
     }
 
     /**
@@ -352,6 +354,7 @@ public class ActiveConfig implements Cloneable {
         useBucketAndBottleImmersive = false;
         useApotheosisEnchantmentTableImmersive = false;
         useApotheosisSalvagingTableImmersive = false;
+        useGrindstoneImmersive = false;
     }
 
     /**

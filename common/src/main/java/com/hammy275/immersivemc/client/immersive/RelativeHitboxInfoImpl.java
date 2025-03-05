@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.ForcedUpDownRenderDir;
 import com.hammy275.immersivemc.api.client.immersive.HitboxPositioningMode;
 import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfo;
@@ -18,10 +19,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -44,13 +49,14 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
     public final float itemRenderSizeMultiplier;
     public final boolean isTriggerHitbox;
     public final Function<BuiltImmersiveInfoImpl<?>, List<Pair<Component, Vec3>>> textSupplier;
-    public final ForcedUpDownRenderDir forcedUpDownRenderDir;
+    public final Function<BuiltImmersiveInfo<?>, ForcedUpDownRenderDir> forcedUpDownRenderDir;
     // Not directly configured by programmers. This is whether the offset from centerOffset returns a constant value.
     public final boolean constantOffset;
     public final boolean needs3dCompat;
     public final HitboxVRMovementInfo vrMovementInfo;
     public final boolean renderItem;
     public final boolean renderItemCount;
+    public final boolean forcedUpDownRenderDirConstant;
 
     // Calculated data to be returned out
     private AABB box;
@@ -94,8 +100,8 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
                                   Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
                                   boolean holdsItems, boolean isInput, boolean itemSpins, float itemRenderSizeMultiplier,
                                   boolean isTriggerHitbox, Function<BuiltImmersiveInfoImpl<?>, List<Pair<Component, Vec3>>> textSupplier,
-                                  ForcedUpDownRenderDir forcedUpDownDir, boolean constantOffset, boolean needs3dCompat,
-                                  HitboxVRMovementInfo vrMovementInfo, boolean renderItem, boolean renderItemCount) {
+                                  Function<BuiltImmersiveInfo<?>, ForcedUpDownRenderDir> forcedUpDownDir, boolean constantOffset, boolean needs3dCompat,
+                                  HitboxVRMovementInfo vrMovementInfo, boolean renderItem, boolean renderItemCount, boolean forcedUpDownRenderDirConstant) {
         this.usedBuilder = usedBuilder;
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
@@ -113,6 +119,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
         this.vrMovementInfo = vrMovementInfo;
         this.renderItem = renderItem;
         this.renderItemCount = renderItemCount;
+        this.forcedUpDownRenderDirConstant = forcedUpDownRenderDirConstant;
     }
 
     /**
@@ -202,12 +209,42 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
                 recalcHorizBlockFacing(dir, info, offset, literalFacing);
                 upDownRenderDir = null;
             }
+        } else if (mode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING_ATTACHED_FLOOR_CEILING_REVERSED) {
+            BlockState state = level.getBlockState(pos);
+            Direction blockFacing = state.getValue(HorizontalDirectionalBlock.FACING);
+            AttachFace attachFace = state.getValue(BlockStateProperties.ATTACH_FACE);
+            switch (attachFace) {
+                case FLOOR, CEILING -> {
+                    boolean isCeiling = attachFace == AttachFace.CEILING;
+                    blockFacing = blockFacing.getOpposite();
+                    recalcHorizBlockFacing(blockFacing, info, offset, isCeiling ? Direction.DOWN : Direction.UP);
+                    upDownRenderDir = isCeiling ? Direction.DOWN : Direction.UP;
+                }
+                case WALL -> {
+                    xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
+                    yVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
+                    zVec = new Vec3(0, -1, 0);
+
+                    centerPos = Vec3.atBottomCenterOf(info.getBlockPosition());
+
+                    upDownRenderDir = null;
+
+                    double actualXSize = blockFacing.getAxis() == Direction.Axis.X ? sizeZ : sizeX;
+                    double actualYSize = blockFacing.getAxis() == Direction.Axis.X ? sizeX : sizeZ;
+                    double actualZSize = this.sizeY;
+
+                    this.pos = centerPos.add(xVec.scale(offset.x)).add(yVec.scale(offset.y)).add(zVec.scale(offset.z));
+                    this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
+                }
+            }
+
         } else {
             throw new UnsupportedOperationException("Hitbox calculation for positioning mode " + mode + " unimplemented!");
         }
         calcTextOffsets(info);
-        if (forcedUpDownRenderDir != ForcedUpDownRenderDir.NOT_FORCED) {
-            upDownRenderDir = forcedUpDownRenderDir.direction;
+        ForcedUpDownRenderDir forcedDirApplied = forcedUpDownRenderDir.apply(info);
+        if (forcedDirApplied != ForcedUpDownRenderDir.NOT_FORCED) {
+            upDownRenderDir = forcedDirApplied.direction;
         }
         // Detect VR hand movements and run callback
         if (vrMovementInfo != null && VRPluginVerify.clientInVR()) {
@@ -248,7 +285,14 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
                 default -> throw new IllegalArgumentException("Invalid controllerMOde for HitboxVRMovementInfo.");
             }
             if (passedOverall) {
-                vrMovementInfo.actionConsumer().accept(info);
+                List<InteractionHand> passedHands = new ArrayList<>(2);
+                if (passed[0]) {
+                    passedHands.add(InteractionHand.MAIN_HAND);
+                }
+                if (passed[1]) {
+                    passedHands.add(InteractionHand.OFF_HAND);
+                }
+                vrMovementInfo.actionConsumer().accept(info, passedHands);
             }
         }
         didCalc = true;

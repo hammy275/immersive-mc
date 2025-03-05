@@ -72,6 +72,7 @@ public class ImmersivesCustomizeScreen extends OptionsSubScreen {
 
         if (VRPluginVerify.clientInVR()) {
             ScreenUtils.addOptionIfClient("grab_beacon", config -> config.useGrabBeaconInVR, (config, newVal) -> config.useGrabBeaconInVR = newVal, this.list);
+            ScreenUtils.addOptionIfClient("grind_grindstone", config -> config.useGrindMotionGrindstoneInVR, (config, newVal) -> config.useGrindMotionGrindstoneInVR = newVal, this.list);
         }
     }
 
