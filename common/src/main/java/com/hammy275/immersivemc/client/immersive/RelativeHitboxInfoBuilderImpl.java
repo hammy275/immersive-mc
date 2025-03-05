@@ -4,7 +4,6 @@ import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.ForcedUpDownRenderDir;
 import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfo;
 import com.hammy275.immersivemc.api.client.immersive.RelativeHitboxInfoBuilder;
-import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfoImpl;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
@@ -22,7 +21,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
      * on the player, so for the furnace, -0.5, 0, 0 moves the box to the leftmost edge from the
      * player's perspective, or the rightmost edge if one were spectating the furnace.
      */
-    private Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset;
+    private Function<BuiltImmersiveInfo<?>, Vec3> centerOffset;
     /**
      * Left/right size of the hitbox. See X axis for centerOffset.
      */
@@ -65,7 +64,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
      * The Vec3 is run through the usual relative math in the same way the centerOffset is, but the position
      * is offset from centerOffset.
      */
-    private Function<BuiltImmersiveInfoImpl<?>, List<Pair<Component, Vec3>>> textSupplier = null;
+    private Function<BuiltImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier = null;
     /**
      * For hitboxes containing an item, this forces the item to render facing UP, DOWN, or null instead of
      * the default for the given HitboxPositioningMode.
@@ -98,11 +97,11 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
     private final boolean constantOffset;
 
 
-    public RelativeHitboxInfoBuilderImpl(Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double size, boolean constantOffset) {
+    public RelativeHitboxInfoBuilderImpl(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double size, boolean constantOffset) {
         this(centerOffset, size, size, size, constantOffset);
     }
 
-    public RelativeHitboxInfoBuilderImpl(Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
+    public RelativeHitboxInfoBuilderImpl(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
                                           boolean constantOffset) {
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
@@ -119,7 +118,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
         this((info) -> centerOffset, sizeX, sizeY, sizeZ, true);
     }
 
-    public RelativeHitboxInfoBuilderImpl setCenterOffset(Function<BuiltImmersiveInfoImpl<?>, Vec3> newOffset) {
+    public RelativeHitboxInfoBuilderImpl setCenterOffset(Function<BuiltImmersiveInfo<?>, Vec3> newOffset) {
         this.centerOffset = newOffset;
         return this;
     }
@@ -154,7 +153,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
         return this;
     }
 
-    public RelativeHitboxInfoBuilderImpl textSupplier(Function<BuiltImmersiveInfoImpl<?>, List<Pair<Component, Vec3>>> textSupplier) {
+    public RelativeHitboxInfoBuilderImpl textSupplier(Function<BuiltImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier) {
         this.textSupplier = textSupplier;
         return this;
     }
@@ -215,7 +214,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
         return new RelativeHitboxInfoBuilderImpl(centerOffset, size);
     }
 
-    public static RelativeHitboxInfoBuilderImpl create(Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double size) {
+    public static RelativeHitboxInfoBuilderImpl create(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double size) {
         return new RelativeHitboxInfoBuilderImpl(centerOffset, size, false);
     }
 
@@ -223,7 +222,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
         return new RelativeHitboxInfoBuilderImpl(centerOffset, sizeX, sizeY, sizeZ);
     }
 
-    public static RelativeHitboxInfoBuilderImpl create(Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ) {
+    public static RelativeHitboxInfoBuilderImpl create(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ) {
         return new RelativeHitboxInfoBuilderImpl(centerOffset, sizeX, sizeY, sizeZ, false);
     }
 
@@ -231,7 +230,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
         return new RelativeHitboxInfoBuilderImpl(centerOffset, size).holdsItems(true).isInput(true);
     }
 
-    public static RelativeHitboxInfoBuilderImpl createItemInput(Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double size) {
+    public static RelativeHitboxInfoBuilderImpl createItemInput(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double size) {
         return new RelativeHitboxInfoBuilderImpl(centerOffset, size, false).holdsItems(true).isInput(true);
     }
 
