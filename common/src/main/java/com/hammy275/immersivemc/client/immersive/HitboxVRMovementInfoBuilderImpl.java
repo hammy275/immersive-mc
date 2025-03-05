@@ -4,9 +4,11 @@ import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfo;
 import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfoBuilder;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
+import java.util.List;
+import java.util.function.BiConsumer;
 
 public class HitboxVRMovementInfoBuilderImpl implements HitboxVRMovementInfoBuilder {
 
@@ -14,7 +16,7 @@ public class HitboxVRMovementInfoBuilderImpl implements HitboxVRMovementInfoBuil
     private Direction.Axis axis = null;
     private final double[] thresholds = new double[]{0, 0};
     private ControllerMode controllerMode = ControllerMode.EITHER;
-    private Consumer<BuiltImmersiveInfo<?>> actionConsumer = ignored -> {};
+    private BiConsumer<BuiltImmersiveInfo<?>, List<InteractionHand>> actionConsumer = (ignored, ignored2) -> {};
 
     @Override
     public HitboxVRMovementInfoBuilder axis(@Nullable Direction.Axis axis) {
@@ -42,7 +44,7 @@ public class HitboxVRMovementInfoBuilderImpl implements HitboxVRMovementInfoBuil
     }
 
     @Override
-    public HitboxVRMovementInfoBuilder actionConsumer(Consumer<BuiltImmersiveInfo<?>> actionConsumer) {
+    public HitboxVRMovementInfoBuilder actionConsumer(BiConsumer<BuiltImmersiveInfo<?>, List<InteractionHand>> actionConsumer) {
         this.actionConsumer = actionConsumer;
         return this;
     }

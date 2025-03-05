@@ -85,6 +85,13 @@ public interface RelativeHitboxInfoBuilder {
     public RelativeHitboxInfoBuilder forceUpDownRenderDir(ForcedUpDownRenderDir forcedDir);
 
     /**
+     * @param forcedDirFunction Forces the direction passed to upDown {@link com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers#renderItem(ItemStack, PoseStack, float, BoundingBox, boolean, int, Float, Direction, Direction)}
+     *                  instead of determining it based on the hitbox positioning mode.
+     * @return This builder object.
+     */
+    public RelativeHitboxInfoBuilder forceUpDownRenderDir(Function<BuiltImmersiveInfo<?>, ForcedUpDownRenderDir> forcedDirFunction);
+
+    /**
      * @param needs3dCompat Whether this hitbox should be moved on the Z axis for 3D resource packs.
      * @return This builder object.
      */
