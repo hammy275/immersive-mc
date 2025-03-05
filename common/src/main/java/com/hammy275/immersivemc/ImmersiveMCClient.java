@@ -25,7 +25,7 @@ public class ImmersiveMCClient {
             Immersives.immersiveLever, Immersives.immersiveRepeater, Immersives.immersiveShulker,
             Immersives.immersiveSmithingTable, Immersives.immersiveTinkersConstructCraftingStation,
             Immersives.immersiveTrapdoor, Immersives.immersiveApothSalvagingTable,
-            Immersives.immersiveDoor
+            Immersives.immersiveDoor, Immersives.immersiveGrindstone
     );
 
     public static void init() {

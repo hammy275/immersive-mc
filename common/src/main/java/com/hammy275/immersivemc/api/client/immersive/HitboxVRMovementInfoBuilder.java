@@ -2,9 +2,11 @@ package com.hammy275.immersivemc.api.client.immersive;
 
 import com.hammy275.immersivemc.client.immersive.HitboxVRMovementInfoBuilderImpl;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
+import java.util.List;
+import java.util.function.BiConsumer;
 
 public interface HitboxVRMovementInfoBuilder {
 
@@ -45,10 +47,10 @@ public interface HitboxVRMovementInfoBuilder {
 
     /**
      * Sets a callback to run when the threshold is met.
-     * @param actionConsumer The callback to run when the threshold is met.
+     * @param actionConsumer The callback to run when the threshold is met, taking the info and the hand(s) that met the threshold.
      * @return Builder object.
      */
-    public HitboxVRMovementInfoBuilder actionConsumer(Consumer<BuiltImmersiveInfo<?>> actionConsumer);
+    public HitboxVRMovementInfoBuilder actionConsumer(BiConsumer<BuiltImmersiveInfo<?>, List<InteractionHand>> actionConsumer);
 
     /**
      * Builds this builder into a {@link HitboxVRMovementInfo}.

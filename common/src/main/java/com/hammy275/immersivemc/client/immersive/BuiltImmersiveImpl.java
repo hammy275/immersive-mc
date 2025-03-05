@@ -24,6 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
@@ -65,7 +66,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
         info.ticksExisted++;
         Direction currentDir;
         switch (builder.positioningMode) {
-            case HORIZONTAL_BLOCK_FACING, BLOCK_FACING_NEG_X ->
+            case HORIZONTAL_BLOCK_FACING, BLOCK_FACING_NEG_X, HORIZONTAL_BLOCK_FACING_ATTACHED_FLOOR_CEILING_REVERSED ->
                     currentDir = info.immersiveDir;
             case TOP_PLAYER_FACING, TOP_BLOCK_FACING, HORIZONTAL_PLAYER_FACING, PLAYER_FACING_NO_DOWN ->
                     currentDir = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition());
@@ -88,7 +89,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             // if it hasn't been calculated yet, if slots can change whether they're active, or if they need
             // to detect VR hand movements.
             if (!hitbox.constantOffset || differentDirs || !hitbox.calcDone() || builder.slotActive != null
-                || hitbox.vrMovementInfo != null || hitbox.textSupplier != null) {
+                || hitbox.vrMovementInfo != null || hitbox.textSupplier != null || !hitbox.forcedUpDownRenderDirConstant) {
                 didRecalc = true;
                 if (builder.slotActive == null || builder.slotActive.apply(info, i)) {
                     hitbox.recalculate(Minecraft.getInstance().level, builder.positioningMode, info);
@@ -209,6 +210,12 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             info = new BuiltImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
         } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING) {
             info = new BuiltImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
+        } else if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING_ATTACHED_FLOOR_CEILING_REVERSED) {
+            info = new BuiltImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
+            info.immersiveDir = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
+            if (state.getValue(BlockStateProperties.ATTACH_FACE) != AttachFace.WALL) {
+                info.immersiveDir = info.immersiveDir.getOpposite();
+            }
         } else {
             throw new UnsupportedOperationException("Tracking for positioning mode " + builder.positioningMode + " unimplemented!");
         }
@@ -308,6 +315,13 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
                 return info.getBlockPosition().relative(info.immersiveDir);
             } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING_NO_DOWN) {
                 return info.getBlockPosition().relative(Util.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition()));
+            } else if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING_ATTACHED_FLOOR_CEILING_REVERSED) {
+                BlockState state = Minecraft.getInstance().level.getBlockState(info.getBlockPosition());
+                return switch (state.getValue(BlockStateProperties.ATTACH_FACE)) {
+                    case FLOOR -> info.getBlockPosition().above();
+                    case WALL -> info.getBlockPosition().relative(state.getValue(BlockStateProperties.HORIZONTAL_FACING));
+                    case CEILING -> info.getBlockPosition().below();
+                };
             } else {
                 throw new UnsupportedOperationException("Light pos for positioning mode " + builder.positioningMode + " unimplemented!");
             }

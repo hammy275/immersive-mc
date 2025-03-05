@@ -52,5 +52,6 @@ public enum HitboxPositioningMode {
     HORIZONTAL_PLAYER_FACING, // Face that faces the player, excluding up and down face.
     BLOCK_FACING_NEG_X, // Same as HORIZONTAL_BLOCK_FACING, but negative X in-world corresponds to +x during translation if the block faces up or down
     PLAYER_FACING_NO_DOWN, // Combination of HORIZONTAL_PLAYER_FACING and TOP_PLAYER_FACING
-    PLAYER_FACING_FILTER_BLOCK_FACING // Effectively PLAYER_FACING (assuming it were to exist) except the axis the block is facing is ignored. If the block is facing down, PLAYER_FACING NESW only.
+    PLAYER_FACING_FILTER_BLOCK_FACING, // Effectively PLAYER_FACING (assuming it were to exist) except the axis the block is facing is ignored. If the block is facing down, PLAYER_FACING NESW only.
+    HORIZONTAL_BLOCK_FACING_ATTACHED_FLOOR_CEILING_REVERSED, // HORIZONTAL_BLOCK_FACING, but the front is based on the attachment point. Additionally, non-wall attachments treat the block as facing the opposite direction. Equivalent to HORIZONTAL_BLOCK_FACING when attached to the floor but with the direction reversed.
 }

@@ -18,6 +18,7 @@ import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentIn
 import com.hammy275.immersivemc.client.immersive.info.AnvilData;
 import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
+import com.hammy275.immersivemc.client.immersive.info.GrindstoneData;
 import com.hammy275.immersivemc.common.compat.IronFurnaces;
 import com.hammy275.immersivemc.common.compat.TinkersConstruct;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
@@ -28,23 +29,30 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
 import com.hammy275.immersivemc.common.util.PosRot;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VRPlugin;
+import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static com.hammy275.immersivemc.client.ClientUtil.createConfigScreenInfo;
 
@@ -96,7 +104,7 @@ public class Immersives {
                             .axis(Direction.Axis.Z)
                             .threshold(0.05)
                             .controllerMode(HitboxVRMovementInfoBuilder.ControllerMode.EITHER)
-                            .actionConsumer(info -> {
+                            .actionConsumer((info, hands) -> {
                                 ChestLikeData extra = (ChestLikeData) info.getExtraData();
                                 extra.toggleOpen(info.getBlockPosition());
                             })
@@ -351,6 +359,58 @@ public class Immersives {
                     config -> config.useFurnaceImmersive,
                     (config, newVal) -> config.useFurnaceImmersive = newVal))
             .build();
+    public static final BuiltImmersive<GrindstoneData,?> immersiveGrindstone = ImmersiveBuilder.create(ImmersiveHandlers.grindstoneHandler, GrindstoneData.class)
+            .setRenderSize(ClientConstants.itemScaleSizeGrindstone)
+            .addHitbox(RelativeHitboxInfoBuilder.createItemInput(info -> grindGrindstone() ? null : new Vec3(0, 0.5, -0.65), ClientConstants.itemScaleSizeGrindstone).build())
+            .addHitbox(RelativeHitboxInfoBuilder.createItemInput(info -> grindGrindstone() ? null : new Vec3(0, 0.5, -0.35), ClientConstants.itemScaleSizeGrindstone).build())
+            .addHitbox(RelativeHitboxInfoBuilder.create(info -> grindGrindstone() || info.getItem(2).isEmpty() ? null : new Vec3(0, 0.125, -0.125),
+                            ClientConstants.itemScaleSizeGrindstone * 1.5d)
+                    .holdsItems(true).itemRenderSizeMultiplier(2f)
+                    .forceUpDownRenderDir(info -> Minecraft.getInstance().level.getBlockState(info.getBlockPosition()).getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.WALL
+                    ? ForcedUpDownRenderDir.DOWN : ForcedUpDownRenderDir.NULL)
+                    .build())
+            .addHitbox(RelativeHitboxInfoBuilder.create(info -> !grindGrindstone() ? null : new Vec3(0, 0.125, -0.5), 0.875)
+                    .setVRMovementInfo(HitboxVRMovementInfoBuilder.create()
+                            .axis(null)
+                            .controllerMode(HitboxVRMovementInfoBuilder.ControllerMode.EITHER)
+                            .threshold(0.03)
+                            .actionConsumer((info, hands) -> {
+                                GrindstoneData data = (GrindstoneData) info.getExtraData();
+                                for (InteractionHand hand : hands) {
+                                    boolean didTick = data.grindTick(hand);
+                                    if (data.didGrind(hand)) {
+                                        ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(3), hand, false);
+                                        data.resetGrind(hand);
+                                    } else if (didTick) {
+                                        int numParticles = ThreadLocalRandom.current().nextInt(1, 5);
+                                        Vec3 pos = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(hand.ordinal()).position();
+                                        for (int i = 0; i < numParticles; i++) {
+                                            Minecraft.getInstance().level.addParticle(ParticleTypes.ELECTRIC_SPARK,
+                                                    pos.x, pos.y, pos.z,
+                                                    ThreadLocalRandom.current().nextDouble() - 0.5,
+                                                    0.2,
+                                                    ThreadLocalRandom.current().nextDouble() - 0.5);
+                                        }
+                                    }
+                                }
+                            })
+                            .build())
+                    .build())
+
+            .setPositioningMode(HitboxPositioningMode.HORIZONTAL_BLOCK_FACING_ATTACHED_FLOOR_CEILING_REVERSED)
+            .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
+                slots = slots.stream().filter(s -> s != 3).toList();
+                if (!slots.isEmpty()) {
+                    ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
+                    return ClientConstants.defaultCooldownTicks;
+                }
+                return -1;
+            })
+            .setNoDragHitbox()
+            .setConfigScreenInfo(createConfigScreenInfo("grindstone", () -> new ItemStack(Items.GRINDSTONE),
+                    config -> config.useGrindstoneImmersive,
+                    (config, newVal) -> config.useGrindstoneImmersive = newVal))
+            .build();
     public static final ImmersiveHitboxes immersiveHitboxes = new ImmersiveHitboxes();
     public static final BuiltImmersive<?,?> immersiveHopper = ImmersiveBuilder.create(ImmersiveHandlers.hopperHandler)
             .setRenderSize(ClientConstants.itemScaleSizeHopper)
@@ -492,5 +552,9 @@ public class Immersives {
                 IMMERSIVES.add(immersive);
             }
         });
+    }
+
+    private static boolean grindGrindstone() {
+        return VRPluginVerify.clientInVR() && ActiveConfig.active().useGrindMotionGrindstoneInVR;
     }
 }
