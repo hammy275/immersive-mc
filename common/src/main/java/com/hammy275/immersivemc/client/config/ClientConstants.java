@@ -34,6 +34,7 @@ public class ClientConstants {
     public static final float itemScaleSizeHopper = 0.15f;
     public static final float itemScaleSizeSmithingTable = itemScaleSizeAnvil;
     public static final float itemScaleSizeApothSalvagingTable = 0.3f;
+    public static final float itemScaleSizeGrindstone = 0.25f;
 
     // Time to transition in ticks
     public static final int transitionTime = 10;

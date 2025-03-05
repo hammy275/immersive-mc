@@ -11,6 +11,7 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.CraftingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ApothSalvagingTableStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.GrindstoneStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternData;
@@ -35,6 +36,7 @@ public class ImmersiveHandlers {
     public static final ImmersiveHandler<NullStorage> doorHandler = new DoorHandler();
     public static final WorldStorageHandler<ETableStorage> enchantingTableHandler = new ETableHandler();
     public static final ImmersiveHandler<?> furnaceHandler = new FurnaceHandler();
+    public static final WorldStorageHandler<GrindstoneStorage> grindstoneHandler = new GrindstoneHandler();
     public static final ImmersiveHandler<?> hopperHandler = new HopperHandler();
     public static final ImmersiveHandler<?> ironFurnacesFurnaceHandler = CompatModule.create(new IronFurnacesFurnaceHandler(), IronFurnaces.compatData);
     public static final ImmersiveHandler<?> jukeboxHandler = new JukeboxHandler();

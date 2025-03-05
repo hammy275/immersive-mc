@@ -34,6 +34,7 @@ public final class ClientActiveConfig extends ActiveConfig {
     public float textScale = 1f;
     public boolean swapBagHand = false;
     public boolean useGrabBeaconInVR = true;
+    public boolean useGrindMotionGrindstoneInVR = true;
 
     public int clientConfigVersion = 4;
     public static final String CLIENT_CONFIG_VERSION = "clientConfigVersion";
