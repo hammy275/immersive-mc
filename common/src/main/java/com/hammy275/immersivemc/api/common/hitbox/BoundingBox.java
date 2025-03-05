@@ -15,7 +15,7 @@ public interface BoundingBox {
      * @return This BoundingBox as an OBB if it is one.
      * @throws RuntimeException If this BoundingBox is not an OBB.
      */
-    OBBImpl asOBB() throws RuntimeException;
+    OBB asOBB() throws RuntimeException;
 
     /**
      * @return This BoundingBox as an AABB if it is one.
