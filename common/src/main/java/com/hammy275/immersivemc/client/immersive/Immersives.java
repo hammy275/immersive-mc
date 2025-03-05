@@ -183,7 +183,7 @@ public class Immersives {
             .addHitbox(RelativeHitboxInfoBuilder.create((info) -> {
                 if (info.getItem(0).isEmpty()) return null;
                 int yOffset = (int) (info.ticksExisted() % ClientConstants.eTableYOffsets.size());
-                double rad = Math.PI * 2 * (info.ticksExisted % (20d * 15d) / (20d * 15d));
+                double rad = Math.PI * 2 * (info.ticksExisted() % (20d * 15d) / (20d * 15d));
                 double x = Math.sin(rad);
                 double z = Math.cos(rad) - 1;
                 return new Vec3(x, 1.25, z).add(0, ClientConstants.eTableYOffsets.get(yOffset), 0);
@@ -206,7 +206,7 @@ public class Immersives {
             .addHitbox(RelativeHitboxInfoBuilder.create((info) -> {
                 if (info.getItem(0).isEmpty()) return null;
                 int yOffset = (int) ((info.ticksExisted() + 7) % ClientConstants.eTableYOffsets.size());
-                double rad = Math.PI * 2 * ((info.ticksExisted + (20d * 5d)) % (20d * 15d) / (20d * 15d));
+                double rad = Math.PI * 2 * ((info.ticksExisted() + (20d * 5d)) % (20d * 15d) / (20d * 15d));
                 double x = Math.sin(rad);
                 double z = Math.cos(rad) - 1;
                 return new Vec3(x, 1.25, z).add(0, ClientConstants.eTableYOffsets.get(yOffset), 0);
@@ -229,7 +229,7 @@ public class Immersives {
             .addHitbox(RelativeHitboxInfoBuilder.create((info) -> {
                 if (info.getItem(0).isEmpty()) return null;
                 int yOffset = (int) ((info.ticksExisted() + 14) % ClientConstants.eTableYOffsets.size());
-                double rad = Math.PI * 2 * ((info.ticksExisted + (20d * 10d)) % (20d * 15d) / (20d * 15d));
+                double rad = Math.PI * 2 * ((info.ticksExisted() + (20d * 10d)) % (20d * 15d) / (20d * 15d));
                 double x = Math.sin(rad);
                 double z = Math.cos(rad) - 1;
                 return new Vec3(x, 1.25, z).add(0, ClientConstants.eTableYOffsets.get(yOffset), 0);
