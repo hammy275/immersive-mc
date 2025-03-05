@@ -39,7 +39,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
     // Settings
     private final RelativeHitboxInfoBuilderImpl usedBuilder;
 
-    public final Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset;
+    public final Function<BuiltImmersiveInfo<?>, Vec3> centerOffset;
     public final double sizeX;
     public final double sizeY;
     public final double sizeZ;
@@ -48,7 +48,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
     public final boolean itemSpins;
     public final float itemRenderSizeMultiplier;
     public final boolean isTriggerHitbox;
-    public final Function<BuiltImmersiveInfoImpl<?>, List<Pair<Component, Vec3>>> textSupplier;
+    public final Function<BuiltImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier;
     public final Function<BuiltImmersiveInfo<?>, ForcedUpDownRenderDir> forcedUpDownRenderDir;
     // Not directly configured by programmers. This is whether the offset from centerOffset returns a constant value.
     public final boolean constantOffset;
@@ -97,9 +97,9 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
      * @param renderItemCount Whether to render the item count in this hitbox if it can contain an item.
      */
     public RelativeHitboxInfoImpl(RelativeHitboxInfoBuilderImpl usedBuilder,
-                                  Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
+                                  Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
                                   boolean holdsItems, boolean isInput, boolean itemSpins, float itemRenderSizeMultiplier,
-                                  boolean isTriggerHitbox, Function<BuiltImmersiveInfoImpl<?>, List<Pair<Component, Vec3>>> textSupplier,
+                                  boolean isTriggerHitbox, Function<BuiltImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier,
                                   Function<BuiltImmersiveInfo<?>, ForcedUpDownRenderDir> forcedUpDownDir, boolean constantOffset, boolean needs3dCompat,
                                   HitboxVRMovementInfo vrMovementInfo, boolean renderItem, boolean renderItemCount, boolean forcedUpDownRenderDirConstant) {
         this.usedBuilder = usedBuilder;
@@ -455,7 +455,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
      * @param newOffset New offset for the clone.
      * @return Clone with the offset replaced with newOffset.
      */
-    public RelativeHitboxInfoImpl cloneWithNewOffset(Function<BuiltImmersiveInfoImpl<?>, Vec3> newOffset) {
+    public RelativeHitboxInfoImpl cloneWithNewOffset(Function<BuiltImmersiveInfo<?>, Vec3> newOffset) {
         return getBuilderClone().setCenterOffset(newOffset).build();
     }
 
