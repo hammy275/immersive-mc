@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.api.client.immersive;
 
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.immersive.RelativeHitboxInfoBuilderImpl;
-import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfoImpl;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Direction;
@@ -35,7 +34,7 @@ public interface RelativeHitboxInfoBuilder {
      *                 The function can return null if this hitbox shouldn't render or be interacted with.
      * @return This builder object.
      */
-    public RelativeHitboxInfoBuilder setCenterOffset(Function<BuiltImmersiveInfoImpl<?>, Vec3> newOffset);
+    public RelativeHitboxInfoBuilder setCenterOffset(Function<BuiltImmersiveInfo<?>, Vec3> newOffset);
 
     /**
      * @param holdsItems Whether this relative hitbox should hold items.
@@ -75,7 +74,7 @@ public interface RelativeHitboxInfoBuilder {
      *                     the center offset to render the text at.
      * @return This builder object.
      */
-    public RelativeHitboxInfoBuilder textSupplier(Function<BuiltImmersiveInfoImpl<?>, List<Pair<Component, Vec3>>> textSupplier);
+    public RelativeHitboxInfoBuilder textSupplier(Function<BuiltImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier);
 
     /**
      * @param forcedDir Forces the direction passed to upDown {@link com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers#renderItem(ItemStack, PoseStack, float, BoundingBox, boolean, int, Float, Direction, Direction)}
@@ -138,7 +137,7 @@ public interface RelativeHitboxInfoBuilder {
      * @param size The size of this hitbox, in blocks.
      * @return A builder object.
      */
-    public static RelativeHitboxInfoBuilder create(Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double size) {
+    public static RelativeHitboxInfoBuilder create(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double size) {
         return new RelativeHitboxInfoBuilderImpl(centerOffset, size, false);
     }
 
@@ -163,7 +162,7 @@ public interface RelativeHitboxInfoBuilder {
      * @param sizeZ The size of this box on the relative z-axis.
      * @return A builder object.
      */
-    public static RelativeHitboxInfoBuilder create(Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ) {
+    public static RelativeHitboxInfoBuilder create(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ) {
         return new RelativeHitboxInfoBuilderImpl(centerOffset, sizeX, sizeY, sizeZ, false);
     }
 
@@ -184,7 +183,7 @@ public interface RelativeHitboxInfoBuilder {
      * @param size The size of this hitbox, in blocks.
      * @return A builder object.
      */
-    public static RelativeHitboxInfoBuilder createItemInput(Function<BuiltImmersiveInfoImpl<?>, Vec3> centerOffset, double size) {
+    public static RelativeHitboxInfoBuilder createItemInput(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double size) {
         return new RelativeHitboxInfoBuilderImpl(centerOffset, size, false).holdsItems(true).isInput(true);
     }
 }
