@@ -1,8 +1,10 @@
 package com.hammy275.immersivemc.api.client.immersive;
 
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
 
-import java.util.function.Consumer;
+import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * An object representing VR movement detection. These can be built from {@link HitboxVRMovementInfoBuilder}, which you
@@ -29,5 +31,5 @@ public interface HitboxVRMovementInfo {
     /**
      * @return The consumer to run when a threshold is met.
      */
-    public Consumer<BuiltImmersiveInfo<?>> actionConsumer();
+    public BiConsumer<BuiltImmersiveInfo<?>, List<InteractionHand>> actionConsumer();
 }
