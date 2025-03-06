@@ -1,13 +1,13 @@
 package com.hammy275.immersivemc.client.subscribe;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.client.ImmersiveClientConstants;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.ClientUtil;
-import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
@@ -580,7 +580,7 @@ public class ClientLogicSubscriber {
                 ChestInfo info = ImmersiveChest.findImmersive(player.level.getBlockEntity(pos));
                 if (info != null) {
                     ImmersiveChest.openChest(info);
-                    return ClientConstants.defaultCooldownTicks;
+                    return ImmersiveClientConstants.instance().defaultCooldown();
                 }
             }
         }
