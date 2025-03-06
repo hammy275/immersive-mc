@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.client.ImmersiveClientConstants;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
@@ -70,7 +71,7 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
         if (!VRPluginVerify.clientInVR() && !ActiveConfig.active().rightClickChestInteractions) return -1;
         if (!info.isOpen) return -1;
         ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), hitboxIndices, hand, false);
-        return ClientConstants.defaultCooldownTicks;
+        return ImmersiveClientConstants.instance().defaultCooldown();
     }
 
     @Override
