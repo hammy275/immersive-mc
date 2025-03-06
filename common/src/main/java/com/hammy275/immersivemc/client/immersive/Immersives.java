@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.client.ImmersiveClientConstants;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersive;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
@@ -88,7 +89,7 @@ public class Immersives {
             .setPositioningMode(HitboxPositioningMode.TOP_BLOCK_FACING)
             .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
-                return ClientConstants.defaultCooldownTicks;
+                return ImmersiveClientConstants.instance().defaultCooldown();
             })
             .setNoDragHitbox()
             .setConfigScreenInfo(createConfigScreenInfo("anvil", () -> new ItemStack(Items.ANVIL),
@@ -117,7 +118,7 @@ public class Immersives {
                 slots = slots.stream().filter(slot -> slot < 27).toList();
                 if (!slots.isEmpty()) {
                     ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
-                    return ClientConstants.defaultCooldownTicks;
+                    return ImmersiveClientConstants.instance().defaultCooldown();
                 }
                 return -1;
             })
@@ -150,7 +151,7 @@ public class Immersives {
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
             .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
-                return ClientConstants.defaultCooldownTicks;
+                return ImmersiveClientConstants.instance().defaultCooldown();
             })
             .setNoDragHitbox()
             .setConfigScreenInfo(createConfigScreenInfo("brewing", () -> new ItemStack(Items.BREWING_STAND),
@@ -170,7 +171,7 @@ public class Immersives {
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
             .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
-                return ClientConstants.defaultCooldownTicks;
+                return ImmersiveClientConstants.instance().defaultCooldown();
             })
             .setConfigScreenInfo(createConfigScreenInfo("crafting", () -> new ItemStack(Items.CRAFTING_TABLE),
                     config -> config.useCraftingTableImmersive,
@@ -252,7 +253,7 @@ public class Immersives {
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_PLAYER_FACING)
             .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
-                return ClientConstants.defaultCooldownTicks;
+                return ImmersiveClientConstants.instance().defaultCooldown();
             })
             .setExtraStorageConsumer((storage, info) -> {
                 EnchantingData extraData = info.getExtraData();
@@ -354,7 +355,7 @@ public class Immersives {
                     }
                 }
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
-                return ClientConstants.defaultCooldownTicks;
+                return ImmersiveClientConstants.instance().defaultCooldown();
             })
             .setNoDragHitbox()
             .setConfigScreenInfo(createConfigScreenInfo("furnace", () -> new ItemStack(Items.FURNACE),
@@ -404,7 +405,7 @@ public class Immersives {
                 slots = slots.stream().filter(s -> s != 3).toList();
                 if (!slots.isEmpty()) {
                     ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
-                    return ClientConstants.defaultCooldownTicks;
+                    return ImmersiveClientConstants.instance().defaultCooldown();
                 }
                 return -1;
             })
@@ -447,7 +448,7 @@ public class Immersives {
             .setPositioningMode(HitboxPositioningMode.PLAYER_FACING_NO_DOWN)
             .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
-                return ClientConstants.defaultCooldownTicks;
+                return ImmersiveClientConstants.instance().defaultCooldown();
             })
             .setConfigScreenInfo(createConfigScreenInfo("hopper", () -> new ItemStack(Items.HOPPER),
                     config -> config.useHopperImmersive,
@@ -458,7 +459,7 @@ public class Immersives {
             .setPositioningMode(HitboxPositioningMode.TOP_LITERAL)
             .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(0), hand, modifierPressed);
-                return ClientConstants.defaultCooldownTicks;
+                return ImmersiveClientConstants.instance().defaultCooldown();
             })
             .setNoDragHitbox()
             .setVROnly(true)
@@ -488,7 +489,7 @@ public class Immersives {
             .setPositioningMode(HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING)
             .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
-                return ClientConstants.defaultCooldownTicks;
+                return ImmersiveClientConstants.instance().defaultCooldown();
             })
             .setSlotActiveFunction((info, slot) -> ((ChestLikeData) info.getExtraData()).isOpen)
             .setOnRemove((info) -> ((ChestLikeData) info.getExtraData()).forceClose(info.getBlockPosition()))
@@ -510,7 +511,7 @@ public class Immersives {
             .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
             .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
-                return ClientConstants.defaultCooldownTicks;
+                return ImmersiveClientConstants.instance().defaultCooldown();
             })
             .setNoDragHitbox()
             .setConfigScreenInfo(createConfigScreenInfo("smithing_table", () -> new ItemStack(Items.SMITHING_TABLE),
@@ -541,7 +542,7 @@ public class Immersives {
                     .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
                     .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
                         ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
-                        return ClientConstants.defaultCooldownTicks;
+                        return ImmersiveClientConstants.instance().defaultCooldown();
                     })
                     .build(),
             BuiltImmersive.class,
