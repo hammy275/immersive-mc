@@ -1,12 +1,12 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.client.ImmersiveClientConstants;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
-import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.book.WrittenBookHelpers;
 import com.hammy275.immersivemc.client.immersive.info.LecternInfo;
 import com.hammy275.immersivemc.common.immersive.CommonBookData;
@@ -53,13 +53,13 @@ public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<Comm
                 return 0;
             } else if (hitboxIndex <= 1) {
                 Network.INSTANCE.sendToServer(new PageTurnPacket(info.getBlockPosition(), hitboxIndex == 1));
-                return ClientConstants.defaultCooldownTicks;
+                return ImmersiveClientConstants.instance().defaultCooldown();
             }
         } else if (!VRPluginVerify.clientInVR()) {
             // Text interaction is done in tick() instead for VR players
             info.lecternData.bookData.interactables.get(hitboxIndex - 3).interact(info.lecternData.bookData,
                     info.lecternData.getLecternPosRot(info.getBlockPosition()), null);
-            return ClientConstants.defaultCooldownTicks;
+            return ImmersiveClientConstants.instance().defaultCooldown();
         }
         return -1;
     }
@@ -84,7 +84,7 @@ public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<Comm
         info.lecternData.tick(Minecraft.getInstance().player);
         info.light = ImmersiveClientLogicHelpers.instance().getLight(info.getBlockPosition().above());
         if (info.didClick) {
-            ImmersiveClientLogicHelpers.instance().setCooldown((int) (ClientConstants.defaultCooldownTicks * ClientConstants.cooldownVRMultiplier));
+            ImmersiveClientLogicHelpers.instance().setCooldown(ImmersiveClientConstants.instance().defaultCooldown());
             info.didClick = false;
         }
     }
