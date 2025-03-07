@@ -1,10 +1,11 @@
 package com.hammy275.immersivemc.mixin.throw_redirectors;
 
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.mixin_proxy.ThrowRedirect;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.projectile.ThrownEnderpearl;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.EnderpearlItem;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -12,14 +13,13 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(EnderpearlItem.class)
 public class EnderPearlRedirect {
 
-    @Redirect(method= "use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResultHolder;",
+    @Redirect(method= "use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/world/entity/projectile/ThrownEnderpearl;shootFromRotation(Lnet/minecraft/world/entity/Entity;FFFFF)V"))
-    public void immersiveMC$shootFromRotation(ThrownEnderpearl projectile, Entity shooter, float xAngle, float yAngle, float unknown, float velocity, float inaccuracy) {
-        if (VRPluginVerify.hasAPI) {
-            ThrowRedirect.shootFromRotation(projectile, shooter, xAngle, yAngle, unknown, velocity, inaccuracy);
-        } else {
-            projectile.shootFromRotation(shooter, xAngle, yAngle, unknown, velocity, inaccuracy);
-        }
+                    target = "Lnet/minecraft/world/entity/projectile/Projectile;spawnProjectileFromRotation(Lnet/minecraft/world/entity/projectile/Projectile$ProjectileFactory;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;FFF)Lnet/minecraft/world/entity/projectile/Projectile;"))
+    public <T extends Projectile> T immersiveMC$shootFromRotation(Projectile.ProjectileFactory<T> factory,
+                                                                  ServerLevel level, ItemStack spawnedFrom,
+                                                                  LivingEntity owner, float z, float velocity,
+                                                                  float inaccuracy) {
+        return ThrowRedirect.throwRedirect(factory, level, spawnedFrom, owner, z, velocity, inaccuracy);
     }
 }
