@@ -7,7 +7,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
@@ -21,7 +20,7 @@ public class HeldImageImmersive extends AbstractHandImmersive<HeldImageImmersive
     @Override
     protected void render(HeldImageImmersiveInfo<?> info, PoseStack stack, IVRData hand) {
         ImmersiveRenderHelpers.instance().renderImage(stack, info.heldImage, 0, 0, 1, 1,
-                hand.position(), info.size, info.light, hand.getRoll(), Direction.NORTH);
+                hand.position(), info.size, info.light, null);
     }
 
     @Override
