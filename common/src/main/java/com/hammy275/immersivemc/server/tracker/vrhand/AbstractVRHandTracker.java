@@ -55,7 +55,7 @@ public abstract class AbstractVRHandTracker {
     }
 
     protected boolean movingInDirectionWithThreshold(Direction direction, Vec3 handVelocity, double threshold) {
-        Vec3i blockFacing = direction.getNormal();
+        Vec3i blockFacing = direction.getUnitVec3i();
         // Check velocity requirement with hand velocity for x, y, and z. If the signs match, absolute value them
         // and check that we're moving faster than the threshold. If we are, return true.
         // If we fail for all three, return false.

@@ -6,24 +6,25 @@ package com.hammy275.immersivemc.client.model;
 
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 
-public class BackpackBundleModel extends EntityModel<Entity> {
+public class BackpackBundleModel extends EntityModel<EntityRenderState> {
     public static final ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "nahnotfox_bundle_bag.png");
     public static final ResourceLocation textureLocationColorable = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "nahnotfox_bundle_bag_colorable.png");
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "bundle_backpack"), "main");
-    private final ModelPart bone;
 
     public BackpackBundleModel(ModelPart root) {
-        this.bone = root.getChild("bone");
+        super(root);
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -41,15 +42,5 @@ public class BackpackBundleModel extends EntityModel<Entity> {
                 .texOffs(0, 34).addBox(-7.0F, -11.0F, -6.0F, 1.0F, 10.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 35.0F, 0.0F, 0.0F, -1.5708F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 128);
-    }
-
-    @Override
-    public void setupAnim(Entity entity, float f, float g, float h, float i, float j) {
-
-    }
-
-    @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-        bone.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 }

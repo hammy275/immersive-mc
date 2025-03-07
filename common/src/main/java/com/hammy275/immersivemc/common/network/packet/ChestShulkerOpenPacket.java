@@ -49,7 +49,7 @@ public class ChestShulkerOpenPacket {
                             other.startOpen(player);
                             ChestToOpenSet.openChest(player, other.getBlockPos());
                         }
-                        PiglinAi.angerNearbyPiglins(player, true);
+                        PiglinAi.angerNearbyPiglins(player.serverLevel(), player, true);
                     } else {
                         chest.stopOpen(player);
                         ChestToOpenSet.closeChest(player, chest.getBlockPos());
@@ -64,7 +64,7 @@ public class ChestShulkerOpenPacket {
                     if (message.isOpen) {
                         chest.startOpen(player);
                         ChestToOpenSet.openChest(player, chest.getBlockPos());
-                        PiglinAi.angerNearbyPiglins(player, true);
+                        PiglinAi.angerNearbyPiglins(player.serverLevel(), player, true);
                     } else {
                         chest.stopOpen(player);
                         ChestToOpenSet.closeChest(player, chest.getBlockPos());
@@ -82,7 +82,7 @@ public class ChestShulkerOpenPacket {
                     if (message.isOpen) {
                         barrel.startOpen(player);
                         ChestToOpenSet.openChest(player, barrel.getBlockPos());
-                        PiglinAi.angerNearbyPiglins(player, true);
+                        PiglinAi.angerNearbyPiglins(player.serverLevel(), player, true);
                     } else {
                         barrel.stopOpen(player);
                         ChestToOpenSet.closeChest(player, barrel.getBlockPos());

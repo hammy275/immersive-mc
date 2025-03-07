@@ -16,9 +16,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.AABB;
@@ -94,7 +94,7 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
                     buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
                     (int) renderColor.toLong(), 64f * (float) size, ClientUtil.maxLight);
         } else if (ConfigScreen.getClientConfigIfAdjusting().placementGuideMode == PlacementGuideMode.OUTLINE) {
-            LevelRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
+            ShapeRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
                     AABB.ofSize(Vec3.ZERO, 128 * size, 128 * size, 128 * size),
                     color.redF(), color.greenF(), color.blueF(), color.alphaF());
         }

@@ -69,7 +69,7 @@ public class ClientUtil {
      * @return Player position while accounting for partial ticks
      */
     public static Vec3 playerPos() {
-        return Minecraft.getInstance().player.getPosition(Minecraft.getInstance().getTimer().getGameTimeDeltaTicks());
+        return Minecraft.getInstance().player.getPosition(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaTicks());
     }
 
     public static Tuple<Vec3, Vec3> getStartAndEndOfLookTrace(Player player) {
@@ -113,14 +113,14 @@ public class ClientUtil {
                 if (VRPlugin.API.apiActive(player)) {
                     Immersives.immersiveBackpack.doTrack();
                 } else {
-                    player.sendSystemMessage(Component.translatable("message.immersivemc.no_api_server"));
+                    player.displayClientMessage(Component.translatable("message.immersivemc.no_api_server"), false);
                 }
             } else {
-                player.sendSystemMessage(Component.translatable("message.immersivemc.not_in_vr"));
+                player.displayClientMessage(Component.translatable("message.immersivemc.not_in_vr"), false);
             }
         } else {
-            player.sendSystemMessage(Component.translatable("message.immersivemc.no_api",
-                    CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString()));
+            player.displayClientMessage(Component.translatable("message.immersivemc.no_api",
+                    CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString()), false);
         }
     }
 

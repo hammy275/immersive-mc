@@ -8,7 +8,7 @@ import com.hammy275.immersivemc.mixin.BucketItemAccessor;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
@@ -68,10 +68,12 @@ public class BottleAndBucketTracker extends AbstractTracker {
     }
 
 
-    private void possiblyPlaceItemAndSetCooldown(Player player, InteractionHand hand, InteractionResultHolder<ItemStack> res) {
-        if (res.getResult().consumesAction() && !res.getObject().isEmpty()) {
-            cooldown.put(player.getUUID(), 5);
-            player.setItemInHand(hand, res.getObject());
+    private void possiblyPlaceItemAndSetCooldown(Player player, InteractionHand hand, InteractionResult res) {
+        if (res.consumesAction() && res instanceof InteractionResult.Success success) {
+            if (success.heldItemTransformedTo() != null) {
+                cooldown.put(player.getUUID(), 5);
+                player.setItemInHand(hand, success.heldItemTransformedTo());
+            }
         }
     }
 }

@@ -101,7 +101,7 @@ public class ClientBookData extends CommonBookData {
                 rightPageTurn, // 0-1. How far across a different page is. Range is [0f, 1f] with 0f being left.
                 bookOpenAmount // How open the book is. A good range seems to be (0f,1.2f]
         );
-        bookModel.render(stack,
+        bookModel.renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderType.entitySolid(writtenBookTexture)),
                 light, OverlayTexture.NO_OVERLAY,

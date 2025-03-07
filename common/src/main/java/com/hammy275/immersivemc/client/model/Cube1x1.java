@@ -21,7 +21,7 @@ public class Cube1x1 extends Model {
     private final ModelPart bb_main;
 
     public Cube1x1(ModelPart root) {
-        super(RenderType::entityCutoutNoCull);
+        super(root, RenderType::entityCutoutNoCull);
         this.bb_main = root.getChild("bb_main");
     }
 
@@ -39,11 +39,5 @@ public class Cube1x1 extends Model {
         stack.scale(size * 16f, size * 16f, size * 16f);
         renderToBuffer(stack, consumer, light, OverlayTexture.NO_OVERLAY, color);
         stack.popPose();
-    }
-
-    @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-        bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-
     }
 }

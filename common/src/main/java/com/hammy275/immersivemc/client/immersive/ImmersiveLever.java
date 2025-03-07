@@ -71,8 +71,8 @@ public class ImmersiveLever extends AbstractDragImmersive {
             }
             default -> throw new IllegalStateException("Lever is attached to unknown face " + attachFace.getSerializedName());
         }
-        Vec3 towardsBase = Vec3.atLowerCornerOf(towardsBaseDir.getNormal());
-        Vec3 towardsOn = Vec3.atLowerCornerOf(towardsOnDir.getNormal());
+        Vec3 towardsBase = towardsBaseDir.getUnitVec3();
+        Vec3 towardsOn = towardsOnDir.getUnitVec3();
         center = center.add(towardsBase.scale(0.25));
 
         Vec3 offPos = center.add(towardsOn.scale(-0.25));

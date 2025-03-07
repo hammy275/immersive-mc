@@ -221,8 +221,8 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
                     upDownRenderDir = isCeiling ? Direction.DOWN : Direction.UP;
                 }
                 case WALL -> {
-                    xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
-                    yVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
+                    xVec = blockFacing.getCounterClockWise().getUnitVec3();
+                    yVec = blockFacing.getUnitVec3();
                     zVec = new Vec3(0, -1, 0);
 
                     centerPos = Vec3.atBottomCenterOf(info.getBlockPosition());
@@ -322,10 +322,10 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
         if (blockLiteralFacing.getAxis() != Direction.Axis.Y) {
             xVec = new Vec3(0, 1, 0);
         } else {
-            xVec = Vec3.atLowerCornerOf(blockFacing.getCounterClockWise().getNormal());
+            xVec = blockFacing.getCounterClockWise().getUnitVec3();
         }
-        yVec = Vec3.atLowerCornerOf(blockLiteralFacing.getNormal());
-        zVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
+        yVec = blockLiteralFacing.getUnitVec3();
+        zVec = blockFacing.getUnitVec3();
 
         centerPos = Vec3.atCenterOf(info.getBlockPosition()).add(zVec.scale(0.5));
 
@@ -348,8 +348,8 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
 
         BlockPos pos = info.getBlockPosition();
 
-        xVec = Vec3.atLowerCornerOf(blockFacing.getClockWise().getNormal());
-        yVec = Vec3.atLowerCornerOf(blockFacing.getNormal());
+        xVec = blockFacing.getClockWise().getUnitVec3();
+        yVec = blockFacing.getUnitVec3();
         zVec = new Vec3(0, 1, 0);
 
         centerPos = Vec3.atBottomCenterOf(pos).add(0, bottomOfBlock ? 0 : 1, 0);
@@ -364,8 +364,8 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
 
     private void recalcTopPlayerFacing(Direction playerFacing, BuiltImmersiveInfoImpl<?> info, Vec3 offset) {
         BlockPos pos = info.getBlockPosition();
-        xVec = Vec3.atLowerCornerOf(playerFacing.getCounterClockWise().getNormal());
-        yVec = Vec3.atLowerCornerOf(playerFacing.getOpposite().getNormal());
+        xVec = playerFacing.getCounterClockWise().getUnitVec3();
+        yVec = playerFacing.getOpposite().getUnitVec3();
         zVec = new Vec3(0, 1, 0);
 
         centerPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0);

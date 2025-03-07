@@ -18,7 +18,6 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -209,7 +208,7 @@ public class WrittenBookHelpers {
         public void hover(ClientBookData data, PosRot bookPosRot, PosRot other) {
             Vec3 pos = obb.getCenter();
             Minecraft.getInstance().player.level().addParticle(
-                    new DustParticleOptions(new Vector3f(0f, 0f, 1f), 0.2f),
+                    new DustParticleOptions(0x0000FF, 0.2f),
                     pos.x, pos.y, pos.z, 0, 0, 0
             );
         }

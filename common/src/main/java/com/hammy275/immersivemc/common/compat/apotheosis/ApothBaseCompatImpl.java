@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.common.compat.apotheosis;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.AirItem;
 
 public abstract class ApothBaseCompatImpl implements ApothCompat {
 
@@ -14,8 +13,9 @@ public abstract class ApothBaseCompatImpl implements ApothCompat {
         // Needed in-case ImmersiveMC's compat crashes or the mod isn't present, since we need to prevent ImmersiveMC
         // from preventing vanilla enchanting.
         if (doSuppressVanillaEnchanting == null) {
-            doSuppressVanillaEnchanting = !(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("apotheosis", "hellshelf")) instanceof AirItem) ||
-                    !(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("zenith", "hellshelf")) instanceof AirItem);
+            // TODO: Below code is not testing as of 1.21.1 -> 1.21.4 port.
+            doSuppressVanillaEnchanting = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("apotheosis", "hellshelf")).isPresent() ||
+                    BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("zenith", "hellshelf")).isPresent();
         }
         return doSuppressVanillaEnchanting;
     }

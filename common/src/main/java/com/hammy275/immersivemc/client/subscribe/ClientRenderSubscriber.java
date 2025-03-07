@@ -27,7 +27,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -72,7 +72,7 @@ public class ClientRenderSubscriber {
         // Draw shield hitbox(es)
         if (VRPluginVerify.clientInVR()) {
             for (InteractionHand iHand : InteractionHand.values()) {
-                if (Minecraft.getInstance().player.getItemInHand(iHand).getUseAnimation() == UseAnim.BLOCK) {
+                if (Minecraft.getInstance().player.getItemInHand(iHand).getUseAnimation() == ItemUseAnimation.BLOCK) {
                     IVRPlayer vrPlayer = Platform.isDevelopmentEnvironment() ?
                             VRPlugin.API.getVRPlayer(Minecraft.getInstance().player) :
                             VRPlugin.API.getRenderVRPlayer();
@@ -133,7 +133,7 @@ public class ClientRenderSubscriber {
             }
             for (I info : singleton.getTrackedObjects()) {
                 if (singleton.shouldRender(info)) {
-                    singleton.render(info, stack, ImmersiveRenderHelpers.instance(), Minecraft.getInstance().getTimer().getGameTimeDeltaTicks());
+                    singleton.render(info, stack, ImmersiveRenderHelpers.instance(), Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaTicks());
                 }
             }
         } catch (ConcurrentModificationException ignored) {

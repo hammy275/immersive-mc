@@ -3,7 +3,6 @@ package com.hammy275.immersivemc.neoforge;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.compat.Lootr;
-import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.network.Network;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
@@ -32,9 +31,6 @@ public class ImmersiveMCNeoForge {
 
         if (Platform.isModLoaded("lootr")) {
             Lootr.lootrImpl = LootrCompatImpl.makeCompatImpl();
-        }
-        if (Platform.isModLoaded("apotheosis")) {
-            Apoth.apothImpl = ApothCompatImpl.makeCompatImpl();
         }
     }
 }

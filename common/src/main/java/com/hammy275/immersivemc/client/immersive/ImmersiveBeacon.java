@@ -218,7 +218,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
             Direction playerForward = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
             double xMult = 0;
             double zMult = 0;
-            if (playerForward.getNormal().getX() != 0) {
+            if (playerForward.getUnitVec3i().getX() != 0) {
                 zMult = 1;
             } else {
                 xMult = 1;
@@ -287,11 +287,11 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
             // perspective, not the block's!
             Vec3 center = Vec3.atCenterOf(info.getBlockPosition()).add(0, 1, 0);
             Direction beaconForward = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition());
-            Vec3 forwardFromBlockVec = new Vec3(beaconForward.getNormal().getX(), beaconForward.getNormal().getY(),
-                    beaconForward.getNormal().getZ());
+            Vec3 forwardFromBlockVec = new Vec3(beaconForward.getUnitVec3i().getX(), beaconForward.getUnitVec3i().getY(),
+                    beaconForward.getUnitVec3i().getZ());
             Direction left = beaconForward.getClockWise();
 
-            Vec3 leftVec = new Vec3(left.getNormal().getX(), left.getNormal().getY(), left.getNormal().getZ());
+            Vec3 leftVec = left.getUnitVec3();
 
             // For item input
             double itemHitboxSize = ClientConstants.itemScaleSizeBeacon;
@@ -420,7 +420,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
     private Vec3 posToRotatedPos(Vec3 forwardPos, double rotRad, Direction playerForwardDir) {
 
         Vec3 circleCenter = forwardPos.add(
-                Vec3.atLowerCornerOf(Direction.DOWN.getNormal()).scale(effectCircleRadius)
+                Direction.DOWN.getUnitVec3().scale(effectCircleRadius)
         );
 
         Direction.Axis axisFacing = playerForwardDir.getAxis();

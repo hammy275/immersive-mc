@@ -98,7 +98,7 @@ public class LecternData<T extends CommonBookData> implements NetworkStorage {
     public PosRot getLecternPosRot(BlockPos pos) {
         Direction lecternDir = level.getBlockState(pos).getValue(BlockStateProperties.HORIZONTAL_FACING);
         Vec3 lecternPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0)
-                .add(Vec3.atLowerCornerOf(lecternDir.getNormal()).scale(0.1));
+                .add(lecternDir.getUnitVec3().scale(0.1));
         return new PosRot(lecternPos, Util.getLookAngle((float) -Math.PI / 8f, (float) -Math.toRadians(lecternDir.getOpposite().toYRot())),
                 22.5f,
                 lecternDir.getOpposite().toYRot(), 0);

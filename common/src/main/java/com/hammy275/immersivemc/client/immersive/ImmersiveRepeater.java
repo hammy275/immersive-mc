@@ -60,7 +60,7 @@ public class ImmersiveRepeater extends AbstractDragImmersive {
         BlockState state = Minecraft.getInstance().level.getBlockState(info.getBlockPosition());
         Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
         Direction forwardDir = facing.getOpposite();
-        Vec3 forward = Vec3.atLowerCornerOf(forwardDir.getNormal());
+        Vec3 forward = forwardDir.getUnitVec3();
         Vec3 centerPos = Vec3.upFromBottomCenterOf(info.getBlockPosition(), 1).add(0, -0.675, 0);
 
         info.hitboxes.add(HitboxInfoFactory.instance().interactHitbox(

@@ -21,9 +21,9 @@ import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -183,7 +183,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
                         -renderInfo.getPosition().y,
                         -renderInfo.getPosition().z);
                 MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-                LevelRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
+                ShapeRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
                         hitbox.asAABB(),
                         red, green, blue, alpha);
                 stack.popPose();
@@ -280,7 +280,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
 
     @Override
     public float getTransitionMultiplier(long ticksExisted) {
-        return Math.min(1, ClientConstants.transitionMult * (ticksExisted + Minecraft.getInstance().getTimer().getGameTimeDeltaTicks()));
+        return Math.min(1, ClientConstants.transitionMult * (ticksExisted + Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaTicks()));
     }
 
     @Override

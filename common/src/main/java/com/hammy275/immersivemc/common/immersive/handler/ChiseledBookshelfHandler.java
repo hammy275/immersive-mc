@@ -44,7 +44,7 @@ public class ChiseledBookshelfHandler extends ContainerHandler<NullStorage> {
         BlockState state = player.level().getBlockState(pos);
         if (state.getBlock() instanceof ChiseledBookShelfBlock block) {
             Direction blockFacing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
-            Vec3 blockEdgePos = Vec3.atBottomCenterOf(pos).add(Vec3.atLowerCornerOf(blockFacing.getNormal()).scale(0.5)).add(0, 0.5, 0);
+            Vec3 blockEdgePos = Vec3.atBottomCenterOf(pos).add(blockFacing.getUnitVec3().scale(0.5)).add(0, 0.5, 0);
             // Change the offsets based on block facing:
             // +Z (south) = do not touch
             // -Z (north) = swap x/z signs

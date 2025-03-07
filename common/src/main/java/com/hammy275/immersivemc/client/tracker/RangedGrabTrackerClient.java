@@ -19,7 +19,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -84,7 +83,7 @@ public class RangedGrabTrackerClient extends AbstractTracker {
                 RGBA color = ClientRenderSubscriber.rangedGrabColor();
                 Vec3 pos = selected.position().add(0, 0.2, 0);
                 selected.level().addParticle(new DustParticleOptions(
-                        new Vector3f(color.redF(), color.greenF(), color.blueF()), color.alphaF()),
+                                (int) color.toLong() & 0xFFFFFF, color.alphaF()),
                         pos.x, pos.y, pos.z, 0.01, 0.01, 0.01);
             }
         }

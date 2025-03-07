@@ -1,8 +1,6 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
-import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.compat.apotheosis.ApothStats;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
@@ -11,10 +9,13 @@ import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStor
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.server.api_impl.ConstantItemSwapAmount;
+import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
+import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.storage.world.impl.ETableWorldStorage;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -23,6 +24,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EnchantingTableBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -44,8 +46,11 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
                     // Null checking is done here in case of an exception causing CompatModule to give us a null value
                     ETableStorage.SlotData[] slots = Apoth.apothImpl.getEnchData(player, pos, worldStorage.getItem(0));
                     if (slots != null) storage.slots = slots;
-                    ApothStats stats = Apoth.apothImpl.getStats(player.level(), pos, worldStorage.getItem(0).getItem().getEnchantmentValue());
-                    if (stats != null) storage.apothStats = stats;
+                    Enchantable enchantable =  worldStorage.getItem(0).get(DataComponents.ENCHANTABLE);
+                    if (enchantable != null) {
+                        ApothStats stats = Apoth.apothImpl.getStats(player.level(), pos, enchantable.value());
+                        if (stats != null) storage.apothStats = stats;
+                    }
                 } else {
                     EnchantmentMenu container = new EnchantmentMenu(-1,
                             player.getInventory(), ContainerLevelAccess.create(player.level(), pos));

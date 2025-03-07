@@ -11,7 +11,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BottleItem;
 import net.minecraft.world.item.BucketItem;
@@ -99,7 +99,7 @@ public class CauldronTracker extends AbstractVRHandTracker {
         return config.useCauldronImmersive;
     }
 
-    private void possiblySetCooldown(Player player, ItemInteractionResult res) {
+    private void possiblySetCooldown(Player player, InteractionResult res) {
         if (res.consumesAction()) {
             cooldown.put(player.getUUID(), 5);
         }

@@ -87,7 +87,7 @@ public class ImmersiveTrapdoor extends AbstractDragImmersive {
             }
             end = AABB.ofSize(endPos, 1, 6d/16d, 1);
         } else {
-            endPos = endPos.add(Vec3.atLowerCornerOf(trapdoorWallDir.getNormal()).scale(5d/16d)).add(0, 0.5, 0);
+            endPos = endPos.add(trapdoorWallDir.getUnitVec3().scale(5d/16d)).add(0, 0.5, 0);
             double xSize = trapdoorWallDir.getAxis() == Direction.Axis.X ? 6d/16d : 1;
             double zSize = xSize == 1 ? 6d/16d : 1;
             end = AABB.ofSize(endPos, xSize, 1, zSize);

@@ -10,6 +10,7 @@ import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -35,18 +36,20 @@ public class CampfireTracker extends AbstractTracker {
     }
 
     @Override
-    protected void tick(Player player) {
+    protected void tick(Player playerIn) {
+        ServerPlayer player = (ServerPlayer) playerIn;
         CookInfo info = cookTime.get(player.getGameProfile().getName());
         if (info == null) return;
         for (int c = 0; c <= 1; c++) {
             ItemStack toSmelt = c == 0 ? player.getItemInHand(InteractionHand.MAIN_HAND) : player.getItemInHand(InteractionHand.OFF_HAND);
             Optional<RecipeHolder<CampfireCookingRecipe>> recipe =
-                    player.level().getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SingleRecipeInput(toSmelt), player.level());
-            if (recipe.isPresent() && info.get(c) >= recipe.get().value().getCookingTime() / 2) { // Smelt the held controller's item if we reach cook time.
+                    player.serverLevel().recipeAccess().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SingleRecipeInput(toSmelt), player.level());
+            if (recipe.isPresent() && info.get(c) >= recipe.get().value().cookingTime() / 2) { // Smelt the held controller's item if we reach cook time.
                 toSmelt.shrink(1);
-                boolean didGive = player.getInventory().add(recipe.get().value().getResultItem(player.level().registryAccess()).copy());
+                ItemStack result = recipe.get().value().assemble(new SingleRecipeInput(toSmelt), player.level().registryAccess());
+                boolean didGive = player.getInventory().add(result);
                 if (!didGive) {
-                    Util.placeLeftovers(player, recipe.get().value().getResultItem(player.level().registryAccess()).copy());
+                    Util.placeLeftovers(player, result);
                 }
                 cookTime.remove(player.getGameProfile().getName());
             } else if (recipe.isPresent() &&

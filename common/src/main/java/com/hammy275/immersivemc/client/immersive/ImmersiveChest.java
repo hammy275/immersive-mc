@@ -157,8 +157,8 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
         for (int chestNum = 0; chestNum <= 1; chestNum++) {
             BlockEntity chest = chests[chestNum];
             if (chest == null) continue;
-            Vec3 forward = Vec3.atLowerCornerOf(info.forward.getNormal());
-            Vec3 left = Vec3.atLowerCornerOf(info.forward.getCounterClockWise().getNormal());
+            Vec3 forward = info.forward.getUnitVec3();
+            Vec3 left = info.forward.getCounterClockWise().getUnitVec3();
             Vec3 frontMid = Vec3.upFromBottomCenterOf(chest.getBlockPos(), 1).add(forward.multiply(0.5, 0.5, 0.5));
             if (info.isOpen) {
                 Vec3 linePos = frontMid.add(forward.multiply(-0.5, -0.5, -0.5));

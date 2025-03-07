@@ -15,10 +15,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.FishingRodItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DirectionalBlock;
@@ -29,7 +33,12 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public class Util {
 
@@ -39,8 +48,8 @@ public class Util {
         return hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
     }
 
-    public static InteractionResultHolder<ItemStack> doUse(Player player, InteractionHand hand, BlockPos pos) {
-        InteractionResultHolder<ItemStack> result;
+    public static InteractionResult doUse(Player player, InteractionHand hand, BlockPos pos) {
+        InteractionResult result;
         try {
             activeUseInfo = new UseInfo(player, hand, pos);
             result = player.getItemInHand(hand).use(player.level(), player, hand);
@@ -416,14 +425,14 @@ public class Util {
         Direction left = blockForward.getCounterClockWise();
 
         Vec3 leftOffset = new Vec3(
-                left.getNormal().getX() * -spacing, 0, left.getNormal().getZ() * -spacing);
+                left.getUnitVec3i().getX() * -spacing, 0, left.getUnitVec3i().getZ() * -spacing);
         Vec3 rightOffset = new Vec3(
-                left.getNormal().getX() * spacing, 0, left.getNormal().getZ() * spacing);
+                left.getUnitVec3i().getX() * spacing, 0, left.getUnitVec3i().getZ() * spacing);
 
         Vec3 topOffset = new Vec3(
-                blockForward.getNormal().getX() * -spacing, 0, blockForward.getNormal().getZ() * -spacing);
+                blockForward.getUnitVec3i().getX() * -spacing, 0, blockForward.getUnitVec3i().getZ() * -spacing);
         Vec3 botOffset = new Vec3(
-                blockForward.getNormal().getX() * spacing, 0, blockForward.getNormal().getZ() * spacing);
+                blockForward.getUnitVec3i().getX() * spacing, 0, blockForward.getUnitVec3i().getZ() * spacing);
 
 
         return new Vec3[]{
@@ -462,7 +471,7 @@ public class Util {
                 Direction blockFacing = player.level().getBlockState(pos).getValue(DirectionalBlock.FACING);
                 Vec3 blockCenter = Vec3.atCenterOf(pos);
                 Direction blockLeftDir = blockFacing.getCounterClockWise();
-                Vec3 blockLeftVec = new Vec3(blockLeftDir.getNormal().getX(), blockLeftDir.getNormal().getY(), blockLeftDir.getNormal().getZ());
+                Vec3 blockLeftVec = blockLeftDir.getUnitVec3();
                 Vec3 counterClockwisePos = blockCenter.add(blockLeftVec.scale(0.5));
                 Vec3 clockwisePos = blockCenter.add(blockLeftVec.scale(-0.5));
                 Vec3 upPos = blockCenter.add(0, 0.5, 0);

@@ -11,7 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +22,7 @@ public class LivingEntityMixinProxy {
                 ActiveConfig.getActiveConfigCommon(player).useShieldImmersive && VRPlugin.API.playerInVR(player)
                 && player.getUseItem().isEmpty()) {
             for (InteractionHand iHand : InteractionHand.values()) {
-                if (player.getItemInHand(iHand).getUseAnimation() == UseAnim.BLOCK) {
+                if (player.getItemInHand(iHand).getUseAnimation() == ItemUseAnimation.BLOCK) {
                     return true;
                 }
             }
@@ -46,9 +46,9 @@ public class LivingEntityMixinProxy {
             if (!damageSource.is(DamageTypeTags.BYPASSES_ARMOR) && damageSource.getSourcePosition() != null) {
                 IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
                 for (InteractionHand iHand : InteractionHand.values()) {
-                    if (player.getItemInHand(iHand).getUseAnimation() == UseAnim.BLOCK) {
+                    if (player.getItemInHand(iHand).getUseAnimation() == ItemUseAnimation.BLOCK) {
                         // Iterate again if shield is on cooldown
-                        if (player.getCooldowns().isOnCooldown(player.getItemInHand(iHand).getItem())) {
+                        if (player.getCooldowns().isOnCooldown(player.getItemInHand(iHand))) {
                             continue;
                         }
                         // Multiplier based on left handedness and based on which hand we're using

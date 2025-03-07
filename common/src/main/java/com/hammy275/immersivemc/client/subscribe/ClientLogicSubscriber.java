@@ -37,6 +37,7 @@ import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -75,7 +76,7 @@ public class ClientLogicSubscriber {
         if (Minecraft.getInstance().level == null) return;
         Player player = Minecraft.getInstance().player;
         if (player == null) return;
-        minecraft.getProfiler().push(ImmersiveMC.MOD_ID);
+        Profiler.get().push(ImmersiveMC.MOD_ID);
 
         if (!VRPluginVerify.clientInVR()) {
             SwapTracker.c0.maybeIdleTick();
@@ -162,7 +163,7 @@ public class ClientLogicSubscriber {
         possiblyTrack(pos, state, tileEntity, Minecraft.getInstance().level);
 
         // Pop profiler push from above. Not using a popPush() so we're part of tick in the profiler.
-        minecraft.getProfiler().pop();
+        Profiler.get().pop();
     }
 
     public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {

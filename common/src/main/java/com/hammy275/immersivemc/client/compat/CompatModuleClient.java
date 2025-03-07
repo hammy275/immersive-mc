@@ -23,7 +23,7 @@ public class CompatModuleClient {
         compatData.configSetter().accept(ActiveConfig.FILE_CLIENT, false);
         ConfigScreen.onClientConfigChange();
         if (!noMessage) {
-            Minecraft.getInstance().player.sendSystemMessage(CompatModule.getErrorMessage(compatData.friendlyName()));
+            Minecraft.getInstance().player.displayClientMessage(CompatModule.getErrorMessage(compatData.friendlyName()), false);
         }
     }
 }

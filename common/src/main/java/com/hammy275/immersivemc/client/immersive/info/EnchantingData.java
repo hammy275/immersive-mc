@@ -118,7 +118,7 @@ public class EnchantingData {
                 this.textPreviews.add(Component.literal("???"));
             } else {
                 for (int i = 0; i < data.enchantmentHints().size(); i++) {
-                    Registry<Enchantment> enchantments = Minecraft.getInstance().level.registryAccess().registry(Registries.ENCHANTMENT).get();
+                    Registry<Enchantment> enchantments = Minecraft.getInstance().level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
                     Enchantment ench = enchantments.byId(data.enchantmentHints().get(i));
                     if (ench != null) {
                         this.levelsNeeded = data.xpLevel();
