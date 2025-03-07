@@ -236,7 +236,6 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
                 -renderInfo.getPosition().z + pos.z);
         stack.scale(size, size, size);
 
-        stack.mulPose(Vector3f.ZN.rotationDegrees(roll));
         // If north, we're good to go
         if (facing == Direction.WEST) {
             stack.mulPose(Vector3f.YP.rotationDegrees(90));
@@ -248,6 +247,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
             faceTowardsPlayer(stack, pos);
             stack.mulPose(Vector3f.YP.rotationDegrees(180));
         }
+        stack.mulPose(Vector3f.ZN.rotationDegrees(roll));
 
         VertexConsumer consumer =
                 Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.entityCutoutNoCull(imageLocation));
