@@ -19,6 +19,7 @@
     "LecternBlockEntityAccessor",
     "LevelMixin",
     "LivingEntityMixin",
+    "PlayerMixin",
     "ProjectileAccessor",
     "ServerPlayerGameModeMixin",
     "throw_redirectors.BottleOEnchantingRedirect",
