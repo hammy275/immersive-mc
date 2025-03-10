@@ -265,8 +265,8 @@ public class Swap {
         List<ItemStack> stacksToGive = new ArrayList<>();
         int itersDone = 0;
         int iters = amount.getSwapMode() == SwapMode.ALL ? Integer.MAX_VALUE : amount.getNumItemsToSwap();
-        while (itersDone++ < iters && ItemStack.matches(firstOut, stackOut) &&
-                itemStackArraysMatchBesidesCount(stacksIn, newSlotsState, 9)) {
+        while (itersDone++ < iters && ItemStack.matches(firstOut, stackOut) && !stackOut.isEmpty() &&
+                itemStackArraysMatchBesidesCount(stacksIn, newSlotsState, isBackpack ? 4 : 9)) {
             // Perform the craft in an actual crafting menu
             for (int i = 0; i < newSlotsState.length - 1; i++) { // -1 from length since we skip the last index since it's the output
                 // Slot 0 is the output
