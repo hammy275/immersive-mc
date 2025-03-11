@@ -34,12 +34,12 @@ public class BrewingStandHandler extends ContainerHandler<ListOfItemsStorage> {
         ItemStack standItem = stand.getItem(slot).copy();
         ItemStack playerItem = player.getItemInHand(hand).copy();
         if (slot < 3) { // Potions
-            if (!stand.canPlaceItem(slot, playerItem) && playerItem != ItemStack.EMPTY
+            if (!stand.canPlaceItem(slot, playerItem) && !playerItem.isEmpty()
                     && !(standItem.getItem() instanceof PotionItem)) return;
             player.setItemInHand(hand, standItem);
             stand.setItem(slot, playerItem);
         } else { // Ingredient and Fuel
-            if (!stand.canPlaceItem(slot, playerItem) && playerItem != ItemStack.EMPTY) return;
+            if (!stand.canPlaceItem(slot, playerItem) && !playerItem.isEmpty()) return;
             SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, standItem, amount);
             result.giveToPlayer(player, hand);
             stand.setItem(slot, result.immersiveStack());
