@@ -61,4 +61,16 @@ public interface ImmersiveLogicHelpers {
      *         the player some other way.
      */
     public SwapResult swapItems(ItemStack stackFromPlayer, ItemStack stackInImmersive, ItemSwapAmount swapAmount, int forcedMaxImmersiveStackSize);
+
+    /**
+     * Gets the result of a swap action between a player and an Immersive where the player may place items only into
+     * a slot, such as the output slot of a furnace.
+     * @param stackFromPlayer The {@link ItemStack} currently in the player's hand.
+     * @param stackInImmersive The {@link ItemStack} currently in the output slot of the Immersive the player is
+     *                         interacting with.
+     * @return A {@link SwapResult} containing the {@link ItemStack}s that should be placed in the player's hand, be
+     *         placed into the slot of the Immersive being interacted with, and the leftovers that should be given to
+     *         the player some other way.
+     */
+    public SwapResult swapItemsWithOutput(ItemStack stackFromPlayer, ItemStack stackInImmersive);
 }
