@@ -96,7 +96,7 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
                 Util.placeLeftovers(player, enchStorage.getItem(0));
                 enchStorage.setItem(0, ItemStack.EMPTY);
             }
-        } else if (player.getItemInHand(hand).isEmpty()) {
+        } else {
             boolean res = Swap.doEnchanting(slot, pos, player, hand);
             if (res) {
                 VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);

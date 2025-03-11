@@ -44,7 +44,6 @@ public class AnvilHandler extends ItemWorldStorageHandler<AnvilStorage> {
                 storage.xpLevels = output.getSecond();
             }
         } else if (!storage.getItem(2).isEmpty()) { // Craft our result!
-            if (!player.getItemInHand(hand).isEmpty()) return;
             boolean res = Swap.handleAnvilCraft(storage, pos, player, hand);
             if (res) {
                 VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);

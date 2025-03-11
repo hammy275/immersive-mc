@@ -375,6 +375,14 @@ public class Util {
         return num - subtract;
     }
 
+    public static void giveStackHandFirst(Player player, InteractionHand hand, ItemStack stack) {
+        if (player.getItemInHand(hand).isEmpty()) {
+            player.setItemInHand(hand, stack);
+        } else {
+            placeLeftovers(player, stack);
+        }
+    }
+
     public static void placeLeftovers(Player player, ItemStack leftovers) {
         placeLeftovers(player, leftovers, player.position());
     }

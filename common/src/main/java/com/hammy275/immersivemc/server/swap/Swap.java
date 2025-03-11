@@ -112,7 +112,6 @@ public class Swap {
 
     public static boolean doEnchanting(int slot, BlockPos pos, ServerPlayer player, InteractionHand hand) {
         // NOTE: slot is 1-3, depending on which enchantment the player is going for.
-        if (!player.getItemInHand(hand).isEmpty()) return false;
         if (slot < 1 || slot > 3) return false;
         ETableWorldStorage storage = (ETableWorldStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
         ItemStack toEnchantItem = storage.getItem(0).copy();
@@ -134,7 +133,7 @@ public class Swap {
             takeLapis = true;
             ItemStack out = Apoth.apothImpl.doEnchant(player, pos, slot - 1, toEnchantItem);
             if (out == null) out = toEnchantItem; // Happens on Apotheosis compat crash
-            player.setItemInHand(hand, out);
+            Util.giveStackHandFirst(player, hand, out);
             storage.setItem(0, ItemStack.EMPTY);
         } else {
             EnchantmentMenu container = new EnchantmentMenu(-1,
@@ -143,7 +142,7 @@ public class Swap {
             container.setItem(0, 0, toEnchantItem);
             if (container.clickMenuButton(player, slot - 1)) {
                 takeLapis = true;
-                player.setItemInHand(hand, container.getSlot(0).getItem());
+                Util.giveStackHandFirst(player, hand, container.getSlot(0).getItem());
                 storage.setItem(0, ItemStack.EMPTY);
             }
         }
@@ -190,7 +189,6 @@ public class Swap {
     }
 
     public static boolean handleAnvilCraft(AnvilStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
-        if (!player.getItemInHand(hand).isEmpty()) return false;
         ItemStack left = storage.getItem(0);
         ItemStack mid = storage.getItem(1);
         Pair<ItemStack, Integer> resAndCost = Swap.getAnvilOutput(left, mid, player);
@@ -211,14 +209,13 @@ public class Swap {
             Pair<ItemStack, Integer> output = Swap.getAnvilOutput(storage.getItem(0), storage.getItem(1), player);
             storage.setItem(2, output.getFirst());
             storage.xpLevels = output.getSecond();
-            player.setItemInHand(hand, resAndCost.getFirst());
+            Util.giveStackHandFirst(player, hand, resAndCost.getFirst());
             return true;
         }
         return false;
     }
 
     public static boolean handleSmithingTableCraft(SmithingTableStorage storage, BlockPos pos, ServerPlayer player, InteractionHand hand) {
-        if (!player.getItemInHand(hand).isEmpty()) return false;
         ItemStack left = storage.getItem(0);
         ItemStack mid = storage.getItem(1);
         ItemStack right = storage.getItem(2);
@@ -231,7 +228,7 @@ public class Swap {
             storage.shrinkSlot(1, 1);
             storage.shrinkSlot(2, 1);
             storage.setItem(3, ItemStack.EMPTY);
-            player.setItemInHand(hand, output);
+            Util.giveStackHandFirst(player, hand, output);
             return true;
         }
         return false;

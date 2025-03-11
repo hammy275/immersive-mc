@@ -2,11 +2,10 @@ package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
-import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
-import com.hammy275.immersivemc.server.storage.server.SwapResult;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
-import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
+import com.hammy275.immersivemc.server.storage.server.SwapResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,21 +41,10 @@ public class FurnaceHandler extends ContainerHandler<ListOfItemsStorage> {
                 furnace.setItem(slot, result.immersiveStack());
             }
         } else {
-            boolean itemTaken = false;
-            if (playerItem.isEmpty()) {
-                player.setItemInHand(hand, furnaceItem);
-                furnace.setItem(2, playerItem);
-                itemTaken = true;
-            } else if (Util.stacksEqualBesidesCount(furnaceItem, playerItem)) {
-                int beforeGrabCount = furnace.getItem(2).getCount();
-                Util.ItemStackMergeResult result = Util.mergeStacks(playerItem, furnaceItem, false);
-                player.setItemInHand(hand, result.mergedInto);
-                furnace.setItem(slot, result.mergedFrom);
-                itemTaken = furnace.getItem(2).isEmpty() || furnace.getItem(2).getCount() < beforeGrabCount;
-            }
-            if (itemTaken) {
-                awardXP(furnace, player);
-            }
+            SwapResult result = ImmersiveLogicHelpers.instance().swapItemsWithOutput(playerItem, furnaceItem);
+            result.giveToPlayer(player, hand);
+            furnace.setItem(2, result.immersiveStack());
+            awardXP(furnace, player);
         }
         furnace.setChanged();
     }

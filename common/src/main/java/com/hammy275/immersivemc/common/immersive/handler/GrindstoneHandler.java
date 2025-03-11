@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.common.immersive.handler;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.GrindstoneStorage;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
 import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
@@ -54,16 +55,16 @@ public class GrindstoneHandler extends ItemWorldStorageHandler<GrindstoneStorage
                 }
                 storage.setItem(2, menu.getSlot(2).getItem().copy());
             }
-        } else if (slot == 2 && player.getItemInHand(hand).isEmpty() && !storage.getItem(2).isEmpty()) {
+        } else if (slot == 2 && !storage.getItem(2).isEmpty()) {
             for (int i = 0; i <= 1; i++) {
                 menu.setItem(i, 0, storage.getItem(i));
             }
-            player.setItemInHand(hand, storage.getItem(2).copy());
+            Util.giveStackHandFirst(player, hand, storage.getItem(2).copy());
             menu.getSlot(2).onTake(player, storage.getItem(2));
             for (int i = 0; i <= 2; i++) {
                 storage.setItem(i, ItemStack.EMPTY);
             }
-        } else if (slot == 3) {
+        } else if (slot == 3) { // VR grindstone movement action.
             menu.setItem(0, 0, stackIn);
             if (!menu.getSlot(2).getItem().isEmpty()) {
                 player.setItemInHand(hand, menu.getSlot(2).getItem().copy());
