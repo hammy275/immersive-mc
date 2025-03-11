@@ -1,12 +1,12 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.CraftingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
-import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
+import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
@@ -16,7 +16,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CraftingTableBlock;
+import net.minecraft.world.level.block.FletchingTableBlock;
+import net.minecraft.world.level.block.SmithingTableBlock;
 
 public class CraftingHandler extends ItemWorldStorageHandler<CraftingTableStorage> {
     @Override
@@ -56,10 +59,9 @@ public class CraftingHandler extends ItemWorldStorageHandler<CraftingTableStorag
 
     @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
-        // Can't do an instanceof CraftingTableBlock check here, since smithing tables and fletching tables
-        // are both subclasses of that.
-        return level.getBlockState(pos).getBlock() == Blocks.CRAFTING_TABLE &&
-                level.getBlockEntity(pos) == null; // Don't stand in the way of mods that store data in-table.
+        Block block = level.getBlockState(pos).getBlock();
+        return block instanceof CraftingTableBlock && !(block instanceof SmithingTableBlock) && !(block instanceof FletchingTableBlock)
+                && level.getBlockEntity(pos) == null; // Don't stand in the way of mods that store data in-table.
     }
 
     @Override
