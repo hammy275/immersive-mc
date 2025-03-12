@@ -217,6 +217,8 @@
   "message.immersivemc.not_in_vr": "This feature only works while in VR!",
   "message.immersivemc.no_api_server": "mc-vr-api is not installed on the server! It must be installed to use this feature!",
   "message.immersivemc.missing_immersives": "You're missing Immersives from the following mods: %s. Check the logs for more details.",
-  "message.immersivemc.compat_error": "ImmersiveMC compatibility for %s has encountered an error, so it has been disabled. Please report this error in the ImmersiveMC Discord server or on ImmersiveMC's GitHub."
+  "message.immersivemc.compat_error": "ImmersiveMC compatibility for %s has encountered an error, so it has been disabled. Please report this error in the ImmersiveMC Discord server or on ImmersiveMC's GitHub.",
 
+  "commands.immersivemc.enable_disable.true": "ImmersiveMC now enabled for the provided players!",
+  "commands.immersivemc.enable_disable.false": "ImmersiveMC now disabled for the provided players!"
 }

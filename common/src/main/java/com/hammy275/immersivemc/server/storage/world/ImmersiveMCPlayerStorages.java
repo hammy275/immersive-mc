@@ -2,14 +2,19 @@ package com.hammy275.immersivemc.server.storage.world;
 
 import com.hammy275.immersivemc.server.ServerUtil;
 import net.minecraft.SharedConstants;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.SavedData;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Uses SavedData to hold player storage
@@ -25,6 +30,7 @@ public class ImmersiveMCPlayerStorages extends SavedData {
     );
 
     protected Map<UUID, List<ItemStack>> backpackCraftingItemsMap = new HashMap<>();
+    protected Set<UUID> disabledPlayers = new HashSet<>();
 
     private static ImmersiveMCPlayerStorages create() {
         return new ImmersiveMCPlayerStorages();
@@ -49,6 +55,22 @@ public class ImmersiveMCPlayerStorages extends SavedData {
         throw new IllegalArgumentException("Can only access storage on server-side!");
     }
 
+    public static boolean isPlayerDisabled(Player player) {
+        return getPlayerStorage(player).disabledPlayers.contains(player.getUUID());
+    }
+
+    public static void setPlayerDisabled(Player player) {
+       ImmersiveMCPlayerStorages storage = getPlayerStorage(player);
+       storage.disabledPlayers.add(player.getUUID());
+       storage.setDirty();
+    }
+
+    public static void setPlayerEnabled(Player player) {
+        ImmersiveMCPlayerStorages storage = getPlayerStorage(player);
+        storage.disabledPlayers.remove(player.getUUID());
+        storage.setDirty();
+    }
+
     public static ImmersiveMCPlayerStorages load(CompoundTag nbt) {
         ImmersiveMCPlayerStorages playerStorage = new ImmersiveMCPlayerStorages();
         // Use 3700 for 1.20.4 (most recent Minecraft version with ImmersiveMC before this was added) or the current Minecraft data version, whichever is lower.
@@ -56,13 +78,23 @@ public class ImmersiveMCPlayerStorages extends SavedData {
         nbt = maybeUpgradeNBT(nbt, lastVanillaDataVersion);
         Set<String> keys = nbt.getAllKeys();
         for (String uuidStr : keys) {
-            UUID uuid = UUID.fromString(uuidStr);
-            CompoundTag bagItems = nbt.getCompound(uuidStr).getCompound("bagItems");
-            List<ItemStack> items = new ArrayList<>();
-            for (int i = 0; i <= 4; i++) {
-                items.add(ServerUtil.parseItem(bagItems.getCompound(String.valueOf(i)), lastVanillaDataVersion));
+            try {
+                UUID uuid = UUID.fromString(uuidStr);
+                CompoundTag bagItems = nbt.getCompound(uuidStr).getCompound("bagItems");
+                List<ItemStack> items = new ArrayList<>();
+                for (int i = 0; i <= 4; i++) {
+                    items.add(ServerUtil.parseItem(bagItems.getCompound(String.valueOf(i)), lastVanillaDataVersion));
+                }
+                playerStorage.backpackCraftingItemsMap.put(uuid, items);
+            } catch (IllegalArgumentException ignored) {} // We also store non-UUID keys here.
+        }
+        CompoundTag disabledPlayers = nbt.contains("disabledPlayers") ? nbt.getCompound("disabledPlayers") : null;
+        if (disabledPlayers != null) {
+            for (String key : disabledPlayers.getAllKeys()) {
+                if (disabledPlayers.getString(key).equalsIgnoreCase("true")) {
+                    playerStorage.disabledPlayers.add(UUID.fromString(key));
+                }
             }
-            playerStorage.backpackCraftingItemsMap.put(uuid, items);
         }
         return playerStorage;
     }
@@ -70,6 +102,7 @@ public class ImmersiveMCPlayerStorages extends SavedData {
     @Override
     public CompoundTag save(CompoundTag nbt) {
         nbt.putInt("lastVanillaDataVersion", SharedConstants.getCurrentVersion().getDataVersion().getVersion());
+        nbt.putInt("version", PLAYER_STORAGES_VERSION);
         for (Map.Entry<UUID, List<ItemStack>> entry : backpackCraftingItemsMap.entrySet()) {
             CompoundTag playerData = new CompoundTag();
             CompoundTag bagData = new CompoundTag();
@@ -86,6 +119,11 @@ public class ImmersiveMCPlayerStorages extends SavedData {
             playerData.put("bagItems", bagData);
             nbt.put(String.valueOf(entry.getKey()), playerData);
         }
+        CompoundTag disabledPlayers = new CompoundTag();
+        for (UUID disabled : this.disabledPlayers) {
+            disabledPlayers.putString(disabled.toString(), "true");
+        }
+        nbt.put("disabledPlayers", disabledPlayers);
         return nbt;
     }
 
