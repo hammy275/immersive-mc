@@ -60,8 +60,7 @@ public class CraftingHandler extends ItemWorldStorageHandler<CraftingTableStorag
     @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
         Block block = level.getBlockState(pos).getBlock();
-        return block instanceof CraftingTableBlock && !(block instanceof SmithingTableBlock) && !(block instanceof FletchingTableBlock)
-                && level.getBlockEntity(pos) == null; // Don't stand in the way of mods that store data in-table.
+        return isCraftingTableBlock(block) && level.getBlockEntity(pos) == null; // Don't stand in the way of mods that store data in-table.
     }
 
     @Override
@@ -88,5 +87,9 @@ public class CraftingHandler extends ItemWorldStorageHandler<CraftingTableStorag
     public void updateStorageOutputAfterItemReturn(ServerPlayer player, BlockPos pos, ItemStorage storage) {
         ItemStack out = Swap.getRecipeOutput(player, storage.getItemsRaw());
         storage.setItem(9, out);
+    }
+
+    public static boolean isCraftingTableBlock(Block block) {
+        return block instanceof CraftingTableBlock && !(block instanceof SmithingTableBlock) && !(block instanceof FletchingTableBlock);
     }
 }
