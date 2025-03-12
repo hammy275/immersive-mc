@@ -54,14 +54,14 @@ public class Swap {
 
     /**
      * Swap items. This is the logic for
-     * {@link ImmersiveLogicHelpers#swapItems(ItemStack, ItemStack, ItemSwapAmount)},
+     * {@link ImmersiveLogicHelpers#swapItems(ItemStack, ItemStack, ItemSwapAmount, Player)},
      * but also has callbacks for incrementing or clearing the item counts for the purposes of {@link ItemStorage}. See
      * the above-mentioned method for details of this method.
      * @param itemCountIncrementer Callback to run when the amount of items in this Immersive is increased
      * @param itemCountClearer Callback to run when the amount of items in this Immersive is decreased
      */
     public static SwapResult swapItems(ItemStack handStack, ItemStack immersiveStack, ItemSwapAmount swapAmount, int forcedMaxImmersiveStackSize,
-                                       @Nullable Consumer<Integer> itemCountIncrementer, @Nullable Consumer<Void> itemCountClearer) {
+                                       Player player, @Nullable Consumer<Integer> itemCountIncrementer, @Nullable Consumer<Void> itemCountClearer) {
         ItemStack toHand;
         ItemStack toImmersive;
         ItemStack leftovers;
@@ -87,12 +87,20 @@ public class Swap {
             if (itemCountIncrementer != null) {
                 itemCountIncrementer.accept(itemsMoved);
             }
-        } else if (handStack.isEmpty() || (immersiveStackAtMax && handAndImmersiveStackMatch)) { // Taking item from Immersive
+        } else if (handStack.isEmpty()) { // Taking item from Immersive and hand is empty
             // Prioritize leftovers over toHand, since we likely don't care about the items anymore, and we don't
             // want to fill the hotbar with item grabs
-            toHand = handStack.isEmpty() ? ItemStack.EMPTY : immersiveStack.copy();
+            boolean stackToInventory = Util.hasItemInInventoryWithStackSpace(player, immersiveStack);
+            toHand = stackToInventory ? ItemStack.EMPTY : immersiveStack.copy();
             toImmersive = ItemStack.EMPTY;
-            leftovers = handStack.isEmpty() ? immersiveStack.copy() : handStack.copy();
+            leftovers = stackToInventory ? immersiveStack.copy() : ItemStack.EMPTY;
+            if (itemCountClearer != null) {
+                itemCountClearer.accept(null);
+            }
+        } else if (immersiveStackAtMax && handAndImmersiveStackMatch) { // Taking item from Immersive and hand contains same item as Immersive
+            toHand = immersiveStack.copy();
+            toImmersive = ItemStack.EMPTY;
+            leftovers = handStack.copy();
             if (itemCountClearer != null) {
                 itemCountClearer.accept(null);
             }
@@ -176,7 +184,7 @@ public class Swap {
         if (slot < 4) {
             ItemStack playerItem = player.getItemInHand(hand);
             ItemStack tableItem = itemArray[slot];
-            SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, tableItem, amount);
+            SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, tableItem, amount, player);
             itemArray[slot] = result.immersiveStack();
             result.giveToPlayer(player, hand);
             itemArray[4] = getRecipeOutput(player, itemArray);

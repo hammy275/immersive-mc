@@ -30,23 +30,26 @@ public class ImmersiveLogicHelpersImpl implements ImmersiveLogicHelpers {
     }
 
     @Override
-    public SwapResult swapItems(ItemStack stackFromPlayer, ItemStack stackInImmersive, ItemSwapAmount swapAmount) {
-        return swapItems(stackFromPlayer, stackInImmersive, swapAmount, -1);
+    public SwapResult swapItems(ItemStack stackFromPlayer, ItemStack stackInImmersive, ItemSwapAmount swapAmount, Player player) {
+        return swapItems(stackFromPlayer, stackInImmersive, swapAmount, player, -1);
     }
 
     @Override
-    public SwapResult swapItems(ItemStack stackFromPlayer, ItemStack stackInImmersive, ItemSwapAmount swapAmount, int forcedMaxImmersiveStackSize) {
-        return Swap.swapItems(stackFromPlayer, stackInImmersive, swapAmount, forcedMaxImmersiveStackSize, null, null);
+    public SwapResult swapItems(ItemStack stackFromPlayer, ItemStack stackInImmersive, ItemSwapAmount swapAmount, Player player, int forcedMaxImmersiveStackSize) {
+        return Swap.swapItems(stackFromPlayer, stackInImmersive, swapAmount, forcedMaxImmersiveStackSize, player, null, null);
     }
 
     @Override
-    public SwapResult swapItemsWithOutput(ItemStack stackFromPlayer, ItemStack stackInImmersive) {
+    public SwapResult swapItemsWithOutput(ItemStack stackFromPlayer, ItemStack stackInImmersive, Player player) {
         if (stackFromPlayer.isEmpty()) { // All items moved directly to player hand
-            return new SwapResultImpl(stackInImmersive.copy(), ItemStack.EMPTY, ItemStack.EMPTY);
+            boolean stackToInventory = Util.hasItemInInventoryWithStackSpace(player, stackInImmersive);
+            ItemStack handStack = stackToInventory ? ItemStack.EMPTY : stackInImmersive.copy();
+            ItemStack leftovers = stackToInventory ? stackInImmersive.copy() : ItemStack.EMPTY;
+            return new SwapResultImpl(handStack, ItemStack.EMPTY, leftovers);
         } else if (Util.stacksEqualBesidesCount(stackInImmersive, stackFromPlayer) && stackFromPlayer.getCount() < stackFromPlayer.getMaxStackSize()) {
             Util.ItemStackMergeResult result = Util.mergeStacks(stackFromPlayer, stackInImmersive, true);
-            return new SwapResultImpl(result.mergedInto, result.mergedFrom, ItemStack.EMPTY);
-        } else { // Player hand item can't hold any of immerisve item. Set player item same and spawn leftovers.
+            return new SwapResultImpl(result.mergedInto, ItemStack.EMPTY, result.mergedFrom);
+        } else { // Player hand item can't hold any of immersive item. Set player item same and spawn leftovers.
             return new SwapResultImpl(stackFromPlayer, ItemStack.EMPTY, stackInImmersive.copy());
         }
     }
