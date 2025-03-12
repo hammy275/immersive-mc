@@ -143,7 +143,7 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
     public void placeItem(Player player, InteractionHand hand, int slot, ItemSwapAmount amount, int forcedMaxImmersiveStackSize) {
         ItemStack playerStack = player.getItemInHand(hand);
         ItemStack otherStack = this.getItem(slot);
-        SwapResult result = Swap.swapItems(playerStack, otherStack, amount, forcedMaxImmersiveStackSize,
+        SwapResult result = Swap.swapItems(playerStack, otherStack, amount, forcedMaxImmersiveStackSize, player,
                 incrementAmount -> incrementCountForPlayer(player, incrementAmount, slot),
                 ignored -> this.itemCounts[slot].clear());
         result.giveToPlayer(player, hand);
