@@ -155,7 +155,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             // Built Immersives can give null hitboxes to skip rendering them. Need to make sure it's nonnull before
             // trying to render it.
             if (hitbox.hasAABB()) {
-                if (hitbox.holdsItems && hitbox.renderItem) {
+                if (hitbox.holdsItems && (hitbox.renderItem || hitbox.item == null || hitbox.item.isEmpty())) {
                     Float spinDegrees = hitbox.itemSpins ? info.ticksExisted % 100f * 3.6f : null;
                     if (hitbox.item == null || hitbox.item.isEmpty()) {
                         if (hitbox.isInput && builder.slotRendersItemGuide.apply(info, i)) {
