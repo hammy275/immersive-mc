@@ -49,10 +49,10 @@ public class TCCraftingStationHandler extends ContainerHandler<ListOfItemsStorag
         Container table = (Container) player.level.getBlockEntity(pos);
         BlockEntity tableBE = (BlockEntity) table;
         ItemStack playerItem = player.getItemInHand(hand).copy();
-        ItemStack craftingItem = table.getItem(slot).copy();
         if (slot < 9) {
             // Just place the item in. Recipe result is calculated in makeInventoryContents() to show the client
             // and at actual crafting time (else block below).
+            ItemStack craftingItem = table.getItem(slot).copy();
             SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, craftingItem, amount);
             result.giveToPlayer(player, hand);
             table.setItem(slot, result.immersiveStack());
