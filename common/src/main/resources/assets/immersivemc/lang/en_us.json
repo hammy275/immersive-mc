@@ -220,5 +220,7 @@
   "message.immersivemc.compat_error": "ImmersiveMC compatibility for %s has encountered an error, so it has been disabled. Please report this error in the ImmersiveMC Discord server or on ImmersiveMC's GitHub.",
 
   "commands.immersivemc.enable_disable.true": "ImmersiveMC now enabled for the provided players!",
-  "commands.immersivemc.enable_disable.false": "ImmersiveMC now disabled for the provided players!"
+  "commands.immersivemc.enable_disable.false": "ImmersiveMC now disabled for the provided players!",
+  "commands.immersivemc.enable_disable.already_enable": "This player already has ImmersiveMC enabled!",
+  "commands.immersivemc.enable_disable.already_disable": "This player already has ImmersiveMC disabled!"
 }
