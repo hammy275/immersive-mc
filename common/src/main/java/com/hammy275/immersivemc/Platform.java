@@ -1,6 +1,8 @@
 package com.hammy275.immersivemc;
 
+import com.mojang.brigadier.CommandDispatcher;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -46,6 +48,10 @@ public class Platform {
     }
     @ExpectPlatform
     public static void registerServerPlayerLeaveListener(Consumer<ServerPlayer> listener) {
+        throw new RuntimeException("@ExpectPlatform should have replaced this");
+    }
+    @ExpectPlatform
+    public static void registerCommands(Consumer<CommandDispatcher<CommandSourceStack>> listener) {
         throw new RuntimeException("@ExpectPlatform should have replaced this");
     }
 
