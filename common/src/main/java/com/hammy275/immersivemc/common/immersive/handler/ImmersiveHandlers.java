@@ -47,6 +47,7 @@ public class ImmersiveHandlers {
     public static final WorldStorageHandler<SmithingTableStorage> smithingTableHandler = new SmithingTableHandler();
     public static final ImmersiveHandler<NullStorage> trapdoorHandler = new TrapdoorHandler();
     public static final ImmersiveHandler<?> tcCraftingStationHandler = CompatModule.create(new TCCraftingStationHandler(), TinkersConstruct.compatData);
+    public static final ImmersiveHandler<?> visualWorkbenchHandler = new VisualWorkbenchHandler();
 
     static {
         ImmersiveMCRegistrationImpl.doImmersiveRegistration((handler) -> {
