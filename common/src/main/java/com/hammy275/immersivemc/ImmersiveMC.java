@@ -22,6 +22,7 @@ import com.hammy275.immersivemc.common.network.packet.ThrowPacket;
 import com.hammy275.immersivemc.common.network.packet.UsePacket;
 import com.hammy275.immersivemc.common.subscribe.CommonSubscriber;
 import com.hammy275.immersivemc.server.ServerSubscriber;
+import com.hammy275.immersivemc.server.command.ImmersiveMCCommand;
 import net.minecraft.client.KeyMapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -70,6 +71,11 @@ public class ImmersiveMC {
         Platform.registerServerPlayerLeaveListener(ServerSubscriber::onPlayerLeave);
         Platform.registerServerPlayerPostTickListener(CommonSubscriber::onPlayerTick);
         Platform.registerServerPostTickListener(CommonSubscriber::globalTick);
+        
+        // Commands
+        Platform.registerCommands(dispatcher -> {
+            ImmersiveMCCommand.createCommand(dispatcher);
+        });
 
         if (Platform.isClient()) {
             ImmersiveMCClient.init();

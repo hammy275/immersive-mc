@@ -1,11 +1,14 @@
 package com.hammy275.immersivemc.fabric;
 
+import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -43,6 +46,10 @@ public class PlatformImpl {
     }
     public static void registerServerPlayerLeaveListener(Consumer<ServerPlayer> listener) {
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> listener.accept(handler.getPlayer()));
+    }
+    public static void registerCommands(Consumer<CommandDispatcher<CommandSourceStack>> listener) {
+        CommandRegistrationCallback.EVENT.register(((dispatcher, dedicated) ->
+                listener.accept(dispatcher)));
     }
 
     // Networking
