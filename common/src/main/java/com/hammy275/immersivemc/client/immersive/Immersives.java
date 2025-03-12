@@ -567,6 +567,11 @@ public class Immersives {
             Apoth.compatData
     );
 
+    public static final BuiltImmersive<?,?> immersiveVisualWorkbench =
+            immersiveTinkersConstructCraftingStation.getBuilderClone(ImmersiveHandlers.visualWorkbenchHandler)
+                    .modifyHitbox(9, hitbox -> hitbox.renderItem(false).build())
+                    .build();
+
     static {
         ImmersiveMCClientRegistrationImpl.doImmersiveRegistration((immersive) -> {
             if (!IMMERSIVES.contains(immersive)) {
