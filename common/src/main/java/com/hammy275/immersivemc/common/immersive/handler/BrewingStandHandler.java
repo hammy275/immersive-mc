@@ -40,7 +40,7 @@ public class BrewingStandHandler extends ContainerHandler<ListOfItemsStorage> {
             stand.setItem(slot, playerItem);
         } else { // Ingredient and Fuel
             if (!stand.canPlaceItem(slot, playerItem) && !playerItem.isEmpty()) return;
-            SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, standItem, amount);
+            SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, standItem, amount, player);
             result.giveToPlayer(player, hand);
             stand.setItem(slot, result.immersiveStack());
         }
