@@ -164,10 +164,13 @@ public class Util {
         return false;
     }
 
-    public static void addStackToInventory(Player player, ItemStack item) {
-        if (!item.isEmpty()) {
-            player.getInventory().add(item);
+    public static boolean hasItemInInventoryWithStackSpace(Player player, ItemStack stack) {
+        for (ItemStack invItem : player.getInventory().items) {
+            if (Util.stacksEqualBesidesCount(invItem, stack) && invItem.getCount() < invItem.getMaxStackSize()) {
+                return true;
+            }
         }
+        return false;
     }
 
     public static boolean canPickUpItem(ItemEntity item, Player player) {

@@ -36,12 +36,12 @@ public class FurnaceHandler extends ContainerHandler<ListOfItemsStorage> {
         ItemStack playerItem = player.getItemInHand(hand).copy();
         if (slot != 2) {
             if (slot != 1 || furnace.canPlaceItem(1, playerItem) || playerItem.isEmpty()) {
-                SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, furnaceItem, amount);
+                SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, furnaceItem, amount, player);
                 result.giveToPlayer(player, hand);
                 furnace.setItem(slot, result.immersiveStack());
             }
         } else {
-            SwapResult result = ImmersiveLogicHelpers.instance().swapItemsWithOutput(playerItem, furnaceItem);
+            SwapResult result = ImmersiveLogicHelpers.instance().swapItemsWithOutput(playerItem, furnaceItem, player);
             result.giveToPlayer(player, hand);
             furnace.setItem(2, result.immersiveStack());
             awardXP(furnace, player);
