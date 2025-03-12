@@ -19,9 +19,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
-
-import java.util.List;
 
 public class ConfigScreen extends Screen {
 
@@ -165,10 +162,9 @@ public class ConfigScreen extends Screen {
                 // Propagate config to other players on the server
                 IntegratedServer server = Minecraft.getInstance().getSingleplayerServer();
                 if (server != null && server.isPublished()) {
-                    List<ServerPlayer> allButHost = server.getPlayerList().getPlayers().stream()
+                    server.getPlayerList().getPlayers().stream()
                             .filter((player) -> !player.getUUID().equals(Minecraft.getInstance().player.getUUID()))
-                            .toList();
-                    Network.INSTANCE.sendToPlayers(allButHost, new ConfigSyncPacket(ActiveConfig.FILE_SERVER));
+                            .forEach(ConfigSyncPacket::syncConfigToPlayer);
                 }
                 TrackedImmersives.clearForPlayer(Minecraft.getInstance().getSingleplayerServer().getPlayerList().getPlayer(Minecraft.getInstance().player.getUUID()));
             }
