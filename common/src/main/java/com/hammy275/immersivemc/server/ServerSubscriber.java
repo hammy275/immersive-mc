@@ -13,6 +13,7 @@ import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCLevelStorage;
+import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import com.hammy275.immersivemc.server.tracker.ServerTrackerInit;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -55,8 +56,9 @@ public class ServerSubscriber {
 
     public static void onPlayerJoin(Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
+            ActiveConfig config = ImmersiveMCPlayerStorages.isPlayerDisabled(serverPlayer) ? ActiveConfig.DISABLED : ActiveConfig.FILE_SERVER;
             Network.INSTANCE.sendToPlayer(serverPlayer,
-                    new ConfigSyncPacket(ActiveConfig.FILE_SERVER,
+                    new ConfigSyncPacket(config,
                             ImmersiveHandlers.HANDLERS.stream()
                                     .filter((handler) -> !handler.clientAuthoritative())
                                     .map(ImmersiveHandler::getID)

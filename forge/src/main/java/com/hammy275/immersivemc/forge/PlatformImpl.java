@@ -1,10 +1,13 @@
 package com.hammy275.immersivemc.forge;
 
+import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.ModList;
@@ -60,6 +63,11 @@ public class PlatformImpl {
             if (event.getEntity() instanceof ServerPlayer sp) {
                 listener.accept(sp);
             }
+        });
+    }
+    public static void registerCommands(Consumer<CommandDispatcher<CommandSourceStack>> listener) {
+        MinecraftForge.EVENT_BUS.addListener((RegisterCommandsEvent event) -> {
+            listener.accept(event.getDispatcher());
         });
     }
 

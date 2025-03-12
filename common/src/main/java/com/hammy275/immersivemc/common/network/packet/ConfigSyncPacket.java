@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
+import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -74,5 +75,10 @@ public class ConfigSyncPacket {
             ActiveConfig.registerPlayerConfig(player, (ClientActiveConfig) message.config);
             TrackedImmersives.clearForPlayer(player);
         }
+    }
+
+    public static void syncConfigToPlayer(ServerPlayer player) {
+        Network.INSTANCE.sendToPlayer(player,
+                new ConfigSyncPacket(ImmersiveMCPlayerStorages.isPlayerDisabled(player) ? ActiveConfig.DISABLED : ActiveConfig.FILE_SERVER));
     }
 }

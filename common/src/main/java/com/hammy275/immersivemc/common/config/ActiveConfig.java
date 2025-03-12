@@ -5,8 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
@@ -128,7 +128,8 @@ public class ActiveConfig implements Cloneable {
     public static ClientActiveConfig getConfigForPlayer(Player player) {
         ClientActiveConfig config = CLIENTS.getOrDefault(player.getUUID(), ClientActiveConfig.DISABLED);
         // If not in VR and user wants ImmersiveMC disabled outside VR, return DISABLED config.
-        if (config.disableImmersiveMCOutsideVR && !VRPluginVerify.playerInVR((ServerPlayer) player)) {
+        if ((config.disableImmersiveMCOutsideVR && !VRPluginVerify.playerInVR(player)) ||
+                ImmersiveMCPlayerStorages.isPlayerDisabled(player)) {
             return ClientActiveConfig.DISABLED;
         }
         return config;

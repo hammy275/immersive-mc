@@ -1,5 +1,7 @@
 package com.hammy275.immersivemc.neoforge;
 
+import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -8,6 +10,7 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -56,6 +59,11 @@ public class PlatformImpl {
             if (event.getEntity() instanceof ServerPlayer sp) {
                 listener.accept(sp);
             }
+        });
+    }
+    public static void registerCommands(Consumer<CommandDispatcher<CommandSourceStack>> listener) {
+        NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) -> {
+            listener.accept(event.getDispatcher());
         });
     }
 

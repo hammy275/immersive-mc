@@ -6,7 +6,6 @@ import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.compat.CompatModuleClient;
 import com.hammy275.immersivemc.common.compat.CompatData;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.server.ServerSubscriber;
 import net.minecraft.network.chat.Component;
@@ -107,7 +106,7 @@ public class CompatModule<T> implements InvocationHandler {
     public static void handleDisableServer(CompatData compatData, MinecraftServer server) {
         compatData.configSetter().accept(ActiveConfig.FILE_SERVER, false);
         ActiveConfig.remergeAllConfigs();
-        Network.INSTANCE.sendToPlayers(server.getPlayerList().getPlayers(), new ConfigSyncPacket(ActiveConfig.FILE_SERVER, null));
+        server.getPlayerList().getPlayers().forEach(ConfigSyncPacket::syncConfigToPlayer);
         server.sendSystemMessage(getErrorMessage(compatData.friendlyName()));
         server.getPlayerList().getPlayers().forEach(player -> player.sendSystemMessage(getErrorMessage(compatData.friendlyName())));
     }
