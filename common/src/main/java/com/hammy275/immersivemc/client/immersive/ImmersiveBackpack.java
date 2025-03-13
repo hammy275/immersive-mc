@@ -3,6 +3,8 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.SwapMode;
+import com.hammy275.immersivemc.client.compat.ipn.IPN;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
@@ -12,11 +14,11 @@ import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
 import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
-import com.hammy275.immersivemc.api.common.immersive.SwapMode;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.FetchBackpackStoragePacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -32,6 +34,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -99,8 +102,13 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
 
     public static void onHitboxInteract(Player player, BackpackInfo info, int slot) {
         if (slot <= 26) { // Inventory handle
-            Network.INSTANCE.sendToServer(new SwapPacket(BlockPos.ZERO, List.of(slot + 9), InteractionHand.MAIN_HAND, SwapMode.SINGLE, SwapPacket.SwapDestination.INVENTORY));
-            Swap.handleInventorySwap(player, slot + 9, InteractionHand.MAIN_HAND); // Do swap on both sides
+            Inventory inventory = player.getInventory();
+            if (IPN.ipnCompat.available() && !Util.stacksEqualBesidesCount(inventory.getItem(slot + 9), inventory.getItem(inventory.selected))) {
+                IPN.ipnCompat.doInventorySwap(slot + 9, inventory.selected);
+            } else {
+                Network.INSTANCE.sendToServer(new SwapPacket(BlockPos.ZERO, List.of(slot + 9), InteractionHand.MAIN_HAND, SwapMode.SINGLE, SwapPacket.SwapDestination.INVENTORY));
+                Swap.handleInventorySwap(player, slot + 9, InteractionHand.MAIN_HAND); // Do swap on both sides
+            }
         } else {
             Network.INSTANCE.sendToServer(new SwapPacket(BlockPos.ZERO, List.of(slot), InteractionHand.MAIN_HAND, SwapMode.SINGLE, SwapPacket.SwapDestination.BAG_CRAFTING));
             Network.INSTANCE.sendToServer(new FetchBackpackStoragePacket());
