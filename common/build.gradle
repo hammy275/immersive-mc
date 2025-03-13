@@ -20,6 +20,7 @@ dependencies {
     modApi "curse.maven:mcvrapi-591092:5720563"
 
     modCompileOnly "curse.maven:vivecraft-667903:5725980"
+    modCompileOnly "curse.maven:inventoryprofilesnext-495267:6093916"
 }
 
 publishing {
