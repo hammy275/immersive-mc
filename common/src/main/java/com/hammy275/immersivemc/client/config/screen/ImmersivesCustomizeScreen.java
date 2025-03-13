@@ -54,7 +54,10 @@ public class ImmersivesCustomizeScreen extends Screen {
                 server.writeConfigFile(ConfigType.SERVER);
             }
         }, this.list);
-        ScreenUtils.addOptionIfClient("right_click_in_vr", config -> config.rightClickImmersiveInteractionsInVR, (config, newVal) -> config.rightClickImmersiveInteractionsInVR = newVal, this.list);
+        if (VRPluginVerify.clientInVR()) {
+            ScreenUtils.addOptionIfClient("right_click_in_vr", config -> config.rightClickImmersiveInteractionsInVR, (config, newVal) -> config.rightClickImmersiveInteractionsInVR = newVal, this.list);
+            ScreenUtils.addOptionIfClient("dont_step_up_immersives_in_vr", config -> config.dontAutoStepOnImmersiveBlocksInVR, (config, newVal) -> config.dontAutoStepOnImmersiveBlocksInVR = newVal, this.list);
+        }
         ScreenUtils.addOptionIfClient("3d_compat", config -> config.compatFor3dResourcePacks, (config, newVal) -> config.compatFor3dResourcePacks = newVal, this.list);
 
         if (ConfigScreen.getAdjustingConfigType() == ConfigType.CLIENT) {
