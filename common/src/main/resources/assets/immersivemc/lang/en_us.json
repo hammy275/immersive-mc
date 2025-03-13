@@ -140,6 +140,8 @@
   "config.immersivemc.use_pick_range": "Use Pick Range as Ranged Grab Range",
   "config.immersivemc.right_click_in_vr": "Right Click Interactions in VR",
   "config.immersivemc.right_click_in_vr.desc": "Allow right-clicking in VR to interact with immersives, similarly to non-VR users.",
+  "config.immersivemc.dont_step_up_immersives_in_vr": "Don't Step Onto Immersive Blocks in VR",
+  "config.immersivemc.dont_step_up_immersives_in_vr.desc": "When enabled, you will never attempt to step onto blocks that you are currently interacting with via ImmersiveMC.",
   "config.immersivemc.3d_compat": "3D Resource Pack Compatability",
   "config.immersivemc.3d_compat.desc": "Moves the item areas for immersives to increase compatability with resource packs such as Classic 3D (16x).",
   "config.immersivemc.crouch_mode": "Crouch Mode",
