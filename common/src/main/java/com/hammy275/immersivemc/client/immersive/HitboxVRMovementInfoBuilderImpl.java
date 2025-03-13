@@ -14,7 +14,7 @@ public class HitboxVRMovementInfoBuilderImpl implements HitboxVRMovementInfoBuil
 
     @Nullable
     private Direction.Axis axis = null;
-    private final double[] thresholds = new double[]{0, 0};
+    private double[] thresholds = new double[]{0, 0};
     private ControllerMode controllerMode = ControllerMode.EITHER;
     private BiConsumer<BuiltImmersiveInfo<?>, List<InteractionHand>> actionConsumer = (ignored, ignored2) -> {};
 
@@ -51,6 +51,15 @@ public class HitboxVRMovementInfoBuilderImpl implements HitboxVRMovementInfoBuil
 
     @Override
     public HitboxVRMovementInfo build() {
+        if (this.axis == null) {
+            this.thresholds = new double[]{Math.abs(Math.max(this.thresholds[0], this.thresholds[1]))};
+        } else {
+            if (this.thresholds[0] == 0 && this.thresholds[1] != 0) {
+                this.thresholds = new double[]{this.thresholds[1]};
+            } else if (this.thresholds[0] != 0 && this.thresholds[1] == 0) {
+                this.thresholds = new double[]{this.thresholds[0]};
+            }
+        }
         return new HitboxVRMovementInfoImpl(this.axis, this.thresholds, this.controllerMode, this.actionConsumer);
     }
 }
