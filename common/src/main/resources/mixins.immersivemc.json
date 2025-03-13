@@ -14,10 +14,12 @@
     "ButtonBlockMixin",
     "ChestLidControllerAccessor",
     "ContainerOpenersCounterMixin",
+    "EntityMixin",
     "FenceGateBlockMixin",
     "ItemMixin",
     "LecternBlockEntityAccessor",
     "LevelMixin",
+    "LivingEntityAccessor",
     "LivingEntityMixin",
     "PlayerMixin",
     "ProjectileAccessor",
@@ -40,6 +42,10 @@
     "MinecraftMixinAccessor",
     "MultiPlayerGameModeMixin",
     "ScreenMixin",
-    "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin"
+    "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin",
+    "throw_render_helpers.vivecraft.VivecraftItemRenderingHotswitchMixin",
+    "VRPlayerMixin",
+    "VRPlayerMixinNewVivecraft",
+    "ScreenMixin"
   ]
 }

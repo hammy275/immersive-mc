@@ -251,7 +251,7 @@ public class ActiveConfig implements Cloneable {
         ACTIVE = (ClientActiveConfig) ClientActiveConfig.DISABLED.clone();
     }
 
-    public static ActiveConfig getActiveConfigCommon(Player player) {
+    public static ClientActiveConfig getActiveConfigCommon(Player player) {
         return player.level.isClientSide ? active() : getConfigForPlayer(player);
     }
 
