@@ -1,14 +1,18 @@
 package com.hammy275.immersivemc.common.util;
 
 
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
+import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.immersive.ImmersiveChecker;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -34,6 +38,34 @@ import java.util.*;
 public class Util {
 
     public static UseInfo activeUseInfo = null;
+
+    public static boolean blockIsActiveImmersive(Player player, BlockPos pos) {
+        Level level = player.level();
+        if (level.isClientSide) {
+            for (Immersive<?, ?> singleton : Immersives.IMMERSIVES) {
+                if (singleton.getHandler() instanceof MultiblockImmersiveHandler<?> handler) {
+                    // Need to actually do blockstate checks if a multiblock handler, since that data isn't known
+                    for (ImmersiveInfo info : singleton.getTrackedObjects()) {
+                        Set<BlockPos> handledBlocks = handler.getHandledBlocks(pos, level);
+                        if (handledBlocks != null && handledBlocks.contains(info.getBlockPosition())) {
+                            return true;
+                        }
+                    }
+                } else {
+                    // Can just look at stored block positions
+                    for (ImmersiveInfo info : singleton.getTrackedObjects()) {
+                        if (info.getBlockPosition().equals(pos)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        } else {
+            return TrackedImmersives.TRACKED_IMMERSIVES.stream()
+                    .anyMatch(data -> data.playerUUID.equals(player.getUUID()) && data.getPos().contains(pos));
+        }
+    }
 
     public static InteractionHand otherHand(InteractionHand hand) {
         return hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
