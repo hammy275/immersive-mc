@@ -181,7 +181,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
         for (double threshold : vrMovementInfo.thresholds()) {
             assert threshold != 0;
         }
-        if (vrMovementInfo.controllerMode() == null) {
+        if (vrMovementInfo.relativeAxis() == null) {
             assert vrMovementInfo.thresholds().length == 1; // Only one threshold if axis doesn't matter.
         } else { // No more than 2 thresholds, and one threshold is positive and one negative.
             assert vrMovementInfo.thresholds().length == 1 ||
