@@ -4,6 +4,7 @@
   "package": "com.hammy275.immersivemc.forge.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "LevelForge118Mixin"
   ],
   "client": [
   ]
