@@ -22,4 +22,9 @@ public class HitboxInfoImpl implements HitboxInfo {
     public boolean isTriggerHitbox() {
         return this.isTriggerHitbox;
     }
+
+    @Override
+    public BoundingBox getRenderHitbox(float partialTicks) {
+        return this.boundingBox;
+    }
 }
