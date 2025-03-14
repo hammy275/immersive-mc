@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.api_impl.hitbox;
 
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.api.common.hitbox.OBB;
 import com.hammy275.immersivemc.common.obb.OBBRotList;
 import com.hammy275.immersivemc.common.obb.RotType;
 import net.minecraft.world.phys.AABB;
@@ -122,6 +123,11 @@ public class OBBImpl implements BoundingBox, com.hammy275.immersivemc.api.common
     public AABB getEnclosingAABB() {
         double maxSize = Math.max(Math.max(this.aabb.getXsize(), this.aabb.getYsize()), this.aabb.getZsize());
         return this.aabb.inflate(maxSize * HALFSQRT2);
+    }
+
+    @Override
+    public OBB move(Vec3 movement) {
+        return new OBBImpl(this.aabb.move(movement), this.rotation);
     }
 
     @Override
