@@ -8,6 +8,7 @@ import com.hammy275.immersivemc.api.client.immersive.RelativeHitboxInfo;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.LastClientVRData;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfoImpl;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
@@ -70,6 +71,9 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
     private Vec3 yVec;
     private Vec3 zVec;
     private Vec3 centerPos;
+
+    // Calculated data for internal usage
+    private Vec3 lastPos = null;
 
     // Extra data. Note that things should only be stored here after a clone() call.
     public ItemStack item = null;
@@ -140,6 +144,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
      * @param info Info instance.
      */
     public void recalculate(Level level, HitboxPositioningMode mode, BuiltImmersiveInfoImpl<?> info) {
+        this.lastPos = this.pos;
         Vec3 offset = this.centerOffset.apply(info);
         if (offset == null) {
             forceNull();
@@ -298,6 +303,21 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
         didCalc = true;
     }
 
+    @Override
+    public AABB getRenderHitbox(float partialTicks) {
+        if (!didCalc) {
+            throw new IllegalStateException("Should call recalculate() or forceNull() before getting render hitbox.");
+        }
+        if (lastPos == null || constantOffset) {
+            return box;
+        }
+        return box.move(ClientUtil.lerpVec3(lastPos, pos, partialTicks).subtract(lastPos));
+    }
+
+    public void onOrientationChange() {
+        lastPos = null;
+    }
+
     /**
      * See below docstring for recalcHorizBlockFacing().
      */
@@ -390,7 +410,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
                     if (pair != null) {
                         textData.add(new TextData(
                                 pair.getFirst(),
-                                this.pos.add(xVec.scale(pair.getSecond().x)).add(yVec.scale(pair.getSecond().y)).add(zVec.scale(pair.getSecond().z))
+                                xVec.scale(pair.getSecond().x).add(yVec.scale(pair.getSecond().y)).add(zVec.scale(pair.getSecond().z))
                         ));
                     }
                 }
