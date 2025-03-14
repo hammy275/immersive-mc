@@ -146,7 +146,9 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
             // info actually holds item information, so we use that here
             ItemStack item = i == 31 ? info.craftingOutput : info.craftingInput[i - 27];
             if (!item.isEmpty() && info.getPosition(i) != null) {
-                renderItem(item, stack, info.getPosition(i), ClientConstants.itemScaleSizeBackpack, null, info.getHitbox(i), true, info.light);
+                final float size =
+                        info.slotHovered == i ? ClientConstants.itemScaleSizeBackpackSelected : ClientConstants.itemScaleSizeBackpack;
+                renderItem(item, stack, info.getPosition(i), size, null, info.getHitbox(i), true, info.light);
             }
         }
 
