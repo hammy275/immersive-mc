@@ -2,9 +2,11 @@ package com.hammy275.immersivemc.api.common.hitbox;
 
 /**
  * An object representing one hitbox for an {@link com.hammy275.immersivemc.api.client.immersive.Immersive}. You
- * may obtain instances of this interface using {@link HitboxInfoFactory}. You could also implement this yourself,
- * but that is NOT covered under the API, so API changes may result in your implementations of this interface breaking
- * without warning.
+ * may obtain instances of this interface using {@link HitboxInfoFactory}, though if your hitbox moves, you'll
+ * likely want to create an implementation of this yourself so you can properly implement
+ * {@link #getRenderHitbox(float)}. Although not in the API,
+ * {@link com.hammy275.immersivemc.client.immersive.info.HitboxItemPair} is a good example of an implementation of
+ * this interface.
  */
 public interface HitboxInfo {
 
