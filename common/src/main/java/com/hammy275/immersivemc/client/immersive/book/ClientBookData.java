@@ -15,6 +15,7 @@ import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -34,9 +35,14 @@ public class ClientBookData extends CommonBookData {
 
     protected final List<OBB> obbs = new ArrayList<>();
 
+    protected float lastLeftPageTurn;
+    protected float lastRightPageTurn;
+
     public ClientBookData() {
         super();
         this.pageTurner = Minecraft.getInstance().player;
+        this.lastLeftPageTurn = leftPageTurn;
+        this.lastRightPageTurn = rightPageTurn;
     }
 
     /**
@@ -46,6 +52,8 @@ public class ClientBookData extends CommonBookData {
      */
     @Override
     public void tick(PosRot bookPosRot, PosRot... others) {
+        lastLeftPageTurn = leftPageTurn;
+        lastRightPageTurn = rightPageTurn;
         super.tick(bookPosRot, others);
         obbs.clear();
         BookInteractable[] interacted = new BookInteractable[others.length];
@@ -79,6 +87,7 @@ public class ClientBookData extends CommonBookData {
      */
     public void render(PoseStack stack, int light, PosRot bookPosRot) {
         stack.pushPose();
+        float partialTicks = Minecraft.getInstance().getFrameTime();
 
         Vec3 pos = bookPosRot.position();
         Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
@@ -97,8 +106,8 @@ public class ClientBookData extends CommonBookData {
 
         bookModel.setupAnim(
                 0, // Partial tick time is always 0 to have page stay in one constant spot
-                leftPageTurn, // 0-1. How far the page is in the turn. Range is [0f, 1f] with 0f being left.
-                rightPageTurn, // 0-1. How far across a different page is. Range is [0f, 1f] with 0f being left.
+                Mth.lerp(partialTicks, lastLeftPageTurn, leftPageTurn), // 0-1. How far the page is in the turn. Range is [0f, 1f] with 0f being left.
+                Mth.lerp(partialTicks, lastRightPageTurn, rightPageTurn), // 0-1. How far across a different page is. Range is [0f, 1f] with 0f being left.
                 bookOpenAmount // How open the book is. A good range seems to be (0f,1.2f]
         );
         bookModel.render(stack,
@@ -174,5 +183,12 @@ public class ClientBookData extends CommonBookData {
             renderable.render(stack, this, leftPage, light, bookPosRot);
             stack.popPose();
         }
+    }
+
+    @Override
+    public void resetTurnState() {
+        super.resetTurnState();
+        lastLeftPageTurn = leftPageTurn;
+        lastRightPageTurn = rightPageTurn;
     }
 }

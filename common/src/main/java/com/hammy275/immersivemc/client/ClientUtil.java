@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -35,6 +36,15 @@ public class ClientUtil {
 
     public static final int maxLight = LightTexture.pack(15, 15);
     public static int immersiveLeftClickCooldown = 0;
+
+    // Doesn't exist in older Minecraft versions ImmersiveMC supports
+    public static Vec3 lerpVec3(Vec3 start, Vec3 end, float partialTicks) {
+        return new Vec3(
+                Mth.lerp(partialTicks, start.x, end.x),
+                Mth.lerp(partialTicks, start.y, end.y),
+                Mth.lerp(partialTicks, start.z, end.z)
+        );
+    }
 
     public static void clearDisabledImmersives() {
         for (Immersive<?, ?> immersive : Immersives.IMMERSIVES) {

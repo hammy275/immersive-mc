@@ -18,4 +18,10 @@ public interface HitboxInfo {
      *         required to be held while a hand is in this hitbox to activate it in VR.
      */
     public boolean isTriggerHitbox();
+
+    /**
+     * @param partialTicks The partial ticks that have occurred between the current tick and the next.
+     * @return The bounding box to be used for rendering.
+     */
+    public BoundingBox getRenderHitbox(float partialTicks);
 }
