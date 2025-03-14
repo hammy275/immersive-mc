@@ -13,6 +13,9 @@ import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.mojang.datafixers.util.Pair;
+import net.blf02.vrapi.api.data.IVRData;
+import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
@@ -44,6 +47,21 @@ public class ClientUtil {
                 Mth.lerp(partialTick, start.y, end.y),
                 Mth.lerp(partialTick, start.z, end.z)
         );
+    }
+
+    /**
+     * Get ray trace start and end for VR.
+     * @param device Device. -1 for HMD, 0 for c0, 1 for c1.
+     * @return Pair containing start and end positions.
+     */
+    public static Pair<Vec3, Vec3> getVRStartAndEnd(int device) {
+        IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player);
+        IVRData vrData = device == -1 ? vrPlayer.getHMD() : vrPlayer.getController(device);
+        double dist = Minecraft.getInstance().gameMode.getPickRange();
+        Vec3 start = vrData.position();
+        Vec3 look = vrData.getLookAngle();
+        Vec3 end = vrData.position().add(look.x * dist, look.y * dist, look.z * dist);
+        return new Pair<>(start, end);
     }
 
     public static void clearDisabledImmersives() {
