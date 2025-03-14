@@ -13,6 +13,7 @@ import com.hammy275.immersivemc.common.immersive.ImmersiveChecker;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -202,6 +203,10 @@ public class Util {
            Plus, it somewhat makes sense */
         return (!item.hasPickUpDelay() || player.getAbilities().instabuild)
                 && Math.abs(item.getDeltaMovement().x) <= 0.01 && Math.abs(item.getDeltaMovement().z) <= 0.01;
+    }
+
+    public static Optional<Integer> rayTraceClosest(Pair<Vec3, Vec3> rayStartAndEnd, BoundingBox... targets) {
+        return rayTraceClosest(rayStartAndEnd.getFirst(), rayStartAndEnd.getSecond(), targets);
     }
 
     /**
