@@ -4,9 +4,11 @@ import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 
@@ -25,7 +27,8 @@ public class BeaconDataPacket {
 
     public static BeaconDataPacket fromBeacon(BeaconBlockEntity beacon) {
         BeaconBlockEntityMixin accessor = (BeaconBlockEntityMixin) beacon;
-        int primaryId = BuiltInRegistries.MOB_EFFECT.getId(accessor.immersiveMC$getPrimaryPower().value());
+        Holder<MobEffect> primaryEffect = accessor.immersiveMC$getPrimaryPower();
+        int primaryId = primaryEffect == null ? -1 : BuiltInRegistries.MOB_EFFECT.getId(primaryEffect.value());
 
         int powerIndex = -1;
         if (primaryId == speedId) {
@@ -40,8 +43,9 @@ public class BeaconDataPacket {
             powerIndex = 4;
         }
 
+        Holder<MobEffect> secondaryEffect = accessor.immersiveMC$getSecondaryPower();
         return new BeaconDataPacket(beacon.getBlockPos(),
-                powerIndex, BuiltInRegistries.MOB_EFFECT.getId(accessor.immersiveMC$getSecondaryPower().value()) == regenId);
+                powerIndex, secondaryEffect != null && BuiltInRegistries.MOB_EFFECT.getId(secondaryEffect.value()) == regenId);
     }
 
     public BeaconDataPacket(BlockPos pos, int powerIndex, boolean useRegen) {
