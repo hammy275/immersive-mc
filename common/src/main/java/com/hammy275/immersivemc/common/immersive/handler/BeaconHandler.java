@@ -1,12 +1,12 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
+import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
-import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
+import com.hammy275.immersivemc.server.storage.server.SwapResult;
 import com.hammy275.immersivemc.server.storage.world.WorldStorage;
-import com.hammy275.immersivemc.server.api_impl.ConstantItemSwapAmount;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -31,14 +31,13 @@ public class BeaconHandler extends ItemWorldStorageHandler<BeaconStorage> {
 
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        if (!player.getItemInHand(hand).is(ItemTags.BEACON_PAYMENT_ITEMS) && !player.getItemInHand(hand).isEmpty()) return;
+        ItemStack playerItem = player.getItemInHand(hand);
+        if (!playerItem.is(ItemTags.BEACON_PAYMENT_ITEMS) && !playerItem.isEmpty()) return;
         BeaconStorage beaconStorage = (BeaconStorage) WorldStoragesImpl.getOrCreateS(pos, player.getLevel());
         ItemStack beaconItem = beaconStorage.getItem(0);
-        if (!beaconItem.isEmpty()) {
-            Util.placeLeftovers(player, beaconItem);
-            beaconStorage.setItem(0, ItemStack.EMPTY);
-        }
-        beaconStorage.placeItem(player, hand, 0, new ConstantItemSwapAmount(1));
+        SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, beaconItem, amount, player, 1);
+        result.giveToPlayer(player, hand);
+        beaconStorage.setItem(0, result.immersiveStack(), player);
         beaconStorage.setDirty(player.getLevel());
     }
 
