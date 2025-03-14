@@ -151,7 +151,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
     }
 
     @Override
-    public void render(BuiltImmersiveInfo<E> infoIn, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
+    public void render(BuiltImmersiveInfo<E> infoIn, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
         BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
         float size = ImmersiveRenderHelpers.instance().getTransitionMultiplier(info.ticksExisted) * builder.renderSize;
         for (int i = 0; i < info.hitboxes.size(); i++) {
@@ -159,7 +159,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             // Built Immersives can give null hitboxes to skip rendering them. Need to make sure it's nonnull before
             // trying to render it.
             if (hitbox.hasAABB()) {
-                AABB renderBox = hitbox.getRenderHitbox(partialTicks);
+                AABB renderBox = hitbox.getRenderHitbox(partialTick);
                 Vec3 renderPos = renderBox.getCenter();
                 if (hitbox.holdsItems && (hitbox.renderItem || hitbox.item == null || hitbox.item.isEmpty())) {
                     Float spinDegrees = hitbox.itemSpins ? info.ticksExisted % 100f * 3.6f : null;
@@ -188,7 +188,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
         if (info.dragHitbox != null) {
             helpers.renderHitbox(stack, info.dragHitbox, false, 0, 1, 1);
         }
-        builder.extraRenderer.render(infoIn, stack, helpers, partialTicks, info.light);
+        builder.extraRenderer.render(infoIn, stack, helpers, partialTick, info.light);
     }
 
     @Override

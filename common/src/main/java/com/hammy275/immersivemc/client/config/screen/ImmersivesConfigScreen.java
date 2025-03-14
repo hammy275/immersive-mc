@@ -109,10 +109,10 @@ public class ImmersivesConfigScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(stack);
 
-        super.render(stack, mouseX, mouseY, partialTicks);
+        super.render(stack, mouseX, mouseY, partialTick);
 
         drawCenteredString(stack, this.font, this.title.getString(),
                 this.width / 2, 8, 0xFFFFFF);
