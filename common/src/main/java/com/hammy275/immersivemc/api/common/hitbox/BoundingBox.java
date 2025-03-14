@@ -55,4 +55,14 @@ public interface BoundingBox {
     public static Vec3 getCenter(BoundingBox box) {
         return box.isOBB() ? box.asOBB().getCenter() : box.asAABB().getCenter();
     }
+
+    /**
+     * Creates a new BoundingBox which is the same as the provided one, but moved by the provided movement.
+     * @param box The original BoundingBox to move.
+     * @param movement The amount on each axis to move the BoundingBox by.
+     * @return A new BoundingBox, which is the original, but translated by the provided movement.
+     */
+    public static BoundingBox move(BoundingBox box, Vec3 movement) {
+        return box.isOBB() ? box.asOBB().move(movement) : box.asAABB().move(movement);
+    }
 }
