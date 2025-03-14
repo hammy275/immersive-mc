@@ -170,7 +170,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
     }
 
     @Override
-    public void render(BeaconInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
+    public void render(BeaconInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
         helpers.renderItemWithInfo(info.hitboxes.get(8).item, stack, ClientConstants.itemScaleSizeBeacon,
                 false, info.light, info, true, 8, null,
                 info.lastPlayerDir.getOpposite(), null);
@@ -181,7 +181,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
         for (int i = 0; i < info.hitboxes.size() - 1; i++) {
             HitboxItemPair hitbox = info.hitboxes.get(i);
             if (hitbox.box != null) {
-                BoundingBox renderHitbox = hitbox.getRenderHitbox(partialTicks);
+                BoundingBox renderHitbox = hitbox.getRenderHitbox(partialTick);
                 helpers.renderHitbox(stack, renderHitbox);
                 if (i <= 4) {
                     helpers.renderImage(stack, effectLocations[i],

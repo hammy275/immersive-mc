@@ -77,7 +77,7 @@ public abstract class AbstractDragImmersive implements Immersive<DragImmersiveIn
     }
 
     @Override
-    public void render(DragImmersiveInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
+    public void render(DragImmersiveInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
         for (int i = 0; i < info.hitboxes.size(); i++) {
             HitboxInfo hitbox = info.hitboxes.get(i);
             AutoDragSettings autoDrag = autoDragSettings();
