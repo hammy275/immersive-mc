@@ -24,7 +24,7 @@ public class HitboxInfoImpl implements HitboxInfo {
     }
 
     @Override
-    public BoundingBox getRenderHitbox(float partialTicks) {
+    public BoundingBox getRenderHitbox(float partialTick) {
         return this.boundingBox;
     }
 }
