@@ -108,6 +108,10 @@ public class Swap {
             toImmersive = handStack.copy();
             toImmersive.setCount(amountToPlace);
             leftovers = immersiveStack.copy();
+            if (toHand.isEmpty() && !Util.hasItemInInventoryWithStackSpace(player, leftovers)) {
+                toHand = leftovers;
+                leftovers = ItemStack.EMPTY;
+            }
             if (itemCountClearer != null) {
                 itemCountClearer.accept(null);
             }
