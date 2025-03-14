@@ -435,7 +435,9 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
         Direction.Axis axisFacing = playerForwardDir.getAxis();
         double xz = axisFacing == Direction.Axis.Z ? circleCenter.x : circleCenter.z;
 
-        rotRad = -rotRad;
+        if (playerForwardDir == Direction.NORTH || playerForwardDir == Direction.EAST) {
+            rotRad = -rotRad;
+        }
 
         double newXZ = xz
                 + effectCircleRadius * Math.cos(rotRad)
