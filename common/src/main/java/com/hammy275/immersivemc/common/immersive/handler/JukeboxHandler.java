@@ -42,7 +42,7 @@ public class JukeboxHandler implements ImmersiveHandler<NullStorage> {
                     playerItem.is(ItemTags.MUSIC_DISCS)) {
                 ItemStack copiedItem = playerItem.copy();
                 copiedItem.setCount(1);
-                block.setRecord(player.level, pos, state, copiedItem);
+                block.setRecord(player, player.level, pos, state, copiedItem);
                 player.level.levelEvent(null, 1010, pos, Item.getId(playerItem.getItem()));
                 playerItem.shrink(1);
                 player.awardStat(Stats.PLAY_RECORD);
