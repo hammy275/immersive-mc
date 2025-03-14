@@ -3,9 +3,7 @@ package com.hammy275.immersivemc.client.config;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ClientConstants {
@@ -46,20 +44,10 @@ public class ClientConstants {
     public static final float sizeScaleForHover = 1.25f;
 
 
-    // Enchanting table y offsets for item animations and a map storing enchantments for fake items to have glimmer
-    public static final List<Float> eTableYOffsets = new ArrayList<>();
     public static final Map<Enchantment, Integer> fakeEnch = new HashMap<>();
 
     static {
-        float max = 0.1f;
-        for (float i = 0; i <= max; i += max / 20f) {
-            eTableYOffsets.add(i - (max / 2f));
-        }
-        for (float i = max; i >= 0f; i -= max / 20f) {
-            eTableYOffsets.add(i - (max / 2f));
-        }
         fakeEnch.put(Enchantments.MENDING, 32767);
-
         hotswitchVivecraftItemRenderingClass = getClassOrNull("org.vivecraft.client_vr.render.VivecraftItemRendering");
     }
 
