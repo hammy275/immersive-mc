@@ -12,6 +12,7 @@ import com.hammy275.immersivemc.api.client.immersive.ImmersiveBuilder;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.RelativeHitboxInfoBuilder;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveMCClientRegistrationImpl;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.book.ClientBookData;
@@ -191,7 +192,10 @@ public class Immersives {
             }, ClientConstants.itemScaleSizeETable).holdsItems(true).textSupplier((info) -> {
                 EnchantingData.ETableData data = ((EnchantingData) info.getExtraData()).weakData;
                 List<Pair<Component, Vec3>> texts = new ArrayList<>();
-                if (!info.isSlotHovered(1)) {
+                if (!info.isSlotHovered(1) && (!VRPluginVerify.clientInVR() || (
+                        Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(-1), info.getAllHitboxes().get(1).getHitbox()).isEmpty() &&
+                                Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(0), info.getAllHitboxes().get(1).getHitbox()).isEmpty() &&
+                                Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(1), info.getAllHitboxes().get(1).getHitbox()).isEmpty()))) {
                     return null;
                 }
                 if (data.isPresent()) {
@@ -214,7 +218,10 @@ public class Immersives {
             }, ClientConstants.itemScaleSizeETable).holdsItems(true).textSupplier((info) -> {
                 EnchantingData.ETableData data = ((EnchantingData) info.getExtraData()).midData;
                 List<Pair<Component, Vec3>> texts = new ArrayList<>();
-                if (!info.isSlotHovered(2)) {
+                if (!info.isSlotHovered(2) && (!VRPluginVerify.clientInVR() || (
+                        Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(-1), info.getAllHitboxes().get(2).getHitbox()).isEmpty() &&
+                                Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(0), info.getAllHitboxes().get(2).getHitbox()).isEmpty() &&
+                                Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(1), info.getAllHitboxes().get(2).getHitbox()).isEmpty()))) {
                     return null;
                 }
                 if (data.isPresent()) {
@@ -237,7 +244,10 @@ public class Immersives {
             }, ClientConstants.itemScaleSizeETable).holdsItems(true).textSupplier((info) -> {
                 EnchantingData.ETableData data = ((EnchantingData) info.getExtraData()).strongData;
                 List<Pair<Component, Vec3>> texts = new ArrayList<>();
-                if (!info.isSlotHovered(3)) {
+                if (!info.isSlotHovered(3) && (!VRPluginVerify.clientInVR() || (
+                        Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(-1), info.getAllHitboxes().get(3).getHitbox()).isEmpty() &&
+                                Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(0), info.getAllHitboxes().get(3).getHitbox()).isEmpty() &&
+                                Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(1), info.getAllHitboxes().get(3).getHitbox()).isEmpty()))) {
                     return null;
                 }
                 if (data.isPresent()) {
