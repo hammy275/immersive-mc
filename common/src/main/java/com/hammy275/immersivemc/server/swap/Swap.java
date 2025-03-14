@@ -302,7 +302,7 @@ public class Swap {
                 Util.ItemStackMergeResult itemRes = Util.mergeStacks(handStack, toGive, true);
                 player.setItemInHand(InteractionHand.MAIN_HAND, itemRes.mergedInto);
                 toGive = itemRes.mergedFrom;
-            } else if (handStack.isEmpty()) {
+            } else if (handStack.isEmpty() && !Util.hasItemInInventoryWithStackSpace(player, toGive)) {
                 player.setItemInHand(InteractionHand.MAIN_HAND, toGive);
                 toGive = ItemStack.EMPTY;
             }
