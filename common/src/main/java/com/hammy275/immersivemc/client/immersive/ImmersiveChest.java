@@ -80,7 +80,7 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
     }
 
     @Override
-    public void render(ChestInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
+    public void render(ChestInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
 
         if (info.isOpen) {
             for (int i = 0; i < 27; i++) {

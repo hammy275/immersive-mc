@@ -40,13 +40,13 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
     @Override
     public void renderItemWithInfo(ItemStack item, PoseStack stack, float size, boolean renderItemCounts, int light, ImmersiveInfo info, boolean shouldRenderItemGuide, int hitboxIndex, @Nullable Float spinDegrees, @Nullable Direction facing, @Nullable Direction upDown) {
         HitboxInfo hitbox = info.getAllHitboxes().get(hitboxIndex);
-        float partialTicks = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
+        float partialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
         boolean hovered = info.getSlotHovered(0) == hitboxIndex
                 || info.getSlotHovered(1) == hitboxIndex
                 || SwapTracker.slotHovered(info, hitboxIndex);
         if (item == null || item.isEmpty()) {
             if (shouldRenderItemGuide) {
-                renderItemGuide(stack, hitbox.getRenderHitbox(partialTicks), hovered, light);
+                renderItemGuide(stack, hitbox.getRenderHitbox(partialTick), hovered, light);
             }
         } else {
             long ticksExisted = info.getTicksExisted();
@@ -57,7 +57,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
                 // Adjust size based on if it's hovered
                 size = hovered ? size * ClientConstants.sizeScaleForHover : size;
             }
-            BoundingBox bbox = hitbox.getRenderHitbox(partialTicks);
+            BoundingBox bbox = hitbox.getRenderHitbox(partialTick);
             renderItem(item, stack, size, bbox, renderItemCounts, light, spinDegrees, facing, upDown);
         }
     }

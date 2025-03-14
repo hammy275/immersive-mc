@@ -122,9 +122,9 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
      * @param info The info to render.
      * @param stack The pose stack being rendered with.
      * @param helpers Some helper functions for rendering.
-     * @param partialTicks The fraction of time between the last tick and the current tick.
+     * @param partialTick The fraction of time between the last tick and the current tick.
      */
-    public void render(I info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks);
+    public void render(I info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick);
 
     /**
      * @return The {@link ImmersiveHandler} this Immersive uses.

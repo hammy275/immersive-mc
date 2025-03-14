@@ -43,11 +43,11 @@ public class ClientUtil {
     }
 
     // Doesn't exist in older Minecraft versions ImmersiveMC supports
-    public static Vec3 lerpVec3(Vec3 start, Vec3 end, float partialTicks) {
+    public static Vec3 lerpVec3(Vec3 start, Vec3 end, float partialTick) {
         return new Vec3(
-                Mth.lerp(partialTicks, start.x, end.x),
-                Mth.lerp(partialTicks, start.y, end.y),
-                Mth.lerp(partialTicks, start.z, end.z)
+                Mth.lerp(partialTick, start.x, end.x),
+                Mth.lerp(partialTick, start.y, end.y),
+                Mth.lerp(partialTick, start.z, end.z)
         );
     }
 
@@ -75,8 +75,8 @@ public class ClientUtil {
     }
 
     /**
-     * Gets player position while accounting for partial ticks (getFrameTime())
-     * @return Player position while accounting for partial ticks
+     * Gets player position while accounting for the partial tick.
+     * @return The interpolated player position.
      */
     public static Vec3 playerPos() {
         return Minecraft.getInstance().player.getPosition(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true));

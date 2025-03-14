@@ -41,9 +41,9 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         ClientRenderSubscriber.setRenderColors();
-        super.render(graphics, mouseX, mouseY, partialTicks);
+        super.render(graphics, mouseX, mouseY, partialTick);
         renderPreview(graphics.pose(), ClientRenderSubscriber.itemGuideColor(), 0.25f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSize);
         renderPreview(graphics.pose(), ClientRenderSubscriber.itemGuideSelectedColor(), 0.5f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize);
         // Render square for particle color by using our cube model lol
