@@ -304,14 +304,14 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
     }
 
     @Override
-    public AABB getRenderHitbox(float partialTicks) {
+    public AABB getRenderHitbox(float partialTick) {
         if (!didCalc) {
             throw new IllegalStateException("Should call recalculate() or forceNull() before getting render hitbox.");
         }
         if (lastPos == null || constantOffset) {
             return box;
         }
-        return box.move(ClientUtil.lerpVec3(lastPos, pos, partialTicks).subtract(lastPos));
+        return box.move(ClientUtil.lerpVec3(lastPos, pos, partialTick).subtract(lastPos));
     }
 
     public void onOrientationChange() {

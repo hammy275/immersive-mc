@@ -38,7 +38,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     boolean blockRightClickWhenGUIClickDisabled = true;
     BiFunction<BuiltImmersiveInfo<E>, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
     ImmersiveConfigScreenInfo configScreenInfo = null;
-    ExtraRenderer<E> extraRenderer = (info, stack, helpers, partialTicks, light) -> {};
+    ExtraRenderer<E> extraRenderer = (info, stack, helpers, partialTick, light) -> {};
     Function<BuiltImmersiveInfo<E>, AABB> dragHitboxCreator = null;
 
     public ImmersiveBuilderImpl(ImmersiveHandler<S> handler, @Nullable Class<E> extraInfoDataClazz) {
