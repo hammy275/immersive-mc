@@ -38,10 +38,10 @@ public class HitboxItemPair implements HitboxInfo {
     }
 
     @Override
-    public BoundingBox getRenderHitbox(float partialTicks) {
+    public BoundingBox getRenderHitbox(float partialTick) {
         if (this.box == null || lastPos == null) {
             return this.box;
         }
-        return BoundingBox.move(this.box, ClientUtil.lerpVec3(this.lastPos, BoundingBox.getCenter(this.box), partialTicks).subtract(this.lastPos));
+        return BoundingBox.move(this.box, ClientUtil.lerpVec3(this.lastPos, BoundingBox.getCenter(this.box), partialTick).subtract(this.lastPos));
     }
 }

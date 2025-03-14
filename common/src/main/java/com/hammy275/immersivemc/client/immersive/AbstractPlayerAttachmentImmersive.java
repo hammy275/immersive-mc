@@ -55,8 +55,8 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractPlayer
     }
 
     /**
-     * Gets player position while accounting for partial ticks (getFrameTime())
-     * @return Player position while accounting for partial ticks
+     * Gets player position while accounting for the partial tick.
+     * @return The interpolated player position.
      */
     public Vec3 playerPos() {
         return ClientUtil.playerPos();

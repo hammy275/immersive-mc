@@ -87,7 +87,7 @@ public class ClientBookData extends CommonBookData {
      */
     public void render(PoseStack stack, int light, PosRot bookPosRot) {
         stack.pushPose();
-        float partialTicks = Minecraft.getInstance().getFrameTime();
+        float partialTick = Minecraft.getInstance().getFrameTime();
 
         Vec3 pos = bookPosRot.position();
         Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
@@ -106,8 +106,8 @@ public class ClientBookData extends CommonBookData {
 
         bookModel.setupAnim(
                 0, // Partial tick time is always 0 to have page stay in one constant spot
-                Mth.lerp(partialTicks, lastLeftPageTurn, leftPageTurn), // 0-1. How far the page is in the turn. Range is [0f, 1f] with 0f being left.
-                Mth.lerp(partialTicks, lastRightPageTurn, rightPageTurn), // 0-1. How far across a different page is. Range is [0f, 1f] with 0f being left.
+                Mth.lerp(partialTick, lastLeftPageTurn, leftPageTurn), // 0-1. How far the page is in the turn. Range is [0f, 1f] with 0f being left.
+                Mth.lerp(partialTick, lastRightPageTurn, rightPageTurn), // 0-1. How far across a different page is. Range is [0f, 1f] with 0f being left.
                 bookOpenAmount // How open the book is. A good range seems to be (0f,1.2f]
         );
         bookModel.render(stack,
