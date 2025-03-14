@@ -75,24 +75,25 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
         }
 
         if (ActiveConfig.active().reachBehindBagMode.usesOverShoulder() && VRPluginVerify.clientInVR()) {
+            int cNum = ActiveConfig.active().swapBagHand ? 0 : 1;
             IVRData hmdData = Platform.isDevelopmentEnvironment() ?
                     VRPlugin.API.getVRPlayer(mc.player).getHMD() :
                     VRPlugin.API.getRenderVRPlayer().getHMD();
-            IVRData c1Data = Platform.isDevelopmentEnvironment() ?
-                    VRPlugin.API.getVRPlayer(mc.player).getController1() :
-                    VRPlugin.API.getRenderVRPlayer().getController1();
+            IVRData cData = Platform.isDevelopmentEnvironment() ?
+                    VRPlugin.API.getVRPlayer(mc.player).getController(cNum) :
+                    VRPlugin.API.getRenderVRPlayer().getController(cNum);
 
             Vec3 hmdDir = hmdData.getLookAngle();
             Vec3 hmdPos = hmdData.position();
-            Vec3 c1Dir = c1Data.getLookAngle();
-            Vec3 c1Pos = c1Data.position();
+            Vec3 cDir = cData.getLookAngle();
+            Vec3 cPos = cData.position();
 
-            Vec3 c1ToHMDDir = c1Pos.subtract(hmdPos).normalize(); // Angle for c1 to "look at" HMD.
+            Vec3 cToHMDDir = cPos.subtract(hmdPos).normalize(); // Angle for c to "look at" HMD.
 
-            double angleToDown = Math.acos(DOWN.dot(c1Dir)); // Angle in radians between straight down and the controller dir
+            double angleToDown = Math.acos(DOWN.dot(cDir)); // Angle in radians between straight down and the controller dir
             boolean pointingDown = angleToDown < Math.PI / 2d;
-            double c1HMDAngleDiff = Math.acos(c1ToHMDDir.dot(hmdDir));
-            boolean behindHMD = c1HMDAngleDiff > 2 * Math.PI / 3d;
+            double cHMDAngleDiff = Math.acos(cToHMDDir.dot(hmdDir));
+            boolean behindHMD = cHMDAngleDiff > 2 * Math.PI / 3d;
 
             if (pointingDown && behindHMD) {
                 doBagOpen(mc.player);
@@ -125,9 +126,9 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
             renderHitbox(stack, backpackHitbox);
             if (VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(mc.player)
             && mc.getEntityRenderDispatcher().shouldRenderHitBoxes()) {
-                IVRData c1 = VRPlugin.API.getVRPlayer(mc.player).getController1();
-                if (BoundingBox.contains(backpackHitbox, c1.position())) {
-                    renderHitbox(stack, AABB.ofSize(c1.position(), 0.25, 0.25, 0.25),
+                IVRData c = VRPlugin.API.getVRPlayer(mc.player).getController(ActiveConfig.active().swapBagHand ? 0 : 1);
+                if (BoundingBox.contains(backpackHitbox, c.position())) {
+                    renderHitbox(stack, AABB.ofSize(c.position(), 0.25, 0.25, 0.25),
                             true,
                             0f, 1f, 0f);
                 }
@@ -169,7 +170,9 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
     @Override
     public void handleRightClick(AbstractPlayerAttachmentInfo info, Player player, int closest, InteractionHand hand) {
         if (info instanceof ImmersiveHitboxesInfo hInfo) {
-            if (closest == ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX && hand == InteractionHand.OFF_HAND) {
+            if (closest == ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX &&
+                    ((hand == InteractionHand.OFF_HAND && !ActiveConfig.active().swapBagHand) ||
+                            (hand == InteractionHand.MAIN_HAND && ActiveConfig.active().swapBagHand))) {
                 doBagOpen(player);
             }
         }
@@ -194,7 +197,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
 
     private void doBagOpen(Player player) {
         if (backpackCooldown <= 0) {
-            VRRumble.rumbleIfVR(mc.player, 1, CommonConstants.vibrationTimePlayerActionAlert);
+            VRRumble.rumbleIfVR(mc.player, ActiveConfig.active().swapBagHand ? 0 : 1, CommonConstants.vibrationTimePlayerActionAlert);
             ClientUtil.openBag(player);
             backpackCooldown = 50;
         }
