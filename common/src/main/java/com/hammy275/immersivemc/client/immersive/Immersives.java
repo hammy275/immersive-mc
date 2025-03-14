@@ -298,7 +298,7 @@ public class Immersives {
             .setConfigScreenInfo(createConfigScreenInfo("enchanting_table", () -> new ItemStack(Items.ENCHANTING_TABLE),
                     config -> config.useEnchantingTableImmersive,
                     (config, newVal) -> config.useEnchantingTableImmersive = newVal))
-            .setExtraRenderer((info, stack, helpers, partialTicks, light) -> {
+            .setExtraRenderer((info, stack, helpers, partialTick, light) -> {
                 BlockEntity blockEntity = Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition());
                 if (Apoth.apothImpl.enchantModuleEnabled() && blockEntity instanceof EnchantmentTableBlockEntity table && table.open == 1f) {
                     Optional<BuiltImmersiveInfo<EnchantingData>> infoOpt = Immersives.immersiveETable.getTrackedObjects().stream()
