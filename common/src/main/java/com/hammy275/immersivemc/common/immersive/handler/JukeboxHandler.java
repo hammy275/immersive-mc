@@ -17,7 +17,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class JukeboxHandler implements ImmersiveHandler<NullStorage> {
     @Override
@@ -33,12 +35,14 @@ public class JukeboxHandler implements ImmersiveHandler<NullStorage> {
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
         if (player.level.getBlockEntity(pos) instanceof JukeboxBlockEntity jukebox) {
+            BlockState state = player.level.getBlockState(pos);
+            JukeboxBlock block = (JukeboxBlock) state.getBlock();
             ItemStack playerItem = player.getItemInHand(hand);
             if (jukebox.getRecord().isEmpty() &&
                     playerItem.is(ItemTags.MUSIC_DISCS)) {
                 ItemStack copiedItem = playerItem.copy();
                 copiedItem.setCount(1);
-                jukebox.setRecord(copiedItem);
+                block.setRecord(player.level, pos, state, copiedItem);
                 player.level.levelEvent(null, 1010, pos, Item.getId(playerItem.getItem()));
                 playerItem.shrink(1);
                 player.awardStat(Stats.PLAY_RECORD);
