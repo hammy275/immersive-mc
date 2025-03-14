@@ -53,4 +53,11 @@ public interface OBB extends BoundingBox {
      * guaranteed to contain the entirety of the OBB within its bounds.
      */
     public AABB getEnclosingAABB();
+
+    /**
+     * Creates a new OBB which is this OBB, but moved by some amount.
+     * @param movement Movement to move by.
+     * @return This OBB, but moved/translated by the provided movement.
+     */
+    public OBB move(Vec3 movement);
 }
