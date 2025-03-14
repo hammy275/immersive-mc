@@ -1,16 +1,17 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
-import com.hammy275.immersivemc.server.storage.world.WorldStorage;
+import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.compat.apotheosis.ApothStats;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
-import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.server.api_impl.ConstantItemSwapAmount;
+import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
+import com.hammy275.immersivemc.server.storage.server.SwapResult;
+import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.storage.world.impl.ETableWorldStorage;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -88,8 +89,9 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
             if (enchStorage.getItem(0).isEmpty()) {
                 enchStorage.placeItem(player, hand, slot, new ConstantItemSwapAmount(1));
             } else {
-                Util.placeLeftovers(player, enchStorage.getItem(0));
-                enchStorage.setItem(0, ItemStack.EMPTY);
+                SwapResult result = ImmersiveLogicHelpers.instance().swapItems(toEnchant, enchStorage.getItem(0), amount, player);
+                result.giveToPlayer(player, hand);
+                enchStorage.setItem(0, result.immersiveStack(), player);
             }
         } else {
             boolean res = Swap.doEnchanting(slot, pos, player, hand);
