@@ -19,6 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -39,6 +40,15 @@ public class ClientUtil {
 
     public static RegistryAccess getRegistryAccess() {
         return Minecraft.getInstance().level.registryAccess();
+    }
+
+    // Doesn't exist in older Minecraft versions ImmersiveMC supports
+    public static Vec3 lerpVec3(Vec3 start, Vec3 end, float partialTicks) {
+        return new Vec3(
+                Mth.lerp(partialTicks, start.x, end.x),
+                Mth.lerp(partialTicks, start.y, end.y),
+                Mth.lerp(partialTicks, start.z, end.z)
+        );
     }
 
     public static void clearDisabledImmersives() {
@@ -69,7 +79,7 @@ public class ClientUtil {
      * @return Player position while accounting for partial ticks
      */
     public static Vec3 playerPos() {
-        return Minecraft.getInstance().player.getPosition(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaTicks());
+        return Minecraft.getInstance().player.getPosition(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true));
     }
 
     public static Tuple<Vec3, Vec3> getStartAndEndOfLookTrace(Player player) {

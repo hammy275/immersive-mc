@@ -27,6 +27,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -66,9 +67,9 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
         info.ticksExisted++;
         Direction currentDir;
         switch (builder.positioningMode) {
-            case HORIZONTAL_BLOCK_FACING, BLOCK_FACING_NEG_X, HORIZONTAL_BLOCK_FACING_ATTACHED_FLOOR_CEILING_REVERSED ->
+            case HORIZONTAL_BLOCK_FACING, BLOCK_FACING_NEG_X, HORIZONTAL_BLOCK_FACING_ATTACHED_FLOOR_CEILING_REVERSED, TOP_BLOCK_FACING ->
                     currentDir = info.immersiveDir;
-            case TOP_PLAYER_FACING, TOP_BLOCK_FACING, HORIZONTAL_PLAYER_FACING, PLAYER_FACING_NO_DOWN ->
+            case TOP_PLAYER_FACING, HORIZONTAL_PLAYER_FACING, PLAYER_FACING_NO_DOWN ->
                     currentDir = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition());
             case TOP_LITERAL ->
                     currentDir = null;
@@ -98,6 +99,9 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
                     // the slot available to receive items from the network, etc.
                     hitbox.forceNull();
                 }
+            }
+            if (differentDirs) {
+                hitbox.onOrientationChange();
             }
         }
 
@@ -155,11 +159,13 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             // Built Immersives can give null hitboxes to skip rendering them. Need to make sure it's nonnull before
             // trying to render it.
             if (hitbox.hasAABB()) {
+                AABB renderBox = hitbox.getRenderHitbox(partialTicks);
+                Vec3 renderPos = renderBox.getCenter();
                 if (hitbox.holdsItems && (hitbox.renderItem || hitbox.item == null || hitbox.item.isEmpty())) {
                     Float spinDegrees = hitbox.itemSpins ? info.ticksExisted % 100f * 3.6f : null;
                     if (hitbox.item == null || hitbox.item.isEmpty()) {
                         if (hitbox.isInput && builder.slotRendersItemGuide.apply(info, i)) {
-                            helpers.renderItemGuide(stack, hitbox.getHitbox(), info.isSlotHovered(i), info.light);
+                            helpers.renderItemGuide(stack, renderBox, info.isSlotHovered(i), info.light);
                         }
                     } else {
                         float renderSize = size * hitbox.itemRenderSizeMultiplier;
@@ -167,14 +173,14 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
                             renderSize *= ImmersiveRenderHelpers.instance().hoverScaleSizeMultiplier();
                         }
                         helpers.renderItem(hitbox.item, stack, renderSize,
-                                hitbox.getHitbox(), hitbox.renderItemCount, info.light, spinDegrees, info.immersiveDir,
-                                hitbox.getUpDownRenderDir());
+                                renderBox, hitbox.renderItemCount, info.light, spinDegrees,
+                                info.immersiveDir, hitbox.getUpDownRenderDir());
                     }
                 } else {
-                    helpers.renderHitbox(stack, hitbox.getAABB());
+                    helpers.renderHitbox(stack, renderBox);
                 }
                 for (TextData data : hitbox.getTextData()) {
-                    helpers.renderText(data.text(), stack, data.pos(), info.light, 0.02f);
+                    helpers.renderText(data.text(), stack, renderPos.add(data.offset()), info.light, 0.02f);
                 }
             }
 

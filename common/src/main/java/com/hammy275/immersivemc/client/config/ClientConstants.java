@@ -1,8 +1,5 @@
 package com.hammy275.immersivemc.client.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ClientConstants {
     // Mixin Reflection Constants
     public static final Class<?> hotswitchVivecraftItemRenderingClass;
@@ -40,19 +37,7 @@ public class ClientConstants {
     public static final double cooldownVRMultiplier = 1.5;
     public static final float sizeScaleForHover = 1.25f;
 
-
-    // Enchanting table y offsets for item animations and a map storing enchantments for fake items to have glimmer
-    public static final List<Float> eTableYOffsets = new ArrayList<>();
-
     static {
-        float max = 0.1f;
-        for (float i = 0; i <= max; i += max / 20f) {
-            eTableYOffsets.add(i - (max / 2f));
-        }
-        for (float i = max; i >= 0f; i -= max / 20f) {
-            eTableYOffsets.add(i - (max / 2f));
-        }
-
         hotswitchVivecraftItemRenderingClass = getClassOrNull("org.vivecraft.client_vr.render.VivecraftItemRendering");
     }
 

@@ -133,7 +133,7 @@ public class ClientRenderSubscriber {
             }
             for (I info : singleton.getTrackedObjects()) {
                 if (singleton.shouldRender(info)) {
-                    singleton.render(info, stack, ImmersiveRenderHelpers.instance(), Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaTicks());
+                    singleton.render(info, stack, ImmersiveRenderHelpers.instance(), Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true));
                 }
             }
         } catch (ConcurrentModificationException ignored) {

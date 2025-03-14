@@ -145,6 +145,9 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
         super.tick(info);
 
         // Run every tick since effects spin in a circle
+        for (HitboxItemPair pair : info.hitboxes) {
+            pair.lastPos = pair.box == null ? null : BoundingBox.getCenter(pair.box);
+        }
         setHitboxesAndPositions(info);
 
         info.lastPlayerDir = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
@@ -178,10 +181,11 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
         for (int i = 0; i < info.hitboxes.size() - 1; i++) {
             HitboxItemPair hitbox = info.hitboxes.get(i);
             if (hitbox.box != null) {
-                helpers.renderHitbox(stack, hitbox.box);
+                BoundingBox renderHitbox = hitbox.getRenderHitbox(partialTicks);
+                helpers.renderHitbox(stack, renderHitbox);
                 if (i <= 4) {
                     helpers.renderImage(stack, effectLocations[i],
-                            BoundingBox.getCenter(hitbox.box).add(0, -0.05, 0),
+                            BoundingBox.getCenter(renderHitbox).add(0, -0.05, 0),
                             info.effectSelected == i && !useGrabBeacon() ? effectSize * 1.5f : info.isSlotHovered(i) ? effectSize * 1.25f : effectSize,
                             info.light, info.lastPlayerDir);
                 }
@@ -320,12 +324,12 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
                 }
                 Network.INSTANCE.sendToServer(new BeaconDataPacket(info.getBlockPosition()));
             }
+            // Need to get the direction the player is facing, so opposite the forward (which is immersive's forward)
+            Direction centerDir = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
             if (beaconLevel > 0) {
                 info.levelWasNonzero = true;
                 long timeSinceStartMilli = Instant.now().toEpochMilli() - info.startMillis;
                 long millisPerRot = 9000;
-                // Need to get the direction the player is facing, so opposite the forward (which is immersive's forward)
-                Direction centerDir = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
                 Vec3 forwardPos = center.add(leftVec.scale(0.8)).add(0, effectCircleRadius, 0).add(forwardFromBlockVec.scale(0.45));
                 double rot0 = ((double) (timeSinceStartMilli % millisPerRot) / millisPerRot) * 2 * Math.PI;
                 if (beaconLevel == 1) {
@@ -397,6 +401,11 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
                 info.effectSelected = -1;
                 info.regenSelected = false;
                 Network.INSTANCE.sendToServer(new BeaconDataPacket(info.getBlockPosition()));
+            }
+            if (centerDir != info.lastPlayerDir) {
+                for (HitboxItemPair hitbox : info.hitboxes) {
+                    hitbox.lastPos = null;
+                }
             }
             info.lastLevel = beaconLevel;
         }
