@@ -70,7 +70,7 @@ public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<Comm
     }
 
     @Override
-    public void render(LecternInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTicks) {
+    public void render(LecternInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
         info.lecternData.bookData.render(stack, info.light, info.lecternData.getLecternPosRot(info.getBlockPosition()));
     }
 

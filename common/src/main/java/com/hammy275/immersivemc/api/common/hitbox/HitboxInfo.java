@@ -20,8 +20,8 @@ public interface HitboxInfo {
     public boolean isTriggerHitbox();
 
     /**
-     * @param partialTicks The partial ticks that have occurred between the current tick and the next.
+     * @param partialTick The partial tick between the current tick and the next.
      * @return The bounding box to be used for rendering.
      */
-    public BoundingBox getRenderHitbox(float partialTicks);
+    public BoundingBox getRenderHitbox(float partialTick);
 }
