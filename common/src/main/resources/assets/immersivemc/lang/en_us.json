@@ -130,7 +130,7 @@
   "config.immersivemc.center_furnace": "Center Items for Furnace Immersive",
   "config.immersivemc.center_furnace.desc": "When enabled, item placements for the furnace are centered, rather than emulate the GUI.",
   "config.immersivemc.right_click_chest": "Right Click Chests",
-  "config.immersivemc.right_click_chest.desc": "When enabled, the immersive chest is opened/closed through a right click, rather than a hand motion. This allows Non-VR players to use the chest immersive! Punch the chest to cycle which row you have selected.",
+  "config.immersivemc.right_click_chest.desc": "When enabled, the immersive chest is opened/closed through a right click, rather than a hand motion.",
   "config.immersivemc.spin_crafting_output": "Spin Immersive Outputs",
   "config.immersivemc.spin_crafting_output.desc": "Whether immersives that have outputs should slowly spin.",
   "config.immersivemc.pet_any_living": "Allow Petting Anything Living",
