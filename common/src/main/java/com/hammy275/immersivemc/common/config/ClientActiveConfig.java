@@ -29,7 +29,6 @@ public final class ClientActiveConfig extends ActiveConfig {
     public transient int colorPresetRangedGrabSize = 0xFF;
     public transient int multiColorPresetTransitionTimeMS = 5000;
     public transient ItemGuideColorData itemGuideCustomColorData = ItemGuideColorData.DEFAULT_CUSTOM;
-    public boolean disableVanillaInteractionsForSupportedImmersives = false;
     public ReachBehindBackpackMode reachBehindBagMode = ReachBehindBackpackMode.BEHIND_BACK;
     public float textScale = 1f;
     public boolean swapBagHand = false;
@@ -37,7 +36,7 @@ public final class ClientActiveConfig extends ActiveConfig {
     public boolean useGrindMotionGrindstoneInVR = true;
     public boolean dontAutoStepOnImmersiveBlocksInVR = true;
 
-    public int clientConfigVersion = 4;
+    public int clientConfigVersion = 5;
     public static final String CLIENT_CONFIG_VERSION = "clientConfigVersion";
 
     static {
@@ -82,7 +81,6 @@ public final class ClientActiveConfig extends ActiveConfig {
         compatFor3dResourcePacks = false;
         itemGuideSize = 1.0;
         itemGuideSelectedSize = 1.0;
-        disableVanillaInteractionsForSupportedImmersives = false;
         reachBehindBagMode = ReachBehindBackpackMode.BEHIND_BACK;
         textScale = 1f;
         swapBagHand = false;
