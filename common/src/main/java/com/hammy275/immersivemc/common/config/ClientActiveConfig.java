@@ -36,7 +36,7 @@ public final class ClientActiveConfig extends ActiveConfig {
     public boolean useGrindMotionGrindstoneInVR = true;
     public boolean dontAutoStepOnImmersiveBlocksInVR = true;
 
-    public int clientConfigVersion = 5;
+    public int clientConfigVersion = 4;
     public static final String CLIENT_CONFIG_VERSION = "clientConfigVersion";
 
     static {
