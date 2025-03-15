@@ -60,6 +60,10 @@ public class ConfigUpgrader {
                     customColorMap.put("transitionTimeMS", 5000);
                     config.put("itemGuideCustomColorData", customColorMap);
                 }
+            } else if (version == 4) {
+                // Server config is always loaded first, so move the key moved from client to common here
+                ActiveConfig.FILE_SERVER.disableVanillaInteractionsForSupportedImmersives =
+                        (boolean) config.getOrDefault("disableVanillaInteractionsForSupportedImmersives", false);
             }
 
             version++;
