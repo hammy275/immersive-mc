@@ -8,17 +8,17 @@ import java.util.*;
 
 public class ChestToOpenSet {
 
-    private static final Map<PosLevel, Set<UUID>> chestImmersiveOpenSet = new HashMap<>();
+    private static final Map<PosLevel, Set<Player>> chestImmersiveOpenSet = new HashMap<>();
 
     public static void openChest(Player player, BlockPos pos) {
-        Set<UUID> set = getOpenSet(player.level, pos, true);
-        set.add(player.getUUID());
+        Set<Player> set = getOpenSet(player.level, pos, true);
+        set.add(player);
     }
 
     public static void closeChest(Player player, BlockPos pos) {
-        Set<UUID> set = getOpenSet(player.level, pos, false);
+        Set<Player> set = getOpenSet(player.level, pos, false);
         if (set != null) {
-            set.remove(player.getUUID());
+            set.remove(player);
             if (set.isEmpty()) {
                 chestImmersiveOpenSet.remove(new PosLevel(pos, player.level));
             }
@@ -26,7 +26,7 @@ public class ChestToOpenSet {
     }
 
     public static int getOpenCount(BlockPos pos, Level level) {
-        Set<UUID> set = getOpenSet(level, pos, false);
+        Set<Player> set = getOpenSet(level, pos, false);
         return set != null ? set.size() : 0;
     }
 
@@ -37,7 +37,7 @@ public class ChestToOpenSet {
     public static void clearForPlayer(Player player) {
         List<PosLevel> toRemove = new ArrayList<>();
         chestImmersiveOpenSet.forEach((posLevel, set) -> {
-            set.remove(player.getUUID());
+            set.remove(player);
             if (set.isEmpty()) {
                 toRemove.add(posLevel);
             }
@@ -45,8 +45,8 @@ public class ChestToOpenSet {
         toRemove.forEach(chestImmersiveOpenSet.keySet()::remove);
     }
 
-    private static Set<UUID> getOpenSet(Level level, BlockPos pos, boolean createIfNotPresent) {
-        Set<UUID> set = chestImmersiveOpenSet.get(new PosLevel(pos, level));
+    public static Set<Player> getOpenSet(Level level, BlockPos pos, boolean createIfNotPresent) {
+        Set<Player> set = chestImmersiveOpenSet.get(new PosLevel(pos, level));
         if (createIfNotPresent && set == null) {
             set = new HashSet<>();
             chestImmersiveOpenSet.put(new PosLevel(pos, level), set);
