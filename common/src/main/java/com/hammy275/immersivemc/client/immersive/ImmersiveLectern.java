@@ -114,7 +114,7 @@ public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<Comm
 
     @Override
     public boolean shouldDisableRightClicksWhenVanillaInteractionsDisabled(LecternInfo info) {
-        return false;
+        return true;
     }
 
     @Override
