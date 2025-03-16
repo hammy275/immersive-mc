@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.client.immersive.info.DragImmersiveInfo;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
+import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
@@ -122,7 +123,7 @@ public abstract class AbstractDragImmersive implements Immersive<DragImmersiveIn
 
     @Override
     public boolean shouldDisableRightClicksWhenVanillaInteractionsDisabled(DragImmersiveInfo info) {
-        return true;
+        return VRPluginVerify.clientInVR();
     }
 
     @Override
