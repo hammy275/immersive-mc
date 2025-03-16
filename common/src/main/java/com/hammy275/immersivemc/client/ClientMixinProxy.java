@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.client.vr;
+package com.hammy275.immersivemc.client;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
@@ -13,6 +13,9 @@ import net.minecraft.world.phys.AABB;
 import java.util.stream.StreamSupport;
 
 public class ClientMixinProxy {
+
+    public static boolean pretendPlayerIsNotCrouching = false;
+
     public static boolean collideDoPlayerMoveInRoomRedirect(ClientLevel level, Entity entity, AABB aabb) {
         if (VRPluginVerify.clientInVR() && ActiveConfig.getActiveConfigCommon((LocalPlayer) entity).dontAutoStepOnImmersiveBlocksInVR) {
             if (StreamSupport.stream(BlockPos.betweenClosed(Mth.floor(aabb.minX), Mth.floor(aabb.minY - 0.500001), Mth.floor(aabb.minZ),
