@@ -1,8 +1,10 @@
 package com.hammy275.immersivemc.mixin;
 
+import com.hammy275.immersivemc.client.ClientMixinProxy;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.server.ServerMixinProxy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -38,6 +40,14 @@ public abstract class EntityMixin {
                     this.maxUpStep = oldMaxUpStep;
                 }
             }
+        }
+    }
+
+    @Inject(method = "isCrouching", at = @At("HEAD"), cancellable = true)
+    private void immersiveMC$notCrouchingWhenUseChecking(CallbackInfoReturnable<Boolean> cir) {
+        Entity me = (Entity) (Object) this;
+        if (me.level().isClientSide ? ClientMixinProxy.pretendPlayerIsNotCrouching : ServerMixinProxy.pretendPlayerIsNotCrouching) {
+            cir.setReturnValue(false);
         }
     }
 }
