@@ -35,12 +35,13 @@
     "ItemInHandRendererMixin",
     "LecternRendererMixin",
     "LevelRendererMixin",
+    "LocalPlayerMixin",
     "MinecraftMixin",
     "MinecraftMixinAccessor",
     "MultiPlayerGameModeMixin",
-    "throw_render_helpers.vivecraft.VivecraftItemRenderingHotswitchMixin",
-    "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin",
     "VRPlayerMixin",
-    "VRPlayerMixinOldVivecraft"
+    "VRPlayerMixinOldVivecraft",
+    "throw_render_helpers.vivecraft.VivecraftItemRenderingHotswitchMixin",
+    "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin"
   ]
 }
