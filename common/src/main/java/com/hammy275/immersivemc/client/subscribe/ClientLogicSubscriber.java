@@ -479,16 +479,8 @@ public class ClientLogicSubscriber {
 
     public static int handleRightClick(Player player) {
         if (Minecraft.getInstance().gameMode == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE_CLIENT.disableImmersiveMCOutsideVR)) return -1;
+        if (ActiveConfig.active().crouchMode.bypassImmersive() && Minecraft.getInstance().player.isCrouching()) return -1;
         boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
-        HitResult looking = Minecraft.getInstance().hitResult;
-
-        if (ActiveConfig.active().crouchMode.bypassImmersive() &&
-                looking != null && looking.getType() == HitResult.Type.BLOCK &&
-                Minecraft.getInstance().player.isSecondaryUseActive()) {
-            if (Util.isHittingImmersive((BlockHitResult) looking, Minecraft.getInstance().level)) {
-                return -1;
-            }
-        }
 
         Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(Minecraft.getInstance().player);
         Vec3 start = startAndEnd.getA();
