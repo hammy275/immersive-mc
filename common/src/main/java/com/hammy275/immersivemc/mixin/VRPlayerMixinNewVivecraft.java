@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.mixin;
 
-import com.hammy275.immersivemc.client.vr.ClientMixinProxy;
+import com.hammy275.immersivemc.client.ClientMixinProxy;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;

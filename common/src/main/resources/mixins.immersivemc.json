@@ -37,6 +37,7 @@
     "ItemInHandRendererMixin",
     "LecternRendererMixin",
     "LevelRendererMixin",
+    "LocalPlayerMixin",
     "MinecraftMixin",
     "MinecraftMixinAccessor",
     "MultiPlayerGameModeMixin",
