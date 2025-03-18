@@ -10,6 +10,12 @@ repositories {
     maven {
         url = "https://cursemaven.com"
     }
+    maven {
+        url "https://maven.jamieswhiteshirt.com/libs-release"
+        content {
+            includeGroup "com.jamieswhiteshirt"
+        }
+    }
 }
 
 dependencies {
@@ -21,6 +27,7 @@ dependencies {
 
     modCompileOnly "curse.maven:vivecraft-667903:4160371"
     modCompileOnly "curse.maven:inventoryprofilesnext-495267:6093916"
+    modCompileOnly "com.jamieswhiteshirt:reach-entity-attributes:2.4.0"
 }
 
 publishing {

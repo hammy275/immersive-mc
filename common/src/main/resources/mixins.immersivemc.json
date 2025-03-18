@@ -22,6 +22,7 @@
     "LivingEntityMixin",
     "PlayerMixin",
     "ProjectileAccessor",
+    "ReachEntityAttributesMixin",
     "ServerPlayerGameModeMixin",
     "throw_redirectors.BottleOEnchantingRedirect",
     "throw_redirectors.EggRedirect",
