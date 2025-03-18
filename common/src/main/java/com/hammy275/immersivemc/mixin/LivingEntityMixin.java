@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.mixin_proxy.ShieldProxy;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.UseAnim;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,16 +23,26 @@ public abstract class LivingEntityMixin {
                 return;
             }
         }
-        // Since we're forcing Minecraft to assume we're blocking with a shield, we should tell it we're not actually
-        // blocking if there's no use item.
-        if (me.getUseItem().isEmpty()) {
+        // Since we're forcing Minecraft to assume we're blocking with a shield if we have one, we should tell it we're
+        // not actually blocking if there's no blocking item.
+        if (me.getUseItem().getUseAnimation() != UseAnim.BLOCK) {
             cir.setReturnValue(false);
         }
     }
 
+    @Inject(method = "isDamageSourceBlocked", at = @At("HEAD"))
+    private void immersiveMC$isDamageSourceBlockedSetIsBlocking(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
+        ShieldProxy.useIsBlockingMixin = true;
+    }
+
+    @Inject(method = "isDamageSourceBlocked", at = @At("RETURN"))
+    private void immersiveMC$isDamageSourceBlockedUnsetIsBlocking(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
+        ShieldProxy.useIsBlockingMixin = false;
+    }
+
     @Inject(method = "isBlocking", at = @At("RETURN"), cancellable = true)
     public void immersiveMC$injectShieldAsItemBlockingWith(CallbackInfoReturnable<Boolean> cir) {
-        if (VRPluginVerify.hasAPI && !cir.getReturnValue()) {
+        if (ShieldProxy.useIsBlockingMixin && VRPluginVerify.hasAPI && !cir.getReturnValue()) {
             cir.setReturnValue(ShieldProxy.getABlockingShield((LivingEntity) (Object) this) != null);
         }
     }
