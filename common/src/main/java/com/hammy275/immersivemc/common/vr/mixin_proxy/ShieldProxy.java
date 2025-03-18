@@ -1,7 +1,9 @@
 package com.hammy275.immersivemc.common.vr.mixin_proxy;
 
+import com.hammy275.immersivemc.client.ClientMixinProxy;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
+import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.world.InteractionHand;
@@ -16,12 +18,11 @@ import org.jetbrains.annotations.Nullable;
 public class ShieldProxy {
 
     public static ItemStack shieldToDamage = ItemStack.EMPTY;
+    public static boolean useIsBlockingMixin = false;
 
     @Nullable
     public static ItemStack getABlockingShield(LivingEntity living) {
-        if (living instanceof Player player &&
-                ActiveConfig.getActiveConfigCommon(player).useShieldImmersive && VRPlugin.API.playerInVR(player)
-                && player.getUseItem().isEmpty()) {
+        if (living instanceof Player player && isVRPlayerToManageBySide(player)) {
             for (InteractionHand iHand : InteractionHand.values()) {
                 if (player.getItemInHand(iHand).getUseAnimation() == ItemUseAnimation.BLOCK) {
                     return player.getItemInHand(iHand);
@@ -32,8 +33,7 @@ public class ShieldProxy {
     }
 
     public static boolean isDamageSourceBlocked(LivingEntity living, DamageSource damageSource) {
-        if (living instanceof Player player && ActiveConfig.getActiveConfigCommon(player).useShieldImmersive &&
-                VRPlugin.API.playerInVR(player) && player.getUseItem().isEmpty()) {
+        if (living instanceof Player player && isVRPlayerToManageBySide(player)) {
             IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
             for (InteractionHand iHand : InteractionHand.values()) {
                 if (player.getItemInHand(iHand).getUseAnimation() == ItemUseAnimation.BLOCK) {
@@ -57,5 +57,11 @@ public class ShieldProxy {
             }
         }
         return false;
+    }
+
+    private static boolean isVRPlayerToManageBySide(Player player) {
+        return VRPluginVerify.hasAPI && player.getUseItem().isEmpty() &&
+                (!player.level().isClientSide || ClientMixinProxy.playerIsLocalPlayer(player)) &&
+                ActiveConfig.getActiveConfigCommon(player).useShieldImmersive;
     }
 }
