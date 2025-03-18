@@ -25,6 +25,7 @@ public abstract class PlayerMixin extends LivingEntity {
     public void immersiveMC$resetImmersivelyBlockedShieldHurt(float damageAmount, CallbackInfo ci) {
         if (!this.useItem.isEmpty() && !ShieldProxy.shieldToDamage.isEmpty()) {
             this.useItem = ItemStack.EMPTY;
+            ShieldProxy.shieldToDamage = ItemStack.EMPTY;
         }
     }
 
