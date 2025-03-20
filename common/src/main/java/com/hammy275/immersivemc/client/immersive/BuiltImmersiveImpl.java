@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -274,7 +275,11 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
             if (state.getMaterial().isReplaceable()) {
                 continue; // Replaceable blocks never block immersives.
             }
-            AABB shape = state.getShape(Minecraft.getInstance().level, pos).bounds();
+            VoxelShape voxelShape = state.getShape(Minecraft.getInstance().level, pos);
+            if (voxelShape.isEmpty()) { // Can happen, surprisingly!
+                continue;
+            }
+            AABB shape = voxelShape.bounds();
             double volume = shape.getXsize() * shape.getYsize() * shape.getZsize();
             if (volume > 1d/3d) {
                 return false; // Blocks with bounding boxes larger than 1/3 of a block cause blocking.
