@@ -114,8 +114,9 @@ public class ConfigScreen extends Screen {
 
         String configTypeButtonTranslationKey = "config.immersivemc.edit_config_type.server";
         if (currentConfigAdjusting == ConfigType.CLIENT) {
-            this.addRenderableWidget(ScreenUtils.createOption("disable_outside_vr", config -> ((ClientActiveConfig) config).disableImmersiveMCOutsideVR, (config, newVal) -> ((ClientActiveConfig) config).disableImmersiveMCOutsideVR = newVal)
-                    .createButton(Minecraft.getInstance().options, (this.width - BUTTON_WIDTH) / 2, this.height - BUTTON_SPACING * 4, BUTTON_WIDTH));
+            // MODFEST: Disable customizing this option, forced false so players have to use ImmersiveMC when enabled.
+            /*this.addRenderableWidget(ScreenUtils.createOption("disable_outside_vr", config -> ((ClientActiveConfig) config).disableImmersiveMCOutsideVR, (config, newVal) -> ((ClientActiveConfig) config).disableImmersiveMCOutsideVR = newVal)
+                    .createButton(Minecraft.getInstance().options, (this.width - BUTTON_WIDTH) / 2, this.height - BUTTON_SPACING * 4, BUTTON_WIDTH));*/
             configTypeButtonTranslationKey = "config.immersivemc.edit_config_type.client";
         }
         Button configTypeButton = ScreenUtils.createButton((this.width - BUTTON_WIDTH) / 2, this.height - BUTTON_SPACING * 3,

@@ -10,7 +10,7 @@ public final class ClientActiveConfig extends ActiveConfig {
     public CrouchMode crouchMode = CrouchMode.SWAP_ALL;
     public boolean doVRControllerRumble = true;
     public boolean returnItemsWhenLeavingImmersives = true;
-    public boolean disableImmersiveMCOutsideVR = false;
+    public boolean disableImmersiveMCOutsideVR = false; // MODFEST: Forced to false so players have to use ImmersiveMC when enabled for them.
     public int bagColor = 11901820;
     public boolean rightClickChestInteractions = false;
     public boolean autoCenterFurnaceImmersive = false;
@@ -61,6 +61,7 @@ public final class ClientActiveConfig extends ActiveConfig {
         colorPresetAlpha = Mth.clamp(colorPresetAlpha, 0, 0xFF);
         colorPresetSelectedAlpha = Mth.clamp(colorPresetSelectedAlpha, 0, 0xFF);
         colorPresetRangedGrabSize = Mth.clamp(colorPresetRangedGrabSize, 0, 0xFF);
+        disableImmersiveMCOutsideVR = false; // MODFEST: Force this to false even if it's changed in the file config
     }
 
     @Override
@@ -69,7 +70,7 @@ public final class ClientActiveConfig extends ActiveConfig {
         crouchMode = CrouchMode.NONE;
         doVRControllerRumble = false;
         returnItemsWhenLeavingImmersives = false;
-        disableImmersiveMCOutsideVR = false;
+        //disableImmersiveMCOutsideVR = false; // MODFEST: See comment for variable declaration
         bagColor = 11901820;
         rightClickChestInteractions = false;
         autoCenterFurnaceImmersive = false;

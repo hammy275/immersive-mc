@@ -1,5 +1,16 @@
 # ImmersiveMC
 
+## WARNING
+
+This branch contains a modified build of ImmersiveMC with several changes! Please use the [regular 1.21.1 branch](https://github.com/hammy275/immersive-mc/tree/1.21.1) instead!
+
+### Changes Made
+
+- ImmersiveMC is disabled by default for players. One can use `/immersivemc enable [PLAYER]` to enable ImmersiveMC for the player, and `/immersivemc disable [PLAYER]` to disable it again. Note that these commands are already in regular ImmersiveMC!
+- The ability to disable ImmersiveMC outside VR is removed. It's found in the config, but changes to it will be ignored.
+
+## Rest of README
+
 Are you sick of in-game GUIs? Do you want to make your game immersive, whether you're in VR or not? Do you want to take Vivecraft to the next level?
 
 Then you'll love ImmersiveMC!

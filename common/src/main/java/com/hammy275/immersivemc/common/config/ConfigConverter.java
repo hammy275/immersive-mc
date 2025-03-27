@@ -188,7 +188,7 @@ public class ConfigConverter {
         addBothConversion("tinkers_construct_crafting_station_immersion", Boolean.class, (config, val) -> config.useTinkersConstructCraftingStationImmersive = val);
         addClientConversion("item_guide_size", Double.class, (config, val) -> config.itemGuideSize = val);
         addClientConversion("item_guide_selected_size", Double.class, (config, val) -> config.itemGuideSelectedSize = val);
-        addClientConversion("disable_outside_vr", Boolean.class, (config, val) -> config.disableImmersiveMCOutsideVR = val);
+        //addClientConversion("disable_outside_vr", Boolean.class, (config, val) -> config.disableImmersiveMCOutsideVR = val); // MODFEST: Variable not customizable to force ImmersiveMC when enabled
         addBothConversion("lectern_immersion", Boolean.class, (config, val) -> config.useLecternImmersive = val);
         addBothConversion("chiseled_bookshelf_immersion", Boolean.class, (config, val) -> config.useChiseledBookshelfImmersive = val);
     }

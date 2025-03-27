@@ -32,7 +32,7 @@ public class ImmersiveMCPlayerStorages extends SavedData {
     );
 
     protected Map<UUID, List<ItemStack>> backpackCraftingItemsMap = new HashMap<>();
-    protected Set<UUID> disabledPlayers = new HashSet<>();
+    protected Set<UUID> enabledPlayers = new HashSet<>();
 
     private static ImmersiveMCPlayerStorages create() {
         return new ImmersiveMCPlayerStorages();
@@ -57,19 +57,20 @@ public class ImmersiveMCPlayerStorages extends SavedData {
         throw new IllegalArgumentException("Can only access storage on server-side!");
     }
 
+    // MODFEST: Functions below use enabledPlayers so fest defaults to ImmersiveMC disabled by default instead of enabled by default.
     public static boolean isPlayerDisabled(Player player) {
-        return getPlayerStorage(player).disabledPlayers.contains(player.getUUID());
+        return !getPlayerStorage(player).enabledPlayers.contains(player.getUUID());
     }
 
     public static void setPlayerDisabled(Player player) {
        ImmersiveMCPlayerStorages storage = getPlayerStorage(player);
-       storage.disabledPlayers.add(player.getUUID());
+       storage.enabledPlayers.remove(player.getUUID());
        storage.setDirty();
     }
 
     public static void setPlayerEnabled(Player player) {
         ImmersiveMCPlayerStorages storage = getPlayerStorage(player);
-        storage.disabledPlayers.remove(player.getUUID());
+        storage.enabledPlayers.add(player.getUUID());
         storage.setDirty();
     }
 
@@ -90,11 +91,11 @@ public class ImmersiveMCPlayerStorages extends SavedData {
                 playerStorage.backpackCraftingItemsMap.put(uuid, items);
             } catch (IllegalArgumentException ignored) {} // We also store non-UUID keys here.
         }
-        CompoundTag disabledPlayers = nbt.contains("disabledPlayers") ? nbt.getCompound("disabledPlayers") : null;
-        if (disabledPlayers != null) {
-            for (String key : disabledPlayers.getAllKeys()) {
-                if (disabledPlayers.getString(key).equalsIgnoreCase("true")) {
-                    playerStorage.disabledPlayers.add(UUID.fromString(key));
+        CompoundTag enabledPlayers = nbt.contains("enabledPlayers") ? nbt.getCompound("enabledPlayers") : null;
+        if (enabledPlayers != null) {
+            for (String key : enabledPlayers.getAllKeys()) {
+                if (enabledPlayers.getString(key).equalsIgnoreCase("true")) {
+                    playerStorage.enabledPlayers.add(UUID.fromString(key));
                 }
             }
         }
@@ -121,11 +122,11 @@ public class ImmersiveMCPlayerStorages extends SavedData {
             playerData.put("bagItems", bagData);
             nbt.put(String.valueOf(entry.getKey()), playerData);
         }
-        CompoundTag disabledPlayers = new CompoundTag();
-        for (UUID disabled : this.disabledPlayers) {
-            disabledPlayers.putString(disabled.toString(), "true");
+        CompoundTag enabledPlayers = new CompoundTag();
+        for (UUID disabled : this.enabledPlayers) {
+            enabledPlayers.putString(disabled.toString(), "true");
         }
-        nbt.put("disabledPlayers", disabledPlayers);
+        nbt.put("enabledPlayers", enabledPlayers);
         return nbt;
     }
 
