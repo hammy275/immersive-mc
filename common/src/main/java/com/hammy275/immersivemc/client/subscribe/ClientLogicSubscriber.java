@@ -521,6 +521,8 @@ public class ClientLogicSubscriber {
             }
         }
 
+        // Can get here from a right-click chest interaction while in VR. VR ticks the swap tracker.
+        if (inVR && SwapTracker.c0.getCooldown() > 0) return SwapTracker.c0.getCooldown();
         // If we handle things in the block ray tracing part of right click, we return true
         int rayTraceCooldown = handleRightClickBlockRayTrace(player);
         if (rayTraceCooldown > 0) {
