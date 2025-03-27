@@ -42,10 +42,14 @@ dependencies {
     modApi "curse.maven:lootr-615106:4596353"
     modApi "curse.maven:clothconfigapi-348521:4633413" // lootr dependency
 
-    modApi "com.terraformersmc:modmenu:5.0.2"
+    modApi("com.terraformersmc:modmenu:5.0.2") {
+        exclude module: "fabric-loader" // ModMenu ships(?) with Fabric Loader, which we don't want.
+    }
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+
+    include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${rootProject.mixin_extras_version}")))
 }
 
 processResources {
