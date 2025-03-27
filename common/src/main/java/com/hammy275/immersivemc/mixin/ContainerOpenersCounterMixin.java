@@ -1,25 +1,32 @@
 package com.hammy275.immersivemc.mixin;
 
 import com.hammy275.immersivemc.server.ChestToOpenSet;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 import java.util.Set;
 
 @Mixin(ContainerOpenersCounter.class)
 public class ContainerOpenersCounterMixin {
-    @Inject(method = "getPlayersWithContainerOpen", at = @At("RETURN"))
-    private void immersiveMC$addImmersiveOpenersCount(Level level, BlockPos pos, CallbackInfoReturnable<List<Player>> cir) {
+
+    // Uses WrapMethod instead of ModifyReturnValue because mods (such as ImmersivePortals) tend to @Inject here
+    @WrapMethod(method = "getPlayersWithContainerOpen")
+    private List<Player> immersiveMC$addImmersiveOpenersCount(Level level, BlockPos pos, Operation<List<Player>> original) {
+        List<Player> result = original.call(level, pos);
         Set<Player> immersivePlayers = ChestToOpenSet.getOpenSet(level, pos, false);
         if (immersivePlayers != null) {
-            cir.getReturnValue().addAll(immersivePlayers);
+            for (Player immersivePlayer : immersivePlayers) {
+                if (!result.contains(immersivePlayer)) {
+                    result.add(immersivePlayer);
+                }
+            }
         }
+        return result;
     }
 }
