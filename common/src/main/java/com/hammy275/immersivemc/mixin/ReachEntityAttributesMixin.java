@@ -17,6 +17,7 @@ import java.util.function.Predicate;
 @Mixin(value = ReachEntityAttributes.class)
 public class ReachEntityAttributesMixin {
 
+    // Mod uses a Redirect, so we need to inject into where that redirect is forwarded to.
     @Inject(method = "getPlayersWithinReach(Ljava/util/function/Predicate;Lnet/minecraft/world/level/Level;IIID)Ljava/util/List;",
             at = @At("RETURN"))
     private static void immersiveMC$addPlayersImmersivelyOpening(Predicate<Player> isViewingChestPredicate, Level level, int x, int y, int z, double baseReachDistance, CallbackInfoReturnable<List<Player>> cir) {
