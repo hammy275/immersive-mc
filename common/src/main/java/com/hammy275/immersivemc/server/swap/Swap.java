@@ -129,7 +129,7 @@ public class Swap {
         ItemStack toEnchantItem = storage.getItem(0).copy();
         if (toEnchantItem.isEmpty()) return false;
         int lapisInInventory = 0;
-        for (int i = 0; i < player.getInventory().items.size(); i++) {
+        for (int i = 0; i < player.getInventory().getNonEquipmentItems().size(); i++) {
             if (player.getInventory().getItem(i).getItem() == Items.LAPIS_LAZULI) {
                 lapisInInventory += player.getInventory().getItem(i).getCount();
             }
@@ -161,7 +161,7 @@ public class Swap {
 
         if (takeLapis) {
             int lapisToTake = slot;
-            for (int i = 0; i < player.getInventory().items.size(); i++) {
+            for (int i = 0; i < player.getInventory().getNonEquipmentItems().size(); i++) {
                 if (player.getInventory().getItem(i).getItem() == Items.LAPIS_LAZULI) {
                     ItemStack stack = player.getInventory().getItem(i);
                     while (!stack.isEmpty() && lapisToTake > 0) {
@@ -280,7 +280,7 @@ public class Swap {
             menu.getSlot(0).set(stackOut);
             menu.getSlot(0).onTake(player, stackOut);
             // Give our item to us, remove items from crafting inventory, and show new recipe
-            stackOut.onCraftedBy(player.level(), player, stackOut.getCount());
+            stackOut.onCraftedBy(player, stackOut.getCount());
             for (int i = 0; i < newSlotsState.length - 1; i++) {
                 newSlotsState[i] = menu.getSlot(i + 1).getItem();
             }

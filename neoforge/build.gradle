@@ -35,7 +35,7 @@ dependencies {
     neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
     modApi "curse.maven:mcvrapi-591092:5720565"
 
-    modApi "curse.maven:lootr-361276:6208765"
+    modCompileOnly "curse.maven:lootr-361276:6208765" // Waiting on 1.21.5 build
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive = false }

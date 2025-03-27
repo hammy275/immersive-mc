@@ -136,7 +136,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
                     ItemDisplayContext.FIXED;
 
             Minecraft.getInstance().getItemRenderer().renderStatic(Minecraft.getInstance().player,
-                    item, type, false,
+                    item, type,
                     stack, Minecraft.getInstance().renderBuffers().bufferSource(),
                     Minecraft.getInstance().level,
                     light, OverlayTexture.NO_OVERLAY, 0);

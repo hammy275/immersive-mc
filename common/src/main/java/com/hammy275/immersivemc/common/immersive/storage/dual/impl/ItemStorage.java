@@ -219,22 +219,22 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
     
     @Override
     public void load(CompoundTag nbt, HolderLookup.Provider provider, int lastVanillaDataVersion) {
-        int length = nbt.getInt("numOfItems");
+        int length = nbt.getInt("numOfItems").get();
         this.items = new ItemStack[length];
         for (int i = 0; i < length; i++) {
-            this.items[i] = ServerUtil.parseItem(ServerSubscriber.server.registryAccess(), nbt.getCompound("item" + i), lastVanillaDataVersion);
+            this.items[i] = ServerUtil.parseItem(ServerSubscriber.server.registryAccess(), nbt.getCompound("item" + i).get(), lastVanillaDataVersion);
         }
         itemCounts = new LinkedList[length];
         for (int i = 0; i < length; i++) {
             itemCounts[i] = new LinkedList<>();
         }
         if (nbt.contains("itemCounts")) {
-            CompoundTag rootCounts = nbt.getCompound("itemCounts");
+            CompoundTag rootCounts = nbt.getCompound("itemCounts").get();
             for (int i = 0; i < length; i++) {
-                CompoundTag slotTag = rootCounts.getCompound("slot" + i);
-                int numOfCounts = slotTag.getInt("numOfItems");
+                CompoundTag slotTag = rootCounts.getCompound("slot" + i).get();
+                int numOfCounts = slotTag.getInt("numOfItems").get();
                 for (int j = 0; j < numOfCounts; j++) {
-                    itemCounts[i].add(PlayerItemCounts.load(slotTag.getCompound(String.valueOf(j))));
+                    itemCounts[i].add(PlayerItemCounts.load(slotTag.getCompound(String.valueOf(j)).get()));
                 }
             }
         }
@@ -244,7 +244,7 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
     public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.putInt("numOfItems", items.length);
         for (int i = 0; i < items.length; i++) {
-            nbt.put("item" + i, items[i].saveOptional(ServerSubscriber.server.registryAccess()));
+            nbt.put("item" + i, items[i].save(ServerSubscriber.server.registryAccess()));
         }
         CompoundTag rootCounts = new CompoundTag();
         for (int slot = 0; slot < itemCounts.length; slot++) {
@@ -326,9 +326,9 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
         }
 
         public static PlayerItemCounts load(CompoundTag nbt) {
-            String uuidString = nbt.getString("uuid");
+            String uuidString = nbt.getString("uuid").get();
             UUID uuid = uuidString.equals("null") || uuidString.isEmpty() ? null : UUID.fromString(uuidString);
-            int count = nbt.getInt("count");
+            int count = nbt.getInt("count").get();
             return new PlayerItemCounts(Optional.ofNullable(uuid), count);
         }
     }

@@ -198,7 +198,7 @@ public class Util {
     }
 
     public static boolean hasItemInInventoryWithStackSpace(Player player, ItemStack stack) {
-        for (ItemStack invItem : player.getInventory().items) {
+        for (ItemStack invItem : player.getInventory().getNonEquipmentItems()) {
             if (Util.stacksEqualBesidesCount(invItem, stack) && invItem.getCount() < invItem.getMaxStackSize()) {
                 return true;
             }
@@ -442,8 +442,8 @@ public class Util {
     }
 
     public static ResourceLocation getResourceLocation(CompoundTag nbt, String key) {
-        CompoundTag subTag = nbt.getCompound(key);
-        return ResourceLocation.fromNamespaceAndPath(subTag.getString("namespace"), subTag.getString("path"));
+        CompoundTag subTag = nbt.getCompound(key).get();
+        return ResourceLocation.fromNamespaceAndPath(subTag.getString("namespace").get(), subTag.getString("path").get());
     }
 
     public static List<BlockPos> allPositionsWithAABB(AABB box) {

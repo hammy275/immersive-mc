@@ -9,6 +9,10 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.ServerUtil;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -20,6 +24,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -32,20 +37,32 @@ public class ImmersiveMCLevelStorage extends SavedData {
 
     private static final int LEVEL_STORAGE_VERSION = 2;
 
-    private static Factory<ImmersiveMCLevelStorage> factory = new Factory<>(
+    private static final SavedDataType<ImmersiveMCLevelStorage> savedDataType = new SavedDataType<>(
+            "immersivemc_data",
             ImmersiveMCLevelStorage::create,
-            ImmersiveMCLevelStorage::load,
+            ctx -> new Codec<>() {
+                @Override
+                public <T> DataResult<Pair<ImmersiveMCLevelStorage, T>> decode(DynamicOps<T> ops, T input) {
+                    return DataResult.success(new Pair<>(ImmersiveMCLevelStorage.load(CompoundTag.CODEC.parse(ops, input).getOrThrow(), ctx.levelOrThrow().registryAccess()), input));
+                }
+
+                @Override
+                public <T> DataResult<T> encode(ImmersiveMCLevelStorage input, DynamicOps<T> ops, T prefix) {
+                    return CompoundTag.CODEC.encode(input.save(new CompoundTag(), ctx.levelOrThrow().registryAccess()), ops, prefix);
+                }
+            },
             null
     );
-    private static final String DATA_KEY = "immersivemc_data";
+
+
     protected Map<BlockPos, WorldStorage> storageMap = new HashMap<>();
 
-    private static ImmersiveMCLevelStorage create() {
+    private static ImmersiveMCLevelStorage create(Context context) {
         return new ImmersiveMCLevelStorage();
     }
 
     public static ImmersiveMCLevelStorage getLevelStorage(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(factory, DATA_KEY);
+        return level.getDataStorage().computeIfAbsent(savedDataType);
     }
 
     @Nullable
@@ -113,7 +130,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
 
     public static void unmarkAllItemStoragesDirty(MinecraftServer server) {
         for (ServerLevel level : server.getAllLevels()) {
-            ImmersiveMCLevelStorage storage = level.getDataStorage().get(factory, DATA_KEY);
+            ImmersiveMCLevelStorage storage = getLevelStorage(level);
             if (storage != null) {
                 storage.storageMap.forEach((pos, ws) -> {
                     if (ws instanceof ItemStorage is) {
@@ -127,26 +144,26 @@ public class ImmersiveMCLevelStorage extends SavedData {
     public static ImmersiveMCLevelStorage load(CompoundTag nbt, HolderLookup.Provider provider) {
         ImmersiveMCLevelStorage levelStorage = new ImmersiveMCLevelStorage();
         // Use 3700 for 1.20.4 (most recent Minecraft version with ImmersiveMC before this was added) or the current Minecraft data version, whichever is lower.
-        int lastVanillaDataVersion = nbt.contains("lastVanillaDataVersion") ? nbt.getInt("lastVanillaDataVersion") : Math.min(3700, SharedConstants.getCurrentVersion().getDataVersion().getVersion());
+        int lastVanillaDataVersion = nbt.contains("lastVanillaDataVersion") ? nbt.getInt("lastVanillaDataVersion").get() : Math.min(3700, SharedConstants.getCurrentVersion().getDataVersion().getVersion());
         nbt = maybeUpgradeNBT(nbt, provider, lastVanillaDataVersion);
         Map<BlockPos, WorldStorage> storageMap = levelStorage.storageMap;
         storageMap.clear();
-        int numOfStorages = nbt.getInt("numOfStorages");
+        int numOfStorages = nbt.getInt("numOfStorages").get();
 
-        CompoundTag storages = nbt.getCompound("storages");
+        CompoundTag storages = nbt.getCompound("storages").get();
         for (int i = 0; i < numOfStorages; i++) {
-            CompoundTag storageInfo = storages.getCompound(String.valueOf(i));
+            CompoundTag storageInfo = storages.getCompound(String.valueOf(i)).get();
 
-            BlockPos pos = new BlockPos(storageInfo.getInt("posX"),
-                    storageInfo.getInt("posY"),
-                    storageInfo.getInt("posZ"));
+            BlockPos pos = new BlockPos(storageInfo.getInt("posX").get(),
+                    storageInfo.getInt("posY").get(),
+                    storageInfo.getInt("posZ").get());
 
             ResourceLocation id = Util.getResourceLocation(storageInfo, "id");
             WorldStorage storage = null;
             for (ImmersiveHandler<?> handlerMaybeWS : ImmersiveHandlers.HANDLERS) {
                 if (handlerMaybeWS.getID().equals(id) && handlerMaybeWS instanceof WorldStorageHandler<?> handler) {
                     storage = handler.getEmptyWorldStorage();
-                    storage.load(storageInfo.getCompound("data"), provider, lastVanillaDataVersion);
+                    storage.load(storageInfo.getCompound("data").get(), provider, lastVanillaDataVersion);
                     break;
                 }
             }
@@ -158,7 +175,6 @@ public class ImmersiveMCLevelStorage extends SavedData {
         return levelStorage;
     }
 
-    @Override
     public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.putInt("lastVanillaDataVersion", SharedConstants.getCurrentVersion().getDataVersion().getVersion());
         nbt.putInt("version", LEVEL_STORAGE_VERSION);
@@ -192,20 +208,20 @@ public class ImmersiveMCLevelStorage extends SavedData {
     private static CompoundTag maybeUpgradeNBT(CompoundTag nbtIn, HolderLookup.Provider provider, int lastVanillaDataVersion) {
         int version = 1;
         if (nbtIn.contains("version")) { // Version 1 didn't store a version int
-            version = nbtIn.getInt("version");
+            version = nbtIn.getInt("version").get();
         }
         while (version < LEVEL_STORAGE_VERSION) {
             if (version == 1) {
-                int numOfStorages = nbtIn.getInt("numOfStorages");
-                CompoundTag storages = nbtIn.getCompound("storages");
+                int numOfStorages = nbtIn.getInt("numOfStorages").get();
+                CompoundTag storages = nbtIn.getCompound("storages").get();
                 for (int i = 0; i < numOfStorages; i++) {
-                    CompoundTag storage = storages.getCompound(String.valueOf(i));
-                    String oldDataType = storage.getString("dataType");
+                    CompoundTag storage = storages.getCompound(String.valueOf(i)).get();
+                    String oldDataType = storage.getString("dataType").get();
                     storage.remove("dataType");
-                    CompoundTag itemsData = storage.getCompound("data");
-                    String oldIdentifier = itemsData.getString("identifier");
+                    CompoundTag itemsData = storage.getCompound("data").get();
+                    String oldIdentifier = itemsData.getString("identifier").get();
                     itemsData.remove("identifier");
-                    int numItems = itemsData.getInt("numOfItems");
+                    int numItems = itemsData.getInt("numOfItems").get();
                     ResourceLocation id;
                     if (numItems == 10) {
                         id = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "crafting_table");
@@ -215,7 +231,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
                         id = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "anvil");
                     } else if (numItems == 1) {
                         // Need to decode the item to figure out if this is an enchanting table or a beacon.
-                        ItemStack item = ServerUtil.parseItem(provider, itemsData.getCompound("item0"), lastVanillaDataVersion);
+                        ItemStack item = ServerUtil.parseItem(provider, itemsData.getCompound("item0").get(), lastVanillaDataVersion);
                         if (item.is(ItemTags.BEACON_PAYMENT_ITEMS)) {
                             id = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "beacon");
                         } else {

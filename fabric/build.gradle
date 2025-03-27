@@ -40,9 +40,9 @@ dependencies {
 
     modApi "curse.maven:mcvrapi-591092:6272369"
 
-    modApi "com.terraformersmc:modmenu:13.0.2"
-    modApi "curse.maven:lootr-615106:6208764"
-    modApi "curse.maven:clothconfigapi-348521:5987042" // lootr dependency
+    modApi "com.terraformersmc:modmenu:14.0.0-rc.2"
+    modCompileOnly "curse.maven:lootr-615106:6208764" // Waiting on 1.21.5 build
+    modCompileOnly "curse.maven:clothconfigapi-348521:5987042" // lootr dependency
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }

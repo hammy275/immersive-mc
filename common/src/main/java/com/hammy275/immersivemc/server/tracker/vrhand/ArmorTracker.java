@@ -21,7 +21,7 @@ public class ArmorTracker extends AbstractVRHandTracker {
         boolean shouldEquip;
         EquipmentSlot slot = player.getEquipmentSlotForItem(stackInHand);
         if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) return;
-        if (!player.getInventory().armor.get(slot.getIndex()).isEmpty()) return;
+        if (!player.getInventory().getItem(slot.getIndex(36)).isEmpty()) return;
         switch (slot) {
             case HEAD:
                 shouldEquip =
@@ -47,7 +47,7 @@ public class ArmorTracker extends AbstractVRHandTracker {
         if (shouldEquip) {
             ItemStack toEquip = stackInHand.copy();
             toEquip.setCount(1);
-            player.getInventory().armor.set(slot.getIndex(), toEquip);
+            player.getInventory().setItem(slot.getIndex(36), toEquip);
             stackInHand.shrink(1);
             VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimePlayerActionAlert);
         }

@@ -20,7 +20,7 @@ dependencies {
     modApi "curse.maven:mcvrapi-591092:6272369"
 
     modCompileOnly "curse.maven:vivecraft-667903:6208707"
-    modCompileOnly "curse.maven:inventoryprofilesnext-495267:6093916"
+    modCompileOnly "curse.maven:inventoryprofilesnext-495267:6312448"
 
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${rootProject.mixin_extras_version}"))
 }

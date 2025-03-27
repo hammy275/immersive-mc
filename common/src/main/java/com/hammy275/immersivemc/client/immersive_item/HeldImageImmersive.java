@@ -55,7 +55,7 @@ public class HeldImageImmersive extends AbstractHandImmersive<HeldImageImmersive
     @Override
     public void registerAndTickAll() {
         // Clear held images on hotbar change
-        int currentSlot = Minecraft.getInstance().player.getInventory().selected;
+        int currentSlot = Minecraft.getInstance().player.getInventory().getSelectedSlot();
         if (lastSlot != currentSlot) {
             lastSlot = currentSlot;
             this.infos.clear();

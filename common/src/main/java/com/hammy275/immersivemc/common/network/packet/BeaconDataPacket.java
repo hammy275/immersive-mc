@@ -14,11 +14,11 @@ import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 
 public class BeaconDataPacket {
 
-    private static final int speedId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.MOVEMENT_SPEED.value());
-    private static final int hasteId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DIG_SPEED.value());
-    private static final int resistId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DAMAGE_RESISTANCE.value());
-    private static final int jumpId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.JUMP.value());
-    private static final int strengthId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.DAMAGE_BOOST.value());
+    private static final int speedId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.SPEED.value());
+    private static final int hasteId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.HASTE.value());
+    private static final int resistId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.RESISTANCE.value());
+    private static final int jumpId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.JUMP_BOOST.value());
+    private static final int strengthId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.STRENGTH.value());
     private static final int regenId = BuiltInRegistries.MOB_EFFECT.getId(MobEffects.REGENERATION.value());
 
     public final BlockPos pos;

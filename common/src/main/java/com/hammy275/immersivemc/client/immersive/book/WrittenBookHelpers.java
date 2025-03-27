@@ -217,10 +217,9 @@ public class WrittenBookHelpers {
         public void interact(ClientBookData data, PosRot bookPosRot, PosRot other) {
             ClickEvent clickEvent = style.getClickEvent();
             if (clickEvent != null) {
-                String eventValue = clickEvent.getValue();
-                if (clickEvent.getAction() == ClickEvent.Action.CHANGE_PAGE) {
+                if (clickEvent.action() == ClickEvent.Action.CHANGE_PAGE) {
                     try {
-                        int newPageNum = Integer.parseInt(eventValue) - 1;
+                        int newPageNum = ((ClickEvent.ChangePage) clickEvent).page() - 1;
                         data.setPage(newPageNum);
                         holder.onPageChangeStyleClick(newPageNum);
                     } catch (Exception ignored) {}

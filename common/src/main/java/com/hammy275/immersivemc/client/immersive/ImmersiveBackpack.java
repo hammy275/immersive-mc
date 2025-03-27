@@ -103,8 +103,8 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     public static void onHitboxInteract(Player player, BackpackInfo info, int slot) {
         if (slot <= 26) { // Inventory handle
             Inventory inventory = player.getInventory();
-            if (IPN.ipnCompat.available() && !Util.stacksEqualBesidesCount(inventory.getItem(slot + 9), inventory.getItem(inventory.selected))) {
-                IPN.ipnCompat.doInventorySwap(slot + 9, inventory.selected);
+            if (IPN.ipnCompat.available() && !Util.stacksEqualBesidesCount(inventory.getItem(slot + 9), inventory.getItem(inventory.getSelectedSlot()))) {
+                IPN.ipnCompat.doInventorySwap(slot + 9, inventory.getSelectedSlot());
             } else {
                 Network.INSTANCE.sendToServer(new SwapPacket(BlockPos.ZERO, List.of(slot + 9), InteractionHand.MAIN_HAND, SwapMode.SINGLE, SwapPacket.SwapDestination.INVENTORY));
                 Swap.handleInventorySwap(player, slot + 9, InteractionHand.MAIN_HAND); // Do swap on both sides

@@ -63,12 +63,12 @@ public class BeaconConfirmPacket {
         MobEffect secondary = secondaryId == -1 ? null : BuiltInRegistries.MOB_EFFECT.byId(secondaryId);
 
         if (beaconLevel == 1) {
-            return primary == MobEffects.MOVEMENT_SPEED.value() || primary == MobEffects.DIG_SPEED.value();
+            return primary == MobEffects.SPEED.value() || primary == MobEffects.HASTE.value();
         } else if (beaconLevel == 2) {
-            return primary == MobEffects.DAMAGE_RESISTANCE.value() || primary == MobEffects.JUMP.value()
+            return primary == MobEffects.RESISTANCE.value() || primary == MobEffects.JUMP_BOOST.value()
                     || isValidForBeacon(1, primaryId, secondaryId);
         } else if (beaconLevel == 3) {
-            return primary == MobEffects.DAMAGE_BOOST.value()
+            return primary == MobEffects.STRENGTH.value()
                     || isValidForBeacon(2, primaryId, secondaryId);
         } else {
             return (secondary == MobEffects.REGENERATION.value() || isValidForBeacon(3, secondaryId, -1)) &&

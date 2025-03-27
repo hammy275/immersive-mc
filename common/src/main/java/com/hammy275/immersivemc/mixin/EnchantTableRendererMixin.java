@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.blockentity.EnchantTableRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,11 +28,9 @@ public class EnchantTableRendererMixin {
 
     @Shadow @Final public BookModel bookModel;
 
-    @Inject(method = "render(Lnet/minecraft/world/level/block/entity/EnchantingTableBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
+    @Inject(method = "render(Lnet/minecraft/world/level/block/entity/EnchantingTableBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/world/phys/Vec3;)V",
     at = @At("HEAD"), cancellable = true)
-    private void immersiveMC$apothEnchantTableBook(EnchantingTableBlockEntity table, float partialTick,
-                                                   PoseStack stack, MultiBufferSource buffer,
-                                                   int light, int packedOverlay, CallbackInfo ci) {
+    private void immersiveMC$apothEnchantTableBook(EnchantingTableBlockEntity table, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int packetOverlay, Vec3 vec3, CallbackInfo ci) {
         if (Apoth.apothImpl.enchantModuleEnabled() && table.open == 1f) {
             Optional<BuiltImmersiveInfo<EnchantingData>> infoOpt = Immersives.immersiveETable.getTrackedObjects().stream()
                     .filter(i -> i.getBlockPosition().equals(table.getBlockPos()))

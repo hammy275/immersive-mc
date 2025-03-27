@@ -25,6 +25,6 @@ public class ServerUtil {
             nbt = (CompoundTag) DataFixers.getDataFixer().update(References.ITEM_STACK,
                     new Dynamic<>(NbtOps.INSTANCE, nbt), lastVanillaDataVersion, CURRENT_VANILLA_DATA_VERSION).getValue();
         }
-        return ItemStack.parseOptional(provider, nbt);
+        return ItemStack.parse(provider, nbt).get();
     }
 }
