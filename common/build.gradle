@@ -28,6 +28,8 @@ dependencies {
     modCompileOnly "curse.maven:vivecraft-667903:4160371"
     modCompileOnly "curse.maven:inventoryprofilesnext-495267:6093916"
     modCompileOnly "com.jamieswhiteshirt:reach-entity-attributes:2.4.0"
+
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${rootProject.mixin_extras_version}"))
 }
 
 publishing {
