@@ -6,18 +6,19 @@ import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.vrapi.api.data.IVRData;
 import net.blf02.vrapi.api.data.IVRPlayer;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.component.BlocksAttacks;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public class ShieldProxy {
 
-    public static ItemStack shieldToDamage = ItemStack.EMPTY;
     public static boolean useIsBlockingMixin = false;
 
     @Nullable
@@ -32,7 +33,8 @@ public class ShieldProxy {
         return null;
     }
 
-    public static boolean isDamageSourceBlocked(LivingEntity living, DamageSource damageSource) {
+    @Nullable
+    public static BlocksAttacks isDamageSourceBlocked(LivingEntity living, DamageSource damageSource) {
         if (living instanceof Player player && isVRPlayerToManageBySide(player)) {
             IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
             for (InteractionHand iHand : InteractionHand.values()) {
@@ -50,13 +52,13 @@ public class ShieldProxy {
                     Vec3 attackerVec = damageSource.getSourcePosition().vectorTo(player.position()).multiply(1, 0, 1).normalize();
                     double angle = Math.acos(handVec.dot(attackerVec)); // Angle in radians
                     if (angle <= Math.PI && angle >= 2 * Math.PI / 3) { // 60 degrees in each direction from shield vec
-                        shieldToDamage = player.getItemInHand(iHand);
-                        return true;
+                        ItemStack shieldToDamage = player.getItemInHand(iHand);
+                        return shieldToDamage.get(DataComponents.BLOCKS_ATTACKS);
                     }
                 }
             }
         }
-        return false;
+        return null;
     }
 
     private static boolean isVRPlayerToManageBySide(Player player) {

@@ -128,9 +128,9 @@ public class ImmersiveMCPlayerStorages extends SavedData {
             for (int i = 0; i <= 4; i++) {
                 Tag itemData;
                 if (i >= items.size()) {
-                    itemData = ItemStack.EMPTY.save(provider);
+                    itemData = ServerUtil.saveItem(ItemStack.EMPTY, provider);
                 } else {
-                    itemData = items.get(i).save(provider);
+                    itemData = ServerUtil.saveItem(items.get(i), provider);
                 }
                 bagData.put(String.valueOf(i), itemData);
             }

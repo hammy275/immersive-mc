@@ -18,7 +18,6 @@
     "LecternBlockEntityAccessor",
     "LevelMixin",
     "LivingEntityMixin",
-    "PlayerMixin",
     "ProjectileAccessor",
     "ServerPlayerGameModeMixin",
     "WolfInvoker",

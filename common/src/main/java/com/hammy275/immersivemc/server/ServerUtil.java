@@ -5,6 +5,7 @@ import net.minecraft.SharedConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.datafix.DataFixers;
 import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.world.item.ItemStack;
@@ -12,6 +13,21 @@ import net.minecraft.world.item.ItemStack;
 public class ServerUtil {
 
     private static final int CURRENT_VANILLA_DATA_VERSION = SharedConstants.getCurrentVersion().getDataVersion().getVersion();
+    private static final CompoundTag EMPTY_ITEM = new CompoundTag();
+
+    /**
+     * Saves an item to NBT, including allowing saving of empty ItemStack's.
+     * @param stack ItemStack to save.
+     * @param registryAccess Registry access.
+     * @return Item saved to an NBT tag.
+     */
+    public static Tag saveItem(ItemStack stack, HolderLookup.Provider registryAccess) {
+        if (stack.isEmpty()) {
+            return EMPTY_ITEM.copy();
+        } else {
+            return stack.save(registryAccess);
+        }
+    }
 
     /**
      * Loads an item from NBT, upgrading it between Minecraft versions as needed.
@@ -21,6 +37,9 @@ public class ServerUtil {
      * @return The loaded ItemStack.
      */
     public static ItemStack parseItem(HolderLookup.Provider provider, CompoundTag nbt, int lastVanillaDataVersion) {
+        if (nbt.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
         if (CURRENT_VANILLA_DATA_VERSION > lastVanillaDataVersion) {
             nbt = (CompoundTag) DataFixers.getDataFixer().update(References.ITEM_STACK,
                     new Dynamic<>(NbtOps.INSTANCE, nbt), lastVanillaDataVersion, CURRENT_VANILLA_DATA_VERSION).getValue();

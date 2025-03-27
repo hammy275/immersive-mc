@@ -244,7 +244,7 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
     public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.putInt("numOfItems", items.length);
         for (int i = 0; i < items.length; i++) {
-            nbt.put("item" + i, items[i].save(ServerSubscriber.server.registryAccess()));
+            nbt.put("item" + i, ServerUtil.saveItem(items[i], ServerSubscriber.server.registryAccess()));
         }
         CompoundTag rootCounts = new CompoundTag();
         for (int slot = 0; slot < itemCounts.length; slot++) {
