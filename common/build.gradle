@@ -21,6 +21,8 @@ dependencies {
 
     modCompileOnly "curse.maven:vivecraft-667903:5725980"
     modCompileOnly "curse.maven:inventoryprofilesnext-495267:6093916"
+
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${rootProject.mixin_extras_version}"))
 }
 
 publishing {
