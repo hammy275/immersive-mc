@@ -26,8 +26,8 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -72,7 +72,7 @@ public class ClientRenderSubscriber {
         // Draw shield hitbox(es)
         if (VRPluginVerify.clientInVR()) {
             for (InteractionHand iHand : InteractionHand.values()) {
-                if (Minecraft.getInstance().player.getItemInHand(iHand).getUseAnimation() == ItemUseAnimation.BLOCK) {
+                if (Minecraft.getInstance().player.getItemInHand(iHand).get(DataComponents.BLOCKS_ATTACKS) != null) {
                     IVRPlayer vrPlayer = Platform.isDevelopmentEnvironment() ?
                             VRPlugin.API.getVRPlayer(Minecraft.getInstance().player) :
                             VRPlugin.API.getRenderVRPlayer();

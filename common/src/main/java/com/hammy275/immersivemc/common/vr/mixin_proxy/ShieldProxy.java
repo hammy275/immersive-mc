@@ -12,7 +12,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.component.BlocksAttacks;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +25,7 @@ public class ShieldProxy {
     public static ItemStack getABlockingShield(LivingEntity living) {
         if (living instanceof Player player && isVRPlayerToManageBySide(player)) {
             for (InteractionHand iHand : InteractionHand.values()) {
-                if (player.getItemInHand(iHand).getUseAnimation() == ItemUseAnimation.BLOCK) {
+                if (player.getItemInHand(iHand).get(DataComponents.BLOCKS_ATTACKS) != null) {
                     return player.getItemInHand(iHand);
                 }
             }
@@ -39,7 +38,7 @@ public class ShieldProxy {
         if (living instanceof Player player && isVRPlayerToManageBySide(player)) {
             IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
             for (InteractionHand iHand : InteractionHand.values()) {
-                if (player.getItemInHand(iHand).getUseAnimation() == ItemUseAnimation.BLOCK) {
+                if (player.getItemInHand(iHand).get(DataComponents.BLOCKS_ATTACKS) != null) {
                     // Iterate again if shield is on cooldown
                     if (player.getCooldowns().isOnCooldown(player.getItemInHand(iHand))) {
                         continue;
