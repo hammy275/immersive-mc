@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.api.client.immersive;
 
+import com.google.common.annotations.Beta;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.immersive.RelativeHitboxInfoBuilderImpl;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -8,6 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Function;
@@ -113,6 +115,13 @@ public interface RelativeHitboxInfoBuilder {
      * @return This builder object.
      */
     public RelativeHitboxInfoBuilder renderItemCount(boolean renderItemCount);
+
+    /**
+     * @param rotationType The type of rotation to apply when rendering an item in this hitbox, or null for no rotation.
+     * @return This builder object.
+     */
+    @Beta
+    public RelativeHitboxInfoBuilder rotateItem(@Nullable ItemRotationType rotationType);
 
     /**
      * Build this builder into a proper relative hitbox.
