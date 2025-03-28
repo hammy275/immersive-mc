@@ -3,10 +3,12 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.ForcedUpDownRenderDir;
 import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfo;
+import com.hammy275.immersivemc.api.client.immersive.ItemRotationType;
 import com.hammy275.immersivemc.api.client.immersive.RelativeHitboxInfoBuilder;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Function;
@@ -92,6 +94,10 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
      * Whether to render the item count for this hitbox if it can contain items.
      */
     private boolean renderItemCount = true;
+    /**
+     * A method of rotation to apply when rendering the item in a hitbox, or null to not rotate.
+     */
+    private ItemRotationType itemRotationType = null;
 
     // Automatically determined
     private final boolean constantOffset;
@@ -203,11 +209,17 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
         return this;
     }
 
+    @Override
+    public RelativeHitboxInfoBuilder rotateItem(@Nullable ItemRotationType itemRotationType) {
+        this.itemRotationType = itemRotationType;
+        return this;
+    }
+
     public RelativeHitboxInfoImpl build() {
         assert !isInput || holdsItems; // If isInput, must holdsItems
         return new RelativeHitboxInfoImpl(this, centerOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
-                forcedUpDown, constantOffset, needs3dCompat, vrMovementInfo, renderItem, renderItemCount, forcedUpDownConstant);
+                forcedUpDown, constantOffset, needs3dCompat, vrMovementInfo, renderItem, renderItemCount, forcedUpDownConstant, itemRotationType);
     }
 
     public static RelativeHitboxInfoBuilderImpl create(Vec3 centerOffset, double size) {

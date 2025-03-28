@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.ForcedUpDownRenderDir;
 import com.hammy275.immersivemc.api.client.immersive.HitboxPositioningMode;
 import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfo;
+import com.hammy275.immersivemc.api.client.immersive.ItemRotationType;
 import com.hammy275.immersivemc.api.client.immersive.RelativeHitboxInfo;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
@@ -58,6 +59,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
     public final boolean renderItem;
     public final boolean renderItemCount;
     public final boolean forcedUpDownRenderDirConstant;
+    public final ItemRotationType itemRotationType;
 
     // Calculated data to be returned out
     private AABB box;
@@ -105,7 +107,8 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
                                   boolean holdsItems, boolean isInput, boolean itemSpins, float itemRenderSizeMultiplier,
                                   boolean isTriggerHitbox, Function<BuiltImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier,
                                   Function<BuiltImmersiveInfo<?>, ForcedUpDownRenderDir> forcedUpDownDir, boolean constantOffset, boolean needs3dCompat,
-                                  HitboxVRMovementInfo vrMovementInfo, boolean renderItem, boolean renderItemCount, boolean forcedUpDownRenderDirConstant) {
+                                  HitboxVRMovementInfo vrMovementInfo, boolean renderItem, boolean renderItemCount, boolean forcedUpDownRenderDirConstant,
+                                  ItemRotationType itemRotationType) {
         this.usedBuilder = usedBuilder;
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
@@ -124,6 +127,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
         this.renderItem = renderItem;
         this.renderItemCount = renderItemCount;
         this.forcedUpDownRenderDirConstant = forcedUpDownRenderDirConstant;
+        this.itemRotationType = itemRotationType;
     }
 
     /**

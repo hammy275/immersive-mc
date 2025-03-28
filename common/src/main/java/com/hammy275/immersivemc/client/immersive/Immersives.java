@@ -10,6 +10,7 @@ import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfoBuilder
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveBuilder;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.ItemRotationType;
 import com.hammy275.immersivemc.api.client.immersive.RelativeHitboxInfoBuilder;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.ClientUtil;
@@ -68,11 +69,11 @@ public class Immersives {
     public static final BuiltImmersive<?,?> immersiveAnvil = ImmersiveBuilder.create(ImmersiveHandlers.anvilHandler, AnvilData.class)
             .setRenderSize(ClientConstants.itemScaleSizeAnvil)
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(0, -1d/3d, 0), // When you place an anvil, the anvil's look direction is rotated 90 degrees.
-                    ClientConstants.itemScaleSizeAnvil).build())
+                    ClientConstants.itemScaleSizeAnvil).rotateItem(ItemRotationType.CLOCKWISE).build())
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(0d, 0, 0),
-                    ClientConstants.itemScaleSizeAnvil).build())
+                    ClientConstants.itemScaleSizeAnvil).rotateItem(ItemRotationType.CLOCKWISE).build())
             .addHitbox(RelativeHitboxInfoBuilder.create((info) -> info.getItem(2).isEmpty() ? null : new Vec3(0, 1d/3d, 0),
-                    ClientConstants.itemScaleSizeAnvil).holdsItems(true).build())
+                    ClientConstants.itemScaleSizeAnvil).rotateItem(ItemRotationType.CLOCKWISE).holdsItems(true).build())
             .addHitbox(RelativeHitboxInfoBuilder.create(new Vec3(0, 0, 0.5), 0)
                     .textSupplier((info) -> {
                         AnvilData data = (AnvilData) info.getExtraData();
