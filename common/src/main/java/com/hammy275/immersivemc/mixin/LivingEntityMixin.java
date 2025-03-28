@@ -24,15 +24,15 @@ public abstract class LivingEntityMixin {
         if (VRPluginVerify.hasAPI) {
             BlocksAttacks blocksAttacks = ShieldProxy.isDamageSourceBlocked(me, damageSource);
             if (blocksAttacks != null) {
-                return Math.PI; // Guaranteed to block
+                return 0; // Guaranteed to block
             }
         }
         // Since we're forcing Minecraft to assume we're blocking with a shield if we have one, we should
         // block if we're using a blocking item!
         if (me.getUseItem().get(DataComponents.BLOCKS_ATTACKS) != null) {
-            original.call(a);
+            return original.call(a);
         }
-        return 0; // Don't block at all
+        return Math.PI; // Don't block at all
     }
 
     @Inject(method = "applyItemBlocking", at = @At("HEAD"))
@@ -49,6 +49,17 @@ public abstract class LivingEntityMixin {
     public void immersiveMC$injectShieldAsItemBlockingWith(CallbackInfoReturnable<ItemStack> cir) {
         if (ShieldProxy.useIsBlockingMixin && cir.getReturnValue() == null && VRPluginVerify.hasAPI) {
             cir.setReturnValue(ShieldProxy.getABlockingShield((LivingEntity) (Object) this));
+        }
+    }
+
+    @WrapOperation(method = "hurtServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getUseItem()Lnet/minecraft/world/item/ItemStack;"))
+    private ItemStack immersiveMC$getUsedShield(LivingEntity instance, Operation<ItemStack> original) {
+        if (ShieldProxy.stackToBlockWith != null) {
+            ItemStack ret = ShieldProxy.stackToBlockWith;
+            ShieldProxy.stackToBlockWith = null;
+            return ret;
+        } else {
+            return original.call(instance);
         }
     }
 }

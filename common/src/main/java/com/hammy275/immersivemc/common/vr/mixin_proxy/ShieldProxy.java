@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 public class ShieldProxy {
 
     public static boolean useIsBlockingMixin = false;
+    public static ItemStack stackToBlockWith = null;
 
     @Nullable
     public static ItemStack getABlockingShield(LivingEntity living) {
@@ -52,8 +53,8 @@ public class ShieldProxy {
                     Vec3 attackerVec = damageSource.getSourcePosition().vectorTo(player.position()).multiply(1, 0, 1).normalize();
                     double angle = Math.acos(handVec.dot(attackerVec)); // Angle in radians
                     if (angle <= Math.PI && angle >= 2 * Math.PI / 3) { // 60 degrees in each direction from shield vec
-                        ItemStack shieldToDamage = player.getItemInHand(iHand);
-                        return shieldToDamage.get(DataComponents.BLOCKS_ATTACKS);
+                        stackToBlockWith = player.getItemInHand(iHand);
+                        return stackToBlockWith.get(DataComponents.BLOCKS_ATTACKS);
                     }
                 }
             }
