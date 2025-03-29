@@ -2,8 +2,6 @@ package com.hammy275.immersivemc.server.swap;
 
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.immersive.SwapMode;
-import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
-import com.hammy275.immersivemc.server.storage.server.SwapResult;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
@@ -13,6 +11,8 @@ import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStor
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.mixin.AnvilMenuMixin;
 import com.hammy275.immersivemc.server.api_impl.SwapResultImpl;
+import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
+import com.hammy275.immersivemc.server.storage.server.SwapResult;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.storage.world.impl.ETableWorldStorage;
@@ -25,10 +25,12 @@ import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractCraftingMenu;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.EnchantmentMenu;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.ItemCombinerMenu;
 import net.minecraft.world.inventory.SmithingMenu;
 import net.minecraft.world.item.ItemStack;
@@ -263,7 +265,7 @@ public class Swap {
     public static ItemStack[] handleDoCraft(ServerPlayer player, ItemStack[] stacksIn,
                                      BlockPos tablePos, ItemSwapAmount amount) {
         boolean isBackpack = stacksIn.length == 5;
-        CraftingMenu menu = new CraftingMenu(-1, player.getInventory());
+        AbstractCraftingMenu menu = isBackpack ? new InventoryMenu(player.getInventory(), false, player) : new CraftingMenu(-1, player.getInventory());
         ItemStack stackOut = getRecipeOutput(player, stacksIn);
         ItemStack firstOut = stackOut;
         ItemStack[] newSlotsState = Arrays.copyOf(stacksIn, stacksIn.length);
@@ -287,6 +289,14 @@ public class Swap {
             stacksToGive.add(stackOut);
             stackOut = getRecipeOutput(player, newSlotsState);
             newSlotsState[newSlotsState.length - 1] = stackOut;
+        }
+
+        // Clear crafting slots to prevent showing output in actual inventory
+        if (isBackpack) {
+            menu.setItem(InventoryMenu.RESULT_SLOT, 0, ItemStack.EMPTY);
+            for (int i = InventoryMenu.CRAFT_SLOT_START; i < InventoryMenu.CRAFT_SLOT_END; i++) {
+                menu.setItem(i, 0, ItemStack.EMPTY);
+            }
         }
 
         if (stacksToGive.isEmpty()) {
