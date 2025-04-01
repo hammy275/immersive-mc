@@ -209,6 +209,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
                 recalcHorizBlockFacing(blockFacing, info, offset);
                 upDownRenderDir = null;
             }
+            this.onOrientationChange(); // MODFEST: Hack to prevent lerping hopper hitboxes
         } else if (mode == HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING) {
             Direction dir = info.immersiveDir; // Direction the block should be "facing" to the player
             Direction literalFacing = level.getBlockState(pos).getValue(DirectionalBlock.FACING); // The direction the block is actually facing
@@ -218,6 +219,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
                 recalcHorizBlockFacing(dir, info, offset, literalFacing);
                 upDownRenderDir = null;
             }
+            this.onOrientationChange(); // MODFEST: Hack to prevent lerping shulker box hitboxes
         } else if (mode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING_ATTACHED_FLOOR_CEILING_REVERSED) {
             BlockState state = level.getBlockState(pos);
             Direction blockFacing = state.getValue(HorizontalDirectionalBlock.FACING);
