@@ -10,7 +10,6 @@ import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfoBuilder
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveBuilder;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
-import com.hammy275.immersivemc.api.client.immersive.ItemRotationType;
 import com.hammy275.immersivemc.api.client.immersive.RelativeHitboxInfoBuilder;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.ClientUtil;
@@ -69,12 +68,12 @@ public class Immersives {
 
     public static final BuiltImmersive<?,?> immersiveAnvil = ImmersiveBuilder.create(ImmersiveHandlers.anvilHandler, AnvilData.class)
             .setRenderSize(ClientConstants.itemScaleSizeAnvil)
-            .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(0, -1d/3d, 0), // When you place an anvil, the anvil's look direction is rotated 90 degrees.
-                    ClientConstants.itemScaleSizeAnvil).rotateItem(ItemRotationType.CLOCKWISE).build())
+            .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(-1d/3d, 0, 0), // When you place an anvil, the anvil's look direction is rotated 90 degrees.
+                    ClientConstants.itemScaleSizeAnvil).build())
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(0d, 0, 0),
-                    ClientConstants.itemScaleSizeAnvil).rotateItem(ItemRotationType.CLOCKWISE).build())
-            .addHitbox(RelativeHitboxInfoBuilder.create((info) -> info.getItem(2).isEmpty() ? null : new Vec3(0, 1d/3d, 0),
-                    ClientConstants.itemScaleSizeAnvil).rotateItem(ItemRotationType.CLOCKWISE).holdsItems(true).build())
+                    ClientConstants.itemScaleSizeAnvil).build())
+            .addHitbox(RelativeHitboxInfoBuilder.create((info) -> info.getItem(2).isEmpty() ? null : new Vec3(1d/3d, 0, 0),
+                    ClientConstants.itemScaleSizeAnvil).holdsItems(true).build())
             .addHitbox(RelativeHitboxInfoBuilder.create(new Vec3(0, 0, 0.5), 0)
                     .textSupplier((info) -> {
                         AnvilData data = (AnvilData) info.getExtraData();
@@ -87,7 +86,7 @@ public class Immersives {
                 AnvilData data = (AnvilData) info.getExtraData();
                 data.anvilCost = aStorage.xpLevels;
             })
-            .setPositioningMode(HitboxPositioningMode.TOP_BLOCK_FACING)
+            .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
             .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
                 return ImmersiveClientConstants.instance().defaultCooldown();
@@ -195,6 +194,7 @@ public class Immersives {
             .setConfigScreenInfo(createConfigScreenInfo("crafting", () -> new ItemStack(Items.CRAFTING_TABLE),
                     config -> config.useCraftingTableImmersive,
                     (config, newVal) -> config.useCraftingTableImmersive = newVal))
+            .shouldDisableRightClicksWhenInteractionsDisabled(false)
             .build();
     public static final ImmersiveDoor immersiveDoor = new ImmersiveDoor();
     public static final BuiltImmersive<EnchantingData, ETableStorage> immersiveETable = ImmersiveBuilder.create(ImmersiveHandlers.enchantingTableHandler, EnchantingData.class)
@@ -202,7 +202,7 @@ public class Immersives {
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(0, 0.9, -0.5), ClientConstants.itemScaleSizeETable).build())
             .addHitbox(RelativeHitboxInfoBuilder.create((info) -> {
                 if (info.getItem(0).isEmpty()) return null;
-                double rad = Math.PI * 2 * (info.ticksExisted() % (20d * 15d) / (20d * 15d));
+                double rad = Math.PI * 2 * (info.ticksExisted() % (20d * 2d) / (20d * 2d));
                 double x = Math.sin(rad);
                 double z = Math.cos(rad) - 1;
                 double yProgress = (info.ticksExisted() % 40d) / 40d;
@@ -228,7 +228,7 @@ public class Immersives {
             }).build())
             .addHitbox(RelativeHitboxInfoBuilder.create((info) -> {
                 if (info.getItem(0).isEmpty()) return null;
-                double rad = Math.PI * 2 * ((info.ticksExisted() + (20d * 5d)) % (20d * 15d) / (20d * 15d));
+                double rad = Math.PI * 2 * ((info.ticksExisted() + (20d * 2d / 3d)) % (20d * 2d) / (20d * 2d));
                 double x = Math.sin(rad);
                 double z = Math.cos(rad) - 1;
                 double yProgress = (info.ticksExisted() % 40d) / 40d;
@@ -254,7 +254,7 @@ public class Immersives {
             }).build())
             .addHitbox(RelativeHitboxInfoBuilder.create((info) -> {
                 if (info.getItem(0).isEmpty()) return null;
-                double rad = Math.PI * 2 * ((info.ticksExisted() + (20d * 10d)) % (20d * 15d) / (20d * 15d));
+                double rad = Math.PI * 2 * ((info.ticksExisted() + (20d * 4d / 3d)) % (20d * 2d) / (20d * 2d));
                 double x = Math.sin(rad);
                 double z = Math.cos(rad) - 1;
                 double yProgress = (info.ticksExisted() % 40d) / 40d;
@@ -346,7 +346,7 @@ public class Immersives {
                 } else {
                     return new Vec3(-0.25, 0.25, 0);
                 }},
-                    ClientConstants.itemScaleSizeFurnace / 1.5d).needs3DResourcePackCompat(true).build())
+                    ClientConstants.itemScaleSizeFurnace / 1.5d).needs3DResourcePackCompat(true).holdsItems(true).build())
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput((info) -> {
                 if (ActiveConfig.active().autoCenterFurnaceImmersive) {
                     return new Vec3(0, -0.25, 0);
@@ -354,7 +354,7 @@ public class Immersives {
                     return new Vec3(-0.25, -0.25, 0);
                 }},
                     ClientConstants.itemScaleSizeFurnace / 1.5d).needs3DResourcePackCompat(true).build())
-            .addHitbox(RelativeHitboxInfoBuilder.create((info) -> {
+            .addHitbox(RelativeHitboxInfoBuilder.createItemInput((info) -> {
                 if (ActiveConfig.active().autoCenterFurnaceImmersive) {
                     if (info.getItem(2) == null || info.getItem(2).isEmpty()) {
                         return null;
@@ -364,7 +364,7 @@ public class Immersives {
                         return new Vec3(0.25, 0.25, 0);
                     }
                 } else {
-                    return info.getItem(2).isEmpty() ? null : new Vec3(0.25, 0, 0);
+                    return new Vec3(0.25, 0, 0);
                 }},
                     ClientConstants.itemScaleSizeFurnace / 1.5d).holdsItems(true).needs3DResourcePackCompat(true).build())
             .setPositioningMode(HitboxPositioningMode.HORIZONTAL_BLOCK_FACING)
@@ -533,11 +533,11 @@ public class Immersives {
 
     public static final BuiltImmersive<?,?> immersiveSmithingTable = ImmersiveBuilder.create(ImmersiveHandlers.smithingTableHandler)
             .setRenderSize(ClientConstants.itemScaleSizeSmithingTable)
-            .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(-1d/3d, 0, 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
+            .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(0, -1d/3d, 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(Vec3.ZERO, ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
-            .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(1d/3d, 0, 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
+            .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(0, 1d/3d, 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
             .addHitbox(RelativeHitboxInfoBuilder.create((info) -> info.getItem(3).isEmpty() ? null : new Vec3(0, 0, 0.5), ClientConstants.itemScaleSizeSmithingTable / 1.025).holdsItems(true).triggerHitbox(true).itemSpins(true).itemRenderSizeMultiplier(1.5f).forceUpDownRenderDir(ForcedUpDownRenderDir.NULL).build())
-            .setPositioningMode(HitboxPositioningMode.TOP_PLAYER_FACING)
+            .setPositioningMode(HitboxPositioningMode.TOP_BLOCK_FACING)
             .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
                 return ImmersiveClientConstants.instance().defaultCooldown();
@@ -558,6 +558,7 @@ public class Immersives {
     public static final BuiltImmersive<?,?> immersiveTinkersConstructCraftingStation = CompatModule.create(
             immersiveCrafting.getBuilderClone(ImmersiveHandlers.tcCraftingStationHandler)
             .modifyHitboxes(0, 8, (hitbox) -> hitbox.renderItem(false).build())
+            .shouldDisableRightClicksWhenInteractionsDisabled(true)
             .build(),
             BuiltImmersive.class,
             TinkersConstruct.compatData

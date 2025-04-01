@@ -329,7 +329,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
             if (beaconLevel > 0) {
                 info.levelWasNonzero = true;
                 long timeSinceStartMilli = Instant.now().toEpochMilli() - info.startMillis;
-                long millisPerRot = 9000;
+                long millisPerRot = 3000;
                 Vec3 forwardPos = center.add(leftVec.scale(0.8)).add(0, effectCircleRadius, 0).add(forwardFromBlockVec.scale(0.45));
                 double rot0 = ((double) (timeSinceStartMilli % millisPerRot) / millisPerRot) * 2 * Math.PI;
                 if (beaconLevel == 1) {

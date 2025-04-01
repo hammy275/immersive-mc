@@ -42,6 +42,7 @@ public class ImmersiveMC {
 
     public static final Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler<?>>> handlerIMCRegistrationHandler =
             (event) -> event.register(
+                    ImmersiveHandlers.nullHandler,
                     ImmersiveHandlers.anvilHandler, ImmersiveHandlers.barrelHandler, ImmersiveHandlers.beaconHandler,
                     ImmersiveHandlers.brewingStandHandler, ImmersiveHandlers.chestHandler, ImmersiveHandlers.chiseledBookshelfHandler,
                     ImmersiveHandlers.craftingHandler, ImmersiveHandlers.enchantingTableHandler, ImmersiveHandlers.furnaceHandler,

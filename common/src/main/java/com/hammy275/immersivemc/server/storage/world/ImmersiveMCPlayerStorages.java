@@ -59,7 +59,7 @@ public class ImmersiveMCPlayerStorages extends SavedData {
 
     // MODFEST: Functions below use enabledPlayers so fest defaults to ImmersiveMC disabled by default instead of enabled by default.
     public static boolean isPlayerDisabled(Player player) {
-        return !getPlayerStorage(player).enabledPlayers.contains(player.getUUID());
+        return false;
     }
 
     public static void setPlayerDisabled(Player player) {

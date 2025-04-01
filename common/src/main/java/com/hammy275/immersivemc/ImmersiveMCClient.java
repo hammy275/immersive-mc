@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.client.compat.ipn.IPN;
 import com.hammy275.immersivemc.client.compat.ipn.IPNCompat;
 import com.hammy275.immersivemc.client.compat.ipn.IPNCompatImpl;
 import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive.BlockInteractionsImmersive;
 import com.hammy275.immersivemc.client.model.BackpackBundleModel;
 import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
 import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
@@ -21,6 +22,7 @@ import java.util.function.Consumer;
 public class ImmersiveMCClient {
 
     public static final Consumer<ImmersiveMCRegistrationEvent<Immersive<?, ?>>> immersiveIMCRegistrationHandler = (event) -> event.register(
+            new BlockInteractionsImmersive(),
             Immersives.immersiveAnvil, Immersives.immersiveBarrel, Immersives.immersiveBeacon,
             Immersives.immersiveBrewing, Immersives.immersiveChest, Immersives.immersiveChiseledBookshelf,
             Immersives.immersiveCrafting, Immersives.immersiveETable, Immersives.immersiveFurnace,

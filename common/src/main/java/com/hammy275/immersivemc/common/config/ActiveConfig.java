@@ -274,7 +274,7 @@ public class ActiveConfig implements Cloneable {
      * @param other The other config
      */
     public void mergeWithServer(ActiveConfig other) {
-        disableVanillaInteractionsForSupportedImmersives = disableVanillaInteractionsForSupportedImmersives || other.disableVanillaInteractionsForSupportedImmersives;
+        disableVanillaInteractionsForSupportedImmersives = true;
         useAnvilImmersive = mergeValueWithServer(useAnvilImmersive, other.useAnvilImmersive);
         useBrewingStandImmersive = mergeValueWithServer(useBrewingStandImmersive, other.useBrewingStandImmersive);
         useChestImmersive = mergeValueWithServer(useChestImmersive, other.useChestImmersive);
@@ -358,7 +358,7 @@ public class ActiveConfig implements Cloneable {
         useApotheosisEnchantmentTableImmersive = false;
         useApotheosisSalvagingTableImmersive = false;
         useGrindstoneImmersive = false;
-        disableVanillaInteractionsForSupportedImmersives = false;
+        disableVanillaInteractionsForSupportedImmersives = true;
     }
 
     protected boolean mergeValueWithServer(boolean client, boolean server) {
@@ -405,6 +405,7 @@ public class ActiveConfig implements Cloneable {
      */
     public void validateConfig() {
         rangedGrabRange = Mth.clamp(rangedGrabRange, -1, 12);
+        disableVanillaInteractionsForSupportedImmersives = true;
     }
 
     @Override

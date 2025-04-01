@@ -95,13 +95,13 @@ public class CommonBookData implements NetworkStorage {
         // Note that the next page/last page on the info is done as the animation starts, so the text is loaded
         // by the time we get to resetState here.
         if (pageChangeState == PageChangeState.LEFT_TO_RIGHT_ANIM) {
-            leftPageTurn = Math.min(leftPageTurn + 0.05f, 1f);
+            leftPageTurn = Math.min(leftPageTurn + 0.25f, 1f);
             if (leftPageTurn == 1f) {
                 resetTurnState();
                 return;
             }
         } else if (pageChangeState == PageChangeState.RIGHT_TO_LEFT_ANIM) {
-            rightPageTurn = Math.max(rightPageTurn - 0.05f, 0f);
+            rightPageTurn = Math.max(rightPageTurn - 0.25f, 0f);
             if (rightPageTurn == 0f) {
                 resetTurnState();
                 return;

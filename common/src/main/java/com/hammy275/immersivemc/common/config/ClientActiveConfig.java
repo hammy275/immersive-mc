@@ -62,6 +62,7 @@ public final class ClientActiveConfig extends ActiveConfig {
         colorPresetSelectedAlpha = Mth.clamp(colorPresetSelectedAlpha, 0, 0xFF);
         colorPresetRangedGrabSize = Mth.clamp(colorPresetRangedGrabSize, 0, 0xFF);
         disableImmersiveMCOutsideVR = false; // MODFEST: Force this to false even if it's changed in the file config
+        autoCenterFurnaceImmersive = false;
     }
 
     @Override

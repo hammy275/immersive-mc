@@ -26,6 +26,7 @@ public class ImmersiveHandlers {
     public static final List<ImmersiveHandler<?>> HANDLERS = new ArrayList<>();
 
 
+    public static final ImmersiveHandler<NullStorage> nullHandler = new BlockInteractionsImmersiveHandler();
     public static final WorldStorageHandler<AnvilStorage> anvilHandler = new AnvilHandler();
     public static final WorldStorageHandler<ApothSalvagingTableStorage> apothSalvagingTableHandler = CompatModule.create(new ApothSalvagingTableHandler(), WorldStorageHandler.class, Apoth.compatData);
     public static final ImmersiveHandler<?> barrelHandler = new BarrelHandler();

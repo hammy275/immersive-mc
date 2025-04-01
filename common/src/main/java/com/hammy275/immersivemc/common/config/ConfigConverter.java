@@ -172,7 +172,6 @@ public class ConfigConverter {
         addClientConversion("do_rumble", Boolean.class, (config, val) -> config.doVRControllerRumble = val);
         addClientConversion("return_items", Boolean.class, (config, val) -> config.returnItemsWhenLeavingImmersives = val);
         addClientConversion("right_click_chest", Boolean.class, (config, val) -> config.rightClickChestInteractions = val);
-        addClientConversion("center_furnace", Boolean.class, (config, val) -> config.autoCenterFurnaceImmersive = val);
         addClientConversion("center_brewing", Boolean.class, (config, val) -> config.autoCenterBrewingStandImmersive = val);
         addClientConversion("bag_mode", Integer.class, (config, val) -> config.bagMode = BackpackMode.values()[val]);
         addClientConversion("placement_guide_mode", Integer.class, (config, val) -> config.placementGuideMode = PlacementGuideMode.values()[val]);
@@ -182,7 +181,7 @@ public class ConfigConverter {
         addClientConversion("item_guide_color", Long.class, (config, val) -> readItemGuideColor = val);
         addClientConversion("item_guide_selected_color", Long.class, (config, val) -> readItemGuideSelectedColor = val);
         addClientConversion("ranged_grab_color", Long.class, (config, val) -> readRangedGrabColor = val);
-        addClientConversion("disable_vanilla_interactions", Boolean.class, (config, val) -> config.disableVanillaInteractionsForSupportedImmersives = val);
+        addClientConversion("disable_vanilla_interactions", Boolean.class, (config, val) -> config.disableVanillaInteractionsForSupportedImmersives = true);
         addClientConversion("reach_behind_bag_mode", Integer.class, (config, val) -> config.reachBehindBagMode = ReachBehindBackpackMode.values()[val]);
         addBothConversion("iron_furnaces_furnace_immersion", Boolean.class, (config, val) -> config.useIronFurnacesFurnaceImmersive = val);
         addBothConversion("tinkers_construct_crafting_station_immersion", Boolean.class, (config, val) -> config.useTinkersConstructCraftingStationImmersive = val);

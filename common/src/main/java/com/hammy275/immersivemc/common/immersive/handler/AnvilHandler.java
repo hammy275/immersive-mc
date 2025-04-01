@@ -1,12 +1,12 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.vr.VRRumble;
+import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
 import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -18,7 +18,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.AnvilBlock;
+import net.minecraft.world.level.block.SmithingTableBlock;
 
 public class AnvilHandler extends ItemWorldStorageHandler<AnvilStorage> {
     @Override
@@ -54,7 +54,7 @@ public class AnvilHandler extends ItemWorldStorageHandler<AnvilStorage> {
 
     @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
-        return level.getBlockState(pos).getBlock() instanceof AnvilBlock;
+        return level.getBlockState(pos).getBlock() instanceof SmithingTableBlock;
     }
 
     @Override
