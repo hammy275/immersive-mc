@@ -60,8 +60,8 @@ public class ShieldProxy {
     }
 
     private static boolean isVRPlayerToManageBySide(Player player) {
-        return VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player) && player.getUseItem().isEmpty() &&
-                (!player.level.isClientSide || ClientMixinProxy.playerIsLocalPlayer(player)) &&
+        return VRPluginVerify.hasAPI && (!player.level.isClientSide || ClientMixinProxy.playerIsLocalPlayer(player)) &&
+                VRPlugin.API.playerInVR(player) && player.getUseItem().isEmpty() &&
                 ActiveConfig.getActiveConfigCommon(player).useShieldImmersive;
     }
 }
