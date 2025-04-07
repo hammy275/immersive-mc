@@ -226,11 +226,13 @@ public class ClientLogicSubscriber {
     }
 
     private static <I extends ImmersiveInfo> boolean skipRightClick(Immersive<I, ?> immersive, BlockPos clickPos) {
-        I info = ClientUtil.findImmersive(immersive, clickPos);
-        // Cancel right click. We can use this immersive, it's enabled, and
-        // the immersive wants us to block it (jukebox may not want to so it can eject disc,
-        // for example).
-        return info != null && immersive.shouldDisableRightClicksWhenVanillaInteractionsDisabled(info);
+        // ModFest: Hack to block right-click without waiting on server info
+        if (immersive.getHandler().isValidBlock(clickPos, Minecraft.getInstance().level)) {
+            // ModFest: Nothing in ImmersiveMC cares if the provided info is null, but others depending on the API might,
+            // ModFest: hence why this is a ModFest-only fix.
+            return immersive.shouldDisableRightClicksWhenVanillaInteractionsDisabled(null);
+        }
+        return false;
     }
 
     public static void onDisconnect(Player player) {
