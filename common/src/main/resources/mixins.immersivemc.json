@@ -34,7 +34,6 @@
     "EnchantTableRendererMixin",
     "ItemInHandRendererMixin",
     "LecternRendererMixin",
-    "LevelRendererMixin",
     "LocalPlayerMixin",
     "MinecraftMixin",
     "MinecraftMixinAccessor",

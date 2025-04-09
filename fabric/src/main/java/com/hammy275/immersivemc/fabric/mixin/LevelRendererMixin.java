@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.mixin;
+package com.hammy275.immersivemc.fabric.mixin;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
@@ -15,7 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
 
-    @Inject(method="renderBlockEntities", at = @At("TAIL"))
+    // Placed into each modloader-specific folder, since Forge changes the signature of the method.
+    @Inject(method="renderBlockEntities", at = @At("RETURN"))
     private void immersiveMC$renderLevelWithParticles(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, MultiBufferSource.BufferSource crumblingBufferSource, Camera camera, float partialTick, CallbackInfo ci) {
         Profiler.get().popPush(ImmersiveMC.MOD_ID);
         ClientRenderSubscriber.onWorldRender(poseStack);
