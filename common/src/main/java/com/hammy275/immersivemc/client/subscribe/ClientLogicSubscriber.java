@@ -569,15 +569,14 @@ public class ClientLogicSubscriber {
 
         BlockPos pos = ((BlockHitResult) looking).getBlockPos();
         BlockState state = player.level().getBlockState(pos);
-        if ((ActiveConfig.active().rightClickChestInteractions
-                || (!VRPluginVerify.clientInVR() && ((BlockHitResult) looking).getDirection() == Direction.UP)
-                || ActiveConfig.active().disableVanillaInteractionsForSupportedImmersives)
-                && ActiveConfig.active().useChestImmersive) {
+        if (ActiveConfig.active().useChestImmersive) {
             boolean isChest = state.getBlock() instanceof AbstractChestBlock && player.level().getBlockEntity(pos) instanceof ChestBlockEntity;
             boolean isEnderChest = state.getBlock() instanceof EnderChestBlock && player.level().getBlockEntity(pos) instanceof EnderChestBlockEntity;
             if (isChest || isEnderChest) {
                 ChestInfo info = ImmersiveChest.findImmersive(player.level().getBlockEntity(pos));
-                if (info != null) {
+                if (info != null && (ActiveConfig.active().rightClickChestInteractions
+                        || (!VRPluginVerify.clientInVR() && (((BlockHitResult) looking).getDirection() == Direction.UP) || info.isOpen)
+                        || ActiveConfig.active().disableVanillaInteractionsForSupportedImmersives)) {
                     ImmersiveChest.openChest(info);
                     return ImmersiveClientConstants.instance().defaultCooldown();
                 }
@@ -585,11 +584,11 @@ public class ClientLogicSubscriber {
         }
         // Direction check is so we only open when right-clicking the front of the barrel
         if (ActiveConfig.active().useBarrelImmersive &&
-                ImmersiveHandlers.barrelHandler.isValidBlock(pos, player.level()) &&
-                (((BlockHitResult) looking).getDirection() == state.getValue(BlockStateProperties.FACING))
-                || ActiveConfig.active().disableVanillaInteractionsForSupportedImmersives) {
+                ImmersiveHandlers.barrelHandler.isValidBlock(pos, player.level())) {
             BuiltImmersiveInfo<ChestLikeData> info = ClientUtil.findImmersive(Immersives.immersiveBarrel, pos);
-            if (info != null) {
+            if (info != null && ((((BlockHitResult) looking).getDirection() == state.getValue(BlockStateProperties.FACING))
+                    || ActiveConfig.active().disableVanillaInteractionsForSupportedImmersives
+                    || info.getExtraData().isOpen)) {
                 info.getExtraData().toggleOpen(pos);
                 return 6;
             }
