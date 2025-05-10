@@ -30,7 +30,7 @@ You'll need my API mod, [MC VR API](https://www.curseforge.com/minecraft/mc-mods
 
 ## Need Help?
 
-Check out the [wiki](https://github.com/hammy3502/immersive-mc/wiki)!
+Check out the [wiki](https://github.com/hammy3502/immersive-mc/wiki)! Still need help? Check out the [Discord server](https://discord.gg/gZP6xjMtgW)!
 
 ## Version Support
 
