@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.mixin;
 
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.mixin_proxy.ShieldProxy;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.UseAnim;
@@ -44,6 +45,13 @@ public abstract class LivingEntityMixin {
     public void immersiveMC$injectShieldAsItemBlockingWith(CallbackInfoReturnable<Boolean> cir) {
         if (ShieldProxy.useIsBlockingMixin && VRPluginVerify.hasAPI && !cir.getReturnValue()) {
             cir.setReturnValue(ShieldProxy.getABlockingShield((LivingEntity) (Object) this) != null);
+        }
+    }
+
+    @Inject(method = "getUsedItemHand", at = @At("HEAD"), cancellable = true)
+    public void immersiveMC$injectShieldHandAsUsedItem(CallbackInfoReturnable<InteractionHand> cir) {
+        if (!ShieldProxy.shieldToDamage.isEmpty() && ShieldProxy.handWithShield != null) {
+            cir.setReturnValue(ShieldProxy.handWithShield);
         }
     }
 }

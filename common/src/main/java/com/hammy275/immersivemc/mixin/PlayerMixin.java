@@ -26,6 +26,7 @@ public abstract class PlayerMixin extends LivingEntity {
         if (!this.useItem.isEmpty() && !ShieldProxy.shieldToDamage.isEmpty()) {
             this.useItem = ItemStack.EMPTY;
             ShieldProxy.shieldToDamage = ItemStack.EMPTY;
+            ShieldProxy.handWithShield = null;
         }
     }
 
