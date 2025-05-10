@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 public class ShieldProxy {
 
     public static ItemStack shieldToDamage = ItemStack.EMPTY;
+    public static InteractionHand handWithShield = null;
     public static boolean useIsBlockingMixin = false;
 
     @Nullable
@@ -51,6 +52,7 @@ public class ShieldProxy {
                     double angle = Math.acos(handVec.dot(attackerVec)); // Angle in radians
                     if (angle <= Math.PI && angle >= 2 * Math.PI / 3) { // 60 degrees in each direction from shield vec
                         shieldToDamage = player.getItemInHand(iHand);
+                        handWithShield = iHand;
                         return true;
                     }
                 }
