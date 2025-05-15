@@ -196,7 +196,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
     }
 
     private void doBagOpen(Player player) {
-        if (backpackCooldown <= 0) {
+        if (backpackCooldown <= 0 && ActiveConfig.active().useBagImmersive) {
             VRRumble.rumbleIfVR(mc.player, ActiveConfig.active().swapBagHand ? 0 : 1, CommonConstants.vibrationTimePlayerActionAlert);
             ClientUtil.openBag(player);
             backpackCooldown = 50;
