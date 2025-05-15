@@ -286,7 +286,7 @@ public class ActiveConfig implements Cloneable {
         useEnchantingTableImmersive = mergeValueWithServer(useEnchantingTableImmersive, other.useEnchantingTableImmersive);
         useCampfireImmersive = mergeValueWithServer(useCampfireImmersive, other.useCampfireImmersive);
         useLeverImmersive = mergeValueWithServer(useLeverImmersive, other.useLeverImmersive);
-        useBagImmersive = useBagImmersive || other.useBagImmersive; // Inventory is unblockable by server due to many inventory-only features and it's VR-only.
+        useBagImmersive = useBagImmersive && other.useBagImmersive; // Inventory is unblockable by server due to many inventory-only features and it's VR-only.
         useRepeaterImmersive = mergeValueWithServer(useRepeaterImmersive, other.useRepeaterImmersive);
         useDoorImmersive = mergeValueWithServer(useDoorImmersive, other.useDoorImmersive);
         useTrapdoorImmersive = mergeValueWithServer(useTrapdoorImmersive, other.useTrapdoorImmersive);
