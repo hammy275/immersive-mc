@@ -1,10 +1,10 @@
 package com.hammy275.immersivemc.common.tracker;
 
+import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
-import com.hammy275.immersivemc.mixin.BucketItemAccessor;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
@@ -64,7 +64,7 @@ public class BottleAndBucketTracker extends AbstractTracker {
 
     private boolean stackMatches(ItemStack stackInHand) {
         return stackInHand.is(Items.GLASS_BOTTLE) ||
-                stackInHand.getItem() instanceof BucketItem bucketItem && ((BucketItemAccessor) bucketItem).immersiveMC$getFluid().isSame(Fluids.EMPTY);
+                stackInHand.getItem() instanceof BucketItem bucketItem && Platform.getFluid(bucketItem).isSame(Fluids.EMPTY);
     }
 
 

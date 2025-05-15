@@ -2,10 +2,13 @@ package com.hammy275.immersivemc;
 
 import com.mojang.brigadier.CommandDispatcher;
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 
 import java.io.File;
 import java.util.function.Consumer;
@@ -63,5 +66,11 @@ public class Platform {
     @ExpectPlatform
     public static void sendToPlayer(ServerPlayer player, FriendlyByteBuf message) {
         throw new RuntimeException("@ExpectPlatform should have replaced this");
+    }
+
+    // Misc.
+    @ExpectPlatform
+    public static Fluid getFluid(BucketItem bucket) {
+        return Fluids.EMPTY; // Return some default fluid so callers don't get odd warnings
     }
 }
