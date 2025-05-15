@@ -1,10 +1,13 @@
 package com.hammy275.immersivemc.neoforge;
 
+import com.hammy275.immersivemc.mixin.BucketItemAccessor;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -73,5 +76,10 @@ public class PlatformImpl {
     }
     public static void sendToPlayer(ServerPlayer player, RegistryFriendlyByteBuf message) {
         PacketDistributor.sendToPlayer(player, new BufferPacket(message));
+    }
+
+    // Misc.
+    public static Fluid getFluid(BucketItem bucket) {
+        return ((BucketItemAccessor) bucket).immersiveMC$getFluid();
     }
 }
