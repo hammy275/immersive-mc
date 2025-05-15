@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.fabric;
 
+import com.hammy275.immersivemc.mixin.BucketItemAccessor;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -12,6 +13,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.level.material.Fluid;
 
 import java.io.File;
 import java.util.function.Consumer;
@@ -58,5 +61,10 @@ public class PlatformImpl {
     }
     public static void sendToPlayer(ServerPlayer player, FriendlyByteBuf message) {
         ServerPlayNetworking.send(player, ImmersiveMCFabric.S2C, message);
+    }
+
+    // Misc.
+    public static Fluid getFluid(BucketItem bucket) {
+        return ((BucketItemAccessor) bucket).immersiveMC$getFluid();
     }
 }
