@@ -1,10 +1,12 @@
 package com.hammy275.immersivemc.forge;
 
-import net.minecraft.network.FriendlyByteBuf;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -77,5 +79,10 @@ public class PlatformImpl {
     }
     public static void sendToPlayer(ServerPlayer player, FriendlyByteBuf message) {
         ImmersiveMCForge.NETWORK.send(PacketDistributor.PLAYER.with(() -> player), new BufferPacket(message));
+    }
+
+    // Misc.
+    public static Fluid getFluid(BucketItem bucket) {
+        return bucket.getFluid();
     }
 }
