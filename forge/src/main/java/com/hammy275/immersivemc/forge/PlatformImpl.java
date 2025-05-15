@@ -5,6 +5,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -77,5 +79,10 @@ public class PlatformImpl {
     }
     public static void sendToPlayer(ServerPlayer player, RegistryFriendlyByteBuf message) {
         ImmersiveMCForge.NETWORK.send(new BufferPacket(message), PacketDistributor.PLAYER.with(player));
+    }
+
+    // Misc.
+    public static Fluid getFluid(BucketItem bucket) {
+        return bucket.getFluid();
     }
 }
