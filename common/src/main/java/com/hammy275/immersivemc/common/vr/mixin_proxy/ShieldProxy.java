@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.common.vr.mixin_proxy;
 
 import com.hammy275.immersivemc.client.ClientMixinProxy;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import net.blf02.vrapi.api.data.IVRData;
@@ -11,7 +12,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +25,7 @@ public class ShieldProxy {
     public static ItemStack getABlockingShield(LivingEntity living) {
         if (living instanceof Player player && isVRPlayerToManageBySide(player)) {
             for (InteractionHand iHand : InteractionHand.values()) {
-                if (player.getItemInHand(iHand).getUseAnimation() == UseAnim.BLOCK) {
+                if (Util.isShield(player.getItemInHand(iHand))) {
                     return player.getItemInHand(iHand);
                 }
             }
@@ -37,7 +37,7 @@ public class ShieldProxy {
         if (living instanceof Player player && isVRPlayerToManageBySide(player)) {
             IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
             for (InteractionHand iHand : InteractionHand.values()) {
-                if (player.getItemInHand(iHand).getUseAnimation() == UseAnim.BLOCK) {
+                if (Util.isShield(player.getItemInHand(iHand))) {
                     // Iterate again if shield is on cooldown
                     if (player.getCooldowns().isOnCooldown(player.getItemInHand(iHand).getItem())) {
                         continue;

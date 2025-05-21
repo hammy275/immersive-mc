@@ -44,6 +44,8 @@ dependencies {
     modApi "curse.maven:lootr-615106:5709011"
     modApi "curse.maven:clothconfigapi-348521:5623418" // lootr dependency
 
+    modApi "curse.maven:frycsparry-686468:6451278"
+
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 

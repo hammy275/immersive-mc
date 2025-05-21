@@ -9,6 +9,7 @@ import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
 import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.common.compat.frycs_parry.FrycsParry;
 import com.hammy275.immersivemc.common.immersive.ImmersiveChecker;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
@@ -16,14 +17,21 @@ import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.FishingRodItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TridentItem;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DirectionalBlock;
@@ -34,11 +42,31 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public class Util {
 
     public static UseInfo activeUseInfo = null;
+    private static List<TagKey<Item>> shieldTags = new ArrayList<>();
+
+    public static void init() {
+        // Add shield item tags used throughout Minecraft versions ImmersiveMC supports
+        shieldTags.add(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "tools/shield")));
+        shieldTags.add(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "tools/shields")));
+        shieldTags.add(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "shields")));
+        shieldTags.add(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("forge", "tools/shields")));
+        shieldTags.add(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("neoforge", "tools/shields")));
+
+    }
+
+    public static boolean isShield(ItemStack stack) {
+        return stack.getUseAnimation() == UseAnim.BLOCK || FrycsParry.INSTANCE.isShield(stack) || shieldTags.stream().anyMatch(stack::is);
+    }
 
     public static boolean blockIsActiveImmersive(Player player, BlockPos pos) {
         Level level = player.level();

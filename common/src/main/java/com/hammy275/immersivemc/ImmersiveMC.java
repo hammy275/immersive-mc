@@ -21,6 +21,7 @@ import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.network.packet.ThrowPacket;
 import com.hammy275.immersivemc.common.network.packet.UsePacket;
 import com.hammy275.immersivemc.common.subscribe.CommonSubscriber;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.ServerSubscriber;
 import com.hammy275.immersivemc.server.command.ImmersiveMCCommand;
 import net.minecraft.client.KeyMapping;
@@ -82,6 +83,7 @@ public class ImmersiveMC {
         }
         networkSetup();
         ActiveConfig.createDefaultConfigFilesIfNotFound();
+        Util.init();
     }
 
     protected static void networkSetup() {
