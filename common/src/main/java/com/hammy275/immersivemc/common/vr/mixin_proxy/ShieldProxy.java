@@ -25,7 +25,7 @@ public class ShieldProxy {
     public static ItemStack getABlockingShield(LivingEntity living) {
         if (living instanceof Player player && isVRPlayerToManageBySide(player)) {
             for (InteractionHand iHand : InteractionHand.values()) {
-                if (Util.isShield(player.getItemInHand(iHand))) {
+                if (Util.isShield(player.getItemInHand(iHand), player)) {
                     return player.getItemInHand(iHand);
                 }
             }
@@ -37,7 +37,7 @@ public class ShieldProxy {
         if (living instanceof Player player && isVRPlayerToManageBySide(player)) {
             IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
             for (InteractionHand iHand : InteractionHand.values()) {
-                if (Util.isShield(player.getItemInHand(iHand))) {
+                if (Util.isShield(player.getItemInHand(iHand), player)) {
                     // Iterate again if shield is on cooldown
                     if (player.getCooldowns().isOnCooldown(player.getItemInHand(iHand).getItem())) {
                         continue;

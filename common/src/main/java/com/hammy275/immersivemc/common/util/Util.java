@@ -13,6 +13,7 @@ import com.hammy275.immersivemc.common.compat.frycs_parry.FrycsParry;
 import com.hammy275.immersivemc.common.immersive.ImmersiveChecker;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -24,6 +25,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.FishingRodItem;
@@ -64,8 +66,10 @@ public class Util {
 
     }
 
-    public static boolean isShield(ItemStack stack) {
-        return stack.getUseAnimation() == UseAnim.BLOCK || FrycsParry.INSTANCE.isShield(stack) || shieldTags.stream().anyMatch(stack::is);
+    public static boolean isShield(ItemStack stack, LivingEntity livingEntity) {
+        // Only check against Fryc's Parry if not in VR as a temporary fix so VR players can immersively block and
+        // non-VR players can parry
+        return stack.getUseAnimation() == UseAnim.BLOCK || (livingEntity instanceof Player player && !VRPluginVerify.playerInVR(player) && FrycsParry.INSTANCE.isShield(stack)) || shieldTags.stream().anyMatch(stack::is);
     }
 
     public static boolean blockIsActiveImmersive(Player player, BlockPos pos) {

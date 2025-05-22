@@ -1,11 +1,11 @@
 package com.hammy275.immersivemc.mixin;
 
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.mixin_proxy.ShieldProxy;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.UseAnim;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -26,7 +26,7 @@ public abstract class LivingEntityMixin {
         }
         // Since we're forcing Minecraft to assume we're blocking with a shield if we have one, we should tell it we're
         // not actually blocking if there's no blocking item.
-        if (me.getUseItem().getUseAnimation() != UseAnim.BLOCK) {
+        if (!Util.isShield(me.getUseItem(), me)) {
             cir.setReturnValue(false);
         }
     }

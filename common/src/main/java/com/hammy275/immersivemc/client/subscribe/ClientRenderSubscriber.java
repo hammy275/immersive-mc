@@ -72,7 +72,7 @@ public class ClientRenderSubscriber {
         // Draw shield hitbox(es)
         if (VRPluginVerify.clientInVR()) {
             for (InteractionHand iHand : InteractionHand.values()) {
-                if (Util.isShield(Minecraft.getInstance().player.getItemInHand(iHand))) {
+                if (Util.isShield(Minecraft.getInstance().player.getItemInHand(iHand), Minecraft.getInstance().player)) {
                     IVRPlayer vrPlayer = Platform.isDevelopmentEnvironment() ?
                             VRPlugin.API.getVRPlayer(Minecraft.getInstance().player) :
                             VRPlugin.API.getRenderVRPlayer();
