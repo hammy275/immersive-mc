@@ -435,19 +435,19 @@ public class Immersives {
                 } else {
                     return new Vec3(ClientConstants.itemScaleSizeHopper * -2.2d, 0.375, 0);
                 }
-            }, ClientConstants.itemScaleSizeHopper).build())
+            }, ClientConstants.itemScaleSizeHopper).lerps(false).build())
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput((info) -> {
                 Direction forward = Util.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition());
                 return new Vec3(ClientConstants.itemScaleSizeHopper * -1.1d, forward == Direction.UP ? 0 : 0.375, 0);
-            }, ClientConstants.itemScaleSizeHopper).build())
+            }, ClientConstants.itemScaleSizeHopper).lerps(false).build())
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput((info) -> {
                 Direction forward = Util.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition());
                 return new Vec3(0, forward == Direction.UP ? 0 : 0.375, 0);
-            }, ClientConstants.itemScaleSizeHopper).build())
+            }, ClientConstants.itemScaleSizeHopper).lerps(false).build())
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput((info) -> {
                 Direction forward = Util.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition());
                 return new Vec3(ClientConstants.itemScaleSizeHopper * 1.1d, forward == Direction.UP ? 0 : 0.375, 0);
-            }, ClientConstants.itemScaleSizeHopper).build())
+            }, ClientConstants.itemScaleSizeHopper).lerps(false).build())
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput((info) -> {
                 Direction forward = Util.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition());
                 if (forward == Direction.UP) {
@@ -455,7 +455,7 @@ public class Immersives {
                 } else {
                     return new Vec3(ClientConstants.itemScaleSizeHopper * 2.2d, 0.375, 0);
                 }
-            }, ClientConstants.itemScaleSizeHopper).build())
+            }, ClientConstants.itemScaleSizeHopper).lerps(false).build())
             .setPositioningMode(HitboxPositioningMode.PLAYER_FACING_NO_DOWN)
             .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
@@ -488,15 +488,15 @@ public class Immersives {
             .add3x3Grid(RelativeHitboxInfoBuilder.createItemInput((info) -> {
                 ChestLikeData extra = (ChestLikeData) info.getExtraData();
                 return new Vec3(0, 0.25, -1d/3d * extra.offsetIn(0));
-            }, 0.14f).build(), 0.15)
+            }, 0.14f).lerps(false).build(), 0.15)
             .add3x3Grid(RelativeHitboxInfoBuilder.createItemInput((info) -> {
                 ChestLikeData extra = (ChestLikeData) info.getExtraData();
                 return new Vec3(0, 0.25, -1d/3d * extra.offsetIn(1));
-            }, 0.14f).build(), 0.15)
+            }, 0.14f).lerps(false).build(), 0.15)
             .add3x3Grid(RelativeHitboxInfoBuilder.createItemInput((info) -> {
                 ChestLikeData extra = (ChestLikeData) info.getExtraData();
                 return new Vec3(0, 0.25, -1d/3d * extra.offsetIn(2));
-            }, 0.14f).build(), 0.15)
+            }, 0.14f).lerps(false).build(), 0.15)
             .setPositioningMode(HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING)
             .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), slots, hand, modifierPressed);
