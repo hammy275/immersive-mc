@@ -95,6 +95,10 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
      */
     private boolean renderItemCount = true;
     /**
+     * Whether to lerp when moving.
+     */
+    private boolean lerps = true;
+    /**
      * A method of rotation to apply when rendering the item in a hitbox, or null to not rotate.
      */
     private ItemRotationType itemRotationType = null;
@@ -210,6 +214,12 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
     }
 
     @Override
+    public RelativeHitboxInfoBuilder lerps(boolean lerps) {
+        this.lerps = lerps;
+        return this;
+    }
+
+    @Override
     public RelativeHitboxInfoBuilder rotateItem(@Nullable ItemRotationType itemRotationType) {
         this.itemRotationType = itemRotationType;
         return this;
@@ -219,7 +229,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
         assert !isInput || holdsItems; // If isInput, must holdsItems
         return new RelativeHitboxInfoImpl(this, centerOffset, sizeX, sizeY, sizeZ, holdsItems, isInput,
                 itemSpins, itemRenderSizeMultiplier, isTriggerHitbox, textSupplier,
-                forcedUpDown, constantOffset, needs3dCompat, vrMovementInfo, renderItem, renderItemCount, forcedUpDownConstant, itemRotationType);
+                forcedUpDown, constantOffset, needs3dCompat, vrMovementInfo, renderItem, renderItemCount, forcedUpDownConstant, lerps, itemRotationType);
     }
 
     public static RelativeHitboxInfoBuilderImpl create(Vec3 centerOffset, double size) {
