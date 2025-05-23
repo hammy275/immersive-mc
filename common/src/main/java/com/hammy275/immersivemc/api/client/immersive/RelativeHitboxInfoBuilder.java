@@ -117,6 +117,12 @@ public interface RelativeHitboxInfoBuilder {
     public RelativeHitboxInfoBuilder renderItemCount(boolean renderItemCount);
 
     /**
+     * @param lerps Whether this hitbox should lerp (perform linearly interpolation) when moving to animate smoothly.
+     * @return This builder object.
+     */
+    public RelativeHitboxInfoBuilder lerps(boolean lerps);
+
+    /**
      * @param rotationType The type of rotation to apply when rendering an item in this hitbox, or null for no rotation.
      * @return This builder object.
      */

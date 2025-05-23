@@ -59,6 +59,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
     public final boolean renderItem;
     public final boolean renderItemCount;
     public final boolean forcedUpDownRenderDirConstant;
+    public final boolean lerps;
     public final ItemRotationType itemRotationType;
 
     // Calculated data to be returned out
@@ -108,7 +109,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
                                   boolean isTriggerHitbox, Function<BuiltImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier,
                                   Function<BuiltImmersiveInfo<?>, ForcedUpDownRenderDir> forcedUpDownDir, boolean constantOffset, boolean needs3dCompat,
                                   HitboxVRMovementInfo vrMovementInfo, boolean renderItem, boolean renderItemCount, boolean forcedUpDownRenderDirConstant,
-                                  ItemRotationType itemRotationType) {
+                                  boolean lerps, ItemRotationType itemRotationType) {
         this.usedBuilder = usedBuilder;
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
@@ -127,6 +128,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
         this.renderItem = renderItem;
         this.renderItemCount = renderItemCount;
         this.forcedUpDownRenderDirConstant = forcedUpDownRenderDirConstant;
+        this.lerps = lerps;
         this.itemRotationType = itemRotationType;
     }
 
@@ -312,7 +314,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
         if (!didCalc) {
             throw new IllegalStateException("Should call recalculate() or forceNull() before getting render hitbox.");
         }
-        if (lastPos == null || constantOffset) {
+        if (lastPos == null || constantOffset || !lerps) {
             return box;
         }
         return box.move(ClientUtil.lerpVec3(lastPos, pos, partialTick).subtract(lastPos));
