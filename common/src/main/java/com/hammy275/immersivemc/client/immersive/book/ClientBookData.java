@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class ClientBookData extends CommonBookData {
     private static final BookModel bookModel = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
-    private static final ResourceLocation writtenBookTexture = new ResourceLocation(ImmersiveMC.MOD_ID, "nahnotfox_written_book.png");
+    private static final ResourceLocation writtenBookTexture = new ResourceLocation(ImmersiveMC.MOD_ID, "immersive/nahnotfox_written_book.png");
 
     public final List<BookInteractable> interactables = new ArrayList<>();
     public final List<BookRenderable> renderables = new ArrayList<>();
