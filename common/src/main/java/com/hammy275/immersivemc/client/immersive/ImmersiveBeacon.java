@@ -60,8 +60,8 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
             new ResourceLocation("textures/mob_effect/strength.png")
     };
     private static final ResourceLocation regenerationLocation = new ResourceLocation("textures/mob_effect/regeneration.png");
-    private static final ResourceLocation confirmLocation = new ResourceLocation(ImmersiveMC.MOD_ID, "confirm.png");
-    private static final ResourceLocation addLocation = new ResourceLocation(ImmersiveMC.MOD_ID, "add.png");
+    private static final ResourceLocation confirmLocation = new ResourceLocation(ImmersiveMC.MOD_ID, "immersive/beacon/confirm.png");
+    private static final ResourceLocation addLocation = new ResourceLocation(ImmersiveMC.MOD_ID, "immersive/beacon/add.png");
 
     @Override
     public BeaconInfo buildInfo(BlockPos pos, Level level) {
