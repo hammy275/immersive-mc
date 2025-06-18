@@ -18,7 +18,7 @@ public class BackpackCraftingModel extends EntityModel<EntityRenderState> {
 
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "crafting"), "main");
-    public static final ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "crafting.png");
+    public static final ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "immersive/bag/crafting.png");
 
     public BackpackCraftingModel(ModelPart root) {
         super(root);
