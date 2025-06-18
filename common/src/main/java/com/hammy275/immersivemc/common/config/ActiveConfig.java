@@ -97,7 +97,6 @@ public class ActiveConfig implements Cloneable {
     public boolean useApotheosisEnchantmentTableImmersive = true;
     public boolean useApotheosisSalvagingTableImmersive = true;
     public boolean useGrindstoneImmersive = true;
-    public boolean disableVanillaInteractionsForSupportedImmersives = false;
 
     public int commonConfigVersion = 2;
     public static final String COMMON_CONFIG_VERSION = "commonConfigVersion";
@@ -274,45 +273,44 @@ public class ActiveConfig implements Cloneable {
      * @param other The other config
      */
     public void mergeWithServer(ActiveConfig other) {
-        disableVanillaInteractionsForSupportedImmersives = disableVanillaInteractionsForSupportedImmersives || other.disableVanillaInteractionsForSupportedImmersives;
-        useAnvilImmersive = mergeValueWithServer(useAnvilImmersive, other.useAnvilImmersive);
-        useBrewingStandImmersive = mergeValueWithServer(useBrewingStandImmersive, other.useBrewingStandImmersive);
-        useChestImmersive = mergeValueWithServer(useChestImmersive, other.useChestImmersive);
-        useCraftingTableImmersive = mergeValueWithServer(useCraftingTableImmersive, other.useCraftingTableImmersive);
-        useFurnaceImmersive = mergeValueWithServer(useFurnaceImmersive, other.useFurnaceImmersive);
-        useJukeboxImmersive = mergeValueWithServer(useJukeboxImmersive, other.useJukeboxImmersive);
-        useRangedGrabImmersive = mergeValueWithServer(useRangedGrabImmersive, other.useRangedGrabImmersive);
-        useButtonImmersive = mergeValueWithServer(useButtonImmersive, other.useButtonImmersive);
-        useEnchantingTableImmersive = mergeValueWithServer(useEnchantingTableImmersive, other.useEnchantingTableImmersive);
-        useCampfireImmersive = mergeValueWithServer(useCampfireImmersive, other.useCampfireImmersive);
-        useLeverImmersive = mergeValueWithServer(useLeverImmersive, other.useLeverImmersive);
-        useBagImmersive = useBagImmersive && other.useBagImmersive; // Inventory is unblockable by server due to many inventory-only features and it's VR-only.
-        useRepeaterImmersive = mergeValueWithServer(useRepeaterImmersive, other.useRepeaterImmersive);
-        useDoorImmersive = mergeValueWithServer(useDoorImmersive, other.useDoorImmersive);
-        useTrapdoorImmersive = mergeValueWithServer(useTrapdoorImmersive, other.useTrapdoorImmersive);
+        useAnvilImmersive = useAnvilImmersive && other.useAnvilImmersive;
+        useBrewingStandImmersive = useBrewingStandImmersive && other.useBrewingStandImmersive;
+        useChestImmersive = useChestImmersive && other.useChestImmersive;
+        useCraftingTableImmersive = useCraftingTableImmersive && other.useCraftingTableImmersive;
+        useFurnaceImmersive = useFurnaceImmersive && other.useFurnaceImmersive;
+        useJukeboxImmersive = useJukeboxImmersive && other.useJukeboxImmersive;
+        useRangedGrabImmersive = useRangedGrabImmersive && other.useRangedGrabImmersive;
+        useButtonImmersive = useButtonImmersive && other.useButtonImmersive;
+        useEnchantingTableImmersive = useEnchantingTableImmersive && other.useEnchantingTableImmersive;
+        useCampfireImmersive = useCampfireImmersive && other.useCampfireImmersive;
+        useLeverImmersive = useLeverImmersive && other.useLeverImmersive;
+        useBagImmersive = useBagImmersive && other.useBagImmersive;
+        useRepeaterImmersive = useRepeaterImmersive && other.useRepeaterImmersive;
+        useDoorImmersive = useDoorImmersive && other.useDoorImmersive;
+        useTrapdoorImmersive = useTrapdoorImmersive && other.useTrapdoorImmersive;
         allowPetting = allowPetting && other.allowPetting;
-        useArmorImmersive = useAnvilImmersive && other.useArmorImmersive; // Inventory is unblockable, no reason to force this.
+        useArmorImmersive = useArmorImmersive && other.useArmorImmersive;
         useFeedingAnimalsImmersive = useFeedingAnimalsImmersive && other.useFeedingAnimalsImmersive;
-        useShulkerImmersive = mergeValueWithServer(useShulkerImmersive, other.useShulkerImmersive);
+        useShulkerImmersive = useShulkerImmersive && other.useShulkerImmersive;
         allowPettingAnythingLiving = allowPettingAnythingLiving && other.allowPettingAnythingLiving;
         useShieldImmersive = useShieldImmersive && other.useShieldImmersive;
         rangedGrabRange = Math.min(rangedGrabRange, other.rangedGrabRange);
-        useBeaconImmersive = mergeValueWithServer(useBeaconImmersive, other.useBeaconImmersive);
-        useBarrelImmersive = mergeValueWithServer(useBarrelImmersive, other.useBarrelImmersive);
+        useBeaconImmersive = useBeaconImmersive && other.useBeaconImmersive;
+        useBarrelImmersive = useBarrelImmersive && other.useBarrelImmersive;
         useThrowingImmersive = useThrowingImmersive && other.useThrowingImmersive;
         allowThrowingBeyondVanillaMaxRange = allowThrowingBeyondVanillaMaxRange && other.allowThrowingBeyondVanillaMaxRange;
-        useHopperImmersive = mergeValueWithServer(useHopperImmersive, other.useHopperImmersive);
-        useSmithingTableImmersive = mergeValueWithServer(useSmithingTableImmersive, other.useSmithingTableImmersive);
-        useChiseledBookshelfImmersive = mergeValueWithServer(useChiseledBookshelfImmersive, other.useChiseledBookshelfImmersive);
+        useHopperImmersive = useHopperImmersive && other.useHopperImmersive;
+        useSmithingTableImmersive = useSmithingTableImmersive && other.useSmithingTableImmersive;
+        useChiseledBookshelfImmersive = useChiseledBookshelfImmersive && other.useChiseledBookshelfImmersive;
         useWrittenBookImmersive = useWrittenBookImmersive && other.useWrittenBookImmersive;
-        useCauldronImmersive = mergeValueWithServer(useCauldronImmersive, other.useCauldronImmersive);
-        useIronFurnacesFurnaceImmersive = mergeValueWithServer(useIronFurnacesFurnaceImmersive, other.useIronFurnacesFurnaceImmersive);
-        useTinkersConstructCraftingStationImmersive = mergeValueWithServer(useTinkersConstructCraftingStationImmersive, other.useTinkersConstructCraftingStationImmersive);
-        useLecternImmersive = mergeValueWithServer(useLecternImmersive, other.useLecternImmersive);
+        useCauldronImmersive = useCauldronImmersive && other.useCauldronImmersive;
+        useIronFurnacesFurnaceImmersive = useIronFurnacesFurnaceImmersive && other.useIronFurnacesFurnaceImmersive;
+        useTinkersConstructCraftingStationImmersive = useTinkersConstructCraftingStationImmersive && other.useTinkersConstructCraftingStationImmersive;
+        useLecternImmersive = useLecternImmersive && other.useLecternImmersive;
         useBucketAndBottleImmersive = useBucketAndBottleImmersive && other.useBucketAndBottleImmersive;
-        useApotheosisEnchantmentTableImmersive = mergeValueWithServer(useApotheosisEnchantmentTableImmersive, other.useApotheosisEnchantmentTableImmersive);
-        useApotheosisSalvagingTableImmersive = mergeValueWithServer(useApotheosisSalvagingTableImmersive, other.useApotheosisSalvagingTableImmersive);
-        useGrindstoneImmersive = mergeValueWithServer(useGrindstoneImmersive, other.useGrindstoneImmersive);
+        useApotheosisEnchantmentTableImmersive = useApotheosisEnchantmentTableImmersive && other.useApotheosisEnchantmentTableImmersive;
+        useApotheosisSalvagingTableImmersive = useApotheosisSalvagingTableImmersive && other.useApotheosisSalvagingTableImmersive;
+        useGrindstoneImmersive = useGrindstoneImmersive && other.useGrindstoneImmersive;
     }
 
     /**
@@ -358,11 +356,6 @@ public class ActiveConfig implements Cloneable {
         useApotheosisEnchantmentTableImmersive = false;
         useApotheosisSalvagingTableImmersive = false;
         useGrindstoneImmersive = false;
-        disableVanillaInteractionsForSupportedImmersives = false;
-    }
-
-    protected boolean mergeValueWithServer(boolean client, boolean server) {
-        return disableVanillaInteractionsForSupportedImmersives ? server : client && server;
     }
 
     /**
