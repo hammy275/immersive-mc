@@ -138,7 +138,7 @@ public class EnchantingData {
                                           BuiltImmersiveInfo<EnchantingData> info) implements BookRenderable {
 
         private static ResourceLocation fullLocation = null;
-        private static final ResourceLocation emptyLocation = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "apoth_bars.png");
+        private static final ResourceLocation emptyLocation = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "immersive/apoth_enchanting_table/apoth_bars.png");
         private static final float barMaxX = 109f;
         private static final float maxXY = 255f;
 
