@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class Cube1x1 extends Model {
     public static final ResourceLocation textureLocation = new ResourceLocation(ImmersiveMC.MOD_ID,
-            "cube.png");
+            "immersive/cube.png");
 
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(ImmersiveMC.MOD_ID, "cube"), "main");
