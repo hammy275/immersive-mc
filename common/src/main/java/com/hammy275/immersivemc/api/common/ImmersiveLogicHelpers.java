@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.api.common;
 
-import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
-import com.hammy275.immersivemc.server.storage.server.SwapResult;
+import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
+import com.hammy275.immersivemc.api.common.immersive.SwapResult;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveLogicHelpersImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
