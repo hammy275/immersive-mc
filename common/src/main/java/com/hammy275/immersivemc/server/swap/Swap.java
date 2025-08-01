@@ -11,8 +11,8 @@ import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStor
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.mixin.AnvilMenuMixin;
 import com.hammy275.immersivemc.server.api_impl.SwapResultImpl;
-import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
-import com.hammy275.immersivemc.server.storage.server.SwapResult;
+import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
+import com.hammy275.immersivemc.api.common.immersive.SwapResult;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.storage.world.impl.ETableWorldStorage;
