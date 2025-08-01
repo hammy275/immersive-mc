@@ -144,7 +144,7 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
                         () -> ConfigScreen.getClientConfigIfAdjusting().itemGuidePreset,
                         (newPresetIndex, newPreset) -> {
                             ConfigScreen.getClientConfigIfAdjusting().itemGuidePreset = newPreset;
-                            Minecraft.getInstance().setScreen(new ItemGuideCustomizeScreen(this.lastScreen));
+                            this.resetList();
                         }
                 ));
 
@@ -193,7 +193,6 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
             ItemGuideColorData colorData = ActiveConfig.FILE_CLIENT.itemGuideCustomColorData;
             for (String key : types) {
                 List<RGBA> colors = key.equals(types[0]) ? colorData.colors().get() : key.equals(types[1]) ? colorData.selectedColors().get() : colorData.rangedGrabColors().get();
-                // TODO: Don't just reset the screen when number of custom colors is adjusted
                 this.list.addBig(ScreenUtils.createIntSlider(
                         "config.immersivemc.num_custom_colors." + key,
                         value -> Component.literal(I18n.get("config.immersivemc.num_custom_colors." + key) + ": " + value),
@@ -220,12 +219,19 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
                             }
                             // Prevents different cycles from getting out of sync when returning to other modes
                             ClientRenderSubscriber.resetCycleProgresses();
-                            Minecraft.getInstance().setScreen(new ItemGuideCustomizeScreen(this.lastScreen));
+                            resetList();
                         }
                         ));
                 addColorOptions(colors, key);
             }
         }
+    }
+
+    private void resetList() {
+        double scrollAmount = this.list.scrollAmount();
+        this.list.children().clear();
+        addOptions();
+        this.list.setScrollAmount(Math.min(scrollAmount, this.list.maxScrollAmount()));
     }
 
     private void addColorOptions(List<RGBA> colors, String key) {
