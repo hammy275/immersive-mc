@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
+import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStorage;
@@ -20,7 +21,7 @@ import net.minecraft.world.InteractionHand;
  *     instances (usually by calling
  *     {@link WorldStorages#getOrCreate(BlockPos, ServerLevel)} in
  *     {@link ImmersiveHandler#makeInventoryContents(ServerPlayer, BlockPos)} and/or
- *     {@link ImmersiveHandler#swap(int, InteractionHand, BlockPos, ServerPlayer, com.hammy275.immersivemc.server.storage.server.ItemSwapAmount)} and by
+ *     {@link ImmersiveHandler#swap(int, InteractionHand, BlockPos, ServerPlayer, ItemSwapAmount)} and by
  *     calling {@link WorldStorages#remove(BlockPos, ServerLevel)} in
  *     {@link ImmersiveHandler#onStopTracking(ServerPlayer, BlockPos)}.</li>
  * </ul>
