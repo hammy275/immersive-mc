@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.server.api_impl;
 
-import com.hammy275.immersivemc.server.storage.server.ItemSwapAmount;
+import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.api.common.immersive.SwapMode;
 
 public class ItemSwapAmountImpl implements ItemSwapAmount {
