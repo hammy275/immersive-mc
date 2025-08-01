@@ -115,17 +115,27 @@ public class ItemGuideCustomizeScreen extends Screen {
         this.list = new OptionsList(Minecraft.getInstance(), this.width, this.height,
                 32, this.height - 32, 24);
 
+        this.addOptions();
 
-        this.list.addBig(
-            ScreenUtils.createEnumOption(PlacementGuideMode.class,
-                    "config.immersivemc.placement_guide_mode",
-                    (guideMode) -> new TranslatableComponent("config.immersivemc.placement_guide_mode." + guideMode.ordinal()),
-                    (guideMode -> new TranslatableComponent("config.immersivemc.placement_guide_mode.desc")),
-                    () -> ConfigScreen.getClientConfigIfAdjusting().placementGuideMode,
-                    (newModeIndex, newMode) -> {
-                        ConfigScreen.getClientConfigIfAdjusting().placementGuideMode = newMode;
-                    }
+        this.addRenderableWidget(this.list);
+        this.addRenderableWidget(ScreenUtils.createDoneButton(
+                (this.width - BUTTON_WIDTH) / 2, this.height - 26,
+                BUTTON_WIDTH, BUTTON_HEIGHT,
+                this
         ));
+    }
+
+    private void addOptions() {
+        this.list.addBig(
+                ScreenUtils.createEnumOption(PlacementGuideMode.class,
+                        "config.immersivemc.placement_guide_mode",
+                        (guideMode) -> new TranslatableComponent("config.immersivemc.placement_guide_mode." + guideMode.ordinal()),
+                        (guideMode -> new TranslatableComponent("config.immersivemc.placement_guide_mode.desc")),
+                        () -> ConfigScreen.getClientConfigIfAdjusting().placementGuideMode,
+                        (newModeIndex, newMode) -> {
+                            ConfigScreen.getClientConfigIfAdjusting().placementGuideMode = newMode;
+                        }
+                ));
 
         this.list.addBig(ScreenUtils.createIntSlider(
                         "config.immersivemc.item_guide_size", (value) -> new TextComponent(I18n.get("config.immersivemc.item_guide_size") + ": " + String.format("%.02f", (float) value / 100.0f)),
@@ -147,7 +157,7 @@ public class ItemGuideCustomizeScreen extends Screen {
                     )
             );
         }
-        
+
         this.list.addBig(
                 ScreenUtils.createEnumOption(ItemGuidePreset.class,
                         "config.immersivemc.item_guide_preset",
@@ -156,7 +166,7 @@ public class ItemGuideCustomizeScreen extends Screen {
                         () -> ConfigScreen.getClientConfigIfAdjusting().itemGuidePreset,
                         (newPresetIndex, newPreset) -> {
                             ConfigScreen.getClientConfigIfAdjusting().itemGuidePreset = newPreset;
-                            Minecraft.getInstance().setScreen(new ItemGuideCustomizeScreen(this.lastScreen));
+                            this.resetList();
                         }
                 ));
 
@@ -173,13 +183,13 @@ public class ItemGuideCustomizeScreen extends Screen {
 
         if (ConfigScreen.getClientConfigIfAdjusting().itemGuidePreset.isCustomizablePreset()) {
             this.list.addBig(ScreenUtils.createIntSlider(
-                    "config.immersivemc.item_guide_a", (value) -> new TextComponent(I18n.get("config.immersivemc.item_guide_a") + ": " + value),
+                            "config.immersivemc.item_guide_a", (value) -> new TextComponent(I18n.get("config.immersivemc.item_guide_a") + ": " + value),
                             0, 255, () -> ConfigScreen.getClientConfigIfAdjusting().colorPresetAlpha,
                             newVal -> ConfigScreen.getClientConfigIfAdjusting().colorPresetAlpha = newVal
                     )
             );
             this.list.addBig(ScreenUtils.createIntSlider(
-                    "config.immersivemc.item_guide_selected_a", (value) -> new TextComponent(I18n.get("config.immersivemc.item_guide_selected_a") + ": " + value),
+                            "config.immersivemc.item_guide_selected_a", (value) -> new TextComponent(I18n.get("config.immersivemc.item_guide_selected_a") + ": " + value),
                             0, 255, () -> ConfigScreen.getClientConfigIfAdjusting().colorPresetSelectedAlpha,
                             newVal -> ConfigScreen.getClientConfigIfAdjusting().colorPresetSelectedAlpha = newVal
                     )
@@ -205,7 +215,6 @@ public class ItemGuideCustomizeScreen extends Screen {
             ItemGuideColorData colorData = ActiveConfig.FILE_CLIENT.itemGuideCustomColorData;
             for (String key : types) {
                 List<RGBA> colors = key.equals(types[0]) ? colorData.colors().get() : key.equals(types[1]) ? colorData.selectedColors().get() : colorData.rangedGrabColors().get();
-                // TODO: Don't just reset the screen when number of custom colors is adjusted
                 this.list.addBig(ScreenUtils.createIntSlider(
                         "config.immersivemc.num_custom_colors." + key,
                         value -> new TextComponent(I18n.get("config.immersivemc.num_custom_colors." + key) + ": " + value),
@@ -232,19 +241,19 @@ public class ItemGuideCustomizeScreen extends Screen {
                             }
                             // Prevents different cycles from getting out of sync when returning to other modes
                             ClientRenderSubscriber.resetCycleProgresses();
-                            Minecraft.getInstance().setScreen(new ItemGuideCustomizeScreen(this.lastScreen));
+                            resetList();
                         }
-                        ));
+                ));
                 addColorOptions(colors, key);
             }
         }
+    }
 
-        this.addRenderableWidget(this.list);
-        this.addRenderableWidget(ScreenUtils.createDoneButton(
-                (this.width - BUTTON_WIDTH) / 2, this.height - 26,
-                BUTTON_WIDTH, BUTTON_HEIGHT,
-                this
-        ));
+    private void resetList() {
+        double scrollAmount = this.list.getScrollAmount();
+        this.list.children().clear();
+        addOptions();
+        this.list.setScrollAmount(Math.min(scrollAmount, this.list.getMaxScroll()));
     }
 
     private void addColorOptions(List<RGBA> colors, String key) {
