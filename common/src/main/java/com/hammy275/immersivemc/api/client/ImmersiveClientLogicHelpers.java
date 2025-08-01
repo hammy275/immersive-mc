@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.api.client;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
+import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveClientLogicHelpersImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -40,7 +41,7 @@ public interface ImmersiveClientLogicHelpers extends ImmersiveLogicHelpers {
 
     /**
      * Sends the packet to the server telling it to run
-     * {@link com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler#swap(int, InteractionHand, BlockPos, ServerPlayer, com.hammy275.immersivemc.server.storage.server.ItemSwapAmount)}
+     * {@link com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler#swap(int, InteractionHand, BlockPos, ServerPlayer, ItemSwapAmount)}
      * for the provided block at the given position. You usually should call this when a hitbox is right-clicked in your
      * Immersive.
      *
