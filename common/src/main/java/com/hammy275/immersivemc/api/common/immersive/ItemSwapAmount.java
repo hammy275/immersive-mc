@@ -1,6 +1,4 @@
-package com.hammy275.immersivemc.server.storage.server;
-
-import com.hammy275.immersivemc.api.common.immersive.SwapMode;
+package com.hammy275.immersivemc.api.common.immersive;
 
 /**
  * Encapsulates the data used to determine how many items are being swapped for this swap.
