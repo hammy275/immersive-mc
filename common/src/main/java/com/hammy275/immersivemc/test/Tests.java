@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.test;
 
+import com.hammy275.immersivemc.test.tests.ChestTest;
 import com.hammy275.immersivemc.test.tests.FurnaceTest;
 import com.hammy275.immersivemc.test.tests.TestTest;
 import net.minecraft.ChatFormatting;
@@ -20,7 +21,7 @@ public class Tests {
     private static final List<String> RESERVED_NAMES = List.of(SETUP_NAME, TEARDOWN_NAME);
     private static final String BAD_METHOD_MESSAGE = "Method does not take the correct test arguments and/or does not return a String type!";
     private static final List<Test> TESTS = List.of(
-            new TestTest(), new FurnaceTest()
+            new TestTest(), new FurnaceTest(), new ChestTest()
     );
     private static final Logger log = LoggerFactory.getLogger(Tests.class);
 

@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.test.tests;
 import com.hammy275.immersivemc.common.immersive.handler.FurnaceHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.server.api_impl.ConstantItemSwapAmount;
+import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import com.hammy275.immersivemc.test.Test;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,6 +30,7 @@ public class FurnaceTest implements Test {
         fastForward(player, 1);
         handler = (FurnaceHandler) ImmersiveHandlers.furnaceHandler;
         furnace = (FurnaceBlockEntity) level(player).getBlockEntity(furnacePos);
+        DirtyTracker.unmarkAllDirty();
     }
 
     public void testPlaceValidItemInInput(ServerPlayer player) {
@@ -37,6 +39,7 @@ public class FurnaceTest implements Test {
         handler.swap(0, InteractionHand.MAIN_HAND, furnacePos, player, new ConstantItemSwapAmount(1));
         assertEquals(new ItemStack(Items.OAK_LOG), furnace.getItem(0));
         assertEmptyMainHand(player);
+        assertTrue(handler.isDirtyForClientSync(player, furnacePos));
     }
 
     public void testPlaceInvalidItemInInput(ServerPlayer player) {
@@ -45,6 +48,7 @@ public class FurnaceTest implements Test {
         handler.swap(0, InteractionHand.MAIN_HAND, furnacePos, player, new ConstantItemSwapAmount(1));
         assertEquals(new ItemStack(Items.DIAMOND_HORSE_ARMOR), furnace.getItem(0));
         assertEmptyMainHand(player);
+        assertTrue(handler.isDirtyForClientSync(player, furnacePos));
     }
 
     public void testPlaceFuelInFuel(ServerPlayer player) {
@@ -53,6 +57,7 @@ public class FurnaceTest implements Test {
         handler.swap(1, InteractionHand.MAIN_HAND, furnacePos, player, new ConstantItemSwapAmount(1));
         assertEquals(new ItemStack(Items.OAK_LOG), furnace.getItem(1));
         assertEmptyMainHand(player);
+        assertTrue(handler.isDirtyForClientSync(player, furnacePos));
     }
 
     public void testCantPlaceNonFuelInFuel(ServerPlayer player) {
@@ -61,6 +66,7 @@ public class FurnaceTest implements Test {
         handler.swap(1, InteractionHand.MAIN_HAND, furnacePos, player, new ConstantItemSwapAmount(1));
         assertEmpty(furnace.getItem(1));
         assertEquals(new ItemStack(Items.DIAMOND_HORSE_ARMOR), player.getItemInHand(InteractionHand.MAIN_HAND));
+        assertFalse(handler.isDirtyForClientSync(player, furnacePos));
     }
 
     public void testCanGetSmeltingOutput(ServerPlayer player) {
@@ -74,5 +80,6 @@ public class FurnaceTest implements Test {
         assertEmpty(furnace.getItem(1));
         assertEmpty(furnace.getItem(2));
         assertEquals(new ItemStack(Items.CHARCOAL), player.getItemInHand(InteractionHand.MAIN_HAND));
+        assertTrue(handler.isDirtyForClientSync(player, furnacePos));
     }
 }
