@@ -5,10 +5,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Objects;
@@ -61,6 +64,7 @@ public interface Test {
      * @param player Player performing tests.
      */
     default void createTestingArea(ServerPlayer player) {
+        player.level().getEntities(player, AABB.ofSize(player.position(), 20, 20, 20)).forEach(Entity::discard);
         BlockPos floorCenter = player.blockPosition().below();
         for (int x = -10; x <= 10; x++) {
             for (int y = -5; y <= 5; y++) {
@@ -82,7 +86,11 @@ public interface Test {
     }
 
     default void setBlock(ServerPlayer player, BlockPos pos, Block block) {
-        player.level().setBlock(pos, block.defaultBlockState(), 3);
+        setBlock(player, pos,  block.defaultBlockState());
+    }
+
+    default void setBlock(ServerPlayer player, BlockPos pos, BlockState state) {
+        player.level().setBlock(pos, state, 3);
     }
 
     default void setItemInMainHand(ServerPlayer player, Item item) {

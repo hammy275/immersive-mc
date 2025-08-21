@@ -11,7 +11,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
 
 public class ChestTest implements Test {
 
@@ -34,6 +37,29 @@ public class ChestTest implements Test {
         setItemInMainHand(player, Items.STICK);
         handler.swap(2, InteractionHand.MAIN_HAND, chestPos, player, new ConstantItemSwapAmount(1));
         assertEmptyMainHand(player);
+        assertEquals(chest.getItem(2), new ItemStack(Items.STICK));
+        assertTrue(handler.isDirtyForClientSync(player, chestPos));
+    }
+
+    public void testDoubleChestSwapToFirst(ServerPlayer player) {
+        BlockState state = Blocks.CHEST.defaultBlockState();
+        state = state.setValue(ChestBlock.TYPE, ChestType.RIGHT);
+        setBlock(player, chestPos.east(), state);
+        setItemInMainHand(player, Items.STICK);
+        handler.swap(2, InteractionHand.MAIN_HAND, chestPos, player, new ConstantItemSwapAmount(1));
+        assertEmptyMainHand(player);
+        assertEquals(chest.getItem(2), new ItemStack(Items.STICK));
+        assertTrue(handler.isDirtyForClientSync(player, chestPos));
+    }
+
+    public void testDoubleChestSwapToSecond(ServerPlayer player) {
+        BlockState state = Blocks.CHEST.defaultBlockState();
+        state = state.setValue(ChestBlock.TYPE, ChestType.RIGHT);
+        setBlock(player, chestPos.east(), state);
+        setItemInMainHand(player, Items.STICK);
+        handler.swap(29, InteractionHand.MAIN_HAND, chestPos, player, new ConstantItemSwapAmount(1));
+        assertEmptyMainHand(player);
+        chest = (ChestBlockEntity) level(player).getBlockEntity(chestPos.east());
         assertEquals(chest.getItem(2), new ItemStack(Items.STICK));
         assertTrue(handler.isDirtyForClientSync(player, chestPos));
     }
