@@ -23,6 +23,7 @@ public class CraftingTest implements Test {
     public void setup(ServerPlayer player) {
         createTestingArea(player);
         tablePos = fromVec3(player.position().add(2, 0, 0));
+        WorldStorages.instance().remove(tablePos, level(player));
         setBlock(player, tablePos, Blocks.CRAFTING_TABLE);
         fastForward(player, 1);
         handler = (CraftingHandler) ImmersiveHandlers.craftingHandler;
@@ -52,6 +53,55 @@ public class CraftingTest implements Test {
             assertEmpty(storage.getItem(i));
         }
         assertEquals(new ItemStack(Items.TORCH, 4), player.getItemInHand(InteractionHand.MAIN_HAND));
+    }
+
+    public void testTakeItemOut(ServerPlayer player) {
+        setItemInMainHand(player, Items.STICK);
+        handler.swap(7, InteractionHand.MAIN_HAND, tablePos, player, new ConstantItemSwapAmount(1));
+        setItemInMainHand(player, Items.COAL);
+        handler.swap(4, InteractionHand.MAIN_HAND, tablePos, player, new ConstantItemSwapAmount(1));
+        CraftingTableStorage storage = (CraftingTableStorage) WorldStorages.instance().getWithoutVerification(tablePos, level(player));
+        for (int i = 0; i <= 8; i++) {
+            if (i != 4 && i != 7) {
+                assertEmpty(storage.getItem(i));
+            }
+        }
+        assertEquals(new ItemStack(Items.TORCH, 4), storage.getItem(9));
+        handler.swap(4, InteractionHand.MAIN_HAND, tablePos, player, new ConstantItemSwapAmount(1));
+        for (int i = 0; i <= 8; i++) {
+            if (i != 7) {
+                assertEmpty(storage.getItem(i));
+            }
+        }
+        assertEmpty(storage.getItem(9));
+    }
+
+    public void testLeftovers(ServerPlayer player) {
+        for (int i = 0; i <= 2; i++) {
+            setItemInMainHand(player, Items.MILK_BUCKET);
+            handler.swap(i, InteractionHand.MAIN_HAND, tablePos, player, new ConstantItemSwapAmount(1));
+        }
+        for (int i = 3; i <= 5; i += 2) {
+            setItemInMainHand(player, Items.SUGAR);
+            handler.swap(i, InteractionHand.MAIN_HAND, tablePos, player, new ConstantItemSwapAmount(1));
+        }
+        setItemInMainHand(player, Items.EGG);
+        handler.swap(4, InteractionHand.MAIN_HAND, tablePos, player, new ConstantItemSwapAmount(1));
+        for (int i = 6; i <= 8; i++) {
+            setItemInMainHand(player, Items.WHEAT);
+            handler.swap(i, InteractionHand.MAIN_HAND, tablePos, player, new ConstantItemSwapAmount(1));
+        }
+
+        CraftingTableStorage storage = (CraftingTableStorage) WorldStorages.instance().getWithoutVerification(tablePos, level(player));
+        assertEquals(new ItemStack(Items.CAKE), storage.getItem(9));
+        handler.swap(9, InteractionHand.MAIN_HAND, tablePos, player, new ConstantItemSwapAmount(1));
+        for (int i = 0; i <= 2; i++) {
+            assertEquals(new ItemStack(Items.BUCKET), storage.getItem(i));
+        }
+        for (int i = 3; i <= 9; i++) {
+            assertEmpty(storage.getItem(i));
+        }
+        assertEquals(new ItemStack(Items.CAKE), player.getItemInHand(InteractionHand.MAIN_HAND));
     }
 
 }
