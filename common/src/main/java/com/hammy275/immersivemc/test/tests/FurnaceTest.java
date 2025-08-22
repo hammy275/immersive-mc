@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 
@@ -25,6 +26,7 @@ public class FurnaceTest implements Test {
     @Override
     public void setup(ServerPlayer player) {
         createTestingArea(player);
+        player.setGameMode(GameType.CREATIVE);
         furnacePos = fromVec3(player.position().add(2, 0, 0));
         setBlock(player, furnacePos, Blocks.FURNACE);
         fastForward(player, 1);

@@ -100,9 +100,10 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
             }
         } else {
             boolean res = Swap.doEnchanting(slot, pos, player, hand);
-            if (res) {
-                VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
+            if (!res) {
+                return;
             }
+            VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
         }
         enchStorage.setDirty(player.serverLevel());
     }

@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
@@ -25,6 +26,7 @@ public class ChestTest implements Test {
     @Override
     public void setup(ServerPlayer player) {
         createTestingArea(player);
+        player.setGameMode(GameType.CREATIVE);
         chestPos = fromVec3(player.position().add(2, 0, 0));
         setBlock(player, chestPos, Blocks.CHEST);
         fastForward(player, 1);
