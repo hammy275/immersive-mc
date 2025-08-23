@@ -224,5 +224,7 @@
   "commands.immersivemc.enable_disable.true": "ImmersiveMC now enabled for the provided players!",
   "commands.immersivemc.enable_disable.false": "ImmersiveMC now disabled for the provided players!",
   "commands.immersivemc.enable_disable.already_enable": "This player already has ImmersiveMC enabled!",
-  "commands.immersivemc.enable_disable.already_disable": "This player already has ImmersiveMC disabled!"
+  "commands.immersivemc.enable_disable.already_disable": "This player already has ImmersiveMC disabled!",
+  "commands.immersivemc.test.no_permission": "You do not have permission to run tests!",
+  "commands.immersivemc.test.not_a_player": "Only players can run ImmersiveMC's tests!"
 }
