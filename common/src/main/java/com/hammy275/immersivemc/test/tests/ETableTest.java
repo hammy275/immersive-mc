@@ -76,4 +76,27 @@ public class ETableTest implements Test {
             assertEmptyMainHand(player);
         }
     }
+
+    public void testEnchantWorks(ServerPlayer player) {
+        for (int i = 1; i <= 3; i++) {
+            setItemInMainHand(player, Items.DIAMOND_SWORD);
+            handler.swap(0, InteractionHand.MAIN_HAND, tablePos, player, new ConstantItemSwapAmount(1));
+            ETableWorldStorage storage = (ETableWorldStorage) WorldStorages.instance().getWithoutVerification(tablePos, level(player));
+            assertTrue(storage.isDirtyForClientSync());
+            storage.setNoLongerDirtyForClientSync();
+            assertEquals(new ItemStack(Items.DIAMOND_SWORD), storage.getItem(0));
+
+            player.setExperienceLevels(30);
+            player.getInventory().setItem(22, new ItemStack(Items.LAPIS_LAZULI, i));
+            handler.swap(i, InteractionHand.MAIN_HAND, tablePos, player, new ConstantItemSwapAmount(1));
+            assertTrue(storage.isDirtyForClientSync());
+            storage.setNoLongerDirtyForClientSync();
+            assertEmpty(storage.getItem(0));
+            assertEquals(30 - i, player.experienceLevel);
+            assertEmpty(player.getInventory().getItem(22));
+            assertTrue(player.getItemInHand(InteractionHand.MAIN_HAND).isEnchanted());
+            assertTrue(player.getItemInHand(InteractionHand.MAIN_HAND).is(Items.DIAMOND_SWORD));
+
+        }
+    }
 }
