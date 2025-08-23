@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.server.command;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
+import com.hammy275.immersivemc.test.Tests;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -32,6 +33,10 @@ public class ImmersiveMCCommand {
                                                                 enableDisable(context.getSource(), EntityArgument.getPlayer(context, "player"), false))
                                         )
                         )
+                        .then(
+                                Commands.literal("test")
+                                        .executes(context -> beginTesting(context.getSource()))
+                        )
         );
     }
 
@@ -48,6 +53,18 @@ public class ImmersiveMCCommand {
         }
         ConfigSyncPacket.syncConfigToPlayer(player);
         source.sendSuccess(Component.translatable("commands." + ImmersiveMC.MOD_ID + ".enable_disable." + nowEnabled), true);
+        return 1;
+    }
+
+    private static int beginTesting(CommandSourceStack source) {
+        if (!source.hasPermission(4)) {
+            source.sendFailure(Component.translatable("commands." + ImmersiveMC.MOD_ID + ".test.no_permission"));
+            return 0;
+        } else if (!source.isPlayer()) {
+            source.sendFailure(Component.translatable("commands." + ImmersiveMC.MOD_ID + ".test.not_a_player"));
+            return 0;
+        }
+        new Tests(source.getPlayer()).runTests();
         return 1;
     }
 }
