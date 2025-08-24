@@ -1,6 +1,8 @@
 package com.hammy275.immersivemc.server;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestStorage;
+import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
@@ -12,7 +14,6 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
-import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCLevelStorage;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import net.minecraft.network.chat.Component;
@@ -42,6 +43,7 @@ public class ServerSubscriber {
         DirtyTracker.unmarkAllDirty(); // Remove dirtiness for block entities
         ImmersiveMCLevelStorage.unmarkAllItemStoragesDirty(server);
         SharedNetworkStorages.instance().getAll(LecternData.class).forEach(data -> data.bookData.setNoLongerDirty());
+        SharedNetworkStorages.instance().getAll(ChestStorage.class).forEach(ChestStorage::setNoLongerDirty);
     }
 
     public static void onPlayerTick(Player playerIn) {

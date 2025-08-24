@@ -1,8 +1,12 @@
 package com.hammy275.immersivemc.client;
 
+import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRVerify;
+import com.hammy275.immersivemc.mixin.ChestLidControllerAccessor;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -10,6 +14,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 import java.util.stream.StreamSupport;
@@ -31,5 +38,17 @@ public class ClientMixinProxy {
             }
         }
         return level.noCollision(entity, aabb);
+    }
+
+    public static <T extends BlockEntity> void handleForcedLidAnimation(Level level, BlockPos pos, BlockState state, T blockEntity, ChestLidControllerAccessor lidController, Operation<Void> original) {
+        if (level.isClientSide()) {
+            ChestInfo info = ClientUtil.findImmersive(Immersives.immersiveChest, pos);
+            if (info != null && info.forcedOpenness >= 0) {
+                lidController.immersiveMC$setOldOpenness(lidController.immersiveMC$getOpenness());
+                lidController.immersiveMC$setOpenness(info.forcedOpenness);
+            } else {
+                original.call(level, pos, state, blockEntity);
+            }
+        }
     }
 }

@@ -26,6 +26,7 @@ public class ChestInfo extends AbstractImmersiveInfo {
     public AABB[] openCloseHitboxes = new AABB[]{null, null};
     public Vec3[] openClosePositions = new Vec3[]{null, null};
     public int light = ClientUtil.maxLight;
+    public float forcedOpenness = -1f;
 
     public ChestInfo(BlockEntity chest, BlockEntity otherChest) {
         super(chest.getBlockPos()); // Accounts for double chest

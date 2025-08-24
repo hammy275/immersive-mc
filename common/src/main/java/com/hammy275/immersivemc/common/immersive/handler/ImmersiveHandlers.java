@@ -8,14 +8,14 @@ import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.compat.util.CompatModule;
 import com.hammy275.immersivemc.common.immersive.CommonBookData;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ApothSalvagingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.CraftingTableStorage;
-import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ApothSalvagingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.GrindstoneStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternData;
-import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class ImmersiveHandlers {
     public static final ImmersiveHandler<?> barrelHandler = new BarrelHandler();
     public static final WorldStorageHandler<BeaconStorage> beaconHandler = new BeaconHandler();
     public static final ImmersiveHandler<?> brewingStandHandler = new BrewingStandHandler();
-    public static final ImmersiveHandler<ListOfItemsStorage> chestHandler = new ChestHandler();
+    public static final ImmersiveHandler<ChestStorage> chestHandler = new ChestHandler();
     public static final ImmersiveHandler<?> chiseledBookshelfHandler = new ChiseledBookshelfHandler();
     public static final WorldStorageHandler<CraftingTableStorage> craftingHandler = new CraftingHandler();
     public static final ImmersiveHandler<NullStorage> doorHandler = new DoorHandler();

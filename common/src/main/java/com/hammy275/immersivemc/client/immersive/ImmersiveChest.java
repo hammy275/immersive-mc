@@ -12,7 +12,7 @@ import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import com.hammy275.immersivemc.common.util.Util;
@@ -39,7 +39,7 @@ import org.vivecraft.api.client.VRClientAPI;
 import java.util.List;
 import java.util.Objects;
 
-public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStorage> {
+public class ImmersiveChest extends AbstractImmersive<ChestInfo, ChestStorage> {
     public static final double spacing = 3d/16d;
     private final double threshold = 0.03;
     // Intentionally stored outside infos, so a chest close (which removes the info) will still have a cooldown
@@ -244,7 +244,7 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
     }
 
     @Override
-    public ImmersiveHandler<ListOfItemsStorage> getHandler() {
+    public ImmersiveHandler<ChestStorage> getHandler() {
         return ImmersiveHandlers.chestHandler;
     }
 
@@ -261,10 +261,11 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
     }
 
     @Override
-    public void processStorageFromNetwork(ChestInfo info, ListOfItemsStorage storage) {
+    public void processStorageFromNetwork(ChestInfo info, ChestStorage storage) {
         for (int i = 0; i < storage.getItems().size(); i++) {
             info.hitboxes.get(i).item = storage.getItems().get(i);
         }
+        info.forcedOpenness = storage.getOpenness();
     }
 
     @Override

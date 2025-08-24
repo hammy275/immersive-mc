@@ -1,11 +1,12 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
-import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
+import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -23,19 +24,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class ChestHandler extends ChestLikeHandler implements MultiblockImmersiveHandler<ListOfItemsStorage> {
+public class ChestHandler extends ChestLikeHandler<ChestStorage> implements MultiblockImmersiveHandler<ChestStorage> {
 
     @Override
-    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public ChestStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         BlockEntity blockEntity = player.level().getBlockEntity(pos);
+        ListOfItemsStorage itemsStorage;
         if (blockEntity instanceof ChestBlockEntity cbe) {
-            ListOfItemsStorage storage = (ListOfItemsStorage) super.makeInventoryContents(player, pos);
+            itemsStorage = makeBaseInventoryContents(player, pos);
             ChestBlockEntity otherChest = Util.getOtherChest(cbe);
             if (otherChest != null) {
-                ListOfItemsStorage otherStorage = (ListOfItemsStorage) super.makeInventoryContents(player, otherChest.getBlockPos());
-                storage.getItems().addAll(otherStorage.getItems());
+                ListOfItemsStorage otherStorage = makeBaseInventoryContents(player, pos);
+                itemsStorage.getItems().addAll(otherStorage.getItems());
             }
-            return storage;
         } else { // Is an ender chest
             // NOTE: On (1.19.2) Forge, PlayerEnderChestContainer#items is private; hence why we for loop here
             // instead of just initializing directly from the items list.
@@ -43,7 +44,13 @@ public class ChestHandler extends ChestLikeHandler implements MultiblockImmersiv
             for (int i = 0; i < player.getEnderChestInventory().getContainerSize(); i++) {
                 items.add(player.getEnderChestInventory().getItem(i));
             }
-            return new ListOfItemsStorage(items, 27);
+            itemsStorage = new ListOfItemsStorage(items, 27);
+        }
+        ChestStorage lidStorage = SharedNetworkStorages.instance().get(player.level(), pos, this);
+        if (lidStorage != null) {
+            return new ChestStorage(itemsStorage, lidStorage);
+        } else {
+            return new ChestStorage(itemsStorage);
         }
     }
 
@@ -60,6 +67,10 @@ public class ChestHandler extends ChestLikeHandler implements MultiblockImmersiv
     @Override
     public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
         BlockEntity blockEntity = player.level().getBlockEntity(pos);
+        ChestStorage lidStorage = SharedNetworkStorages.instance().get(player.level(), pos, this);
+        if (lidStorage != null && lidStorage.isDirty()) {
+            return true;
+        }
         if (blockEntity instanceof EnderChestBlockEntity) {
             return player.tickCount % 2 == 0; // Every other tick for dirtiness. Not ideal, but works.
         } else {
@@ -70,6 +81,11 @@ public class ChestHandler extends ChestLikeHandler implements MultiblockImmersiv
             }
             return isDirtyForClientSync;
         }
+    }
+
+    @Override
+    public ChestStorage getEmptyNetworkStorage() {
+        return new ChestStorage();
     }
 
     @Override
