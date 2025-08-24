@@ -1,11 +1,11 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.ClientUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class ChestInfo extends AbstractImmersiveInfo {
     public boolean isOpen = false;
     public double lastY0;
     public double lastY1;
-    public AABB[] openCloseHitboxes = new AABB[]{null, null};
+    public BoundingBox[] openCloseHitboxes = new BoundingBox[]{null, null};
     public Vec3[] openClosePositions = new Vec3[]{null, null};
     public int light = ClientUtil.maxLight;
     public float forcedOpenness = -1f;

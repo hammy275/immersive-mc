@@ -40,10 +40,11 @@ public class ClientMixinProxy {
         return level.noCollision(entity, aabb);
     }
 
-    public static <T extends BlockEntity> void handleForcedLidAnimation(Level level, BlockPos pos, BlockState state, T blockEntity, ChestLidControllerAccessor lidController, Operation<Void> original) {
+    public static <T extends BlockEntity> void handleForcedLidAnimation(Level level, BlockPos pos, BlockState state, T blockEntity, Operation<Void> original) {
         if (level.isClientSide()) {
             ChestInfo info = ClientUtil.findImmersive(Immersives.immersiveChest, pos);
             if (info != null && info.forcedOpenness >= 0) {
+                ChestLidControllerAccessor lidController = Util.getChestLidController(blockEntity);
                 lidController.immersiveMC$setOldOpenness(lidController.immersiveMC$getOpenness());
                 lidController.immersiveMC$setOpenness(info.forcedOpenness);
             } else {

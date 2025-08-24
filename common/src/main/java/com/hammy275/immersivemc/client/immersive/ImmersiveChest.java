@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveClientConstants;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
@@ -19,6 +20,7 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -35,6 +37,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.vivecraft.api.client.VRClientAPI;
+import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.Objects;
@@ -159,29 +162,23 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ChestStorage> {
         for (int chestNum = 0; chestNum <= 1; chestNum++) {
             BlockEntity chest = chests[chestNum];
             if (chest == null) continue;
+
+            float openness = Util.getChestLidController(chest).immersiveMC$getOpenness();
+            openness = 1f - openness;
+            openness = 1f - openness * openness * openness;
             Vec3 forward = info.forward.getUnitVec3();
-            Vec3 left = info.forward.getCounterClockWise().getUnitVec3();
-            Vec3 frontMid = Vec3.upFromBottomCenterOf(chest.getBlockPos(), 1).add(forward.multiply(0.5, 0.5, 0.5));
-            if (info.isOpen) {
-                Vec3 linePos = frontMid.add(forward.multiply(-0.5, -0.5, -0.5));
-                linePos = linePos.add(0, 0.5, 0);
-                info.openClosePositions[chestNum] = linePos;
-                info.openCloseHitboxes[chestNum] = new AABB(
-                        linePos.add(left.multiply(-0.5, -0.5, -0.5)).add(0, -1d/4d, 0)
-                                .add(forward.multiply(-0.625, -0.625, -0.625)),
-                        linePos.add(left.multiply(0.5, 0.5, 0.5)).add(0, 1d/4d, 0)
-                                .add(forward.multiply(0.625, 0.625, 0.625))
-                );
-            } else {
-                Vec3 linePos = frontMid.add(0, -0.375, 0);
-                info.openClosePositions[chestNum] = linePos;
-                info.openCloseHitboxes[chestNum] = new AABB(
-                        linePos.add(left.multiply(-0.5, -0.5, -0.5)).add(0, -1d/4d, 0)
-                                .add(forward.multiply(-0.15, -0.15, -0.15)),
-                        linePos.add(left.multiply(0.5, 0.5, 0.5)).add(0, 1d/4d, 0)
-                                .add(forward.multiply(0.15, 0.15, 0.15))
-                );
-            }
+            Vec3 chestBackTopPos = Vec3.atBottomCenterOf(chest.getBlockPos()).add(forward.scale(-0.5)).add(0, 10d/16d, 0);
+
+
+            Vector3f lidVecF = new Vector3f(0, 0, 1);
+            float xRot = openness * (float) Math.PI / 2f;
+            lidVecF.rotate(Axis.XN.rotation(xRot));
+            lidVecF.rotate(Axis.YN.rotationDegrees(info.forward.toYRot()));
+            Vec3 lidVec = new Vec3(lidVecF.x, lidVecF.y, lidVecF.z);
+            info.openClosePositions[chestNum] = chestBackTopPos.add(lidVec.scale(0.5));
+            AABB aabbBase = AABB.ofSize(info.openClosePositions[chestNum], 0.9, 0.3, 1.2);
+            info.openCloseHitboxes[chestNum] = OBBFactory.instance().create(aabbBase, xRot, Math.toRadians(info.forward.toYRot()), 0);
+
         }
 
         if (openCloseCooldown <= 0 && !ActiveConfig.active().rightClickChestInteractions) {
