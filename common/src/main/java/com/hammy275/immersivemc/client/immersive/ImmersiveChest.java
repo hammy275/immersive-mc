@@ -114,6 +114,9 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
         info.light = ImmersiveClientLogicHelpers.instance().getLight(info.getBlockPosition().above());
         if (Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition()) instanceof ChestBlockEntity cbe) {
             info.otherChest = Util.getOtherChest(cbe);
+            if (info.otherChest != null) {
+                info.otherPos = info.otherChest.getBlockPos();
+            }
         }
 
         BlockEntity[] chests = new BlockEntity[]{info.chest, info.otherChest};
@@ -271,14 +274,10 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
     }
 
     public boolean chestsValid(ChestInfo info) {
-        try {
-            boolean mainChestExists = getHandler().isValidBlock(info.getBlockPosition(), info.chest.getLevel());
-            boolean otherChestExists = info.otherChest == null ||
-                    (info.chest.getLevel() != null && info.chest.getLevel().getBlockEntity(info.otherPos) instanceof ChestBlockEntity);
-            return mainChestExists && otherChestExists;
-        } catch (NullPointerException e) {
-            return false;
-        }
+        boolean mainChestExists = getHandler().isValidBlock(info.getBlockPosition(), info.chest.getLevel());
+        boolean otherChestExists = info.otherChest == null ||
+                (info.chest.getLevel() != null && info.chest.getLevel().getBlockEntity(info.otherPos) instanceof ChestBlockEntity);
+        return mainChestExists && otherChestExists;
     }
 
     public static ChestInfo findImmersive(BlockEntity chest) {
