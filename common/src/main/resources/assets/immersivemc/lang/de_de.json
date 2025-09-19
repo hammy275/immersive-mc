@@ -67,8 +67,6 @@
   "config.immersivemc.ranged_grab.desc": "Schalte das Aufheben von entfernten Gegenständen durch eine Zugbewegung des Handgelenks mit gedrücktem Auslöseknopf an/aus.",
   "config.immersivemc.repeater": "Nutze Redstone Verstärker Immersion [nur in VR]",
   "config.immersivemc.repeater.desc": "Schaltet das physikalische Verschieben von Redstone Verstärker Fakeln an/aus.",
-  "config.immersivemc.shield": "Nutze Immersive Schilde [nur in VR]",
-  "config.immersivemc.shield.desc": "Wenn aktiviert, erlaubt es einem VR Spieler ein Schild in eine Richtung zu halten um Schaden/Projektiele abzuwehren; es besteht keine Notwendigkeit Rechtklick zu drücken.",
   "config.immersivemc.shulker": "Nutze Shulker Kisten Immersion",
   "config.immersivemc.shulker.desc": "Schaltet das Nutzen von Immersive Shulker Kisten an/aus. Du kannst die Shulker Kiste schlagen um die Gegenstände, die oben angezeigt werden zu wechseln!",
   "config.immersivemc.smithing_table": "Nutze Schmiedetisch Immersion",

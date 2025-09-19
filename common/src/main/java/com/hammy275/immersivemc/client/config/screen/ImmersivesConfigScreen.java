@@ -88,7 +88,6 @@ public class ImmersivesConfigScreen extends Screen {
             options.add(ScreenUtils.createOption("door", config -> config.useDoorImmersive, (config, newVal) -> config.useDoorImmersive = newVal));
             options.add(ScreenUtils.createOption("pet", config -> config.allowPetting, (config, newVal) -> config.allowPetting = newVal));
             options.add(ScreenUtils.createOption("ranged_grab", config -> config.useRangedGrabImmersive, (config, newVal) -> config.useRangedGrabImmersive = newVal));
-            options.add(ScreenUtils.createOption("shield", config -> config.useShieldImmersive, (config, newVal) -> config.useShieldImmersive = newVal));
             options.add(ScreenUtils.createOption("throw", config -> config.useThrowingImmersive, (config, newVal) -> config.useThrowingImmersive = newVal));
             options.add(ScreenUtils.createOption("written_book", config -> config.useWrittenBookImmersive, (config, newVal) -> config.useWrittenBookImmersive = newVal));
         }
