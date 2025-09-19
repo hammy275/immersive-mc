@@ -158,7 +158,6 @@ public class ConfigConverter {
         addBothConversion("feed_animals", Boolean.class, (config, val) -> config.useFeedingAnimalsImmersive = val);
         addBothConversion("shulker_box_immersion", Boolean.class, (config, val) -> config.useShulkerImmersive = val);
         addBothConversion("can_pet_any_living", Boolean.class, (config, val) -> config.allowPettingAnythingLiving = val);
-        addBothConversion("immersive_shield", Boolean.class, (config, val) -> config.useShieldImmersive = val);
         addBothConversion("ranged_grab_range", Integer.class, (config, val) -> config.rangedGrabRange = val);
         addBothConversion("beacon_immersion", Boolean.class, (config, val) -> config.useBeaconImmersive = val);
         addBothConversion("barrel_immersion", Boolean.class, (config, val) -> config.useBarrelImmersive = val);
