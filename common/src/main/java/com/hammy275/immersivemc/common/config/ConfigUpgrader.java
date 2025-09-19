@@ -22,6 +22,9 @@ public class ConfigUpgrader {
             if (version == 1) {
                 // Add version value
                 config.put(COMMON_CONFIG_VERSION, 1);
+            } else if (version == 2) {
+                // Remove shield Immersive setting since it's no longer used
+                config.remove("useShieldImmersive");
             }
 
             version++;

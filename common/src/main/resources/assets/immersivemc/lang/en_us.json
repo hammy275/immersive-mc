@@ -107,8 +107,6 @@
   "config.immersivemc.ranged_grab.desc": "Enables/disables the ability for VR players to grab items by flicking their wrist after holding down the trigger.",
   "config.immersivemc.repeater": "Use Repeater Immersive [VR Only]",
   "config.immersivemc.repeater.desc": "Enables/disables the ability for VR players to physically move redstone repeater torches.",
-  "config.immersivemc.shield": "Use Immersive Shields [VR Only]",
-  "config.immersivemc.shield.desc": "When enabled, allows VR users to hold their shields in the direction of something to block it; no need to right click!",
   "config.immersivemc.shulker": "Use Shulker Box Immersive",
   "config.immersivemc.shulker.desc": "Enables/disables the ability to use the Shulker Box immersive. You can punch the Shulker Box to cycle which items are shown!",
   "config.immersivemc.smithing_table": "Use Smithing Table Immersive",
