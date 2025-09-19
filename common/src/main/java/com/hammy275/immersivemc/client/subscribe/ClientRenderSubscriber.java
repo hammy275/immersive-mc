@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.client.subscribe;
 
-import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
@@ -16,18 +15,12 @@ import com.hammy275.immersivemc.common.config.ItemGuideColorData;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.util.RGBA;
-import com.hammy275.immersivemc.common.util.ShieldUtil;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.blf02.vrapi.api.data.IVRData;
-import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -69,19 +62,6 @@ public class ClientRenderSubscriber {
             // It's fine, since we were only going to read it anyway!!
         }
 
-        // Draw shield hitbox(es)
-        if (VRPluginVerify.clientInVR()) {
-            for (InteractionHand iHand : InteractionHand.values()) {
-                if (Minecraft.getInstance().player.getItemInHand(iHand).get(DataComponents.BLOCKS_ATTACKS) != null) {
-                    IVRPlayer vrPlayer = Platform.isDevelopmentEnvironment() ?
-                            VRPlugin.API.getVRPlayer(Minecraft.getInstance().player) :
-                            VRPlugin.API.getRenderVRPlayer();
-                    IVRData hand = vrPlayer.getController(iHand.ordinal());
-                    ImmersiveRenderHelpers.instance().renderHitbox(stack, ShieldUtil.getShieldHitbox(Minecraft.getInstance().player, hand, iHand),
-                            false, 1, 1, 1);
-                }
-            }
-        }
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch(); // Render out immersives
 
         // Render item guides separately so items behind item guides can be seen
