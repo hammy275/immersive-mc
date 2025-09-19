@@ -83,8 +83,6 @@
   "config.immersivemc.ranged_grab.desc": "Schakelt de mogelijkheid voor VR-spelers in/uit om voorwerpen te pakken door met hun pols te bewegen nadat ze de trekker ingedrukt hebben.",
  "config.immersivemc.repeater": "Gebruik Repeater Immersion [alleen VR]",
   "config.immersivemc.repeater.desc": "Schakelt de mogelijkheid in/uit voor VR-spelers om Redstone Repeater-fakkels fysiek te verplaatsen.",
-  "config.immersivemc.shield": "Gebruik meeslepende schilden [alleen VR]",
-  "config.immersivemc.shield.desc": "Wanneer ingeschakeld, kunnen VR-gebruikers hun schilden in de richting van iets houden om het te blokkeren; rechtsklikken is niet nodig!",
   "config.immersivemc.shulker": "Gebruik Shulker Box Immersion",
   "config.immersivemc.shulker.desc": "Schakelt de mogelijkheid in/uit om de meeslepende Shulker Box te gebruiken. Je kunt op de Shulker Box slaan om te wisselen welke voorwerpen worden getoond!",
   "config.immersivemc.smithing_table": "Gebruik Smithing Table Immersion",

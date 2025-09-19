@@ -79,7 +79,6 @@ public class ActiveConfig implements Cloneable {
     public boolean useFeedingAnimalsImmersive = true;
     public boolean useShulkerImmersive = true;
     public boolean allowPettingAnythingLiving = false;
-    public boolean useShieldImmersive = true;
     public int rangedGrabRange = 8;
     public boolean useBeaconImmersive = true;
     public boolean useBarrelImmersive = true;
@@ -98,7 +97,7 @@ public class ActiveConfig implements Cloneable {
     public boolean useApotheosisSalvagingTableImmersive = true;
     public boolean useGrindstoneImmersive = true;
 
-    public int commonConfigVersion = 2;
+    public int commonConfigVersion = 3;
     public static final String COMMON_CONFIG_VERSION = "commonConfigVersion";
 
     static {
@@ -293,7 +292,6 @@ public class ActiveConfig implements Cloneable {
         useFeedingAnimalsImmersive = useFeedingAnimalsImmersive && other.useFeedingAnimalsImmersive;
         useShulkerImmersive = useShulkerImmersive && other.useShulkerImmersive;
         allowPettingAnythingLiving = allowPettingAnythingLiving && other.allowPettingAnythingLiving;
-        useShieldImmersive = useShieldImmersive && other.useShieldImmersive;
         rangedGrabRange = Math.min(rangedGrabRange, other.rangedGrabRange);
         useBeaconImmersive = useBeaconImmersive && other.useBeaconImmersive;
         useBarrelImmersive = useBarrelImmersive && other.useBarrelImmersive;
@@ -337,7 +335,6 @@ public class ActiveConfig implements Cloneable {
         useFeedingAnimalsImmersive = false;
         useShulkerImmersive = false;
         allowPettingAnythingLiving = false;
-        useShieldImmersive = false;
         rangedGrabRange = 0;
         useBeaconImmersive = false;
         useBarrelImmersive = false;

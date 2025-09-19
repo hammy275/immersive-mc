@@ -20,8 +20,6 @@
     "LecternBlockEntityAccessor",
     "LevelMixin",
     "LivingEntityAccessor",
-    "LivingEntityMixin",
-    "PlayerMixin",
     "ProjectileAccessor",
     "ReachEntityAttributesMixin",
     "ServerPlayerGameModeMixin",
