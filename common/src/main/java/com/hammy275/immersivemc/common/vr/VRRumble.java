@@ -4,7 +4,12 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.DoubleControllerVibrate;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import org.vivecraft.api.VRAPI;
+import org.vivecraft.api.client.VRClientAPI;
+import org.vivecraft.api.data.VRBodyPart;
+import org.vivecraft.api.server.VRServerAPI;
 
 public class VRRumble {
     private static boolean rumbleInVRConfigCheck(Player player) {
@@ -15,21 +20,24 @@ public class VRRumble {
         }
     }
 
-    public static void rumbleIfVR(Player player, int controller, float rumbleDuration) {
+    public static void rumbleIfVR(Player player, InteractionHand hand, float rumbleDuration) {
         // Note: All rumble in ImmersiveMC should converge to this function call for config checking
-        if (VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player) &&
-            rumbleInVRConfigCheck(player)) {
-            VRPlugin.API.triggerHapticPulse(controller, rumbleDuration, player instanceof ServerPlayer sp ? sp : null);
+        if (VRPluginVerify.playerInVR(player) && rumbleInVRConfigCheck(player)) {
+            if (player instanceof ServerPlayer sp) {
+                VRServerAPI.instance().sendHapticPulse(sp, VRBodyPart.fromInteractionHand(hand), rumbleDuration);
+            } else if (player.isLocalPlayer()) {
+                VRClientAPI.instance().triggerHapticPulse(VRBodyPart.fromInteractionHand(hand), rumbleDuration);
+            }
         }
     }
 
     public static void doubleRumbleIfVR(Player player, float rumbleDuration) {
-        if (VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player)) {
+        if (VRPluginVerify.playerInVR(player)) {
             if (player instanceof ServerPlayer sp) {
                 Network.INSTANCE.sendToPlayer(sp, new DoubleControllerVibrate(rumbleDuration));
             } else {
-                rumbleIfVR(player, 0, rumbleDuration);
-                rumbleIfVR(player, 1, rumbleDuration);
+                rumbleIfVR(player, InteractionHand.MAIN_HAND, rumbleDuration);
+                rumbleIfVR(player, InteractionHand.OFF_HAND, rumbleDuration);
             }
         }
     }

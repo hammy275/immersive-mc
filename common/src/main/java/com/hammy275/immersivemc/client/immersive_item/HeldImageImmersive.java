@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import org.vivecraft.api.data.VRBodyPartData;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -18,13 +19,13 @@ public class HeldImageImmersive extends AbstractHandImmersive<HeldImageImmersive
     private int lastSlot = -1;
 
     @Override
-    protected void render(HeldImageImmersiveInfo<?> info, PoseStack stack, IVRData hand) {
+    protected void render(HeldImageImmersiveInfo<?> info, PoseStack stack, VRBodyPartData hand) {
         ImmersiveRenderHelpers.instance().renderImage(stack, info.heldImage, 0, 0, 1, 1,
                 hand.position(), info.size, info.light, null);
     }
 
     @Override
-    protected void tick(HeldImageImmersiveInfo<?> info, IVRData hand, IVRData other) {
+    protected void tick(HeldImageImmersiveInfo<?> info, VRBodyPartData hand, VRBodyPartData other) {
         info.light = ImmersiveClientLogicHelpers.instance().getLight(BlockPos.containing(hand.position()));
         doTickerTick(info, hand);
     }
@@ -47,7 +48,7 @@ public class HeldImageImmersive extends AbstractHandImmersive<HeldImageImmersive
     }
 
     @Override
-    public boolean onLeftClick(HeldImageImmersiveInfo<?> info, IVRData hand, IVRData other) {
+    public boolean onLeftClick(HeldImageImmersiveInfo<?> info, VRBodyPartData hand, VRBodyPartData other) {
         // No left-click interactions
         return false;
     }

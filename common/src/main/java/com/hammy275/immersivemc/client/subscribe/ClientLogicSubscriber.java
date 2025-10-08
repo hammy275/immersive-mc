@@ -28,12 +28,9 @@ import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
 import com.hammy275.immersivemc.server.api_impl.SharedNetworkStoragesImpl;
-import net.blf02.vrapi.api.data.IVRData;
-import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -52,6 +49,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.vivecraft.api.VRAPI;
+import org.vivecraft.api.data.VRBodyPartData;
+import org.vivecraft.api.data.VRPose;
 
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -273,10 +273,10 @@ public class ClientLogicSubscriber {
                 singleton.tick(info);
                 if (info.hasHitboxes()) {
                     if (VRPluginVerify.clientInVR()) {
-                        IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
-                        for (int i = 0; i <= 1; i++) {
-                            info.setSlotHovered(Util.getFirstIntersect(vrPlayer.getController(i).position(),
-                                    info.getAllHitboxes().stream().map((box) -> box != null ? box.getHitbox() : null).toList()).orElse(-1), i);
+                        VRPose vrPose = VRAPI.instance().getVRPose(player);
+                        for (InteractionHand hand : InteractionHand.values()) {
+                            info.setSlotHovered(Util.getFirstIntersect(vrPose.getHand(hand).getPos(),
+                                    info.getAllHitboxes().stream().map((box) -> box != null ? box.getHitbox() : null).toList()).orElse(-1), hand.ordinal());
                         }
                     }
                     if (!VRPluginVerify.clientInVR() || ActiveConfig.active().rightClickImmersiveInteractionsInVR) {
@@ -320,14 +320,14 @@ public class ClientLogicSubscriber {
                 if (info.hasHitboxes()) {
                     boolean inBox = false;
                     if (VRPluginVerify.clientInVR()) {
-                        IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player);
-                        info.slotHovered = Util.getFirstIntersect(vrPlayer.getController0().position(),
+                        VRPose vrPose = VRAPI.instance().getVRPose(Minecraft.getInstance().player);
+                        info.slotHovered = Util.getFirstIntersect(vrPose.getMainHand().getPos(),
                                 info.getAllHitboxes()).orElse(-1);
                         inBox = info.slotHovered != -1;
-                        info.slotHovered2 = Util.getFirstIntersect(vrPlayer.getController1().position(),
+                        info.slotHovered2 = Util.getFirstIntersect(vrPose.getOffHand().getPos(),
                                 info.getAllHitboxes()).orElse(-1);
                         if (info instanceof InfoTriggerHitboxes tInfo) {
-                            info.triggerHitboxSlotHovered = Util.getFirstIntersect(vrPlayer.getController(tInfo.getVRControllerNum()).position(),
+                            info.triggerHitboxSlotHovered = Util.getFirstIntersect(vrPose.getHand(tInfo.getVRHand()).getPos(),
                                     tInfo.getTriggerHitboxes()).orElse(-1);
                             inBox = inBox || info.triggerHitboxSlotHovered != -1;
                         } else {
@@ -375,7 +375,7 @@ public class ClientLogicSubscriber {
     public static boolean handleLeftClick(Player player) {
         if (Minecraft.getInstance().player == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE_CLIENT.disableImmersiveMCOutsideVR)) return false;
 
-        boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
+        boolean inVR = VRPluginVerify.playerInVR(player);
         if (inVR) {
             for (AbstractHandImmersive<?> immersive : HandImmersives.HAND_IMMERSIVES) {
                 boolean handledClick = immersive.attemptLeftClickAll();
@@ -398,8 +398,8 @@ public class ClientLogicSubscriber {
                 for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
                     if (!(info instanceof InfoTriggerHitboxes)) break;
                     InfoTriggerHitboxes triggerInfo = (InfoTriggerHitboxes) info;
-                    IVRData data = VRPlugin.API.getVRPlayer(player).getController(triggerInfo.getVRControllerNum());
-                    Optional<Integer> triggerHit = Util.getFirstIntersect(data.position(), triggerInfo.getTriggerHitboxes());
+                    VRBodyPartData data = VRAPI.instance().getVRPose(player).getHand(triggerInfo.getVRHand());
+                    Optional<Integer> triggerHit = Util.getFirstIntersect(data.getPos(), triggerInfo.getTriggerHitboxes());
                     if (triggerHit.isPresent()) {
                         singleton.onAnyRightClick(info);
                         singleton.handleTriggerHitboxRightClick(triggerInfo, player, triggerHit.get());
@@ -480,7 +480,7 @@ public class ClientLogicSubscriber {
     public static int handleRightClick(Player player) {
         if (Minecraft.getInstance().gameMode == null || (!VRPluginVerify.clientInVR() && ActiveConfig.FILE_CLIENT.disableImmersiveMCOutsideVR)) return -1;
         if (ActiveConfig.active().crouchMode.bypassImmersive() && Minecraft.getInstance().player.isCrouching()) return -1;
-        boolean inVR = VRPluginVerify.hasAPI && VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(player);
+        boolean inVR = VRPluginVerify.playerInVR(player);
 
         Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(Minecraft.getInstance().player);
         Vec3 start = startAndEnd.getA();

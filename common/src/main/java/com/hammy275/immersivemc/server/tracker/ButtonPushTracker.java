@@ -3,19 +3,20 @@ package com.hammy275.immersivemc.server.tracker;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.mixin.ButtonBlockMixin;
-import net.blf02.vrapi.api.data.IVRData;
-import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.vivecraft.api.VRAPI;
+import org.vivecraft.api.data.VRBodyPartData;
+import org.vivecraft.api.data.VRPose;
 
 public class ButtonPushTracker extends AbstractTracker {
 
@@ -25,10 +26,10 @@ public class ButtonPushTracker extends AbstractTracker {
 
     @Override
     protected void tick(Player player) {
-        IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
-        for (int i = 0; i <= 1; i++) {
-            IVRData controller = vrPlayer.getController(i);
-            BlockPos pos = BlockPos.containing(controller.position());
+        VRPose vrPose = VRAPI.instance().getVRPose(player);
+        for (InteractionHand hand : InteractionHand.values()) {
+            VRBodyPartData handPose = vrPose.getHand(hand);
+            BlockPos pos = BlockPos.containing(handPose.getPos());
             BlockState state = player.level().getBlockState(pos);
             if (state.getBlock() instanceof ButtonBlock && !state.getValue(ButtonBlock.POWERED)) {
                 ButtonBlock button = (ButtonBlock) state.getBlock();
@@ -36,13 +37,13 @@ public class ButtonPushTracker extends AbstractTracker {
                         CollisionContext.of(player));
                 // Start and end vectors need to be slightly different, so we just give a bit extra on the y axis
                 BlockHitResult res = shape.clip(
-                        controller.position().add(0, -0.01, 0),
-                        controller.position().add(0, 0.01, 0),
+                        handPose.getPos().add(0, -0.01, 0),
+                        handPose.getPos().add(0, 0.01, 0),
                         pos);
                 if (res != null && res.getBlockPos().equals(pos)) {
                     button.press(state, player.level(), pos, null);
                     ((ButtonBlockMixin) button).immersiveMC$playButtonSound(null, player.level(), pos, true);
-                    VRRumble.rumbleIfVR(player, i, CommonConstants.vibrationTimeWorldInteraction);
+                    VRRumble.rumbleIfVR(player, hand, CommonConstants.vibrationTimeWorldInteraction);
                 }
             }
         }
@@ -51,7 +52,7 @@ public class ButtonPushTracker extends AbstractTracker {
     @Override
     protected boolean shouldTick(Player player) {
         return ActiveConfig.FILE_SERVER.useButtonImmersive &&
-                VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(player) && VRPlugin.API.apiActive(player)
+                VRPluginVerify.hasAPI && VRPluginVerify.playerInVR(player)
                 && ActiveConfig.getConfigForPlayer(player).useButtonImmersive;
     }
 }

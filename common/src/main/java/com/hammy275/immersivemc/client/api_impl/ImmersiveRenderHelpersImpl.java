@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.client.api_impl;
 
-import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
@@ -12,12 +11,10 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.obb.OBBRotList;
 import com.hammy275.immersivemc.common.obb.RotType;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -32,6 +29,8 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.vivecraft.api.client.VRClientAPI;
+import org.vivecraft.api.data.VRPose;
 
 public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
 
@@ -116,10 +115,8 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
                 stack.mulPose(Axis.YP.rotationDegrees(180));
                 Vec3 textMove;
                 if (VRPluginVerify.hasAPI && VRPluginVerify.clientInVR()) {
-                    IVRPlayer textMovePlayer = Platform.isDevelopmentEnvironment() ?
-                            VRPlugin.API.getVRPlayer(Minecraft.getInstance().player) :
-                            VRPlugin.API.getRenderVRPlayer();
-                    textMove = textMovePlayer.getHMD().getLookAngle();
+                    VRPose textMovePose = VRClientAPI.instance().getWorldRenderPose();
+                    textMove = textMovePose.getHead().getDir();
                 } else {
                     textMove = Minecraft.getInstance().player.getLookAngle();
                 }
@@ -291,9 +288,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
 
     private void faceTowardsPlayer(PoseStack stack, Vec3 renderPos) {
         if (VRPluginVerify.clientInVR()) {
-            Vec3 target = Platform.isDevelopmentEnvironment() ?
-                    VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD().position() :
-                    VRPlugin.API.getRenderVRPlayer().getHMD().position();
+            Vec3 target = VRClientAPI.instance().getWorldRenderPose().getHead().getPos();
             Vec3 ray = target.subtract(renderPos);
             Vec3 rayNoY = ray.multiply(1, 0, 1);
             OBBRotList rotList = OBBRotList.create()

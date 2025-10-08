@@ -24,6 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.vivecraft.api.data.VRPose;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -34,19 +35,19 @@ public class PetTracker extends AbstractVRHandTracker {
     public static final double THRESHOLD = 0.02;
 
     @Override
-    protected boolean shouldRunForHand(Player player, InteractionHand hand, ItemStack stackInHand, IVRPlayer currentVRData, LastTickData lastVRData) {
+    protected boolean shouldRunForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRPose, LastTickData lastVRData) {
         return this.getPlayerPetsNearby(player).size() > 0;
     }
 
     @Override
-    protected void runForHand(Player player, InteractionHand hand, ItemStack stackInHand, IVRPlayer currentVRData, LastTickData lastVRData) {
+    protected void runForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRData, LastTickData lastVRData) {
         if (ThreadLocalRandom.current().nextInt(20) == 0) {
             for (LivingEntity entity : this.getPlayerPetsNearby(player)) {
-                if (entity.getBoundingBox().inflate(0.2).contains(currentVRData.getController(hand.ordinal()).position())) {
-                    if (LastTickVRData.getAllVelocity(lastVRData.lastPlayer.getController(hand.ordinal()),
-                            currentVRData.getController(hand.ordinal()), lastVRData) >= THRESHOLD) {
+                if (entity.getBoundingBox().inflate(0.2).contains(currentVRData.getHand(hand).position())) {
+                    if (LastTickVRData.getAllVelocity(lastVRData.lastPlayer.getHand(hand),
+                            currentVRData.getHand(hand), lastVRData) >= THRESHOLD) {
                         ServerLevel level = (ServerLevel) player.level();
-                        Vec3 pos = currentVRData.getController(hand.ordinal()).position();
+                        Vec3 pos = currentVRData.getHand(hand).position();
                         level.sendParticles(ParticleTypes.HEART, pos.x, pos.y, pos.z, ThreadLocalRandom.current().nextInt(5) + 1,
                                 0.25, 0.1, 0.25, 0.00001);
                         if (ThreadLocalRandom.current().nextInt(5) == 0) {

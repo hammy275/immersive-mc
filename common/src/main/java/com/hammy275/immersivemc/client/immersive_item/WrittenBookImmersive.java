@@ -11,18 +11,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.vivecraft.api.data.VRBodyPartData;
 
 public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo> {
 
     @Override
-    protected void render(WrittenBookInfo info, PoseStack stack, IVRData hand) {
+    protected void render(WrittenBookInfo info, PoseStack stack, VRBodyPartData hand) {
         if (info.light > -1) {
             info.bookData.render(stack, info.light, VRUtil.posRot(hand));
         }
     }
 
     @Override
-    protected void tick(WrittenBookInfo info, IVRData hand, IVRData other) {
+    protected void tick(WrittenBookInfo info, VRBodyPartData hand, VRBodyPartData other) {
         info.didClick = false;
         info.light = ImmersiveClientLogicHelpers.instance().getLight(BlockPos.containing(hand.position()));
         info.bookData.interactables.clear();
@@ -47,7 +48,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     }
 
     @Override
-    public boolean onLeftClick(WrittenBookInfo info, IVRData hand, IVRData other) {
+    public boolean onLeftClick(WrittenBookInfo info, VRBodyPartData hand, VRBodyPartData other) {
         return info.didClick;
     }
 }

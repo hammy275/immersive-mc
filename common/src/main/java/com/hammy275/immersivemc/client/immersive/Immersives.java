@@ -414,7 +414,7 @@ public class Immersives {
                                         data.resetGrind(hand);
                                     } else if (didTick) {
                                         int numParticles = ThreadLocalRandom.current().nextInt(1, 5);
-                                        Vec3 pos = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(hand.ordinal()).position();
+                                        Vec3 pos = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHand(hand).position();
                                         for (int i = 0; i < numParticles; i++) {
                                             Minecraft.getInstance().level.addParticle(ParticleTypes.ELECTRIC_SPARK,
                                                     pos.x, pos.y, pos.z,

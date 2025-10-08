@@ -38,7 +38,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 
-    modApi "curse.maven:mcvrapi-591092:6272369"
+    modApi "curse.maven:vivecraft-667903:7077387"
 
     modApi "com.terraformersmc:modmenu:14.0.0-rc.2"
     modCompileOnly "curse.maven:lootr-615106:6208764" // Waiting on 1.21.5 build
