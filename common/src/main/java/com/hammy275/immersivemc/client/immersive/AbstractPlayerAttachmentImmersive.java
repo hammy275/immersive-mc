@@ -13,7 +13,6 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -30,6 +29,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.vivecraft.api.VRAPI;
+import org.vivecraft.api.client.VRClientAPI;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -263,8 +264,8 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractPlayer
         HitResult hit = Minecraft.getInstance().hitResult;
         Player player = Minecraft.getInstance().player;
         boolean inVR = VRPluginVerify.clientInVR();
-        Vec3 vrHitStart = inVR ? VRPlugin.API.getVRPlayer(player).getHMD().position() : null;
-        Vec3 vrLook = inVR ? VRPlugin.API.getVRPlayer(player).getHMD().getLookAngle() : null;
+        Vec3 vrHitStart = inVR ? VRClientAPI.instance().getPreTickWorldPose().getHead().getPos() : null;
+        Vec3 vrLook = inVR ? VRClientAPI.instance().getPreTickWorldPose().getHead().getDir() : null;
         Vec3 vrHitEnd = inVR ? vrHitStart.add(vrLook.scale(Minecraft.getInstance().player.blockInteractionRange())) : null;
         HitResult vrHit = inVR ? player.level().clip(new ClipContext(vrHitStart, vrHitEnd, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player)) : null;
         return (hit != null && hit.getType() == HitResult.Type.BLOCK &&

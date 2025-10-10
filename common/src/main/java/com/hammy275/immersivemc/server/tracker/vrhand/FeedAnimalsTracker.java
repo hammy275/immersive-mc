@@ -4,7 +4,6 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.server.data.LastTickData;
-import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -50,8 +49,8 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
         for (Animal animal : nearbyEnts) {
             if (animal.isFood(inHand)) {
                 AABB feedbox = getMouthHitbox(animal);
-                if (feedbox.contains(vrPose.getController0().position()) && feedbox.contains(vrPose.getController1().position())
-                && vrPose.getController0().position().distanceToSqr(vrPose.getController1().position()) < 0.5) {
+                if (feedbox.contains(vrPose.getMainHand().getPos()) && feedbox.contains(vrPose.getOffHand().getPos())
+                && vrPose.getMainHand().getPos().distanceToSqr(vrPose.getOffHand().getPos()) < 0.5) {
                     InteractionResult res = animal.mobInteract(player, hand);
                     if (res == InteractionResult.CONSUME || res == InteractionResult.SUCCESS) {
                         cooldown.put(player.getGameProfile().getName(), COOLDOWN_TICKS);

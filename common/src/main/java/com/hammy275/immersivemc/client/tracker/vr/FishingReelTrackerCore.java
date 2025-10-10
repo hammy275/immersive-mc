@@ -4,11 +4,11 @@ import com.hammy275.immersivemc.client.LastClientVRData;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ReelFishPacket;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.phys.Vec3;
+import org.vivecraft.api.VRAPI;
 
 public class FishingReelTrackerCore {
 
@@ -20,7 +20,7 @@ public class FishingReelTrackerCore {
     }
 
     public static boolean shouldTick(Player player) {
-        return ActiveConfig.active().useThrowingImmersive && VRPlugin.API.playerInVR(player) &&
+        return ActiveConfig.active().useThrowingImmersive && VRAPI.instance().isVRPlayer(player) &&
                 player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof FishingRodItem &&
                 player.fishing != null;
     }

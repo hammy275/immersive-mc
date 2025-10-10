@@ -21,12 +21,10 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.BeaconConfirmPacket;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -42,6 +40,8 @@ import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.vivecraft.api.client.VRClientAPI;
+import org.vivecraft.api.data.VRBodyPartData;
 
 import java.time.Instant;
 import java.util.List;
@@ -74,7 +74,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
     @Override
     public int handleHitboxInteract(BeaconInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
         ResourceLocation id = getHandler().getID();
-        BiConsumer<HeldImageImmersiveInfo<Integer>, IVRData> heldItemTicker = !useGrabBeacon() ? null : (imageInfo, handData) -> {
+        BiConsumer<HeldImageImmersiveInfo<Integer>, VRBodyPartData> heldItemTicker = !useGrabBeacon() ? null : (imageInfo, handData) -> {
             if (!Immersives.immersiveBeacon.getTrackedObjects().contains(info)) {
                 imageInfo.shouldRemove = true;
             }
@@ -107,7 +107,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
                         secondaryId = heldImages.stream().filter(imageInfo -> {
                             int held = (int) imageInfo.heldData;
                             return (held == 5 || held == -1) && info.hitboxes.get(7).box != null
-                                    && BoundingBox.contains(info.hitboxes.get(7).box, VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(imageInfo.hand.ordinal()).position());
+                                    && BoundingBox.contains(info.hitboxes.get(7).box, VRClientAPI.instance().getPreTickWorldPose().getHand(imageInfo.hand).getPos());
                         }).findFirst().map(heldImageImmersiveInfo -> (int) heldImageImmersiveInfo.heldData).orElse(-2);
                         if (secondaryId != -2) {
                             secondaryId = info.regenSelected ? BuiltInRegistries.MOB_EFFECT.getId(MobEffects.REGENERATION.value()) : -1;
@@ -116,7 +116,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
                     effectId = heldImages.stream().filter(imageInfo -> {
                         int held = (int) imageInfo.heldData;
                         return held >= 0 && held <= 4 && info.hitboxes.get(7).box != null
-                                && BoundingBox.contains(info.hitboxes.get(7).box, VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(imageInfo.hand.ordinal()).position());
+                                && BoundingBox.contains(info.hitboxes.get(7).box, VRClientAPI.instance().getPreTickWorldPose().getHand(imageInfo.hand).getPos());
                     }).findFirst().map(heldImageImmersiveInfo -> (int) heldImageImmersiveInfo.heldData).orElse(-2);
                     if (effectId >= 0) {
                         info.effectSelected = effectId;
@@ -129,7 +129,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
             if (effectId >= 0 && secondaryId != -2 && !info.hitboxes.get(8).item.isEmpty()) {
                 effectId = info.getEffectId();
                 Network.INSTANCE.sendToServer(new BeaconConfirmPacket(info.getBlockPosition(), effectId, secondaryId));
-                VRRumble.rumbleIfVR(Minecraft.getInstance().player, 0, CommonConstants.vibrationTimeWorldInteraction);
+                VRRumble.rumbleIfVR(Minecraft.getInstance().player, InteractionHand.MAIN_HAND, CommonConstants.vibrationTimeWorldInteraction);
                 HandImmersives.heldImageImmersive.removeImages(id);
             } else {
                 return -1;

@@ -4,7 +4,6 @@ import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.client.immersive_item.info.HeldImageImmersiveInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -21,12 +20,12 @@ public class HeldImageImmersive extends AbstractHandImmersive<HeldImageImmersive
     @Override
     protected void render(HeldImageImmersiveInfo<?> info, PoseStack stack, VRBodyPartData hand) {
         ImmersiveRenderHelpers.instance().renderImage(stack, info.heldImage, 0, 0, 1, 1,
-                hand.position(), info.size, info.light, null);
+                hand.getPos(), info.size, info.light, null);
     }
 
     @Override
     protected void tick(HeldImageImmersiveInfo<?> info, VRBodyPartData hand, VRBodyPartData other) {
-        info.light = ImmersiveClientLogicHelpers.instance().getLight(BlockPos.containing(hand.position()));
+        info.light = ImmersiveClientLogicHelpers.instance().getLight(BlockPos.containing(hand.getPos()));
         doTickerTick(info, hand);
     }
 
@@ -66,7 +65,7 @@ public class HeldImageImmersive extends AbstractHandImmersive<HeldImageImmersive
     }
 
     public <T> void setHeldImage(InteractionHand hand, ResourceLocation heldImage, ResourceLocation immersiveId,
-                                 T heldData, float size, BiConsumer<HeldImageImmersiveInfo<T>, IVRData> ticker) {
+                                 T heldData, float size, BiConsumer<HeldImageImmersiveInfo<T>, VRBodyPartData> ticker) {
         this.infos.removeIf(info -> info.hand == hand);
         this.infos.add(new HeldImageImmersiveInfo<>(hand, heldImage, immersiveId, heldData, size, ticker));
     }
@@ -79,7 +78,7 @@ public class HeldImageImmersive extends AbstractHandImmersive<HeldImageImmersive
         this.infos.removeIf(info -> info.immersiveId.equals(immersiveId));
     }
 
-    private <T> void doTickerTick(HeldImageImmersiveInfo<T> info, IVRData hand) {
-        info.ticker.accept(info, hand);
+    private <T> void doTickerTick(HeldImageImmersiveInfo<T> info, VRBodyPartData handData) {
+        info.ticker.accept(info, handData);
     }
 }

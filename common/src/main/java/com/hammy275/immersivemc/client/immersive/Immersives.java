@@ -33,7 +33,6 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
 import com.hammy275.immersivemc.common.util.PosRot;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.hammy275.immersivemc.common.vr.VRPluginVerify;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
@@ -52,6 +51,7 @@ import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
+import org.vivecraft.api.client.VRClientAPI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -414,7 +414,7 @@ public class Immersives {
                                         data.resetGrind(hand);
                                     } else if (didTick) {
                                         int numParticles = ThreadLocalRandom.current().nextInt(1, 5);
-                                        Vec3 pos = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHand(hand).position();
+                                        Vec3 pos = VRClientAPI.instance().getPreTickWorldPose().getHand(hand).getPos();
                                         for (int i = 0; i < numParticles; i++) {
                                             Minecraft.getInstance().level.addParticle(ParticleTypes.ELECTRIC_SPARK,
                                                     pos.x, pos.y, pos.z,
