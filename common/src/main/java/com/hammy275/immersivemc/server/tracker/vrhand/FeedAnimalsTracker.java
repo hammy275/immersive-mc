@@ -3,7 +3,6 @@ package com.hammy275.immersivemc.server.tracker.vrhand;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.vr.VRRumble;
-import com.hammy275.immersivemc.server.data.LastTickData;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -30,7 +29,7 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
     }
 
     @Override
-    protected boolean shouldRun(Player player, VRPose vrPose, LastTickData lastVRData) {
+    protected boolean shouldRun(Player player, VRPose vrPose) {
         int currentCooldown = cooldown.getOrDefault(player.getGameProfile().getName(), 0);
         if (currentCooldown > 0) {
             cooldown.put(player.getGameProfile().getName(), --currentCooldown);
@@ -41,7 +40,7 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
     }
 
     @Override
-    protected void run(Player player, VRPose vrPose, LastTickData lastVRData) {
+    protected void run(Player player, VRPose vrPose) {
         InteractionHand hand = player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
         ItemStack inHand = player.getItemInHand(hand);
         if (inHand.isEmpty()) return;

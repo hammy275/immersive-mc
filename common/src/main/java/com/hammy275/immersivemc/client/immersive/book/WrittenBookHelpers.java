@@ -65,7 +65,7 @@ public class WrittenBookHelpers {
         BookViewScreen.BookAccess access = BookViewScreen.BookAccess.fromItem(dataHolder.getBook());
         if (access == null) return;
         ClientBookData data = dataHolder.getData();
-        Vec3 pageUp = bookPosRot.getLookAngle();
+        Vec3 pageUp = bookPosRot.getDir();
         Vec3 pageDown = pageUp.scale(-1);
         Vec3 left = data.getLeftRightVector(bookPosRot, true);
         Vec3 right = data.getLeftRightVector(bookPosRot, false);
@@ -73,7 +73,7 @@ public class WrittenBookHelpers {
 
         // Makes pos be the very top left of the page text
         Vec3 leftStartMove = isLeft ? left.scale(singlePageWidth * 0.96) : Vec3.ZERO;
-        Vec3 pos = bookPosRot.position().add(pageUp.scale(pageHalfHeight)).add(leftStartMove)
+        Vec3 pos = bookPosRot.getPos().add(pageUp.scale(pageHalfHeight)).add(leftStartMove)
                 .add(away.scale(textUpAmount)).add(pageDown.scale(9 * Math.abs(textStackScaleSize)));
         Font font = Minecraft.getInstance().font;
         int rightMod = isLeft ? 0 : 1;

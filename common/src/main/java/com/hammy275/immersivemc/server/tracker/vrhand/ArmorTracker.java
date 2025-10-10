@@ -3,7 +3,6 @@ package com.hammy275.immersivemc.server.tracker.vrhand;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.vr.VRRumble;
-import com.hammy275.immersivemc.server.data.LastTickData;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -12,12 +11,12 @@ import org.vivecraft.api.data.VRPose;
 
 public class ArmorTracker extends AbstractVRHandTracker {
     @Override
-    protected boolean shouldRunForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRPose, LastTickData lastVRData) {
+    protected boolean shouldRunForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRPose) {
         return player.getBoundingBox().contains(currentVRPose.getHand(hand).getPos());
     }
 
     @Override
-    protected void runForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRData, LastTickData lastVRData) {
+    protected void runForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRData) {
         boolean shouldEquip;
         EquipmentSlot slot = player.getEquipmentSlotForItem(stackInHand);
         if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) return;
@@ -49,7 +48,7 @@ public class ArmorTracker extends AbstractVRHandTracker {
             toEquip.setCount(1);
             player.getInventory().setItem(slot.getIndex(36), toEquip);
             stackInHand.shrink(1);
-            VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimePlayerActionAlert);
+            VRRumble.rumbleIfVR(player, hand, CommonConstants.vibrationTimePlayerActionAlert);
         }
     }
 

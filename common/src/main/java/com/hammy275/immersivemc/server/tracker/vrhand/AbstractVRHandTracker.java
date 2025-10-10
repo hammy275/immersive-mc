@@ -1,7 +1,6 @@
 package com.hammy275.immersivemc.server.tracker.vrhand;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.server.data.LastTickData;
 import com.hammy275.immersivemc.server.tracker.ServerTrackerInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,10 +21,10 @@ public abstract class AbstractVRHandTracker {
     }
 
     protected abstract boolean shouldRunForHand(Player player, InteractionHand hand, ItemStack stackInHand,
-                                                VRPose currentVRPose, LastTickData lastVRData);
+                                                VRPose currentVRPose);
 
     protected abstract void runForHand(Player player, InteractionHand hand, ItemStack stackInHand,
-                                       VRPose currentVRData, LastTickData lastVRData);
+                                       VRPose currentVRData);
 
     public abstract boolean isEnabledInConfig(ActiveConfig config);
 
@@ -33,10 +32,10 @@ public abstract class AbstractVRHandTracker {
 
     }
 
-    public void tick(Player player, VRPose currentVRPose, LastTickData lastVRData) {
+    public void tick(Player player, VRPose currentVRPose) {
         for (InteractionHand hand : InteractionHand.values()) {
-            if (shouldRunForHand(player, hand, player.getItemInHand(hand), currentVRPose, lastVRData)) {
-                runForHand(player, hand, player.getItemInHand(hand), currentVRPose, lastVRData);
+            if (shouldRunForHand(player, hand, player.getItemInHand(hand), currentVRPose)) {
+                runForHand(player, hand, player.getItemInHand(hand), currentVRPose);
             }
         }
     }

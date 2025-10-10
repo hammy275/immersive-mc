@@ -3,7 +3,6 @@ package com.hammy275.immersivemc.server.tracker.vrhand;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.mixin.AbstractCauldronBlockAccessor;
-import com.hammy275.immersivemc.server.data.LastTickData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.cauldron.CauldronInteraction;
@@ -11,12 +10,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BottleItem;
-import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PotionItem;
-import net.minecraft.world.item.SolidBucketItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
@@ -46,7 +40,7 @@ public class CauldronTracker extends AbstractVRHandTracker {
     }
 
     @Override
-    protected boolean shouldRunForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRPose, LastTickData lastVRData) {
+    protected boolean shouldRunForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRPose) {
         if (cooldown.getOrDefault(player.getUUID(), 0) > 0) return false;
         VRBodyPartData data = currentVRPose.getHand(hand);
         // If block at hand pos is cauldron or block at hand pos is air and block below is cauldron.
@@ -56,7 +50,7 @@ public class CauldronTracker extends AbstractVRHandTracker {
     }
 
     @Override
-    protected void runForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRData, LastTickData lastVRData) {
+    protected void runForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRData) {
         VRBodyPartData data = currentVRData.getHand(hand);
         BlockState handState = player.level().getBlockState(BlockPos.containing(data.getPos()));
 
