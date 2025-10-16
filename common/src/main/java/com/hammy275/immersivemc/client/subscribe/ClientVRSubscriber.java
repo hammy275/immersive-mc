@@ -9,7 +9,7 @@ import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -40,7 +40,7 @@ public class ClientVRSubscriber {
     public static void immersiveTickVR(Player player) {
         if (!Platform.isClient()) return;
         if (Minecraft.getInstance().gameMode == null) return;
-        if (!VRPluginVerify.playerInVR(player)) return;
+        if (!VRVerify.playerInVR(player)) return;
         VRPose vrPose = VRAPI.instance().getVRPose(player);
 
         // Track things the HMD is looking at (cursor is already covered in ClientLogicSubscriber)

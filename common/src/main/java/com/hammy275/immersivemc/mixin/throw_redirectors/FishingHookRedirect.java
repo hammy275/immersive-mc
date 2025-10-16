@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.mixin.throw_redirectors;
 
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.common.vr.mixin_proxy.ThrowRedirect;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
@@ -18,7 +18,7 @@ public class FishingHookRedirect {
     at = @At("RETURN"))
     public void immersiveMC$atEndOfConstruction(Player player, Level levelIn, int i, int j, CallbackInfo ci) {
         // Sadly, it makes more sense to undo Vanilla's work and handle shooting ourselves here
-        if (VRPluginVerify.hasAPI && levelIn instanceof ServerLevel level) {
+        if (VRVerify.hasAPI && levelIn instanceof ServerLevel level) {
             FishingHook me = (FishingHook) (Object) this;
             // Velocity is guessed from experimentation
             // Safe to pass the parameters as null, since they're only used in the factory.

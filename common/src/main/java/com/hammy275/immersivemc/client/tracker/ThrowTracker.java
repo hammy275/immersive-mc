@@ -7,7 +7,7 @@ import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ThrowPacket;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.common.vr.VRUtil;
 import net.minecraft.client.Minecraft;
@@ -52,7 +52,7 @@ public class ThrowTracker extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        return VRPluginVerify.clientInVR() && ActiveConfig.active().useThrowingImmersive;
+        return VRVerify.clientInVR() && ActiveConfig.active().useThrowingImmersive;
     }
 
     public boolean readyToThrow() {

@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.util.PageChangeState;
 import com.hammy275.immersivemc.common.util.PosRot;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.common.vr.VRUtil;
 import com.hammy275.immersivemc.mixin.LecternBlockEntityAccessor;
 import net.minecraft.core.BlockPos;
@@ -75,13 +75,13 @@ public class LecternData<T extends CommonBookData> implements NetworkStorage {
         }
         if (this.bookData.pageTurner == null) return;
 
-        if (!VRPluginVerify.playerInVR(this.bookData.pageTurner) &&
+        if (!VRVerify.playerInVR(this.bookData.pageTurner) &&
             this.bookData.getPageChangeState() != PageChangeState.NONE && !this.bookData.getPageChangeState().isAnim) {
             this.bookData.startNonVRPageTurnAnim(this.bookData.pageTurner, this.bookData.getPageChangeState() == PageChangeState.RIGHT_TO_LEFT);
         }
 
         PosRot lecternPosRot = getLecternPosRot(pos);
-        if (VRPluginVerify.playerInVR(this.bookData.pageTurner)) {
+        if (VRVerify.playerInVR(this.bookData.pageTurner)) {
             this.bookData.tick(lecternPosRot,
                     VRUtil.posRot(VRAPI.instance().getVRPose(this.bookData.pageTurner).getMainHand()),
                     VRUtil.posRot(VRAPI.instance().getVRPose(this.bookData.pageTurner).getOffHand()));

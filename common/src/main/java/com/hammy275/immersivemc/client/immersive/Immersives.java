@@ -33,7 +33,7 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
 import com.hammy275.immersivemc.common.util.PosRot;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
@@ -210,7 +210,7 @@ public class Immersives {
             }, ClientConstants.itemScaleSizeETable).holdsItems(true).textSupplier((info) -> {
                 EnchantingData.ETableData data = ((EnchantingData) info.getExtraData()).weakData;
                 List<Pair<Component, Vec3>> texts = new ArrayList<>();
-                if (!info.isSlotHovered(1) && (!VRPluginVerify.clientInVR() || (
+                if (!info.isSlotHovered(1) && (!VRVerify.clientInVR() || (
                         Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(-1), info.getAllHitboxes().get(1).getHitbox()).isEmpty() &&
                                 Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(0), info.getAllHitboxes().get(1).getHitbox()).isEmpty() &&
                                 Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(1), info.getAllHitboxes().get(1).getHitbox()).isEmpty()))) {
@@ -236,7 +236,7 @@ public class Immersives {
             }, ClientConstants.itemScaleSizeETable).holdsItems(true).textSupplier((info) -> {
                 EnchantingData.ETableData data = ((EnchantingData) info.getExtraData()).midData;
                 List<Pair<Component, Vec3>> texts = new ArrayList<>();
-                if (!info.isSlotHovered(2) && (!VRPluginVerify.clientInVR() || (
+                if (!info.isSlotHovered(2) && (!VRVerify.clientInVR() || (
                         Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(-1), info.getAllHitboxes().get(2).getHitbox()).isEmpty() &&
                                 Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(0), info.getAllHitboxes().get(2).getHitbox()).isEmpty() &&
                                 Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(1), info.getAllHitboxes().get(2).getHitbox()).isEmpty()))) {
@@ -262,7 +262,7 @@ public class Immersives {
             }, ClientConstants.itemScaleSizeETable).holdsItems(true).textSupplier((info) -> {
                 EnchantingData.ETableData data = ((EnchantingData) info.getExtraData()).strongData;
                 List<Pair<Component, Vec3>> texts = new ArrayList<>();
-                if (!info.isSlotHovered(3) && (!VRPluginVerify.clientInVR() || (
+                if (!info.isSlotHovered(3) && (!VRVerify.clientInVR() || (
                         Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(-1), info.getAllHitboxes().get(3).getHitbox()).isEmpty() &&
                                 Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(0), info.getAllHitboxes().get(3).getHitbox()).isEmpty() &&
                                 Util.rayTraceClosest(ClientUtil.getVRStartAndEnd(1), info.getAllHitboxes().get(3).getHitbox()).isEmpty()))) {
@@ -592,6 +592,6 @@ public class Immersives {
     }
 
     private static boolean grindGrindstone() {
-        return VRPluginVerify.clientInVR() && ActiveConfig.active().useGrindMotionGrindstoneInVR;
+        return VRVerify.clientInVR() && ActiveConfig.active().useGrindMotionGrindstoneInVR;
     }
 }

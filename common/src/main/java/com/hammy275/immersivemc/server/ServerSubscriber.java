@@ -9,7 +9,7 @@ import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternDat
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCLevelStorage;
@@ -43,7 +43,7 @@ public class ServerSubscriber {
         for (AbstractTracker tracker : ServerTrackerInit.playerTrackers) {
             tracker.doTick(player);
         }
-        if (VRPluginVerify.hasAPI) {
+        if (VRVerify.hasAPI) {
             ServerVRSubscriber.vrPlayerTick(player);
         }
 

@@ -11,7 +11,7 @@ import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
@@ -107,7 +107,7 @@ public class ClientUtil {
         Vec3 start;
         Vec3 viewVec;
         Vec3 end;
-        if (VRPluginVerify.clientInVR()) {
+        if (VRVerify.clientInVR()) {
             start = VRAPI.instance().getVRPose(player).getMainHand().getPos();
             viewVec = VRAPI.instance().getVRPose(player).getMainHand().getDir();
         } else {
@@ -138,7 +138,7 @@ public class ClientUtil {
     }
 
     public static void openBag(Player player) {
-        if (VRPluginVerify.hasAPI) {
+        if (VRVerify.hasAPI) {
             if (VRAPI.instance().isVRPlayer(player)) {
                 Immersives.immersiveBackpack.doTrack();
             } else {

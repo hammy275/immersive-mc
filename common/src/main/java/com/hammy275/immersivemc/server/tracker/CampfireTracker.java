@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.server.tracker;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -66,7 +66,7 @@ public class CampfireTracker extends AbstractTracker {
     @Override
     protected boolean shouldTick(Player player) {
         if (!ActiveConfig.FILE_SERVER.useCampfireImmersive) return false;
-        if (!VRPluginVerify.playerInVR(player)) return false;
+        if (!VRVerify.playerInVR(player)) return false;
         if (!ActiveConfig.getConfigForPlayer(player).useCampfireImmersive) return false;
         VRPose vrPose = VRAPI.instance().getVRPose(player);
         boolean mainRes = false;

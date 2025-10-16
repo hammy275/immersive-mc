@@ -21,7 +21,7 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.BeaconConfirmPacket;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -454,6 +454,6 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
     }
 
     public static boolean useGrabBeacon() {
-        return VRPluginVerify.clientInVR() && ActiveConfig.active().useGrabBeaconInVR;
+        return VRVerify.clientInVR() && ActiveConfig.active().useGrabBeaconInVR;
     }
 }

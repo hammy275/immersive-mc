@@ -13,7 +13,7 @@ import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfoImpl;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.common.vr.VRUtil;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
@@ -32,7 +32,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.vivecraft.api.client.VRClientAPI;
 import org.vivecraft.api.data.VRBodyPart;
-import org.vivecraft.api.data.VRPoseHistory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -260,7 +259,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
             upDownRenderDir = forcedDirApplied.direction;
         }
         // Detect VR hand movements and run callback
-        if (vrMovementInfo != null && VRPluginVerify.clientInVR()) {
+        if (vrMovementInfo != null && VRVerify.clientInVR()) {
             boolean[] passed = {false, false};
             for (InteractionHand hand : InteractionHand.values()) {
                 if (!box.contains(VRClientAPI.instance().getPreTickWorldPose().getHand(hand).getPos())) continue;

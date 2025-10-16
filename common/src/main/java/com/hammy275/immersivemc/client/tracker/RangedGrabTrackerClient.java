@@ -8,7 +8,7 @@ import com.hammy275.immersivemc.common.network.packet.GrabItemPacket;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.util.RGBA;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.world.entity.Entity;
@@ -92,7 +92,7 @@ public class RangedGrabTrackerClient extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        return VRPluginVerify.clientInVR() && Minecraft.getInstance().gameMode != null
+        return VRVerify.clientInVR() && Minecraft.getInstance().gameMode != null
                 && ActiveConfig.active().useRangedGrabImmersive;
     }
 }

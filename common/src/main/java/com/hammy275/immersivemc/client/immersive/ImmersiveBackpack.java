@@ -18,7 +18,7 @@ import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.FetchBackpackStoragePacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.swap.Swap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -38,7 +38,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-import org.vivecraft.api.VRAPI;
 import org.vivecraft.api.client.VRClientAPI;
 import org.vivecraft.api.data.VRBodyPartData;
 import org.vivecraft.api.data.VRPose;
@@ -120,7 +119,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     @Override
     public boolean shouldRender(BackpackInfo info, boolean isInVR) {
         return Minecraft.getInstance().player != null &&
-                VRPluginVerify.playerInVR(Minecraft.getInstance().player) && info.light >= 0;
+                VRVerify.playerInVR(Minecraft.getInstance().player) && info.light >= 0;
     }
 
     @Override

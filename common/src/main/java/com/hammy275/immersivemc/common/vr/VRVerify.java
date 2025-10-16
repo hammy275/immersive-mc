@@ -4,7 +4,7 @@ import com.hammy275.immersivemc.client.vr.VRPluginClientProxy;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-public class VRPluginVerify {
+public class VRVerify {
 
     public static boolean hasAPI = false;
 
@@ -14,6 +14,6 @@ public class VRPluginVerify {
     }
 
     public static boolean playerInVR(Player player) {
-        return player instanceof ServerPlayer sp ? (hasAPI && VRPluginProxy.vrAPIIInVR(sp)) : clientInVR();
+        return player instanceof ServerPlayer sp ? (hasAPI && VRProxy.vrAPIIInVR(sp)) : clientInVR();
     }
 }

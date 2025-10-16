@@ -11,7 +11,7 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.obb.OBBRotList;
 import com.hammy275.immersivemc.common.obb.RotType;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -114,7 +114,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
                 faceTowardsPlayer(stack, BoundingBox.getCenter(hitbox));
                 stack.mulPose(Axis.YP.rotationDegrees(180));
                 Vec3 textMove;
-                if (VRPluginVerify.hasAPI && VRPluginVerify.clientInVR()) {
+                if (VRVerify.hasAPI && VRVerify.clientInVR()) {
                     VRPose textMovePose = VRClientAPI.instance().getWorldRenderPose();
                     textMove = textMovePose.getHead().getDir();
                 } else {
@@ -287,7 +287,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
     }
 
     private void faceTowardsPlayer(PoseStack stack, Vec3 renderPos) {
-        if (VRPluginVerify.clientInVR()) {
+        if (VRVerify.clientInVR()) {
             Vec3 target = VRClientAPI.instance().getWorldRenderPose().getHead().getPos();
             Vec3 ray = target.subtract(renderPos);
             Vec3 rayNoY = ray.multiply(1, 0, 1);

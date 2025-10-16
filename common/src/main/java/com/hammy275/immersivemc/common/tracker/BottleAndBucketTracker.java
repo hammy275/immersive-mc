@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.common.tracker;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -50,7 +50,7 @@ public class BottleAndBucketTracker extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        if (!VRPluginVerify.playerInVR(player)) return false;
+        if (!VRVerify.playerInVR(player)) return false;
         if (!ActiveConfig.getActiveConfigCommon(player).useBucketAndBottleImmersive) return false;
         int newCooldown = cooldown.getOrDefault(player.getUUID(), 0) - 1;
         if (newCooldown <= 0) {

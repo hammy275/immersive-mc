@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.server.tracker;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.mixin.ButtonBlockMixin;
 import net.minecraft.core.BlockPos;
@@ -52,7 +52,7 @@ public class ButtonPushTracker extends AbstractTracker {
     @Override
     protected boolean shouldTick(Player player) {
         return ActiveConfig.FILE_SERVER.useButtonImmersive &&
-                VRPluginVerify.hasAPI && VRPluginVerify.playerInVR(player)
+                VRVerify.hasAPI && VRVerify.playerInVR(player)
                 && ActiveConfig.getConfigForPlayer(player).useButtonImmersive;
     }
 }
