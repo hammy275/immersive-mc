@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.common.vr.mixin_proxy;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.data.AboutToThrowData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -24,7 +24,7 @@ public class ThrowRedirect {
                                          Entity shooter, float xAngle, float yAngle, float unknown, float velocity, float inaccuracy,
                                          boolean doDefaultShotOtherwise) {
         if (shooter instanceof Player player) {
-            if (VRPlugin.API.playerInVR(player) && AboutToThrowData.aboutToThrowMap.containsKey(player.getUUID())) {
+            if (VRVerify.playerInVR(player) && AboutToThrowData.aboutToThrowMap.containsKey(player.getUUID())) {
                 AboutToThrowData.ThrowRecord data = AboutToThrowData.aboutToThrowMap.remove(player.getUUID());
 
                 // Force inaccuracy to be 0. Inaccuracy already comes from the player using a physical hand.
@@ -44,7 +44,7 @@ public class ThrowRedirect {
     }
 
     public static void deleteRecord(Player player) {
-        if (VRPlugin.API.playerInVR(player)) {
+        if (VRVerify.playerInVR(player)) {
             AboutToThrowData.aboutToThrowMap.remove(player.getUUID());
         }
     }

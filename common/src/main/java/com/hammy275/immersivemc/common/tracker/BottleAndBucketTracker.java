@@ -3,9 +3,7 @@ package com.hammy275.immersivemc.common.tracker;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
-import net.blf02.vrapi.api.data.IVRPlayer;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -18,6 +16,8 @@ import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
+import org.vivecraft.api.VRAPI;
+import org.vivecraft.api.data.VRPose;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,10 +33,10 @@ public class BottleAndBucketTracker extends AbstractTracker {
             InteractionHand hand = InteractionHand.values()[c];
             ItemStack stackInHand = player.getItemInHand(hand);
             if (stackMatches(stackInHand)) {
-                IVRPlayer currentVRData = VRPlugin.API.getVRPlayer(player);
-                if (Math.abs(currentVRData.getController(hand.ordinal()).getRoll()) < 90) {
+                VRPose currentVRPose = VRAPI.instance().getVRPose(player);
+                if (Math.abs(currentVRPose.getHand(hand).getRoll()) < Math.PI / 2) {
                     boolean holdingGlassBottle = stackInHand.is(Items.GLASS_BOTTLE);
-                    BlockPos pos = BlockPos.containing(currentVRData.getController(hand.ordinal()).position());
+                    BlockPos pos = BlockPos.containing(currentVRPose.getHand(hand).getPos());
                     BlockState state = player.level().getBlockState(pos);
                     BucketPickup pickup = state.getBlock() instanceof BucketPickup bp ? bp : null;
                     boolean isWaterSource = state.is(Blocks.WATER) && state.getValue(BlockStateProperties.LEVEL) == 0;
@@ -50,7 +50,7 @@ public class BottleAndBucketTracker extends AbstractTracker {
 
     @Override
     protected boolean shouldTick(Player player) {
-        if (!VRPluginVerify.playerInVR(player)) return false;
+        if (!VRVerify.playerInVR(player)) return false;
         if (!ActiveConfig.getActiveConfigCommon(player).useBucketAndBottleImmersive) return false;
         int newCooldown = cooldown.getOrDefault(player.getUUID(), 0) - 1;
         if (newCooldown <= 0) {

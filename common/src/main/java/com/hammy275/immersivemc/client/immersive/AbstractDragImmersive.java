@@ -6,15 +6,15 @@ import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.immersive.info.DragImmersiveInfo;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
+import org.vivecraft.api.client.VRClientAPI;
+import org.vivecraft.api.data.VRBodyPartData;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,17 +94,17 @@ public abstract class AbstractDragImmersive implements Immersive<DragImmersiveIn
         if (autoDrag.makeHitboxesEveryTick) {
             makeHitboxes(info, Minecraft.getInstance().level);
         }
-        for (int c = 0; c <= 1; c++) {
-            IVRData hand = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(c);
-            int lastGrabbed = info.grabbedBox[c];
-            int grabbed = Util.getFirstIntersect(hand.position(), info.getAllHitboxes().stream().map(HitboxInfo::getHitbox).toList()).orElse(-1);
+        for (InteractionHand interactionHand : InteractionHand.values()) {
+            VRBodyPartData hand = VRClientAPI.instance().getPreTickWorldPose().getHand(interactionHand);
+            int lastGrabbed = info.grabbedBox[interactionHand.ordinal()];
+            int grabbed = Util.getFirstIntersect(hand.getPos(), info.getAllHitboxes().stream().map(HitboxInfo::getHitbox).toList()).orElse(-1);
             if ((lastGrabbed == info.startingHitboxIndex || info.startingHitboxIndex == -1) && grabbed > -1 && lastGrabbed != grabbed) {
                 if (!autoDrag.nonInteractables.contains(grabbed)) {
-                    hitboxDragged(info, c, lastGrabbed, grabbed);
+                    hitboxDragged(info, interactionHand.ordinal(), lastGrabbed, grabbed);
                 }
             }
             if (!autoDrag.nonInteractables.contains(grabbed)) {
-                info.grabbedBox[c] = grabbed;
+                info.grabbedBox[interactionHand.ordinal()] = grabbed;
             }
         }
     }

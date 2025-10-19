@@ -62,7 +62,7 @@ public class ClientBookData extends CommonBookData {
             obbs.add(obb);
             for (int o = 0; o < others.length; o++) {
                 PosRot other = others[o];
-                if (interacted[o] == null && obb.contains(other.position())) {
+                if (interacted[o] == null && obb.contains(other.getPos())) {
                      interacted[o] = interactable;
                 }
             }
@@ -89,7 +89,7 @@ public class ClientBookData extends CommonBookData {
         stack.pushPose();
         float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
 
-        Vec3 pos = bookPosRot.position();
+        Vec3 pos = bookPosRot.getPos();
         Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.translate(-cameraInfo.getPosition().x + pos.x,
                 -cameraInfo.getPosition().y + pos.y,
@@ -97,10 +97,10 @@ public class ClientBookData extends CommonBookData {
 
         stack.scale(scaleSize, scaleSize, scaleSize);
 
-        stack.mulPose(Axis.YN.rotationDegrees(bookPosRot.getYaw() + 90f));
+        stack.mulPose(Axis.YN.rotation(bookPosRot.getYawF() + (float) Math.PI / 2f));
         stack.mulPose(Axis.ZP.rotationDegrees(90f));
-        stack.mulPose(Axis.ZP.rotationDegrees(bookPosRot.getPitch()));
-        stack.mulPose(Axis.YN.rotationDegrees(bookPosRot.getRoll()));
+        stack.mulPose(Axis.ZP.rotation(bookPosRot.getPitchF()));
+        stack.mulPose(Axis.YN.rotation(bookPosRot.getRollF()));
 
         float bookOpenAmount = 1.1f;
 
@@ -159,9 +159,9 @@ public class ClientBookData extends CommonBookData {
     protected void renderPage(PoseStack stack, PosRot bookPosRot, boolean leftPage, int light) {
         Vec3 awayFromBookUp = getAwayVector(bookPosRot);
 
-        Vec3 pageUp = bookPosRot.getLookAngle();
+        Vec3 pageUp = bookPosRot.getDir();
         Vec3 left = getLeftRightVector(bookPosRot, leftPage); // Should be called "right" for right page
-        Vec3 posBase = bookPosRot.position().add(left.scale(singlePageWidth / 2d))
+        Vec3 posBase = bookPosRot.getPos().add(left.scale(singlePageWidth / 2d))
                 .add(awayFromBookUp.scale(textUpAmount));
 
         Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
@@ -176,11 +176,11 @@ public class ClientBookData extends CommonBookData {
             stack.translate(-cameraInfo.getPosition().x + pos.x,
                     -cameraInfo.getPosition().y + pos.y,
                     -cameraInfo.getPosition().z + pos.z);
-            stack.mulPose(Axis.YN.rotationDegrees(bookPosRot.getYaw() + 90f));
-            stack.mulPose(Axis.ZP.rotationDegrees(bookPosRot.getPitch()));
+            stack.mulPose(Axis.YN.rotation(bookPosRot.getYawF() + (float) Math.PI / 2f));
+            stack.mulPose(Axis.ZP.rotation(bookPosRot.getPitchF()));
             stack.mulPose(Axis.XP.rotationDegrees(90f + (leftPage ? pageTilt : -pageTilt)));
             stack.mulPose(Axis.ZP.rotationDegrees(270f));
-            stack.mulPose(Axis.YP.rotationDegrees(bookPosRot.getRoll()));
+            stack.mulPose(Axis.YP.rotation(bookPosRot.getRollF()));
             renderable.render(stack, this, leftPage, light, bookPosRot);
             stack.popPose();
         }

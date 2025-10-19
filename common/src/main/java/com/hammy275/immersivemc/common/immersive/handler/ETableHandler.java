@@ -98,7 +98,7 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
             if (!res) {
                 return;
             }
-            VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
+            VRRumble.rumbleIfVR(player, hand, CommonConstants.vibrationTimeWorldInteraction);
         }
         enchStorage.setDirty(player.serverLevel());
     }
