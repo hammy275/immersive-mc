@@ -30,6 +30,12 @@ subprojects {
         }
         // The following line declares the yarn mappings you may select this one as well.
         // mappings "net.fabricmc:yarn:1.18.2+build.4:v2"
+
+        runtimeOnly "com.illposed.osc:javaosc-core:${rootProject.javaosc_core_version}"
+        runtimeOnly "org.lwjgl:lwjgl-openvr:${lwjgl_version}"
+        runtimeOnly "org.lwjgl:lwjgl-openvr:${lwjgl_version}:natives-linux"
+        runtimeOnly "org.lwjgl:lwjgl-openvr:${lwjgl_version}:natives-macos"
+        runtimeOnly "org.lwjgl:lwjgl-openvr:${lwjgl_version}:natives-windows"
         compileOnly(implementation('com.electronwill.night-config:toml:3.6.6'))
         compileOnly(implementation('com.electronwill.night-config:core:3.6.6'))
     }
