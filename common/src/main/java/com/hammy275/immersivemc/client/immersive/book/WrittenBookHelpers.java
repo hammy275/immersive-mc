@@ -153,9 +153,9 @@ public class WrittenBookHelpers {
             Vec3 centerPos = getCenterPos(positions);
             return new BookStyleInteractable(holder,
                     OBBFactory.instance().create(AABB.ofSize(centerPos, length, 0.04 * scaleSize, 0.02 * scaleSize),
-                    Math.toRadians(hand.getPitch()),
-                    Math.toRadians(hand.getYaw()),
-                    (isLeft ? leftPageRot : -leftPageRot) + Math.toRadians(hand.getRoll())),
+                    hand.getPitch(),
+                    hand.getYaw(),
+                    (isLeft ? leftPageRot : -leftPageRot) + hand.getRoll()),
                     style);
         }
         return null;

@@ -54,7 +54,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
             double yaw;
             Vec3 headLook;
             if (VRVerify.playerInVR(mc.player) && !Platform.isDevelopmentEnvironment()) {
-                yaw = Math.toRadians(hmdData.getYaw());
+                yaw = hmdData.getYaw();
                 headLook = hmdData.getDir();
             } else {
                 // Yaw based on player's yaw for testing in dev

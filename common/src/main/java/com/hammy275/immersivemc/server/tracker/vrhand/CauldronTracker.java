@@ -70,14 +70,14 @@ public class CauldronTracker extends AbstractVRHandTracker {
         // If holding an empty bucket or glass bottle, see if we can fill it.
         if (inCauldronBlock && (handItem instanceof BottleItem || (handItem instanceof BucketItem bucketItem && Platform.getFluid(bucketItem).isSame(Fluids.EMPTY)))) {
             // Pointing up in any way
-            if (Math.abs(data.getRoll()) < 90) {
+            if (Math.abs(data.getRoll()) < Math.PI / 2) {
                 possiblySetCooldown(player, interaction.interact(cauldron, player.level(), cauldronPos, player, hand, handStack));
             }
         } else if ((handItem instanceof PotionItem && heldPotion == Potions.WATER) ||
                 (handItem instanceof BucketItem bucketItem && !Platform.getFluid(bucketItem).isSame(Fluids.EMPTY)) ||
                 handItem instanceof SolidBucketItem) {
             // 20-degrees in either direction from straight down
-            if (Math.abs(data.getRoll()) > 160) {
+            if (Math.abs(data.getRoll()) > Math.PI - Math.toRadians(20)) {
                 possiblySetCooldown(player, interaction.interact(cauldron, player.level(), cauldronPos, player, hand, handStack));
             }
         } else if (inCauldronBlock) {

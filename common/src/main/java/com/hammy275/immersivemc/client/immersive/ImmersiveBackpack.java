@@ -309,9 +309,9 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     private void calculatePositions(BackpackInfo info, VRPose vrPose) {
         VRBodyPartData backpackData = vrPose.getHand(getBagHand());
         info.handPos = backpackData.getPos();
-        info.handPitch = (float) Math.toRadians(backpackData.getPitch());
-        info.handYaw = (float) Math.toRadians(backpackData.getYaw());
-        info.handRoll = (float) Math.toRadians(backpackData.getRoll());
+        info.handPitch = (float) backpackData.getPitch();
+        info.handYaw = (float) backpackData.getYaw();
+        info.handRoll = (float) backpackData.getRoll();
         info.lookVec = backpackData.getDir();
 
         Vec3 rightVec = getRightVec(info).scale(0.25);

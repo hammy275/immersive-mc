@@ -97,10 +97,10 @@ public class ClientBookData extends CommonBookData {
 
         stack.scale(scaleSize, scaleSize, scaleSize);
 
-        stack.mulPose(Axis.YN.rotationDegrees(bookPosRot.getYawF() + 90f));
+        stack.mulPose(Axis.YN.rotation(bookPosRot.getYawF() + (float) Math.PI / 2f));
         stack.mulPose(Axis.ZP.rotationDegrees(90f));
-        stack.mulPose(Axis.ZP.rotationDegrees(bookPosRot.getPitchF()));
-        stack.mulPose(Axis.YN.rotationDegrees(bookPosRot.getRollF()));
+        stack.mulPose(Axis.ZP.rotation(bookPosRot.getPitchF()));
+        stack.mulPose(Axis.YN.rotation(bookPosRot.getRollF()));
 
         float bookOpenAmount = 1.1f;
 
@@ -176,11 +176,11 @@ public class ClientBookData extends CommonBookData {
             stack.translate(-cameraInfo.getPosition().x + pos.x,
                     -cameraInfo.getPosition().y + pos.y,
                     -cameraInfo.getPosition().z + pos.z);
-            stack.mulPose(Axis.YN.rotationDegrees(bookPosRot.getYawF() + 90f));
-            stack.mulPose(Axis.ZP.rotationDegrees(bookPosRot.getPitchF()));
+            stack.mulPose(Axis.YN.rotation(bookPosRot.getYawF() + (float) Math.PI / 2f));
+            stack.mulPose(Axis.ZP.rotation(bookPosRot.getPitchF()));
             stack.mulPose(Axis.XP.rotationDegrees(90f + (leftPage ? pageTilt : -pageTilt)));
             stack.mulPose(Axis.ZP.rotationDegrees(270f));
-            stack.mulPose(Axis.YP.rotationDegrees(bookPosRot.getRollF()));
+            stack.mulPose(Axis.YP.rotation(bookPosRot.getRollF()));
             renderable.render(stack, this, leftPage, light, bookPosRot);
             stack.popPose();
         }

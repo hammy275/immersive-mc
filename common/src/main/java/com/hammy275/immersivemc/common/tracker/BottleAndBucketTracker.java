@@ -34,7 +34,7 @@ public class BottleAndBucketTracker extends AbstractTracker {
             ItemStack stackInHand = player.getItemInHand(hand);
             if (stackMatches(stackInHand)) {
                 VRPose currentVRPose = VRAPI.instance().getVRPose(player);
-                if (Math.abs(currentVRPose.getHand(hand).getRoll()) < 90) {
+                if (Math.abs(currentVRPose.getHand(hand).getRoll()) < Math.PI / 2) {
                     boolean holdingGlassBottle = stackInHand.is(Items.GLASS_BOTTLE);
                     BlockPos pos = BlockPos.containing(currentVRPose.getHand(hand).getPos());
                     BlockState state = player.level().getBlockState(pos);

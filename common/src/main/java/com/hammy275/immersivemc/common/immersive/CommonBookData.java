@@ -79,17 +79,17 @@ public class CommonBookData implements NetworkStorage {
         pageTurnPositions[1] = pageTurnPositions[2].add(right.scale(singlePageWidth * 1.25d)); // Right edge
         Vec3 upCenter = pageTurnPositions[2].add(away.scale(singlePageWidth * 0.5)); // Used for "continue page turning" boxes.
 
-        double pitch = Math.toRadians(bookPosRot.getPitch());
-        double yaw = Math.toRadians(bookPosRot.getYaw());
+        double pitch = bookPosRot.getPitch();
+        double yaw = bookPosRot.getYaw();
 
         // Boxes to start a page turn are a box on the page edge to generally capture the hand
         pageTurnBoxes[0] = OBBFactory.instance().create(AABB.ofSize(pageTurnPositions[0], 0.2, 0.2, pageHalfHeight * 2),
-                pitch, yaw, Math.toRadians(bookPosRot.getRoll()));
+                pitch, yaw, bookPosRot.getRoll());
         pageTurnBoxes[1] = OBBFactory.instance().create(AABB.ofSize(pageTurnPositions[1], 0.2, 0.2, pageHalfHeight * 2),
-                pitch, yaw, Math.toRadians(bookPosRot.getRoll()));
+                pitch, yaw, bookPosRot.getRoll());
         // Box to continue a page turn
         pageTurnBoxes[2] = OBBFactory.instance().create(AABB.ofSize(upCenter, singlePageWidth * 11d/3d, singlePageWidth * 2d, pageHalfHeight * 2.25),
-                pitch, yaw, Math.toRadians(bookPosRot.getRoll()));
+                pitch, yaw, bookPosRot.getRoll());
 
         // Automatic page turning
         // Note that the next page/last page on the info is done as the animation starts, so the text is loaded
@@ -282,9 +282,9 @@ public class CommonBookData implements NetworkStorage {
     public Vec3 getLeftRightVector(PosRot bookPosRot, boolean left) {
         Vector3f leftF = new Vector3f(0, 0, 1); // +Z is the default forward vector
         leftF.rotate(Axis.YN.rotationDegrees(left ? 270  : 90));
-        leftF.rotate(Axis.ZP.rotationDegrees(bookPosRot.getRollF()));
-        leftF.rotate(Axis.XN.rotationDegrees(bookPosRot.getPitchF()));
-        leftF.rotate(Axis.YN.rotationDegrees(bookPosRot.getYawF()));
+        leftF.rotate(Axis.ZP.rotation(bookPosRot.getRollF()));
+        leftF.rotate(Axis.XN.rotation(bookPosRot.getPitchF()));
+        leftF.rotate(Axis.YN.rotation(bookPosRot.getYawF()));
         return new Vec3(leftF.x(), leftF.y(), leftF.z());
     }
 
@@ -295,9 +295,9 @@ public class CommonBookData implements NetworkStorage {
      */
     public Vec3 getAwayVector(PosRot hand) {
         Vector3f awayFromBookF = new Vector3f(0, 1, 0);
-        awayFromBookF.rotate(Axis.ZP.rotationDegrees(hand.getRollF()));
-        awayFromBookF.rotate(Axis.XN.rotationDegrees(hand.getPitchF()));
-        awayFromBookF.rotate(Axis.YN.rotationDegrees(hand.getYawF()));
+        awayFromBookF.rotate(Axis.ZP.rotation(hand.getRollF()));
+        awayFromBookF.rotate(Axis.XN.rotation(hand.getPitchF()));
+        awayFromBookF.rotate(Axis.YN.rotation(hand.getYawF()));
         return new Vec3(awayFromBookF.x(), awayFromBookF.y(), awayFromBookF.z());
     }
 }
