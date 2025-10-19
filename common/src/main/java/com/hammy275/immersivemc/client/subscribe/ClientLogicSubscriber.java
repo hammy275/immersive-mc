@@ -9,16 +9,8 @@ import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
-import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
-import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
-import com.hammy275.immersivemc.client.immersive.ImmersiveChest;
-import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.client.immersive.SwapTracker;
-import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
-import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
-import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
-import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
-import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
+import com.hammy275.immersivemc.client.immersive.*;
+import com.hammy275.immersivemc.client.immersive.info.*;
 import com.hammy275.immersivemc.client.immersive_item.AbstractHandImmersive;
 import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
 import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
@@ -34,6 +26,7 @@ import com.hammy275.immersivemc.server.api_impl.SharedNetworkStoragesImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.InteractionHand;
@@ -53,18 +46,14 @@ import org.vivecraft.api.VRAPI;
 import org.vivecraft.api.data.VRBodyPartData;
 import org.vivecraft.api.data.VRPose;
 
-import java.util.Collection;
-import java.util.ConcurrentModificationException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class ClientLogicSubscriber {
 
     public static boolean backpackPressed = false;
     private static boolean alreadyInServer = false;
     private static boolean lastVRState = VRVerify.clientInVR();
+    private static boolean didLowVivecraftVersionCheck = false;
 
     public static void onClientLogin(Minecraft minecraft) {
         if (!alreadyInServer) { // Only run if we're actually joining a new level, rather than changing dimensions
@@ -78,6 +67,14 @@ public class ClientLogicSubscriber {
         Player player = Minecraft.getInstance().player;
         if (player == null) return;
         Profiler.get().push(ImmersiveMC.MOD_ID);
+
+        // Tell the user if they're running a Vivecraft version too low
+        if (!didLowVivecraftVersionCheck) {
+            didLowVivecraftVersionCheck = true;
+            if (Util.hasTooLowVivecraftVersion()) {
+                player.displayClientMessage(Component.translatable("message.immersivemc.vivecraft_low_version"), false);
+            }
+        }
 
         if (!VRVerify.clientInVR()) {
             SwapTracker.c0.maybeIdleTick();

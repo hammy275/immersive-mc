@@ -213,6 +213,7 @@
   "immersivemc.immersive.anvil.levels_needed": "Levels Needed: %d",
   "immersivemc.immersive.beacon.selected": "Selected:",
 
+  "message.immersivemc.vivecraft_low_version": "You are using a version of Vivecraft before version 1.3.0. Please upgrade to this version to use the VR features of ImmersiveMC!",
   "message.immersivemc.no_vivecraft": "Vivecraft is not installed or is on a version before 1.3.0. Please install or upgrade to Vivecraft 1.3.0 to use this feature!",
   "message.immersivemc.not_in_vr": "This feature only works while in VR!",
   "message.immersivemc.no_api_server": "mc-vr-api is not installed on the server! It must be installed to use this feature!",

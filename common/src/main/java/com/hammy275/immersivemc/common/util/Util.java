@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.util;
 
 
+import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
@@ -12,6 +13,7 @@ import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.immersive.ImmersiveChecker;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -48,6 +50,11 @@ import java.util.Set;
 public class Util {
 
     public static UseInfo activeUseInfo = null;
+
+    public static boolean hasTooLowVivecraftVersion() {
+        // If missing Vivecraft or the API loaded successfully, we're on a compatible Vivecraft version
+        return Platform.isModLoaded("vivecraft") && !VRVerify.hasAPI;
+    }
 
     public static boolean blockIsActiveImmersive(Player player, BlockPos pos) {
         Level level = player.level();
