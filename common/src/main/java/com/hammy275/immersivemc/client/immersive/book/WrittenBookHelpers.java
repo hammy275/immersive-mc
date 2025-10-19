@@ -66,7 +66,7 @@ public class WrittenBookHelpers {
         BookViewScreen.BookAccess access = BookViewScreen.BookAccess.fromItem(dataHolder.getBook());
         if (access == null) return;
         ClientBookData data = dataHolder.getData();
-        Vec3 pageUp = bookPosRot.getLookAngle();
+        Vec3 pageUp = bookPosRot.getDir();
         Vec3 pageDown = pageUp.scale(-1);
         Vec3 left = data.getLeftRightVector(bookPosRot, true);
         Vec3 right = data.getLeftRightVector(bookPosRot, false);
@@ -74,7 +74,7 @@ public class WrittenBookHelpers {
 
         // Makes pos be the very top left of the page text
         Vec3 leftStartMove = isLeft ? left.scale(singlePageWidth * 0.96) : Vec3.ZERO;
-        Vec3 pos = bookPosRot.position().add(pageUp.scale(pageHalfHeight)).add(leftStartMove)
+        Vec3 pos = bookPosRot.getPos().add(pageUp.scale(pageHalfHeight)).add(leftStartMove)
                 .add(away.scale(textUpAmount)).add(pageDown.scale(9 * Math.abs(textStackScaleSize)));
         Font font = Minecraft.getInstance().font;
         int rightMod = isLeft ? 0 : 1;
@@ -154,9 +154,9 @@ public class WrittenBookHelpers {
             Vec3 centerPos = getCenterPos(positions);
             return new BookStyleInteractable(holder,
                     OBBFactory.instance().create(AABB.ofSize(centerPos, length, 0.04 * scaleSize, 0.02 * scaleSize),
-                    Math.toRadians(hand.getPitch()),
-                    Math.toRadians(hand.getYaw()),
-                    (isLeft ? leftPageRot : -leftPageRot) + Math.toRadians(hand.getRoll())),
+                    hand.getPitch(),
+                    hand.getYaw(),
+                    (isLeft ? leftPageRot : -leftPageRot) + hand.getRoll()),
                     style);
         }
         return null;

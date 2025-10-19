@@ -6,25 +6,25 @@ import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.vr.VRUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.blf02.vrapi.api.data.IVRData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.vivecraft.api.data.VRBodyPartData;
 
 public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo> {
 
     @Override
-    protected void render(WrittenBookInfo info, PoseStack stack, IVRData hand) {
+    protected void render(WrittenBookInfo info, PoseStack stack, VRBodyPartData hand) {
         if (info.light > -1) {
             info.bookData.render(stack, info.light, VRUtil.posRot(hand));
         }
     }
 
     @Override
-    protected void tick(WrittenBookInfo info, IVRData hand, IVRData other) {
+    protected void tick(WrittenBookInfo info, VRBodyPartData hand, VRBodyPartData other) {
         info.didClick = false;
-        info.light = ImmersiveClientLogicHelpers.instance().getLight(new BlockPos(hand.position()));
+        info.light = ImmersiveClientLogicHelpers.instance().getLight(new BlockPos(hand.getPos()));
         info.bookData.interactables.clear();
         WrittenBookHelpers.addInteractablesForThisTick(info, VRUtil.posRot(hand), true);
         WrittenBookHelpers.addInteractablesForThisTick(info, VRUtil.posRot(hand), false);
@@ -47,7 +47,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     }
 
     @Override
-    public boolean onLeftClick(WrittenBookInfo info, IVRData hand, IVRData other) {
+    public boolean onLeftClick(WrittenBookInfo info, VRBodyPartData hand, VRBodyPartData other) {
         return info.didClick;
     }
 }

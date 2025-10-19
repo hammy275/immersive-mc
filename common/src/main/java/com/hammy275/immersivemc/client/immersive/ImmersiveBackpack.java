@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.SwapMode;
@@ -19,13 +18,10 @@ import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.FetchBackpackStoragePacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.swap.Swap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import net.blf02.vrapi.api.data.IVRData;
-import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
@@ -41,6 +37,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.vivecraft.api.client.VRClientAPI;
+import org.vivecraft.api.data.VRBodyPartData;
+import org.vivecraft.api.data.VRPose;
 
 import java.util.List;
 
@@ -71,10 +70,8 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     @Override
     protected void renderTick(BackpackInfo info, boolean isInVR) {
         super.renderTick(info, isInVR);
-        IVRPlayer vrPlayer = Platform.isDevelopmentEnvironment() ?
-                VRPlugin.API.getVRPlayer(Minecraft.getInstance().player) :
-                VRPlugin.API.getRenderVRPlayer();
-        calculatePositions(info, vrPlayer);
+        VRPose vrPose = VRClientAPI.instance().getPreTickWorldPose();
+        calculatePositions(info, vrPose);
     }
 
     @Override
@@ -91,11 +88,11 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     @Override
     public BlockPos getLightPos(BackpackInfo info) {
         // Light position is bag position if not in light-blocking block, or HMD position if it is in one.
-        BlockPos c1 = new BlockPos(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(getBagControllerNum()).position());
+        BlockPos c1 = new BlockPos(VRClientAPI.instance().getPreTickWorldPose().getHand(getBagHand()).getPos());
         if (!Minecraft.getInstance().level.getBlockState(c1).canOcclude()) {
             return c1;
         } else {
-            return new BlockPos(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getHMD().position());
+            return new BlockPos(VRClientAPI.instance().getPreTickWorldPose().getHead().getPos());
         }
     }
 
@@ -121,8 +118,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     @Override
     public boolean shouldRender(BackpackInfo info, boolean isInVR) {
         return Minecraft.getInstance().player != null &&
-                VRPluginVerify.hasAPI && VRPlugin.API.playerInVR(Minecraft.getInstance().player) &&
-                VRPlugin.API.apiActive(Minecraft.getInstance().player) && info.light >= 0;
+                VRVerify.playerInVR(Minecraft.getInstance().player) && info.light >= 0;
     }
 
     @Override
@@ -312,13 +308,13 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
         return new Vec3(leftF.x(), leftF.y(), leftF.z());
     }
 
-    private void calculatePositions(BackpackInfo info, IVRPlayer vrPlayer) {
-        IVRData backpackController = vrPlayer.getController(getBagControllerNum());
-        info.handPos = backpackController.position();
-        info.handPitch = (float) Math.toRadians(backpackController.getPitch());
-        info.handYaw = (float) Math.toRadians(backpackController.getYaw());
-        info.handRoll = (float) Math.toRadians(backpackController.getRoll());
-        info.lookVec = backpackController.getLookAngle();
+    private void calculatePositions(BackpackInfo info, VRPose vrPose) {
+        VRBodyPartData backpackData = vrPose.getHand(getBagHand());
+        info.handPos = backpackData.getPos();
+        info.handPitch = (float) backpackData.getPitch();
+        info.handYaw = (float) backpackData.getYaw();
+        info.handRoll = (float) backpackData.getRoll();
+        info.lookVec = backpackData.getDir();
 
         Vec3 rightVec = getRightVec(info).scale(0.25);
         if (leftHanded()) {
@@ -407,12 +403,12 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     }
 
     private boolean leftHanded() {
-        boolean vrLeftHanded = VRPlugin.API.isLeftHanded(Minecraft.getInstance().player);
+        boolean vrLeftHanded = VRClientAPI.instance().isLeftHanded();
         boolean useSwappedHands = ActiveConfig.active().swapBagHand;
         return vrLeftHanded != useSwappedHands; // If both are true or both are false, we're using the right hand.
     }
 
-    private int getBagControllerNum() {
-        return ActiveConfig.active().swapBagHand ? 0 : 1;
+    private InteractionHand getBagHand() {
+        return ActiveConfig.active().swapBagHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
     }
 }

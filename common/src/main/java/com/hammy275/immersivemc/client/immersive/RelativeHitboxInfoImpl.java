@@ -10,12 +10,11 @@ import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.ClientUtil;
-import com.hammy275.immersivemc.client.LastClientVRData;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfoImpl;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
+import com.hammy275.immersivemc.common.vr.VRUtil;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -31,6 +30,8 @@ import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.vivecraft.api.client.VRClientAPI;
+import org.vivecraft.api.data.VRBodyPart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -258,12 +259,13 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
             upDownRenderDir = forcedDirApplied.direction;
         }
         // Detect VR hand movements and run callback
-        if (vrMovementInfo != null && VRPluginVerify.clientInVR()) {
+        if (vrMovementInfo != null && VRVerify.clientInVR()) {
             boolean[] passed = {false, false};
-            for (int c = 0; c <= 1; c++) {
-                if (!LastClientVRData.canGetVelocityChange()) continue;
-                if (!box.contains(VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController(c).position())) continue;
-                Vec3 velocity = LastClientVRData.changeForVelocity(c == 0 ? LastClientVRData.VRType.C0 : LastClientVRData.VRType.C1);
+            for (InteractionHand hand : InteractionHand.values()) {
+                if (!box.contains(VRClientAPI.instance().getPreTickWorldPose().getHand(hand).getPos())) continue;
+                int c = hand.ordinal();
+                Vec3 velocity = VRUtil.changeForVelocity(Minecraft.getInstance().player, VRBodyPart.fromInteractionHand(hand));
+                if (velocity == null) continue;
                 if (vrMovementInfo.relativeAxis() == null) {
                     passed[c] = velocity.lengthSqr() >= vrMovementInfo.thresholds()[0] * vrMovementInfo.thresholds()[0];
                 } else {
