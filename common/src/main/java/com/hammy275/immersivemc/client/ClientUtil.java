@@ -145,7 +145,7 @@ public class ClientUtil {
                 player.displayClientMessage(Component.translatable("message.immersivemc.not_in_vr"), false);
             }
         } else {
-            player.displayClientMessage(Component.translatable("message.immersivemc.no_api",
+            player.displayClientMessage(Component.translatable("message.immersivemc.no_vivecraft",
                     CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString()), false);
         }
     }

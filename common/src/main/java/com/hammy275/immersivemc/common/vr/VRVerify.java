@@ -3,10 +3,25 @@ package com.hammy275.immersivemc.common.vr;
 import com.hammy275.immersivemc.client.vr.VRPluginClientProxy;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import org.vivecraft.api.VRAPI;
+import org.vivecraft.api.client.VRClientAPI;
+import org.vivecraft.api.server.VRServerAPI;
 
 public class VRVerify {
 
-    public static boolean hasAPI = false;
+    public static boolean hasAPI;
+
+    static {
+        try {
+            // Get instances that we expect to be there, so a classnotfound or similar sets having the API to false
+            VRAPI.instance();
+            VRClientAPI.instance();
+            VRServerAPI.instance();
+            hasAPI = true;
+        } catch (Throwable ignored) {
+            hasAPI = false;
+        }
+    }
 
     // Only checks for API if not in-world
     public static boolean clientInVR() {

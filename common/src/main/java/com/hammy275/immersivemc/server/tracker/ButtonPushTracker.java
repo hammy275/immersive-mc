@@ -52,7 +52,7 @@ public class ButtonPushTracker extends AbstractTracker {
     @Override
     protected boolean shouldTick(Player player) {
         return ActiveConfig.FILE_SERVER.useButtonImmersive &&
-                VRVerify.hasAPI && VRVerify.playerInVR(player)
+                VRVerify.playerInVR(player)
                 && ActiveConfig.getConfigForPlayer(player).useButtonImmersive;
     }
 }

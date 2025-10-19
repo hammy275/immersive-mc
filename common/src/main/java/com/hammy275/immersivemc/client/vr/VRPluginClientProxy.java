@@ -7,7 +7,7 @@ public class VRPluginClientProxy {
 
     public static boolean vrAPIIInVR() {
         return Minecraft.getInstance().player == null ||
-                VRClientAPI.instance().isVRActive();
+                VRClientAPI.instance().getPreTickWorldPose() != null;
     }
 
 }
