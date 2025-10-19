@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.mixin;
 import com.hammy275.immersivemc.client.ClientMixinProxy;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.ServerMixinProxy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -27,7 +27,7 @@ public abstract class EntityMixin {
     @Inject(method = "collide", at = @At("RETURN"), cancellable = true)
     private void immersiveMC$differentCollideIfSteppingOntoImemrsive(Vec3 moveVecIn, CallbackInfoReturnable<Vec3> cir) {
         if (maxUpStep > 0.0001f && (Object) this instanceof Player player && ActiveConfig.getActiveConfigCommon(player).dontAutoStepOnImmersiveBlocksInVR
-                && VRPluginVerify.playerInVR(player) && !((LivingEntityAccessor) this).immersiveMC$jumping()) {
+                && VRVerify.playerInVR(player) && !((LivingEntityAccessor) this).immersiveMC$jumping()) {
             if (StreamSupport.stream(player.level().getBlockCollisions(player, player.getBoundingBox().expandTowards(moveVecIn)).spliterator(), false)
                     .filter(shape -> !shape.isEmpty())
                     .map(shape -> BlockPos.containing(shape.bounds().getCenter()))

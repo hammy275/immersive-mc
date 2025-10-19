@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.common.immersive.CommonBookData;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternData;
 import com.hammy275.immersivemc.common.network.NetworkUtil;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -47,10 +47,10 @@ public class PageTurnPacket {
             LecternData<CommonBookData> storage = SharedNetworkStorages.instance().get(player.level(), message.pos, ImmersiveHandlers.lecternHandler);
             if (storage != null && !storage.book.isEmpty() && storage.bookData.pageTurner == null) {
                 if (message.forcedPageIndex == -1) {
-                    if (!VRPluginVerify.playerInVR(player) &&
+                    if (!VRVerify.playerInVR(player) &&
                             (message.clickedRight ? !storage.bookData.onLastPage() : !storage.bookData.onFirstPage())) {
                         storage.bookData.startNonVRPageTurnAnim(player, message.clickedRight);
-                    } else if (VRPluginVerify.playerInVR(player)) {
+                    } else if (VRVerify.playerInVR(player)) {
                         // Let the VR player have control of page turning
                         storage.bookData.pageTurner = player;
                     }

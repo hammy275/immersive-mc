@@ -15,7 +15,7 @@ import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternDat
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.PageTurnPacket;
 import com.hammy275.immersivemc.common.util.PosRot;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -49,13 +49,13 @@ public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<Comm
     public int handleHitboxInteract(LecternInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
         int hitboxIndex = hitboxIndices.get(0);
         if (hitboxIndex <= 2) {
-            if (VRPluginVerify.clientInVR()) { // Page turning handled in ClientBookData#tick() for VR players
+            if (VRVerify.clientInVR()) { // Page turning handled in ClientBookData#tick() for VR players
                 return 0;
             } else if (hitboxIndex <= 1) {
                 Network.INSTANCE.sendToServer(new PageTurnPacket(info.getBlockPosition(), hitboxIndex == 1));
                 return ImmersiveClientConstants.instance().defaultCooldown();
             }
-        } else if (!VRPluginVerify.clientInVR()) {
+        } else if (!VRVerify.clientInVR()) {
             // Text interaction is done in tick() instead for VR players
             info.lecternData.bookData.interactables.get(hitboxIndex - 3).interact(info.lecternData.bookData,
                     info.lecternData.getLecternPosRot(info.getBlockPosition()), null);

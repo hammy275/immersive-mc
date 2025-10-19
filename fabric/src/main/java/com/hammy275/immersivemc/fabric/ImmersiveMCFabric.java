@@ -41,7 +41,6 @@ public class ImmersiveMCFabric implements ModInitializer {
         ImmersiveMC.init();
         try {
             Class.forName("net.blf02.vrapi.api.IVRAPI");
-            VRPlugin.initVR();
         } catch (ClassNotFoundException e) {
             ImmersiveMC.LOGGER.info("Not loading with mc-vr-api; it wasn't found!");
         }
