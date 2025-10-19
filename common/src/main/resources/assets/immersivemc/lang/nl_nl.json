@@ -134,7 +134,6 @@
   "immersivemc.immersive.anvil.levels_needed": "Benodigde niveaus: %d",
   "immersivemc.immersive.beacon.selected": "Geselecteerd:",
 
-  "message.immersivemc.no_api": "mc-vr-api kon niet worden gevonden! Zorg ervoor dat u mc-vr-api %s of hoger, maar geen versie voor %s, hebt geïnstalleerd!",
   "message.immersivemc.not_in_vr": "Deze functie werkt alleen in VR!",
   "message.immersivemc.no_api_server": "mc-vr-api is niet geïnstalleerd op de server! Het moet worden geïnstalleerd om deze functie te gebruiken!"
 

@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.client;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -23,7 +23,7 @@ public class ClientMixinProxy {
     }
 
     public static boolean collideDoPlayerMoveInRoomRedirect(ClientLevel level, Entity entity, AABB aabb) {
-        if (VRPluginVerify.clientInVR() && ActiveConfig.getActiveConfigCommon((LocalPlayer) entity).dontAutoStepOnImmersiveBlocksInVR) {
+        if (VRVerify.clientInVR() && ActiveConfig.getActiveConfigCommon((LocalPlayer) entity).dontAutoStepOnImmersiveBlocksInVR) {
             if (StreamSupport.stream(BlockPos.betweenClosed(Mth.floor(aabb.minX), Mth.floor(aabb.minY - 0.500001), Mth.floor(aabb.minZ),
                             Mth.floor(aabb.maxX), Mth.floor(aabb.maxY), Mth.floor(aabb.maxZ)).spliterator(), false)
                     .anyMatch(pos -> Util.blockIsActiveImmersive((LocalPlayer) entity, pos))) {

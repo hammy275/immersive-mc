@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.client.config.screen;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ConfigType;
 import com.hammy275.immersivemc.common.config.CrouchMode;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.OptionsList;
@@ -49,7 +49,7 @@ public class ImmersivesCustomizeScreen extends Screen {
                 server.writeConfigFile(ConfigType.SERVER);
             }
         }, this.list);
-        if (VRPluginVerify.clientInVR()) {
+        if (VRVerify.clientInVR()) {
             ScreenUtils.addOptionIfClient("right_click_in_vr", config -> config.rightClickImmersiveInteractionsInVR, (config, newVal) -> config.rightClickImmersiveInteractionsInVR = newVal, this.list);
             ScreenUtils.addOptionIfClient("dont_step_up_immersives_in_vr", config -> config.dontAutoStepOnImmersiveBlocksInVR, (config, newVal) -> config.dontAutoStepOnImmersiveBlocksInVR = newVal, this.list);
         }
@@ -83,7 +83,7 @@ public class ImmersivesCustomizeScreen extends Screen {
             ));
         }
 
-        if (VRPluginVerify.clientInVR()) {
+        if (VRVerify.clientInVR()) {
             ScreenUtils.addOptionIfClient("grab_beacon", config -> config.useGrabBeaconInVR, (config, newVal) -> config.useGrabBeaconInVR = newVal, this.list);
             ScreenUtils.addOptionIfClient("grind_grindstone", config -> config.useGrindMotionGrindstoneInVR, (config, newVal) -> config.useGrindMotionGrindstoneInVR = newVal, this.list);
         }

@@ -44,7 +44,7 @@ public class SmithingTableHandler extends ItemWorldStorageHandler<SmithingTableS
         } else if (!storage.getItem(3).isEmpty()) { // Craft our result!
             boolean res = Swap.handleSmithingTableCraft(storage, pos, player, hand);
             if (res) {
-                VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
+                VRRumble.rumbleIfVR(player, hand, CommonConstants.vibrationTimeWorldInteraction);
             }
         }
         storage.setDirty(player.serverLevel());
