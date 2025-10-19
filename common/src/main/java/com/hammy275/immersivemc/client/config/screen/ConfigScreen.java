@@ -8,7 +8,7 @@ import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.config.ConfigType;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -71,7 +71,7 @@ public class ConfigScreen extends Screen {
                 BUTTON_WIDTH, BUTTON_HEIGHT,
                 "config.immersivemc.immersives",
                 new ImmersivesConfigScreen(this,
-                        VRPluginVerify.clientInVR() || currentConfigAdjusting == ConfigType.SERVER ?
+                        VRVerify.clientInVR() || currentConfigAdjusting == ConfigType.SERVER ?
                                 ImmersivesConfigScreen.ScreenType.BOTH : ImmersivesConfigScreen.ScreenType.NONVR)
         ));
 

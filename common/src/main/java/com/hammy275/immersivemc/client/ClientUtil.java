@@ -11,11 +11,8 @@ import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.datafixers.util.Pair;
-import net.blf02.vrapi.api.data.IVRData;
-import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
@@ -24,12 +21,17 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.vivecraft.api.VRAPI;
+import org.vivecraft.api.client.VRClientAPI;
+import org.vivecraft.api.data.VRBodyPartData;
+import org.vivecraft.api.data.VRPose;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -60,12 +62,12 @@ public class ClientUtil {
      * @return Pair containing start and end positions.
      */
     public static Pair<Vec3, Vec3> getVRStartAndEnd(int device) {
-        IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player);
-        IVRData vrData = device == -1 ? vrPlayer.getHMD() : vrPlayer.getController(device);
+        VRPose vrPose = VRClientAPI.instance().getPreTickWorldPose();
+        VRBodyPartData vrData = device == -1 ? vrPose.getHead() : vrPose.getHand(InteractionHand.values()[device]);
         double dist = Minecraft.getInstance().player.blockInteractionRange();
-        Vec3 start = vrData.position();
-        Vec3 look = vrData.getLookAngle();
-        Vec3 end = vrData.position().add(look.x * dist, look.y * dist, look.z * dist);
+        Vec3 start = vrData.getPos();
+        Vec3 look = vrData.getDir();
+        Vec3 end = start.add(look.x * dist, look.y * dist, look.z * dist);
         return new Pair<>(start, end);
     }
 
@@ -105,9 +107,9 @@ public class ClientUtil {
         Vec3 start;
         Vec3 viewVec;
         Vec3 end;
-        if (VRPluginVerify.clientInVR()) {
-            start = VRPlugin.API.getVRPlayer(player).getController0().position();
-            viewVec = VRPlugin.API.getVRPlayer(player).getController0().getLookAngle();
+        if (VRVerify.clientInVR()) {
+            start = VRAPI.instance().getVRPose(player).getMainHand().getPos();
+            viewVec = VRAPI.instance().getVRPose(player).getMainHand().getDir();
         } else {
             start = player.getEyePosition(1);
             viewVec = player.getViewVector(1);
@@ -136,18 +138,14 @@ public class ClientUtil {
     }
 
     public static void openBag(Player player) {
-        if (VRPluginVerify.hasAPI) {
-            if (VRPlugin.API.playerInVR(player)) {
-                if (VRPlugin.API.apiActive(player)) {
-                    Immersives.immersiveBackpack.doTrack();
-                } else {
-                    player.displayClientMessage(Component.translatable("message.immersivemc.no_api_server"), false);
-                }
+        if (VRVerify.hasAPI) {
+            if (VRAPI.instance().isVRPlayer(player)) {
+                Immersives.immersiveBackpack.doTrack();
             } else {
                 player.displayClientMessage(Component.translatable("message.immersivemc.not_in_vr"), false);
             }
         } else {
-            player.displayClientMessage(Component.translatable("message.immersivemc.no_api",
+            player.displayClientMessage(Component.translatable("message.immersivemc.no_vivecraft",
                     CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString()), false);
         }
     }

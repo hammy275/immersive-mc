@@ -3,10 +3,7 @@ package com.hammy275.immersivemc.server.tracker;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
-import net.blf02.vrapi.api.data.IVRData;
-import net.blf02.vrapi.api.data.IVRPlayer;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -21,6 +18,9 @@ import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.vivecraft.api.VRAPI;
+import org.vivecraft.api.data.VRBodyPartData;
+import org.vivecraft.api.data.VRPose;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,11 +40,11 @@ public class CampfireTracker extends AbstractTracker {
         ServerPlayer player = (ServerPlayer) playerIn;
         CookInfo info = cookTime.get(player.getGameProfile().getName());
         if (info == null) return;
-        for (int c = 0; c <= 1; c++) {
-            ItemStack toSmelt = c == 0 ? player.getItemInHand(InteractionHand.MAIN_HAND) : player.getItemInHand(InteractionHand.OFF_HAND);
+        for (InteractionHand hand : InteractionHand.values()) {
+            ItemStack toSmelt = player.getItemInHand(hand);
             Optional<RecipeHolder<CampfireCookingRecipe>> recipe =
                     player.serverLevel().recipeAccess().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SingleRecipeInput(toSmelt), player.level());
-            if (recipe.isPresent() && info.get(c) >= recipe.get().value().cookingTime() / 2) { // Smelt the held controller's item if we reach cook time.
+            if (recipe.isPresent() && info.get(hand.ordinal()) >= recipe.get().value().cookingTime() / 2) { // Smelt the held controller's item if we reach cook time.
                 toSmelt.shrink(1);
                 ItemStack result = recipe.get().value().assemble(new SingleRecipeInput(toSmelt), player.level().registryAccess());
                 boolean didGive = player.getInventory().add(result);
@@ -54,7 +54,7 @@ public class CampfireTracker extends AbstractTracker {
                 cookTime.remove(player.getGameProfile().getName());
             } else if (recipe.isPresent() &&
                     ThreadLocalRandom.current().nextInt(4) == 0) { // Not ready to smelt yet, show particle
-                Vec3 pos = VRPlugin.API.getVRPlayer(player).getController(c).position();
+                Vec3 pos = VRAPI.instance().getVRPose(player).getHand(hand).getPos();
                 if (player.level() instanceof ServerLevel serverLevel) {
                     serverLevel.sendParticles(ParticleTypes.SMOKE, pos.x, pos.y, pos.z,
                             1, 0.01, 0.01, 0.01, 0);
@@ -66,15 +66,14 @@ public class CampfireTracker extends AbstractTracker {
     @Override
     protected boolean shouldTick(Player player) {
         if (!ActiveConfig.FILE_SERVER.useCampfireImmersive) return false;
-        if (!VRPluginVerify.hasAPI) return false;
-        if (!VRPlugin.API.playerInVR(player)) return false;
+        if (!VRVerify.playerInVR(player)) return false;
         if (!ActiveConfig.getConfigForPlayer(player).useCampfireImmersive) return false;
-        IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
+        VRPose vrPose = VRAPI.instance().getVRPose(player);
         boolean mainRes = false;
         boolean offRes = false;
-        for (int c = 0; c <= 1; c++) {
-            IVRData controller = vrPlayer.getController(c);
-            BlockPos pos = BlockPos.containing(controller.position());
+        for (InteractionHand hand : InteractionHand.values()) {
+            VRBodyPartData controller = vrPose.getHand(hand);
+            BlockPos pos = BlockPos.containing(controller.getPos());
             if (player.level().getBlockState(pos).getBlock() instanceof CampfireBlock ||
                     player.level().getBlockState(pos.below()).getBlock() instanceof CampfireBlock) {
                 BlockState campfire;
@@ -84,28 +83,23 @@ public class CampfireTracker extends AbstractTracker {
                     campfire = player.level().getBlockState(pos.below());
                 } // Get campfire state
                 if (!campfire.getValue(CampfireBlock.LIT)) continue; // Immediately continue if no campfire is lit
-                ItemStack stackNew;
-                if (c == 0) {
-                    stackNew = player.getItemInHand(InteractionHand.MAIN_HAND);
-                } else {
-                    stackNew = player.getItemInHand(InteractionHand.OFF_HAND);
-                }
+                ItemStack stackNew = player.getItemInHand(hand);
                 // Get info instance ready
                 CookInfo info = cookTime.get(player.getGameProfile().getName());
                 if (info == null) {
                     info = new CookInfo();
                     cookTime.put(player.getGameProfile().getName(), info);
                 }
-                ItemStack stackOld = info.getStack(c);
+                ItemStack stackOld = info.getStack(hand.ordinal());
                 if (stackNew == stackOld || stackOld.isEmpty()) { // If what we're holding is either new or what we were holding last tick
-                    info.add(c, 1); // Add 1 to the count
-                    if (c == 0) {
+                    info.add(hand.ordinal(), 1); // Add 1 to the count
+                    if (hand == InteractionHand.MAIN_HAND) {
                         mainRes = true;
                     } else {
                         offRes = true;
                     }
                 }
-                info.setStack(c, stackNew); // Set the old stack to our new stack
+                info.setStack(hand.ordinal(), stackNew); // Set the old stack to our new stack
             }
         }
         return mainRes || offRes; // A result has occurred from either hand

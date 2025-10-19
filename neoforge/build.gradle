@@ -33,7 +33,7 @@ configurations {
 
 dependencies {
     neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
-    modApi "curse.maven:mcvrapi-591092:5720565"
+    modApi "curse.maven:vivecraft-667903:${rootProject.vivecraft_neoforge_file_id}"
 
     modApi "curse.maven:lootr-361276:6208765"
 
