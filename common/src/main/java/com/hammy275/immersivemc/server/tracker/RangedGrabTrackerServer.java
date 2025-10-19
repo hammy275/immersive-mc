@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -43,7 +44,7 @@ public class RangedGrabTrackerServer extends AbstractTracker {
                 Vec3 move = info.item.getLookAngle().multiply(moveMultiplier, moveMultiplier, moveMultiplier).add(baseVelocity);
                 info.item.setDeltaMovement(move.x, move.y, move.z);
                 info.item.hurtMarked = true; // velocityChanged from MCP
-                VRRumble.rumbleIfVR(info.player, 0, CommonConstants.vibrationTimeRangedGrab);
+                VRRumble.rumbleIfVR(info.player, InteractionHand.MAIN_HAND, CommonConstants.vibrationTimeRangedGrab);
             }
         }
 

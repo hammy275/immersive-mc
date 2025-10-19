@@ -2,9 +2,6 @@ package com.hammy275.immersivemc.server.tracker.vrhand;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.mixin.WolfInvoker;
-import com.hammy275.immersivemc.server.LastTickVRData;
-import com.hammy275.immersivemc.server.data.LastTickData;
-import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -24,6 +21,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.vivecraft.api.VRAPI;
+import org.vivecraft.api.data.VRBodyPart;
+import org.vivecraft.api.data.VRPose;
+import org.vivecraft.api.data.VRPoseHistory;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -34,19 +35,20 @@ public class PetTracker extends AbstractVRHandTracker {
     public static final double THRESHOLD = 0.02;
 
     @Override
-    protected boolean shouldRunForHand(Player player, InteractionHand hand, ItemStack stackInHand, IVRPlayer currentVRData, LastTickData lastVRData) {
+    protected boolean shouldRunForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRPose) {
         return this.getPlayerPetsNearby(player).size() > 0;
     }
 
     @Override
-    protected void runForHand(Player player, InteractionHand hand, ItemStack stackInHand, IVRPlayer currentVRData, LastTickData lastVRData) {
+    protected void runForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRData) {
         if (ThreadLocalRandom.current().nextInt(20) == 0) {
             for (LivingEntity entity : this.getPlayerPetsNearby(player)) {
-                if (entity.getBoundingBox().inflate(0.2).contains(currentVRData.getController(hand.ordinal()).position())) {
-                    if (LastTickVRData.getAllVelocity(lastVRData.lastPlayer.getController(hand.ordinal()),
-                            currentVRData.getController(hand.ordinal()), lastVRData) >= THRESHOLD) {
+                if (entity.getBoundingBox().inflate(0.2).contains(currentVRData.getHand(hand).getPos())) {
+                    VRPoseHistory history = VRAPI.instance().getHistoricalVRPoses(player);
+                    if (history == null) return;
+                    if (history.averageSpeed(VRBodyPart.fromInteractionHand(hand), 1) >= THRESHOLD) {
                         ServerLevel level = (ServerLevel) player.level();
-                        Vec3 pos = currentVRData.getController(hand.ordinal()).position();
+                        Vec3 pos = currentVRData.getHand(hand).getPos();
                         level.sendParticles(ParticleTypes.HEART, pos.x, pos.y, pos.z, ThreadLocalRandom.current().nextInt(5) + 1,
                                 0.25, 0.1, 0.25, 0.00001);
                         if (ThreadLocalRandom.current().nextInt(5) == 0) {

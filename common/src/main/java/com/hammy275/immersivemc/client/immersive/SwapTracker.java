@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.client.subscribe.ClientVRSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import org.jetbrains.annotations.Nullable;
@@ -146,7 +146,7 @@ public class SwapTracker {
     }
 
     protected int getCooldownToPass() {
-        return VRPluginVerify.clientInVR() && !ActiveConfig.active().rightClickImmersiveInteractionsInVR
+        return VRVerify.clientInVR() && !ActiveConfig.active().rightClickImmersiveInteractionsInVR
                 ? ClientVRSubscriber.getCooldown() : rightClickCooldown;
     }
 

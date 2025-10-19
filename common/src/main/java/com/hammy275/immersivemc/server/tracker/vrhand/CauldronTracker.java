@@ -3,9 +3,6 @@ package com.hammy275.immersivemc.server.tracker.vrhand;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.mixin.AbstractCauldronBlockAccessor;
-import com.hammy275.immersivemc.server.data.LastTickData;
-import net.blf02.vrapi.api.data.IVRData;
-import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.cauldron.CauldronInteraction;
@@ -13,18 +10,15 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BottleItem;
-import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PotionItem;
-import net.minecraft.world.item.SolidBucketItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
+import org.vivecraft.api.data.VRBodyPartData;
+import org.vivecraft.api.data.VRPose;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,22 +40,22 @@ public class CauldronTracker extends AbstractVRHandTracker {
     }
 
     @Override
-    protected boolean shouldRunForHand(Player player, InteractionHand hand, ItemStack stackInHand, IVRPlayer currentVRData, LastTickData lastVRData) {
+    protected boolean shouldRunForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRPose) {
         if (cooldown.getOrDefault(player.getUUID(), 0) > 0) return false;
-        IVRData data = currentVRData.getController(hand.ordinal());
+        VRBodyPartData data = currentVRPose.getHand(hand);
         // If block at hand pos is cauldron or block at hand pos is air and block below is cauldron.
-        return player.level().getBlockState(BlockPos.containing(data.position())).getBlock() instanceof AbstractCauldronBlock ||
-                (player.level().getBlockState(BlockPos.containing(data.position()).below()).getBlock() instanceof AbstractCauldronBlock
-                && player.level().getBlockState(BlockPos.containing(data.position())).isAir());
+        return player.level().getBlockState(BlockPos.containing(data.getPos())).getBlock() instanceof AbstractCauldronBlock ||
+                (player.level().getBlockState(BlockPos.containing(data.getPos()).below()).getBlock() instanceof AbstractCauldronBlock
+                && player.level().getBlockState(BlockPos.containing(data.getPos())).isAir());
     }
 
     @Override
-    protected void runForHand(Player player, InteractionHand hand, ItemStack stackInHand, IVRPlayer currentVRData, LastTickData lastVRData) {
-        IVRData data = currentVRData.getController(hand.ordinal());
-        BlockState handState = player.level().getBlockState(BlockPos.containing(data.position()));
+    protected void runForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRData) {
+        VRBodyPartData data = currentVRData.getHand(hand);
+        BlockState handState = player.level().getBlockState(BlockPos.containing(data.getPos()));
 
-        BlockPos cauldronPos = handState.getBlock() instanceof AbstractCauldronBlock ? BlockPos.containing(data.position()) :
-                BlockPos.containing(data.position()).below();
+        BlockPos cauldronPos = handState.getBlock() instanceof AbstractCauldronBlock ? BlockPos.containing(data.getPos()) :
+                BlockPos.containing(data.getPos()).below();
         BlockState cauldron = player.level().getBlockState(cauldronPos);
         AbstractCauldronBlock cauldronBlock = (AbstractCauldronBlock) cauldron.getBlock();
         boolean inCauldronBlock = handState.getBlock() instanceof AbstractCauldronBlock;
@@ -76,14 +70,14 @@ public class CauldronTracker extends AbstractVRHandTracker {
         // If holding an empty bucket or glass bottle, see if we can fill it.
         if (inCauldronBlock && (handItem instanceof BottleItem || (handItem instanceof BucketItem bucketItem && Platform.getFluid(bucketItem).isSame(Fluids.EMPTY)))) {
             // Pointing up in any way
-            if (Math.abs(data.getRoll()) < 90) {
+            if (Math.abs(data.getRoll()) < Math.PI / 2) {
                 possiblySetCooldown(player, interaction.interact(cauldron, player.level(), cauldronPos, player, hand, handStack));
             }
         } else if ((handItem instanceof PotionItem && heldPotion == Potions.WATER) ||
                 (handItem instanceof BucketItem bucketItem && !Platform.getFluid(bucketItem).isSame(Fluids.EMPTY)) ||
                 handItem instanceof SolidBucketItem) {
             // 20-degrees in either direction from straight down
-            if (Math.abs(data.getRoll()) > 160) {
+            if (Math.abs(data.getRoll()) > Math.PI - Math.toRadians(20)) {
                 possiblySetCooldown(player, interaction.interact(cauldron, player.level(), cauldronPos, player, hand, handStack));
             }
         } else if (inCauldronBlock) {

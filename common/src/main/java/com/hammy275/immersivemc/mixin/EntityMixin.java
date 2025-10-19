@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.mixin;
 import com.hammy275.immersivemc.client.ClientMixinProxy;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.ServerMixinProxy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -40,7 +40,7 @@ public class EntityMixin {
     @ModifyVariable(method = "collectCandidateStepUpHeights", at = @At("HEAD"), index = 1, ordinal = 0, argsOnly = true)
     private static List<VoxelShape> immersiveMC$removeImmersiveBlocksFromStepUpCandidates(List<VoxelShape> original) {
         if (me instanceof Player player && ActiveConfig.getActiveConfigCommon(player).dontAutoStepOnImmersiveBlocksInVR
-            && VRPluginVerify.playerInVR(player)) {
+            && VRVerify.playerInVR(player)) {
             return original.stream().filter(shape -> {
                 if (!shape.isEmpty()) {
                     BlockPos pos = BlockPos.containing(shape.bounds().getCenter());
