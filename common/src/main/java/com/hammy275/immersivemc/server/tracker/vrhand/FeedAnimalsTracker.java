@@ -3,8 +3,6 @@ package com.hammy275.immersivemc.server.tracker.vrhand;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.vr.VRRumble;
-import com.hammy275.immersivemc.server.data.LastTickData;
-import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -13,6 +11,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
+import org.vivecraft.api.data.VRPose;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,7 +29,7 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
     }
 
     @Override
-    protected boolean shouldRun(Player player, IVRPlayer vrPlayer, LastTickData lastVRData) {
+    protected boolean shouldRun(Player player, VRPose vrPose) {
         int currentCooldown = cooldown.getOrDefault(player.getGameProfile().getName(), 0);
         if (currentCooldown > 0) {
             cooldown.put(player.getGameProfile().getName(), --currentCooldown);
@@ -41,7 +40,7 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
     }
 
     @Override
-    protected void run(Player player, IVRPlayer vrPlayer, LastTickData lastVRData) {
+    protected void run(Player player, VRPose vrPose) {
         InteractionHand hand = player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
         ItemStack inHand = player.getItemInHand(hand);
         if (inHand.isEmpty()) return;
@@ -49,8 +48,8 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
         for (Animal animal : nearbyEnts) {
             if (animal.isFood(inHand)) {
                 AABB feedbox = getMouthHitbox(animal);
-                if (feedbox.contains(vrPlayer.getController0().position()) && feedbox.contains(vrPlayer.getController1().position())
-                && vrPlayer.getController0().position().distanceToSqr(vrPlayer.getController1().position()) < 0.5) {
+                if (feedbox.contains(vrPose.getMainHand().getPos()) && feedbox.contains(vrPose.getOffHand().getPos())
+                && vrPose.getMainHand().getPos().distanceToSqr(vrPose.getOffHand().getPos()) < 0.5) {
                     InteractionResult res = animal.mobInteract(player, hand);
                     if (res == InteractionResult.CONSUME || res == InteractionResult.SUCCESS) {
                         cooldown.put(player.getGameProfile().getName(), COOLDOWN_TICKS);

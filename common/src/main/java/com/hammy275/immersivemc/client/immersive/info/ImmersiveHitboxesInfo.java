@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 
 public class ImmersiveHitboxesInfo extends AbstractPlayerAttachmentInfo implements InfoTriggerHitboxes {
@@ -96,7 +97,7 @@ public class ImmersiveHitboxesInfo extends AbstractPlayerAttachmentInfo implemen
     }
 
     @Override
-    public int getVRControllerNum() {
-        return 1;
+    public InteractionHand getVRHand() {
+        return InteractionHand.OFF_HAND;
     }
 }

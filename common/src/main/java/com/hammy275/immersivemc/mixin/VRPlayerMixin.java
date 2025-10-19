@@ -7,7 +7,7 @@ import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.vivecraft.gameplay.VRPlayer;
+import org.vivecraft.client_vr.gameplay.VRPlayer;
 
 @Mixin(VRPlayer.class)
 public class VRPlayerMixin {

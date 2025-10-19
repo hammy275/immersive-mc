@@ -17,8 +17,7 @@ import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItem
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -36,6 +35,7 @@ import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.vivecraft.api.client.VRClientAPI;
 
 import java.util.List;
 import java.util.Objects;
@@ -186,10 +186,9 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
         }
 
         if (openCloseCooldown <= 0 && !ActiveConfig.active().rightClickChestInteractions) {
-            if (VRPluginVerify.clientInVR() && VRPlugin.API.apiActive(Minecraft.getInstance().player)
-                    && info.openCloseHitboxes != null) {
-                Vec3 current0 = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController0().position();
-                Vec3 current1 = VRPlugin.API.getVRPlayer(Minecraft.getInstance().player).getController1().position();
+            if (VRVerify.playerInVR(Minecraft.getInstance().player) && info.openCloseHitboxes != null) {
+                Vec3 current0 = VRClientAPI.instance().getPreTickWorldPose().getMainHand().getPos();
+                Vec3 current1 = VRClientAPI.instance().getPreTickWorldPose().getOffHand().getPos();
 
                 double diff0 = current0.y - info.lastY0;
                 double diff1 = current1.y - info.lastY1;
@@ -212,15 +211,15 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
                         // Use a distance check for checking if to vibrate the other controller to hopefully filter out
                         // actions of moving up that are for something other than the chest
                         if (diff0 >= threshold) {
-                            VRRumble.rumbleIfVR(Minecraft.getInstance().player, 0, CommonConstants.vibrationTimeWorldInteraction);
+                            VRRumble.rumbleIfVR(Minecraft.getInstance().player, InteractionHand.MAIN_HAND, CommonConstants.vibrationTimeWorldInteraction);
                             if (diff1 >= threshold / 5d && current0.distanceToSqr(current1) <= 1) {
-                                VRRumble.rumbleIfVR(Minecraft.getInstance().player, 1, CommonConstants.vibrationTimeWorldInteraction);
+                                VRRumble.rumbleIfVR(Minecraft.getInstance().player, InteractionHand.OFF_HAND, CommonConstants.vibrationTimeWorldInteraction);
                             }
                         }
                         if (diff1 >= threshold) {
-                            VRRumble.rumbleIfVR(Minecraft.getInstance().player, 1, CommonConstants.vibrationTimeWorldInteraction);
+                            VRRumble.rumbleIfVR(Minecraft.getInstance().player, InteractionHand.OFF_HAND, CommonConstants.vibrationTimeWorldInteraction);
                             if ((diff0 >= threshold / 5d && current0.distanceToSqr(current1) <= 1)) {
-                                VRRumble.rumbleIfVR(Minecraft.getInstance().player, 0, CommonConstants.vibrationTimeWorldInteraction);
+                                VRRumble.rumbleIfVR(Minecraft.getInstance().player, InteractionHand.MAIN_HAND, CommonConstants.vibrationTimeWorldInteraction);
                             }
                         }
                     }

@@ -9,15 +9,16 @@ import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRPlugin;
-import net.blf02.vrapi.api.data.IVRData;
-import net.blf02.vrapi.api.data.IVRPlayer;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.vivecraft.api.VRAPI;
+import org.vivecraft.api.data.VRBodyPartData;
+import org.vivecraft.api.data.VRPose;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,14 +40,14 @@ public class ClientVRSubscriber {
     public static void immersiveTickVR(Player player) {
         if (!Platform.isClient()) return;
         if (Minecraft.getInstance().gameMode == null) return;
-        if (!VRPlugin.API.playerInVR(player)) return;
-        IVRPlayer vrPlayer = VRPlugin.API.getVRPlayer(player);
+        if (!VRVerify.playerInVR(player)) return;
+        VRPose vrPose = VRAPI.instance().getVRPose(player);
 
         // Track things the HMD is looking at (cursor is already covered in ClientLogicSubscriber)
         double dist = Minecraft.getInstance().gameMode.getPickRange();
-        Vec3 start = vrPlayer.getHMD().position();
-        Vec3 look = vrPlayer.getHMD().getLookAngle();
-        Vec3 end = vrPlayer.getHMD().position().add(look.x * dist, look.y * dist, look.z * dist);
+        Vec3 start = vrPose.getHead().getPos();
+        Vec3 look = vrPose.getHead().getDir();
+        Vec3 end = vrPose.getHead().getPos().add(look.x * dist, look.y * dist, look.z * dist);
         BlockHitResult res = player.level.clip(new ClipContext(start, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE,
                 player));
         ClientLogicSubscriber.possiblyTrack(res.getBlockPos(), player.level.getBlockState(res.getBlockPos()),
@@ -56,20 +57,20 @@ public class ClientVRSubscriber {
             cooldown--;
         }
 
-        for (int c = 0; c <= 1; c++) {
+        for (InteractionHand hand : InteractionHand.values()) {
             for (Immersive<?, ?> singleton : Immersives.IMMERSIVES) {
-                if (handleInfos(singleton, vrPlayer, c)) {
+                if (handleInfos(singleton, vrPose, hand)) {
                     return;
                 }
             }
-            SwapTracker swapTracker = c == 0 ? SwapTracker.c0 : SwapTracker.c1;
+            SwapTracker swapTracker = hand == InteractionHand.MAIN_HAND ? SwapTracker.c0 : SwapTracker.c1;
             swapTracker.tick(null, null, -1, false);
         }
 
         if (cooldown <= 0) {
             for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
                 for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
-                    if (handleInfo(singleton, info, vrPlayer)) {
+                    if (handleInfo(singleton, info, vrPose)) {
                         return;
                     }
                 }
@@ -77,13 +78,13 @@ public class ClientVRSubscriber {
         }
     }
 
-    protected static <I extends ImmersiveInfo> boolean handleInfos(Immersive<I, ?> singleton, IVRPlayer vrPlayer, int c) {
+    protected static <I extends ImmersiveInfo> boolean handleInfos(Immersive<I, ?> singleton, VRPose vrPose, InteractionHand hand) {
         I infoWithDragHitbox = null;
-        SwapTracker swapTracker = c == 0 ? SwapTracker.c0 : SwapTracker.c1;
+        SwapTracker swapTracker = hand == InteractionHand.MAIN_HAND ? SwapTracker.c0 : SwapTracker.c1;
         for (I info : singleton.getTrackedObjects()) {
             if (info.hasHitboxes()) {
-                IVRData controller = vrPlayer.getController(c);
-                Vec3 pos = controller.position();
+                VRBodyPartData controller = vrPose.getHand(hand);
+                Vec3 pos = controller.getPos();
                 Optional<Integer> hit = Util.getFirstIntersect(pos, info.getAllHitboxes());
                 if (hit.isPresent() &&
                         (Minecraft.getInstance().options.keyAttack.isDown() || !info.getAllHitboxes().get(hit.get()).isTriggerHitbox())) {
@@ -93,7 +94,7 @@ public class ClientVRSubscriber {
                     } else {
                         swapTracker.tick(singleton, info, -1, inDragHitbox(singleton, info, pos));
                         if (cooldown <= 0) {
-                            int cooldown = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(hit.get()), InteractionHand.values()[c], Minecraft.getInstance().options.keyAttack.isDown());
+                            int cooldown = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(hit.get()), hand, Minecraft.getInstance().options.keyAttack.isDown());
                             if (singleton.isVROnly()) {
                                 cooldown = (int) (cooldown / 1.5);
                             }
@@ -114,16 +115,15 @@ public class ClientVRSubscriber {
         return infoWithDragHitbox != null;
     }
 
-    protected static boolean handleInfo(AbstractPlayerAttachmentImmersive<?, ?> singleton, AbstractPlayerAttachmentInfo info, IVRPlayer vrPlayer) {
+    protected static boolean handleInfo(AbstractPlayerAttachmentImmersive<?, ?> singleton, AbstractPlayerAttachmentInfo info, VRPose vrPose) {
         if (info.hasHitboxes() && singleton.hitboxesAvailable(info)) {
-            for (int c = 0; c <= 1; c++) {
-                IVRData controller = vrPlayer.getController(c);
-                Vec3 pos = controller.position();
+            for (InteractionHand hand : InteractionHand.values()) {
+                VRBodyPartData controller = vrPose.getHand(hand);
+                Vec3 pos = controller.getPos();
                 Optional<Integer> hit = Util.getFirstIntersect(pos, info.getAllHitboxes());
                 if (hit.isPresent()) {
                     singleton.onAnyRightClick(info);
-                    singleton.handleRightClick(info, Minecraft.getInstance().player, hit.get(),
-                            c == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+                    singleton.handleRightClick(info, Minecraft.getInstance().player, hit.get(), hand);
                     if (Minecraft.getInstance().options.keyAttack.isDown()) {
                         cooldown = 20; // Set long cooldown if whole stack is placed
                     } else {

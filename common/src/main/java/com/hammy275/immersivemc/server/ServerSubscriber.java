@@ -1,7 +1,6 @@
 package com.hammy275.immersivemc.server;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
@@ -9,12 +8,15 @@ import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternDat
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.common.tracker.AbstractTracker;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
+import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCLevelStorage;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import com.hammy275.immersivemc.server.tracker.ServerTrackerInit;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -25,8 +27,17 @@ public class ServerSubscriber {
 
     public static MinecraftServer server;
 
+    private static boolean didLowVivecraftVersionCheck = false;
+
     public static void onServerTick(MinecraftServer server) {
         ServerSubscriber.server = server; // Not a fan of this, but no better way to hold onto the server instance.
+        // Tell the server operator if they're running a Vivecraft version too low
+        if (!didLowVivecraftVersionCheck) {
+            didLowVivecraftVersionCheck = true;
+            if (Util.hasTooLowVivecraftVersion()) {
+                server.sendMessage(new TranslatableComponent("message.immersivemc.vivecraft_low_version"), net.minecraft.Util.NIL_UUID);
+            }
+        }
         SharedNetworkStorages.instance().getAll(LecternData.class).forEach(data -> data.tick(null));
         for (AbstractTracker tracker : ServerTrackerInit.globalTrackers) {
             tracker.doTick(null);
@@ -43,7 +54,7 @@ public class ServerSubscriber {
         for (AbstractTracker tracker : ServerTrackerInit.playerTrackers) {
             tracker.doTick(player);
         }
-        if (VRPluginVerify.hasAPI) {
+        if (VRVerify.hasAPI) {
             ServerVRSubscriber.vrPlayerTick(player);
         }
 

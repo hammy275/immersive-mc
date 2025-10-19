@@ -15,7 +15,7 @@ import com.hammy275.immersivemc.common.config.ItemGuideColorData;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.util.RGBA;
-import com.hammy275.immersivemc.common.vr.VRPluginVerify;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -52,7 +52,7 @@ public class ClientRenderSubscriber {
             for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
                 renderInfos(singleton, stack);
             }
-            if (VRPluginVerify.clientInVR()) {
+            if (VRVerify.clientInVR()) {
                 for (AbstractHandImmersive<?> singleton : HandImmersives.HAND_IMMERSIVES) {
                     singleton.renderAll(stack);
                 }
@@ -108,7 +108,7 @@ public class ClientRenderSubscriber {
     protected static <I extends ImmersiveInfo> void renderInfos(Immersive<I, ?> singleton,
                                                                 PoseStack stack) {
         try {
-            if (singleton.isVROnly() && !VRPluginVerify.clientInVR()) {
+            if (singleton.isVROnly() && !VRVerify.clientInVR()) {
                 return;
             }
             for (I info : singleton.getTrackedObjects()) {
@@ -125,11 +125,11 @@ public class ClientRenderSubscriber {
     protected static <I extends AbstractPlayerAttachmentInfo> void renderInfos(AbstractPlayerAttachmentImmersive<I, ?> singleton,
                                                                                PoseStack stack) {
         try {
-            if (singleton.isVROnly() && !VRPluginVerify.clientInVR()) {
+            if (singleton.isVROnly() && !VRVerify.clientInVR()) {
                 return;
             }
             for (I info : singleton.getTrackedObjects()) {
-                singleton.doRender(info, stack, VRPluginVerify.clientInVR());
+                singleton.doRender(info, stack, VRVerify.clientInVR());
             }
         } catch (ConcurrentModificationException ignored) {
             // Skip rendering if the list is modified mid-render

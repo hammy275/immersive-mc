@@ -1,10 +1,7 @@
 package com.hammy275.immersivemc.server.tracker.vrhand;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.server.data.LastTickData;
 import com.hammy275.immersivemc.server.tracker.ServerTrackerInit;
-import net.blf02.vrapi.api.data.IVRData;
-import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -14,6 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.vivecraft.api.data.VRBodyPartData;
+import org.vivecraft.api.data.VRPose;
 
 public abstract class AbstractVRHandTracker {
 
@@ -22,10 +21,10 @@ public abstract class AbstractVRHandTracker {
     }
 
     protected abstract boolean shouldRunForHand(Player player, InteractionHand hand, ItemStack stackInHand,
-                                                IVRPlayer currentVRData, LastTickData lastVRData);
+                                                VRPose currentVRPose);
 
     protected abstract void runForHand(Player player, InteractionHand hand, ItemStack stackInHand,
-                                       IVRPlayer currentVRData, LastTickData lastVRData);
+                                       VRPose currentVRData);
 
     public abstract boolean isEnabledInConfig(ActiveConfig config);
 
@@ -33,25 +32,25 @@ public abstract class AbstractVRHandTracker {
 
     }
 
-    public void tick(Player player, IVRPlayer currentVRData, LastTickData lastVRData) {
+    public void tick(Player player, VRPose currentVRPose) {
         for (InteractionHand hand : InteractionHand.values()) {
-            if (shouldRunForHand(player, hand, player.getItemInHand(hand), currentVRData, lastVRData)) {
-                runForHand(player, hand, player.getItemInHand(hand), currentVRData, lastVRData);
+            if (shouldRunForHand(player, hand, player.getItemInHand(hand), currentVRPose)) {
+                runForHand(player, hand, player.getItemInHand(hand), currentVRPose);
             }
         }
     }
-
-    protected BlockPos getBlockPosAtHand(IVRPlayer vrPlayer, InteractionHand hand) {
-        IVRData data = vrPlayer.getController(hand.ordinal());
-        return new BlockPos(data.position());
+    
+    protected BlockPos getBlockPosAtHand(VRPose vrPose, InteractionHand hand) {
+        VRBodyPartData data = vrPose.getHand(hand);
+        return new BlockPos(data.getPos());
     }
 
-    protected BlockState getBlockStateAtHand(Player player, IVRPlayer vrPlayer, InteractionHand hand) {
-        return player.level.getBlockState(getBlockPosAtHand(vrPlayer, hand));
+    protected BlockState getBlockStateAtHand(Player player, VRPose vrPose, InteractionHand hand) {
+        return player.level.getBlockState(getBlockPosAtHand(vrPose, hand));
     }
 
-    protected Block getBlockAtHand(Player player, IVRPlayer vrPlayer, InteractionHand hand) {
-        return getBlockStateAtHand(player, vrPlayer, hand).getBlock();
+    protected Block getBlockAtHand(Player player, VRPose vrPose, InteractionHand hand) {
+        return getBlockStateAtHand(player, vrPose, hand).getBlock();
     }
 
     protected boolean movingInDirectionWithThreshold(Direction direction, Vec3 handVelocity, double threshold) {

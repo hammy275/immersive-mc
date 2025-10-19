@@ -47,7 +47,7 @@ public class JukeboxHandler implements ImmersiveHandler<NullStorage> {
                 playerItem.shrink(1);
                 player.awardStat(Stats.PLAY_RECORD);
                 jukebox.setChanged();
-                VRRumble.rumbleIfVR(player, hand.ordinal(), CommonConstants.vibrationTimeWorldInteraction);
+                VRRumble.rumbleIfVR(player, hand, CommonConstants.vibrationTimeWorldInteraction);
             }
         }
     }
