@@ -6,13 +6,12 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.TridentItem;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.vivecraft.client_vr.render.VivecraftItemRendering;
 
-@Pseudo // Allows compiling even though targets can't be found due to being in hotswitch version
-@Mixin(targets = "org.vivecraft.client_vr.render.VivecraftItemRendering")
-public class VivecraftItemRenderingHotswitchMixin {
+@Mixin(VivecraftItemRendering.class)
+public class VivecraftItemRenderingMixin {
 
     @Redirect(method = "applyFirstPersonItemTransforms(Lcom/mojang/blaze3d/vertex/PoseStack;Lorg/vivecraft/client_vr/render/VivecraftItemRendering$VivecraftItemTransformType;ZLnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;)V",
     at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;isUsingItem()Z"))
