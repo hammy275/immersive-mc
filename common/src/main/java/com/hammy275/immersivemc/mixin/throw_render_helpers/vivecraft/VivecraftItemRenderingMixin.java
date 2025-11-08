@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.vivecraft.client_vr.render.VivecraftItemRendering;
 
 @Mixin(VivecraftItemRendering.class)
-public class VivecraftItemRenderingHotswitchMixin {
+public class VivecraftItemRenderingMixin {
 
     @Redirect(method = "applyFirstPersonItemTransforms(Lcom/mojang/blaze3d/vertex/PoseStack;Lorg/vivecraft/client_vr/render/VivecraftItemRendering$VivecraftItemTransformType;ZLnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;)V",
     at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;isUsingItem()Z"))
