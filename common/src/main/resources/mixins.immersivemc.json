@@ -43,7 +43,6 @@
     "ScreenMixin",
     "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin",
     "VRPlayerMixin",
-    "VRPlayerMixinNewVivecraft",
     "ScreenMixin"
   ]
 }
