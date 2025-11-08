@@ -41,10 +41,8 @@
     "MinecraftMixinAccessor",
     "MultiPlayerGameModeMixin",
     "ScreenMixin",
-    "throw_render_helpers.vivecraft.VivecraftItemRenderingHotswitchMixin",
+    "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin",
     "VRPlayerMixin",
-    "VRPlayerMixinNewVivecraft",
-    "ScreenMixin",
-    "throw_render_helpers.vivecraft.VivecraftItemRenderingHotswitchMixin"
+    "ScreenMixin"
   ]
 }
