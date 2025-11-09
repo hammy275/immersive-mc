@@ -26,16 +26,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AnvilMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.inventory.CraftingMenu;
-import net.minecraft.world.inventory.EnchantmentMenu;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.inventory.ItemCombinerMenu;
-import net.minecraft.world.inventory.RecipeBookMenu;
-import net.minecraft.world.inventory.SmithingMenu;
-import net.minecraft.world.inventory.TransientCraftingContainer;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -250,6 +241,16 @@ public class Swap {
         return false;
     }
 
+    public static Optional<RecipeHolder<CraftingRecipe>> getRecipe(ServerPlayer player, ItemStack[] stacksIn) {
+        int invDim = stacksIn.length >= 9 ? 3 : 2;
+        CraftingContainer inv = new TransientCraftingContainer(new NullContainer(), invDim, invDim);
+        for (int i = 0; i < stacksIn.length - 1; i++) {
+            inv.setItem(i, stacksIn[i]);
+        }
+
+        return player.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, inv, player.level());
+    }
+
     public static ItemStack getRecipeOutput(ServerPlayer player, ItemStack[] stacksIn) {
         int invDim = stacksIn.length >= 9 ? 3 : 2;
         CraftingContainer inv = new TransientCraftingContainer(new NullContainer(), invDim, invDim);
@@ -283,7 +284,10 @@ public class Swap {
                 // Slot 0 is the output
                 menu.setItem(i + 1, 0, newSlotsState[i].copy());
             }
-            menu.getSlot(0).set(stackOut);
+            // Need to use this resultContainer instead of the slots directly due to Fast Workbench changing things up
+            ResultContainer resultContainer = (ResultContainer) menu.getSlot(0).container;
+            resultContainer.setRecipeUsed(getRecipe(player, newSlotsState).get());
+            resultContainer.setItem(0, stackOut);
             menu.getSlot(0).onTake(player, stackOut);
             // Give our item to us, remove items from crafting inventory, and show new recipe
             stackOut.onCraftedBy(player.level(), player, stackOut.getCount());
