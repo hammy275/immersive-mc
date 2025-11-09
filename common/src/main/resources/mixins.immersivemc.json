@@ -42,7 +42,6 @@
     "MultiPlayerGameModeMixin",
     "ScreenMixin",
     "VRPlayerMixin",
-    "VRPlayerMixinNewVivecraft",
     "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin"
   ]
 }
