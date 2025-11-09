@@ -1,7 +1,9 @@
 package com.hammy275.immersivemc.server.swap;
 
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
+import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.api.common.immersive.SwapMode;
+import com.hammy275.immersivemc.api.common.immersive.SwapResult;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
@@ -11,8 +13,6 @@ import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStor
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.mixin.AnvilMenuMixin;
 import com.hammy275.immersivemc.server.api_impl.SwapResultImpl;
-import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
-import com.hammy275.immersivemc.api.common.immersive.SwapResult;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.storage.world.impl.ETableWorldStorage;
@@ -25,14 +25,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractCraftingMenu;
-import net.minecraft.world.inventory.AnvilMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.CraftingMenu;
-import net.minecraft.world.inventory.EnchantmentMenu;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.inventory.ItemCombinerMenu;
-import net.minecraft.world.inventory.SmithingMenu;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -248,6 +241,14 @@ public class Swap {
         return false;
     }
 
+    public static Optional<RecipeHolder<CraftingRecipe>> getRecipe(ServerPlayer player, ItemStack[] stacksIn) {
+        int invDim = stacksIn.length >= 9 ? 3 : 2;
+        List<ItemStack> stacks = new ArrayList<>(Arrays.asList(stacksIn).subList(0, invDim * invDim));
+        CraftingInput inv = CraftingInput.of(invDim, invDim, stacks);
+
+        return player.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, inv, player.level());
+    }
+
     public static ItemStack getRecipeOutput(ServerPlayer player, ItemStack[] stacksIn) {
         int invDim = stacksIn.length >= 9 ? 3 : 2;
         List<ItemStack> stacks = new ArrayList<>(Arrays.asList(stacksIn).subList(0, invDim * invDim));
@@ -279,7 +280,10 @@ public class Swap {
                 // Slot 0 is the output
                 menu.setItem(i + 1, 0, newSlotsState[i].copy());
             }
-            menu.getSlot(0).set(stackOut);
+            // Need to use this resultContainer instead of the slots directly due to Fast Workbench changing things up
+            ResultContainer resultContainer = (ResultContainer) menu.getSlot(0).container;
+            resultContainer.setRecipeUsed(getRecipe(player, newSlotsState).get());
+            resultContainer.setItem(0, stackOut);
             menu.getSlot(0).onTake(player, stackOut);
             // Give our item to us, remove items from crafting inventory, and show new recipe
             stackOut.onCraftedBy(player.level(), player, stackOut.getCount());
