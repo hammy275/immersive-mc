@@ -5,6 +5,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.vivecraft.api.VRAPI;
 import org.vivecraft.api.client.VRClientAPI;
+import org.vivecraft.api.data.VRBodyPart;
+import org.vivecraft.api.data.VRPoseHistory;
 import org.vivecraft.api.server.VRServerAPI;
 
 public class VRVerify {
@@ -13,10 +15,11 @@ public class VRVerify {
 
     static {
         try {
-            // Get instances that we expect to be there, so a classnotfound or similar sets having the API to false
+            // Get instances and methods that we expect to be there, so a classnotfound or similar sets having the API to false
             VRAPI.instance();
             VRClientAPI.instance();
             VRServerAPI.instance();
+            VRPoseHistory.class.getMethod("netMovement", VRBodyPart.class, int.class, boolean.class);
             hasAPI = true;
         } catch (Throwable ignored) {
             hasAPI = false;
