@@ -1,11 +1,11 @@
 package com.hammy275.immersivemc.client.immersive.book;
 
-import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.common.hitbox.OBB;
 import com.hammy275.immersivemc.common.immersive.CommonBookData;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.util.PageChangeState;
 import com.hammy275.immersivemc.common.util.PosRot;
+import com.hammy275.immersivemc.common.util.Util;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Camera;
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class ClientBookData extends CommonBookData {
     private static final BookModel bookModel = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
-    private static final ResourceLocation writtenBookTexture = new ResourceLocation(ImmersiveMC.MOD_ID, "immersive/nahnotfox_written_book.png");
+    private static final ResourceLocation writtenBookTexture = Util.id("immersive/nahnotfox_written_book.png");
 
     public final List<BookInteractable> interactables = new ArrayList<>();
     public final List<BookRenderable> renderables = new ArrayList<>();

@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
-import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.book.BookRenderable;
@@ -10,6 +9,7 @@ import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.compat.apotheosis.ApothStats;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
 import com.hammy275.immersivemc.common.util.PosRot;
+import com.hammy275.immersivemc.common.util.Util;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix3f;
@@ -144,7 +144,7 @@ public class EnchantingData {
                                           BuiltImmersiveInfo<EnchantingData> info) implements BookRenderable {
 
         private static ResourceLocation fullLocation = null;
-        private static final ResourceLocation emptyLocation = new ResourceLocation(ImmersiveMC.MOD_ID, "immersive/apoth_enchanting_table/apoth_bars.png");
+        private static final ResourceLocation emptyLocation = Util.id("immersive/apoth_enchanting_table/apoth_bars.png");
         private static final float barMaxX = 109f;
         private static final float maxXY = 255f;
 
@@ -153,7 +153,7 @@ public class EnchantingData {
             if (leftPage || info.getItem(0).isEmpty()) return;
             if (fullLocation == null) {
                 String modId = Platform.isModLoaded("zenith") ? "zenith" : "apotheosis";
-                fullLocation = new ResourceLocation(modId, "textures/gui/enchanting_table.png");
+                fullLocation = Util.id(modId, "textures/gui/enchanting_table.png");
             }
             renderBar(stack, light, amountFullSupplier.get());
         }

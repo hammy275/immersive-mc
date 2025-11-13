@@ -1,9 +1,8 @@
 package com.hammy275.immersivemc.server.storage.world;
 
-import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.handler.WorldStorageHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.immersive.handler.WorldStorageHandler;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
@@ -200,18 +199,18 @@ public class ImmersiveMCLevelStorage extends SavedData {
                     int numItems = itemsData.getInt("numOfItems");
                     ResourceLocation id;
                     if (numItems == 10) {
-                        id = new ResourceLocation(ImmersiveMC.MOD_ID, "crafting_table");
+                        id = Util.id("crafting_table");
                     } else if (numItems == 3 && oldDataType.equals("basic_item_store")) {
-                        id = new ResourceLocation(ImmersiveMC.MOD_ID, "smithing_table");
+                        id = Util.id("smithing_table");
                     } else if (numItems == 3) {
-                        id = new ResourceLocation(ImmersiveMC.MOD_ID, "anvil");
+                        id = Util.id("anvil");
                     } else if (numItems == 1) {
                         // Need to decode the item to figure out if this is an enchanting table or a beacon.
                         ItemStack item = ServerUtil.parseItem(itemsData.getCompound("item0"), lastVanillaDataVersion);
                         if (item.is(ItemTags.BEACON_PAYMENT_ITEMS)) {
-                            id = new ResourceLocation(ImmersiveMC.MOD_ID, "beacon");
+                            id = Util.id("beacon");
                         } else {
-                            id = new ResourceLocation(ImmersiveMC.MOD_ID, "enchanting_table");
+                            id = Util.id("enchanting_table");
                         }
                     } else {
                         continue;

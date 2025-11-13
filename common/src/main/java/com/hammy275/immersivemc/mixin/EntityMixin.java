@@ -46,7 +46,7 @@ public abstract class EntityMixin {
     @Inject(method = "isCrouching", at = @At("HEAD"), cancellable = true)
     private void immersiveMC$notCrouchingWhenUseChecking(CallbackInfoReturnable<Boolean> cir) {
         Entity me = (Entity) (Object) this;
-        if (me.level.isClientSide ? ClientMixinProxy.pretendPlayerIsNotCrouching : ServerMixinProxy.pretendPlayerIsNotCrouching) {
+        if (me.level.isClientSide() ? ClientMixinProxy.pretendPlayerIsNotCrouching : ServerMixinProxy.pretendPlayerIsNotCrouching) {
             cir.setReturnValue(false);
         }
     }
