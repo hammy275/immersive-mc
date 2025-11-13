@@ -63,7 +63,7 @@ public class Util {
 
     public static boolean blockIsActiveImmersive(Player player, BlockPos pos) {
         Level level = player.level();
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             for (Immersive<?, ?> singleton : Immersives.IMMERSIVES) {
                 if (singleton.getHandler() instanceof MultiblockImmersiveHandler<?> handler) {
                     // Need to actually do blockstate checks if a multiblock handler, since that data isn't known

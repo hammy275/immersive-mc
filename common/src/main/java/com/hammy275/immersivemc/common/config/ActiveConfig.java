@@ -128,7 +128,7 @@ public class ActiveConfig implements Cloneable {
         ClientActiveConfig config = CLIENTS.getOrDefault(player.getUUID(), ClientActiveConfig.DISABLED);
         // If not in VR and user wants ImmersiveMC disabled outside VR, return DISABLED config.
         if ((config.disableImmersiveMCOutsideVR && !VRVerify.playerInVR(player)) ||
-                (!player.level().isClientSide && ImmersiveMCPlayerStorages.isPlayerDisabled(player))) {
+                (!player.level().isClientSide() && ImmersiveMCPlayerStorages.isPlayerDisabled(player))) {
             return ClientActiveConfig.DISABLED;
         }
         return config;
@@ -251,7 +251,7 @@ public class ActiveConfig implements Cloneable {
     }
 
     public static ClientActiveConfig getActiveConfigCommon(Player player) {
-        return player.level().isClientSide ? active() : getConfigForPlayer(player);
+        return player.level().isClientSide() ? active() : getConfigForPlayer(player);
     }
 
     /**

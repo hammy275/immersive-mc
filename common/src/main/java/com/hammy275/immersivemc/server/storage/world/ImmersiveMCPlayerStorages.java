@@ -47,7 +47,7 @@ public class ImmersiveMCPlayerStorages extends SavedData {
     }
 
     public static ImmersiveMCPlayerStorages getPlayerStorage(Player player) {
-        if (!player.level().isClientSide) {
+        if (!player.level().isClientSide()) {
             ServerPlayer sPlayer = (ServerPlayer) player;
             return sPlayer.getServer().overworld().getDataStorage()
                     .computeIfAbsent(factory, "immersivemc_player_data");
