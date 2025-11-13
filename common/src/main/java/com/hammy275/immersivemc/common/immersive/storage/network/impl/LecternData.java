@@ -62,7 +62,7 @@ public class LecternData<T extends CommonBookData> implements NetworkStorage {
     public void tick(@Nullable Player player) {
         if (level == null || !ImmersiveHandlers.lecternHandler.isValidBlock(pos, level)) return;
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             LecternBlockEntity lectern = (LecternBlockEntity) level.getBlockEntity(pos);
             int lecternPageNum = lectern.getPage();
             if (lecternPageNum != this.bookData.getLeftPageIndex() && lecternPageNum != this.bookData.getLeftPageIndex() + 1) {

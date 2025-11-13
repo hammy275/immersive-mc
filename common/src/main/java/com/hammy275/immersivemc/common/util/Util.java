@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.util;
 
 
+import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
@@ -51,6 +52,18 @@ public class Util {
 
     public static UseInfo activeUseInfo = null;
 
+    public static ResourceLocation mcId(String path) {
+        return ResourceLocation.withDefaultNamespace(path);
+    }
+    
+    public static ResourceLocation id(String path) {
+        return id(ImmersiveMC.MOD_ID, path);
+    }
+
+    public static ResourceLocation id(String namespace, String path) {
+        return ResourceLocation.fromNamespaceAndPath(namespace, path);
+    }
+
     public static boolean hasTooLowVivecraftVersion() {
         // If missing Vivecraft or the API loaded successfully, we're on a compatible Vivecraft version
         return Platform.isModLoaded("vivecraft") && !VRVerify.hasAPI;
@@ -58,7 +71,7 @@ public class Util {
 
     public static boolean blockIsActiveImmersive(Player player, BlockPos pos) {
         Level level = player.level();
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             for (Immersive<?, ?> singleton : Immersives.IMMERSIVES) {
                 if (singleton.getHandler() instanceof MultiblockImmersiveHandler<?> handler) {
                     // Need to actually do blockstate checks if a multiblock handler, since that data isn't known
@@ -450,7 +463,7 @@ public class Util {
 
     public static ResourceLocation getResourceLocation(CompoundTag nbt, String key) {
         CompoundTag subTag = nbt.getCompound(key);
-        return ResourceLocation.fromNamespaceAndPath(subTag.getString("namespace"), subTag.getString("path"));
+        return Util.id(subTag.getString("namespace"), subTag.getString("path"));
     }
 
     public static List<BlockPos> allPositionsWithAABB(AABB box) {

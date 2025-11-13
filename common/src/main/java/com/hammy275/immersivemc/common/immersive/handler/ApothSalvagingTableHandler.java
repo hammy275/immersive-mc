@@ -1,12 +1,11 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
-import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
-import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ApothSalvagingTableStorage;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -73,6 +72,6 @@ public class ApothSalvagingTableHandler extends ItemWorldStorageHandler<ApothSal
 
     @Override
     public ResourceLocation getID() {
-        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "apoth_salvaging_table");
+        return Util.id("apoth_salvaging_table");
     }
 }

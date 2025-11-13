@@ -5,23 +5,19 @@ package com.hammy275.immersivemc.client.model;
 // Paste this class into your mod and generate all required imports
 
 
-import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeDeformation;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.resources.ResourceLocation;
 
 public class BackpackBundleModel extends EntityModel<EntityRenderState> {
-    public static final ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "immersive/bag/nahnotfox_bundle_bag.png");
-    public static final ResourceLocation textureLocationColorable = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "immersive/bag/nahnotfox_bundle_bag_colorable.png");
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "bundle_backpack"), "main");
+    public static final ResourceLocation textureLocation = Util.id("immersive/bag/nahnotfox_bundle_bag.png");
+    public static final ResourceLocation textureLocationColorable = Util.id("immersive/bag/nahnotfox_bundle_bag_colorable.png");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Util.id("bundle_backpack"), "main");
 
     public BackpackBundleModel(ModelPart root) {
         super(root);

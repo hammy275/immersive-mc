@@ -1,25 +1,21 @@
 package com.hammy275.immersivemc.client.model;
 
-import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeDeformation;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
 // 99% exported from BlockBench
 public class BackpackModel extends Model {
 
-    public static final ResourceLocation textureLocation = ResourceLocation.withDefaultNamespace("textures/block/white_wool.png");
+    public static final ResourceLocation textureLocation = Util.mcId("textures/block/white_wool.png");
 
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "backpack"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Util.id("backpack"), "main");
     private final ModelPart wall;
     private final ModelPart bb_main;
 

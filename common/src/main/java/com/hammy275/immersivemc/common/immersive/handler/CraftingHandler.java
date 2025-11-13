@@ -70,7 +70,7 @@ public class CraftingHandler extends ItemWorldStorageHandler<CraftingTableStorag
 
     @Override
     public ResourceLocation getID() {
-        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "crafting_table");
+        return Util.id("crafting_table");
     }
 
     @Override
