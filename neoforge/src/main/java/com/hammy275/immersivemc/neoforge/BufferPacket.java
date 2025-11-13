@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.neoforge;
 
-import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 public class BufferPacket implements CustomPacketPayload {
-    public static final ResourceLocation ID = new ResourceLocation(ImmersiveMC.MOD_ID, "network");
+    public static final ResourceLocation ID = Util.id("network");
 
     private final FriendlyByteBuf buffer;
 

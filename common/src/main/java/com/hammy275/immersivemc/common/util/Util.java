@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.util;
 
 
+import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
@@ -41,6 +42,19 @@ import java.util.*;
 public class Util {
 
     public static UseInfo activeUseInfo = null;
+
+    public static ResourceLocation mcId(String path) {
+        return new ResourceLocation(path);
+    }
+
+    public static ResourceLocation id(String path) {
+        return id(ImmersiveMC.MOD_ID, path);
+    }
+
+    public static ResourceLocation id(String namespace, String path) {
+        return new ResourceLocation(namespace, path);
+    }
+
 
     public static boolean hasTooLowVivecraftVersion() {
         // If missing Vivecraft or the API loaded successfully, we're on a compatible Vivecraft version
