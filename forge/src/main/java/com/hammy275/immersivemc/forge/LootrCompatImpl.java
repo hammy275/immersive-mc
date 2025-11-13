@@ -63,7 +63,7 @@ public class LootrCompatImpl implements LootrCompat {
     public void markOpener(Player player, BlockPos pos) {
         BlockEntity blockEntity = player.level.getBlockEntity(pos);
         if (blockEntity instanceof ILootBlockEntity lootBE) {
-            if (player.level.isClientSide) {
+            if (player.level.isClientSide()) {
                 lootBE.setOpened(true);
             } else {
                 lootBE.getOpeners().add(player.getUUID());
