@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.forge;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.compat.Lootr;
-import net.minecraft.resources.ResourceLocation;
+import com.hammy275.immersivemc.common.util.Util;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -16,7 +16,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 @Mod(ImmersiveMC.MOD_ID)
 public class ImmersiveMCForge {
 
-    public static final SimpleChannel NETWORK = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(ImmersiveMC.MOD_ID, "network"))
+    public static final SimpleChannel NETWORK = NetworkRegistry.ChannelBuilder.named(Util.id("network"))
             .networkProtocolVersion(() -> "3.0.10+")
             .serverAcceptedVersions(ignored -> true)
             .clientAcceptedVersions(ignored -> true).simpleChannel();

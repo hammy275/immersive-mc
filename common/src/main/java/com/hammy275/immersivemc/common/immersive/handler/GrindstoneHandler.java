@@ -86,6 +86,6 @@ public class GrindstoneHandler extends ItemWorldStorageHandler<GrindstoneStorage
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "grindstone");
+        return Util.id("grindstone");
     }
 }
