@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.util.Util;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -12,8 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ImmersiveMCFabric implements ModInitializer {
 
-    public static final ResourceLocation S2C = new ResourceLocation(ImmersiveMC.MOD_ID, "s2c");
-    public static final ResourceLocation C2S = new ResourceLocation(ImmersiveMC.MOD_ID, "c2s");
+    public static final ResourceLocation S2C = Util.id("s2c");
+    public static final ResourceLocation C2S = Util.id("c2s");
 
     @Override
     public void onInitialize() {

@@ -1,8 +1,8 @@
 package com.hammy275.immersivemc.common.compat.lootr;
 
+import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface LootrCompat {
 
-    public static final TagKey<Block> BLOCK_TAG = TagKey.create(Registries.BLOCK, new ResourceLocation("lootr", "containers"));
+    public static final TagKey<Block> BLOCK_TAG = TagKey.create(Registries.BLOCK, Util.id("lootr", "containers"));
 
     /**
      * Gets the container Lootr-handled block, or returns null if the target isn't a Lootr-handled block.

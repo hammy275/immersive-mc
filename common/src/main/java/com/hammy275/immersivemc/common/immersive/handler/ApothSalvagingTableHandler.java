@@ -73,6 +73,6 @@ public class ApothSalvagingTableHandler extends ItemWorldStorageHandler<ApothSal
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "apoth_salvaging_table");
+        return Util.id("apoth_salvaging_table");
     }
 }

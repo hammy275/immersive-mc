@@ -1,8 +1,8 @@
 package com.hammy275.immersivemc.client.model;
 
+import com.hammy275.immersivemc.common.util.Util;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.hammy275.immersivemc.ImmersiveMC;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -14,10 +14,10 @@ import net.minecraft.resources.ResourceLocation;
 // 99% exported from BlockBench
 public class BackpackModel extends Model {
 
-    public static final ResourceLocation textureLocation = new ResourceLocation("textures/block/white_wool.png");
+    public static final ResourceLocation textureLocation = Util.mcId("textures/block/white_wool.png");
 
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(ImmersiveMC.MOD_ID, "backpack"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Util.id("backpack"), "main");
     private final ModelPart wall;
     private final ModelPart bb_main;
 

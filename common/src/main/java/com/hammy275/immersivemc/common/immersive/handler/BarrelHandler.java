@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
-import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -32,6 +32,6 @@ public class BarrelHandler extends ChestLikeHandler {
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(ImmersiveMC.MOD_ID, "barrel");
+        return Util.id("barrel");
     }
 }
