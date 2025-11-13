@@ -5,7 +5,7 @@ public class CommonConstants {
     // ImmersiveMC API Versioning
     // 1.0: 1.5.0 Beta 3
     // 2.0: 1.5.0
-    // 3.0: First 1.6.0 release
+    // 3.0: 1.6.0 Alpha 1
     public static final int API_MAJOR_VERSION = 3;
     public static final int API_MINOR_VERSION = 0;
 

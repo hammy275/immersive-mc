@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.common.compat.apotheosis;
 
+import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 
 public abstract class ApothBaseCompatImpl implements ApothCompat {
 
@@ -14,8 +14,8 @@ public abstract class ApothBaseCompatImpl implements ApothCompat {
         // from preventing vanilla enchanting.
         if (doSuppressVanillaEnchanting == null) {
             // TODO: Below code is not testing as of 1.21.1 -> 1.21.4 port.
-            doSuppressVanillaEnchanting = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("apotheosis", "hellshelf")).isPresent() ||
-                    BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("zenith", "hellshelf")).isPresent();
+            doSuppressVanillaEnchanting = BuiltInRegistries.ITEM.get(Util.id("apotheosis", "hellshelf")).isPresent() ||
+                    BuiltInRegistries.ITEM.get(Util.id("zenith", "hellshelf")).isPresent();
         }
         return doSuppressVanillaEnchanting;
     }

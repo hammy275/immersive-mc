@@ -1,15 +1,11 @@
 package com.hammy275.immersivemc.client.model;
 
-import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeDeformation;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.resources.ResourceLocation;
 
@@ -17,8 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 public class BackpackCraftingModel extends EntityModel<EntityRenderState> {
 
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "crafting"), "main");
-    public static final ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "immersive/bag/crafting.png");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Util.id("crafting"), "main");
+    public static final ResourceLocation textureLocation = Util.id("immersive/bag/crafting.png");
 
     public BackpackCraftingModel(ModelPart root) {
         super(root);
