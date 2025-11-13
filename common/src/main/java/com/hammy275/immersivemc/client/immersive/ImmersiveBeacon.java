@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.client.ImmersiveClientConstants;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
@@ -21,8 +20,9 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.BeaconConfirmPacket;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
-import com.hammy275.immersivemc.common.vr.VRVerify;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRRumble;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -53,15 +53,15 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
     private static final double displayHitboxSize = 0.2;
     private static final double effectCircleRadius = 0.2;
     private static final ResourceLocation[] effectLocations = new ResourceLocation[]{
-            ResourceLocation.withDefaultNamespace("textures/mob_effect/speed.png"),
-            ResourceLocation.withDefaultNamespace("textures/mob_effect/haste.png"),
-            ResourceLocation.withDefaultNamespace("textures/mob_effect/resistance.png"),
-            ResourceLocation.withDefaultNamespace("textures/mob_effect/jump_boost.png"),
-            ResourceLocation.withDefaultNamespace("textures/mob_effect/strength.png")
+            Util.mcId("textures/mob_effect/speed.png"),
+            Util.mcId("textures/mob_effect/haste.png"),
+            Util.mcId("textures/mob_effect/resistance.png"),
+            Util.mcId("textures/mob_effect/jump_boost.png"),
+            Util.mcId("textures/mob_effect/strength.png")
     };
-    private static final ResourceLocation regenerationLocation = ResourceLocation.withDefaultNamespace("textures/mob_effect/regeneration.png");
-    private static final ResourceLocation confirmLocation = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "immersive/beacon/confirm.png");
-    private static final ResourceLocation addLocation = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "immersive/beacon/add.png");
+    private static final ResourceLocation regenerationLocation = Util.mcId("textures/mob_effect/regeneration.png");
+    private static final ResourceLocation confirmLocation = Util.id("immersive/beacon/confirm.png");
+    private static final ResourceLocation addLocation = Util.id("immersive/beacon/add.png");
 
     @Override
     public BeaconInfo buildInfo(BlockPos pos, Level level) {

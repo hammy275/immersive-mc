@@ -1,9 +1,9 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
-import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
+import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -82,6 +82,6 @@ public class ChiseledBookshelfHandler extends ContainerHandler<NullStorage> {
 
     @Override
     public ResourceLocation getID() {
-        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "chiseled_bookshelf");
+        return Util.id("chiseled_bookshelf");
     }
 }

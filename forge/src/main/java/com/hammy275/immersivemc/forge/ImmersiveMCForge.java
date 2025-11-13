@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.forge;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.common.network.Network;
-import net.minecraft.resources.ResourceLocation;
+import com.hammy275.immersivemc.common.util.Util;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -14,7 +14,7 @@ import net.minecraftforge.network.SimpleChannel;
 @Mod(ImmersiveMC.MOD_ID)
 public class ImmersiveMCForge {
 
-    public static final SimpleChannel NETWORK = ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "network"))
+    public static final SimpleChannel NETWORK = ChannelBuilder.named(Util.id("network"))
             .optional()
             .simpleChannel()
             .play().bidirectional().add(BufferPacket.class, BufferPacket.CODEC, (bufferPacket, context) -> {

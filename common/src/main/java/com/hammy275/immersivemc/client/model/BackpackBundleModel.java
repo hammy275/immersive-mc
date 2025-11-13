@@ -5,7 +5,7 @@ package com.hammy275.immersivemc.client.model;
 // Paste this class into your mod and generate all required imports
 
 
-import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.common.util.Util;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -17,9 +17,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
 public class BackpackBundleModel extends EntityModel<Entity> {
-    public static final ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "immersive/bag/nahnotfox_bundle_bag.png");
-    public static final ResourceLocation textureLocationColorable = ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "immersive/bag/nahnotfox_bundle_bag_colorable.png");
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "bundle_backpack"), "main");
+    public static final ResourceLocation textureLocation = Util.id("immersive/bag/nahnotfox_bundle_bag.png");
+    public static final ResourceLocation textureLocationColorable = Util.id("immersive/bag/nahnotfox_bundle_bag_colorable.png");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Util.id("bundle_backpack"), "main");
     private final ModelPart bone;
 
     public BackpackBundleModel(ModelPart root) {

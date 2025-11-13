@@ -86,7 +86,7 @@ public class ChestHandler extends ChestLikeHandler implements MultiblockImmersiv
 
     @Override
     public ResourceLocation getID() {
-        return ResourceLocation.fromNamespaceAndPath(ImmersiveMC.MOD_ID, "chest");
+        return Util.id("chest");
     }
 
     @Override
