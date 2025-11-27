@@ -214,7 +214,6 @@
   "message.immersivemc.vivecraft_low_version": "You are using a version of Vivecraft before version 1.3.3. Please upgrade to this version or later to use the VR features of ImmersiveMC!",
   "message.immersivemc.no_vivecraft": "Vivecraft is not installed or is on a version before 1.3.3. Please install or upgrade to Vivecraft 1.3.3 or later to use this feature!",
   "message.immersivemc.not_in_vr": "This feature only works while in VR!",
-  "message.immersivemc.no_api_server": "mc-vr-api is not installed on the server! It must be installed to use this feature!",
   "message.immersivemc.missing_immersives": "You're missing Immersives from the following mods: %s. Check the logs for more details.",
   "message.immersivemc.compat_error": "ImmersiveMC compatibility for %s has encountered an error, so it has been disabled. Please report this error in the ImmersiveMC Discord server or on ImmersiveMC's GitHub.",
 
