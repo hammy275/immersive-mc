@@ -46,6 +46,7 @@ public class ServerSubscriber {
         DirtyTracker.unmarkAllDirty(); // Remove dirtiness for block entities
         ImmersiveMCLevelStorage.unmarkAllItemStoragesDirty(server);
         SharedNetworkStorages.instance().getAll(LecternData.class).forEach(data -> data.bookData.setNoLongerDirty());
+        ServerTrackerInit.petTracker.globalTick();
     }
 
     public static void onPlayerTick(Player playerIn) {
