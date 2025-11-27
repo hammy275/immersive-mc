@@ -116,6 +116,5 @@
   "immersivemc.immersive.anvil.levels_needed": "Erfahrungslevel benötigt: %d",
   "immersivemc.immersive.beacon.selected": "Ausgewählt:",
 
-  "message.immersivemc.not_in_vr": "Diese Funktion funktioniert nur in VR!",
-  "message.immersivemc.no_api_server": "mc-vr-api ist nicht auf dem Server installiert! Sie muss aber installiert sein, um diese Funktion zu benutzen!"
+  "message.immersivemc.not_in_vr": "Diese Funktion funktioniert nur in VR!"
 }
