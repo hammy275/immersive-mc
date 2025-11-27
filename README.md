@@ -14,7 +14,7 @@ Then you'll love ImmersiveMC!
 ImmersiveMC has a couple requirements:
 
 - [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api) if you're using Fabric.
-- [mc-vr-api](https://www.curseforge.com/minecraft/mc-mods/mc-vr-api) if you're playing in VR.
+- Vivecraft 1.3.3 or later if you're playing in VR.
 
 Additionally, ImmersiveMC (and its requirements) **must be installed on BOTH the server and client to use it!**
 
