@@ -38,11 +38,6 @@ public class ImmersiveMCFabric implements ModInitializer {
             });
         }
         ImmersiveMC.init();
-        try {
-            Class.forName("net.blf02.vrapi.api.IVRAPI");
-        } catch (ClassNotFoundException e) {
-            ImmersiveMC.LOGGER.info("Not loading with mc-vr-api; it wasn't found!");
-        }
         if (Platform.isModLoaded("lootr")) {
             Lootr.lootrImpl = LootrCompatImpl.makeCompatImpl();
         }
