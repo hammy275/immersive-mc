@@ -26,9 +26,7 @@ You can use things such as the crafting table, furnaces, and brewing stands with
 
 ## VR?
 
-There's VR support! In fact, this mod was primarily built to make VR a better experience!
-
-You'll need my API mod, [MC VR API](https://www.curseforge.com/minecraft/mc-mods/mc-vr-api) to use this in VR. With this mod installed, you'll be able to use your actual hands to place items, instead of just right clicking!
+There's VR support! In fact, this mod was primarily built to make VR a better experience and has MANY VR-unique features!
 
 ## NOTE
 
