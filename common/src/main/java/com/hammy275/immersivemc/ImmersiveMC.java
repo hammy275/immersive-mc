@@ -2,27 +2,17 @@ package com.hammy275.immersivemc;
 
 import com.hammy275.immersivemc.api.common.ImmersiveMCRegistrationEvent;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.petting.PettingHandler;
 import com.hammy275.immersivemc.client.subscribe.ClientLogicSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.BeaconConfirmPacket;
-import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
-import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
-import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
-import com.hammy275.immersivemc.common.network.packet.DoubleControllerVibrate;
-import com.hammy275.immersivemc.common.network.packet.FetchBackpackStoragePacket;
-import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
-import com.hammy275.immersivemc.common.network.packet.GrabItemPacket;
-import com.hammy275.immersivemc.common.network.packet.PageTurnPacket;
-import com.hammy275.immersivemc.common.network.packet.ReelFishPacket;
-import com.hammy275.immersivemc.common.network.packet.SetRepeaterPacket;
-import com.hammy275.immersivemc.common.network.packet.SwapPacket;
-import com.hammy275.immersivemc.common.network.packet.ThrowPacket;
-import com.hammy275.immersivemc.common.network.packet.UsePacket;
+import com.hammy275.immersivemc.common.network.packet.*;
 import com.hammy275.immersivemc.common.subscribe.CommonSubscriber;
 import com.hammy275.immersivemc.server.ServerSubscriber;
 import com.hammy275.immersivemc.server.command.ImmersiveMCCommand;
+import com.hammy275.immersivemc.server.immersive.petting.AnythingLivingPettingHandler;
+import com.hammy275.immersivemc.server.immersive.petting.VanillaMobsPettingHandler;
 import net.minecraft.client.KeyMapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,6 +40,12 @@ public class ImmersiveMC {
                     ImmersiveHandlers.smithingTableHandler, ImmersiveHandlers.tcCraftingStationHandler, ImmersiveHandlers.lecternHandler,
                     ImmersiveHandlers.trapdoorHandler, ImmersiveHandlers.apothSalvagingTableHandler, ImmersiveHandlers.doorHandler,
                     ImmersiveHandlers.grindstoneHandler, ImmersiveHandlers.visualWorkbenchHandler
+            );
+
+    public static final Consumer<ImmersiveMCRegistrationEvent<PettingHandler<?>>> pettingIMCRegistrationHandler =
+            (event) -> event.register(
+                    new VanillaMobsPettingHandler<>(),
+                    new AnythingLivingPettingHandler<>() // Should always be last so other ImmersiveMC petting handlers go first
             );
 
     public ImmersiveMC() {
