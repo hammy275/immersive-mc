@@ -10,6 +10,8 @@ import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.EndTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerLevel;
@@ -212,7 +214,7 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
     }
     
     @Override
-    public void load(CompoundTag nbt, RegistryOps<CompoundTag> ops, int lastVanillaDataVersion) {
+    public void load(CompoundTag nbt, RegistryOps<Tag> ops, int lastVanillaDataVersion) {
         int length = nbt.getInt("numOfItems").get();
         this.items = new ItemStack[length];
         for (int i = 0; i < length; i++) {
@@ -235,7 +237,7 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
     }
 
     @Override
-    public CompoundTag save(CompoundTag nbt, RegistryOps<CompoundTag> ops, CompoundTag prefix) {
+    public CompoundTag save(CompoundTag nbt, RegistryOps<Tag> ops, EndTag prefix) {
         nbt.putInt("numOfItems", items.length);
         for (int i = 0; i < items.length; i++) {
             nbt.put("item" + i, ServerUtil.saveItem(items[i], ops, prefix));

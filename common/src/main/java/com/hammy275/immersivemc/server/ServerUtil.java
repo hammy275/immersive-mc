@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.server;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.SharedConstants;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.EndTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
@@ -22,7 +23,7 @@ public class ServerUtil {
      * @param prefix Prefix
      * @return Item saved to an NBT tag.
      */
-    public static Tag saveItem(ItemStack stack, RegistryOps<CompoundTag> ops, CompoundTag prefix) {
+    public static Tag saveItem(ItemStack stack, RegistryOps<Tag> ops, EndTag prefix) {
         if (stack.isEmpty()) {
             return EMPTY_ITEM.copy();
         } else {
@@ -37,7 +38,7 @@ public class ServerUtil {
      * @param lastVanillaDataVersion The last vanilla data version used to save the item.
      * @return The loaded ItemStack.
      */
-    public static ItemStack parseItem(RegistryOps<CompoundTag> ops, CompoundTag nbt, int lastVanillaDataVersion) {
+    public static ItemStack parseItem(RegistryOps<Tag> ops, CompoundTag nbt, int lastVanillaDataVersion) {
         if (nbt.isEmpty()) {
             return ItemStack.EMPTY;
         }

@@ -15,6 +15,8 @@ import com.mojang.serialization.DynamicOps;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.EndTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.MinecraftServer;
@@ -39,12 +41,12 @@ public class ImmersiveMCLevelStorage extends SavedData {
     private static final Codec<ImmersiveMCLevelStorage> savedDataCodec = new Codec<>() {
         @Override
         public <T> DataResult<Pair<ImmersiveMCLevelStorage, T>> decode(DynamicOps<T> ops, T input) {
-            return DataResult.success(new Pair<>(ImmersiveMCLevelStorage.load(CompoundTag.CODEC.parse(ops, input).getOrThrow(), (RegistryOps<CompoundTag>) ops), input));
+            return DataResult.success(new Pair<>(ImmersiveMCLevelStorage.load(CompoundTag.CODEC.parse(ops, input).getOrThrow(), (RegistryOps<Tag>) ops), input));
         }
 
         @Override
         public <T> DataResult<T> encode(ImmersiveMCLevelStorage input, DynamicOps<T> ops, T prefix) {
-            return CompoundTag.CODEC.encode(input.save(new CompoundTag(), (RegistryOps<CompoundTag>) ops, (CompoundTag) prefix), ops, prefix);
+            return CompoundTag.CODEC.encode(input.save(new CompoundTag(), (RegistryOps<Tag>) ops, (EndTag) prefix), ops, prefix);
         }
     };
     private static final SavedDataType<ImmersiveMCLevelStorage> savedDataType = new SavedDataType<>(
@@ -141,7 +143,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
         }
     }
 
-    public static ImmersiveMCLevelStorage load(CompoundTag nbt, RegistryOps<CompoundTag> ops) {
+    public static ImmersiveMCLevelStorage load(CompoundTag nbt, RegistryOps<Tag> ops) {
         ImmersiveMCLevelStorage levelStorage = new ImmersiveMCLevelStorage();
         // Use 3700 for 1.20.4 (most recent Minecraft version with ImmersiveMC before this was added) or the current Minecraft data version, whichever is lower.
         int lastVanillaDataVersion = nbt.contains("lastVanillaDataVersion") ? nbt.getInt("lastVanillaDataVersion").get() : Math.min(3700, SharedConstants.getCurrentVersion().dataVersion().version());
@@ -175,7 +177,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
         return levelStorage;
     }
 
-    public CompoundTag save(CompoundTag nbt, RegistryOps<CompoundTag> ops, CompoundTag prefix) {
+    public CompoundTag save(CompoundTag nbt, RegistryOps<Tag> ops, EndTag prefix) {
         nbt.putInt("lastVanillaDataVersion", SharedConstants.getCurrentVersion().dataVersion().version());
         nbt.putInt("version", LEVEL_STORAGE_VERSION);
         nbt.putInt("numOfStorages", storageMap.size());
@@ -205,7 +207,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
      * @param lastVanillaDataVersion The last vanilla data version this saved data was loaded in.
      * @return A converted NBT, that isn't necessarily the same object as the nbt going into this function.
      */
-    private static CompoundTag maybeUpgradeNBT(CompoundTag nbtIn, RegistryOps<CompoundTag> ops, int lastVanillaDataVersion) {
+    private static CompoundTag maybeUpgradeNBT(CompoundTag nbtIn, RegistryOps<Tag> ops, int lastVanillaDataVersion) {
         int version = 1;
         if (nbtIn.contains("version")) { // Version 1 didn't store a version int
             version = nbtIn.getInt("version").get();

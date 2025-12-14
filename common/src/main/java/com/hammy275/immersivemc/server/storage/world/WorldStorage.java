@@ -3,6 +3,8 @@ package com.hammy275.immersivemc.server.storage.world;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.handler.WorldStorageHandler;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.EndTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 
 /**
@@ -19,7 +21,7 @@ public interface WorldStorage {
      * @param ops Registry operations.
      * @param lastVanillaDataVersion The last vanilla data version this storage was loaded in.
      */
-    public void load(CompoundTag nbt, RegistryOps<CompoundTag> ops, int lastVanillaDataVersion);
+    public void load(CompoundTag nbt, RegistryOps<Tag> ops, int lastVanillaDataVersion);
 
     /**
      * Save this object into the NBT tag.
@@ -29,7 +31,7 @@ public interface WorldStorage {
      * @param prefix Prefix.
      * @return The same NBT tag as provided to this method.
      */
-    public CompoundTag save(CompoundTag nbt, RegistryOps<CompoundTag> ops, CompoundTag prefix);
+    public CompoundTag save(CompoundTag nbt, RegistryOps<Tag> ops, EndTag prefix);
 
     /**
      * @return Handler for this type of WorldStorage.

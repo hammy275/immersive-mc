@@ -3,6 +3,8 @@ package com.hammy275.immersivemc.common.immersive.storage.dual.impl;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.handler.WorldStorageHandler;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.EndTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.RegistryOps;
 
@@ -20,13 +22,13 @@ public class AnvilStorage extends ItemStorage {
     }
 
     @Override
-    public void load(CompoundTag nbt, RegistryOps<CompoundTag> ops, int lastVanillaDataVersion) {
+    public void load(CompoundTag nbt, RegistryOps<Tag> ops, int lastVanillaDataVersion) {
         super.load(nbt, ops, lastVanillaDataVersion);
         this.xpLevels = nbt.getInt("xpLevels").get();
     }
 
     @Override
-    public CompoundTag save(CompoundTag nbtIn, RegistryOps<CompoundTag> ops, CompoundTag prefix) {
+    public CompoundTag save(CompoundTag nbtIn, RegistryOps<Tag> ops, EndTag prefix) {
         CompoundTag nbt = super.save(nbtIn, ops, prefix);
         nbt.putInt("xpLevels", xpLevels);
         return nbt;

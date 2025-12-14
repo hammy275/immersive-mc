@@ -7,6 +7,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.SharedConstants;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.EndTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,12 +29,12 @@ public class ImmersiveMCPlayerStorages extends SavedData {
     private static final Codec<ImmersiveMCPlayerStorages> savedDataCodec = new Codec<>() {
         @Override
         public <T> DataResult<Pair<ImmersiveMCPlayerStorages, T>> decode(DynamicOps<T> ops, T input) {
-            return DataResult.success(new Pair<>(ImmersiveMCPlayerStorages.load(CompoundTag.CODEC.parse(ops, input).getOrThrow(), (RegistryOps<CompoundTag>) ops), input));
+            return DataResult.success(new Pair<>(ImmersiveMCPlayerStorages.load(CompoundTag.CODEC.parse(ops, input).getOrThrow(), (RegistryOps<Tag>) ops), input));
         }
 
         @Override
         public <T> DataResult<T> encode(ImmersiveMCPlayerStorages input, DynamicOps<T> ops, T prefix) {
-            return CompoundTag.CODEC.encode(input.save(new CompoundTag(), (RegistryOps<CompoundTag>) ops, (CompoundTag) prefix), ops, prefix);
+            return CompoundTag.CODEC.encode(input.save(new CompoundTag(), (RegistryOps<Tag>) ops, (EndTag) prefix), ops, prefix);
         }
     };
     private static final SavedDataType<ImmersiveMCPlayerStorages> savedDataType = new SavedDataType<>(
@@ -85,7 +86,7 @@ public class ImmersiveMCPlayerStorages extends SavedData {
         storage.setDirty();
     }
 
-    public static ImmersiveMCPlayerStorages load(CompoundTag nbt, RegistryOps<CompoundTag> ops) {
+    public static ImmersiveMCPlayerStorages load(CompoundTag nbt, RegistryOps<Tag> ops) {
         ImmersiveMCPlayerStorages playerStorage = new ImmersiveMCPlayerStorages();
         // Use 3700 for 1.20.4 (most recent Minecraft version with ImmersiveMC before this was added) or the current Minecraft data version, whichever is lower.
         int lastVanillaDataVersion = nbt.contains("lastVanillaDataVersion") ? nbt.getInt("lastVanillaDataVersion").get() : Math.min(3700, SharedConstants.getCurrentVersion().dataVersion().version());
@@ -113,7 +114,7 @@ public class ImmersiveMCPlayerStorages extends SavedData {
         return playerStorage;
     }
 
-    public CompoundTag save(CompoundTag nbt, RegistryOps<CompoundTag> ops, CompoundTag prefix) {
+    public CompoundTag save(CompoundTag nbt, RegistryOps<Tag> ops, EndTag prefix) {
         nbt.putInt("lastVanillaDataVersion", SharedConstants.getCurrentVersion().dataVersion().version());
         nbt.putInt("version", PLAYER_STORAGES_VERSION);
         for (Map.Entry<UUID, List<ItemStack>> entry : backpackCraftingItemsMap.entrySet()) {
