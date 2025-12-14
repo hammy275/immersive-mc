@@ -13,13 +13,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.gizmos.CuboidGizmo;
+import net.minecraft.gizmos.GizmoStyle;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -44,27 +46,27 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         ClientRenderSubscriber.setRenderColors();
         super.render(graphics, mouseX, mouseY, partialTick);
-        renderPreview(graphics.pose(), ClientRenderSubscriber.itemGuideColor(), 0.25f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSize);
-        renderPreview(graphics.pose(), ClientRenderSubscriber.itemGuideSelectedColor(), 0.5f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize);
+        renderPreview(new PoseStack(), ClientRenderSubscriber.itemGuideColor(), 0.25f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSize);
+        renderPreview(new PoseStack(), ClientRenderSubscriber.itemGuideSelectedColor(), 0.5f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize);
         // Render square for particle color by using our cube model lol
-        renderPreview(graphics.pose(), ClientRenderSubscriber.rangedGrabColor(), 0.75f, true, 1.0f);
+        renderPreview(new PoseStack(), ClientRenderSubscriber.rangedGrabColor(), 0.75f, true, 1.0f);
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
                 this.height * 250 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 250 / 1000 + 16)) {
-            graphics.renderTooltip(this.font, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide.desc")),
-                    mouseX, mouseY);
+            graphics.renderTooltip(this.font, List.of(ClientTooltipComponent.create(Component.translatable("config.immersivemc.item_guide.desc").getVisualOrderText())),
+                    mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
         }
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
                 this.height * 500 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 500 / 1000 + 16)) {
-            graphics.renderTooltip(this.font, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.item_guide_selected.desc")),
-                    mouseX, mouseY);
+            graphics.renderTooltip(this.font, List.of(ClientTooltipComponent.create(Component.translatable("config.immersivemc.item_guide_selected.desc").getVisualOrderText())),
+                    mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
         }
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
                 this.height * 750 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 750 / 1000 + 16)) {
-            graphics.renderTooltip(this.font, Tooltip.splitTooltip(Minecraft.getInstance(), Component.translatable("config.immersivemc.ranged_grab_color.desc")),
-                    mouseX, mouseY);
+            graphics.renderTooltip(this.font, List.of(ClientTooltipComponent.create(Component.translatable("config.immersivemc.ranged_grab_color.desc").getVisualOrderText())),
+                    mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
         }
     }
 
@@ -94,9 +96,7 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
                     buffer.getBuffer(RenderTypes.entityTranslucent(Cube1x1.textureLocation)),
                     (int) renderColor.toLong(), 64f * (float) size, ClientUtil.maxLight);
         } else if (ConfigScreen.getClientConfigIfAdjusting().placementGuideMode == PlacementGuideMode.OUTLINE) {
-            ShapeRenderer.renderLineBox(stack, buffer.getBuffer(RenderTypes.LINES),
-                    AABB.ofSize(Vec3.ZERO, 128 * size, 128 * size, 128 * size),
-                    color.redF(), color.greenF(), color.blueF(), color.alphaF());
+            ClientUtil.renderGizmo(new CuboidGizmo(AABB.ofSize(Vec3.ZERO, 128 * size, 128 * size, 128 * size), GizmoStyle.stroke((int) color.toLong()), true), stack);
         }
         buffer.endBatch();
         stack.popPose();

@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(value = ItemInHandRenderer.class, priority = 998) // Priority 998 to come before Vivecraft's Inject
 public class ItemInHandRendererMixin {
 
-    @ModifyVariable(method = "renderArmWithItem(Lnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/InteractionHand;FLnet/minecraft/world/item/ItemStack;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+    @ModifyVariable(method = "renderArmWithItem",
                     at = @At("HEAD"), index = 6, ordinal = 0, argsOnly = true)
     private ItemStack immersiveMC$overwriteItemStack(ItemStack stack, AbstractClientPlayer player, float f, float g, InteractionHand hand) {
         if (player == Minecraft.getInstance().player && VRVerify.clientInVR()) {

@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.neoforge;
 
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
+import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -9,6 +10,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 import java.util.ArrayList;
@@ -24,5 +26,6 @@ public class ClientSetup {
         ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () -> (modContainer, screen) -> new ConfigScreen(screen));
         modBus.addListener((RegisterKeyMappingsEvent event) -> keyMappingsToRegister.forEach(event::register));
         modBus.addListener((EntityRenderersEvent.RegisterLayerDefinitions event) -> entityModelLayersToRegister.forEach(pair -> event.registerLayerDefinition(pair.getFirst(), pair.getSecond())));
+        modBus.addListener((RenderLevelStageEvent.AfterEntities event) -> ClientRenderSubscriber.onWorldRender(event.getPoseStack()));
     }
 }

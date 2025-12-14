@@ -90,7 +90,7 @@ public class BackpackConfigScreen extends OptionsSubScreen {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
-        renderBackpack(graphics.pose());
+        renderBackpack(new PoseStack());
     }
 
     protected void renderBackpack(PoseStack stack) {

@@ -1,8 +1,8 @@
 {
-  "key.categories.immersivemc.vr": "ImmersiveMC VR 绑定",
+  "key.category.immersivemc.vr": "ImmersiveMC VR 绑定",
   "key.immersivemc.backpack": "打开/关闭 背包",
 
-  "key.categories.immersivemc": "ImmersiveMC 绑定",
+  "key.category.immersivemc.global": "ImmersiveMC 绑定",
   "key.immersivemc.config": "ImmersiveMC 设置",
 
   "screen.immersivemc.config.title": "ImmersiveMC 配置",

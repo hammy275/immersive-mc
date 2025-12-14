@@ -1,9 +1,9 @@
 {
-  "key.categories.immersivemc.vr": "ImmersiveMC VR-bindingen",
+  "key.category.immersivemc.vr": "ImmersiveMC VR-bindingen",
   "key.immersivemc.backpack": "Tas openen/sluiten",
   "key.immersivemc.ranged_grab": "Afstandsgrijper",
 
-  "key.categories.immersivemc": "ImmersiveMC-bindingen",
+  "key.category.immersivemc.global": "ImmersiveMC-bindingen",
   "key.immersivemc.config": "ImmersiveMC-instellingen",
 
   "screen.immersivemc.config.title": "ImmersiveMC-configuratie",

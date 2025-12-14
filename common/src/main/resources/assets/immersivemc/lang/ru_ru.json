@@ -1,9 +1,9 @@
 {
-    "key.categories.immersivemc.vr": "Горячие клавиши ImmersiveMC VR",
+    "key.category.immersivemc.vr": "Горячие клавиши ImmersiveMC VR",
     "key.immersivemc.backpack": "Открыть/закрыть вещмешок",
     "key.immersivemc.ranged_grab": "Дистанционный подбор предметов",
   
-    "key.categories.immersivemc": "Горячие клавиши ImmersiveMC",
+    "key.category.immersivemc.global": "Горячие клавиши ImmersiveMC",
     "key.immersivemc.config": "Настройки ImmersiveMC",
   
     "screen.immersivemc.config.title": "Конфиг ImmersiveMC",

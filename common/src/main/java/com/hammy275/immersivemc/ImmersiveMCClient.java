@@ -12,6 +12,7 @@ import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
 import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.client.model.Cube1x1;
 import com.hammy275.immersivemc.common.compat.util.CompatModule;
+import com.hammy275.immersivemc.common.util.Util;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import org.lwjgl.glfw.GLFW;
@@ -33,13 +34,15 @@ public class ImmersiveMCClient {
     );
 
     public static void init() {
+        KeyMapping.Category globalKeyCategory = KeyMapping.Category.register(Util.id("global"));
+        KeyMapping.Category vrKeyCategory = KeyMapping.Category.register(Util.id("vr"));
         // Map to a very obscure key, so it has no conflicts for VR users
         ImmersiveMC.SUMMON_BACKPACK = new KeyMapping("key." + ImmersiveMC.MOD_ID + ".backpack",
-                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F23, ImmersiveMC.vrKeyCategory);
+                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F23, vrKeyCategory);
         ImmersiveMC.OPEN_SETTINGS = new KeyMapping("key." + ImmersiveMC.MOD_ID + ".config",
-                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_COMMA, ImmersiveMC.globalKeyCategory);
+                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_COMMA, globalKeyCategory);
         ImmersiveMC.RANGED_GRAB_KEY = new KeyMapping("key." + ImmersiveMC.MOD_ID + ".ranged_grab",
-                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F24, ImmersiveMC.vrKeyCategory);
+                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F24, vrKeyCategory);
         PlatformClient.registerKeyMapping(ImmersiveMC.SUMMON_BACKPACK);
         PlatformClient.registerKeyMapping(ImmersiveMC.OPEN_SETTINGS);
         PlatformClient.registerKeyMapping(ImmersiveMC.RANGED_GRAB_KEY);

@@ -1,9 +1,9 @@
 {
-  "key.categories.immersivemc.vr": "ImmersiveMC VR Tastenbelegungen",
+  "key.category.immersivemc.vr": "ImmersiveMC VR Tastenbelegungen",
   "key.immersivemc.backpack": "Ruckstack öffnen/schließen",
   "key.immersivemc.ranged_grab": "Von Weitem aufheben",
 
-  "key.categories.immersivemc": "ImmersiveMC Tastenbelegungen",
+  "key.category.immersivemc.global": "ImmersiveMC Tastenbelegungen",
   "key.immersivemc.config": "ImmersiveMC Einstellungen",
 
   "screen.immersivemc.config.title": "ImmersiveMC Konfiguration",

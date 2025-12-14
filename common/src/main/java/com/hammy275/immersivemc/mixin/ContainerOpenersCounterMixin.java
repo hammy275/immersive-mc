@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.server.ChestToOpenSet;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.ContainerUser;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
@@ -16,9 +17,9 @@ import java.util.Set;
 public class ContainerOpenersCounterMixin {
 
     // Uses WrapMethod instead of ModifyReturnValue because mods (such as ImmersivePortals) tend to @Inject here
-    @WrapMethod(method = "getPlayersWithContainerOpen")
-    private List<Player> immersiveMC$addImmersiveOpenersCount(Level level, BlockPos pos, Operation<List<Player>> original) {
-        List<Player> result = original.call(level, pos);
+    @WrapMethod(method = "getEntitiesWithContainerOpen")
+    private List<ContainerUser> immersiveMC$addImmersiveOpenersCount(Level level, BlockPos pos, Operation<List<ContainerUser>> original) {
+        List<ContainerUser> result = original.call(level, pos);
         Set<Player> immersivePlayers = ChestToOpenSet.getOpenSet(level, pos, false);
         if (immersivePlayers != null) {
             for (Player immersivePlayer : immersivePlayers) {
