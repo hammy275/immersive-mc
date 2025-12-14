@@ -20,7 +20,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -146,14 +146,14 @@ public class ClientRenderSubscriber {
                 Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
                 Vec3 pos = aabb.getCenter();
                 stack.pushPose();
-                stack.translate(-renderInfo.getPosition().x + pos.x,
-                        -renderInfo.getPosition().y + pos.y,
-                        -renderInfo.getPosition().z + pos.z);
+                stack.translate(-renderInfo.position().x + pos.x,
+                        -renderInfo.position().y + pos.y,
+                        -renderInfo.position().z + pos.z);
                 MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
                 if (hitbox.isOBB()) {
                     OBBClientUtil.rotateStackForOBB(stack, hitbox.asOBB());
                 }
-                cubeModel.render(stack, buffer.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
+                cubeModel.render(stack, buffer.getBuffer(RenderTypes.entityTranslucent(Cube1x1.textureLocation)),
                         (int) color.toLong(), size / 2, light);
                 stack.popPose();
             } else if (ActiveConfig.active().placementGuideMode == PlacementGuideMode.OUTLINE) {

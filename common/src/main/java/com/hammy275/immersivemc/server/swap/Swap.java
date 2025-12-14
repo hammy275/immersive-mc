@@ -120,7 +120,7 @@ public class Swap {
     public static boolean doEnchanting(int slot, BlockPos pos, ServerPlayer player, InteractionHand hand) {
         // NOTE: slot is 1-3, depending on which enchantment the player is going for.
         if (slot < 1 || slot > 3) return false;
-        ETableWorldStorage storage = (ETableWorldStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+        ETableWorldStorage storage = (ETableWorldStorage) WorldStoragesImpl.getOrCreateS(pos, player.level());
         ItemStack toEnchantItem = storage.getItem(0).copy();
         if (toEnchantItem.isEmpty()) return false;
         int lapisInInventory = 0;
@@ -246,7 +246,7 @@ public class Swap {
         List<ItemStack> stacks = new ArrayList<>(Arrays.asList(stacksIn).subList(0, invDim * invDim));
         CraftingInput inv = CraftingInput.of(invDim, invDim, stacks);
 
-        return player.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, inv, player.level());
+        return player.level().getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, inv, player.level());
     }
 
     public static ItemStack getRecipeOutput(ServerPlayer player, ItemStack[] stacksIn) {
@@ -254,7 +254,7 @@ public class Swap {
         List<ItemStack> stacks = new ArrayList<>(Arrays.asList(stacksIn).subList(0, invDim * invDim));
         CraftingInput inv = CraftingInput.of(invDim, invDim, stacks);
 
-        Optional<RecipeHolder<CraftingRecipe>> res = player.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING,
+        Optional<RecipeHolder<CraftingRecipe>> res = player.level().getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING,
                 inv, player.level());
         if (res.isPresent()) {
             return res.get().value().assemble(inv, player.level().registryAccess());

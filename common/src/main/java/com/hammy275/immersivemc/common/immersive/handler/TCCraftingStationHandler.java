@@ -9,7 +9,7 @@ import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItem
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -82,7 +82,7 @@ public class TCCraftingStationHandler extends ContainerHandler<ListOfItemsStorag
     }
 
     @Override
-    public ResourceLocation getID() {
+    public Identifier getID() {
         return Util.id("tinkers_construct_crafting_station");
     }
 }

@@ -15,14 +15,14 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -137,8 +137,8 @@ public class EnchantingData {
                                           float startYEmpty, float startYFull, boolean useOurImageForFull,
                                           BuiltImmersiveInfo<EnchantingData> info) implements BookRenderable {
 
-        private static ResourceLocation fullLocation = null;
-        private static final ResourceLocation emptyLocation = Util.id("immersive/apoth_enchanting_table/apoth_bars.png");
+        private static Identifier fullLocation = null;
+        private static final Identifier emptyLocation = Util.id("immersive/apoth_enchanting_table/apoth_bars.png");
         private static final float barMaxX = 109f;
         private static final float maxXY = 255f;
 
@@ -166,9 +166,9 @@ public class EnchantingData {
 
         private void renderBarPart(boolean isEmpty, PoseStack stack, int light, float startX, float startY, float fullAmount) {
             if ((!isEmpty && fullAmount <= 0) || (isEmpty && 1 - fullAmount <= 0)) return;
-            ResourceLocation barLoc = !isEmpty && !useOurImageForFull ? fullLocation : emptyLocation;
+            Identifier barLoc = !isEmpty && !useOurImageForFull ? fullLocation : emptyLocation;
             VertexConsumer consumer =
-                    Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.entityCutoutNoCull(barLoc));
+                    Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderTypes.entityCutoutNoCull(barLoc));
             PoseStack.Pose lastPose = stack.last();
             Matrix4f pose = lastPose.pose();
 

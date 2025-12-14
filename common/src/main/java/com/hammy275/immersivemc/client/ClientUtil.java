@@ -12,12 +12,16 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRVerify;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.gizmos.DrawableGizmoPrimitives;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.gizmos.Gizmo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
@@ -28,6 +32,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.vivecraft.api.VRAPI;
 import org.vivecraft.api.client.VRClientAPI;
 import org.vivecraft.api.data.VRBodyPartData;
@@ -42,6 +48,21 @@ public class ClientUtil {
 
     public static final int maxLight = LightTexture.pack(15, 15);
     public static int immersiveLeftClickCooldown = 0;
+
+    /**
+     * Renders a gizmo immediately. Should NOT add instances via {@link net.minecraft.gizmos.Gizmos}, since this renders
+     * them directly instead.
+     * @param gizmo Gizmo to render
+     */
+    public static void renderGizmo(Gizmo gizmo, PoseStack poseStack) {
+        Minecraft mc = Minecraft.getInstance();
+        DrawableGizmoPrimitives gizmoPrimitives = new DrawableGizmoPrimitives();
+        gizmo.emit(gizmoPrimitives, 1f);
+        CameraRenderState cameraRenderState = mc.gameRenderer.getLevelRenderState().cameraRenderState;
+        // Frustum found via basically the same code as GameRenderer#renderLevel() in the one line below
+        Matrix4f frustum = new Matrix4f().rotation(cameraRenderState.orientation.conjugate(new Quaternionf()));
+        gizmoPrimitives.render(poseStack, mc.renderBuffers().bufferSource(), cameraRenderState, frustum);
+    }
 
     public static RegistryAccess getRegistryAccess() {
         return Minecraft.getInstance().level.registryAccess();

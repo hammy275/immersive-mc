@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
@@ -18,13 +19,17 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ShapeRenderer;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
+import net.minecraft.gizmos.CuboidGizmo;
+import net.minecraft.gizmos.GizmoStyle;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -74,9 +79,9 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
             stack.pushPose();
 
             // Move the stack to be relative to the camera
-            stack.translate(-renderInfo.getPosition().x + pos.x,
-                    -renderInfo.getPosition().y + pos.y,
-                    -renderInfo.getPosition().z + pos.z);
+            stack.translate(-renderInfo.position().x + pos.x,
+                    -renderInfo.position().y + pos.y,
+                    -renderInfo.position().z + pos.z);
 
             // Scale the item to be a good size
             stack.scale(size, size, size);
@@ -132,11 +137,9 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
             ItemDisplayContext type = facing == null ? ItemDisplayContext.GROUND :
                     ItemDisplayContext.FIXED;
 
-            Minecraft.getInstance().getItemRenderer().renderStatic(Minecraft.getInstance().player,
-                    item, type,
-                    stack, Minecraft.getInstance().renderBuffers().bufferSource(),
-                    Minecraft.getInstance().level,
-                    light, OverlayTexture.NO_OVERLAY, 0);
+            ItemStackRenderState renderState = new ItemStackRenderState();
+            Minecraft.getInstance().getItemModelResolver().updateForLiving(renderState, item, type, Minecraft.getInstance().player);
+            renderState.submit(stack, Minecraft.getInstance().gameRenderer.getSubmitNodeStorage(), light, OverlayTexture.NO_OVERLAY, 0);
 
             stack.popPose();
 
@@ -171,19 +174,17 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
 
     @Override
     public void renderHitbox(PoseStack stack, BoundingBox hitbox, boolean alwaysRender, float red, float green, float blue, float alpha) {
-        if ((Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() || alwaysRender) &&
+        if ((Minecraft.getInstance().debugEntries.isCurrentlyEnabled(DebugScreenEntries.ENTITY_HITBOXES) || alwaysRender) &&
                 hitbox != null) {
             if (hitbox.isAABB()) {
                 Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
                 // Use a new stack here, so we don't conflict with the stack.scale() for the item itself
                 stack.pushPose();
-                stack.translate(-renderInfo.getPosition().x,
-                        -renderInfo.getPosition().y,
-                        -renderInfo.getPosition().z);
+                stack.translate(-renderInfo.position().x,
+                        -renderInfo.position().y,
+                        -renderInfo.position().z);
                 MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-                ShapeRenderer.renderLineBox(stack, buffer.getBuffer(RenderType.LINES),
-                        hitbox.asAABB(),
-                        red, green, blue, alpha);
+                ClientUtil.renderGizmo(new CuboidGizmo(hitbox.asAABB(), GizmoStyle.stroke(ARGB.colorFromFloat(alpha, red, green, blue)), true), stack);
                 stack.popPose();
             } else {
                 OBBClientUtil.renderOBB(stack, hitbox.asOBB(), alwaysRender, red, green, blue, alpha);
@@ -196,9 +197,9 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         textSize *= ActiveConfig.active().textScale;
         stack.pushPose();
-        stack.translate(-renderInfo.getPosition().x + pos.x,
-                -renderInfo.getPosition().y + pos.y,
-                -renderInfo.getPosition().z + pos.z);
+        stack.translate(-renderInfo.position().x + pos.x,
+                -renderInfo.position().y + pos.y,
+                -renderInfo.position().z + pos.z);
         stack.mulPose(renderInfo.rotation());
         stack.scale(textSize, -textSize, textSize);
         Font font = Minecraft.getInstance().font;
@@ -210,25 +211,25 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
     }
 
     @Override
-    public void renderImage(PoseStack stack, ResourceLocation imageLocation, Vec3 pos, float size, int light,
+    public void renderImage(PoseStack stack, Identifier imageLocation, Vec3 pos, float size, int light,
                             @Nullable Direction facing) {
         renderImage(stack, imageLocation, 0, 0, 1, 1, pos, size, light, facing);
     }
 
     @Override
-    public void renderImage(PoseStack stack, ResourceLocation imageLocation, float minImageU, float minImageV,
+    public void renderImage(PoseStack stack, Identifier imageLocation, float minImageU, float minImageV,
                             float maxImageU, float maxImageV, Vec3 pos, float size, int light,
                             @Nullable Direction facing) {
         renderImage(stack, imageLocation, minImageU, minImageV, maxImageU, maxImageV, pos, size, light, 0, facing);
     }
 
     @Override
-    public void renderImage(PoseStack stack, ResourceLocation imageLocation, float minImageU, float minImageV, float maxImageU, float maxImageV, Vec3 pos, float size, int light, float roll, @Nullable Direction facing) {
+    public void renderImage(PoseStack stack, Identifier imageLocation, float minImageU, float minImageV, float maxImageU, float maxImageV, Vec3 pos, float size, int light, float roll, @Nullable Direction facing) {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.pushPose();
-        stack.translate(-renderInfo.getPosition().x + pos.x,
-                -renderInfo.getPosition().y + pos.y,
-                -renderInfo.getPosition().z + pos.z);
+        stack.translate(-renderInfo.position().x + pos.x,
+                -renderInfo.position().y + pos.y,
+                -renderInfo.position().z + pos.z);
         stack.scale(size, size, size);
 
         // If north, we're good to go
@@ -245,7 +246,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
         stack.mulPose(Axis.ZN.rotationDegrees(roll));
 
         VertexConsumer consumer =
-                Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.entityCutoutNoCull(imageLocation));
+                Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderTypes.entityCutoutNoCull(imageLocation));
         PoseStack.Pose pose = stack.last();
 
         consumer.addVertex(pose, -0.5f, -0.25f, 0)
@@ -296,7 +297,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
                     .addRot(-Math.atan2(ray.y, rayNoY.length()), RotType.PITCH);
             stack.mulPose(rotList.asQuaternion());
         } else {
-            stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+            stack.mulPose(Minecraft.getInstance().gameRenderer.getLevelRenderState().cameraRenderState.orientation);
         }
     }
 }

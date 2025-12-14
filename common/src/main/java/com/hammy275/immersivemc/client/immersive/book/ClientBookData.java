@@ -10,11 +10,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.model.object.book.BookModel;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class ClientBookData extends CommonBookData {
     private static final BookModel bookModel = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
-    private static final ResourceLocation writtenBookTexture = Util.id("immersive/nahnotfox_written_book.png");
+    private static final Identifier writtenBookTexture = Util.id("immersive/nahnotfox_written_book.png");
 
     public final List<BookInteractable> interactables = new ArrayList<>();
     public final List<BookRenderable> renderables = new ArrayList<>();
@@ -91,9 +91,9 @@ public class ClientBookData extends CommonBookData {
 
         Vec3 pos = bookPosRot.getPos();
         Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
-        stack.translate(-cameraInfo.getPosition().x + pos.x,
-                -cameraInfo.getPosition().y + pos.y,
-                -cameraInfo.getPosition().z + pos.z);
+        stack.translate(-cameraInfo.position().x + pos.x,
+                -cameraInfo.position().y + pos.y,
+                -cameraInfo.position().z + pos.z);
 
         stack.scale(scaleSize, scaleSize, scaleSize);
 
@@ -104,15 +104,15 @@ public class ClientBookData extends CommonBookData {
 
         float bookOpenAmount = 1.1f;
 
-        bookModel.setupAnim(
+        bookModel.setupAnim(new BookModel.State(
                 0, // Partial tick time is always 0 to have page stay in one constant spot
                 Mth.lerp(partialTick, lastLeftPageTurn, leftPageTurn), // 0-1. How far the page is in the turn. Range is [0f, 1f] with 0f being left.
                 Mth.lerp(partialTick, lastRightPageTurn, rightPageTurn), // 0-1. How far across a different page is. Range is [0f, 1f] with 0f being left.
                 bookOpenAmount // How open the book is. A good range seems to be (0f,1.2f]
-        );
+        ));
         bookModel.renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderType.entitySolid(writtenBookTexture)),
+                        .getBuffer(RenderTypes.entitySolid(writtenBookTexture)),
                 light, OverlayTexture.NO_OVERLAY,
                 0xFFFFFFFF);
 
@@ -173,9 +173,9 @@ public class ClientBookData extends CommonBookData {
             Vec3 pos = posBase.add(pageUp.scale(pageHalfHeight * renderableOffset.y))
                     .add(left.scale(singlePageWidth / -2d * renderableOffset.x))
                     .add(awayFromBookUp.scale(textUpAmount * renderableOffset.z));
-            stack.translate(-cameraInfo.getPosition().x + pos.x,
-                    -cameraInfo.getPosition().y + pos.y,
-                    -cameraInfo.getPosition().z + pos.z);
+            stack.translate(-cameraInfo.position().x + pos.x,
+                    -cameraInfo.position().y + pos.y,
+                    -cameraInfo.position().z + pos.z);
             stack.mulPose(Axis.YN.rotation(bookPosRot.getYawF() + (float) Math.PI / 2f));
             stack.mulPose(Axis.ZP.rotation(bookPosRot.getPitchF()));
             stack.mulPose(Axis.XP.rotationDegrees(90f + (leftPage ? pageTilt : -pageTilt)));

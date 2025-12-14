@@ -6,22 +6,16 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.SharedConstants;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Uses SavedData to hold player storage
@@ -31,27 +25,28 @@ public class ImmersiveMCPlayerStorages extends SavedData {
     private static final int PLAYER_STORAGES_VERSION = 2;
 
 
+    private static final Codec<ImmersiveMCPlayerStorages> savedDataCodec = new Codec<>() {
+        @Override
+        public <T> DataResult<Pair<ImmersiveMCPlayerStorages, T>> decode(DynamicOps<T> ops, T input) {
+            return DataResult.success(new Pair<>(ImmersiveMCPlayerStorages.load(CompoundTag.CODEC.parse(ops, input).getOrThrow(), (RegistryOps<CompoundTag>) ops), input));
+        }
+
+        @Override
+        public <T> DataResult<T> encode(ImmersiveMCPlayerStorages input, DynamicOps<T> ops, T prefix) {
+            return CompoundTag.CODEC.encode(input.save(new CompoundTag(), (RegistryOps<CompoundTag>) ops, (CompoundTag) prefix), ops, prefix);
+        }
+    };
     private static final SavedDataType<ImmersiveMCPlayerStorages> savedDataType = new SavedDataType<>(
             "immersivemc_player_data",
             ImmersiveMCPlayerStorages::create,
-            ctx -> new Codec<>() {
-                @Override
-                public <T> DataResult<Pair<ImmersiveMCPlayerStorages, T>> decode(DynamicOps<T> ops, T input) {
-                    return DataResult.success(new Pair<>(ImmersiveMCPlayerStorages.load(CompoundTag.CODEC.parse(ops, input).getOrThrow(), ctx.levelOrThrow().registryAccess()), input));
-                }
-
-                @Override
-                public <T> DataResult<T> encode(ImmersiveMCPlayerStorages input, DynamicOps<T> ops, T prefix) {
-                    return CompoundTag.CODEC.encode(input.save(new CompoundTag(), ctx.levelOrThrow().registryAccess()), ops, prefix);
-                }
-            },
+            savedDataCodec,
             null
     );
 
     protected Map<UUID, List<ItemStack>> backpackCraftingItemsMap = new HashMap<>();
     protected Set<UUID> disabledPlayers = new HashSet<>();
 
-    private static ImmersiveMCPlayerStorages create(Context context) {
+    private static ImmersiveMCPlayerStorages create() {
         return new ImmersiveMCPlayerStorages();
     }
 
@@ -68,7 +63,7 @@ public class ImmersiveMCPlayerStorages extends SavedData {
     public static ImmersiveMCPlayerStorages getPlayerStorage(Player player) {
         if (!player.level().isClientSide()) {
             ServerPlayer sPlayer = (ServerPlayer) player;
-            return sPlayer.getServer().overworld().getDataStorage()
+            return sPlayer.level().getServer().overworld().getDataStorage()
                     .computeIfAbsent(savedDataType);
         }
         throw new IllegalArgumentException("Can only access storage on server-side!");
@@ -90,10 +85,10 @@ public class ImmersiveMCPlayerStorages extends SavedData {
         storage.setDirty();
     }
 
-    public static ImmersiveMCPlayerStorages load(CompoundTag nbt, HolderLookup.Provider provider) {
+    public static ImmersiveMCPlayerStorages load(CompoundTag nbt, RegistryOps<CompoundTag> ops) {
         ImmersiveMCPlayerStorages playerStorage = new ImmersiveMCPlayerStorages();
         // Use 3700 for 1.20.4 (most recent Minecraft version with ImmersiveMC before this was added) or the current Minecraft data version, whichever is lower.
-        int lastVanillaDataVersion = nbt.contains("lastVanillaDataVersion") ? nbt.getInt("lastVanillaDataVersion").get() : Math.min(3700, SharedConstants.getCurrentVersion().getDataVersion().getVersion());
+        int lastVanillaDataVersion = nbt.contains("lastVanillaDataVersion") ? nbt.getInt("lastVanillaDataVersion").get() : Math.min(3700, SharedConstants.getCurrentVersion().dataVersion().version());
         nbt = maybeUpgradeNBT(nbt, lastVanillaDataVersion);
         Set<String> keys = nbt.keySet();
         for (String uuidStr : keys) {
@@ -102,7 +97,7 @@ public class ImmersiveMCPlayerStorages extends SavedData {
                 CompoundTag bagItems = nbt.getCompound(uuidStr).get().getCompound("bagItems").get();
                 List<ItemStack> items = new ArrayList<>();
                 for (int i = 0; i <= 4; i++) {
-                    items.add(ServerUtil.parseItem(provider, bagItems.getCompound(String.valueOf(i)).get(), lastVanillaDataVersion));
+                    items.add(ServerUtil.parseItem(ops, bagItems.getCompound(String.valueOf(i)).get(), lastVanillaDataVersion));
                 }
                 playerStorage.backpackCraftingItemsMap.put(uuid, items);
             } catch (IllegalArgumentException ignored) {} // We also store non-UUID keys here.
@@ -118,8 +113,8 @@ public class ImmersiveMCPlayerStorages extends SavedData {
         return playerStorage;
     }
 
-    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) {
-        nbt.putInt("lastVanillaDataVersion", SharedConstants.getCurrentVersion().getDataVersion().getVersion());
+    public CompoundTag save(CompoundTag nbt, RegistryOps<CompoundTag> ops, CompoundTag prefix) {
+        nbt.putInt("lastVanillaDataVersion", SharedConstants.getCurrentVersion().dataVersion().version());
         nbt.putInt("version", PLAYER_STORAGES_VERSION);
         for (Map.Entry<UUID, List<ItemStack>> entry : backpackCraftingItemsMap.entrySet()) {
             CompoundTag playerData = new CompoundTag();
@@ -128,9 +123,9 @@ public class ImmersiveMCPlayerStorages extends SavedData {
             for (int i = 0; i <= 4; i++) {
                 Tag itemData;
                 if (i >= items.size()) {
-                    itemData = ServerUtil.saveItem(ItemStack.EMPTY, provider);
+                    itemData = ServerUtil.saveItem(ItemStack.EMPTY, ops, prefix);
                 } else {
-                    itemData = ServerUtil.saveItem(items.get(i), provider);
+                    itemData = ServerUtil.saveItem(items.get(i), ops, prefix);
                 }
                 bagData.put(String.valueOf(i), itemData);
             }

@@ -1,5 +1,4 @@
 {
-  "accessWidener": "immersivemc.accesswidener",
   "injected_interfaces": {
     "net/minecraft/class_238": ["com/hammy275/immersivemc/api/common/hitbox/BoundingBox"]
   }

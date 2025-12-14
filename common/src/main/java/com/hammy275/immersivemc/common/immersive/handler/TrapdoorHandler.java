@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
@@ -50,7 +50,7 @@ public class TrapdoorHandler implements ImmersiveHandler<NullStorage> {
     }
 
     @Override
-    public ResourceLocation getID() {
+    public Identifier getID() {
         return Util.id("trapdoor");
     }
 }

@@ -15,7 +15,7 @@ public abstract class ItemWorldStorageHandler<S extends NetworkStorage> implemen
 
     @Override
     public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        if (WorldStoragesImpl.getS(pos, player.serverLevel()) instanceof ItemStorage iws) {
+        if (WorldStoragesImpl.getS(pos, player.level()) instanceof ItemStorage iws) {
             return iws.isDirtyForClientSync();
         }
         return false;
@@ -23,12 +23,12 @@ public abstract class ItemWorldStorageHandler<S extends NetworkStorage> implemen
 
     @Override
     public void onStopTracking(ServerPlayer player, BlockPos pos) {
-        if (WorldStoragesImpl.getWithoutVerificationS(pos, player.serverLevel()) instanceof ItemStorage iws) {
+        if (WorldStoragesImpl.getWithoutVerificationS(pos, player.level()) instanceof ItemStorage iws) {
             if (Util.isValidBlocks(this, pos, player.level())) {
                 if (ActiveConfig.getConfigForPlayer(player).returnItemsWhenLeavingImmersives) { // Player left block range
                     iws.returnItems(player);
                     updateStorageOutputAfterItemReturn(player, pos, iws);
-                    iws.setDirty(player.serverLevel());
+                    iws.setDirty(player.level());
                 }
             } else if (player.level().getBlockState(pos).isAir()) {
                 // Block was destroyed. Need to air check above, since getting block entities returns null when paused
@@ -41,7 +41,7 @@ public abstract class ItemWorldStorageHandler<S extends NetworkStorage> implemen
                         player.level().addFreshEntity(itemEnt);
                     }
                 }
-                WorldStoragesImpl.removeS(pos, player.serverLevel());
+                WorldStoragesImpl.removeS(pos, player.level());
             }
         }
     }

@@ -2,8 +2,8 @@ package com.hammy275.immersivemc.server.storage.world;
 
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.handler.WorldStorageHandler;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.RegistryOps;
 
 /**
  * An object that can be written to and from NBT used with a {@link WorldStorageHandler}. Allows Immersives to hold
@@ -16,18 +16,20 @@ public interface WorldStorage {
      * Load from the NBT tag into this object.
      *
      * @param nbt NBT tag to load from.
-     * @param provider Provider for registry access.
+     * @param ops Registry operations.
      * @param lastVanillaDataVersion The last vanilla data version this storage was loaded in.
      */
-    public void load(CompoundTag nbt, HolderLookup.Provider provider, int lastVanillaDataVersion);
+    public void load(CompoundTag nbt, RegistryOps<CompoundTag> ops, int lastVanillaDataVersion);
 
     /**
      * Save this object into the NBT tag.
+     *
      * @param nbt NBT tag to save to.
-     * @param provider Provider for registry access.
+     * @param ops Registry operations.
+     * @param prefix Prefix.
      * @return The same NBT tag as provided to this method.
      */
-    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider);
+    public CompoundTag save(CompoundTag nbt, RegistryOps<CompoundTag> ops, CompoundTag prefix);
 
     /**
      * @return Handler for this type of WorldStorage.

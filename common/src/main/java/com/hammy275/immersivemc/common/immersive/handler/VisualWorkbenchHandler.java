@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -44,7 +44,7 @@ public class VisualWorkbenchHandler extends TCCraftingStationHandler {
     }
 
     @Override
-    public ResourceLocation getID() {
+    public Identifier getID() {
         return Util.id("visual_workbench");
     }
 }

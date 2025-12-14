@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.common.immersive.handler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
@@ -20,7 +20,7 @@ public class HopperHandler extends ChestLikeHandler {
     }
 
     @Override
-    public ResourceLocation getID() {
+    public Identifier getID() {
         return Util.id("hopper");
     }
 }

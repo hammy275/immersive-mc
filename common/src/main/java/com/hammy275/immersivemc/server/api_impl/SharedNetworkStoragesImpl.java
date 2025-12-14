@@ -4,7 +4,7 @@ import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,14 +17,14 @@ public class SharedNetworkStoragesImpl implements SharedNetworkStorages {
 
     public static final SharedNetworkStoragesImpl INSTANCE = new SharedNetworkStoragesImpl();
 
-    private Map<ResourceLocation, Map<BlockPos, NetworkStorage>> storages = new HashMap<>();
+    private Map<Identifier, Map<BlockPos, NetworkStorage>> storages = new HashMap<>();
 
     @Override
     public <S extends NetworkStorage> S getOrCreate(Level level, BlockPos pos, ImmersiveHandler<S> handler) {
         S storage = get(level, pos, handler);
         if (storage == null) {
             storage = handler.getEmptyNetworkStorage();
-            storages.get(level.dimension().location()).put(pos, storage);
+            storages.get(level.dimension().identifier()).put(pos, storage);
         }
         return storage;
     }
@@ -32,7 +32,7 @@ public class SharedNetworkStoragesImpl implements SharedNetworkStorages {
     @SuppressWarnings("unchecked")
     @Override
     public <S extends NetworkStorage> @Nullable S get(Level level, BlockPos pos, ImmersiveHandler<S> handler) {
-        Map<BlockPos, NetworkStorage> innerMap = storages.computeIfAbsent(level.dimension().location(), rl -> new HashMap<>());
+        Map<BlockPos, NetworkStorage> innerMap = storages.computeIfAbsent(level.dimension().identifier(), rl -> new HashMap<>());
         NetworkStorage emptyStorage = handler.getEmptyNetworkStorage();
         if (innerMap.containsKey(pos)) {
             NetworkStorage storage = innerMap.get(pos);
@@ -45,7 +45,7 @@ public class SharedNetworkStoragesImpl implements SharedNetworkStorages {
 
     @Override
     public <S extends NetworkStorage> void remove(Level level, BlockPos pos, ImmersiveHandler<S> handler) {
-        Map<BlockPos, NetworkStorage> innerMap = storages.get(level.dimension().location());
+        Map<BlockPos, NetworkStorage> innerMap = storages.get(level.dimension().identifier());
         if (innerMap != null) {
             NetworkStorage storage = innerMap.get(pos);
             if (storage != null && storage.getClass() == handler.getEmptyNetworkStorage().getClass()) {

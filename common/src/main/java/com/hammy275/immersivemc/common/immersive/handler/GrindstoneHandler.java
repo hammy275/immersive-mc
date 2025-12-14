@@ -1,14 +1,13 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
-import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.GrindstoneStorage;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -22,7 +21,7 @@ public class GrindstoneHandler extends ItemWorldStorageHandler<GrindstoneStorage
 
     @Override
     public GrindstoneStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return (GrindstoneStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+        return (GrindstoneStorage) WorldStoragesImpl.getOrCreateS(pos, player.level());
     }
 
     @Override
@@ -71,7 +70,7 @@ public class GrindstoneHandler extends ItemWorldStorageHandler<GrindstoneStorage
                 menu.getSlot(2).onTake(player, storage.getItem(2));
             }
         }
-        storage.setDirty(player.serverLevel());
+        storage.setDirty(player.level());
     }
 
     @Override
@@ -85,7 +84,7 @@ public class GrindstoneHandler extends ItemWorldStorageHandler<GrindstoneStorage
     }
 
     @Override
-    public ResourceLocation getID() {
+    public Identifier getID() {
         return Util.id("grindstone");
     }
 }

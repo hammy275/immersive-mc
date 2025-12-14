@@ -14,6 +14,7 @@ import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -120,7 +121,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
         BoundingBox backpackHitbox = info.getHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX);
         if (backpackHitbox != null) {
             renderHitbox(stack, backpackHitbox);
-            if (VRVerify.playerInVR(mc.player) && mc.getEntityRenderDispatcher().shouldRenderHitBoxes()) {
+            if (VRVerify.playerInVR(mc.player) && mc.debugEntries.isCurrentlyEnabled(DebugScreenEntries.ENTITY_HITBOXES)) {
                 VRBodyPartData c = VRAPI.instance().getVRPose(mc.player).getHand(ActiveConfig.active().swapBagHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
                 if (BoundingBox.contains(backpackHitbox, c.getPos())) {
                     renderHitbox(stack, AABB.ofSize(c.getPos(), 0.25, 0.25, 0.25),

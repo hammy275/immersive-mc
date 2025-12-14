@@ -8,7 +8,7 @@ import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,13 +26,13 @@ public class ConfigSyncPacket {
 
     public final ActiveConfig config;
     @Nullable
-    public final List<ResourceLocation> handlerIDs;
+    public final List<Identifier> handlerIDs;
 
     public ConfigSyncPacket(ActiveConfig config) {
         this(config, null);
     }
 
-    public ConfigSyncPacket(ActiveConfig config, @Nullable List<ResourceLocation> handlerIDs) {
+    public ConfigSyncPacket(ActiveConfig config, @Nullable List<Identifier> handlerIDs) {
         this.config = config;
         this.handlerIDs = handlerIDs;
     }
@@ -41,18 +41,18 @@ public class ConfigSyncPacket {
         packet.config.encode(buffer);
         buffer.writeInt(packet.handlerIDs == null ? 0 : packet.handlerIDs.size());
         if (packet.handlerIDs != null) {
-            packet.handlerIDs.forEach(buffer::writeResourceLocation);
+            packet.handlerIDs.forEach(buffer::writeIdentifier);
         }
     }
 
     public static ConfigSyncPacket decode(RegistryFriendlyByteBuf buffer) {
         ActiveConfig incoming = ActiveConfig.decode(buffer);
-        List<ResourceLocation> handlerIDs = null;
+        List<Identifier> handlerIDs = null;
         int numIDs = buffer.readInt();
         if (numIDs > 0) {
             handlerIDs = new ArrayList<>();
             for (int i = 0; i < numIDs; i++) {
-                handlerIDs.add(buffer.readResourceLocation());
+                handlerIDs.add(buffer.readIdentifier());
             }
         }
         return new ConfigSyncPacket(incoming, handlerIDs);

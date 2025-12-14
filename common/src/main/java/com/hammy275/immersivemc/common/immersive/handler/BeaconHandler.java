@@ -9,7 +9,7 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 public class BeaconHandler extends ItemWorldStorageHandler<BeaconStorage> {
     @Override
     public BeaconStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return (BeaconStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+        return (BeaconStorage) WorldStoragesImpl.getOrCreateS(pos, player.level());
     }
 
     @Override
@@ -33,12 +33,12 @@ public class BeaconHandler extends ItemWorldStorageHandler<BeaconStorage> {
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
         ItemStack playerItem = player.getItemInHand(hand);
         if (!playerItem.is(ItemTags.BEACON_PAYMENT_ITEMS) && !playerItem.isEmpty()) return;
-        BeaconStorage beaconStorage = (BeaconStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+        BeaconStorage beaconStorage = (BeaconStorage) WorldStoragesImpl.getOrCreateS(pos, player.level());
         ItemStack beaconItem = beaconStorage.getItem(0);
         SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, beaconItem, amount, player, 1);
         result.giveToPlayer(player, hand);
         beaconStorage.setItem(0, result.immersiveStack(), player);
-        beaconStorage.setDirty(player.serverLevel());
+        beaconStorage.setDirty(player.level());
     }
 
     @Override
@@ -52,7 +52,7 @@ public class BeaconHandler extends ItemWorldStorageHandler<BeaconStorage> {
     }
 
     @Override
-    public ResourceLocation getID() {
+    public Identifier getID() {
         return Util.id("beacon");
     }
 

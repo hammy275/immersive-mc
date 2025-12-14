@@ -1,14 +1,13 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
-import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
+import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -85,7 +84,7 @@ public class ChestHandler extends ChestLikeHandler implements MultiblockImmersiv
     }
 
     @Override
-    public ResourceLocation getID() {
+    public Identifier getID() {
         return Util.id("chest");
     }
 

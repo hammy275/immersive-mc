@@ -9,7 +9,7 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -64,7 +64,7 @@ public class JukeboxHandler implements ImmersiveHandler<NullStorage> {
     }
 
     @Override
-    public ResourceLocation getID() {
+    public Identifier getID() {
         return Util.id("jukebox");
     }
 }

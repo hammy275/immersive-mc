@@ -12,7 +12,6 @@ loom {
 
     forge {
         convertAccessWideners = true
-        extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
         mixinConfig "mixins.immersivemc.json"
         mixinConfig "mixins.forge.immersivemc.json"
     }

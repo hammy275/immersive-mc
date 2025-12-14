@@ -233,7 +233,7 @@ public class ClientLogicSubscriber {
         // against UUID though, since the incoming player is a ServerPlayer, while Minecraft.getInstance().player is
         // a local player (of course).
         if (Minecraft.getInstance().player == null ||
-                Minecraft.getInstance().player.getGameProfile().getId().equals(player.getGameProfile().getId())) {
+                Minecraft.getInstance().player.getGameProfile().id().equals(player.getGameProfile().id())) {
             for (Immersive<? extends ImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
                 singleton.getTrackedObjects().clear();
             }

@@ -6,13 +6,13 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.resources.Identifier;
 
 // 99% exported from BlockBench
-public class BackpackModel extends Model {
+public class BackpackModel extends Model<Void> {
 
-    public static final ResourceLocation textureLocation = Util.mcId("textures/block/white_wool.png");
+    public static final Identifier textureLocation = Util.mcId("textures/block/white_wool.png");
 
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Util.id("backpack"), "main");
@@ -20,7 +20,7 @@ public class BackpackModel extends Model {
     private final ModelPart bb_main;
 
     public BackpackModel(ModelPart root) {
-        super(root, RenderType::entityCutoutNoCull);
+        super(root, RenderTypes::entityCutoutNoCull);
         this.wall = root.getChild("wall");
         this.bb_main = root.getChild("bb_main");
     }

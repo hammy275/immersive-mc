@@ -12,7 +12,7 @@ import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.swap.Swap;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.AnvilBlock;
 public class AnvilHandler extends ItemWorldStorageHandler<AnvilStorage> {
     @Override
     public AnvilStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return (AnvilStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+        return (AnvilStorage) WorldStoragesImpl.getOrCreateS(pos, player.level());
     }
 
     @Override
@@ -33,7 +33,7 @@ public class AnvilHandler extends ItemWorldStorageHandler<AnvilStorage> {
 
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        AnvilStorage storage = (AnvilStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+        AnvilStorage storage = (AnvilStorage) WorldStoragesImpl.getOrCreateS(pos, player.level());
         if (slot != 2) {
             storage.placeItem(player, hand, slot, amount);
             storage.setItem(2, ItemStack.EMPTY);
@@ -49,7 +49,7 @@ public class AnvilHandler extends ItemWorldStorageHandler<AnvilStorage> {
                 VRRumble.rumbleIfVR(player, hand, CommonConstants.vibrationTimeWorldInteraction);
             }
         }
-        storage.setDirty(player.serverLevel());
+        storage.setDirty(player.level());
     }
 
     @Override
@@ -63,7 +63,7 @@ public class AnvilHandler extends ItemWorldStorageHandler<AnvilStorage> {
     }
 
     @Override
-    public ResourceLocation getID() {
+    public Identifier getID() {
         return Util.id("anvil");
     }
 

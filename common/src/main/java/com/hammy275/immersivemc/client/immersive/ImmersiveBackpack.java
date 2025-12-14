@@ -25,10 +25,10 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -152,9 +152,9 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
         Vec3 pos = info.renderPos;
 
         Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
-        stack.translate(-cameraInfo.getPosition().x + pos.x,
-                -cameraInfo.getPosition().y + pos.y,
-                -cameraInfo.getPosition().z + pos.z);
+        stack.translate(-cameraInfo.position().x + pos.x,
+                -cameraInfo.position().y + pos.y,
+                -cameraInfo.position().z + pos.z);
 
         stack.scale(0.5f, 0.5f, 0.5f);
 
@@ -167,7 +167,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
         // Render the model (finally!)
         getBackpackModel().renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderType.entityCutout(getBackpackTexture())),
+                        .getBuffer(RenderTypes.entityCutout(getBackpackTexture())),
                 info.light, OverlayTexture.NO_OVERLAY,
                 info.argb);
 
@@ -176,7 +176,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
         stack.translate(leftHanded ? -0.75 : 0.75, 0.25, 0);
         craftingModel.renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderType.entityCutout(BackpackCraftingModel.textureLocation)),
+                        .getBuffer(RenderTypes.entityCutout(BackpackCraftingModel.textureLocation)),
                 info.light, OverlayTexture.NO_OVERLAY,
                 0xFFFFFFFF);
 
@@ -271,7 +271,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
         }
     }
 
-    public static ResourceLocation getBackpackTexture() {
+    public static Identifier getBackpackTexture() {
         switch (ActiveConfig.active().bagMode) {
             case BUNDLE -> {
                 return BackpackBundleModel.textureLocation;

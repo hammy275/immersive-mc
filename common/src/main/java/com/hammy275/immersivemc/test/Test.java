@@ -55,7 +55,7 @@ public interface Test {
      */
     default void fastForward(ServerPlayer player, int numTicks) {
         for (int i = 0; i < numTicks; i++) {
-            player.serverLevel().tick(() -> false);
+            player.level().tick(() -> false);
         }
     }
 
@@ -102,7 +102,7 @@ public interface Test {
     }
 
     default ServerLevel level(ServerPlayer player) {
-        return player.serverLevel();
+        return player.level();
     }
 
     default void assertTrue(boolean condition) {

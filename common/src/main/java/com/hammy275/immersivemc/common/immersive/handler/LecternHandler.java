@@ -9,7 +9,7 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -67,7 +67,7 @@ public class LecternHandler implements ImmersiveHandler<LecternData<CommonBookDa
     }
 
     @Override
-    public ResourceLocation getID() {
+    public Identifier getID() {
         return Util.id("lectern");
     }
 }

@@ -30,9 +30,9 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
 
     @Override
     protected boolean shouldRun(Player player, VRPose vrPose) {
-        int currentCooldown = cooldown.getOrDefault(player.getGameProfile().getName(), 0);
+        int currentCooldown = cooldown.getOrDefault(player.getGameProfile().name(), 0);
         if (currentCooldown > 0) {
-            cooldown.put(player.getGameProfile().getName(), --currentCooldown);
+            cooldown.put(player.getGameProfile().name(), --currentCooldown);
         }
         return (!player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()
                 || !player.getItemInHand(InteractionHand.OFF_HAND).isEmpty())
@@ -52,7 +52,7 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
                 && vrPose.getMainHand().getPos().distanceToSqr(vrPose.getOffHand().getPos()) < 0.5) {
                     InteractionResult res = animal.mobInteract(player, hand);
                     if (res == InteractionResult.CONSUME || res == InteractionResult.SUCCESS) {
-                        cooldown.put(player.getGameProfile().getName(), COOLDOWN_TICKS);
+                        cooldown.put(player.getGameProfile().name(), COOLDOWN_TICKS);
                         VRRumble.doubleRumbleIfVR(player, CommonConstants.vibrationTimePlayerActionAlert);
                         break;
                     }

@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.client.immersive_item.info.HeldImageImmersiveInf
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import org.vivecraft.api.data.VRBodyPartData;
 
@@ -64,17 +64,17 @@ public class HeldImageImmersive extends AbstractHandImmersive<HeldImageImmersive
         super.registerAndTickAll();
     }
 
-    public <T> void setHeldImage(InteractionHand hand, ResourceLocation heldImage, ResourceLocation immersiveId,
+    public <T> void setHeldImage(InteractionHand hand, Identifier heldImage, Identifier immersiveId,
                                  T heldData, float size, BiConsumer<HeldImageImmersiveInfo<T>, VRBodyPartData> ticker) {
         this.infos.removeIf(info -> info.hand == hand);
         this.infos.add(new HeldImageImmersiveInfo<>(hand, heldImage, immersiveId, heldData, size, ticker));
     }
 
-    public List<HeldImageImmersiveInfo<?>> getHeldImages(ResourceLocation immersiveId) {
+    public List<HeldImageImmersiveInfo<?>> getHeldImages(Identifier immersiveId) {
         return this.infos.stream().filter(info -> info.immersiveId.equals(immersiveId)).toList();
     }
 
-    public void removeImages(ResourceLocation immersiveId) {
+    public void removeImages(Identifier immersiveId) {
         this.infos.removeIf(info -> info.immersiveId.equals(immersiveId));
     }
 

@@ -17,7 +17,7 @@ import com.hammy275.immersivemc.server.storage.world.impl.ETableWorldStorage;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -37,7 +37,7 @@ import java.util.List;
 public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
     @Override
     public ETableStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        ETableWorldStorage worldStorage = (ETableWorldStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+        ETableWorldStorage worldStorage = (ETableWorldStorage) WorldStoragesImpl.getOrCreateS(pos, player.level());
         ETableStorage storage = new ETableStorage(Arrays.asList(worldStorage.getItemsRaw()));
 
         if (worldStorage.getItem(0) != null && !worldStorage.getItem(0).isEmpty()) {
@@ -70,7 +70,7 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
     @Override
     public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
         if (Apoth.apothImpl.enchantModuleEnabled()) {
-            WorldStorage storage = WorldStoragesImpl.getS(pos, player.serverLevel());
+            WorldStorage storage = WorldStoragesImpl.getS(pos, player.level());
             if (storage instanceof ETableWorldStorage ews) {
                 ews.setDirtyFromApothStats(Apoth.apothImpl.getStats(player.level(), pos, 1));
             }
@@ -86,7 +86,7 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
         if (player == null) return;
-        ETableWorldStorage enchStorage = (ETableWorldStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+        ETableWorldStorage enchStorage = (ETableWorldStorage) WorldStoragesImpl.getOrCreateS(pos, player.level());
         if (slot == 0) {
             ItemStack toEnchant = player.getItemInHand(hand);
             // Apotheosis allows placing any item in
@@ -105,7 +105,7 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
             }
             VRRumble.rumbleIfVR(player, hand, CommonConstants.vibrationTimeWorldInteraction);
         }
-        enchStorage.setDirty(player.serverLevel());
+        enchStorage.setDirty(player.level());
     }
 
     @Override
@@ -120,7 +120,7 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
     }
 
     @Override
-    public ResourceLocation getID() {
+    public Identifier getID() {
         return Util.id("enchanting_table");
     }
 

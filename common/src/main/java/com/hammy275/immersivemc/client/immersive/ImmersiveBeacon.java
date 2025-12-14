@@ -30,7 +30,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
@@ -52,16 +52,16 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
     private static final double effectHitboxSize = 0.2;
     private static final double displayHitboxSize = 0.2;
     private static final double effectCircleRadius = 0.2;
-    private static final ResourceLocation[] effectLocations = new ResourceLocation[]{
+    private static final Identifier[] effectLocations = new Identifier[]{
             Util.mcId("textures/mob_effect/speed.png"),
             Util.mcId("textures/mob_effect/haste.png"),
             Util.mcId("textures/mob_effect/resistance.png"),
             Util.mcId("textures/mob_effect/jump_boost.png"),
             Util.mcId("textures/mob_effect/strength.png")
     };
-    private static final ResourceLocation regenerationLocation = Util.mcId("textures/mob_effect/regeneration.png");
-    private static final ResourceLocation confirmLocation = Util.id("immersive/beacon/confirm.png");
-    private static final ResourceLocation addLocation = Util.id("immersive/beacon/add.png");
+    private static final Identifier regenerationLocation = Util.mcId("textures/mob_effect/regeneration.png");
+    private static final Identifier confirmLocation = Util.id("immersive/beacon/confirm.png");
+    private static final Identifier addLocation = Util.id("immersive/beacon/add.png");
 
     @Override
     public BeaconInfo buildInfo(BlockPos pos, Level level) {
@@ -73,7 +73,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
 
     @Override
     public int handleHitboxInteract(BeaconInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
-        ResourceLocation id = getHandler().getID();
+        Identifier id = getHandler().getID();
         BiConsumer<HeldImageImmersiveInfo<Integer>, VRBodyPartData> heldItemTicker = !useGrabBeacon() ? null : (imageInfo, handData) -> {
             if (!Immersives.immersiveBeacon.getTrackedObjects().contains(info)) {
                 imageInfo.shouldRemove = true;

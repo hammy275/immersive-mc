@@ -4,7 +4,7 @@ import com.hammy275.immersivemc.common.compat.IronFurnaces;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Player;
@@ -23,7 +23,7 @@ public class IronFurnacesFurnaceHandler extends FurnaceHandler {
     }
 
     @Override
-    public ResourceLocation getID() {
+    public Identifier getID() {
         return Util.id("iron_furnaces_furnace");
     }
 

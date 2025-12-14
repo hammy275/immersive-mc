@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.client.api_impl.ImmersiveRenderHelpersImpl;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -155,7 +155,7 @@ public interface ImmersiveRenderHelpers {
      * @param facing The direction for the item to face. If null, the item will face the camera. This value should not
      *               be UP or DOWN.
      */
-    public void renderImage(PoseStack stack, ResourceLocation imageLocation, Vec3 pos, float size, int light,
+    public void renderImage(PoseStack stack, Identifier imageLocation, Vec3 pos, float size, int light,
                             @Nullable Direction facing);
 
     /**
@@ -172,7 +172,7 @@ public interface ImmersiveRenderHelpers {
      * @param facing The direction for the item to face. If null, the item will face the camera. This value should not
      *               be UP or DOWN.
      */
-    public void renderImage(PoseStack stack, ResourceLocation imageLocation,
+    public void renderImage(PoseStack stack, Identifier imageLocation,
                             float minImageU, float minImageV, float maxImageU, float maxImageV,
                             Vec3 pos, float size, int light,
                             @Nullable Direction facing);
@@ -192,7 +192,7 @@ public interface ImmersiveRenderHelpers {
      * @param facing The direction for the item to face. If null, the item will face the camera. This value should not
      *               be UP or DOWN.
      */
-    public void renderImage(PoseStack stack, ResourceLocation imageLocation,
+    public void renderImage(PoseStack stack, Identifier imageLocation,
                             float minImageU, float minImageV, float maxImageU, float maxImageV,
                             Vec3 pos, float size, int light, float roll,
                             @Nullable Direction facing);

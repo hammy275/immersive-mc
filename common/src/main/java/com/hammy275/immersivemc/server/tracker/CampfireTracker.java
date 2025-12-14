@@ -38,12 +38,12 @@ public class CampfireTracker extends AbstractTracker {
     @Override
     protected void tick(Player playerIn) {
         ServerPlayer player = (ServerPlayer) playerIn;
-        CookInfo info = cookTime.get(player.getGameProfile().getName());
+        CookInfo info = cookTime.get(player.getGameProfile().name());
         if (info == null) return;
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack toSmelt = player.getItemInHand(hand);
             Optional<RecipeHolder<CampfireCookingRecipe>> recipe =
-                    player.serverLevel().recipeAccess().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SingleRecipeInput(toSmelt), player.level());
+                    player.level().recipeAccess().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SingleRecipeInput(toSmelt), player.level());
             if (recipe.isPresent() && info.get(hand.ordinal()) >= recipe.get().value().cookingTime() / 2) { // Smelt the held controller's item if we reach cook time.
                 toSmelt.shrink(1);
                 ItemStack result = recipe.get().value().assemble(new SingleRecipeInput(toSmelt), player.level().registryAccess());
@@ -51,7 +51,7 @@ public class CampfireTracker extends AbstractTracker {
                 if (!didGive) {
                     Util.placeLeftovers(player, result);
                 }
-                cookTime.remove(player.getGameProfile().getName());
+                cookTime.remove(player.getGameProfile().name());
             } else if (recipe.isPresent() &&
                     ThreadLocalRandom.current().nextInt(4) == 0) { // Not ready to smelt yet, show particle
                 Vec3 pos = VRAPI.instance().getVRPose(player).getHand(hand).getPos();
@@ -85,10 +85,10 @@ public class CampfireTracker extends AbstractTracker {
                 if (!campfire.getValue(CampfireBlock.LIT)) continue; // Immediately continue if no campfire is lit
                 ItemStack stackNew = player.getItemInHand(hand);
                 // Get info instance ready
-                CookInfo info = cookTime.get(player.getGameProfile().getName());
+                CookInfo info = cookTime.get(player.getGameProfile().name());
                 if (info == null) {
                     info = new CookInfo();
-                    cookTime.put(player.getGameProfile().getName(), info);
+                    cookTime.put(player.getGameProfile().name(), info);
                 }
                 ItemStack stackOld = info.getStack(hand.ordinal());
                 if (stackNew == stackOld || stackOld.isEmpty()) { // If what we're holding is either new or what we were holding last tick

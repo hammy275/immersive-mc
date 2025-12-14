@@ -1,30 +1,24 @@
 package com.hammy275.immersivemc.common.immersive.storage.dual.impl;
 
-import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
+import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.api.common.immersive.SwapResult;
-import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.server.ServerSubscriber;
 import com.hammy275.immersivemc.server.ServerUtil;
+import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.swap.Swap;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Stack;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Functions both as WorldStorage for saving server side and as a NetworkStorage for sending items
@@ -151,7 +145,7 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
         result.giveToPlayer(player, hand);
         this.items[slot] = result.immersiveStack(); // Set without clearing item counts, since those are updated above
         if (player instanceof ServerPlayer sp) {
-            setDirty(sp.serverLevel());
+            setDirty(sp.level());
         }
     }
 
@@ -218,11 +212,11 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
     }
     
     @Override
-    public void load(CompoundTag nbt, HolderLookup.Provider provider, int lastVanillaDataVersion) {
+    public void load(CompoundTag nbt, RegistryOps<CompoundTag> ops, int lastVanillaDataVersion) {
         int length = nbt.getInt("numOfItems").get();
         this.items = new ItemStack[length];
         for (int i = 0; i < length; i++) {
-            this.items[i] = ServerUtil.parseItem(ServerSubscriber.server.registryAccess(), nbt.getCompound("item" + i).get(), lastVanillaDataVersion);
+            this.items[i] = ServerUtil.parseItem(ops, nbt.getCompound("item" + i).get(), lastVanillaDataVersion);
         }
         itemCounts = new LinkedList[length];
         for (int i = 0; i < length; i++) {
@@ -241,10 +235,10 @@ public abstract class ItemStorage implements WorldStorage, NetworkStorage {
     }
 
     @Override
-    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) {
+    public CompoundTag save(CompoundTag nbt, RegistryOps<CompoundTag> ops, CompoundTag prefix) {
         nbt.putInt("numOfItems", items.length);
         for (int i = 0; i < items.length; i++) {
-            nbt.put("item" + i, ServerUtil.saveItem(items[i], ServerSubscriber.server.registryAccess()));
+            nbt.put("item" + i, ServerUtil.saveItem(items[i], ops, prefix));
         }
         CompoundTag rootCounts = new CompoundTag();
         for (int slot = 0; slot < itemCounts.length; slot++) {

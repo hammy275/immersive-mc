@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
 public class FetchInventoryPacket<S extends NetworkStorage> {
@@ -23,7 +23,7 @@ public class FetchInventoryPacket<S extends NetworkStorage> {
 
     public static <NS extends NetworkStorage> void encode(FetchInventoryPacket<NS> packet, RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos);
-        buffer.writeResourceLocation(packet.handler.getID());
+        buffer.writeIdentifier(packet.handler.getID());
         packet.storage.encode(buffer);
     }
 
@@ -32,7 +32,7 @@ public class FetchInventoryPacket<S extends NetworkStorage> {
         BlockPos pos = buffer.readBlockPos();
         ImmersiveHandler<NS> handlerToSet = null;
         NS storage = null;
-        ResourceLocation id = buffer.readResourceLocation();
+        Identifier id = buffer.readIdentifier();
         for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
             if (handler.getID().equals(id)) {
                 handlerToSet = (ImmersiveHandler<NS>) handler;

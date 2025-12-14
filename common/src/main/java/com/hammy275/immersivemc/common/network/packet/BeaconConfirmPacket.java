@@ -38,7 +38,7 @@ public class BeaconConfirmPacket {
         if (NetworkUtil.safeToRun(message.pos, player)) {
             if (player.level().getBlockEntity(message.pos) instanceof BeaconBlockEntity beacon) {
                 ContainerData data = ((BeaconBlockEntityMixin) beacon).immersiveMC$getBeaconData();
-                BeaconStorage beaconStorage = (BeaconStorage) WorldStoragesImpl.getOrCreateS(message.pos, player.serverLevel());
+                BeaconStorage beaconStorage = (BeaconStorage) WorldStoragesImpl.getOrCreateS(message.pos, player.level());
                 int secondId = message.secondaryId;
                 if (data.get(0) == 4 && message.secondaryId == -1) {
                     secondId = message.primaryId;
@@ -48,7 +48,7 @@ public class BeaconConfirmPacket {
                     beaconStorage.setItem(0, ItemStack.EMPTY);
                     data.set(1, message.primaryId + 1);
                     data.set(2, secondId + 1);
-                    beaconStorage.setDirty(player.serverLevel());
+                    beaconStorage.setDirty(player.level());
                     player.level().blockEntityChanged(beacon.getBlockPos());
                 }
             }

@@ -8,7 +8,7 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -32,7 +32,7 @@ public class ApothSalvagingTableHandler extends ItemWorldStorageHandler<ApothSal
 
     @Override
     public ApothSalvagingTableStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return (ApothSalvagingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+        return (ApothSalvagingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.level());
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ApothSalvagingTableHandler extends ItemWorldStorageHandler<ApothSal
 
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        ApothSalvagingTableStorage storage = (ApothSalvagingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+        ApothSalvagingTableStorage storage = (ApothSalvagingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.level());
         if (slot < 9) { // Placing input
             ItemStack handItem = player.getItemInHand(hand);
             if (handItem.isEmpty() || Apoth.apothImpl.isSalvagable(handItem, player.level())) {
@@ -57,7 +57,7 @@ public class ApothSalvagingTableHandler extends ItemWorldStorageHandler<ApothSal
                 storage.setItem(i, ItemStack.EMPTY);
             }
         }
-        storage.setDirty(player.serverLevel());
+        storage.setDirty(player.level());
     }
 
     @Override
@@ -71,7 +71,7 @@ public class ApothSalvagingTableHandler extends ItemWorldStorageHandler<ApothSal
     }
 
     @Override
-    public ResourceLocation getID() {
+    public Identifier getID() {
         return Util.id("apoth_salvaging_table");
     }
 }

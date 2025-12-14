@@ -11,7 +11,7 @@ import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.SmithingTableBlock;
 public class SmithingTableHandler extends ItemWorldStorageHandler<SmithingTableStorage> {
     @Override
     public SmithingTableStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return (SmithingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+        return (SmithingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.level());
     }
 
     @Override
@@ -32,7 +32,7 @@ public class SmithingTableHandler extends ItemWorldStorageHandler<SmithingTableS
 
     @Override
     public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        SmithingTableStorage storage = (SmithingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+        SmithingTableStorage storage = (SmithingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.level());
         if (slot != 3) {
             storage.placeItem(player, hand, slot, amount);
             storage.setItem(3, ItemStack.EMPTY);
@@ -47,7 +47,7 @@ public class SmithingTableHandler extends ItemWorldStorageHandler<SmithingTableS
                 VRRumble.rumbleIfVR(player, hand, CommonConstants.vibrationTimeWorldInteraction);
             }
         }
-        storage.setDirty(player.serverLevel());
+        storage.setDirty(player.level());
     }
 
     @Override
@@ -61,7 +61,7 @@ public class SmithingTableHandler extends ItemWorldStorageHandler<SmithingTableS
     }
 
     @Override
-    public ResourceLocation getID() {
+    public Identifier getID() {
         return Util.id("smithing_table");
     }
 

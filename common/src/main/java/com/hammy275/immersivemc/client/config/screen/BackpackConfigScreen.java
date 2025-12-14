@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Vec3i;
@@ -114,7 +114,7 @@ public class BackpackConfigScreen extends OptionsSubScreen {
 
         ImmersiveBackpack.getBackpackModel().renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderType.entityCutout(ImmersiveBackpack.getBackpackTexture())),
+                        .getBuffer(RenderTypes.entityCutout(ImmersiveBackpack.getBackpackTexture())),
                 15728880, OverlayTexture.NO_OVERLAY, rgb);
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
 

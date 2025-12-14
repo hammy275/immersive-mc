@@ -20,7 +20,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -52,16 +52,16 @@ public class Util {
 
     public static UseInfo activeUseInfo = null;
 
-    public static ResourceLocation mcId(String path) {
-        return ResourceLocation.withDefaultNamespace(path);
+    public static Identifier mcId(String path) {
+        return Identifier.withDefaultNamespace(path);
     }
     
-    public static ResourceLocation id(String path) {
+    public static Identifier id(String path) {
         return id(ImmersiveMC.MOD_ID, path);
     }
 
-    public static ResourceLocation id(String namespace, String path) {
-        return ResourceLocation.fromNamespaceAndPath(namespace, path);
+    public static Identifier id(String namespace, String path) {
+        return Identifier.fromNamespaceAndPath(namespace, path);
     }
 
     public static boolean hasTooLowVivecraftVersion() {
@@ -454,14 +454,14 @@ public class Util {
         }
     }
 
-    public static void putResourceLocation(CompoundTag nbt, String key, ResourceLocation loc) {
+    public static void putResourceLocation(CompoundTag nbt, String key, Identifier loc) {
         CompoundTag locTag = new CompoundTag();
         locTag.putString("namespace", loc.getNamespace());
         locTag.putString("path", loc.getPath());
         nbt.put(key, locTag);
     }
 
-    public static ResourceLocation getResourceLocation(CompoundTag nbt, String key) {
+    public static Identifier getResourceLocation(CompoundTag nbt, String key) {
         CompoundTag subTag = nbt.getCompound(key).get();
         return Util.id(subTag.getString("namespace").get(), subTag.getString("path").get());
     }

@@ -16,10 +16,9 @@ public class ClickHandlerScreen extends Screen {
         super(Component.empty());
     }
 
-    @Override
-    public boolean handleComponentClicked(@Nullable Style style) {
-        boolean ret = super.handleComponentClicked(style);
+    public void handleComponentClicked(@Nullable Style style) {
         if (style != null && style.getClickEvent() != null) {
+            Screen.defaultHandleClickEvent(style.getClickEvent(), Minecraft.getInstance(), this);
             ClickEvent.Action action = style.getClickEvent().action();
             if (action == ClickEvent.Action.RUN_COMMAND || action == ClickEvent.Action.COPY_TO_CLIPBOARD ||
                 action == ClickEvent.Action.SUGGEST_COMMAND) {
@@ -29,7 +28,6 @@ public class ClickHandlerScreen extends Screen {
                 this.closeWhenAble = true; // Need to wait until this screen is restored to close
             }
         }
-        return ret;
     }
 
     @Override
