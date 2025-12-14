@@ -40,8 +40,8 @@ dependencies {
 
     modApi "curse.maven:vivecraft-667903:${rootProject.vivecraft_fabric_file_id}"
 
-    modApi "com.terraformersmc:modmenu:14.0.0-rc.2"
-    modCompileOnly "curse.maven:lootr-615106:6208764" // Waiting on 1.21.5 build
+    modApi "com.terraformersmc:modmenu:17.0.0-alpha.1"
+    modCompileOnly "curse.maven:lootr-615106:6208764" // Waiting on 1.21.11 build
     modCompileOnly "curse.maven:clothconfigapi-348521:5987042" // lootr dependency
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
