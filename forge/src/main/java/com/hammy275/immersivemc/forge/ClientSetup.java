@@ -1,7 +1,6 @@
 package com.hammy275.immersivemc.forge;
 
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
-import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -37,10 +36,5 @@ public class ClientSetup {
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         entityModelLayersToRegister.forEach(pair -> event.registerLayerDefinition(pair.getFirst(), pair.getSecond()));
-    }
-
-    @SubscribeEvent
-    public static void levelRenderAfterEntities(TODO) {
-        ClientRenderSubscriber.onWorldRender(TODO);
     }
 }
