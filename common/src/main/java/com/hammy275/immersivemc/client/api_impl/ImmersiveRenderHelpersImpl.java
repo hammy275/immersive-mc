@@ -20,7 +20,6 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.debug.DebugScreenEntries;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -177,13 +176,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
         if ((Minecraft.getInstance().debugEntries.isCurrentlyEnabled(DebugScreenEntries.ENTITY_HITBOXES) || alwaysRender) &&
                 hitbox != null) {
             if (hitbox.isAABB()) {
-                Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
-                // Use a new stack here, so we don't conflict with the stack.scale() for the item itself
                 stack.pushPose();
-                stack.translate(-renderInfo.position().x,
-                        -renderInfo.position().y,
-                        -renderInfo.position().z);
-                MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
                 ClientUtil.renderGizmo(new CuboidGizmo(hitbox.asAABB(), GizmoStyle.stroke(ARGB.colorFromFloat(alpha, red, green, blue)), true), stack);
                 stack.popPose();
             } else {
