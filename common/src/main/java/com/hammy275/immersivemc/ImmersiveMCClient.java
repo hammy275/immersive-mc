@@ -6,11 +6,7 @@ import com.hammy275.immersivemc.client.compat.ipn.IPN;
 import com.hammy275.immersivemc.client.compat.ipn.IPNCompat;
 import com.hammy275.immersivemc.client.compat.ipn.IPNCompatImpl;
 import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.client.model.BackpackBundleModel;
-import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
-import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
-import com.hammy275.immersivemc.client.model.BackpackModel;
-import com.hammy275.immersivemc.client.model.Cube1x1;
+import com.hammy275.immersivemc.client.model.*;
 import com.hammy275.immersivemc.common.compat.util.CompatModule;
 import com.hammy275.immersivemc.common.util.Util;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -52,6 +48,8 @@ public class ImmersiveMCClient {
         PlatformClient.registerEntityModelLayer(BackpackModel.LAYER_LOCATION, BackpackModel::createBodyLayer);
         PlatformClient.registerEntityModelLayer(BackpackBundleModel.LAYER_LOCATION, BackpackBundleModel::createBodyLayer);
         PlatformClient.registerEntityModelLayer(Cube1x1.LAYER_LOCATION, Cube1x1::createBodyLayer);
+
+        PlatformClient.registerPictureInPictureRenderer(ModelGuiRendererState.class, ModelGuiRenderer::new);
 
         if (Platform.isModLoaded("inventoryprofilesnext")) {
             IPN.ipnCompat = CompatModule.create(new IPNCompatImpl(), IPNCompat.class, IPN.compatData);
