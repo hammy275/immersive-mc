@@ -305,7 +305,7 @@ public class Immersives {
                                 float rot = table.rot + (float) Math.PI / 2f;
                                 PosRot posRot = new PosRot(Vec3.atBottomCenterOf(pos).add(0, 0.9, 0),
                                         Util.getLookAngle((float) -Math.PI / 8f, -rot),
-                                        22.5f, (float) Math.toDegrees(rot), 0);
+                                        (float) Math.PI / 8f, rot, 0);
                                 bookData.render(stack, light, posRot);
                             }
                         }
