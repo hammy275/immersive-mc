@@ -100,8 +100,8 @@ public class LecternData<T extends CommonBookData> implements NetworkStorage {
         Vec3 lecternPos = Vec3.atBottomCenterOf(pos).add(0, 1, 0)
                 .add(Vec3.atLowerCornerOf(lecternDir.getNormal()).scale(0.1));
         return new PosRot(lecternPos, Util.getLookAngle((float) -Math.PI / 8f, (float) -Math.toRadians(lecternDir.getOpposite().toYRot())),
-                22.5f,
-                lecternDir.getOpposite().toYRot(), 0);
+                (float) Math.PI / 8f,
+                Math.toRadians(lecternDir.getOpposite().toYRot()), 0);
     }
 
     protected int findMaxLeftPageIndex() {
