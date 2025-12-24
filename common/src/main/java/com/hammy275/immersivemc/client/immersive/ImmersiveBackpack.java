@@ -71,7 +71,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     @Override
     protected void renderTick(BackpackInfo info, boolean isInVR) {
         super.renderTick(info, isInVR);
-        VRPose vrPose = VRClientAPI.instance().getPreTickWorldPose();
+        VRPose vrPose = VRClientAPI.instance().getWorldRenderPose();
         calculatePositions(info, vrPose);
     }
 
