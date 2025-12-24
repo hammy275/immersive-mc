@@ -49,7 +49,7 @@ public class ImmersiveMCClient {
         PlatformClient.registerEntityModelLayer(BackpackBundleModel.LAYER_LOCATION, BackpackBundleModel::createBodyLayer);
         PlatformClient.registerEntityModelLayer(Cube1x1.LAYER_LOCATION, Cube1x1::createBodyLayer);
 
-        PlatformClient.registerPictureInPictureRenderer(ModelGuiRendererState.class, ModelGuiRenderer::new);
+        PlatformClient.registerPictureInPictureRenderer(CustomGuiRendererState.class, CustomGuiRenderer::new);
 
         if (Platform.isModLoaded("inventoryprofilesnext")) {
             IPN.ipnCompat = CompatModule.create(new IPNCompatImpl(), IPNCompat.class, IPN.compatData);

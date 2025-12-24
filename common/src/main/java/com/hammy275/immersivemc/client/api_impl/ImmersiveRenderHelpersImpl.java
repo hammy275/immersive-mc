@@ -177,7 +177,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
                 hitbox != null) {
             if (hitbox.isAABB()) {
                 stack.pushPose();
-                ClientUtil.renderGizmo(new CuboidGizmo(hitbox.asAABB(), GizmoStyle.stroke(ARGB.colorFromFloat(alpha, red, green, blue)), true), stack);
+                ClientUtil.renderGizmo(new CuboidGizmo(hitbox.asAABB(), GizmoStyle.stroke(ARGB.colorFromFloat(alpha, red, green, blue)), false), stack);
                 stack.popPose();
             } else {
                 OBBClientUtil.renderOBB(stack, hitbox.asOBB(), alwaysRender, red, green, blue, alpha);

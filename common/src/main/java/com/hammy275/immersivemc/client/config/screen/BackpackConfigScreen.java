@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.client.config.screen;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.PlatformClient;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
-import com.hammy275.immersivemc.client.model.ModelGuiRendererState;
+import com.hammy275.immersivemc.client.model.CustomGuiRendererState;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.BackpackMode;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
@@ -16,6 +16,8 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
@@ -94,18 +96,20 @@ public class BackpackConfigScreen extends OptionsSubScreen {
         super.render(graphics, mouseX, mouseY, partialTick);
         GuiRenderState guiRenderState = ((GuiGraphicsAccessor) graphics).immersiveMC$getGuiRenderState();
         ScreenRectangle peek = PlatformClient.peekScissorStack(graphics);
-        guiRenderState.submitPicturesInPictureState(new ModelGuiRendererState(
+        guiRenderState.submitPicturesInPictureState(new CustomGuiRendererState(
                 this.width * 0.85, this.width, 0, this.height, 50f, peek,
-                ImmersiveBackpack.getBackpackModel(), ImmersiveBackpack.getBackpackTexture(),
-                ImmersiveBackpack.getBackpackColor(), poseStack -> {
-                    poseStack.translate(0, -1.5f, 0); // Translate up since bag model's origin is the top
+                (poseStack, bufferSource) -> {
+                    poseStack.translate(0, -1.5f, 0); // Translate down (becoming up after XN rotation) since bag model's origin is the top
                     long currentTimeMilli = Instant.now().toEpochMilli();
                     long millisPerRot = 8000;
                     float rot = (((float) (currentTimeMilli % millisPerRot)) / millisPerRot) *
                             (2f * (float) Math.PI);
                     poseStack.mulPose(Axis.XN.rotationDegrees(335f));
                     poseStack.mulPose(Axis.YP.rotation(rot));
-        }
+                    ImmersiveBackpack.getBackpackModel().renderToBuffer(poseStack,
+                            bufferSource.getBuffer(RenderTypes.entityCutout(ImmersiveBackpack.getBackpackTexture())),
+                            15728880, OverlayTexture.NO_OVERLAY, ImmersiveBackpack.getBackpackColor());
+                }
         ));
     }
 

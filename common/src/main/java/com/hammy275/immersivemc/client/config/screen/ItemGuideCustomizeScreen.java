@@ -1,23 +1,26 @@
 package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.PlatformClient;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.model.Cube1x1;
+import com.hammy275.immersivemc.client.model.CustomGuiRendererState;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ItemGuideColorData;
 import com.hammy275.immersivemc.common.config.ItemGuidePreset;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.util.RGBA;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.hammy275.immersivemc.mixin.GuiGraphicsAccessor;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.gizmos.CuboidGizmo;
@@ -46,10 +49,10 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         ClientRenderSubscriber.setRenderColors();
         super.render(graphics, mouseX, mouseY, partialTick);
-        renderPreview(new PoseStack(), ClientRenderSubscriber.itemGuideColor(), 0.25f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSize);
-        renderPreview(new PoseStack(), ClientRenderSubscriber.itemGuideSelectedColor(), 0.5f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize);
+        renderPreview(graphics, ClientRenderSubscriber.itemGuideColor(), 0.25f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSize);
+        renderPreview(graphics, ClientRenderSubscriber.itemGuideSelectedColor(), 0.5f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize);
         // Render square for particle color by using our cube model lol
-        renderPreview(new PoseStack(), ClientRenderSubscriber.rangedGrabColor(), 0.75f, true, 1.0f);
+        renderPreview(graphics, ClientRenderSubscriber.rangedGrabColor(), 0.75f, true, 1.0f);
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
                 this.height * 250 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 250 / 1000 + 16)) {
@@ -70,36 +73,34 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
         }
     }
 
-    private void renderPreview(PoseStack stack, RGBA color, float heightMult, boolean renderSquare, double size) {
-        stack.pushPose();
-        stack.translate(this.width * 0.95, this.height * heightMult - 16f, 0);
-        stack.scale(0.225f, 0.225f, 0.225f);
+    private void renderPreview(GuiGraphics graphics, RGBA color, float heightMult, boolean renderSquare, double size) {
+        GuiRenderState guiRenderState = ((GuiGraphicsAccessor) graphics).immersiveMC$getGuiRenderState();
+        ScreenRectangle peek = PlatformClient.peekScissorStack(graphics);
 
-        if (!renderSquare) {
-            long currentTimeMilli = Instant.now().toEpochMilli();
-            long millisPerRot = 8000;
-            float rot = (((float) (currentTimeMilli % millisPerRot)) / millisPerRot) *
-                    (2f * (float) Math.PI);
-            stack.mulPose(Axis.YN.rotation(rot));
-        }
+        guiRenderState.submitPicturesInPictureState(new CustomGuiRendererState(
+                this.width * 0.9, this.width, this.height * heightMult - 64f, this.height * heightMult + 64f, 0.5f, peek,
+                (stack, bufferSource) -> {
+                    float renderSize = (float) size / 2f;
+                    if (!renderSquare) {
+                        long currentTimeMilli = Instant.now().toEpochMilli();
+                        long millisPerRot = 8000;
+                        float rot = (((float) (currentTimeMilli % millisPerRot)) / millisPerRot) *
+                                (2f * (float) Math.PI);
+                        stack.mulPose(Axis.YN.rotation(rot));
+                    } else {
+                        renderSize = color.alphaF() / 2f;
+                    }
 
-        if (renderSquare) {
-            stack.translate(0, 64f * color.alphaF(), 0);
-            stack.scale(color.alphaF(), color.alphaF(), color.alphaF());
-        } else {
-            stack.translate(0, 64f * size, 0);
-        }
-        MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-        if (ConfigScreen.getClientConfigIfAdjusting().placementGuideMode == PlacementGuideMode.CUBE || renderSquare) {
-            RGBA renderColor = renderSquare ? new RGBA(color.toLong() | 0xFF000000L) : color;
-            ClientRenderSubscriber.cubeModel.render(stack,
-                    buffer.getBuffer(RenderTypes.entityTranslucent(Cube1x1.textureLocation)),
-                    (int) renderColor.toLong(), 64f * (float) size, ClientUtil.maxLight);
-        } else if (ConfigScreen.getClientConfigIfAdjusting().placementGuideMode == PlacementGuideMode.OUTLINE) {
-            ClientUtil.renderGizmo(new CuboidGizmo(AABB.ofSize(Vec3.ZERO, 128 * size, 128 * size, 128 * size), GizmoStyle.stroke((int) color.toLong()), true), stack);
-        }
-        buffer.endBatch();
-        stack.popPose();
+                    if (ConfigScreen.getClientConfigIfAdjusting().placementGuideMode == PlacementGuideMode.CUBE || renderSquare) {
+                        RGBA renderColor = renderSquare ? new RGBA(color.toLong() | 0xFF000000L) : color;
+                        ClientRenderSubscriber.cubeModel.render(stack,
+                                bufferSource.getBuffer(RenderTypes.entityTranslucent(Cube1x1.textureLocation)),
+                                (int) renderColor.toLong(), 64f * renderSize, ClientUtil.maxLight);
+                    } else if (ConfigScreen.getClientConfigIfAdjusting().placementGuideMode == PlacementGuideMode.OUTLINE) {
+                        ClientUtil.renderGizmo(new CuboidGizmo(AABB.ofSize(Vec3.ZERO, 128 * renderSize, 128 * renderSize, 128 * renderSize), GizmoStyle.stroke((int) color.toLong() | 0xFF000000), false), stack);
+                    }
+                }
+        ));
     }
 
     @Override
@@ -229,7 +230,7 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
 
     private void resetList() {
         double scrollAmount = this.list.scrollAmount();
-        this.list.children().clear();
+        this.list.replaceEntries(List.of());
         addOptions();
         this.list.setScrollAmount(Math.min(scrollAmount, this.list.maxScrollAmount()));
     }

@@ -23,7 +23,7 @@ public class OBBClientUtil {
                     -renderInfo.position().y + obb.getCenter().y,
                     -renderInfo.position().z + obb.getCenter().z);
             rotateStackForOBB(stack, obb);
-            ClientUtil.renderGizmo(new CuboidGizmo(obb.getUnderlyingAABB().move(obb.getCenter().scale(-1)), GizmoStyle.stroke(ARGB.colorFromFloat(alpha, red, green, blue)), true), stack);
+            ClientUtil.renderGizmo(new CuboidGizmo(obb.getUnderlyingAABB().move(obb.getCenter().scale(-1)), GizmoStyle.stroke(ARGB.colorFromFloat(alpha, red, green, blue)), false), stack);
             stack.popPose();
         }
     }
