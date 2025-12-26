@@ -8,10 +8,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.vivecraft.client_vr.gameplay.trackers.BackpackTracker;
 
-@Mixin(BackpackTracker.class)
+@Mixin(value = BackpackTracker.class)
 public class BackpackTrackerMixin {
-    @Inject(method = "isActive", at = @At("HEAD"), cancellable = true)
-    public void immersiveMC$notActiveIfUsingBag(LocalPlayer p, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(method = "isActive", at = @At("HEAD"), cancellable = true, require = 1)
+    public void immersiveMC$notActiveIfUsingBagPreHotswitch(LocalPlayer p, CallbackInfoReturnable<Boolean> cir) {
         if (ActiveConfig.active().reachBehindBagMode.usesOverShoulder()) {
             cir.setReturnValue(false);
         }
