@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -40,35 +39,31 @@ public class PlatformImpl {
 
     // Events
     public static void registerServerPostTickListener(Consumer<MinecraftServer> listener) {
-        MinecraftForge.EVENT_BUS.addListener((TickEvent.ServerTickEvent event) -> {
-            if (event.phase == TickEvent.Phase.END) {
-                listener.accept(event.getServer());
-            }
+        TickEvent.ServerTickEvent.Post.BUS.addListener((TickEvent.ServerTickEvent.Post event) -> {
+            listener.accept(event.server());
         });
     }
     public static void registerServerPlayerPostTickListener(Consumer<ServerPlayer> listener) {
-        MinecraftForge.EVENT_BUS.addListener((TickEvent.ServerTickEvent event) -> {
-            if (event.phase == TickEvent.Phase.END) {
-                event.getServer().getPlayerList().getPlayers().forEach(listener);
-            }
+        TickEvent.ServerTickEvent.Post.BUS.addListener((TickEvent.ServerTickEvent.Post event) -> {
+            event.server().getPlayerList().getPlayers().forEach(listener);
         });
     }
     public static void registerServerPlayerJoinListener(Consumer<ServerPlayer> listener) {
-        MinecraftForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedInEvent event) -> {
+        PlayerEvent.PlayerLoggedInEvent.BUS.addListener((PlayerEvent.PlayerLoggedInEvent event) -> {
             if (event.getEntity() instanceof ServerPlayer sp) {
                 listener.accept(sp);
             }
         });
     }
     public static void registerServerPlayerLeaveListener(Consumer<ServerPlayer> listener) {
-        MinecraftForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedOutEvent event) -> {
+        PlayerEvent.PlayerLoggedOutEvent.BUS.addListener((PlayerEvent.PlayerLoggedOutEvent event) -> {
             if (event.getEntity() instanceof ServerPlayer sp) {
                 listener.accept(sp);
             }
         });
     }
     public static void registerCommands(Consumer<CommandDispatcher<CommandSourceStack>> listener) {
-        MinecraftForge.EVENT_BUS.addListener((RegisterCommandsEvent event) -> {
+        RegisterCommandsEvent.BUS.addListener((RegisterCommandsEvent event) -> {
             listener.accept(event.getDispatcher());
         });
     }

@@ -12,7 +12,6 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 
 import java.util.function.Consumer;
@@ -22,19 +21,17 @@ import java.util.function.Supplier;
 public class PlatformClientImpl {
     // Events
     public static void registerOnClientJoinListener(Consumer<Minecraft> listener) {
-        MinecraftForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingIn event) -> {
+        ClientPlayerNetworkEvent.LoggingIn.BUS.addListener((ClientPlayerNetworkEvent.LoggingIn event) -> {
             listener.accept(Minecraft.getInstance());
         });
     }
     public static void registerOnClientTickListener(Consumer<Minecraft> listener) {
-        MinecraftForge.EVENT_BUS.addListener((TickEvent.ClientTickEvent event) -> {
-            if (event.phase == TickEvent.Phase.END) {
-                listener.accept(Minecraft.getInstance());
-            }
+        TickEvent.ClientTickEvent.Post.BUS.addListener((TickEvent.ClientTickEvent.Post event) -> {
+            listener.accept(Minecraft.getInstance());
         });
     }
     public static void registerOnClientDisconnectListener(Consumer<Player> listener) {
-        MinecraftForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut event) -> {
+        ClientPlayerNetworkEvent.LoggingOut.BUS.addListener((ClientPlayerNetworkEvent.LoggingOut event) -> {
             listener.accept(event.getPlayer());
         });
     }

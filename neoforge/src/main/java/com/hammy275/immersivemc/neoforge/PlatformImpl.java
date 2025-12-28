@@ -12,6 +12,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -24,10 +25,10 @@ import java.util.function.Consumer;
 public class PlatformImpl {
     // Platform information
     public static boolean isClient() {
-        return FMLEnvironment.dist == Dist.CLIENT;
+        return FMLEnvironment.getDist() == Dist.CLIENT;
     }
     public static boolean isDevelopmentEnvironment() {
-        return !FMLEnvironment.production;
+        return !FMLEnvironment.isProduction();
     }
     public static boolean isForgeLike() {
         return true;
@@ -72,7 +73,7 @@ public class PlatformImpl {
 
     // Networking
     public static void sendToServer(RegistryFriendlyByteBuf message) {
-        PacketDistributor.sendToServer(new BufferPacket(message));
+        ClientPacketDistributor.sendToServer(new BufferPacket(message));
     }
     public static void sendToPlayer(ServerPlayer player, RegistryFriendlyByteBuf message) {
         PacketDistributor.sendToPlayer(player, new BufferPacket(message));

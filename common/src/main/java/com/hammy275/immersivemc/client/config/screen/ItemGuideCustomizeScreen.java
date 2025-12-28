@@ -80,7 +80,7 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
         guiRenderState.submitPicturesInPictureState(new CustomGuiRendererState(
                 this.width * 0.9, this.width, this.height * heightMult - 64f, this.height * heightMult + 64f, 0.5f, peek,
                 (stack, bufferSource) -> {
-                    float renderSize = (float) size / 2f;
+                    float renderSize = (float) size / 2f; // Cut size in half on 1.21.11+ to match older versions for this parameter
                     if (!renderSquare) {
                         long currentTimeMilli = Instant.now().toEpochMilli();
                         long millisPerRot = 8000;
