@@ -11,6 +11,7 @@ import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
@@ -137,16 +138,21 @@ public class ClientUtil {
         }
     }
 
-    public static void openBag(Player player) {
-        if (VRVerify.hasAPI) {
-            if (VRAPI.instance().isVRPlayer(player)) {
-                Immersives.immersiveBackpack.doTrack();
+    public static void openBag(Player player, boolean doRumble) {
+        if (ActiveConfig.active().useBagImmersive) {
+            if (VRVerify.hasAPI) {
+                if (VRAPI.instance().isVRPlayer(player)) {
+                    if (doRumble) {
+                        VRRumble.rumbleIfVR(Minecraft.getInstance().player, ActiveConfig.active().swapBagHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, CommonConstants.vibrationTimePlayerActionAlert);
+                    }
+                    Immersives.immersiveBackpack.doTrack();
+                } else {
+                    player.displayClientMessage(Component.translatable("message.immersivemc.not_in_vr"), false);
+                }
             } else {
-                player.sendSystemMessage(Component.translatable("message.immersivemc.not_in_vr"));
+                player.displayClientMessage(Component.translatable("message.immersivemc.no_vivecraft",
+                        CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString()), false);
             }
-        } else {
-            player.sendSystemMessage(Component.translatable("message.immersivemc.no_vivecraft",
-                    CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString()));
         }
     }
 

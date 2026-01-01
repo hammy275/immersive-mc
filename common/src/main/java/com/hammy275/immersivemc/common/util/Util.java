@@ -180,7 +180,7 @@ public class Util {
     }
 
     public static boolean isThrowableItem(Item item) {
-        return item == Items.EXPERIENCE_BOTTLE || item == Items.EGG ||
+        return item == Items.EXPERIENCE_BOTTLE || item instanceof EggItem ||
                 item == Items.ENDER_PEARL || item == Items.SPLASH_POTION ||
                 item == Items.LINGERING_POTION || item == Items.SNOWBALL ||
                 item instanceof TridentItem || item instanceof FishingRodItem;
