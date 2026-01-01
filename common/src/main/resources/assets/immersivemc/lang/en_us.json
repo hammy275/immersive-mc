@@ -45,6 +45,8 @@
   "config.immersivemc.backpack_r": "Bag Red Value",
   "config.immersivemc.backpack_g": "Bag Green Value",
   "config.immersivemc.backpack_b": "Bag Blue Value",
+  "config.immersivemc.trigger_hit_for_bag": "Require Trigger Press to Open Bag",
+  "config.immersivemc.trigger_hit_for_bag.desc": "Whether one needs to press the trigger or grip button to open the bag via the \"Behind Your Back\" and \"Over Your Shoulder\" options.",
 
   "screen.immersivemc.immersives_config.title": "Enable/Disable Immersives",
   "screen.immersivemc.immersives_config.subtitle": "Note: Any immersives that are disabled by server admins override your settings here!",
