@@ -6,12 +6,15 @@ import com.hammy275.immersivemc.client.compat.ipn.IPN;
 import com.hammy275.immersivemc.client.compat.ipn.IPNCompat;
 import com.hammy275.immersivemc.client.compat.ipn.IPNCompatImpl;
 import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.interact_module.BagOpenInteractModule;
 import com.hammy275.immersivemc.client.model.*;
 import com.hammy275.immersivemc.common.compat.util.CompatModule;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import org.lwjgl.glfw.GLFW;
+import org.vivecraft.api.client.VRClientAPI;
 
 import java.util.function.Consumer;
 
@@ -53,6 +56,11 @@ public class ImmersiveMCClient {
 
         if (Platform.isModLoaded("inventoryprofilesnext")) {
             IPN.ipnCompat = CompatModule.create(new IPNCompatImpl(), IPNCompat.class, IPN.compatData);
+        }
+
+        if (VRVerify.hasAPI) {
+            VRClientAPI.instance().addClientRegistrationHandler(event ->
+                    event.registerInteractModules(new BagOpenInteractModule()));
         }
     }
 }
