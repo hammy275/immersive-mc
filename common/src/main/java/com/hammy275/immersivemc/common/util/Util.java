@@ -26,11 +26,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.FishingRodItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TridentItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DirectionalBlock;
@@ -189,7 +185,7 @@ public class Util {
     }
 
     public static boolean isThrowableItem(Item item) {
-        return item == Items.EXPERIENCE_BOTTLE || item == Items.EGG ||
+        return item == Items.EXPERIENCE_BOTTLE || item instanceof EggItem ||
                 item == Items.ENDER_PEARL || item == Items.SPLASH_POTION ||
                 item == Items.LINGERING_POTION || item == Items.SNOWBALL ||
                 item instanceof TridentItem || item instanceof FishingRodItem;
