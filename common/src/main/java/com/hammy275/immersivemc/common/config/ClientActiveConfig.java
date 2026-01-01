@@ -36,6 +36,7 @@ public final class ClientActiveConfig extends ActiveConfig {
     public boolean useGrabBeaconInVR = true;
     public boolean useGrindMotionGrindstoneInVR = true;
     public boolean dontAutoStepOnImmersiveBlocksInVR = true;
+    public boolean requireTriggerForBagOpen = true;
 
     public int clientConfigVersion = 4;
     public static final String CLIENT_CONFIG_VERSION = "clientConfigVersion";
@@ -87,6 +88,7 @@ public final class ClientActiveConfig extends ActiveConfig {
         swapBagHand = false;
         dontAutoStepOnImmersiveBlocksInVR = false;
         disableVanillaInteractionsForSupportedImmersives = false;
+        requireTriggerForBagOpen = true;
     }
 
 
