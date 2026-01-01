@@ -8,10 +8,8 @@ import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.client.immersive.info.ImmersiveHitboxesInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.vr.VRVerify;
-import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -34,7 +32,8 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
     
     private static final double backpackHeight = 0.625;
     private static final Vec3 DOWN = new Vec3(0, -1, 0);
-    private int backpackCooldown = 0;
+    private int backpackCooldown = 0; // Used for those with trigger-hit for opening the bag disabled
+    private boolean canOpenBackpack = false;
 
     public ImmersiveHitboxes() {
         super(1);
@@ -45,6 +44,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
     @Override
     protected void renderTick(ImmersiveHitboxesInfo info, boolean isInVR) {
         super.renderTick(info, isInVR);
+        canOpenBackpack = false;
         if (ActiveConfig.active().reachBehindBagMode.usesBehindBack() && VRVerify.clientInVR()) {
             // centerPos is the center of the back of the player
             VRBodyPartData hmdData = Platform.isDevelopmentEnvironment() ? null : VRClientAPI.instance().getWorldRenderPose().getHead();
@@ -69,13 +69,16 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
             info.setHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX,
                     OBBFactory.instance().create(AABB.ofSize(centerPos, 0.35, backpackHeight, 0.2),
                             0, yaw, 0));
+            if (BoundingBox.contains(info.getHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX), VRClientAPI.instance().getWorldRenderPose().getHand(getBagHand()).getPos())) {
+                canOpenBackpack = true;
+            }
         } else {
             // In case setting changes mid-game
             info.setHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX, null);
         }
 
-        if (ActiveConfig.active().reachBehindBagMode.usesOverShoulder() && VRVerify.clientInVR()) {
-            InteractionHand hand = ActiveConfig.active().swapBagHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+        if (!canOpenBackpack && ActiveConfig.active().reachBehindBagMode.usesOverShoulder() && VRVerify.clientInVR()) {
+            InteractionHand hand = getBagHand();
             VRBodyPartData hmdData = VRClientAPI.instance().getWorldRenderPose().getHead();
             VRBodyPartData handData = VRClientAPI.instance().getWorldRenderPose().getHand(hand);
 
@@ -92,8 +95,14 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
             boolean behindHMD = cHMDAngleDiff > 2 * Math.PI / 3d;
 
             if (pointingDown && behindHMD) {
-                doBagOpen(mc.player);
+                canOpenBackpack = true;
             }
+        }
+
+        // Handle those that don't use the trigger press to open the bag
+        if (!ActiveConfig.active().requireTriggerForBagOpen && canOpenBackpack && backpackCooldown <= 0) {
+            ClientUtil.openBag(mc.player, true);
+            backpackCooldown = 50;
         }
     }
 
@@ -121,7 +130,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
         if (backpackHitbox != null) {
             renderHitbox(stack, backpackHitbox);
             if (VRVerify.playerInVR(mc.player) && mc.getEntityRenderDispatcher().shouldRenderHitBoxes()) {
-                VRBodyPartData c = VRAPI.instance().getVRPose(mc.player).getHand(ActiveConfig.active().swapBagHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+                VRBodyPartData c = VRAPI.instance().getVRPose(mc.player).getHand(getBagHand());
                 if (BoundingBox.contains(backpackHitbox, c.getPos())) {
                     renderHitbox(stack, AABB.ofSize(c.getPos(), 0.25, 0.25, 0.25),
                             true,
@@ -164,14 +173,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
 
     @Override
     public void handleRightClick(AbstractPlayerAttachmentInfo info, Player player, int closest, InteractionHand hand) {
-        if (info instanceof ImmersiveHitboxesInfo hInfo) {
-            if (closest == ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX &&
-                    ((hand == InteractionHand.OFF_HAND && !ActiveConfig.active().swapBagHand) ||
-                            (hand == InteractionHand.MAIN_HAND && ActiveConfig.active().swapBagHand))) {
-                doBagOpen(player);
-            }
-        }
-
+        // Intentionally empty, all hitbox logic is handled from ticking
     }
 
     @Override
@@ -190,11 +192,12 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
         }
     }
 
-    private void doBagOpen(Player player) {
-        if (backpackCooldown <= 0 && ActiveConfig.active().useBagImmersive) {
-            VRRumble.rumbleIfVR(mc.player, ActiveConfig.active().swapBagHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, CommonConstants.vibrationTimePlayerActionAlert);
-            ClientUtil.openBag(player);
-            backpackCooldown = 50;
-        }
+    public boolean canOpenBagFromInteractModule(InteractionHand bagHand) {
+        return bagHand == getBagHand() && canOpenBackpack && ActiveConfig.active().requireTriggerForBagOpen;
     }
+
+    private static InteractionHand getBagHand() {
+        return ActiveConfig.active().swapBagHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+    }
+
 }
