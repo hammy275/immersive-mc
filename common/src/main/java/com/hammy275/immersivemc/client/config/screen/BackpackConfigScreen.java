@@ -80,13 +80,23 @@ public class BackpackConfigScreen extends Screen {
                     (reachBehindBackpackMode) -> Component.translatable("config.immersivemc.reach_behind_backpack_mode." + reachBehindBackpackMode.ordinal()),
                     (reachBehindBackpackMode) -> Component.translatable("config.immersivemc.reach_behind_backpack_mode." + reachBehindBackpackMode.ordinal() + ".desc"),
                     () -> ConfigScreen.getClientConfigIfAdjusting().reachBehindBagMode,
-                    (newModeIndex, newMode) -> ConfigScreen.getClientConfigIfAdjusting().reachBehindBagMode = newMode
+                    (newModeIndex, newMode) -> {
+                        ConfigScreen.getClientConfigIfAdjusting().reachBehindBagMode = newMode;
+                        Minecraft.getInstance().setScreen(new BackpackConfigScreen(parentScreen));
+                    }
             ));
 
         this.list.addBig(ScreenUtils.createOption("swap_bag_hand",
                 config -> ((ClientActiveConfig) config).swapBagHand,
                 (config, val) -> ((ClientActiveConfig) config).swapBagHand = val));
 
+        if (ConfigScreen.getClientConfigIfAdjusting().reachBehindBagMode != ReachBehindBackpackMode.NONE) {
+            this.list.addBig(ScreenUtils.createOption(
+                    "trigger_hit_for_bag",
+                    config -> ((ClientActiveConfig) config).requireTriggerForBagOpen,
+                    (config, newVal) -> ((ClientActiveConfig) config).requireTriggerForBagOpen = newVal
+            ));
+        }
         if (ConfigScreen.getClientConfigIfAdjusting().bagMode.colorable) {
             this.list.addBig(ScreenUtils.createIntSlider(
                     "config.immersivemc.backpack_r",

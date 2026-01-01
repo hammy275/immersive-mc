@@ -116,7 +116,7 @@ public class ClientLogicSubscriber {
         if (ImmersiveMC.SUMMON_BACKPACK.isDown()) {
             if (!backpackPressed) {
                 backpackPressed = true;
-                ClientUtil.openBag(player);
+                ClientUtil.openBag(player, false);
             }
         } else {
             backpackPressed = false;
