@@ -16,6 +16,8 @@ ImmersiveMC has a couple requirements:
 - [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api) if you're using Fabric.
 - Vivecraft 1.3.3 or later if you're playing in VR.
 
+Additionally, if you're playing on a multiplayer server, **ImmersiveMC is needed on both the server and the client** (your copy of the game)! If playing using Open to LAN or world sharing mods, this means the host must have ImmersiveMC installed. If they don't want to use ImmersiveMC, they can disable its features in [ImmersiveMC's settings](https://immersivemcwiki.hammy275.com/faq.html#q-how-do-i-access-immersivemc-settings).
+
 ## What is it?
 
 The goal of ImmersiveMC is to make Minecraft more immersive! It most obviously does this by minimizing the amount of GUIs you need to interact with.
@@ -32,6 +34,6 @@ Check out the [wiki](https://github.com/hammy3502/immersive-mc/wiki)! Still need
 
 ## Version Support
 
-- ImmersiveMC is safe to use when upgrading your world between versions, ImmersiveMC will do its best to upgrade the data it keeps alongside Minecraft itself. That said, it's always best to backup your world when you upgrade.
+- ImmersiveMC is safe to use when upgrading your world between Minecraft versions, ImmersiveMC will do its best to upgrade the data it keeps alongside Minecraft itself. That said, it's always best to backup your world when you upgrade.
 - ImmersiveMC supports many Minecraft versions, and may release for whatever the latest Minecraft version is, if it hasn't been released for it already.
 - ImmersiveMC is a multiloader mod, supporting many modloaders! You should be able to run ImmersiveMC on a modloader of your choice!
