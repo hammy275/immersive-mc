@@ -1,7 +1,8 @@
-package com.hammy275.immersivemc.server.tracker.vrhand;
+package com.hammy275.immersivemc.server.ticker;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
+import com.hammy275.immersivemc.common.ticker.AbstractTicker;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -12,35 +13,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import org.vivecraft.api.data.VRPose;
+import org.vivecraft.api.data.VRPoseHistory;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-public class FeedAnimalsTracker extends AbstractVRHandsTracker {
+public class FeedAnimalsTicker extends AbstractTicker {
     public static final int COOLDOWN_TICKS = 20;
 
-    protected Map<String, Integer> cooldown = new HashMap<>();
-
     @Override
-    public boolean isEnabledInConfig(ActiveConfig config) {
-        return config.useFeedingAnimalsImmersive;
-    }
-
-    @Override
-    protected boolean shouldRun(Player player, VRPose vrPose) {
-        int currentCooldown = cooldown.getOrDefault(player.getGameProfile().name(), 0);
-        if (currentCooldown > 0) {
-            cooldown.put(player.getGameProfile().name(), --currentCooldown);
-        }
-        return (!player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()
-                || !player.getItemInHand(InteractionHand.OFF_HAND).isEmpty())
-                && currentCooldown <= 0;
-    }
-
-    @Override
-    protected void run(Player player, VRPose vrPose) {
+    protected void tick(Player player, VRPose pose, VRPoseHistory poseHistory) {
         InteractionHand hand = player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
         ItemStack inHand = player.getItemInHand(hand);
         if (inHand.isEmpty()) return;
@@ -48,17 +30,23 @@ public class FeedAnimalsTracker extends AbstractVRHandsTracker {
         for (Animal animal : nearbyEnts) {
             if (animal.isFood(inHand)) {
                 AABB feedbox = getMouthHitbox(animal);
-                if (feedbox.contains(vrPose.getMainHand().getPos()) && feedbox.contains(vrPose.getOffHand().getPos())
-                && vrPose.getMainHand().getPos().distanceToSqr(vrPose.getOffHand().getPos()) < 0.5) {
+                if (feedbox.contains(pose.getMainHand().getPos()) && feedbox.contains(pose.getOffHand().getPos())
+                        && pose.getMainHand().getPos().distanceToSqr(pose.getOffHand().getPos()) < 0.5) {
                     InteractionResult res = animal.mobInteract(player, hand);
                     if (res == InteractionResult.CONSUME || res == InteractionResult.SUCCESS) {
-                        cooldown.put(player.getGameProfile().name(), COOLDOWN_TICKS);
+                        setCooldown(player, COOLDOWN_TICKS);
                         VRRumble.doubleRumbleIfVR(player, CommonConstants.vibrationTimePlayerActionAlert);
                         break;
                     }
                 }
             }
         }
+    }
+
+    @Override
+    protected boolean shouldTick(Player player, VRPose pose, VRPoseHistory poseHistory) {
+        return ActiveConfig.getConfigForPlayer(player).useFeedingAnimalsImmersive &&
+                (!player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty() || !player.getItemInHand(InteractionHand.OFF_HAND).isEmpty());
     }
 
     public static AABB getMouthHitbox(LivingEntity entity) {
