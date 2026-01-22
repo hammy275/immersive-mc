@@ -1,23 +1,18 @@
 package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.PlatformClient;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.model.Cube1x1;
-import com.hammy275.immersivemc.client.model.CustomGuiRendererState;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ItemGuideColorData;
 import com.hammy275.immersivemc.common.config.ItemGuidePreset;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.util.RGBA;
-import com.hammy275.immersivemc.mixin.GuiGraphicsAccessor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
