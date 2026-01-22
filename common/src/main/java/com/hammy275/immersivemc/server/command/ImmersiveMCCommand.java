@@ -10,15 +10,13 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.permissions.Permission;
-import net.minecraft.server.permissions.PermissionLevel;
 
 public class ImmersiveMCCommand {
 
     public static void createCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal("immersivemc")
-                        .requires(source -> source.permissions().hasPermission(new Permission.HasCommandLevel(PermissionLevel.GAMEMASTERS)))
+                        .requires(source -> source.hasPermission(2))
                         .then(
                                 Commands.literal("enable")
                                         .then(
@@ -61,7 +59,7 @@ public class ImmersiveMCCommand {
     }
 
     private static int beginTesting(CommandSourceStack source) {
-        if (!source.permissions().hasPermission(new Permission.HasCommandLevel(PermissionLevel.OWNERS))) {
+        if (!source.hasPermission(4)) {
             source.sendFailure(Component.translatable("commands." + ImmersiveMC.MOD_ID + ".test.no_permission"));
             return 0;
         } else if (!source.isPlayer()) {

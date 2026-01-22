@@ -17,12 +17,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.gizmos.DrawableGizmoPrimitives;
-import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.gizmos.Gizmo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
@@ -49,21 +46,6 @@ public class ClientUtil {
 
     public static final int maxLight = LightTexture.pack(15, 15);
     public static int immersiveLeftClickCooldown = 0;
-
-    /**
-     * Renders a gizmo immediately. Should NOT add instances via {@link net.minecraft.gizmos.Gizmos}, since this renders
-     * them directly instead.
-     * @param gizmo Gizmo to render
-     */
-    public static void renderGizmo(Gizmo gizmo, PoseStack poseStack) {
-        Minecraft mc = Minecraft.getInstance();
-        DrawableGizmoPrimitives gizmoPrimitives = new DrawableGizmoPrimitives();
-        gizmo.emit(gizmoPrimitives, 1f);
-        CameraRenderState cameraRenderState = mc.gameRenderer.getLevelRenderState().cameraRenderState;
-        // Frustum found via basically the same code as GameRenderer#renderLevel() in the one line below
-        Matrix4f frustum = new Matrix4f().rotation(cameraRenderState.orientation.conjugate(new Quaternionf()));
-        gizmoPrimitives.render(poseStack, mc.renderBuffers().bufferSource(), cameraRenderState, frustum);
-    }
 
     public static RegistryAccess getRegistryAccess() {
         return Minecraft.getInstance().level.registryAccess();

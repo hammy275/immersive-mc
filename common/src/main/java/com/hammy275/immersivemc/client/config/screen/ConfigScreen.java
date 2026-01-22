@@ -18,7 +18,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Util;
+import net.minecraft.Util;
 
 public class ConfigScreen extends Screen {
 
