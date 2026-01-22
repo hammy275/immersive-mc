@@ -11,10 +11,10 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.model.object.book.BookModel;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.model.BookModel;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class ClientBookData extends CommonBookData {
     private static final BookModel bookModel = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
-    private static final Identifier writtenBookTexture = Util.id("immersive/nahnotfox_written_book.png");
+    private static final ResourceLocation writtenBookTexture = Util.id("immersive/nahnotfox_written_book.png");
 
     public final List<BookInteractable> interactables = new ArrayList<>();
     public final List<BookRenderable> renderables = new ArrayList<>();
@@ -112,7 +112,7 @@ public class ClientBookData extends CommonBookData {
         ));
         bookModel.renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderTypes.entitySolid(writtenBookTexture)),
+                        .getBuffer(RenderType.entitySolid(writtenBookTexture)),
                 light, OverlayTexture.NO_OVERLAY,
                 0xFFFFFFFF);
 

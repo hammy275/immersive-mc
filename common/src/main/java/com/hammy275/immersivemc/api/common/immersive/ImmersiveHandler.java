@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.api.common.immersive;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -78,7 +78,7 @@ public interface ImmersiveHandler<S extends NetworkStorage> {
     /**
      * @return A unique ID to identify this handler. The same value should always be returned by this method.
      */
-    Identifier getID();
+    ResourceLocation getID();
 
     /**
      * Function called whenever this immersive is no longer being tracked. Only ever called server-side.

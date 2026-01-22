@@ -9,7 +9,7 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.storage.world.WorldStorage;
 import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
@@ -52,7 +52,7 @@ public class BeaconHandler extends ItemWorldStorageHandler<BeaconStorage> {
     }
 
     @Override
-    public Identifier getID() {
+    public ResourceLocation getID() {
         return Util.id("beacon");
     }
 

@@ -21,7 +21,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.gizmos.CuboidGizmo;
 import net.minecraft.gizmos.GizmoStyle;
@@ -94,7 +94,7 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
                     if (ConfigScreen.getClientConfigIfAdjusting().placementGuideMode == PlacementGuideMode.CUBE || renderSquare) {
                         RGBA renderColor = renderSquare ? new RGBA(color.toLong() | 0xFF000000L) : color;
                         ClientRenderSubscriber.cubeModel.render(stack,
-                                bufferSource.getBuffer(RenderTypes.entityTranslucent(Cube1x1.textureLocation)),
+                                bufferSource.getBuffer(RenderType.entityTranslucent(Cube1x1.textureLocation)),
                                 (int) renderColor.toLong(), 64f * renderSize, ClientUtil.maxLight);
                     } else if (ConfigScreen.getClientConfigIfAdjusting().placementGuideMode == PlacementGuideMode.OUTLINE) {
                         ClientUtil.renderGizmo(new CuboidGizmo(AABB.ofSize(Vec3.ZERO, 128 * renderSize, 128 * renderSize, 128 * renderSize), GizmoStyle.stroke((int) color.toLong() | 0xFF000000), false), stack);

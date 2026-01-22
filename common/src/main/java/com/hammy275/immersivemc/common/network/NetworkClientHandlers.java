@@ -19,7 +19,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.DisconnectionDetails;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -27,22 +27,22 @@ import java.util.*;
 
 public class NetworkClientHandlers {
 
-    public static void checkHandlerMatch(List<Identifier> serverHandlerIDs) {
-        Map<Identifier, ImmersiveHandler<?>> clientHandlers = new HashMap<>();
+    public static void checkHandlerMatch(List<ResourceLocation> serverHandlerIDs) {
+        Map<ResourceLocation, ImmersiveHandler<?>> clientHandlers = new HashMap<>();
         ImmersiveHandlers.HANDLERS.forEach((handler) -> clientHandlers.put(handler.getID(), handler));
 
-        List<Identifier> serverOnly = serverHandlerIDs.stream().filter((id) -> !clientHandlers.containsKey(id)).toList();
-        List<Identifier> clientOnly = clientHandlers.entrySet().stream().filter((entry) ->
+        List<ResourceLocation> serverOnly = serverHandlerIDs.stream().filter((id) -> !clientHandlers.containsKey(id)).toList();
+        List<ResourceLocation> clientOnly = clientHandlers.entrySet().stream().filter((entry) ->
                 !serverHandlerIDs.contains(entry.getKey()) && !entry.getValue().clientAuthoritative())
                 .map(Map.Entry::getKey).toList();
         if (!serverOnly.isEmpty() || !clientOnly.isEmpty()) {
             if (!serverOnly.isEmpty()) {
                 ImmersiveMC.LOGGER.error("The following Immersives were on the server, but not in your game:");
-                ImmersiveMC.LOGGER.error(String.join(", ", serverOnly.stream().map(Identifier::toString).toList()));
+                ImmersiveMC.LOGGER.error(String.join(", ", serverOnly.stream().map(ResourceLocation::toString).toList()));
             }
             if (!clientOnly.isEmpty()) {
                 ImmersiveMC.LOGGER.error("The following Immersives are in your game, but not on the server even though they're required to be:");
-                ImmersiveMC.LOGGER.error(String.join(", ", clientOnly.stream().map(Identifier::toString).toList()));
+                ImmersiveMC.LOGGER.error(String.join(", ", clientOnly.stream().map(ResourceLocation::toString).toList()));
             }
             Set<String> missingModIDs = new HashSet<>();
             serverOnly.forEach((id) -> missingModIDs.add(id.getNamespace()));

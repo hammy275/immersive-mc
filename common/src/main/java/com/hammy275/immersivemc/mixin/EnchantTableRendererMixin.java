@@ -7,7 +7,7 @@ import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.object.book.BookModel;
+import net.minecraft.client.model.BookModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.EnchantTableRenderer;
 import net.minecraft.client.renderer.blockentity.state.EnchantTableRenderState;

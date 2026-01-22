@@ -12,11 +12,11 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class BackpackBundleModel extends EntityModel<EntityRenderState> {
-    public static final Identifier textureLocation = Util.id("immersive/bag/nahnotfox_bundle_bag.png");
-    public static final Identifier textureLocationColorable = Util.id("immersive/bag/nahnotfox_bundle_bag_colorable.png");
+    public static final ResourceLocation textureLocation = Util.id("immersive/bag/nahnotfox_bundle_bag.png");
+    public static final ResourceLocation textureLocationColorable = Util.id("immersive/bag/nahnotfox_bundle_bag_colorable.png");
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Util.id("bundle_backpack"), "main");
 
     public BackpackBundleModel(ModelPart root) {

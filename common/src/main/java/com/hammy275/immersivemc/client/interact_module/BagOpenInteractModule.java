@@ -4,17 +4,17 @@ import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import org.vivecraft.api.client.InteractModule;
 
 public class BagOpenInteractModule implements InteractModule {
 
-    private static final Identifier id = Util.id("bag_open");
+    private static final ResourceLocation id = Util.id("bag_open");
 
     @Override
-    public Identifier getId() {
+    public ResourceLocation getId() {
         return id;
     }
 
