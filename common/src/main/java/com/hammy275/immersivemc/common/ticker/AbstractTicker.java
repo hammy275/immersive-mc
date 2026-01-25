@@ -21,7 +21,7 @@ public abstract class AbstractTicker {
     /**
      * Tick method that performs some action (usually). Called for each player on each tick when the player is not
      * on cooldown and {@link #shouldTick} returns true.
-     * @param player The player running for this tracker.
+     * @param player The player running for this ticker.
      * @param pose The player's pose in VR.
      * @param poseHistory The player's pose history in VR.
      */
@@ -30,7 +30,7 @@ public abstract class AbstractTicker {
     /**
      * Method that checks if the action should be performed (usually). Called for each player on each tick when the
      * player is not on cooldown.
-     * @param player The player running for this tracker.
+     * @param player The player running for this ticker.
      * @param pose The player's pose in VR.
      * @param poseHistory The player's pose history in VR.
      * @return Whether the {@link #tick} method should be run for the player.
@@ -48,8 +48,8 @@ public abstract class AbstractTicker {
     }
 
     /**
-     * Entrypoint for actually running trackers. Should be called on each tick to actually run tracker logic.
-     * @param player The player running for this tracker.
+     * Entrypoint for actually running tickers. Should be called on each tick to actually run ticker logic.
+     * @param player The player running for this ticker.
      * @param pose The player's pose in VR.
      * @param poseHistory The player's pose history in VR.
      */
@@ -69,10 +69,10 @@ public abstract class AbstractTicker {
     }
 
     /**
-     * Set the cooldown for a player for this tracker, thus preventing this tracker from running for them until the
+     * Set the cooldown for a player for this ticker, thus preventing this ticker from running for them until the
      * cooldown expires.
      * @param player Player to set a cooldown for.
-     * @param cooldown The cooldown in ticks until this tracker should be able to run again. Note that a cooldown of
+     * @param cooldown The cooldown in ticks until this ticker should be able to run again. Note that a cooldown of
      *                 0 or below is ignored.
      */
     protected final void setCooldown(Player player, int cooldown) {
