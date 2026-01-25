@@ -1,21 +1,20 @@
 package com.hammy275.immersivemc.server;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternData;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
-import com.hammy275.immersivemc.common.tracker.AbstractTracker;
+import com.hammy275.immersivemc.common.ticker.TickerInit;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
+import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCLevelStorage;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
-import com.hammy275.immersivemc.server.tracker.ServerTrackerInit;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,22 +38,16 @@ public class ServerSubscriber {
             }
         }
         SharedNetworkStorages.instance().getAll(LecternData.class).forEach(data -> data.tick(null));
-        for (AbstractTracker tracker : ServerTrackerInit.globalTrackers) {
-            tracker.doTick(null);
-        }
         TrackedImmersives.tick(server);
         DirtyTracker.unmarkAllDirty(); // Remove dirtiness for block entities
         ImmersiveMCLevelStorage.unmarkAllItemStoragesDirty(server);
         SharedNetworkStorages.instance().getAll(LecternData.class).forEach(data -> data.bookData.setNoLongerDirty());
-        ServerTrackerInit.petTracker.globalTick();
     }
 
     public static void onPlayerTick(Player playerIn) {
         if (playerIn.level().isClientSide()) return;
         ServerPlayer player = (ServerPlayer) playerIn;
-        for (AbstractTracker tracker : ServerTrackerInit.playerTrackers) {
-            tracker.doTick(player);
-        }
+        TickerInit.tickServer(player);
         if (VRVerify.hasAPI) {
             ServerVRSubscriber.vrPlayerTick(player);
         }
@@ -83,6 +76,7 @@ public class ServerSubscriber {
         if (playerIn instanceof ServerPlayer player) {
             TrackedImmersives.clearForPlayer(player);
             ChestToOpenSet.clearForPlayer(player);
+            TickerInit.onPlayerDisconnectServer(player);
         }
     }
 }

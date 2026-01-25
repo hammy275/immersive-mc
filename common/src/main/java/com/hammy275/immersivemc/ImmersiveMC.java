@@ -9,10 +9,19 @@ import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.*;
 import com.hammy275.immersivemc.common.subscribe.CommonSubscriber;
+import com.hammy275.immersivemc.common.ticker.BottleAndBucketTicker;
+import com.hammy275.immersivemc.common.ticker.TickerInit;
 import com.hammy275.immersivemc.server.ServerSubscriber;
 import com.hammy275.immersivemc.server.command.ImmersiveMCCommand;
 import com.hammy275.immersivemc.server.immersive.petting.AnythingLivingPettingHandler;
 import com.hammy275.immersivemc.server.immersive.petting.VanillaMobsPettingHandler;
+import com.hammy275.immersivemc.server.ticker.CampfireTicker;
+import com.hammy275.immersivemc.server.ticker.FeedAnimalsTicker;
+import com.hammy275.immersivemc.server.ticker.hand.ArmorTicker;
+import com.hammy275.immersivemc.server.ticker.hand.ButtonPushTicker;
+import com.hammy275.immersivemc.server.ticker.hand.CauldronTicker;
+import com.hammy275.immersivemc.server.ticker.hand.PetTicker;
+import com.hammy275.immersivemc.server.ticker.RangedGrabTickerServer;
 import net.minecraft.client.KeyMapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,6 +85,17 @@ public class ImmersiveMC {
         }
         networkSetup();
         ActiveConfig.createDefaultConfigFilesIfNotFound();
+
+        // Add common and server tickers
+        TickerInit.addCommonTicker(new BottleAndBucketTicker());
+
+        TickerInit.addServerTicker(new ArmorTicker());
+        TickerInit.addServerTicker(new ButtonPushTicker());
+        TickerInit.addServerTicker(new CampfireTicker());
+        TickerInit.addServerTicker(new CauldronTicker());
+        TickerInit.addServerTicker(new FeedAnimalsTicker());
+        TickerInit.addServerTicker(new PetTicker());
+        TickerInit.addServerTicker(RangedGrabTickerServer.INSTANCE);
     }
 
     protected static void networkSetup() {

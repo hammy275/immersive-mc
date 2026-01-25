@@ -2,8 +2,7 @@ package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.server.tracker.RangedGrabTrackerServer;
-import com.hammy275.immersivemc.server.tracker.ServerTrackerInit;
+import com.hammy275.immersivemc.server.ticker.RangedGrabTickerServer;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -43,7 +42,7 @@ public class GrabItemPacket {
             if (ent instanceof ItemEntity && player.distanceToSqr(ent) <= range * range &&
                     Util.canPickUpItem((ItemEntity) ent, player)) {
                 ItemEntity item = (ItemEntity) ent;
-                ServerTrackerInit.rangedGrabTracker.infos.add(new RangedGrabTrackerServer.RangedGrabInfo(item, player));
+                RangedGrabTickerServer.INSTANCE.infos.put(player.getUUID(), new RangedGrabTickerServer.RangedGrabInfo(item, player));
             }
         }
     }

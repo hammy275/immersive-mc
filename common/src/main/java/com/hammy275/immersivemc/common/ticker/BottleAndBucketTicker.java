@@ -1,9 +1,8 @@
-package com.hammy275.immersivemc.common.tracker;
+package com.hammy275.immersivemc.common.ticker;
 
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -18,17 +17,12 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import org.vivecraft.api.VRAPI;
 import org.vivecraft.api.data.VRPose;
+import org.vivecraft.api.data.VRPoseHistory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-public class BottleAndBucketTracker extends AbstractTracker {
-
-    private final Map<UUID, Integer> cooldown = new HashMap<>();
+public class BottleAndBucketTicker extends AbstractTicker {
 
     @Override
-    protected void tick(Player player) {
+    protected void tick(Player player, VRPose pose, VRPoseHistory poseHistory) {
         for (int c = 0; c <= 1; c++) {
             InteractionHand hand = InteractionHand.values()[c];
             ItemStack stackInHand = player.getItemInHand(hand);
@@ -49,17 +43,8 @@ public class BottleAndBucketTracker extends AbstractTracker {
     }
 
     @Override
-    protected boolean shouldTick(Player player) {
-        if (!VRVerify.playerInVR(player)) return false;
-        if (!ActiveConfig.getActiveConfigCommon(player).useBucketAndBottleImmersive) return false;
-        int newCooldown = cooldown.getOrDefault(player.getUUID(), 0) - 1;
-        if (newCooldown <= 0) {
-            cooldown.remove(player.getUUID());
-        } else {
-            cooldown.put(player.getUUID(), newCooldown);
-            return false;
-        }
-        return true;
+    protected boolean shouldTick(Player player, VRPose pose, VRPoseHistory poseHistory) {
+        return ActiveConfig.getActiveConfigCommon(player).useBucketAndBottleImmersive;
     }
 
     private boolean stackMatches(ItemStack stackInHand) {
@@ -71,7 +56,7 @@ public class BottleAndBucketTracker extends AbstractTracker {
     private void possiblyPlaceItemAndSetCooldown(Player player, InteractionHand hand, InteractionResult res) {
         if (res.consumesAction() && res instanceof InteractionResult.Success success) {
             if (success.heldItemTransformedTo() != null) {
-                cooldown.put(player.getUUID(), 5);
+                setCooldown(player, 5);
                 player.setItemInHand(hand, success.heldItemTransformedTo());
             }
         }
