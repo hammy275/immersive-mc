@@ -1,43 +1,42 @@
-package com.hammy275.immersivemc.server.tracker.vrhand;
+package com.hammy275.immersivemc.server.ticker.hand;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
+import com.hammy275.immersivemc.common.ticker.AbstractHandTicker;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.vivecraft.api.data.VRPose;
+import org.vivecraft.api.data.VRBodyPartData;
+import org.vivecraft.api.data.VRPoseHistory;
 
-public class ArmorTracker extends AbstractVRHandTracker {
-    @Override
-    protected boolean shouldRunForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRPose) {
-        return player.getBoundingBox().contains(currentVRPose.getHand(hand).getPos());
-    }
+public class ArmorTicker extends AbstractHandTicker {
 
     @Override
-    protected void runForHand(Player player, InteractionHand hand, ItemStack stackInHand, VRPose currentVRData) {
+    protected void tickHand(Player player, InteractionHand hand, VRBodyPartData handData, VRPoseHistory poseHistory) {
         boolean shouldEquip;
+        ItemStack stackInHand = player.getItemInHand(hand);
         EquipmentSlot slot = player.getEquipmentSlotForItem(stackInHand);
         if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) return;
         if (!player.getInventory().armor.get(slot.getIndex()).isEmpty()) return;
         switch (slot) {
             case HEAD:
                 shouldEquip =
-                        player.getEyePosition().distanceToSqr(currentVRData.getHand(hand).getPos()) <= 0.5*0.5;
+                        player.getEyePosition().distanceToSqr(handData.getPos()) <= 0.5*0.5;
                 break;
             case CHEST:
                 shouldEquip =
-                        player.position().add(0, 1.2, 0).distanceToSqr(currentVRData.getHand(hand).getPos())
-                        <= 0.5*0.5;
+                        player.position().add(0, 1.2, 0).distanceToSqr(handData.getPos())
+                                <= 0.5*0.5;
                 break;
             case LEGS:
                 shouldEquip =
-                        player.position().add(0, 0.7, 0).distanceToSqr(currentVRData.getHand(hand).getPos())
+                        player.position().add(0, 0.7, 0).distanceToSqr(handData.getPos())
                                 <= 0.375*0.375;
                 break;
             case FEET:
-                shouldEquip = player.position().distanceToSqr(currentVRData.getHand(hand).getPos())
+                shouldEquip = player.position().distanceToSqr(handData.getPos())
                         <= 0.5*0.5;
                 break;
             default:
@@ -53,7 +52,7 @@ public class ArmorTracker extends AbstractVRHandTracker {
     }
 
     @Override
-    public boolean isEnabledInConfig(ActiveConfig config) {
-        return config.useArmorImmersive;
+    protected boolean shouldTickHand(Player player, InteractionHand hand, VRBodyPartData handData, VRPoseHistory poseHistory) {
+        return ActiveConfig.getConfigForPlayer(player).useArmorImmersive && player.getBoundingBox().contains(handData.getPos());
     }
 }
