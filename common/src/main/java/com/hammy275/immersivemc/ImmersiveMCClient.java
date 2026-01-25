@@ -14,6 +14,10 @@ import com.hammy275.immersivemc.client.model.Cube1x1;
 import com.hammy275.immersivemc.common.compat.util.CompatModule;
 import com.hammy275.immersivemc.client.interact_module.BagOpenInteractModule;
 import com.hammy275.immersivemc.client.model.*;
+import com.hammy275.immersivemc.client.ticker.FishingReelTicker;
+import com.hammy275.immersivemc.client.ticker.RangedGrabTickerClient;
+import com.hammy275.immersivemc.client.ticker.ThrowTicker;
+import com.hammy275.immersivemc.common.ticker.TickerInit;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
@@ -62,5 +66,10 @@ public class ImmersiveMCClient {
             VRClientAPI.instance().addClientRegistrationHandler(event ->
                     event.registerInteractModules(new BagOpenInteractModule()));
         }
+
+        // Add client tickers
+        TickerInit.addClientTicker(new FishingReelTicker());
+        TickerInit.addClientTicker(new RangedGrabTickerClient());
+        TickerInit.addClientTicker(ThrowTicker.INSTANCE);
     }
 }
