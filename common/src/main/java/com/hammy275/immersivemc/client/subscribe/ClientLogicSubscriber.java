@@ -13,12 +13,11 @@ import com.hammy275.immersivemc.client.immersive.*;
 import com.hammy275.immersivemc.client.immersive.info.*;
 import com.hammy275.immersivemc.client.immersive_item.AbstractHandImmersive;
 import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
-import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.common.tracker.AbstractTracker;
+import com.hammy275.immersivemc.common.ticker.TickerInit;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
@@ -124,9 +123,8 @@ public class ClientLogicSubscriber {
 
         Immersives.immersiveHitboxes.initImmersiveIfNeeded();
 
-        for (AbstractTracker tracker : ClientTrackerInit.trackers) {
-            tracker.doTick(player);
-        }
+        TickerInit.tickClient(player);
+
         for (Immersive<? extends ImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
             tickInfos(singleton, player);
         }
@@ -227,10 +225,8 @@ public class ClientLogicSubscriber {
 
     public static void onDisconnect(Player player) {
         // LAN hosts call this whenever any player disconnects, so make sure the host is the one leaving (#448).
-        // I don't trust Minecraft's player to exist under all leaving conditions (whether it does or not under all
-        // conditions is untested), so we check if it's either null or the player leaving is us. Have to do a check
-        // against UUID though, since the incoming player is a ServerPlayer, while Minecraft.getInstance().player is
-        // a local player (of course).
+        // Check if it's either null or the player leaving is us. Have to do a check against UUID though, since the
+        // incoming player is a ServerPlayer, while Minecraft.getInstance().player is a local player (of course).
         if (Minecraft.getInstance().player == null ||
                 Minecraft.getInstance().player.getGameProfile().getId().equals(player.getGameProfile().getId())) {
             for (Immersive<? extends ImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
@@ -244,6 +240,7 @@ public class ClientLogicSubscriber {
             // Cleared so leaving and re-joining a singleplayer world doesn't keep the lid open
             ChestToOpenSet.clear();
             SharedNetworkStoragesImpl.INSTANCE.clear(); // Clear so these don't persist between singleplayer worlds
+            TickerInit.onPlayerDisconnectClient(player);
         }
     }
 

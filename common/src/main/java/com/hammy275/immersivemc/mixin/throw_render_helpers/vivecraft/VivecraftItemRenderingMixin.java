@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.mixin.throw_render_helpers.vivecraft;
 
-import com.hammy275.immersivemc.client.tracker.ClientTrackerInit;
+import com.hammy275.immersivemc.client.ticker.ThrowTicker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.InteractionHand;
@@ -17,7 +17,7 @@ public class VivecraftItemRenderingMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;isUsingItem()Z"))
     private static boolean immersiveMC$isUsingItemRedirectPreHotswitch(AbstractClientPlayer player) {
         if (player == Minecraft.getInstance().player && player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof TridentItem
-                && Minecraft.getInstance().options.keyAttack.isDown() && ClientTrackerInit.throwTracker.readyToThrow()) {
+        && Minecraft.getInstance().options.keyAttack.isDown() && ThrowTicker.INSTANCE.readyToThrow()) {
             return true;
         }
         return player.isUsingItem();
@@ -27,7 +27,7 @@ public class VivecraftItemRenderingMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;getUseItemRemainingTicks()I"))
     private static int immersiveMC$getUseItemRemainingTicksPreHotswitch(AbstractClientPlayer player) {
         if (player == Minecraft.getInstance().player && player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof TridentItem
-                && Minecraft.getInstance().options.keyAttack.isDown() && ClientTrackerInit.throwTracker.readyToThrow()) {
+                && Minecraft.getInstance().options.keyAttack.isDown() && ThrowTicker.INSTANCE.readyToThrow()) {
             return 72000 - 21;
         }
         return player.getUseItemRemainingTicks();
@@ -37,7 +37,7 @@ public class VivecraftItemRenderingMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;getUsedItemHand()Lnet/minecraft/world/InteractionHand;"))
     private static InteractionHand immersiveMC$getUsedItemHandMixinPreHotswitch(AbstractClientPlayer player) {
         if (player == Minecraft.getInstance().player && player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof TridentItem
-                && Minecraft.getInstance().options.keyAttack.isDown() && ClientTrackerInit.throwTracker.readyToThrow()) {
+                && Minecraft.getInstance().options.keyAttack.isDown() && ThrowTicker.INSTANCE.readyToThrow()) {
             return InteractionHand.MAIN_HAND;
         }
         return player.getUsedItemHand();
