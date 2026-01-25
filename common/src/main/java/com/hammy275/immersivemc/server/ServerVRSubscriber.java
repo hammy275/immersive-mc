@@ -1,10 +1,7 @@
 package com.hammy275.immersivemc.server;
 
-import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
-import com.hammy275.immersivemc.server.tracker.ServerTrackerInit;
-import com.hammy275.immersivemc.server.tracker.vrhand.AbstractVRHandTracker;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
@@ -26,13 +23,6 @@ public class ServerVRSubscriber {
                     player));
             if (blockHit.getType() == HitResult.Type.BLOCK) {
                 TrackedImmersives.maybeTrackImmersive(player, blockHit.getBlockPos());
-            }
-
-            for (AbstractVRHandTracker tracker : ServerTrackerInit.vrPlayerTrackers) {
-                tracker.preTick(player);
-                if (tracker.isEnabledInConfig(ActiveConfig.getConfigForPlayer(player))) {
-                    tracker.tick(player, vrPose);
-                }
             }
         }
     }

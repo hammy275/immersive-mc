@@ -1,12 +1,12 @@
-package com.hammy275.immersivemc.server.tracker;
+package com.hammy275.immersivemc.server.ticker;
 
-import com.hammy275.immersivemc.common.tracker.AbstractTracker;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.ticker.AbstractTicker;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -19,22 +19,20 @@ import net.minecraft.world.phys.Vec3;
 import org.vivecraft.api.VRAPI;
 import org.vivecraft.api.data.VRBodyPartData;
 import org.vivecraft.api.data.VRPose;
+import org.vivecraft.api.data.VRPoseHistory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class CampfireTracker extends AbstractTracker {
+public class CampfireTicker extends AbstractTicker {
 
     public static final Map<String, CookInfo> cookTime = new HashMap<>();
 
-    public CampfireTracker() {
-        ServerTrackerInit.playerTrackers.add(this);
-    }
-
     @Override
-    protected void tick(Player player) {
+    protected void tick(Player playerIn, VRPose pose, VRPoseHistory poseHistory) {
+        ServerPlayer player = (ServerPlayer) playerIn;
         CookInfo info = cookTime.get(player.getGameProfile().getName());
         if (info == null) return;
         for (InteractionHand hand : InteractionHand.values()) {
@@ -60,9 +58,7 @@ public class CampfireTracker extends AbstractTracker {
     }
 
     @Override
-    protected boolean shouldTick(Player player) {
-        if (!ActiveConfig.FILE_SERVER.useCampfireImmersive) return false;
-        if (!VRVerify.playerInVR(player)) return false;
+    protected boolean shouldTick(Player player, VRPose pose, VRPoseHistory poseHistory) {
         if (!ActiveConfig.getConfigForPlayer(player).useCampfireImmersive) return false;
         VRPose vrPose = VRAPI.instance().getVRPose(player);
         boolean mainRes = false;
@@ -99,6 +95,12 @@ public class CampfireTracker extends AbstractTracker {
             }
         }
         return mainRes || offRes; // A result has occurred from either hand
+    }
+
+    @Override
+    public void onPlayerDisconnect(Player player) {
+        super.onPlayerDisconnect(player);
+        cookTime.remove(player.getGameProfile().getName());
     }
 
     public static class CookInfo {
