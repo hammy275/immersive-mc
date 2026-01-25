@@ -7,7 +7,7 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -58,7 +58,7 @@ public class BrewingStandHandler extends ContainerHandler<ListOfItemsStorage> {
     }
 
     @Override
-    public Identifier getID() {
+    public ResourceLocation getID() {
         return Util.id("brewing_stand");
     }
 }

@@ -17,7 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.EndTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -160,7 +160,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
                     storageInfo.getInt("posY").get(),
                     storageInfo.getInt("posZ").get());
 
-            Identifier id = Util.getResourceLocation(storageInfo, "id");
+            ResourceLocation id = Util.getResourceLocation(storageInfo, "id");
             WorldStorage storage = null;
             for (ImmersiveHandler<?> handlerMaybeWS : ImmersiveHandlers.HANDLERS) {
                 if (handlerMaybeWS.getID().equals(id) && handlerMaybeWS instanceof WorldStorageHandler<?> handler) {
@@ -221,10 +221,10 @@ public class ImmersiveMCLevelStorage extends SavedData {
                     String oldDataType = storage.getString("dataType").get();
                     storage.remove("dataType");
                     CompoundTag itemsData = storage.getCompound("data").get();
-                    String oldIdentifier = itemsData.getString("identifier").get();
-                    itemsData.remove("identifier");
+                    String oldResourceLocation = itemsData.getString("ResourceLocation").get();
+                    itemsData.remove("ResourceLocation");
                     int numItems = itemsData.getInt("numOfItems").get();
-                    Identifier id;
+                    ResourceLocation id;
                     if (numItems == 10) {
                         id = Util.id("crafting_table");
                     } else if (numItems == 4 || (numItems == 3 && oldDataType.equals("basic_item_store"))) {

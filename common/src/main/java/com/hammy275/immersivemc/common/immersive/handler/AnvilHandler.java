@@ -12,7 +12,7 @@ import com.hammy275.immersivemc.server.storage.world.WorldStoragesImpl;
 import com.hammy275.immersivemc.server.swap.Swap;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -63,7 +63,7 @@ public class AnvilHandler extends ItemWorldStorageHandler<AnvilStorage> {
     }
 
     @Override
-    public Identifier getID() {
+    public ResourceLocation getID() {
         return Util.id("anvil");
     }
 

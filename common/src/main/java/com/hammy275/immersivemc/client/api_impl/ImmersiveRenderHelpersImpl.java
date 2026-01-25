@@ -20,14 +20,13 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.debug.DebugScreenEntries;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
-import net.minecraft.gizmos.CuboidGizmo;
-import net.minecraft.gizmos.GizmoStyle;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -176,8 +175,15 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
         if ((Minecraft.getInstance().debugEntries.isCurrentlyEnabled(DebugScreenEntries.ENTITY_HITBOXES) || alwaysRender) &&
                 hitbox != null) {
             if (hitbox.isAABB()) {
+                Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
                 stack.pushPose();
-                ClientUtil.renderGizmo(new CuboidGizmo(hitbox.asAABB(), GizmoStyle.stroke(ARGB.colorFromFloat(alpha, red, green, blue)), false), stack);
+                stack.translate(-renderInfo.position().x,
+                        -renderInfo.position().y,
+                        -renderInfo.position().z);
+                MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+                net.minecraft.client.renderer.ShapeRenderer.renderLineBox(stack.last(), buffer.getBuffer(RenderType.LINES),
+                        hitbox.asAABB(),
+                        red, green, blue, alpha);
                 stack.popPose();
             } else {
                 OBBClientUtil.renderOBB(stack, hitbox.asOBB(), alwaysRender, red, green, blue, alpha);
@@ -204,20 +210,20 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
     }
 
     @Override
-    public void renderImage(PoseStack stack, Identifier imageLocation, Vec3 pos, float size, int light,
+    public void renderImage(PoseStack stack, ResourceLocation imageLocation, Vec3 pos, float size, int light,
                             @Nullable Direction facing) {
         renderImage(stack, imageLocation, 0, 0, 1, 1, pos, size, light, facing);
     }
 
     @Override
-    public void renderImage(PoseStack stack, Identifier imageLocation, float minImageU, float minImageV,
+    public void renderImage(PoseStack stack, ResourceLocation imageLocation, float minImageU, float minImageV,
                             float maxImageU, float maxImageV, Vec3 pos, float size, int light,
                             @Nullable Direction facing) {
         renderImage(stack, imageLocation, minImageU, minImageV, maxImageU, maxImageV, pos, size, light, 0, facing);
     }
 
     @Override
-    public void renderImage(PoseStack stack, Identifier imageLocation, float minImageU, float minImageV, float maxImageU, float maxImageV, Vec3 pos, float size, int light, float roll, @Nullable Direction facing) {
+    public void renderImage(PoseStack stack, ResourceLocation imageLocation, float minImageU, float minImageV, float maxImageU, float maxImageV, Vec3 pos, float size, int light, float roll, @Nullable Direction facing) {
         Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         stack.pushPose();
         stack.translate(-renderInfo.position().x + pos.x,
@@ -239,7 +245,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
         stack.mulPose(Axis.ZN.rotationDegrees(roll));
 
         VertexConsumer consumer =
-                Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderTypes.entityCutoutNoCull(imageLocation));
+                Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.entityCutoutNoCull(imageLocation));
         PoseStack.Pose pose = stack.last();
 
         consumer.addVertex(pose, -0.5f, -0.25f, 0)

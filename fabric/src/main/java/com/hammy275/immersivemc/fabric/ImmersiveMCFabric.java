@@ -2,12 +2,10 @@ package com.hammy275.immersivemc.fabric;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.network.Network;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
@@ -38,8 +36,6 @@ public class ImmersiveMCFabric implements ModInitializer {
                     }
                 });
             });
-            WorldRenderEvents.AFTER_ENTITIES.register(context ->
-                    ClientRenderSubscriber.onWorldRender(context.matrices()));
         }
         ImmersiveMC.init();
         if (Platform.isModLoaded("lootr")) {

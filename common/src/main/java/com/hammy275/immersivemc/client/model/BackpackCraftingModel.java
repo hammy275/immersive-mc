@@ -7,14 +7,14 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 // 99% exported from BlockBench
 public class BackpackCraftingModel extends EntityModel<EntityRenderState> {
 
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Util.id("crafting"), "main");
-    public static final Identifier textureLocation = Util.id("immersive/bag/crafting.png");
+    public static final ResourceLocation textureLocation = Util.id("immersive/bag/crafting.png");
 
     public BackpackCraftingModel(ModelPart root) {
         super(root);
