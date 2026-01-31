@@ -253,6 +253,9 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
         } else {
             throw new UnsupportedOperationException("Hitbox calculation for positioning mode " + mode + " unimplemented!");
         }
+        // Mark calculations as done here, since this is only used for hitboxes (not text offsets, etc.) and callbacks
+        // may depend on hitbox information, such as the enchanting table.
+        didCalc = true;
         calcTextOffsets(info);
         ForcedUpDownRenderDir forcedDirApplied = forcedUpDownRenderDir.apply(info);
         if (forcedDirApplied != ForcedUpDownRenderDir.NOT_FORCED) {
@@ -308,7 +311,6 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
                 vrMovementInfo.actionConsumer().accept(info, passedHands);
             }
         }
-        didCalc = true;
     }
 
     @Override
