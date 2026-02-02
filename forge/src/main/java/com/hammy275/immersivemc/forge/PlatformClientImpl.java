@@ -29,7 +29,9 @@ public class PlatformClientImpl {
     }
     public static void registerOnClientDisconnectListener(Consumer<Player> listener) {
         MinecraftForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut event) -> {
-            listener.accept(event.getPlayer());
+            if (event.getPlayer() != null) {  // Fires with null player on login. Don't pass these fires on to listeners.
+                listener.accept(event.getPlayer());
+            }
         });
     }
 
