@@ -3,8 +3,12 @@ package com.hammy275.immersivemc.common.immersive.handler;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
+import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.packet.SelfHandlingNetworkStorageSyncPacket;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class ChestHandler extends ChestLikeHandler<ListOfItemsStorage> implements MultiblockImmersiveHandler<ListOfItemsStorage> {
+public class ChestHandler extends ChestLikeHandler<ListOfItemsStorage>
+        implements MultiblockImmersiveHandler<ListOfItemsStorage>, AfterClientSyncHandler {
 
     @Override
     public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
@@ -107,5 +112,15 @@ public class ChestHandler extends ChestLikeHandler<ListOfItemsStorage> implement
             }
         }
         return null;
+    }
+
+    @Override
+    public void afterClientSync(ServerPlayer player, Set<BlockPos> positions) {
+        // Use the minimum value in the set so the position for large chests is consistent.
+        BlockPos pos = positions.stream().min(BlockPos::compareTo).get();
+        BlockEntity blockEntity = player.level().getBlockEntity(pos);
+        ChestOpennessStorage storage = SharedNetworkStorages.instance().getOrCreate(player.level(), pos,
+                ChestOpennessStorage.class, () -> new ChestOpennessStorage(blockEntity));
+        Network.INSTANCE.sendToPlayer(player, new SelfHandlingNetworkStorageSyncPacket(storage));
     }
 }
