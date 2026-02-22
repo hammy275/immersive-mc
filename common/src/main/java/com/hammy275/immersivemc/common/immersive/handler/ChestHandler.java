@@ -3,10 +3,8 @@ package com.hammy275.immersivemc.common.immersive.handler;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -24,19 +22,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class ChestHandler extends ChestLikeHandler<ChestStorage> implements MultiblockImmersiveHandler<ChestStorage> {
+public class ChestHandler extends ChestLikeHandler<ListOfItemsStorage> implements MultiblockImmersiveHandler<ListOfItemsStorage> {
 
     @Override
-    public ChestStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         BlockEntity blockEntity = player.level().getBlockEntity(pos);
-        ListOfItemsStorage itemsStorage;
         if (blockEntity instanceof ChestBlockEntity cbe) {
-            itemsStorage = makeBaseInventoryContents(player, pos);
+            ListOfItemsStorage storage = makeBaseInventoryContents(player, pos);
             ChestBlockEntity otherChest = Util.getOtherChest(cbe);
             if (otherChest != null) {
                 ListOfItemsStorage otherStorage = makeBaseInventoryContents(player, pos);
-                itemsStorage.getItems().addAll(otherStorage.getItems());
+                storage.getItems().addAll(otherStorage.getItems());
             }
+            return storage;
         } else { // Is an ender chest
             // NOTE: On (1.19.2) Forge, PlayerEnderChestContainer#items is private; hence why we for loop here
             // instead of just initializing directly from the items list.
@@ -44,13 +42,7 @@ public class ChestHandler extends ChestLikeHandler<ChestStorage> implements Mult
             for (int i = 0; i < player.getEnderChestInventory().getContainerSize(); i++) {
                 items.add(player.getEnderChestInventory().getItem(i));
             }
-            itemsStorage = new ListOfItemsStorage(items, 27);
-        }
-        ChestStorage lidStorage = SharedNetworkStorages.instance().get(player.level(), pos, this);
-        if (lidStorage != null) {
-            return new ChestStorage(itemsStorage, lidStorage);
-        } else {
-            return new ChestStorage(itemsStorage);
+            return new ListOfItemsStorage(items, 27);
         }
     }
 
@@ -67,10 +59,6 @@ public class ChestHandler extends ChestLikeHandler<ChestStorage> implements Mult
     @Override
     public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
         BlockEntity blockEntity = player.level().getBlockEntity(pos);
-        ChestStorage lidStorage = SharedNetworkStorages.instance().get(player.level(), pos, this);
-        if (lidStorage != null && lidStorage.isDirty()) {
-            return true;
-        }
         if (blockEntity instanceof EnderChestBlockEntity) {
             return player.tickCount % 2 == 0; // Every other tick for dirtiness. Not ideal, but works.
         } else {
@@ -84,8 +72,8 @@ public class ChestHandler extends ChestLikeHandler<ChestStorage> implements Mult
     }
 
     @Override
-    public ChestStorage getEmptyNetworkStorage() {
-        return new ChestStorage();
+    public ListOfItemsStorage getEmptyNetworkStorage() {
+        return getBaseEmptyNetworkStorage();
     }
 
     @Override
