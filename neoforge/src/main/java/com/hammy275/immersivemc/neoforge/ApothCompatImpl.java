@@ -114,7 +114,7 @@ public class ApothCompatImpl extends ApothBaseCompatImpl {
 
     @Override
     public boolean isSalvagable(ItemStack input, Level level) {
-        return SalvagingMenu.findMatch(level, input) != null;
+        return !SalvagingMenu.findMatch(level, input).isEmpty();
     }
 
     private InternalItemHandler getOutputSlots(Player player, BlockPos pos) {
