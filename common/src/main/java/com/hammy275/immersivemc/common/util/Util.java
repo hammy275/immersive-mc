@@ -41,6 +41,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -331,10 +332,12 @@ public class Util {
         return res == -1 ? Optional.empty() : Optional.of(res);
     }
 
+    @Nullable
     public static ChestBlockEntity getOtherChest(ChestBlockEntity chest) {
         return getOtherChest(chest, true);
     }
 
+    @Nullable
     protected static ChestBlockEntity getOtherChest(ChestBlockEntity chest, boolean checkOther) {
         // Gets the chest this one is connected to. Can be null.
         if (chest == null) return null;

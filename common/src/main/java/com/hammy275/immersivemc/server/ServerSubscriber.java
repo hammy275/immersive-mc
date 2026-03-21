@@ -44,6 +44,7 @@ public class ServerSubscriber {
         DirtyTracker.unmarkAllDirty(); // Remove dirtiness for block entities
         ImmersiveMCLevelStorage.unmarkAllItemStoragesDirty(server);
         SharedNetworkStorages.instance().getAll(LecternData.class).forEach(data -> data.bookData.setNoLongerDirty());
+        SharedNetworkStorages.instance().getAll(ChestOpennessStorage.class).forEach(ChestOpennessStorage::serverTick);
         SharedNetworkStorages.instance().getAll(ChestOpennessStorage.class).forEach(storage -> {
             if (storage.isDirty()) {
                 Network.INSTANCE.sendToPlayers(TrackedImmersives.getPlayersTrackingPos(server, storage.getLevel(), storage.getPos()),

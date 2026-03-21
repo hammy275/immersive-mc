@@ -3,12 +3,28 @@ package com.hammy275.immersivemc.common.immersive.storage.network.impl;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
+import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.immersive.storage.network.SelfHandlingNetworkStorage;
+import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VRVerify;
+import com.hammy275.immersivemc.server.ChestToOpenSet;
+import com.hammy275.immersivemc.server.ServerSubscriber;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.monster.piglin.PiglinAi;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
+import net.minecraft.world.level.block.entity.LidBlockEntity;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 /**
  * Storage for syncing chest contents. Only the openness and isDirty are kept on the server continuously, and the
@@ -21,8 +37,12 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
 
     private BlockPos pos = BlockPos.ZERO;
     private float openness = -1f;
-    private transient Level level = null;  // Only available on the server
+    private @Nullable UUID controllingPlayerUUID = null;
+    public int cooldown = 0;
+    private transient ServerLevel level = null;  // Only available on the server
+    private transient LidBlockEntity chest = null;  // Only available on the server
     private boolean isDirty = true;
+    public LidTargetState lidTargetState = LidTargetState.OPEN;
 
     public ChestOpennessStorage() {
     }
@@ -30,18 +50,31 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     public ChestOpennessStorage(BlockEntity blockEntity) {
         this.openness = Util.getChestLidController(blockEntity).immersiveMC$getOpenness();
         this.pos = blockEntity.getBlockPos();
-        this.level = blockEntity.getLevel();
+        this.level = (ServerLevel) blockEntity.getLevel();
+        this.chest = (LidBlockEntity) blockEntity;
     }
 
     @Override
     public void encode(RegistryFriendlyByteBuf buffer) {
-        buffer.writeBlockPos(pos).writeFloat(openness);
+        buffer.writeBlockPos(pos)
+                .writeFloat(openness)
+                .writeInt(cooldown)
+                .writeEnum(lidTargetState)
+                .writeBoolean(controllingPlayerUUID != null);
+        if (controllingPlayerUUID != null) {
+            buffer.writeUUID(controllingPlayerUUID);
+        }
     }
 
     @Override
     public void decode(RegistryFriendlyByteBuf buffer) {
         this.pos = buffer.readBlockPos();
         this.openness = buffer.readFloat();
+        this.cooldown = buffer.readInt();
+        this.lidTargetState = buffer.readEnum(LidTargetState.class);
+        if (buffer.readBoolean()) {
+            this.controllingPlayerUUID = buffer.readUUID();
+        }
     }
 
     public float getOpenness() {
@@ -57,6 +90,11 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
         return this.pos;
     }
 
+    @Nullable
+    public Player getControllingPlayer(Level level) {
+        return controllingPlayerUUID != null ? level.getPlayerByUUID(controllingPlayerUUID) : null;
+    }
+
     public Level getLevel() {
         if (level == null) {
             throw new IllegalStateException("Can only access ChestOpennessStorage's level on the server.");
@@ -68,8 +106,80 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
         return isDirty;
     }
 
+    public void setDirty() {
+        isDirty = true;
+    }
+
     public void setNoLongerDirty() {
         isDirty = false;
+    }
+
+    public void serverTick() {
+        Player controllingPlayer = getControllingPlayer(level);
+        if (controllingPlayer == null) {
+            if (controllingPlayerUUID != null) {
+                controllingPlayerUUID = null;
+                setDirty();
+            }
+        } else {
+            if (VRVerify.playerInVR(controllingPlayer)) {
+
+            } else {
+                if (chest instanceof ChestBlockEntity cbe) {
+                    ChestBlockEntity other = Util.getOtherChest(cbe);
+                    if (lidTargetState == LidTargetState.OPEN) {
+                        if (!ChestToOpenSet.hasChestOpen(controllingPlayer, pos)) {
+                            cbe.startOpen(controllingPlayer);
+                            ChestToOpenSet.openChest(controllingPlayer, pos);
+                            if (other != null) {
+                                other.startOpen(controllingPlayer);
+                                ChestToOpenSet.openChest(controllingPlayer, other.getBlockPos());
+                            }
+                            PiglinAi.angerNearbyPiglins(level, controllingPlayer, true);
+                            ChestShulkerOpenPacket.handle(new ChestShulkerOpenPacket(pos, true), (ServerPlayer) controllingPlayer);
+                            Lootr.lootrImpl.markOpener(controllingPlayer, pos);
+                        }
+                    } else {
+                        if (ChestToOpenSet.hasChestOpen(controllingPlayer, pos)) {
+                            cbe.stopOpen(controllingPlayer);
+                            ChestToOpenSet.closeChest(controllingPlayer, pos);
+                            if (other != null) {
+                                other.stopOpen(controllingPlayer);
+                                ChestToOpenSet.closeChest(controllingPlayer, other.getBlockPos());
+                            }
+                        }
+                    }
+                } else if (chest instanceof EnderChestBlockEntity ecbe) {
+                    if (lidTargetState == LidTargetState.OPEN) {
+                        if (!ChestToOpenSet.hasChestOpen(controllingPlayer, pos)) {
+                            ecbe.startOpen(controllingPlayer);
+                            ChestToOpenSet.openChest(controllingPlayer, pos);
+                            PiglinAi.angerNearbyPiglins(level, controllingPlayer, true);
+                            ChestShulkerOpenPacket.handle(new ChestShulkerOpenPacket(pos, true), (ServerPlayer) controllingPlayer);
+                        }
+                    } else {
+                        if (ChestToOpenSet.hasChestOpen(controllingPlayer, pos)) {
+                            ecbe.stopOpen(controllingPlayer);
+                            ChestToOpenSet.closeChest(controllingPlayer, pos);
+                        }
+                    }
+                }
+            }
+        }
+        if (cooldown > 0) {
+            cooldown--;
+        } else {
+            controllingPlayerUUID = null;
+        }
+        ServerSubscriber.server.getPlayerList().getPlayers().forEach(player -> player.sendSystemMessage(Component.literal("Cooldown:" + cooldown + " Controlling player: " + controllingPlayer)));
+    }
+
+    public boolean takeControl(UUID newController) {
+        if (cooldown > 0 || controllingPlayerUUID != null) {
+            return false;
+        }
+        controllingPlayerUUID = newController;
+        return true;
     }
 
     @Override
@@ -78,5 +188,10 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
         if (info != null) {
             info.forcedOpenness = openness;
         }
+    }
+
+    public enum LidTargetState {
+        CLOSED,
+        OPEN;
     }
 }
