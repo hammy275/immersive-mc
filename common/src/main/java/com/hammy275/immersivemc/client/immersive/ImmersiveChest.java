@@ -71,7 +71,7 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
 
     @Override
     public int handleHitboxInteract(ChestInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
-        if (!info.isOpen) return -1;
+        if (!info.slotVisible(hitboxIndices.get(0))) return -1;
         ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), hitboxIndices, hand, false);
         return ImmersiveClientConstants.instance().defaultCooldown();
     }
@@ -83,18 +83,19 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
 
     @Override
     public void render(ChestInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
-
-        if (info.isOpen) {
-            for (int i = 0; i < 27; i++) {
+        for (int i = 0; i < 27; i++) {
+            if (info.slotVisible(i)) {
                 int startTop = 9 * info.getRowNum();
                 int endTop = startTop + 9;
                 boolean showCount = i >= startTop && i <= endTop;
                 helpers.renderItemWithInfo(info.hitboxes.get(i).item, stack, ClientConstants.itemScaleSizeChest,
                         showCount, info.light, info, true, i, null, info.forward, Direction.UP);
             }
+        }
 
-            if (info.otherChest != null) {
-                for (int i = 27; i < 27 * 2; i++) {
+        if (info.otherChest != null) {
+            for (int i = 27; i < 27 * 2; i++) {
+                if (info.slotVisible(i)) {
                     int startTop = 9 * info.getRowNum() + 27;
                     int endTop = startTop + 9 + 27;
                     boolean showCount = i >= startTop && i <= endTop;
@@ -196,14 +197,14 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
                 }
 
                 boolean cond;
-                if (info.isOpen) {
+                if (info.isOpen()) {
                     cond = diff0 <= -threshold || diff1 <= -threshold;
                 } else {
                     cond = diff0 >= threshold || diff1 >= threshold;
                 }
 
                 if (cond) {
-                    if (!info.isOpen) {
+                    if (!info.isOpen()) {
                         // Use a distance check for checking if to vibrate the other controller to hopefully filter out
                         // actions of moving up that are for something other than the chest
                         if (diff0 >= threshold) {
@@ -287,9 +288,8 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
     }
 
     public static void openChest(ChestInfo info) {
-        info.isOpen = !info.isOpen;
-        Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(info.getBlockPosition(), info.isOpen));
-        if (info.isOpen) {
+        Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(info.getBlockPosition(), !info.isOpen()));
+        if (info.isOpen()) {
             Lootr.lootrImpl.markOpener(Minecraft.getInstance().player, info.getBlockPosition());
         }
     }

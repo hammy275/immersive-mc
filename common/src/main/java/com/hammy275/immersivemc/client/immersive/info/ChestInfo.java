@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -18,9 +19,7 @@ public class ChestInfo extends AbstractImmersiveInfo {
     public BlockEntity otherChest;
     public BlockPos otherPos = null;
     public Direction forward = null;
-    public boolean failRender = false; // Used for thread safety when changing `other`
     protected int rowNum = 0;
-    public boolean isOpen = false;
     public double lastY0;
     public double lastY1;
     public BoundingBox[] openCloseHitboxes = new BoundingBox[]{null, null};
@@ -64,5 +63,32 @@ public class ChestInfo extends AbstractImmersiveInfo {
     public boolean hasHitboxes() {
         return (hitboxes.get(8).box != null || hitboxes.get(17).box != null || hitboxes.get(26).box != null) &&
                 (this.otherChest == null || (hitboxes.get(35).box != null || hitboxes.get(44).box != null || hitboxes.get(53).box != null));
+    }
+
+    public boolean isOpen() {
+        return getDirectOpenness() >= 0.1f;
+    }
+
+    public boolean slotVisible(int slot) {
+        float openness = getDirectOpenness();
+        if (slot % 9 >= 6) { // Slot is in the front row
+            return openness >= 0.1f;
+        } else if (slot % 9 >= 3) { // Slot is in the middle row
+            return openness >= 0.3f;
+        } else { // Slot is in the back row
+            return openness >= 0.5f;
+        }
+    }
+
+    /**
+     * Gets the openness from the chest, ignoring the forced openness. Mainly useful since the non-VR code path for
+     * opening/closing chests doesn't modify forcedOpenness.
+     * @return The openness of the chest as rendered in-world.
+     */
+    private float getDirectOpenness() {
+        if (chest instanceof LidBlockEntity lbe) {
+            return lbe.getOpenNess(1f);
+        }
+        return -1f;
     }
 }

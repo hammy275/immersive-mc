@@ -406,7 +406,7 @@ public class ClientLogicSubscriber {
 
             if (tileEnt instanceof ChestBlockEntity || tileEnt instanceof EnderChestBlockEntity) {
                 ChestInfo chestInfo = ImmersiveChest.findImmersive(tileEnt);
-                if (chestInfo != null && chestInfo.isOpen) {
+                if (chestInfo != null && chestInfo.isOpen()) {
                     chestInfo.nextRow();
                     return true;
                 }
@@ -564,7 +564,7 @@ public class ClientLogicSubscriber {
             if (isChest || isEnderChest) {
                 ChestInfo info = ImmersiveChest.findImmersive(player.level().getBlockEntity(pos));
                 if (info != null && (ActiveConfig.active().rightClickChestInteractions
-                        || (!VRVerify.clientInVR() && (((BlockHitResult) looking).getDirection() == Direction.UP) || info.isOpen)
+                        || (!VRVerify.clientInVR() && (((BlockHitResult) looking).getDirection() == Direction.UP) || info.isOpen())
                         || ActiveConfig.active().disableVanillaInteractionsForSupportedImmersives)) {
                     ImmersiveChest.openChest(info);
                     return ImmersiveClientConstants.instance().defaultCooldown();

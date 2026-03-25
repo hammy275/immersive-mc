@@ -9,10 +9,8 @@ import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
-import com.hammy275.immersivemc.server.ServerSubscriber;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
@@ -171,7 +169,6 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
         } else {
             controllingPlayerUUID = null;
         }
-        ServerSubscriber.server.getPlayerList().getPlayers().forEach(player -> player.sendSystemMessage(Component.literal("Cooldown:" + cooldown + " Controlling player: " + controllingPlayer)));
     }
 
     public boolean takeControl(UUID newController) {
