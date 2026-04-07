@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.immersive.info;
 
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.ClientUtil;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +26,7 @@ public class ChestInfo extends AbstractImmersiveInfo {
     public BoundingBox[] openCloseHitboxes = new BoundingBox[]{null, null};
     public Vec3[] openClosePositions = new Vec3[]{null, null};
     public int light = ClientUtil.maxLight;
-    public float forcedOpenness = -1f;
+    private ChestOpennessStorage opennessStorage = null;
 
     public ChestInfo(BlockEntity chest, BlockEntity otherChest) {
         super(chest.getBlockPos()); // Accounts for double chest
@@ -78,6 +79,14 @@ public class ChestInfo extends AbstractImmersiveInfo {
         } else { // Slot is in the back row
             return openness >= 0.5f;
         }
+    }
+
+    public void setOpennessStorage(ChestOpennessStorage opennessStorage) {
+        this.opennessStorage = opennessStorage;
+    }
+
+    public float getForcedOpenness() {
+        return opennessStorage == null ? -1 : opennessStorage.getOpenness();
     }
 
     /**

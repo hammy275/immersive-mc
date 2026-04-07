@@ -183,7 +183,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     public void handleClient() {
         ChestInfo info = ClientUtil.findImmersive(Immersives.immersiveChest, pos);
         if (info != null) {
-            info.forcedOpenness = openness;
+            info.setOpennessStorage(this);
         }
     }
 
