@@ -20,7 +20,9 @@ public record SelfHandlingNetworkStorageSyncPacket(SelfHandlingNetworkStorage st
     }
 
     public static void handle(final SelfHandlingNetworkStorageSyncPacket packet, ServerPlayer player) {
-        if (player == null) {
+        if (player instanceof ServerPlayer sp) {
+            packet.storage.handleServer(sp);
+        } else {
             packet.storage.handleClient();
         }
     }

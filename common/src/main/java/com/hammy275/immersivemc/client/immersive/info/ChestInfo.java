@@ -3,12 +3,16 @@ package com.hammy275.immersivemc.client.immersive.info;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage;
+import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.packet.SelfHandlingNetworkStorageSyncPacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +30,7 @@ public class ChestInfo extends AbstractImmersiveInfo {
     public BoundingBox[] openCloseHitboxes = new BoundingBox[]{null, null};
     public Vec3[] openClosePositions = new Vec3[]{null, null};
     public int light = ClientUtil.maxLight;
-    private ChestOpennessStorage opennessStorage = null;
+    private @Nullable ChestOpennessStorage opennessStorage = null;
 
     public ChestInfo(BlockEntity chest, BlockEntity otherChest) {
         super(chest.getBlockPos()); // Accounts for double chest
@@ -34,6 +38,8 @@ public class ChestInfo extends AbstractImmersiveInfo {
         this.otherChest = otherChest;
         if (this.otherChest != null) {
             this.otherPos = this.otherChest.getBlockPos();
+        } else {
+            this.otherPos = null;
         }
         for (int i = 0; i < 54; i++) {
             hitboxes.add(new HitboxItemPair(null, ItemStack.EMPTY, false));
@@ -87,6 +93,22 @@ public class ChestInfo extends AbstractImmersiveInfo {
 
     public float getForcedOpenness() {
         return opennessStorage == null ? -1 : opennessStorage.getOpenness();
+    }
+
+    public boolean takeControl() {
+        return opennessStorage != null && opennessStorage.takeControl(Minecraft.getInstance().player.getUUID());
+    }
+
+    public void syncOpennessToServerIfDirty() {
+        if (!Minecraft.getInstance().player.getUUID().equals(opennessStorage.getControllingPlayerUUID())) {
+            throw new RuntimeException("Illegal state: Player should own chest before syncing to server.");
+        } else if (opennessStorage.isDirty()) {
+            Network.INSTANCE.sendToServer(new SelfHandlingNetworkStorageSyncPacket(opennessStorage));
+        }
+    }
+
+    public void setForcedOpenness(float forcedOpenness) {
+        opennessStorage.setOpenness(forcedOpenness);
     }
 
     /**

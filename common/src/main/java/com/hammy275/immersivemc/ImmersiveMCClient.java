@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.client.compat.ipn.IPN;
 import com.hammy275.immersivemc.client.compat.ipn.IPNCompat;
 import com.hammy275.immersivemc.client.compat.ipn.IPNCompatImpl;
 import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.interact_module.ChestLidInteractModule;
 import com.hammy275.immersivemc.client.model.BackpackBundleModel;
 import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
 import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
@@ -64,7 +65,7 @@ public class ImmersiveMCClient {
 
         if (VRVerify.hasAPI) {
             VRClientAPI.instance().addClientRegistrationHandler(event ->
-                    event.registerInteractModules(new BagOpenInteractModule()));
+                    event.registerInteractModules(new BagOpenInteractModule(), ChestLidInteractModule.INSTANCE));
         }
 
         // Add client tickers

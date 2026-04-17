@@ -5,14 +5,18 @@ import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.immersive.storage.network.SelfHandlingNetworkStorage;
+import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
+import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
+import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -40,7 +44,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     private transient ServerLevel level = null;  // Only available on the server
     private transient LidBlockEntity chest = null;  // Only available on the server
     private boolean isDirty = true;
-    public LidTargetState lidTargetState = LidTargetState.OPEN;
+    public LidTargetState lidTargetState = LidTargetState.CLOSED; // Default to closing if a player in VR leaves it
 
     public ChestOpennessStorage() {
     }
@@ -92,6 +96,12 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     public Player getControllingPlayer(Level level) {
         return controllingPlayerUUID != null ? level.getPlayerByUUID(controllingPlayerUUID) : null;
     }
+
+    @Nullable
+    public UUID getControllingPlayerUUID() {
+        return controllingPlayerUUID;
+    }
+
 
     public Level getLevel() {
         if (level == null) {
@@ -172,7 +182,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     }
 
     public boolean takeControl(UUID newController) {
-        if (cooldown > 0 || controllingPlayerUUID != null) {
+        if (cooldown > 0 || (controllingPlayerUUID != null && !controllingPlayerUUID.equals(newController))) {
             return false;
         }
         controllingPlayerUUID = newController;
@@ -184,6 +194,15 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
         ChestInfo info = ClientUtil.findImmersive(Immersives.immersiveChest, pos);
         if (info != null) {
             info.setOpennessStorage(this);
+        }
+    }
+
+    @Override
+    public void handleServer(ServerPlayer player) {
+        ChestOpennessStorage actual = SharedNetworkStorages.instance().get(player.level(), this.pos, ChestOpennessStorage.class);
+        if (actual != null && VRVerify.playerInVR(player) && actual.takeControl(player.getUUID())) {
+            actual.openness = Mth.clamp(this.openness, 0f, 1f);
+            Network.INSTANCE.sendToPlayers(TrackedImmersives.getPlayersTrackingPos(player.server, player.level(), this.pos), actual);
         }
     }
 

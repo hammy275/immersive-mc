@@ -13,6 +13,7 @@ import com.hammy275.immersivemc.client.immersive.*;
 import com.hammy275.immersivemc.client.immersive.info.*;
 import com.hammy275.immersivemc.client.immersive_item.AbstractHandImmersive;
 import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
+import com.hammy275.immersivemc.client.interact_module.ChestLidInteractModule;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
@@ -152,6 +153,8 @@ public class ClientLogicSubscriber {
         BlockEntity tileEntity = player.level().getBlockEntity(pos);
 
         possiblyTrack(pos, state, tileEntity, Minecraft.getInstance().level);
+
+        ChestLidInteractModule.INSTANCE.removeInvalid();
 
         // Pop profiler push from above. Not using a popPush() so we're part of tick in the profiler.
         Profiler.get().pop();

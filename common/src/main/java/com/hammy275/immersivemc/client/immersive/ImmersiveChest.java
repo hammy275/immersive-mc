@@ -120,6 +120,8 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
             info.otherChest = Util.getOtherChest(cbe);
             if (info.otherChest != null) {
                 info.otherPos = info.otherChest.getBlockPos();
+            } else {
+                info.otherPos = null;
             }
         }
 

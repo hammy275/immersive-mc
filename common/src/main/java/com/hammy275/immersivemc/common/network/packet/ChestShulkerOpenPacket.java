@@ -40,6 +40,7 @@ public class ChestShulkerOpenPacket {
                             message.pos, ChestOpennessStorage.class, () -> new ChestOpennessStorage(tileEnt));
                     if (storage.takeControl(player.getUUID())) {
                         storage.lidTargetState = message.isOpen ? ChestOpennessStorage.LidTargetState.OPEN : ChestOpennessStorage.LidTargetState.CLOSED;
+                        storage.setOpenness(-1f);
                     }
                 } else if (tileEnt instanceof ShulkerBoxBlockEntity shulkerBox) {
                     if (!ActiveConfig.FILE_SERVER.useShulkerImmersive) return;
