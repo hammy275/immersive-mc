@@ -17,8 +17,9 @@ import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItem
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRVerify;
+import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRRumble;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -36,7 +37,6 @@ import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.vivecraft.api.client.VRClientAPI;
 import org.joml.Vector3f;
 
 import java.util.List;
@@ -186,8 +186,8 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
 
         if (openCloseCooldown <= 0 && !ActiveConfig.active().rightClickChestInteractions) {
             if (VRVerify.playerInVR(Minecraft.getInstance().player) && info.openCloseHitboxes != null) {
-                Vec3 current0 = VRClientAPI.instance().getPreTickWorldPose().getMainHand().getPos();
-                Vec3 current1 = VRClientAPI.instance().getPreTickWorldPose().getOffHand().getPos();
+                Vec3 current0 = VR.ClientAPI.getPreTickWorldPose().getMainHand().getPos();
+                Vec3 current1 = VR.ClientAPI.getPreTickWorldPose().getOffHand().getPos();
 
                 double diff0 = current0.y - info.lastY0;
                 double diff1 = current1.y - info.lastY1;

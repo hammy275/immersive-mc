@@ -6,13 +6,13 @@ import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VR;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import org.vivecraft.api.client.HeldInteractModule;
-import org.vivecraft.api.client.VRClientAPI;
 import org.vivecraft.api.data.VRBodyPartData;
 
 import java.util.EnumMap;
@@ -64,7 +64,7 @@ public class ChestLidInteractModule implements HeldInteractModule {
         if (!Immersives.immersiveChest.chestsValid(info) || !info.takeControl()) {
             return false;
         }
-        VRBodyPartData handData = VRClientAPI.instance().getPreTickWorldPose().getHand(hand);
+        VRBodyPartData handData = VR.ClientAPI.getPreTickWorldPose().getHand(hand);
         Vec3 handPos = handData.getPos();
         Vec3 chestBottomCenter = Vec3.atBottomCenterOf(info.getBlockPosition());
         if (info.otherPos != null) {

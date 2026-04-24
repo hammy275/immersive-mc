@@ -21,6 +21,9 @@ public class CommonConstants {
 
     public static final float vibrationTimeRangedGrab = vibrationTimePlayerActionAlert / 2f;
 
+    // Debug VR mode
+    public static final boolean devFakeVRMode = true;
+
     public static String vrAPIVersionAsString() {
         return minimumVRAPIVersion[0] + "." + minimumVRAPIVersion[1] + "." + minimumVRAPIVersion[2];
     }
