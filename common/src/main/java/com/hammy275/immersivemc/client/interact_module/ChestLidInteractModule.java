@@ -45,7 +45,7 @@ public class ChestLidInteractModule implements HeldInteractModule {
         if (existingInfo != null) return false;
         ChestInfo chestInfo = ClientUtil.findImmersive(Immersives.immersiveChest, BlockPos.containing(handPos));
         if (chestInfo != null && chestInfo.getTicksExisted() >= 1) {
-            boolean tookControl = chestInfo.takeControl(ChestOpennessStorage.AnimationState.ANIMATED);
+            boolean tookControl = chestInfo.takeControl(ChestOpennessStorage.AnimationState.PLAYER_CONTROLLED);
             if (tookControl) {
                 activeChests.put(hand, chestInfo);
                 return true;
@@ -62,7 +62,7 @@ public class ChestLidInteractModule implements HeldInteractModule {
     @Override
     public boolean onHoldTick(LocalPlayer player, InteractionHand hand) {
         ChestInfo info = activeChests.get(hand);
-        if (!Immersives.immersiveChest.chestsValid(info) || !info.takeControl(ChestOpennessStorage.AnimationState.ANIMATED)) {
+        if (!Immersives.immersiveChest.chestsValid(info) || !info.takeControl(ChestOpennessStorage.AnimationState.PLAYER_CONTROLLED)) {
             return false;
         }
         VRBodyPartData handData = VR.ClientAPI.getPreTickWorldPose().getHand(hand);

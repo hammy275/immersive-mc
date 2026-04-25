@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -39,7 +40,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     private BlockPos pos = BlockPos.ZERO;
     private float openness = 0f;
     private @Nullable UUID controllingPlayerUUID = null;
-    private AnimationState animationState = AnimationState.ANIMATED;
+    private AnimationState animationState = AnimationState.PLAYER_CONTROLLED;
     private transient ServerLevel level = null;  // Only available on the server
     private transient LidBlockEntity chest = null;  // Only available on the server
     private boolean isDirty = true;
@@ -127,11 +128,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
                 setDirty();
             }
         } else {
-            if (animationState == AnimationState.ANIMATED) {
-                if (this.isDirty()) {
-                    Network.INSTANCE.sendToPlayers(TrackedImmersives.getPlayersTrackingPos(controllingPlayer.server, controllingPlayer.level(), this.pos), new SelfHandlingNetworkStorageSyncPacket(this));
-                }
-            } else if (isAnimating()) {
+            if (isAnimating()) {
                 ChestBlockEntity other = null;
                 if (chest instanceof ChestBlockEntity cbe) {
                     other = Util.getOtherChest(cbe);
@@ -173,9 +170,17 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
                 }
             }
 
-            if (animationState != AnimationState.ANIMATED && !isAnimating()) {
+            if (animationState != AnimationState.PLAYER_CONTROLLED && !isAnimating()) {
                 controllingPlayerUUID = null;
                 setDirty();
+            }
+
+            if (isDirty()) {
+                List<ServerPlayer> toSendTo = TrackedImmersives.getPlayersTrackingPos(controllingPlayer.server, controllingPlayer.level(), this.pos);
+                if (animationState == AnimationState.PLAYER_CONTROLLED) {
+                    toSendTo = toSendTo.stream().filter(player -> player != controllingPlayer).toList();
+                }
+                Network.INSTANCE.sendToPlayers(toSendTo, new SelfHandlingNetworkStorageSyncPacket(this));
             }
         }
     }
@@ -204,7 +209,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     @Override
     public void handleServer(ServerPlayer player) {
         ChestOpennessStorage actual = SharedNetworkStorages.instance().get(player.level(), this.pos, ChestOpennessStorage.class);
-        if (actual != null && VRVerify.playerInVR(player) && actual.takeControl(player.getUUID(), AnimationState.ANIMATED)) {
+        if (actual != null && VRVerify.playerInVR(player) && actual.takeControl(player.getUUID(), AnimationState.PLAYER_CONTROLLED)) {
             actual.openness = Mth.clamp(this.openness, 0f, 1f);
         }
     }
