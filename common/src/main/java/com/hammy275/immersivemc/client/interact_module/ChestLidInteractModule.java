@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.interact_module;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import com.hammy275.immersivemc.common.util.Util;
@@ -44,7 +45,7 @@ public class ChestLidInteractModule implements HeldInteractModule {
         if (existingInfo != null) return false;
         ChestInfo chestInfo = ClientUtil.findImmersive(Immersives.immersiveChest, BlockPos.containing(handPos));
         if (chestInfo != null && chestInfo.getTicksExisted() >= 1) {
-            boolean tookControl = chestInfo.takeControl();
+            boolean tookControl = chestInfo.takeControl(ChestOpennessStorage.AnimationState.ANIMATED);
             if (tookControl) {
                 activeChests.put(hand, chestInfo);
                 return true;
@@ -61,7 +62,7 @@ public class ChestLidInteractModule implements HeldInteractModule {
     @Override
     public boolean onHoldTick(LocalPlayer player, InteractionHand hand) {
         ChestInfo info = activeChests.get(hand);
-        if (!Immersives.immersiveChest.chestsValid(info) || !info.takeControl()) {
+        if (!Immersives.immersiveChest.chestsValid(info) || !info.takeControl(ChestOpennessStorage.AnimationState.ANIMATED)) {
             return false;
         }
         VRBodyPartData handData = VR.ClientAPI.getPreTickWorldPose().getHand(hand);

@@ -43,7 +43,7 @@ public class ClientMixinProxy {
     public static <T extends BlockEntity> void handleForcedLidAnimation(Level level, BlockPos pos, BlockState state, T blockEntity, Operation<Void> original) {
         if (level.isClientSide()) {
             ChestInfo info = ClientUtil.findImmersive(Immersives.immersiveChest, pos);
-            if (info != null && info.getForcedOpenness() > 0) { // Use >0 so fully closed chests by ImmersiveMC are controlled by vanilla
+            if (info != null && info.getForcedOpenness() >= 0) {
                 ChestLidControllerAccessor lidController = Util.getChestLidController(blockEntity);
                 lidController.immersiveMC$setOldOpenness(lidController.immersiveMC$getOpenness());
                 lidController.immersiveMC$setOpenness(info.getForcedOpenness());

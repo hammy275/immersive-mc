@@ -38,9 +38,8 @@ public class ChestShulkerOpenPacket {
                 if (tileEnt instanceof ChestBlockEntity || tileEnt instanceof EnderChestBlockEntity) {
                     ChestOpennessStorage storage = SharedNetworkStorages.instance().getOrCreate(player.level(),
                             message.pos, ChestOpennessStorage.class, () -> new ChestOpennessStorage(tileEnt));
-                    if (storage.takeControl(player.getUUID())) {
-                        storage.lidTargetState = message.isOpen ? ChestOpennessStorage.LidTargetState.OPEN : ChestOpennessStorage.LidTargetState.CLOSED;
-                        storage.setOpenness(-1f);
+                    if (storage.takeControl(player.getUUID(), ChestOpennessStorage.AnimationState.PLAYER_CONTROLLED)) {
+                        storage.lidTarget = message.isOpen ? ChestOpennessStorage.LidTarget.OPEN : ChestOpennessStorage.LidTarget.CLOSED;
                     }
                 } else if (tileEnt instanceof ShulkerBoxBlockEntity shulkerBox) {
                     if (!ActiveConfig.FILE_SERVER.useShulkerImmersive) return;

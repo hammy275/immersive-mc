@@ -6,7 +6,6 @@ import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.immersive.storage.network.SelfHandlingNetworkStorage;
 import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import com.hammy275.immersivemc.common.network.packet.SelfHandlingNetworkStorageSyncPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRVerify;
@@ -19,7 +18,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
@@ -39,13 +37,13 @@ import java.util.UUID;
 public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
 
     private BlockPos pos = BlockPos.ZERO;
-    private float openness = -1f;
+    private float openness = 0f;
     private @Nullable UUID controllingPlayerUUID = null;
-    public int cooldown = 0;
+    private AnimationState animationState = AnimationState.ANIMATED;
     private transient ServerLevel level = null;  // Only available on the server
     private transient LidBlockEntity chest = null;  // Only available on the server
     private boolean isDirty = true;
-    public LidTargetState lidTargetState = LidTargetState.CLOSED; // Default to closing if a player in VR leaves it
+    public LidTarget lidTarget = LidTarget.CLOSED; // Default to closing if a player in VR leaves it
 
     public ChestOpennessStorage() {
     }
@@ -61,8 +59,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     public void encode(RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(pos)
                 .writeFloat(openness)
-                .writeInt(cooldown)
-                .writeEnum(lidTargetState)
+                .writeEnum(lidTarget)
                 .writeBoolean(controllingPlayerUUID != null);
         if (controllingPlayerUUID != null) {
             buffer.writeUUID(controllingPlayerUUID);
@@ -73,8 +70,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     public void decode(RegistryFriendlyByteBuf buffer) {
         this.pos = buffer.readBlockPos();
         this.openness = buffer.readFloat();
-        this.cooldown = buffer.readInt();
-        this.lidTargetState = buffer.readEnum(LidTargetState.class);
+        this.lidTarget = buffer.readEnum(LidTarget.class);
         if (buffer.readBoolean()) {
             this.controllingPlayerUUID = buffer.readUUID();
         }
@@ -94,8 +90,8 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     }
 
     @Nullable
-    public Player getControllingPlayer(Level level) {
-        return controllingPlayerUUID != null ? level.getPlayerByUUID(controllingPlayerUUID) : null;
+    public ServerPlayer getControllingPlayer(Level level) {
+        return controllingPlayerUUID != null ? (ServerPlayer) level.getPlayerByUUID(controllingPlayerUUID) : null;
     }
 
     @Nullable
@@ -124,72 +120,77 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     }
 
     public void serverTick() {
-        ServerPlayer controllingPlayer = (ServerPlayer) getControllingPlayer(level);
+        ServerPlayer controllingPlayer = getControllingPlayer(level);
         if (controllingPlayer == null) {
             if (controllingPlayerUUID != null) {
                 controllingPlayerUUID = null;
                 setDirty();
             }
         } else {
-            if (VRVerify.playerInVR(controllingPlayer)) {
+            if (animationState == AnimationState.ANIMATED) {
                 if (this.isDirty()) {
                     Network.INSTANCE.sendToPlayers(TrackedImmersives.getPlayersTrackingPos(controllingPlayer.server, controllingPlayer.level(), this.pos), new SelfHandlingNetworkStorageSyncPacket(this));
                 }
-            } else {
+            } else if (isAnimating()) {
+                ChestBlockEntity other = null;
                 if (chest instanceof ChestBlockEntity cbe) {
-                    ChestBlockEntity other = Util.getOtherChest(cbe);
-                    if (lidTargetState == LidTargetState.OPEN) {
-                        if (!ChestToOpenSet.hasChestOpen(controllingPlayer, pos)) {
-                            cbe.startOpen(controllingPlayer);
-                            ChestToOpenSet.openChest(controllingPlayer, pos);
-                            if (other != null) {
-                                other.startOpen(controllingPlayer);
-                                ChestToOpenSet.openChest(controllingPlayer, other.getBlockPos());
-                            }
-                            PiglinAi.angerNearbyPiglins(level, controllingPlayer, true);
-                            ChestShulkerOpenPacket.handle(new ChestShulkerOpenPacket(pos, true), controllingPlayer);
-                            Lootr.lootrImpl.markOpener(controllingPlayer, pos);
+                    other = Util.getOtherChest(cbe);
+                }
+
+                float oldOpenness = openness;
+                if (lidTarget == LidTarget.OPEN) {
+                    openness = Mth.clamp(openness + 0.1f, 0, 1);
+                } else {
+                    openness = Mth.clamp(openness - 0.1f, 0, 1);
+                }
+                if (openness != oldOpenness) {
+                    setDirty();
+                }
+
+                if (openness < 0.1f && oldOpenness >= 0.1f) {
+                    if (chest instanceof ChestBlockEntity cbe) {
+                        cbe.stopOpen(controllingPlayer);
+                        ChestToOpenSet.closeChest(controllingPlayer, pos);
+                        if (other != null) {
+                            other.stopOpen(controllingPlayer);
+                            ChestToOpenSet.closeChest(controllingPlayer, other.getBlockPos());
                         }
-                    } else {
-                        if (ChestToOpenSet.hasChestOpen(controllingPlayer, pos)) {
-                            cbe.stopOpen(controllingPlayer);
-                            ChestToOpenSet.closeChest(controllingPlayer, pos);
-                            if (other != null) {
-                                other.stopOpen(controllingPlayer);
-                                ChestToOpenSet.closeChest(controllingPlayer, other.getBlockPos());
-                            }
-                        }
+                    } else if (chest instanceof EnderChestBlockEntity ecbe) {
+                        ecbe.stopOpen(controllingPlayer);
+                        ChestToOpenSet.closeChest(controllingPlayer, pos);
                     }
-                } else if (chest instanceof EnderChestBlockEntity ecbe) {
-                    if (lidTargetState == LidTargetState.OPEN) {
-                        if (!ChestToOpenSet.hasChestOpen(controllingPlayer, pos)) {
-                            ecbe.startOpen(controllingPlayer);
-                            ChestToOpenSet.openChest(controllingPlayer, pos);
-                            PiglinAi.angerNearbyPiglins(level, controllingPlayer, true);
-                            ChestShulkerOpenPacket.handle(new ChestShulkerOpenPacket(pos, true), controllingPlayer);
+                } else if (openness >= 0.1f && oldOpenness < 0.1f) {
+                    if (chest instanceof ChestBlockEntity cbe) {
+                        cbe.startOpen(controllingPlayer);
+                        ChestToOpenSet.openChest(controllingPlayer, pos);
+                        if (other != null) {
+                            other.startOpen(controllingPlayer);
+                            ChestToOpenSet.openChest(controllingPlayer, other.getBlockPos());
                         }
-                    } else {
-                        if (ChestToOpenSet.hasChestOpen(controllingPlayer, pos)) {
-                            ecbe.stopOpen(controllingPlayer);
-                            ChestToOpenSet.closeChest(controllingPlayer, pos);
-                        }
+                        PiglinAi.angerNearbyPiglins(level, controllingPlayer, true);
+                        Lootr.lootrImpl.markOpener(controllingPlayer, pos);
                     }
                 }
             }
-        }
-        if (cooldown > 0) {
-            cooldown--;
-        } else {
-            controllingPlayerUUID = null;
+
+            if (animationState != AnimationState.ANIMATED && !isAnimating()) {
+                controllingPlayerUUID = null;
+                setDirty();
+            }
         }
     }
 
-    public boolean takeControl(UUID newController) {
-        if (cooldown > 0 || (controllingPlayerUUID != null && !controllingPlayerUUID.equals(newController))) {
+    public boolean takeControl(UUID newController, AnimationState animationState) {
+        if (controllingPlayerUUID != null && !controllingPlayerUUID.equals(newController)) {
             return false;
         }
         controllingPlayerUUID = newController;
+        this.animationState = animationState;
         return true;
+    }
+
+    public boolean isAnimating() {
+        return openness != 0f && openness != 1f;
     }
 
     @Override
@@ -203,13 +204,18 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     @Override
     public void handleServer(ServerPlayer player) {
         ChestOpennessStorage actual = SharedNetworkStorages.instance().get(player.level(), this.pos, ChestOpennessStorage.class);
-        if (actual != null && VRVerify.playerInVR(player) && actual.takeControl(player.getUUID())) {
+        if (actual != null && VRVerify.playerInVR(player) && actual.takeControl(player.getUUID(), AnimationState.ANIMATED)) {
             actual.openness = Mth.clamp(this.openness, 0f, 1f);
         }
     }
 
-    public enum LidTargetState {
+    public enum LidTarget {
         CLOSED,
         OPEN;
+    }
+
+    public enum AnimationState {
+        ANIMATED,
+        PLAYER_CONTROLLED
     }
 }

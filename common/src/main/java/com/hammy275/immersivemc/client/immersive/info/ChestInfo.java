@@ -95,8 +95,8 @@ public class ChestInfo extends AbstractImmersiveInfo {
         return opennessStorage == null ? -1 : opennessStorage.getOpenness();
     }
 
-    public boolean takeControl() {
-        return opennessStorage != null && opennessStorage.takeControl(Minecraft.getInstance().player.getUUID());
+    public boolean takeControl(ChestOpennessStorage.AnimationState animationState) {
+        return opennessStorage != null && opennessStorage.takeControl(Minecraft.getInstance().player.getUUID(), animationState);
     }
 
     public void syncOpennessToServerIfDirty() {
