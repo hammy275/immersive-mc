@@ -195,7 +195,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     }
 
     public boolean isAnimating() {
-        return openness != 0f && openness != 1f;
+        return !((lidTarget == LidTarget.CLOSED && openness == 0f) || (lidTarget == LidTarget.OPEN && openness == 1f));
     }
 
     @Override
