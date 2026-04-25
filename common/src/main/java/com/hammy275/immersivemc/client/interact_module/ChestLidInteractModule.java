@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.client.interact_module;
 
-import com.hammy275.immersivemc.client.ClientUtil;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage;
@@ -9,7 +9,6 @@ import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VR;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
@@ -43,7 +42,19 @@ public class ChestLidInteractModule implements HeldInteractModule {
     public boolean isActive(LocalPlayer player, InteractionHand hand, Vec3 handPos) {
         ChestInfo existingInfo = activeChests.get(hand);
         if (existingInfo != null) return false;
-        ChestInfo chestInfo = ClientUtil.findImmersive(Immersives.immersiveChest, BlockPos.containing(handPos));
+        // Can't get chest info based on block position since lid goes well outside of block bounds
+        ChestInfo chestInfo = null;
+        for (ChestInfo info : Immersives.immersiveChest.getTrackedObjects()) {
+            for (BoundingBox box : info.openCloseHitboxes) {
+                if (box != null && BoundingBox.contains(box, handPos)) {
+                    chestInfo = info;
+                    break;
+                }
+            }
+            if (chestInfo != null) {
+                break;
+            }
+        }
         if (chestInfo != null && chestInfo.getTicksExisted() >= 1) {
             boolean tookControl = chestInfo.takeControl(ChestOpennessStorage.AnimationState.PLAYER_CONTROLLED);
             if (tookControl) {
