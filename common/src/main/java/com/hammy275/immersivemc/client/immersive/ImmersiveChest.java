@@ -10,16 +10,11 @@ import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.compat.Lootr;
-import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VR;
-import com.hammy275.immersivemc.common.vr.VRRumble;
-import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -182,53 +177,6 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
             AABB aabbBase = AABB.ofSize(info.openClosePositions[chestNum], 0.9, 0.3, 1.2);
             info.openCloseHitboxes[chestNum] = OBBFactory.instance().create(aabbBase, xRot, Math.toRadians(info.forward.toYRot()), 0);
 
-        }
-
-        if (openCloseCooldown <= 0 && !ActiveConfig.active().rightClickChestInteractions) {
-            if (VRVerify.playerInVR(Minecraft.getInstance().player) && info.openCloseHitboxes != null) {
-                Vec3 current0 = VR.ClientAPI.getPreTickWorldPose().getMainHand().getPos();
-                Vec3 current1 = VR.ClientAPI.getPreTickWorldPose().getOffHand().getPos();
-
-                double diff0 = current0.y - info.lastY0;
-                double diff1 = current1.y - info.lastY1;
-                if (Util.getFirstIntersect(current0, info.openCloseHitboxes).isEmpty()) {
-                    diff0 = 0;
-                }
-                if (Util.getFirstIntersect(current1, info.openCloseHitboxes).isEmpty()) {
-                    diff1 = 0;
-                }
-
-                boolean cond;
-                if (info.isOpen()) {
-                    cond = diff0 <= -threshold || diff1 <= -threshold;
-                } else {
-                    cond = diff0 >= threshold || diff1 >= threshold;
-                }
-
-                if (cond) {
-                    if (!info.isOpen()) {
-                        // Use a distance check for checking if to vibrate the other controller to hopefully filter out
-                        // actions of moving up that are for something other than the chest
-                        if (diff0 >= threshold) {
-                            VRRumble.rumbleIfVR(Minecraft.getInstance().player, InteractionHand.MAIN_HAND, CommonConstants.vibrationTimeWorldInteraction);
-                            if (diff1 >= threshold / 5d && current0.distanceToSqr(current1) <= 1) {
-                                VRRumble.rumbleIfVR(Minecraft.getInstance().player, InteractionHand.OFF_HAND, CommonConstants.vibrationTimeWorldInteraction);
-                            }
-                        }
-                        if (diff1 >= threshold) {
-                            VRRumble.rumbleIfVR(Minecraft.getInstance().player, InteractionHand.OFF_HAND, CommonConstants.vibrationTimeWorldInteraction);
-                            if ((diff0 >= threshold / 5d && current0.distanceToSqr(current1) <= 1)) {
-                                VRRumble.rumbleIfVR(Minecraft.getInstance().player, InteractionHand.MAIN_HAND, CommonConstants.vibrationTimeWorldInteraction);
-                            }
-                        }
-                    }
-                    openChest(info);
-                    openCloseCooldown = 40;
-                }
-
-                info.lastY0 = current0.y;
-                info.lastY1 = current1.y;
-            }
         }
     }
 

@@ -69,7 +69,7 @@ public class DevVRState {
 
     public static void clientTick() {
         LocalPlayer player = Minecraft.getInstance().player;
-        if (player != null) {
+        if (player != null && !Minecraft.getInstance().isPaused()) {
             if (toggleVR.consumeClick()) {
                 inVR = !inVR;
                 if (inVR) {
@@ -161,13 +161,12 @@ public class DevVRState {
                         held.onRelease(player, hand);
                     }
                     active.reset(player, hand);
+                    activeModules.remove(hand);
                 }
                 for (InteractModule module : interactModules) {
-                    if (module.isActive(player, hand, pose.getHand(hand).getPos())) {
+                    if (leftDown && module.isActive(player, hand, pose.getHand(hand).getPos())) {
+                        module.onPress(player, hand);
                         activeModules.put(hand, module);
-                        if (leftDown) {
-                            module.onPress(player, hand);
-                        }
                         break;
                     }
                 }
