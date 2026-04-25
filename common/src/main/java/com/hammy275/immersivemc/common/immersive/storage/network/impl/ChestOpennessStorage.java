@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.immersive.storage.network.SelfHandlingNetworkStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
+import com.hammy275.immersivemc.common.network.packet.SelfHandlingNetworkStorageSyncPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
@@ -123,7 +124,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     }
 
     public void serverTick() {
-        Player controllingPlayer = getControllingPlayer(level);
+        ServerPlayer controllingPlayer = (ServerPlayer) getControllingPlayer(level);
         if (controllingPlayer == null) {
             if (controllingPlayerUUID != null) {
                 controllingPlayerUUID = null;
@@ -131,7 +132,9 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
             }
         } else {
             if (VRVerify.playerInVR(controllingPlayer)) {
-
+                if (this.isDirty()) {
+                    Network.INSTANCE.sendToPlayers(TrackedImmersives.getPlayersTrackingPos(controllingPlayer.server, controllingPlayer.level(), this.pos), new SelfHandlingNetworkStorageSyncPacket(this));
+                }
             } else {
                 if (chest instanceof ChestBlockEntity cbe) {
                     ChestBlockEntity other = Util.getOtherChest(cbe);
@@ -144,7 +147,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
                                 ChestToOpenSet.openChest(controllingPlayer, other.getBlockPos());
                             }
                             PiglinAi.angerNearbyPiglins(level, controllingPlayer, true);
-                            ChestShulkerOpenPacket.handle(new ChestShulkerOpenPacket(pos, true), (ServerPlayer) controllingPlayer);
+                            ChestShulkerOpenPacket.handle(new ChestShulkerOpenPacket(pos, true), controllingPlayer);
                             Lootr.lootrImpl.markOpener(controllingPlayer, pos);
                         }
                     } else {
@@ -163,7 +166,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
                             ecbe.startOpen(controllingPlayer);
                             ChestToOpenSet.openChest(controllingPlayer, pos);
                             PiglinAi.angerNearbyPiglins(level, controllingPlayer, true);
-                            ChestShulkerOpenPacket.handle(new ChestShulkerOpenPacket(pos, true), (ServerPlayer) controllingPlayer);
+                            ChestShulkerOpenPacket.handle(new ChestShulkerOpenPacket(pos, true), controllingPlayer);
                         }
                     } else {
                         if (ChestToOpenSet.hasChestOpen(controllingPlayer, pos)) {
@@ -202,7 +205,6 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
         ChestOpennessStorage actual = SharedNetworkStorages.instance().get(player.level(), this.pos, ChestOpennessStorage.class);
         if (actual != null && VRVerify.playerInVR(player) && actual.takeControl(player.getUUID())) {
             actual.openness = Mth.clamp(this.openness, 0f, 1f);
-            Network.INSTANCE.sendToPlayers(TrackedImmersives.getPlayersTrackingPos(player.server, player.level(), this.pos), actual);
         }
     }
 
