@@ -37,8 +37,11 @@ import java.util.UUID;
  */
 public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
 
+    public static final float CHEST_OPEN_THRESHOLD = 0.1f;
+
     private BlockPos pos = BlockPos.ZERO;
     private float openness = 0f;
+    private transient float oldOpenness = 0f;
     private @Nullable UUID controllingPlayerUUID = null;
     private AnimationState animationState = AnimationState.PLAYER_CONTROLLED;
     private transient ServerLevel level = null;  // Only available on the server
@@ -128,23 +131,27 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
                 setDirty();
             }
         } else {
+            if (animationState == AnimationState.PLAYER_CONTROLLED) {
+                lidTarget = openness >= CHEST_OPEN_THRESHOLD ? LidTarget.OPEN : LidTarget.CLOSED;
+            }
             if (isAnimating()) {
                 ChestBlockEntity other = null;
                 if (chest instanceof ChestBlockEntity cbe) {
                     other = Util.getOtherChest(cbe);
                 }
 
-                float oldOpenness = openness;
-                if (lidTarget == LidTarget.OPEN) {
-                    openness = Mth.clamp(openness + 0.1f, 0, 1);
-                } else {
-                    openness = Mth.clamp(openness - 0.1f, 0, 1);
-                }
-                if (openness != oldOpenness) {
-                    setDirty();
+                if (animationState == AnimationState.ANIMATED) {
+                    if (lidTarget == LidTarget.OPEN) {
+                        openness = Mth.clamp(openness + 0.1f, 0, 1);
+                    } else {
+                        openness = Mth.clamp(openness - 0.1f, 0, 1);
+                    }
+                    if (openness != oldOpenness) {
+                        setDirty();
+                    }
                 }
 
-                if (openness < 0.1f && oldOpenness >= 0.1f) {
+                if (openness < CHEST_OPEN_THRESHOLD && oldOpenness >= CHEST_OPEN_THRESHOLD) {
                     if (chest instanceof ChestBlockEntity cbe) {
                         cbe.stopOpen(controllingPlayer);
                         ChestToOpenSet.closeChest(controllingPlayer, pos);
@@ -156,7 +163,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
                         ecbe.stopOpen(controllingPlayer);
                         ChestToOpenSet.closeChest(controllingPlayer, pos);
                     }
-                } else if (openness >= 0.1f && oldOpenness < 0.1f) {
+                } else if (openness >= CHEST_OPEN_THRESHOLD && oldOpenness < CHEST_OPEN_THRESHOLD) {
                     if (chest instanceof ChestBlockEntity cbe) {
                         cbe.startOpen(controllingPlayer);
                         ChestToOpenSet.openChest(controllingPlayer, pos);
@@ -182,6 +189,8 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
                 }
                 Network.INSTANCE.sendToPlayers(toSendTo, new SelfHandlingNetworkStorageSyncPacket(this));
             }
+
+            oldOpenness = openness;
         }
     }
 
@@ -211,6 +220,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
         ChestOpennessStorage actual = SharedNetworkStorages.instance().get(player.level(), this.pos, ChestOpennessStorage.class);
         if (actual != null && VRVerify.playerInVR(player) && actual.takeControl(player.getUUID(), AnimationState.PLAYER_CONTROLLED)) {
             actual.openness = Mth.clamp(this.openness, 0f, 1f);
+            actual.animationState = this.animationState;
         }
     }
 

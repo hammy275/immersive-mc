@@ -17,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage.CHEST_OPEN_THRESHOLD;
+
 public class ChestInfo extends AbstractImmersiveInfo {
 
     public List<HitboxItemPair> hitboxes = new ArrayList<>(54);
@@ -73,13 +75,13 @@ public class ChestInfo extends AbstractImmersiveInfo {
     }
 
     public boolean isOpen() {
-        return getDirectOpenness() >= 0.1f;
+        return getDirectOpenness() >= CHEST_OPEN_THRESHOLD;
     }
 
     public boolean slotVisible(int slot) {
         float openness = getDirectOpenness();
         if (slot % 9 >= 6) { // Slot is in the front row
-            return openness >= 0.1f;
+            return openness >= CHEST_OPEN_THRESHOLD;
         } else if (slot % 9 >= 3) { // Slot is in the middle row
             return openness >= 0.3f;
         } else { // Slot is in the back row
