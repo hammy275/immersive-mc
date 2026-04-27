@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.common.immersive.storage.network.impl;
 
+import com.hammy275.immersivemc.client.ClientMixinProxy;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
@@ -40,14 +41,14 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     public static final float CHEST_OPEN_THRESHOLD = 0.1f;
 
     private BlockPos pos = BlockPos.ZERO;
-    private float openness = 0f;
+    private float openness = -1f;
     private transient float oldOpenness = 0f;
     private @Nullable UUID controllingPlayerUUID = null;
-    private AnimationState animationState = AnimationState.PLAYER_CONTROLLED;
+    private transient AnimationState animationState = AnimationState.PLAYER_CONTROLLED;
     private transient ServerLevel level = null;  // Only available on the server
     private transient LidBlockEntity chest = null;  // Only available on the server
     private boolean isDirty = true;
-    public LidTarget lidTarget = LidTarget.CLOSED; // Default to closing if a player in VR leaves it
+    private LidTarget lidTarget = LidTarget.CLOSED; // Default to closing if a player in VR leaves it
 
     public ChestOpennessStorage() {
     }
@@ -133,6 +134,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
         } else {
             if (animationState == AnimationState.PLAYER_CONTROLLED) {
                 lidTarget = openness >= CHEST_OPEN_THRESHOLD ? LidTarget.OPEN : LidTarget.CLOSED;
+                setDirty();
             }
             if (isAnimating()) {
                 ChestBlockEntity other = null;
@@ -142,37 +144,23 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
 
                 if (animationState == AnimationState.ANIMATED) {
                     if (lidTarget == LidTarget.OPEN) {
-                        openness = Mth.clamp(openness + 0.1f, 0, 1);
+                        openness = Mth.clamp(Math.max(openness, 0f) + 0.1f, 0, 1);
                     } else {
                         openness = Mth.clamp(openness - 0.1f, 0, 1);
+                        if (openness == 0) {
+                            openness = -1f; // Give vanilla control back when the chest is closed again
+                        }
                     }
                     if (openness != oldOpenness) {
                         setDirty();
                     }
                 }
 
-                if (openness < CHEST_OPEN_THRESHOLD && oldOpenness >= CHEST_OPEN_THRESHOLD) {
-                    if (chest instanceof ChestBlockEntity cbe) {
-                        cbe.stopOpen(controllingPlayer);
-                        ChestToOpenSet.closeChest(controllingPlayer, pos);
-                        if (other != null) {
-                            other.stopOpen(controllingPlayer);
-                            ChestToOpenSet.closeChest(controllingPlayer, other.getBlockPos());
-                        }
-                    } else if (chest instanceof EnderChestBlockEntity ecbe) {
-                        ecbe.stopOpen(controllingPlayer);
-                        ChestToOpenSet.closeChest(controllingPlayer, pos);
-                    }
-                } else if (openness >= CHEST_OPEN_THRESHOLD && oldOpenness < CHEST_OPEN_THRESHOLD) {
-                    if (chest instanceof ChestBlockEntity cbe) {
-                        cbe.startOpen(controllingPlayer);
-                        ChestToOpenSet.openChest(controllingPlayer, pos);
-                        if (other != null) {
-                            other.startOpen(controllingPlayer);
-                            ChestToOpenSet.openChest(controllingPlayer, other.getBlockPos());
-                        }
-                        PiglinAi.angerNearbyPiglins(level, controllingPlayer, true);
-                        Lootr.lootrImpl.markOpener(controllingPlayer, pos);
+                if (animationState == AnimationState.PLAYER_CONTROLLED) {
+                    if (openness < CHEST_OPEN_THRESHOLD && oldOpenness >= CHEST_OPEN_THRESHOLD) {
+                        doChestClose(controllingPlayer, other);
+                    } else if (openness >= CHEST_OPEN_THRESHOLD && oldOpenness < CHEST_OPEN_THRESHOLD) {
+                        doChestOpen(controllingPlayer, other);
                     }
                 }
             }
@@ -181,30 +169,89 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
                 controllingPlayerUUID = null;
                 setDirty();
             }
+        }
 
-            if (isDirty()) {
-                List<ServerPlayer> toSendTo = TrackedImmersives.getPlayersTrackingPos(controllingPlayer.server, controllingPlayer.level(), this.pos);
-                if (animationState == AnimationState.PLAYER_CONTROLLED) {
-                    toSendTo = toSendTo.stream().filter(player -> player != controllingPlayer).toList();
-                }
-                Network.INSTANCE.sendToPlayers(toSendTo, new SelfHandlingNetworkStorageSyncPacket(this));
+        if (isDirty()) {
+            ServerLevel level = (ServerLevel) ((BlockEntity) chest).getLevel();
+            List<ServerPlayer> toSendTo = TrackedImmersives.getPlayersTrackingPos(level.getServer(), level, this.pos);
+            if (animationState == AnimationState.PLAYER_CONTROLLED && controllingPlayer != null) {
+                toSendTo = toSendTo.stream().filter(player -> player != controllingPlayer).toList();
             }
+            Network.INSTANCE.sendToPlayers(toSendTo, new SelfHandlingNetworkStorageSyncPacket(this));
+            isDirty = false;
+        }
+        oldOpenness = Math.max(openness, 0f);
+    }
 
-            oldOpenness = openness;
+    private void doChestOpen(ServerPlayer controllingPlayer, @Nullable ChestBlockEntity other) {
+        ClientMixinProxy.skipIncrementDecrementChests = true;
+        try {
+            if (chest instanceof ChestBlockEntity cbe) {
+                cbe.startOpen(controllingPlayer);
+                ChestToOpenSet.openChest(controllingPlayer, pos);
+                if (other != null) {
+                    other.startOpen(controllingPlayer);
+                    ChestToOpenSet.openChest(controllingPlayer, other.getBlockPos());
+                }
+                PiglinAi.angerNearbyPiglins(level, controllingPlayer, true);
+                Lootr.lootrImpl.markOpener(controllingPlayer, pos);
+            } else if (chest instanceof EnderChestBlockEntity ecbe) {
+                ecbe.startOpen(controllingPlayer);
+                ChestToOpenSet.openChest(controllingPlayer, pos);
+                PiglinAi.angerNearbyPiglins(level, controllingPlayer, true);
+            }
+        } finally {
+            ClientMixinProxy.skipIncrementDecrementChests = false;
+        }
+
+    }
+
+    private void doChestClose(ServerPlayer controllingPlayer, @Nullable ChestBlockEntity other) {
+        ClientMixinProxy.skipIncrementDecrementChests = true;
+        try {
+            if (chest instanceof ChestBlockEntity cbe) {
+                cbe.stopOpen(controllingPlayer);
+                ChestToOpenSet.closeChest(controllingPlayer, pos);
+                if (other != null) {
+                    other.stopOpen(controllingPlayer);
+                    ChestToOpenSet.closeChest(controllingPlayer, other.getBlockPos());
+                }
+            } else if (chest instanceof EnderChestBlockEntity ecbe) {
+                ecbe.stopOpen(controllingPlayer);
+                ChestToOpenSet.closeChest(controllingPlayer, pos);
+            }
+        } finally {
+            ClientMixinProxy.skipIncrementDecrementChests = false;
         }
     }
 
-    public boolean takeControl(UUID newController, AnimationState animationState) {
+    public boolean takeControl(UUID newController, AnimationState newAnimationState) {
+        // No control if you aren't the one controlling it
         if (controllingPlayerUUID != null && !controllingPlayerUUID.equals(newController)) {
             return false;
         }
+        // Chests in an animation cannot be "unanimated"
+        if (this.animationState == AnimationState.ANIMATED && isAnimating()) {
+            return false;
+        }
+        // Actually take control of the chest
         controllingPlayerUUID = newController;
-        this.animationState = animationState;
+        this.animationState = newAnimationState;
         return true;
     }
 
+    public void startAnimating(ServerPlayer controllingPlayer, LidTarget newTarget) {
+        this.lidTarget = newTarget;
+        this.animationState = AnimationState.ANIMATED;
+        if (newTarget == LidTarget.OPEN) {
+            doChestOpen(controllingPlayer, Util.getOtherChest((ChestBlockEntity) chest));
+        } else {
+            doChestClose(controllingPlayer, Util.getOtherChest((ChestBlockEntity) chest));
+        }
+    }
+
     public boolean isAnimating() {
-        return !((lidTarget == LidTarget.CLOSED && openness == 0f) || (lidTarget == LidTarget.OPEN && openness == 1f));
+        return !((lidTarget == LidTarget.CLOSED && openness == -1f) || (lidTarget == LidTarget.OPEN && openness == 1f));
     }
 
     @Override

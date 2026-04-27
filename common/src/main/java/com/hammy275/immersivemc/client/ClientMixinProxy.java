@@ -24,6 +24,11 @@ import java.util.stream.StreamSupport;
 public class ClientMixinProxy {
 
     public static boolean pretendPlayerIsNotCrouching = false;
+    /**
+     * Needed since the decrement of openers to -1 is very bad, as when written as a count of number of openers then
+     * read back, it's read as an unsigned byte (255). Good to protect from bad values here anyway though.
+     */
+    public static boolean skipIncrementDecrementChests = false;
 
     public static boolean playerIsLocalPlayer(Player player) {
         return player == Minecraft.getInstance().player;
@@ -43,7 +48,7 @@ public class ClientMixinProxy {
     public static <T extends BlockEntity> void handleForcedLidAnimation(Level level, BlockPos pos, BlockState state, T blockEntity, Operation<Void> original) {
         if (level.isClientSide()) {
             ChestInfo info = ClientUtil.findImmersive(Immersives.immersiveChest, pos);
-            if (info != null && info.getForcedOpenness() > 0) {
+            if (info != null && info.getForcedOpenness() >= 0) {
                 ChestLidControllerAccessor lidController = Util.getChestLidController(blockEntity);
                 lidController.immersiveMC$setOldOpenness(lidController.immersiveMC$getOpenness());
                 lidController.immersiveMC$setOpenness(info.getForcedOpenness());

@@ -1,12 +1,10 @@
 package com.hammy275.immersivemc.server;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage;
-import com.hammy275.immersivemc.common.network.packet.SelfHandlingNetworkStorageSyncPacket;
-import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternData;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
@@ -15,6 +13,7 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
+import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCLevelStorage;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import net.minecraft.network.chat.Component;
@@ -45,13 +44,6 @@ public class ServerSubscriber {
         ImmersiveMCLevelStorage.unmarkAllItemStoragesDirty(server);
         SharedNetworkStorages.instance().getAll(LecternData.class).forEach(data -> data.bookData.setNoLongerDirty());
         SharedNetworkStorages.instance().getAll(ChestOpennessStorage.class).forEach(ChestOpennessStorage::serverTick);
-        SharedNetworkStorages.instance().getAll(ChestOpennessStorage.class).forEach(storage -> {
-            if (storage.isDirty()) {
-                Network.INSTANCE.sendToPlayers(TrackedImmersives.getPlayersTrackingPos(server, storage.getLevel(), storage.getPos()),
-                        new SelfHandlingNetworkStorageSyncPacket(storage));
-            }
-            storage.setNoLongerDirty();
-        });
     }
 
     public static void onPlayerTick(Player playerIn) {
