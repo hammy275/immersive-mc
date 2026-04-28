@@ -54,7 +54,6 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     }
 
     public ChestOpennessStorage(BlockEntity blockEntity) {
-        this.openness = Util.getChestLidController(blockEntity).immersiveMC$getOpenness();
         this.pos = blockEntity.getBlockPos();
         this.level = (ServerLevel) blockEntity.getLevel();
         this.chest = (LidBlockEntity) blockEntity;
