@@ -100,10 +100,8 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
             }
         }
 
-        for (int i = 0; i <= 1; i++) {
-            if (info.openCloseHitboxes[i] != null && info.openClosePositions[i] != null) {
-                helpers.renderHitbox(stack, info.openCloseHitboxes[i]);
-            }
+        if (info.openCloseHitbox != null && info.openClosePosition != null) {
+            helpers.renderHitbox(stack, info.openCloseHitbox);
         }
     }
 
@@ -157,27 +155,25 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
             }
         }
 
-        for (int chestNum = 0; chestNum <= 1; chestNum++) {
-            BlockEntity chest = chests[chestNum];
-            if (chest == null) continue;
-
-            float openness = Util.getChestLidController(chest).immersiveMC$getOpenness();
-            openness = 1f - openness;
-            openness = 1f - openness * openness * openness;
-            Vec3 forward = info.forward.getUnitVec3();
-            Vec3 chestBackTopPos = Vec3.atBottomCenterOf(chest.getBlockPos()).add(forward.scale(-0.5)).add(0, 10d/16d, 0);
+        float openness = Util.getChestLidController(info.chest).immersiveMC$getOpenness();
+        openness = 1f - openness;
+        openness = 1f - openness * openness * openness;
+        Vec3 forward = info.forward.getUnitVec3();
+        Vec3 chestBackTopPos = Vec3.atBottomCenterOf(info.chest.getBlockPos()).add(forward.scale(-0.5)).add(0, 10d/16d, 0);
 
 
-            Vector3f lidVecF = new Vector3f(0, 0, 1);
-            float xRot = openness * (float) Math.PI / 2f;
-            lidVecF.rotate(Axis.XN.rotation(xRot));
-            lidVecF.rotate(Axis.YN.rotationDegrees(info.forward.toYRot()));
-            Vec3 lidVec = new Vec3(lidVecF.x, lidVecF.y, lidVecF.z);
-            info.openClosePositions[chestNum] = chestBackTopPos.add(lidVec.scale(0.5));
-            AABB aabbBase = AABB.ofSize(info.openClosePositions[chestNum], 0.9, 0.3, 1.2);
-            info.openCloseHitboxes[chestNum] = OBBFactory.instance().create(aabbBase, xRot, Math.toRadians(info.forward.toYRot()), 0);
-
+        Vector3f lidVecF = new Vector3f(0, 0, 1);
+        float xRot = openness * (float) Math.PI / 2f;
+        lidVecF.rotate(Axis.XN.rotation(xRot));
+        lidVecF.rotate(Axis.YN.rotationDegrees(info.forward.toYRot()));
+        Vec3 lidVec = new Vec3(lidVecF.x, lidVecF.y, lidVecF.z);
+        info.openClosePosition = chestBackTopPos.add(lidVec.scale(0.5));
+        if (info.otherChest != null) {
+            info.openClosePosition = info.openClosePosition.add(Vec3.atLowerCornerOf(info.otherPos.subtract(info.getBlockPosition())).scale(0.5));
         }
+        AABB aabbBase = AABB.ofSize(info.openClosePosition, info.otherChest != null ? 1.8 : 0.9, 0.3, 1.2);
+        info.openCloseHitbox = OBBFactory.instance().create(aabbBase, xRot, Math.toRadians(info.forward.toYRot()), 0);
+
     }
 
     @Override

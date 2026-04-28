@@ -45,11 +45,9 @@ public class ChestLidInteractModule implements HeldInteractModule {
         // Can't get chest info based on block position since lid goes well outside of block bounds
         ChestInfo chestInfo = null;
         for (ChestInfo info : Immersives.immersiveChest.getTrackedObjects()) {
-            for (BoundingBox box : info.openCloseHitboxes) {
-                if (box != null && BoundingBox.contains(box, handPos)) {
-                    chestInfo = info;
-                    break;
-                }
+            if (info.openCloseHitbox != null && BoundingBox.contains(info.openCloseHitbox, handPos)) {
+                chestInfo = info;
+                break;
             }
             if (chestInfo != null) {
                 break;

@@ -27,10 +27,8 @@ public class ChestInfo extends AbstractImmersiveInfo {
     public BlockPos otherPos = null;
     public Direction forward = null;
     protected int rowNum = 0;
-    public double lastY0;
-    public double lastY1;
-    public BoundingBox[] openCloseHitboxes = new BoundingBox[]{null, null};
-    public Vec3[] openClosePositions = new Vec3[]{null, null};
+    public BoundingBox openCloseHitbox = null;
+    public Vec3 openClosePosition = null;
     public int light = ClientUtil.maxLight;
     private @Nullable ChestOpennessStorage opennessStorage = null;
 
