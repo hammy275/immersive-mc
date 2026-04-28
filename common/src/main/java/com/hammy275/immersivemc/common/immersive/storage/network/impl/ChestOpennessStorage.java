@@ -10,6 +10,8 @@ import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.SelfHandlingNetworkStorageSyncPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRVerify;
+import com.hammy275.immersivemc.mixin.ChestBlockEntityAccessor;
+import com.hammy275.immersivemc.mixin.ContainerOpenersCounterAccessor;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
@@ -209,15 +211,18 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
         ClientMixinProxy.skipIncrementDecrementChests = true;
         try {
             if (chest instanceof ChestBlockEntity cbe) {
-                cbe.stopOpen(controllingPlayer);
-                ChestToOpenSet.closeChest(controllingPlayer, pos);
+                ((ContainerOpenersCounterAccessor) ((ChestBlockEntityAccessor) cbe).immersiveMC$openersCounter())
+                        .immersiveMC$getPlayersWithContainerOpen(controllingPlayer.level(), pos).forEach(cbe::stopOpen);
+                ChestToOpenSet.closeForAll(controllingPlayer.level(), pos);
                 if (other != null) {
-                    other.stopOpen(controllingPlayer);
-                    ChestToOpenSet.closeChest(controllingPlayer, other.getBlockPos());
+                    ((ContainerOpenersCounterAccessor) ((ChestBlockEntityAccessor) other).immersiveMC$openersCounter())
+                            .immersiveMC$getPlayersWithContainerOpen(controllingPlayer.level(), other.getBlockPos()).forEach(cbe::stopOpen);
+                    ChestToOpenSet.closeForAll(controllingPlayer.level(), other.getBlockPos());
                 }
             } else if (chest instanceof EnderChestBlockEntity ecbe) {
-                ecbe.stopOpen(controllingPlayer);
-                ChestToOpenSet.closeChest(controllingPlayer, pos);
+                ((ContainerOpenersCounterAccessor) ((ChestBlockEntityAccessor) ecbe).immersiveMC$openersCounter())
+                        .immersiveMC$getPlayersWithContainerOpen(controllingPlayer.level(), pos).forEach(ecbe::stopOpen);
+                ChestToOpenSet.closeForAll(controllingPlayer.level(), pos);
             }
         } finally {
             ClientMixinProxy.skipIncrementDecrementChests = false;

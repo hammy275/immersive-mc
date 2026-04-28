@@ -35,6 +35,10 @@ public class ChestToOpenSet {
         return players != null && players.contains(player);
     }
 
+    public static void closeForAll(Level level, BlockPos pos) {
+        chestImmersiveOpenSet.remove(new PosLevel(pos, level));
+    }
+
     public static void clear() {
         chestImmersiveOpenSet.clear();
     }

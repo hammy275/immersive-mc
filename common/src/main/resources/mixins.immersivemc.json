@@ -15,6 +15,7 @@
     "ChestBlockEntityAccessor",
     "ChestBlockEntityMixin",
     "ChestLidControllerAccessor",
+    "ContainerOpenersCounterAccessor",
     "ContainerOpenersCounterMixin",
     "EnderChestBlockEntityAccessor",
     "EnderChestBlockEntityMixin",
@@ -42,7 +43,7 @@
     "MinecraftMixin",
     "MinecraftMixinAccessor",
     "MultiPlayerGameModeMixin",
-    "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin",
-    "VRPlayerMixin"
+    "VRPlayerMixin",
+    "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin"
   ]
 }
