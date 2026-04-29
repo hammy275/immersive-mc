@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveClientConstants;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
@@ -39,17 +40,10 @@ import java.util.Objects;
 
 public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStorage> {
     public static final double spacing = 3d/16d;
-    private final double threshold = 0.03;
-    // Intentionally stored outside infos, so a chest close (which removes the info) will still have a cooldown
-    // before you can open a chest again.
-    public int openCloseCooldown = 0;
 
     @Override
     public void globalTick() {
         super.globalTick();
-        if (openCloseCooldown > 0) {
-            openCloseCooldown--;
-        }
         this.infos.removeIf((info) -> !chestsValid(info));
     }
 
@@ -100,8 +94,10 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
             }
         }
 
-        if (info.openCloseHitbox != null && info.openClosePosition != null) {
-            helpers.renderHitbox(stack, info.openCloseHitbox);
+        if (info.openClosePosition != null) {
+            for (BoundingBox box : info.openCloseHitboxes) {
+                helpers.renderHitbox(stack, box);
+            }
         }
     }
 
@@ -172,7 +168,20 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
             info.openClosePosition = info.openClosePosition.add(Vec3.atLowerCornerOf(info.otherPos.subtract(info.getBlockPosition())).scale(0.5));
         }
         AABB aabbBase = AABB.ofSize(info.openClosePosition, info.otherChest != null ? 1.8 : 0.9, 0.3, 1.2);
-        info.openCloseHitbox = OBBFactory.instance().create(aabbBase, xRot, Math.toRadians(info.forward.toYRot()), 0);
+        info.openCloseHitboxes.clear();
+        info.openCloseHitboxes.add(OBBFactory.instance().create(aabbBase, xRot, Math.toRadians(info.forward.toYRot()), 0));
+        if (openness == 1f) {
+            double xSize, zSize;
+            if (info.forward.getAxis() == Direction.Axis.X) {
+                xSize = 1;
+                zSize = info.otherChest != null ? 1.8 : 0.9;
+            } else {
+                xSize = info.otherChest != null ? 1.8 : 0.9;
+                zSize = 1;
+            }
+            info.openCloseHitboxes.add(AABB.ofSize(info.openClosePosition.add(0, 0.425, 0).add(info.forward.getUnitVec3().scale(0.65)),
+                    xSize, 0.35, zSize));
+        }
 
     }
 
