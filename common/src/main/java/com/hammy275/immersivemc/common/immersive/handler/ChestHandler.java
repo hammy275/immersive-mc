@@ -1,11 +1,14 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
-import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
+import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
+import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.packet.SelfHandlingNetworkStorageSyncPacket;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -23,16 +26,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class ChestHandler extends ChestLikeHandler implements MultiblockImmersiveHandler<ListOfItemsStorage> {
+public class ChestHandler extends ChestLikeHandler<ListOfItemsStorage>
+        implements MultiblockImmersiveHandler<ListOfItemsStorage>, AfterClientSyncHandler {
 
     @Override
     public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
         BlockEntity blockEntity = player.level().getBlockEntity(pos);
         if (blockEntity instanceof ChestBlockEntity cbe) {
-            ListOfItemsStorage storage = (ListOfItemsStorage) super.makeInventoryContents(player, pos);
+            ListOfItemsStorage storage = makeBaseInventoryContents(player, pos);
             ChestBlockEntity otherChest = Util.getOtherChest(cbe);
             if (otherChest != null) {
-                ListOfItemsStorage otherStorage = (ListOfItemsStorage) super.makeInventoryContents(player, otherChest.getBlockPos());
+                ListOfItemsStorage otherStorage = makeBaseInventoryContents(player, pos);
                 storage.getItems().addAll(otherStorage.getItems());
             }
             return storage;
@@ -73,6 +77,11 @@ public class ChestHandler extends ChestLikeHandler implements MultiblockImmersiv
     }
 
     @Override
+    public ListOfItemsStorage getEmptyNetworkStorage() {
+        return getBaseEmptyNetworkStorage();
+    }
+
+    @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         return (blockEntity instanceof ChestBlockEntity || blockEntity instanceof EnderChestBlockEntity) &&
@@ -103,5 +112,15 @@ public class ChestHandler extends ChestLikeHandler implements MultiblockImmersiv
             }
         }
         return null;
+    }
+
+    @Override
+    public void afterClientSync(ServerPlayer player, Set<BlockPos> positions) {
+        // Use the minimum value in the set so the position for large chests is consistent.
+        BlockPos pos = positions.stream().min(BlockPos::compareTo).get();
+        BlockEntity blockEntity = player.level().getBlockEntity(pos);
+        ChestOpennessStorage storage = SharedNetworkStorages.instance().getOrCreate(player.level(), pos,
+                ChestOpennessStorage.class, () -> new ChestOpennessStorage(blockEntity));
+        Network.INSTANCE.sendToPlayer(player, new SelfHandlingNetworkStorageSyncPacket(storage));
     }
 }
