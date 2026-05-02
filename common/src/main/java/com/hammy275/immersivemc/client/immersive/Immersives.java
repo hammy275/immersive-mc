@@ -2,26 +2,13 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.api.client.ImmersiveClientConstants;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
-import com.hammy275.immersivemc.api.client.immersive.BuiltImmersive;
-import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
-import com.hammy275.immersivemc.api.client.immersive.ForcedUpDownRenderDir;
-import com.hammy275.immersivemc.api.client.immersive.HitboxPositioningMode;
-import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfoBuilder;
-import com.hammy275.immersivemc.api.client.immersive.Immersive;
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveBuilder;
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
-import com.hammy275.immersivemc.api.client.immersive.ItemRotationType;
-import com.hammy275.immersivemc.api.client.immersive.RelativeHitboxInfoBuilder;
+import com.hammy275.immersivemc.api.client.immersive.*;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveMCClientRegistrationImpl;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.book.ClientBookData;
-import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
-import com.hammy275.immersivemc.client.immersive.info.AnvilData;
-import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
-import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
-import com.hammy275.immersivemc.client.immersive.info.GrindstoneData;
+import com.hammy275.immersivemc.client.immersive.info.*;
 import com.hammy275.immersivemc.common.compat.IronFurnaces;
 import com.hammy275.immersivemc.common.compat.TinkersConstruct;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
@@ -32,6 +19,7 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
 import com.hammy275.immersivemc.common.util.PosRot;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
@@ -52,7 +40,6 @@ import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
-import org.vivecraft.api.client.VRClientAPI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -397,7 +384,7 @@ public class Immersives {
                                         data.resetGrind(hand);
                                     } else if (didTick) {
                                         int numParticles = ThreadLocalRandom.current().nextInt(1, 5);
-                                        Vec3 pos = VRClientAPI.instance().getPreTickWorldPose().getHand(hand).getPos();
+                                        Vec3 pos = VR.ClientAPI.getPreTickWorldPose().getHand(hand).getPos();
                                         for (int i = 0; i < numParticles; i++) {
                                             Minecraft.getInstance().level.addParticle(ParticleTypes.ELECTRIC_SPARK,
                                                     pos.x, pos.y, pos.z,

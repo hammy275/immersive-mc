@@ -4,22 +4,20 @@ import com.hammy275.immersivemc.api.client.ImmersiveClientConstants;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
-import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.compat.Lootr;
-import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRVerify;
-import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -35,24 +33,16 @@ import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.vivecraft.api.client.VRClientAPI;
 
 import java.util.List;
 import java.util.Objects;
 
 public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStorage> {
     public static final double spacing = 3d/16d;
-    private final double threshold = 0.03;
-    // Intentionally stored outside infos, so a chest close (which removes the info) will still have a cooldown
-    // before you can open a chest again.
-    public int openCloseCooldown = 0;
 
     @Override
     public void globalTick() {
         super.globalTick();
-        if (openCloseCooldown > 0) {
-            openCloseCooldown--;
-        }
         this.infos.removeIf((info) -> !chestsValid(info));
     }
 
@@ -69,7 +59,7 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
 
     @Override
     public int handleHitboxInteract(ChestInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
-        if (!info.isOpen) return -1;
+        if (!info.slotVisible(hitboxIndices.get(0))) return -1;
         ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), hitboxIndices, hand, false);
         return ImmersiveClientConstants.instance().defaultCooldown();
     }
@@ -81,18 +71,19 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
 
     @Override
     public void render(ChestInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
-
-        if (info.isOpen) {
-            for (int i = 0; i < 27; i++) {
+        for (int i = 0; i < 27; i++) {
+            if (info.slotVisible(i)) {
                 int startTop = 9 * info.getRowNum();
                 int endTop = startTop + 9;
                 boolean showCount = i >= startTop && i <= endTop;
                 helpers.renderItemWithInfo(info.hitboxes.get(i).item, stack, ClientConstants.itemScaleSizeChest,
                         showCount, info.light, info, true, i, null, info.forward, Direction.UP);
             }
+        }
 
-            if (info.otherChest != null) {
-                for (int i = 27; i < 27 * 2; i++) {
+        if (info.otherChest != null) {
+            for (int i = 27; i < 27 * 2; i++) {
+                if (info.slotVisible(i)) {
                     int startTop = 9 * info.getRowNum() + 27;
                     int endTop = startTop + 9 + 27;
                     boolean showCount = i >= startTop && i <= endTop;
@@ -102,9 +93,9 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
             }
         }
 
-        for (int i = 0; i <= 1; i++) {
-            if (info.openCloseHitboxes[i] != null && info.openClosePositions[i] != null) {
-                helpers.renderHitbox(stack, info.openCloseHitboxes[i]);
+        if (info.openClosePosition != null) {
+            for (BoundingBox box : info.openCloseHitboxes) {
+                helpers.renderHitbox(stack, box);
             }
         }
     }
@@ -117,6 +108,8 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
             info.otherChest = Util.getOtherChest(cbe);
             if (info.otherChest != null) {
                 info.otherPos = info.otherChest.getBlockPos();
+            } else {
+                info.otherPos = null;
             }
         }
 
@@ -157,79 +150,36 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
             }
         }
 
-        for (int chestNum = 0; chestNum <= 1; chestNum++) {
-            BlockEntity chest = chests[chestNum];
-            if (chest == null) continue;
-            Vec3 forward = Vec3.atLowerCornerOf(info.forward.getNormal());
-            Vec3 left = Vec3.atLowerCornerOf(info.forward.getCounterClockWise().getNormal());
-            Vec3 frontMid = Vec3.upFromBottomCenterOf(chest.getBlockPos(), 1).add(forward.multiply(0.5, 0.5, 0.5));
-            if (info.isOpen) {
-                Vec3 linePos = frontMid.add(forward.multiply(-0.5, -0.5, -0.5));
-                linePos = linePos.add(0, 0.5, 0);
-                info.openClosePositions[chestNum] = linePos;
-                info.openCloseHitboxes[chestNum] = new AABB(
-                        linePos.add(left.multiply(-0.5, -0.5, -0.5)).add(0, -1d/4d, 0)
-                                .add(forward.multiply(-0.625, -0.625, -0.625)),
-                        linePos.add(left.multiply(0.5, 0.5, 0.5)).add(0, 1d/4d, 0)
-                                .add(forward.multiply(0.625, 0.625, 0.625))
-                );
-            } else {
-                Vec3 linePos = frontMid.add(0, -0.375, 0);
-                info.openClosePositions[chestNum] = linePos;
-                info.openCloseHitboxes[chestNum] = new AABB(
-                        linePos.add(left.multiply(-0.5, -0.5, -0.5)).add(0, -1d/4d, 0)
-                                .add(forward.multiply(-0.15, -0.15, -0.15)),
-                        linePos.add(left.multiply(0.5, 0.5, 0.5)).add(0, 1d/4d, 0)
-                                .add(forward.multiply(0.15, 0.15, 0.15))
-                );
-            }
+        float openness = Util.getChestLidController(info.chest).immersiveMC$getOpenness();
+        openness = 1f - openness;
+        openness = 1f - openness * openness * openness;
+        Vec3 forward = Vec3.atLowerCornerOf(info.forward.getNormal());
+        Vec3 chestBackTopPos = Vec3.atBottomCenterOf(info.chest.getBlockPos()).add(forward.scale(-0.5)).add(0, 10d/16d, 0);
+
+
+        Vector3f lidVecF = new Vector3f(0, 0, 1);
+        float xRot = openness * (float) Math.PI / 2f;
+        lidVecF.transform(Vector3f.XN.rotation(xRot));
+        lidVecF.transform(Vector3f.YN.rotationDegrees(info.forward.toYRot()));
+        Vec3 lidVec = new Vec3(lidVecF.x(), lidVecF.y(), lidVecF.z());
+        info.openClosePosition = chestBackTopPos.add(lidVec.scale(0.5));
+        if (info.otherChest != null) {
+            info.openClosePosition = info.openClosePosition.add(Vec3.atLowerCornerOf(info.otherPos.subtract(info.getBlockPosition())).scale(0.5));
         }
-
-        if (openCloseCooldown <= 0 && !ActiveConfig.active().rightClickChestInteractions) {
-            if (VRVerify.playerInVR(Minecraft.getInstance().player) && info.openCloseHitboxes != null) {
-                Vec3 current0 = VRClientAPI.instance().getPreTickWorldPose().getMainHand().getPos();
-                Vec3 current1 = VRClientAPI.instance().getPreTickWorldPose().getOffHand().getPos();
-
-                double diff0 = current0.y - info.lastY0;
-                double diff1 = current1.y - info.lastY1;
-                if (Util.getFirstIntersect(current0, info.openCloseHitboxes).isEmpty()) {
-                    diff0 = 0;
-                }
-                if (Util.getFirstIntersect(current1, info.openCloseHitboxes).isEmpty()) {
-                    diff1 = 0;
-                }
-
-                boolean cond;
-                if (info.isOpen) {
-                    cond = diff0 <= -threshold || diff1 <= -threshold;
-                } else {
-                    cond = diff0 >= threshold || diff1 >= threshold;
-                }
-
-                if (cond) {
-                    if (!info.isOpen) {
-                        // Use a distance check for checking if to vibrate the other controller to hopefully filter out
-                        // actions of moving up that are for something other than the chest
-                        if (diff0 >= threshold) {
-                            VRRumble.rumbleIfVR(Minecraft.getInstance().player, InteractionHand.MAIN_HAND, CommonConstants.vibrationTimeWorldInteraction);
-                            if (diff1 >= threshold / 5d && current0.distanceToSqr(current1) <= 1) {
-                                VRRumble.rumbleIfVR(Minecraft.getInstance().player, InteractionHand.OFF_HAND, CommonConstants.vibrationTimeWorldInteraction);
-                            }
-                        }
-                        if (diff1 >= threshold) {
-                            VRRumble.rumbleIfVR(Minecraft.getInstance().player, InteractionHand.OFF_HAND, CommonConstants.vibrationTimeWorldInteraction);
-                            if ((diff0 >= threshold / 5d && current0.distanceToSqr(current1) <= 1)) {
-                                VRRumble.rumbleIfVR(Minecraft.getInstance().player, InteractionHand.MAIN_HAND, CommonConstants.vibrationTimeWorldInteraction);
-                            }
-                        }
-                    }
-                    openChest(info);
-                    openCloseCooldown = 40;
-                }
-
-                info.lastY0 = current0.y;
-                info.lastY1 = current1.y;
+        AABB aabbBase = AABB.ofSize(info.openClosePosition, info.otherChest != null ? 1.8 : 0.9, 0.3, 1.2);
+        info.openCloseHitboxes.clear();
+        info.openCloseHitboxes.add(OBBFactory.instance().create(aabbBase, xRot, Math.toRadians(info.forward.toYRot()), 0));
+        if (openness == 1f) {
+            double xSize, zSize;
+            if (info.forward.getAxis() == Direction.Axis.X) {
+                xSize = 1;
+                zSize = info.otherChest != null ? 1.8 : 0.9;
+            } else {
+                xSize = info.otherChest != null ? 1.8 : 0.9;
+                zSize = 1;
             }
+            info.openCloseHitboxes.add(AABB.ofSize(info.openClosePosition.add(0, 0.425, 0).add(Vec3.atLowerCornerOf(info.forward.getNormal()).scale(0.65)),
+                    xSize, 0.35, zSize));
         }
     }
 
@@ -291,9 +241,8 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
     }
 
     public static void openChest(ChestInfo info) {
-        info.isOpen = !info.isOpen;
-        Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(info.getBlockPosition(), info.isOpen));
-        if (info.isOpen) {
+        Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(info.getBlockPosition(), !info.isOpen()));
+        if (info.isOpen()) {
             Lootr.lootrImpl.markOpener(Minecraft.getInstance().player, info.getBlockPosition());
         }
     }

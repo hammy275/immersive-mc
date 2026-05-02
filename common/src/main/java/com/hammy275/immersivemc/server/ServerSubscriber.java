@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternData;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
@@ -42,6 +43,7 @@ public class ServerSubscriber {
         DirtyTracker.unmarkAllDirty(); // Remove dirtiness for block entities
         ImmersiveMCLevelStorage.unmarkAllItemStoragesDirty(server);
         SharedNetworkStorages.instance().getAll(LecternData.class).forEach(data -> data.bookData.setNoLongerDirty());
+        SharedNetworkStorages.instance().getAll(ChestOpennessStorage.class).forEach(ChestOpennessStorage::serverTick);
     }
 
     public static void onPlayerTick(Player playerIn) {

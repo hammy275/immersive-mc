@@ -9,6 +9,7 @@ import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
@@ -16,7 +17,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.vivecraft.api.VRAPI;
 import org.vivecraft.api.data.VRBodyPartData;
 import org.vivecraft.api.data.VRPose;
 
@@ -41,7 +41,7 @@ public class ClientVRSubscriber {
         if (!Platform.isClient()) return;
         if (Minecraft.getInstance().gameMode == null) return;
         if (!VRVerify.playerInVR(player)) return;
-        VRPose vrPose = VRAPI.instance().getVRPose(player);
+        VRPose vrPose = VR.API.getVRPose(player);
 
         // Track things the HMD is looking at (cursor is already covered in ClientLogicSubscriber)
         double dist = Minecraft.getInstance().gameMode.getPickRange();

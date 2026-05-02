@@ -1,12 +1,14 @@
 package com.hammy275.immersivemc.server.immersive;
 
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.common.immersive.handler.AfterClientSyncHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -60,6 +62,15 @@ public class TrackedImmersives {
         }
     }
 
+    public static List<ServerPlayer> getPlayersTrackingPos(MinecraftServer server, Level level, BlockPos pos) {
+        return TRACKED_IMMERSIVES.stream()
+                .filter(data -> data.getLevel() == level && data.getPos().contains(pos))
+                .map(data -> data.playerUUID)
+                .distinct()
+                .map(uuid -> server.getPlayerList().getPlayer(uuid))
+                .toList();
+    }
+
     private static void trackImmersive(ServerPlayer player, ImmersiveHandler<?> handler, BlockPos pos) {
         if (TRACKED_IMMERSIVES.stream().anyMatch((data) ->
                 Util.getValidBlocks(data.getHandler(), data.getPos().iterator().next(), player.level).contains(pos) &&
@@ -74,6 +85,9 @@ public class TrackedImmersives {
     private static void syncDataToClient(ServerPlayer player, TrackedImmersiveData<?> data) {
         if (!data.getHandler().clientAuthoritative()) {
             Network.INSTANCE.sendToPlayer(player, data.getSyncPacket(player));
+            if (data.getHandler() instanceof AfterClientSyncHandler afterHandler) {
+                afterHandler.afterClientSync(player, data.getPos());
+            }
         }
     }
 }

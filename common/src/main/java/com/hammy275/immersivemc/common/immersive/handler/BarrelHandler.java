@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -11,10 +12,20 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 
-public class BarrelHandler extends ChestLikeHandler {
+public class BarrelHandler extends ChestLikeHandler<ListOfItemsStorage> {
     @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
         return level.getBlockState(pos).getBlock() instanceof BarrelBlock && super.isValidBlock(pos, level);
+    }
+
+    @Override
+    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+        return makeBaseInventoryContents(player, pos);
+    }
+
+    @Override
+    public ListOfItemsStorage getEmptyNetworkStorage() {
+        return getBaseEmptyNetworkStorage();
     }
 
     @Override
