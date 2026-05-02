@@ -22,10 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
-import net.minecraft.world.level.block.entity.LidBlockEntity;
+import net.minecraft.world.level.block.entity.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -188,17 +185,17 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
         ClientMixinProxy.skipIncrementDecrementChests = true;
         try {
             if (chest instanceof ChestBlockEntity cbe) {
-                cbe.startOpen(controllingPlayer);
                 ChestToOpenSet.openChest(controllingPlayer, pos);
+                cbe.startOpen(controllingPlayer);
                 if (other != null) {
-                    other.startOpen(controllingPlayer);
                     ChestToOpenSet.openChest(controllingPlayer, other.getBlockPos());
+                    other.startOpen(controllingPlayer);
                 }
                 PiglinAi.angerNearbyPiglins(level, controllingPlayer, true);
                 Lootr.lootrImpl.markOpener(controllingPlayer, pos);
             } else if (chest instanceof EnderChestBlockEntity ecbe) {
-                ecbe.startOpen(controllingPlayer);
                 ChestToOpenSet.openChest(controllingPlayer, pos);
+                ecbe.startOpen(controllingPlayer);
                 PiglinAi.angerNearbyPiglins(level, controllingPlayer, true);
             }
         } finally {
@@ -209,20 +206,28 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
 
     private void doChestClose(ServerPlayer controllingPlayer, @Nullable ChestBlockEntity other) {
         ClientMixinProxy.skipIncrementDecrementChests = true;
+        // When closing, immediately recheckOpeners to sync the "closed" state to the client, which otherwise
+        // thinks it's open.
         try {
             if (chest instanceof ChestBlockEntity cbe) {
-                ((ContainerOpenersCounterAccessor) ((ChestBlockEntityAccessor) cbe).immersiveMC$openersCounter())
-                        .immersiveMC$getPlayersWithContainerOpen(controllingPlayer.level(), pos).forEach(cbe::stopOpen);
                 ChestToOpenSet.closeForAll(controllingPlayer.level(), pos);
+                ContainerOpenersCounter openersCounter = ((ChestBlockEntityAccessor) cbe).immersiveMC$openersCounter();
+                ((ContainerOpenersCounterAccessor) openersCounter).immersiveMC$getPlayersWithContainerOpen(controllingPlayer.level(), pos)
+                        .forEach(cbe::stopOpen);
+                openersCounter.recheckOpeners(cbe.getLevel(), cbe.getBlockPos(), cbe.getLevel().getBlockState(cbe.getBlockPos()));
                 if (other != null) {
-                    ((ContainerOpenersCounterAccessor) ((ChestBlockEntityAccessor) other).immersiveMC$openersCounter())
-                            .immersiveMC$getPlayersWithContainerOpen(controllingPlayer.level(), other.getBlockPos()).forEach(cbe::stopOpen);
-                    ChestToOpenSet.closeForAll(controllingPlayer.level(), other.getBlockPos());
+                    ChestToOpenSet.closeForAll(controllingPlayer.level(), pos);
+                    openersCounter = ((ChestBlockEntityAccessor) other).immersiveMC$openersCounter();
+                    ((ContainerOpenersCounterAccessor) openersCounter).immersiveMC$getPlayersWithContainerOpen(controllingPlayer.level(), pos)
+                            .forEach(other::stopOpen);
+                    openersCounter.recheckOpeners(other.getLevel(), other.getBlockPos(), other.getLevel().getBlockState(other.getBlockPos()));
                 }
             } else if (chest instanceof EnderChestBlockEntity ecbe) {
-                ((ContainerOpenersCounterAccessor) ((ChestBlockEntityAccessor) ecbe).immersiveMC$openersCounter())
-                        .immersiveMC$getPlayersWithContainerOpen(controllingPlayer.level(), pos).forEach(ecbe::stopOpen);
                 ChestToOpenSet.closeForAll(controllingPlayer.level(), pos);
+                ContainerOpenersCounter openersCounter = ((ChestBlockEntityAccessor) ecbe).immersiveMC$openersCounter();
+                ((ContainerOpenersCounterAccessor) openersCounter).immersiveMC$getPlayersWithContainerOpen(controllingPlayer.level(), pos)
+                        .forEach(ecbe::stopOpen);
+                openersCounter.recheckOpeners(ecbe.getLevel(), ecbe.getBlockPos(), ecbe.getLevel().getBlockState(ecbe.getBlockPos()));
             }
         } finally {
             ClientMixinProxy.skipIncrementDecrementChests = false;

@@ -9,6 +9,7 @@ import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.level.block.entity.*;
 
@@ -16,18 +17,24 @@ public class ChestShulkerOpenPacket {
 
     public BlockPos pos;
     public boolean isOpen;
+    public float startingOpenness;
 
     public ChestShulkerOpenPacket(BlockPos pos, boolean isOpenPacket) {
+        this(pos, isOpenPacket, -1f);
+    }
+
+    public ChestShulkerOpenPacket(BlockPos pos, boolean isOpenPacket, float startingOpenness) {
         this.pos = pos;
         this.isOpen = isOpenPacket;
+        this.startingOpenness = startingOpenness;
     }
 
     public static void encode(ChestShulkerOpenPacket packet, RegistryFriendlyByteBuf buffer) {
-        buffer.writeBlockPos(packet.pos).writeBoolean(packet.isOpen);
+        buffer.writeBlockPos(packet.pos).writeBoolean(packet.isOpen).writeFloat(packet.startingOpenness);
     }
 
     public static ChestShulkerOpenPacket decode(RegistryFriendlyByteBuf buffer) {
-        return new ChestShulkerOpenPacket(buffer.readBlockPos(), buffer.readBoolean());
+        return new ChestShulkerOpenPacket(buffer.readBlockPos(), buffer.readBoolean(), buffer.readFloat());
     }
 
     public static void handle(final ChestShulkerOpenPacket message, ServerPlayer player) {
@@ -39,6 +46,9 @@ public class ChestShulkerOpenPacket {
                     ChestOpennessStorage storage = SharedNetworkStorages.instance().getOrCreate(player.level(),
                             message.pos, ChestOpennessStorage.class, () -> new ChestOpennessStorage(tileEnt));
                     if (storage.takeControl(player.getUUID(), ChestOpennessStorage.AnimationState.ANIMATED)) {
+                        if (message.startingOpenness >= 0f) {
+                            storage.setOpenness(Mth.clamp(message.startingOpenness, 0f, 1f));
+                        }
                         storage.startAnimating(player, message.isOpen ? ChestOpennessStorage.LidTarget.OPEN : ChestOpennessStorage.LidTarget.CLOSED);
                     }
                 } else if (tileEnt instanceof ShulkerBoxBlockEntity shulkerBox) {

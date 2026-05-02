@@ -10,10 +10,10 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VR;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import org.vivecraft.api.client.HeldInteractModule;
-import org.vivecraft.api.client.VRClientAPI;
 import org.vivecraft.api.data.VRBodyPartData;
 import org.vivecraft.api.data.VRPoseHistory;
 
@@ -37,7 +37,8 @@ public class ChestLidInteractModule implements HeldInteractModule {
         Vec3 last = poseHistory.getHistoricalData(1).getHand(hand).getPos();
         Vec3 current = VR.ClientAPI.getPreTickWorldPose().getHand(hand).getPos();
         double verticalDist = current.y - last.y;
-        Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(chestInfo.getBlockPosition(), verticalDist >= OPEN_THRESHOLD));
+        boolean isOpen = verticalDist >= OPEN_THRESHOLD || chestInfo.getForcedOpenness() >= 0.9f;
+        Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(chestInfo.getBlockPosition(), isOpen, chestInfo.getForcedOpenness()));
     }
 
     @Override
@@ -102,7 +103,7 @@ public class ChestLidInteractModule implements HeldInteractModule {
         double handDistToEnd = progressCoordinate.distanceTo(end);
         double progress = (startToEndDist - handDistToEnd) / startToEndDist;
 
-        info.setForcedOpenness((float) progress);
+        info.setForcedOpenness(Mth.clamp((float) progress, 0f, 1f));
         info.syncOpennessToServerIfDirty();
 
         return true;

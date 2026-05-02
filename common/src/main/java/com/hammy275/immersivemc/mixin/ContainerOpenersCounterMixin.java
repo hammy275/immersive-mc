@@ -22,8 +22,7 @@ public class ContainerOpenersCounterMixin {
         if (!ClientMixinProxy.skipIncrementDecrementChests) {
             original.call(player, level, pos, state);
         } else {
-            // Do a full re-check next tick (so ChestToOpenSet is up-to-date beforehand)
-            level.scheduleTick(pos, state.getBlock(), 1);
+            ((ContainerOpenersCounter) (Object) this).recheckOpeners(level, pos, state);
         }
     }
 
@@ -32,8 +31,7 @@ public class ContainerOpenersCounterMixin {
         if (!ClientMixinProxy.skipIncrementDecrementChests) {
             original.call(player, level, pos, state);
         } else {
-            // Do a full re-check next tick (so ChestToOpenSet is up-to-date beforehand)
-            level.scheduleTick(pos, state.getBlock(), 1);
+            ((ContainerOpenersCounter) (Object) this).recheckOpeners(level, pos, state);
         }
     }
 

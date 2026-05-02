@@ -182,7 +182,6 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
             info.openCloseHitboxes.add(AABB.ofSize(info.openClosePosition.add(0, 0.425, 0).add(info.forward.getUnitVec3().scale(0.65)),
                     xSize, 0.35, zSize));
         }
-
     }
 
     @Override
