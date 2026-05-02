@@ -8,6 +8,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * A place to keep {@link NetworkStorage} instances. These are not saved to disk, but are kept as long as the
@@ -36,6 +37,17 @@ public interface SharedNetworkStorages {
     public <S extends NetworkStorage> S getOrCreate(Level level, BlockPos pos, ImmersiveHandler<S> handler);
 
     /**
+     * Gets the NetworkStorage saved at the specified position, or creates a new one if one isn't already there.
+     * @param level The level to get the storage from. This should be the level the Immersive is in.
+     * @param pos The position to get the storage from. This should be the block position the Immersive is at.
+     * @param type The class of the type of storage to get or create.
+     * @param storageCreator Creator for creating a new storage instance if it doesn't exist.
+     * @return An instance of S, which is the NetworkStorage at that position. It may have been freshly created via
+     * {@link ImmersiveHandler#getEmptyNetworkStorage()}, so it may need initializing.
+     */
+    public <S extends NetworkStorage> S getOrCreate(Level level, BlockPos pos, Class<S> type, Supplier<S> storageCreator);
+
+    /**
      * Gets the NetworkStorage saved at the specified position, or returns null if one isn't already there.
      * @param level The level to get the storage from. This should be the level the Immersive is in.
      * @param pos The position to get the storage from. This should be the block position the Immersive is at.
@@ -48,14 +60,33 @@ public interface SharedNetworkStorages {
     public <S extends NetworkStorage> S get(Level level, BlockPos pos, ImmersiveHandler<S> handler);
 
     /**
+     * Gets the NetworkStorage saved at the specified position, or returns null if one isn't already there.
+     * @param level The level to get the storage from. This should be the level the Immersive is in.
+     * @param pos The position to get the storage from. This should be the block position the Immersive is at.
+     * @param type The class of the type of storage to get.
+     * @return An instance of S, which is the NetworkStorage at that position. It may have been freshly created via
+     * {@link ImmersiveHandler#getEmptyNetworkStorage()}, so it may need initializing.
+     */
+    public <S extends NetworkStorage> S get(Level level, BlockPos pos, Class<S> type);
+
+    /**
      * Removes the NetworkStorage saved at the specified position, or does nothing if one isn't there or doesn't match
-     * the storage type of the handler provided.
+     * the storage type provided.
      * @param level The level to remove the storage from. This should be the level the Immersive is in.
      * @param pos The position to remove the storage from. This should be the block position the Immersive is at.
      * @param handler The {@link ImmersiveHandler} for the Immersive.
      * @param <S> The type of storage used by the ImmersiveHandler.
      */
     public <S extends NetworkStorage> void remove(Level level, BlockPos pos, ImmersiveHandler<S> handler);
+
+    /**
+     * Removes the NetworkStorage saved at the specified position, or does nothing if one isn't there or doesn't match
+     * the storage type of the handler provided.
+     * @param level The level to remove the storage from. This should be the level the Immersive is in.
+     * @param pos The position to remove the storage from. This should be the block position the Immersive is at.
+     * @param type The class of the type of storage to get.
+     */
+    public <S extends NetworkStorage> void remove(Level level, BlockPos pos, Class<S> type);
 
     /**
      * Get all storages stored that match some class; useful for marking storages as no longer dirty for

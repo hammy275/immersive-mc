@@ -18,6 +18,7 @@ import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.FetchBackpackStoragePacket;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.swap.Swap;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -38,7 +39,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-import org.vivecraft.api.client.VRClientAPI;
 import org.vivecraft.api.data.VRBodyPartData;
 import org.vivecraft.api.data.VRPose;
 
@@ -71,7 +71,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     @Override
     protected void renderTick(BackpackInfo info, boolean isInVR) {
         super.renderTick(info, isInVR);
-        VRPose vrPose = VRClientAPI.instance().getWorldRenderPose();
+        VRPose vrPose = VR.ClientAPI.getWorldRenderPose();
         calculatePositions(info, vrPose);
     }
 
@@ -89,11 +89,11 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     @Override
     public BlockPos getLightPos(BackpackInfo info) {
         // Light position is bag position if not in light-blocking block, or HMD position if it is in one.
-        BlockPos c1 = BlockPos.containing(VRClientAPI.instance().getPreTickWorldPose().getHand(getBagHand()).getPos());
+        BlockPos c1 = BlockPos.containing(VR.ClientAPI.getPreTickWorldPose().getHand(getBagHand()).getPos());
         if (!Minecraft.getInstance().level.getBlockState(c1).canOcclude()) {
             return c1;
         } else {
-            return BlockPos.containing(VRClientAPI.instance().getPreTickWorldPose().getHead().getPos());
+            return BlockPos.containing(VR.ClientAPI.getPreTickWorldPose().getHead().getPos());
         }
     }
 
@@ -404,7 +404,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     }
 
     private boolean leftHanded() {
-        boolean vrLeftHanded = VRClientAPI.instance().isLeftHanded();
+        boolean vrLeftHanded = VR.ClientAPI.isLeftHanded();
         boolean useSwappedHands = ActiveConfig.active().swapBagHand;
         return vrLeftHanded != useSwappedHands; // If both are true or both are false, we're using the right hand.
     }

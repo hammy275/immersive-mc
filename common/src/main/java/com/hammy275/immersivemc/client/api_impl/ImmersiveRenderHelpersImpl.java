@@ -11,6 +11,7 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.obb.OBBRotList;
 import com.hammy275.immersivemc.common.obb.RotType;
+import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -31,7 +32,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-import org.vivecraft.api.client.VRClientAPI;
 import org.vivecraft.api.data.VRPose;
 
 public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
@@ -117,7 +117,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
                 stack.mulPose(Axis.YP.rotationDegrees(180));
                 Vec3 textMove;
                 if (VRVerify.hasAPI && VRVerify.clientInVR()) {
-                    VRPose textMovePose = VRClientAPI.instance().getWorldRenderPose();
+                    VRPose textMovePose = VR.ClientAPI.getWorldRenderPose();
                     textMove = textMovePose.getHead().getDir();
                 } else {
                     textMove = Minecraft.getInstance().player.getLookAngle();
@@ -296,7 +296,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
 
     private void faceTowardsPlayer(PoseStack stack, Vec3 renderPos) {
         if (VRVerify.clientInVR()) {
-            Vec3 target = VRClientAPI.instance().getWorldRenderPose().getHead().getPos();
+            Vec3 target = VR.ClientAPI.getWorldRenderPose().getHead().getPos();
             Vec3 ray = target.subtract(renderPos);
             Vec3 rayNoY = ray.multiply(1, 0, 1);
             OBBRotList rotList = OBBRotList.create()

@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.server.ticker;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.ticker.AbstractTicker;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VR;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -16,7 +17,6 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.vivecraft.api.VRAPI;
 import org.vivecraft.api.data.VRBodyPartData;
 import org.vivecraft.api.data.VRPose;
 import org.vivecraft.api.data.VRPoseHistory;
@@ -48,7 +48,7 @@ public class CampfireTicker extends AbstractTicker {
                 cookTime.remove(player.getGameProfile().getName());
             } else if (recipe.isPresent() &&
                     ThreadLocalRandom.current().nextInt(4) == 0) { // Not ready to smelt yet, show particle
-                Vec3 pos = VRAPI.instance().getVRPose(player).getHand(hand).getPos();
+                Vec3 pos = VR.API.getVRPose(player).getHand(hand).getPos();
                 if (player.level instanceof ServerLevel serverLevel) {
                     serverLevel.sendParticles(ParticleTypes.SMOKE, pos.x, pos.y, pos.z,
                             1, 0.01, 0.01, 0.01, 0);
@@ -60,7 +60,7 @@ public class CampfireTicker extends AbstractTicker {
     @Override
     protected boolean shouldTick(Player player, VRPose pose, VRPoseHistory poseHistory) {
         if (!ActiveConfig.getConfigForPlayer(player).useCampfireImmersive) return false;
-        VRPose vrPose = VRAPI.instance().getVRPose(player);
+        VRPose vrPose = VR.API.getVRPose(player);
         boolean mainRes = false;
         boolean offRes = false;
         for (InteractionHand hand : InteractionHand.values()) {

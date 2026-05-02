@@ -21,6 +21,9 @@ public class CommonConstants {
 
     public static final float vibrationTimeRangedGrab = vibrationTimePlayerActionAlert / 2f;
 
+    // Debug VR mode. -Dimmersivemc.devvr=true as a VM option will enable this
+    public static final boolean devFakeVRMode = Boolean.parseBoolean(System.getProperty("immersivemc.devvr", "false"));
+
     public static String vrAPIVersionAsString() {
         return minimumVRAPIVersion[0] + "." + minimumVRAPIVersion[1] + "." + minimumVRAPIVersion[2];
     }
