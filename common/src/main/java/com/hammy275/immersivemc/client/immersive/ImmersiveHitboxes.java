@@ -9,6 +9,7 @@ import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentIn
 import com.hammy275.immersivemc.client.immersive.info.ImmersiveHitboxesInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
+import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -20,8 +21,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.vivecraft.api.VRAPI;
-import org.vivecraft.api.client.VRClientAPI;
 import org.vivecraft.api.data.VRBodyPartData;
 
 /**
@@ -48,7 +47,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
         canOpenBackpack = false;
         if (ActiveConfig.active().reachBehindBagMode.usesBehindBack() && VRVerify.clientInVR()) {
             // centerPos is the center of the back of the player
-            VRBodyPartData hmdData = Platform.isDevelopmentEnvironment() ? null : VRClientAPI.instance().getWorldRenderPose().getHead();
+            VRBodyPartData hmdData = Platform.isDevelopmentEnvironment() ? null : VR.ClientAPI.getWorldRenderPose().getHead();
             Vec3 centerPos = hmdData != null ?
                     hmdData.getPos().add(0, -0.5, 0).add(hmdData.getDir().scale(-0.15)) :
                     mc.player.getEyePosition(mc.getDeltaTracker().getGameTimeDeltaPartialTick(true)).add(0, -0.5, 0).add(mc.player.getLookAngle().scale(-0.15));
@@ -70,7 +69,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
             info.setHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX,
                     OBBFactory.instance().create(AABB.ofSize(centerPos, 0.35, backpackHeight, 0.2),
                             0, yaw, 0));
-            if (BoundingBox.contains(info.getHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX), VRClientAPI.instance().getWorldRenderPose().getHand(getBagHand()).getPos())) {
+            if (BoundingBox.contains(info.getHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX), VR.ClientAPI.getWorldRenderPose().getHand(getBagHand()).getPos())) {
                 canOpenBackpack = true;
             }
         } else {
@@ -80,8 +79,8 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
 
         if (!canOpenBackpack && ActiveConfig.active().reachBehindBagMode.usesOverShoulder() && VRVerify.clientInVR()) {
             InteractionHand hand = getBagHand();
-            VRBodyPartData hmdData = VRClientAPI.instance().getWorldRenderPose().getHead();
-            VRBodyPartData handData = VRClientAPI.instance().getWorldRenderPose().getHand(hand);
+            VRBodyPartData hmdData = VR.ClientAPI.getWorldRenderPose().getHead();
+            VRBodyPartData handData = VR.ClientAPI.getWorldRenderPose().getHand(hand);
 
             Vec3 hmdDir = hmdData.getDir();
             Vec3 hmdPos = hmdData.getPos();
@@ -131,7 +130,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
         if (backpackHitbox != null) {
             renderHitbox(stack, backpackHitbox);
             if (VRVerify.playerInVR(mc.player) && mc.debugEntries.isCurrentlyEnabled(DebugScreenEntries.ENTITY_HITBOXES)) {
-                VRBodyPartData c = VRAPI.instance().getVRPose(mc.player).getHand(getBagHand());
+                VRBodyPartData c = VR.API.getVRPose(mc.player).getHand(getBagHand());
                 if (BoundingBox.contains(backpackHitbox, c.getPos())) {
                     renderHitbox(stack, AABB.ofSize(c.getPos(), 0.25, 0.25, 0.25),
                             true,

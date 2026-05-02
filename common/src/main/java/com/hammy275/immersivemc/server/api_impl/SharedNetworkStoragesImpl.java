@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class SharedNetworkStoragesImpl implements SharedNetworkStorages {
 
@@ -19,12 +20,19 @@ public class SharedNetworkStoragesImpl implements SharedNetworkStorages {
 
     private Map<ResourceLocation, Map<BlockPos, NetworkStorage>> storages = new HashMap<>();
 
+    @SuppressWarnings("unchecked")
     @Override
     public <S extends NetworkStorage> S getOrCreate(Level level, BlockPos pos, ImmersiveHandler<S> handler) {
-        S storage = get(level, pos, handler);
+        S emptyNetworkStorage = handler.getEmptyNetworkStorage();
+        return getOrCreate(level, pos, (Class<S>) emptyNetworkStorage.getClass(), () -> emptyNetworkStorage);
+    }
+
+    @Override
+    public <S extends NetworkStorage> S getOrCreate(Level level, BlockPos pos, Class<S> type, Supplier<S> storageCreator) {
+        S storage = get(level, pos, type);
         if (storage == null) {
-            storage = handler.getEmptyNetworkStorage();
-            storages.get(level.dimension().registry()).put(pos, storage);
+            storage = storageCreator.get();
+            storages.get(level.dimension().location()).put(pos, storage);
         }
         return storage;
     }
@@ -32,11 +40,16 @@ public class SharedNetworkStoragesImpl implements SharedNetworkStorages {
     @SuppressWarnings("unchecked")
     @Override
     public <S extends NetworkStorage> @Nullable S get(Level level, BlockPos pos, ImmersiveHandler<S> handler) {
-        Map<BlockPos, NetworkStorage> innerMap = storages.computeIfAbsent(level.dimension().registry(), rl -> new HashMap<>());
-        NetworkStorage emptyStorage = handler.getEmptyNetworkStorage();
+        return (S) get(level, pos, handler.getEmptyNetworkStorage().getClass());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <S extends NetworkStorage> @Nullable S get(Level level, BlockPos pos, Class<S> type) {
+        Map<BlockPos, NetworkStorage> innerMap = storages.computeIfAbsent(level.dimension().location(), rl -> new HashMap<>());
         if (innerMap.containsKey(pos)) {
             NetworkStorage storage = innerMap.get(pos);
-            if (storage.getClass() == emptyStorage.getClass()) {
+            if (storage.getClass() == type) {
                 return (S) storage;
             }
         }
@@ -45,10 +58,15 @@ public class SharedNetworkStoragesImpl implements SharedNetworkStorages {
 
     @Override
     public <S extends NetworkStorage> void remove(Level level, BlockPos pos, ImmersiveHandler<S> handler) {
-        Map<BlockPos, NetworkStorage> innerMap = storages.get(level.dimension().registry());
+        remove(level, pos, handler.getEmptyNetworkStorage().getClass());
+    }
+
+    @Override
+    public <S extends NetworkStorage> void remove(Level level, BlockPos pos, Class<S> type) {
+        Map<BlockPos, NetworkStorage> innerMap = storages.get(level.dimension().location());
         if (innerMap != null) {
             NetworkStorage storage = innerMap.get(pos);
-            if (storage != null && storage.getClass() == handler.getEmptyNetworkStorage().getClass()) {
+            if (storage != null && storage.getClass() == type) {
                 innerMap.remove(pos);
             }
         }

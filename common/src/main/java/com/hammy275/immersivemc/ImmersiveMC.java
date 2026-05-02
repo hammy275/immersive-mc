@@ -127,6 +127,8 @@ public class ImmersiveMC {
                 UsePacket::decode, UsePacket::handle);
         Network.INSTANCE.register(PageTurnPacket.class, PageTurnPacket::encode,
                 PageTurnPacket::decode, PageTurnPacket::handle);
+        Network.INSTANCE.register(SelfHandlingNetworkStorageSyncPacket.class, SelfHandlingNetworkStorageSyncPacket::encode,
+                SelfHandlingNetworkStorageSyncPacket::decode, SelfHandlingNetworkStorageSyncPacket::handle);
 
     }
 }
