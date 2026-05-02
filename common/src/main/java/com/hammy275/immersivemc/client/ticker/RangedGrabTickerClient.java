@@ -8,6 +8,7 @@ import com.hammy275.immersivemc.common.network.packet.GrabItemPacket;
 import com.hammy275.immersivemc.common.ticker.AbstractTicker;
 import com.hammy275.immersivemc.common.util.RGBA;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VR;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.world.entity.Entity;
@@ -15,7 +16,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.vivecraft.api.VRAPI;
 import org.vivecraft.api.data.VRBodyPartData;
 import org.vivecraft.api.data.VRPose;
 import org.vivecraft.api.data.VRPoseHistory;
@@ -36,7 +36,7 @@ public class RangedGrabTickerClient extends AbstractTicker {
 
         double dist = ActiveConfig.active().rangedGrabRange == -1 ?
                 player.blockInteractionRange() : ActiveConfig.active().rangedGrabRange;
-        VRPoseHistory history = VRAPI.instance().getHistoricalVRPoses(player);
+        VRPoseHistory history = VR.API.getHistoricalVRPoses(player);
         if (history.ticksOfHistory() >= 1) {
             VRBodyPartData last = history.getHistoricalData(1).getMainHand();
             if (Minecraft.getInstance().options.keyAttack.isDown() ||
