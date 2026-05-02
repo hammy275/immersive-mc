@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ChestLikeHandler extends ContainerHandler<ListOfItemsStorage> {
+public abstract class ChestLikeHandler<S extends ListOfItemsStorage> extends ContainerHandler<S> {
 
     // NOTE: Inheritors should && with isValidBlock() if they might be a Lootr block!
     @Override
@@ -24,7 +24,9 @@ public abstract class ChestLikeHandler extends ContainerHandler<ListOfItemsStora
     }
 
     @Override
-    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public abstract S makeInventoryContents(ServerPlayer player, BlockPos pos);
+
+    protected ListOfItemsStorage makeBaseInventoryContents(ServerPlayer player, BlockPos pos) {
         List<ItemStack> items = new ArrayList<>();
         Container inv;
         Container lootrInv = Lootr.lootrImpl.getContainer(player, pos);
@@ -51,7 +53,9 @@ public abstract class ChestLikeHandler extends ContainerHandler<ListOfItemsStora
     }
 
     @Override
-    public ListOfItemsStorage getEmptyNetworkStorage() {
+    public abstract S getEmptyNetworkStorage();
+
+    protected ListOfItemsStorage getBaseEmptyNetworkStorage() {
         return new ListOfItemsStorage();
     }
 

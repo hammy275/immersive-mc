@@ -9,4 +9,16 @@ public interface ChestLidControllerAccessor {
 
     @Accessor("shouldBeOpen")
     public boolean immersiveMC$getShouldBeOpen();
+
+    @Accessor("openness")
+    public void immersiveMC$setOpenness(float newOpenness);
+
+    @Accessor("openness")
+    public float immersiveMC$getOpenness();
+
+    @Accessor("oOpenness")
+    public void immersiveMC$setOldOpenness(float newOpenness);
+
+    @Accessor("oOpenness")
+    public float immersiveMC$getOldOpenness();
 }

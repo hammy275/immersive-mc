@@ -1,11 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
-import com.hammy275.immersivemc.api.client.immersive.ForcedUpDownRenderDir;
-import com.hammy275.immersivemc.api.client.immersive.HitboxPositioningMode;
-import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfo;
-import com.hammy275.immersivemc.api.client.immersive.ItemRotationType;
-import com.hammy275.immersivemc.api.client.immersive.RelativeHitboxInfo;
+import com.hammy275.immersivemc.api.client.immersive.*;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
@@ -13,8 +8,9 @@ import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfoImpl;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VRVerify;
+import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRUtil;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -30,7 +26,6 @@ import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.vivecraft.api.client.VRClientAPI;
 import org.vivecraft.api.data.VRBodyPart;
 
 import java.util.ArrayList;
@@ -265,7 +260,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
         if (vrMovementInfo != null && VRVerify.clientInVR()) {
             boolean[] passed = {false, false};
             for (InteractionHand hand : InteractionHand.values()) {
-                if (!box.contains(VRClientAPI.instance().getPreTickWorldPose().getHand(hand).getPos())) continue;
+                if (!box.contains(VR.ClientAPI.getPreTickWorldPose().getHand(hand).getPos())) continue;
                 int c = hand.ordinal();
                 Vec3 velocity = VRUtil.changeForVelocity(Minecraft.getInstance().player, VRBodyPart.fromInteractionHand(hand));
                 if (velocity == null) continue;
