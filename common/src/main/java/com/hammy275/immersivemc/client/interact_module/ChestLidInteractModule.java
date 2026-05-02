@@ -13,13 +13,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import org.vivecraft.api.client.HeldInteractModule;
+import org.vivecraft.api.client.VRClientAPI;
 import org.vivecraft.api.data.VRBodyPartData;
+import org.vivecraft.api.data.VRPoseHistory;
 
 import java.util.EnumMap;
 
 public class ChestLidInteractModule implements HeldInteractModule {
 
     public static final ChestLidInteractModule INSTANCE = new ChestLidInteractModule();
+    public static final double OPEN_THRESHOLD = 0.03;
 
     private static final ResourceLocation ID = Util.id("chest_lid");
 
@@ -30,7 +33,11 @@ public class ChestLidInteractModule implements HeldInteractModule {
     public void onRelease(LocalPlayer player, InteractionHand hand) {
         // On intentional release, open/close based on what we're closer to
         ChestInfo chestInfo = activeChests.get(hand);
-        Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(chestInfo.getBlockPosition(), chestInfo.isOpen()));
+        VRPoseHistory poseHistory = VR.ClientAPI.getHistoricalVRPoses();
+        Vec3 last = poseHistory.getHistoricalData(1).getHand(hand).getPos();
+        Vec3 current = VR.ClientAPI.getPreTickWorldPose().getHand(hand).getPos();
+        double verticalDist = current.y - last.y;
+        Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(chestInfo.getBlockPosition(), verticalDist >= OPEN_THRESHOLD));
     }
 
     @Override
