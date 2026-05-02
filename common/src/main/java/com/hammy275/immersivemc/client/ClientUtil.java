@@ -11,6 +11,7 @@ import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -35,8 +36,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.vivecraft.api.VRAPI;
-import org.vivecraft.api.client.VRClientAPI;
 import org.vivecraft.api.data.VRBodyPartData;
 import org.vivecraft.api.data.VRPose;
 
@@ -84,7 +83,7 @@ public class ClientUtil {
      * @return Pair containing start and end positions.
      */
     public static Pair<Vec3, Vec3> getVRStartAndEnd(int device) {
-        VRPose vrPose = VRClientAPI.instance().getPreTickWorldPose();
+        VRPose vrPose = VR.ClientAPI.getPreTickWorldPose();
         VRBodyPartData vrData = device == -1 ? vrPose.getHead() : vrPose.getHand(InteractionHand.values()[device]);
         double dist = Minecraft.getInstance().player.blockInteractionRange();
         Vec3 start = vrData.getPos();
@@ -130,8 +129,8 @@ public class ClientUtil {
         Vec3 viewVec;
         Vec3 end;
         if (VRVerify.clientInVR()) {
-            start = VRAPI.instance().getVRPose(player).getMainHand().getPos();
-            viewVec = VRAPI.instance().getVRPose(player).getMainHand().getDir();
+            start = VR.API.getVRPose(player).getMainHand().getPos();
+            viewVec = VR.API.getVRPose(player).getMainHand().getDir();
         } else {
             start = player.getEyePosition(1);
             viewVec = player.getViewVector(1);
@@ -162,7 +161,7 @@ public class ClientUtil {
     public static void openBag(Player player, boolean doRumble) {
         if (ActiveConfig.active().useBagImmersive) {
             if (VRVerify.hasAPI) {
-                if (VRAPI.instance().isVRPlayer(player)) {
+                if (VR.API.isVRPlayer(player)) {
                     if (doRumble) {
                         VRRumble.rumbleIfVR(Minecraft.getInstance().player, ActiveConfig.active().swapBagHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, CommonConstants.vibrationTimePlayerActionAlert);
                     }

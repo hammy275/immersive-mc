@@ -8,15 +8,12 @@ import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.compat.util.CompatModule;
 import com.hammy275.immersivemc.common.immersive.CommonBookData;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
+import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ApothSalvagingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.BeaconStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.CraftingTableStorage;
-import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ApothSalvagingTableStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.GrindstoneStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
-import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
-import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternData;
-import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
-import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.*;
 
 import java.util.ArrayList;
 import java.util.List;

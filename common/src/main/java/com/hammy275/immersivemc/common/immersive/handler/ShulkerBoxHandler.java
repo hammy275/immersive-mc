@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.common.immersive.handler;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,7 +15,7 @@ import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 
-public class ShulkerBoxHandler extends ChestLikeHandler {
+public class ShulkerBoxHandler extends ChestLikeHandler<ListOfItemsStorage> {
 
     @Override
     public boolean canPlaceItem(ItemStack item) {
@@ -24,6 +25,16 @@ public class ShulkerBoxHandler extends ChestLikeHandler {
     @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
         return level.getBlockState(pos).getBlock() instanceof ShulkerBoxBlock && super.isValidBlock(pos, level);
+    }
+
+    @Override
+    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+        return makeBaseInventoryContents(player, pos);
+    }
+
+    @Override
+    public ListOfItemsStorage getEmptyNetworkStorage() {
+        return getBaseEmptyNetworkStorage();
     }
 
     @Override

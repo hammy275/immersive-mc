@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.client.compat.ipn.IPNCompat;
 import com.hammy275.immersivemc.client.compat.ipn.IPNCompatImpl;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.interact_module.BagOpenInteractModule;
+import com.hammy275.immersivemc.client.interact_module.ChestLidInteractModule;
 import com.hammy275.immersivemc.client.model.*;
 import com.hammy275.immersivemc.client.ticker.FishingReelTicker;
 import com.hammy275.immersivemc.client.ticker.RangedGrabTickerClient;
@@ -14,11 +15,13 @@ import com.hammy275.immersivemc.client.ticker.ThrowTicker;
 import com.hammy275.immersivemc.common.compat.util.CompatModule;
 import com.hammy275.immersivemc.common.ticker.TickerInit;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.config.CommonConstants;
+import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRVerify;
+import com.hammy275.immersivemc.common.vr.dev.DevVRState;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import org.lwjgl.glfw.GLFW;
-import org.vivecraft.api.client.VRClientAPI;
 
 import java.util.function.Consumer;
 
@@ -36,9 +39,12 @@ public class ImmersiveMCClient {
             Immersives.immersiveDoor, Immersives.immersiveGrindstone, Immersives.immersiveVisualWorkbench
     );
 
+    public static KeyMapping.Category globalKeyCategory;
+    public static KeyMapping.Category vrKeyCategory;
+
     public static void init() {
-        KeyMapping.Category globalKeyCategory = KeyMapping.Category.register(Util.id("global"));
-        KeyMapping.Category vrKeyCategory = KeyMapping.Category.register(Util.id("vr"));
+        globalKeyCategory = KeyMapping.Category.register(Util.id("global"));
+        vrKeyCategory = KeyMapping.Category.register(Util.id("vr"));
         // Map to a very obscure key, so it has no conflicts for VR users
         ImmersiveMC.SUMMON_BACKPACK = new KeyMapping("key." + ImmersiveMC.MOD_ID + ".backpack",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F23, vrKeyCategory);
@@ -62,9 +68,13 @@ public class ImmersiveMCClient {
             IPN.ipnCompat = CompatModule.create(new IPNCompatImpl(), IPNCompat.class, IPN.compatData);
         }
 
+        if (CommonConstants.devFakeVRMode) {
+            DevVRState.clientInit();
+        }
+
         if (VRVerify.hasAPI) {
-            VRClientAPI.instance().addClientRegistrationHandler(event ->
-                    event.registerInteractModules(new BagOpenInteractModule()));
+            VR.ClientAPI.addClientRegistrationHandler(event ->
+                    event.registerInteractModules(new BagOpenInteractModule(), ChestLidInteractModule.INSTANCE));
         }
 
         // Add client tickers
