@@ -1,8 +1,8 @@
 package com.hammy275.immersivemc.common.ticker;
 
+import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.world.entity.player.Player;
-import org.vivecraft.api.VRAPI;
 import org.vivecraft.api.data.VRPose;
 import org.vivecraft.api.data.VRPoseHistory;
 
@@ -61,8 +61,8 @@ public class TickerInit {
 
     private static void tickTickers(Player player, List<AbstractTicker> tickers) {
         if (!VRVerify.playerInVR(player)) return;
-        VRPose pose = VRAPI.instance().getVRPose(player);
-        VRPoseHistory poseHistory = VRAPI.instance().getHistoricalVRPoses(player);
+        VRPose pose = VR.API.getVRPose(player);
+        VRPoseHistory poseHistory = VR.API.getHistoricalVRPoses(player);
         if (pose != null && poseHistory != null) {
             for (AbstractTicker ticker : tickers) {
                 ticker.doTick(player, pose, poseHistory);

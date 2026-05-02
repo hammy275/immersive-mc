@@ -1,12 +1,10 @@
 package com.hammy275.immersivemc.client.immersive_item;
 
-import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.client.immersive_item.info.AbstractHandImmersiveInfo;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VR;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
-import org.vivecraft.api.client.VRClientAPI;
 import org.vivecraft.api.data.VRBodyPartData;
 import org.vivecraft.api.data.VRPose;
 
@@ -34,7 +32,7 @@ public abstract class AbstractHandImmersive<I extends AbstractHandImmersiveInfo>
     }
 
     public boolean attemptLeftClickAll() {
-        VRPose pose = VRClientAPI.instance().getPreTickWorldPose();
+        VRPose pose = VR.ClientAPI.getPreTickWorldPose();
         for (I info : this.infos) {
             boolean handledClick = onLeftClick(info, pose.getHand(info.hand),
                     pose.getHand(Util.otherHand(info.hand)));
@@ -73,7 +71,7 @@ public abstract class AbstractHandImmersive<I extends AbstractHandImmersiveInfo>
         maybeRegister(InteractionHand.MAIN_HAND);
         maybeRegister(InteractionHand.OFF_HAND);
 
-        VRPose pose = VRClientAPI.instance().getPreTickWorldPose();
+        VRPose pose = VR.ClientAPI.getPreTickWorldPose();
 
         for (I info : infos) {
             this.tick(info, pose.getHand(info.hand),
@@ -82,7 +80,7 @@ public abstract class AbstractHandImmersive<I extends AbstractHandImmersiveInfo>
     }
 
     public void renderAll(PoseStack poseStack) {
-        VRPose pose = VRClientAPI.instance().getWorldRenderPose();
+        VRPose pose = VR.ClientAPI.getWorldRenderPose();
         for (I info : infos) {
             if (!info.shouldRemove && this.isEnabled()) {
                 this.render(info, poseStack, pose.getHand(info.hand));
