@@ -21,6 +21,7 @@ import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.BeaconConfirmPacket;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.mixin.BeaconBlockEntityMixin;
@@ -40,7 +41,6 @@ import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.vivecraft.api.client.VRClientAPI;
 import org.vivecraft.api.data.VRBodyPartData;
 
 import java.time.Instant;
@@ -107,7 +107,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
                         secondaryId = heldImages.stream().filter(imageInfo -> {
                             int held = (int) imageInfo.heldData;
                             return (held == 5 || held == -1) && info.hitboxes.get(7).box != null
-                                    && BoundingBox.contains(info.hitboxes.get(7).box, VRClientAPI.instance().getPreTickWorldPose().getHand(imageInfo.hand).getPos());
+                                    && BoundingBox.contains(info.hitboxes.get(7).box, VR.ClientAPI.getPreTickWorldPose().getHand(imageInfo.hand).getPos());
                         }).findFirst().map(heldImageImmersiveInfo -> (int) heldImageImmersiveInfo.heldData).orElse(-2);
                         if (secondaryId != -2) {
                             secondaryId = info.regenSelected ? Registry.MOB_EFFECT.getId(MobEffects.REGENERATION) : -1;
@@ -116,7 +116,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
                     effectId = heldImages.stream().filter(imageInfo -> {
                         int held = (int) imageInfo.heldData;
                         return held >= 0 && held <= 4 && info.hitboxes.get(7).box != null
-                                && BoundingBox.contains(info.hitboxes.get(7).box, VRClientAPI.instance().getPreTickWorldPose().getHand(imageInfo.hand).getPos());
+                                && BoundingBox.contains(info.hitboxes.get(7).box, VR.ClientAPI.getPreTickWorldPose().getHand(imageInfo.hand).getPos());
                     }).findFirst().map(heldImageImmersiveInfo -> (int) heldImageImmersiveInfo.heldData).orElse(-2);
                     if (effectId >= 0) {
                         info.effectSelected = effectId;
