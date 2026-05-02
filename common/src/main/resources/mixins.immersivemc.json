@@ -12,7 +12,13 @@
     "BeaconBlockEntityMixin",
     "BucketItemAccessor",
     "ButtonBlockMixin",
+    "ChestBlockEntityAccessor",
+    "ChestBlockEntityMixin",
+    "ChestLidControllerAccessor",
+    "ContainerOpenersCounterAccessor",
     "ContainerOpenersCounterMixin",
+    "EnderChestBlockEntityAccessor",
+    "EnderChestBlockEntityMixin",
     "EntityMixin",
     "ItemMixin",
     "LecternBlockEntityAccessor",
@@ -37,7 +43,7 @@
     "MinecraftMixin",
     "MinecraftMixinAccessor",
     "MultiPlayerGameModeMixin",
-    "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin",
-    "VRPlayerMixin"
+    "VRPlayerMixin",
+    "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin"
   ]
 }

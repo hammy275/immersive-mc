@@ -13,13 +13,16 @@ import com.hammy275.immersivemc.client.immersive.*;
 import com.hammy275.immersivemc.client.immersive.info.*;
 import com.hammy275.immersivemc.client.immersive_item.AbstractHandImmersive;
 import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
+import com.hammy275.immersivemc.client.interact_module.ChestLidInteractModule;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.ticker.TickerInit;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRVerify;
+import com.hammy275.immersivemc.common.vr.dev.DevVRState;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
 import com.hammy275.immersivemc.server.api_impl.SharedNetworkStoragesImpl;
 import net.minecraft.client.Minecraft;
@@ -40,7 +43,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.vivecraft.api.VRAPI;
 import org.vivecraft.api.data.VRBodyPartData;
 import org.vivecraft.api.data.VRPose;
 
@@ -140,6 +142,12 @@ public class ClientLogicSubscriber {
 
         if (VRVerify.hasAPI) {
             ClientVRSubscriber.immersiveTickVR(player);
+        }
+
+        ChestLidInteractModule.INSTANCE.removeInvalid();
+
+        if (CommonConstants.devFakeVRMode) {
+            DevVRState.clientTick();
         }
 
         // Get block that we're looking at
@@ -261,7 +269,7 @@ public class ClientLogicSubscriber {
                 singleton.tick(info);
                 if (info.hasHitboxes()) {
                     if (VRVerify.clientInVR()) {
-                        VRPose vrPose = VRAPI.instance().getVRPose(player);
+                        VRPose vrPose = VR.API.getVRPose(player);
                         for (InteractionHand hand : InteractionHand.values()) {
                             info.setSlotHovered(Util.getFirstIntersect(vrPose.getHand(hand).getPos(),
                                     info.getAllHitboxes().stream().map((box) -> box != null ? box.getHitbox() : null).toList()).orElse(-1), hand.ordinal());
@@ -308,7 +316,7 @@ public class ClientLogicSubscriber {
                 if (info.hasHitboxes()) {
                     boolean inBox = false;
                     if (VRVerify.clientInVR()) {
-                        VRPose vrPose = VRAPI.instance().getVRPose(Minecraft.getInstance().player);
+                        VRPose vrPose = VR.API.getVRPose(Minecraft.getInstance().player);
                         info.slotHovered = Util.getFirstIntersect(vrPose.getMainHand().getPos(),
                                 info.getAllHitboxes()).orElse(-1);
                         inBox = info.slotHovered != -1;
@@ -386,7 +394,7 @@ public class ClientLogicSubscriber {
                 for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
                     if (!(info instanceof InfoTriggerHitboxes)) break;
                     InfoTriggerHitboxes triggerInfo = (InfoTriggerHitboxes) info;
-                    VRBodyPartData data = VRAPI.instance().getVRPose(player).getHand(triggerInfo.getVRHand());
+                    VRBodyPartData data = VR.API.getVRPose(player).getHand(triggerInfo.getVRHand());
                     Optional<Integer> triggerHit = Util.getFirstIntersect(data.getPos(), triggerInfo.getTriggerHitboxes());
                     if (triggerHit.isPresent()) {
                         singleton.onAnyRightClick(info);
@@ -405,7 +413,7 @@ public class ClientLogicSubscriber {
 
             if (tileEnt instanceof ChestBlockEntity || tileEnt instanceof EnderChestBlockEntity) {
                 ChestInfo chestInfo = ImmersiveChest.findImmersive(tileEnt);
-                if (chestInfo != null && chestInfo.isOpen) {
+                if (chestInfo != null && chestInfo.isOpen()) {
                     chestInfo.nextRow();
                     return true;
                 }
@@ -563,7 +571,7 @@ public class ClientLogicSubscriber {
             if (isChest || isEnderChest) {
                 ChestInfo info = ImmersiveChest.findImmersive(player.level().getBlockEntity(pos));
                 if (info != null && (ActiveConfig.active().rightClickChestInteractions
-                        || (!VRVerify.clientInVR() && (((BlockHitResult) looking).getDirection() == Direction.UP) || info.isOpen)
+                        || (!VRVerify.clientInVR() && (((BlockHitResult) looking).getDirection() == Direction.UP) || info.isOpen())
                         || ActiveConfig.active().disableVanillaInteractionsForSupportedImmersives)) {
                     ImmersiveChest.openChest(info);
                     return ImmersiveClientConstants.instance().defaultCooldown();

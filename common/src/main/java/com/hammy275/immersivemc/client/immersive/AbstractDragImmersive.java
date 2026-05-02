@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.immersive.info.DragImmersiveInfo;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VR;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -13,7 +14,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
-import org.vivecraft.api.client.VRClientAPI;
 import org.vivecraft.api.data.VRBodyPartData;
 
 import java.util.ArrayList;
@@ -95,7 +95,7 @@ public abstract class AbstractDragImmersive implements Immersive<DragImmersiveIn
             makeHitboxes(info, Minecraft.getInstance().level);
         }
         for (InteractionHand interactionHand : InteractionHand.values()) {
-            VRBodyPartData hand = VRClientAPI.instance().getPreTickWorldPose().getHand(interactionHand);
+            VRBodyPartData hand = VR.ClientAPI.getPreTickWorldPose().getHand(interactionHand);
             int lastGrabbed = info.grabbedBox[interactionHand.ordinal()];
             int grabbed = Util.getFirstIntersect(hand.getPos(), info.getAllHitboxes().stream().map(HitboxInfo::getHitbox).toList()).orElse(-1);
             if ((lastGrabbed == info.startingHitboxIndex || info.startingHitboxIndex == -1) && grabbed > -1 && lastGrabbed != grabbed) {

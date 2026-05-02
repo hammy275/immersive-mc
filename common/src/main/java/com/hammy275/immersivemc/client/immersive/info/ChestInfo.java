@@ -1,15 +1,23 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.ClientUtil;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage;
+import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.packet.SelfHandlingNetworkStorageSyncPacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage.CHEST_OPEN_THRESHOLD;
 
 public class ChestInfo extends AbstractImmersiveInfo {
 
@@ -18,14 +26,11 @@ public class ChestInfo extends AbstractImmersiveInfo {
     public BlockEntity otherChest;
     public BlockPos otherPos = null;
     public Direction forward = null;
-    public boolean failRender = false; // Used for thread safety when changing `other`
     protected int rowNum = 0;
-    public boolean isOpen = false;
-    public double lastY0;
-    public double lastY1;
-    public AABB[] openCloseHitboxes = new AABB[]{null, null};
-    public Vec3[] openClosePositions = new Vec3[]{null, null};
+    public List<BoundingBox> openCloseHitboxes = new ArrayList<>();
+    public Vec3 openClosePosition = null;
     public int light = ClientUtil.maxLight;
+    private @Nullable ChestOpennessStorage opennessStorage = null;
 
     public ChestInfo(BlockEntity chest, BlockEntity otherChest) {
         super(chest.getBlockPos()); // Accounts for double chest
@@ -33,6 +38,8 @@ public class ChestInfo extends AbstractImmersiveInfo {
         this.otherChest = otherChest;
         if (this.otherChest != null) {
             this.otherPos = this.otherChest.getBlockPos();
+        } else {
+            this.otherPos = null;
         }
         for (int i = 0; i < 54; i++) {
             hitboxes.add(new HitboxItemPair(null, ItemStack.EMPTY, false));
@@ -63,5 +70,56 @@ public class ChestInfo extends AbstractImmersiveInfo {
     public boolean hasHitboxes() {
         return (hitboxes.get(8).box != null || hitboxes.get(17).box != null || hitboxes.get(26).box != null) &&
                 (this.otherChest == null || (hitboxes.get(35).box != null || hitboxes.get(44).box != null || hitboxes.get(53).box != null));
+    }
+
+    public boolean isOpen() {
+        return getDirectOpenness() >= CHEST_OPEN_THRESHOLD;
+    }
+
+    public boolean slotVisible(int slot) {
+        float openness = getDirectOpenness();
+        if (slot % 9 >= 6) { // Slot is in the front row
+            return openness >= CHEST_OPEN_THRESHOLD;
+        } else if (slot % 9 >= 3) { // Slot is in the middle row
+            return openness >= 0.3f;
+        } else { // Slot is in the back row
+            return openness >= 0.5f;
+        }
+    }
+
+    public void setOpennessStorage(ChestOpennessStorage opennessStorage) {
+        this.opennessStorage = opennessStorage;
+    }
+
+    public float getForcedOpenness() {
+        return opennessStorage == null ? -1 : opennessStorage.getOpenness();
+    }
+
+    public boolean takeControl(ChestOpennessStorage.AnimationState animationState) {
+        return opennessStorage != null && opennessStorage.takeControl(Minecraft.getInstance().player.getUUID(), animationState);
+    }
+
+    public void syncOpennessToServerIfDirty() {
+        if (!Minecraft.getInstance().player.getUUID().equals(opennessStorage.getControllingPlayerUUID())) {
+            throw new RuntimeException("Illegal state: Player should own chest before syncing to server.");
+        } else if (opennessStorage.isDirty()) {
+            Network.INSTANCE.sendToServer(new SelfHandlingNetworkStorageSyncPacket(opennessStorage));
+        }
+    }
+
+    public void setForcedOpenness(float forcedOpenness) {
+        opennessStorage.setOpenness(forcedOpenness);
+    }
+
+    /**
+     * Gets the openness from the chest, ignoring the forced openness. Mainly useful since the non-VR code path for
+     * opening/closing chests doesn't modify forcedOpenness.
+     * @return The openness of the chest as rendered in-world.
+     */
+    private float getDirectOpenness() {
+        if (chest instanceof LidBlockEntity lbe) {
+            return lbe.getOpenNess(1f);
+        }
+        return -1f;
     }
 }

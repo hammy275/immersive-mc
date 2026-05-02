@@ -15,6 +15,9 @@ import com.hammy275.immersivemc.common.immersive.ImmersiveChecker;
 import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.vr.VRVerify;
+import com.hammy275.immersivemc.mixin.ChestBlockEntityAccessor;
+import com.hammy275.immersivemc.mixin.ChestLidControllerAccessor;
+import com.hammy275.immersivemc.mixin.EnderChestBlockEntityAccessor;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -31,11 +34,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.RepeaterBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -58,6 +64,19 @@ public class Util {
     public static boolean hasTooLowVivecraftVersion() {
         // If missing Vivecraft or the API loaded successfully, we're on a compatible Vivecraft version
         return Platform.isModLoaded("vivecraft") && !VRVerify.hasAPI;
+    }
+
+    public static ChestLidControllerAccessor getChestLidController(BlockEntity blockEntity) {
+        if (blockEntity instanceof ChestBlockEntity) {
+            return (ChestLidControllerAccessor) ((ChestBlockEntityAccessor) blockEntity).immersiveMC$getChestLidController();
+        } else if (blockEntity instanceof EnderChestBlockEntity) {
+            return (ChestLidControllerAccessor) ((EnderChestBlockEntityAccessor) blockEntity).immersiveMC$getChestLidController();
+        } else if (false) {
+            // TODO: Lootr chest
+            throw new RuntimeException("Unimplemented");
+        } else {
+            throw new IllegalArgumentException("Can only get chest lid controller for chest!");
+        }
     }
 
     public static boolean blockIsActiveImmersive(Player player, BlockPos pos) {
@@ -308,10 +327,12 @@ public class Util {
         return res == -1 ? Optional.empty() : Optional.of(res);
     }
 
+    @Nullable
     public static ChestBlockEntity getOtherChest(ChestBlockEntity chest) {
         return getOtherChest(chest, true);
     }
 
+    @Nullable
     protected static ChestBlockEntity getOtherChest(ChestBlockEntity chest, boolean checkOther) {
         // Gets the chest this one is connected to. Can be null.
         if (chest == null) return null;
