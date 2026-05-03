@@ -1,14 +1,15 @@
 package com.hammy275.immersivemc.client.immersive.info.render_state;
 
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
+import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveRenderState;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 
 import java.util.List;
 import java.util.Objects;
 
-public class BuiltImmersiveRenderState<ER> implements ImmersiveRenderState {
+public class BuiltImmersiveRenderStateImpl<ER> implements BuiltImmersiveRenderState {
 
     public List<RelativeHitboxRenderState> hitboxes;
     public long ticksExisted;
@@ -17,6 +18,7 @@ public class BuiltImmersiveRenderState<ER> implements ImmersiveRenderState {
     public Direction immersiveDir;
     public AABB dragHitbox;
     public ER extraData;
+    public int[] slotsHovered;
 
     public boolean hasHitboxes() {
         return hitboxes.stream().anyMatch(Objects::nonNull);
@@ -24,7 +26,7 @@ public class BuiltImmersiveRenderState<ER> implements ImmersiveRenderState {
 
     @Override
     public List<BoundingBox> hitboxes() {
-        return hitboxes.stream().map(hitbox -> hitbox.aabb).toList();
+        return hitboxes.stream().map(hitbox -> (BoundingBox) hitbox.aabb).toList();
     }
 
     @Override
@@ -34,5 +36,6 @@ public class BuiltImmersiveRenderState<ER> implements ImmersiveRenderState {
 
     @Override
     public boolean isSlotHovered(int slot) {
+        return slotsHovered[0] == slot || slotsHovered[1] == slot || SwapTracker.slotHovered(this, slot)
     }
 }

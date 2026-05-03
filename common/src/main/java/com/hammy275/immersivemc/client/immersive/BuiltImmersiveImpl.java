@@ -5,12 +5,13 @@ import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersive;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveRenderState;
 import com.hammy275.immersivemc.api.client.immersive.HitboxPositioningMode;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfoImpl;
-import com.hammy275.immersivemc.client.immersive.info.render_state.BuiltImmersiveRenderState;
+import com.hammy275.immersivemc.client.immersive.info.render_state.BuiltImmersiveRenderStateImpl;
 import com.hammy275.immersivemc.client.immersive.info.render_state.RelativeHitboxRenderState;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
@@ -33,12 +34,13 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implements BuiltImmersive<E, ER, BuiltImmersiveRenderState<ER>, S> {
+public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implements BuiltImmersive<E, ER, S> {
 
     private final ImmersiveBuilderImpl<E, ER, S> builder;
     private final List<BuiltImmersiveInfo<E>> infos = new ArrayList<>();
@@ -148,50 +150,52 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
 
     @Override
     public boolean shouldRender(BuiltImmersiveRenderState<ER> renderStateIn) {
-        return renderStateIn.hasHitboxes() && renderStateIn.airCheckPassed;
+        BuiltImmersiveRenderStateImpl<ER> renderState = asImpl(renderStateIn);
+        return renderState.hasHitboxes() && renderState.airCheckPassed;
     }
 
     @Override
     public void render(BuiltImmersiveRenderState<ER> renderStateIn, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
-        float size = ImmersiveRenderHelpers.instance().getTransitionMultiplier(renderStateIn.ticksExisted) * builder.renderSize;
-        for (int i = 0; i < renderStateIn.hitboxes.size(); i++) {
-            RelativeHitboxRenderState hitbox = renderStateIn.hitboxes.get(i);
+        BuiltImmersiveRenderStateImpl<ER> renderState = asImpl(renderStateIn);
+        float size = ImmersiveRenderHelpers.instance().getTransitionMultiplier(renderState.ticksExisted) * builder.renderSize;
+        for (int i = 0; i < renderState.hitboxes.size(); i++) {
+            RelativeHitboxRenderState hitbox = renderState.hitboxes.get(i);
             // Built Immersives can give null hitboxes to skip rendering them. Need to make sure it's nonnull before
             // trying to render it.
             if (hitbox.aabb != null) {
                 Vec3 renderPos = hitbox.aabb.getCenter();
                 if (hitbox.holdsItems && (hitbox.renderItem || hitbox.item == null || hitbox.item.isEmpty())) {
-                    Float spinDegrees = hitbox.itemSpins ? renderStateIn.ticksExisted % 100f * 3.6f : null;
+                    Float spinDegrees = hitbox.itemSpins ? renderState.ticksExisted % 100f * 3.6f : null;
                     if (hitbox.item == null || hitbox.item.isEmpty()) {
                         if (hitbox.isInput && builder.slotRendersItemGuide.apply(renderStateIn, i)) {
-                            helpers.renderItemGuide(stack, hitbox.aabb, renderStateIn.isSlotHovered(i), renderStateIn.light);
+                            helpers.renderItemGuide(stack, hitbox.aabb, renderState.isSlotHovered(i), renderState.light);
                         }
                     } else {
                         float renderSize = size * hitbox.itemRenderSizeMultiplier;
-                        if (renderStateIn.isSlotHovered(i)) {
+                        if (renderState.isSlotHovered(i)) {
                             renderSize *= ImmersiveRenderHelpers.instance().hoverScaleSizeMultiplier();
                         }
-                        Direction itemDir = renderStateIn.immersiveDir;
+                        Direction itemDir = renderState.immersiveDir;
                         if (hitbox.itemRotationType != null) {
                             itemDir = hitbox.itemRotationType.transform(itemDir);
                         }
                         helpers.renderItem(hitbox.item, stack, renderSize,
-                                hitbox.aabb, hitbox.renderItemCount, renderStateIn.light, spinDegrees,
+                                hitbox.aabb, hitbox.renderItemCount, renderState.light, spinDegrees,
                                 itemDir, hitbox.upDownRenderDir);
                     }
                 } else {
                     helpers.renderHitbox(stack, hitbox.aabb);
                 }
                 for (TextData data : hitbox.textData) {
-                    helpers.renderText(data.text(), stack, renderPos.add(data.offset()), renderStateIn.light, 0.02f);
+                    helpers.renderText(data.text(), stack, renderPos.add(data.offset()), renderState.light, 0.02f);
                 }
             }
 
         }
-        if (renderStateIn.dragHitbox != null) {
-            helpers.renderHitbox(stack, renderStateIn.dragHitbox, false, 0, 1, 1);
+        if (renderState.dragHitbox != null) {
+            helpers.renderHitbox(stack, renderState.dragHitbox, false, 0, 1, 1);
         }
-        builder.extraRenderer.render(renderStateIn, stack, helpers, partialTick, renderStateIn.light);
+        builder.extraRenderer.render(renderStateIn, stack, helpers, partialTick, renderState.light);
     }
 
     @Override
@@ -365,6 +369,39 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
         return builder.vrOnly;
     }
 
+    @Override
+    public BuiltImmersiveRenderState<ER> createRenderState() {
+        BuiltImmersiveRenderStateImpl<ER> renderState = new BuiltImmersiveRenderStateImpl<ER>();
+        if (builder.extraInfoDataRenderStateClazz != null) {
+            try {
+                renderState.extraData = builder.extraInfoDataRenderStateClazz.getDeclaredConstructor().newInstance();
+            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        renderState.hitboxes = new ArrayList<>(builder.hitboxes.size());
+        for (int i = 0; i < builder.hitboxes.size(); i++) {
+            renderState.hitboxes.add(new RelativeHitboxRenderState());
+        }
+        return renderState;
+    }
+
+    @Override
+    public void extractRenderState(BuiltImmersiveInfo<E> infoIn, BuiltImmersiveRenderState<ER> renderStateIn, float partialTicks) {
+        BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
+        BuiltImmersiveRenderStateImpl<ER> renderState = asImpl(renderStateIn);
+        for (int i = 0; i < builder.hitboxes.size(); i++) {
+            builder.hitboxes.get(i).extractRenderState(renderState.hitboxes.get(i), partialTicks);
+        }
+        renderState.ticksExisted = info.ticksExisted;
+        renderState.airCheckPassed = info.airCheckPassed;
+        renderState.light = info.light;
+        renderState.immersiveDir = info.immersiveDir;
+        renderState.dragHitbox = info.dragHitbox;
+        builder.extraInfoDataRenderStateExtractor.accept(info.extraData, renderState.extraData);
+        renderState.slotsHovered = info.slotsHovered.clone();
+    }
+
     public <T extends NetworkStorage> ImmersiveBuilderImpl<E, ER, T> getBuilderClone(ImmersiveHandler<T> newHandler) {
         return builder.copy(newHandler);
     }
@@ -372,5 +409,10 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
     @SuppressWarnings("unchecked")
     private BuiltImmersiveInfoImpl<E> asImpl(BuiltImmersiveInfo<E> infoIn) {
         return (BuiltImmersiveInfoImpl<E>) infoIn;
+    }
+
+    @SuppressWarnings("unchecked")
+    private BuiltImmersiveRenderStateImpl<ER> asImpl(BuiltImmersiveRenderState<ER> renderStateIn) {
+        return (BuiltImmersiveRenderStateImpl<ER>) renderStateIn;
     }
 }

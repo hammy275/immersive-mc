@@ -134,7 +134,7 @@ public interface ImmersiveBuilder<E, ER, S extends NetworkStorage> {
      * @param itemGuideActive Function that returns whether the given slot is active given the info.
      * @return Builder object.
      */
-    public ImmersiveBuilder<E,ER,S> setShouldRenderItemGuideFunction(BiFunction<BuiltImmersiveInfo<E>, Integer, Boolean> itemGuideActive);
+    public ImmersiveBuilder<E,ER,S> setShouldRenderItemGuideFunction(BiFunction<BuiltImmersiveRenderState<ER>, Integer, Boolean> itemGuideActive);
 
     /**
      * Set the config screen info associated with this Immersive.
@@ -148,7 +148,7 @@ public interface ImmersiveBuilder<E, ER, S extends NetworkStorage> {
      * @param renderer Extra function to run when rendering, taking the info and the light for the Immersive.
      * @return Builder object.
      */
-    public ImmersiveBuilder<E,ER,S> setExtraRenderer(ExtraRenderer<E> renderer);
+    public ImmersiveBuilder<E,ER,S> setExtraRenderer(ExtraRenderer<ER> renderer);
 
     /**
      * Overwrites hitbox at index with a new hitbox. Useful when cloning.

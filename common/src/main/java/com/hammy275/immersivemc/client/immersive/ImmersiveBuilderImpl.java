@@ -37,9 +37,9 @@ public class ImmersiveBuilderImpl<E, ER, S extends NetworkStorage> implements Im
     BiFunction<BuiltImmersiveInfo<E>, Integer, Boolean> slotActive = null;
     Consumer<BuiltImmersiveInfo<E>> onRemove = (info) -> {};
     boolean blockRightClickWhenGUIClickDisabled = true;
-    BiFunction<BuiltImmersiveInfo<E>, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
+    BiFunction<BuiltImmersiveRenderState<ER>, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
     ImmersiveConfigScreenInfo configScreenInfo = null;
-    ExtraRenderer<E> extraRenderer = (info, stack, helpers, partialTick, light) -> {};
+    ExtraRenderer<ER> extraRenderer = (info, stack, helpers, partialTick, light) -> {};
     Function<BuiltImmersiveInfo<E>, AABB> dragHitboxCreator = null;
 
     public ImmersiveBuilderImpl(ImmersiveHandler<S> handler, @Nullable Class<E> extraInfoDataClazz, @Nullable Class<ER> extraInfoDataRenderStateClazz, @Nullable BiConsumer<E, ER> extraInfoDataRenderStateExtractor) {
@@ -191,7 +191,7 @@ public class ImmersiveBuilderImpl<E, ER, S extends NetworkStorage> implements Im
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilder<E,ER,S> setShouldRenderItemGuideFunction(BiFunction<BuiltImmersiveInfo<E>, Integer, Boolean> itemGuideActive) {
+    public ImmersiveBuilder<E,ER,S> setShouldRenderItemGuideFunction(BiFunction<BuiltImmersiveRenderState<ER>, Integer, Boolean> itemGuideActive) {
         this.slotRendersItemGuide = itemGuideActive;
         return this;
     }
@@ -203,7 +203,7 @@ public class ImmersiveBuilderImpl<E, ER, S extends NetworkStorage> implements Im
     }
 
     @Override
-    public ImmersiveBuilder<E, ER, S> setExtraRenderer(ExtraRenderer<E> renderer) {
+    public ImmersiveBuilder<E, ER, S> setExtraRenderer(ExtraRenderer<ER> renderer) {
         this.extraRenderer = renderer;
         return this;
     }

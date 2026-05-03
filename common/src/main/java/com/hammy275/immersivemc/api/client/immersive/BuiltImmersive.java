@@ -8,11 +8,9 @@ import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
  * can also be used to make new {@link ImmersiveBuilder}s that start as copies of this built Immersive.
  * @param <E> The type of the "extra data" stored on info instances of this Immersive.
  * @param <ER> The type of the extracted render state for the "extra data" stored on info instances of this Immersive.
- * @param <R> The type of extracted render state for the infos of this Immersive. The implementation of this type for
- *           built Immersives is not exposed via the API. TODO: Fix this.
  * @param <S> The type of storage to use for sending Immersive data over the network.
  */
-public interface BuiltImmersive<E, ER, R extends ImmersiveRenderState, S extends NetworkStorage> extends Immersive<BuiltImmersiveInfo<E>, R, S> {
+public interface BuiltImmersive<E, ER, S extends NetworkStorage> extends Immersive<BuiltImmersiveInfo<E>, BuiltImmersiveRenderState<ER>, S> {
 
     /**
      * Creates a clone of this Immersive for creating an Immersive similar to this one.
