@@ -33,6 +33,7 @@ import java.util.List;
  * alternatively, build one using an {@link ImmersiveBuilder}). When combined with a {@link ImmersiveHandler}, you have
  * a fully-functioning (block-based) Immersive!
  * @param <I> The {@link ImmersiveInfo} implementation this Immersive uses.
+ * @param <R> The render state implementation this Immersive uses. See {@link #extractRenderState(ImmersiveInfo, ImmersiveRenderState, float)}.
  * @param <S> The type of storage to use for sending Immersive data over the network.
  */
 public interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRenderState, S extends NetworkStorage> {

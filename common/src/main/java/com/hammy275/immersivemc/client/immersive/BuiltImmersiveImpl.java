@@ -10,6 +10,8 @@ import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfoImpl;
+import com.hammy275.immersivemc.client.immersive.info.render_state.BuiltImmersiveRenderState;
+import com.hammy275.immersivemc.client.immersive.info.render_state.RelativeHitboxRenderState;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
@@ -36,12 +38,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements BuiltImmersive<E, S> {
+public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implements BuiltImmersive<E, ER, BuiltImmersiveRenderState<ER>, S> {
 
-    private final ImmersiveBuilderImpl<E, S> builder;
+    private final ImmersiveBuilderImpl<E, ER, S> builder;
     private final List<BuiltImmersiveInfo<E>> infos = new ArrayList<>();
 
-    public BuiltImmersiveImpl(ImmersiveBuilderImpl<E, S> builder) {
+    public BuiltImmersiveImpl(ImmersiveBuilderImpl<E, ER, S> builder) {
         this.builder = builder;
     }
 
@@ -53,13 +55,6 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
     @Override
     public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
         return builder.configScreenInfo;
-    }
-
-    @Override
-    public boolean shouldRender(BuiltImmersiveInfo<E> infoIn) {
-        BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
-        return getHandler().isValidBlock(info.getBlockPosition(), Minecraft.getInstance().level) &&
-                        info.hasHitboxes() && info.airCheckPassed && builder.extraRenderReady.apply(info);
     }
 
     @Override
@@ -152,48 +147,51 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
     }
 
     @Override
-    public void render(BuiltImmersiveInfo<E> infoIn, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
-        BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
-        float size = ImmersiveRenderHelpers.instance().getTransitionMultiplier(info.ticksExisted) * builder.renderSize;
-        for (int i = 0; i < info.hitboxes.size(); i++) {
-            RelativeHitboxInfoImpl hitbox = info.hitboxes.get(i);
+    public boolean shouldRender(BuiltImmersiveRenderState<ER> renderStateIn) {
+        return renderStateIn.hasHitboxes() && renderStateIn.airCheckPassed;
+    }
+
+    @Override
+    public void render(BuiltImmersiveRenderState<ER> renderStateIn, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
+        float size = ImmersiveRenderHelpers.instance().getTransitionMultiplier(renderStateIn.ticksExisted) * builder.renderSize;
+        for (int i = 0; i < renderStateIn.hitboxes.size(); i++) {
+            RelativeHitboxRenderState hitbox = renderStateIn.hitboxes.get(i);
             // Built Immersives can give null hitboxes to skip rendering them. Need to make sure it's nonnull before
             // trying to render it.
-            if (hitbox.hasAABB()) {
-                AABB renderBox = hitbox.getRenderHitbox(partialTick);
-                Vec3 renderPos = renderBox.getCenter();
+            if (hitbox.aabb != null) {
+                Vec3 renderPos = hitbox.aabb.getCenter();
                 if (hitbox.holdsItems && (hitbox.renderItem || hitbox.item == null || hitbox.item.isEmpty())) {
-                    Float spinDegrees = hitbox.itemSpins ? info.ticksExisted % 100f * 3.6f : null;
+                    Float spinDegrees = hitbox.itemSpins ? renderStateIn.ticksExisted % 100f * 3.6f : null;
                     if (hitbox.item == null || hitbox.item.isEmpty()) {
-                        if (hitbox.isInput && builder.slotRendersItemGuide.apply(info, i)) {
-                            helpers.renderItemGuide(stack, renderBox, info.isSlotHovered(i), info.light);
+                        if (hitbox.isInput && builder.slotRendersItemGuide.apply(renderStateIn, i)) {
+                            helpers.renderItemGuide(stack, hitbox.aabb, renderStateIn.isSlotHovered(i), renderStateIn.light);
                         }
                     } else {
                         float renderSize = size * hitbox.itemRenderSizeMultiplier;
-                        if (info.isSlotHovered(i)) {
+                        if (renderStateIn.isSlotHovered(i)) {
                             renderSize *= ImmersiveRenderHelpers.instance().hoverScaleSizeMultiplier();
                         }
-                        Direction itemDir = info.immersiveDir;
+                        Direction itemDir = renderStateIn.immersiveDir;
                         if (hitbox.itemRotationType != null) {
                             itemDir = hitbox.itemRotationType.transform(itemDir);
                         }
                         helpers.renderItem(hitbox.item, stack, renderSize,
-                                renderBox, hitbox.renderItemCount, info.light, spinDegrees,
-                                itemDir, hitbox.getUpDownRenderDir());
+                                hitbox.aabb, hitbox.renderItemCount, renderStateIn.light, spinDegrees,
+                                itemDir, hitbox.upDownRenderDir);
                     }
                 } else {
-                    helpers.renderHitbox(stack, renderBox);
+                    helpers.renderHitbox(stack, hitbox.aabb);
                 }
-                for (TextData data : hitbox.getTextData()) {
-                    helpers.renderText(data.text(), stack, renderPos.add(data.offset()), info.light, 0.02f);
+                for (TextData data : hitbox.textData) {
+                    helpers.renderText(data.text(), stack, renderPos.add(data.offset()), renderStateIn.light, 0.02f);
                 }
             }
 
         }
-        if (info.dragHitbox != null) {
-            helpers.renderHitbox(stack, info.dragHitbox, false, 0, 1, 1);
+        if (renderStateIn.dragHitbox != null) {
+            helpers.renderHitbox(stack, renderStateIn.dragHitbox, false, 0, 1, 1);
         }
-        builder.extraRenderer.render(infoIn, stack, helpers, partialTick, info.light);
+        builder.extraRenderer.render(renderStateIn, stack, helpers, partialTick, renderStateIn.light);
     }
 
     @Override
@@ -367,7 +365,7 @@ public final class BuiltImmersiveImpl<E, S extends NetworkStorage> implements Bu
         return builder.vrOnly;
     }
 
-    public <T extends NetworkStorage> ImmersiveBuilderImpl<E, T> getBuilderClone(ImmersiveHandler<T> newHandler) {
+    public <T extends NetworkStorage> ImmersiveBuilderImpl<E, ER, T> getBuilderClone(ImmersiveHandler<T> newHandler) {
         return builder.copy(newHandler);
     }
 
