@@ -398,7 +398,9 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
         renderState.light = info.light;
         renderState.immersiveDir = info.immersiveDir;
         renderState.dragHitbox = info.dragHitbox;
-        builder.extraInfoDataRenderStateExtractor.accept(info.extraData, renderState.extraData);
+        if (builder.extraInfoDataRenderStateExtractor != null) {
+            builder.extraInfoDataRenderStateExtractor.accept(info.extraData, renderState.extraData);
+        }
         renderState.slotsHovered = info.slotsHovered.clone();
     }
 

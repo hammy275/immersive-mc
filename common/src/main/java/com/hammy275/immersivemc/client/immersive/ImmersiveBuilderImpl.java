@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.*;
 
 public class ImmersiveBuilderImpl<E, ER, S extends NetworkStorage> implements ImmersiveBuilder<E, ER, S> {
@@ -31,8 +32,8 @@ public class ImmersiveBuilderImpl<E, ER, S extends NetworkStorage> implements Im
     boolean vrOnly = false;
     List<Vec3i> airCheckPositionOffsets = new ArrayList<>();
     Class<E> extraInfoDataClazz;
-    Class<ER> extraInfoDataRenderStateClazz;
-    BiConsumer<E, ER> extraInfoDataRenderStateExtractor;
+    @Nullable Class<ER> extraInfoDataRenderStateClazz;
+    @Nullable BiConsumer<BuiltImmersiveInfo<E>, ER> extraInfoDataRenderStateExtractor;
     BiConsumer<S, BuiltImmersiveInfo<E>> extraStorageConsumer = null;
     BiFunction<BuiltImmersiveInfo<E>, Integer, Boolean> slotActive = null;
     Consumer<BuiltImmersiveInfo<E>> onRemove = (info) -> {};
@@ -42,13 +43,16 @@ public class ImmersiveBuilderImpl<E, ER, S extends NetworkStorage> implements Im
     ExtraRenderer<ER> extraRenderer = (info, stack, helpers, partialTick, light) -> {};
     Function<BuiltImmersiveInfo<E>, AABB> dragHitboxCreator = null;
 
-    public ImmersiveBuilderImpl(ImmersiveHandler<S> handler, @Nullable Class<E> extraInfoDataClazz, @Nullable Class<ER> extraInfoDataRenderStateClazz, @Nullable BiConsumer<E, ER> extraInfoDataRenderStateExtractor) {
+    public ImmersiveBuilderImpl(ImmersiveHandler<S> handler, @Nullable Class<E> extraInfoDataClazz, @Nullable Class<ER> extraInfoDataRenderStateClazz, @Nullable BiConsumer<BuiltImmersiveInfo<E>, ER> extraInfoDataRenderStateExtractor) {
         this.handler = handler;
         this.extraInfoDataClazz = extraInfoDataClazz;
         this.extraInfoDataRenderStateClazz = extraInfoDataRenderStateClazz;
         this.extraInfoDataRenderStateExtractor = extraInfoDataRenderStateExtractor;
         if (handler instanceof MultiblockImmersiveHandler<?>) {
             throw new IllegalArgumentException("Cannot create an ImmersiveBuilder with a MultiblockImmersiveHandler.");
+        }
+        if (Objects.isNull(extraInfoDataRenderStateClazz) != Objects.isNull(extraInfoDataRenderStateExtractor)) {
+            throw new IllegalArgumentException("extraInfoDataRenderStateClazz and extraInfoDataRenderStateExtractor must both be null or both be non-null.");
         }
     }
 
@@ -287,7 +291,7 @@ public class ImmersiveBuilderImpl<E, ER, S extends NetworkStorage> implements Im
     }
 
     @Override
-    public <F, FR, T extends NetworkStorage> ImmersiveBuilderImpl<F, FR, T> copy(ImmersiveHandler<T> newHandler, Class<F> newExtraInfoDataClass, Class<FR> newExtraInfoDataRenderStateClass, BiConsumer<F, FR> newExtraInfoDataRenderStateExtractor) {
+    public <F, FR, T extends NetworkStorage> ImmersiveBuilderImpl<F, FR, T> copy(ImmersiveHandler<T> newHandler, Class<F> newExtraInfoDataClass, Class<FR> newExtraInfoDataRenderStateClass, BiConsumer<BuiltImmersiveInfo<F>, FR> newExtraInfoDataRenderStateExtractor) {
         ImmersiveBuilderImpl<F, FR, T> clone = new ImmersiveBuilderImpl<>(newHandler, newExtraInfoDataClass, newExtraInfoDataRenderStateClass, newExtraInfoDataRenderStateExtractor);
         clone.renderSize = this.renderSize;
         clone.hitboxes = new ArrayList<>(this.hitboxes);

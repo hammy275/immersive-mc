@@ -40,7 +40,7 @@ public class EnchantTableRendererMixin {
                 Player player = Minecraft.getInstance().level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 3.0, false);
                 if (player != null) {
                     BuiltImmersiveInfo<EnchantingData> info = infoOpt.get();
-                    ClientBookData bookData = info.getExtraData().getBookData(info);
+                    ClientBookData bookData = info.getExtraData().getBookData(info.getItem(0));
                     if (bookData != null) {
                         ci.cancel();
                     }

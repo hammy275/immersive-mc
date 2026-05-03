@@ -39,13 +39,15 @@ public interface ImmersiveBuilder<E, ER, S extends NetworkStorage> {
      * @param handler The handler for the Immersive.
      * @param extraInfoDataClass A class with an empty constructor that holds extra data for each info instance.
      * @param extraInfoDataRenderStateClass A class with an empty constructor that holds the render-specific extra data
-     *                                      for each info instance.
-     * @param extraInfoDataRenderStateExtractor A class for extracting render state from the extra data.
+     *                                      for each info instance. If null, extra data will not be available when
+     *                                      rendering.
+     * @param extraInfoDataRenderStateExtractor A class for extracting render state from the info. Should be null
+     *                                          only if {@code extraInfoDataRenderStateClass} is also null.
      * @return A builder object.
      * @throws IllegalArgumentException If provided a MultiblockImmersiveHandler, as it is unsupported with
      * ImmersiveBuilders.
      */
-    public static <E, ER, NS extends NetworkStorage> ImmersiveBuilder<E, ER, NS> create(ImmersiveHandler<NS> handler, Class<E> extraInfoDataClass, Class<ER> extraInfoDataRenderStateClass, BiConsumer<E, ER> extraInfoDataRenderStateExtractor) throws IllegalArgumentException {
+    public static <E, ER, NS extends NetworkStorage> ImmersiveBuilder<E, ER, NS> create(ImmersiveHandler<NS> handler, Class<E> extraInfoDataClass, @Nullable Class<ER> extraInfoDataRenderStateClass, @Nullable BiConsumer<BuiltImmersiveInfo<E>, ER> extraInfoDataRenderStateExtractor) throws IllegalArgumentException {
         return new ImmersiveBuilderImpl<>(handler, extraInfoDataClass, extraInfoDataRenderStateClass, extraInfoDataRenderStateExtractor);
     }
 
@@ -205,11 +207,11 @@ public interface ImmersiveBuilder<E, ER, S extends NetworkStorage> {
      * handler, and the Immersive config info to null/no-op on the copy.
      * @return A best-effort copy of this ImmersiveBuilder.
      */
-    public <F, FR, T extends NetworkStorage> ImmersiveBuilder<F, FR, T> copy(ImmersiveHandler<T> newHandler, Class<F> newExtraInfoDataClass, Class<FR> newExtraInfoDataRenderStateClass, BiConsumer<F, FR> newExtraInfoDataRenderStateExtractor);
+    public <F, FR, T extends NetworkStorage> ImmersiveBuilder<F, FR, T> copy(ImmersiveHandler<T> newHandler, Class<F> newExtraInfoDataClass, Class<FR> newExtraInfoDataRenderStateClass, BiConsumer<BuiltImmersiveInfo<F>, FR> newExtraInfoDataRenderStateExtractor);
 
     /**
      * Builds this Immersive.
      * @return The built Immersive from this builder.
      */
-    public BuiltImmersive<E, ?, S> build();
+    public BuiltImmersive<E, ER, S> build();
 }

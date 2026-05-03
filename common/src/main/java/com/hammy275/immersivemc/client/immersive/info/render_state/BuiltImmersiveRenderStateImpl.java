@@ -36,6 +36,11 @@ public class BuiltImmersiveRenderStateImpl<ER> implements BuiltImmersiveRenderSt
 
     @Override
     public boolean isSlotHovered(int slot) {
-        return slotsHovered[0] == slot || slotsHovered[1] == slot || SwapTracker.slotHovered(this, slot)
+        return slotsHovered[0] == slot || slotsHovered[1] == slot || SwapTracker.slotHovered(this, slot);
+    }
+
+    @Override
+    public Object getExtraRenderData() {
+        return extraData;
     }
 }
