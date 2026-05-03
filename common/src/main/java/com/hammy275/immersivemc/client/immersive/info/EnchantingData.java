@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.book.BookRenderable;
 import com.hammy275.immersivemc.client.immersive.book.ClientBookData;
 import com.hammy275.immersivemc.client.immersive.book.WrittenBookHelpers;
+import com.hammy275.immersivemc.client.immersive.info.render_state.BookDataRenderState;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.compat.apotheosis.ApothStats;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
@@ -143,7 +144,7 @@ public class EnchantingData {
         private static final float maxXY = 255f;
 
         @Override
-        public void render(PoseStack stack, ClientBookData data, boolean leftPage, int light, PosRot bookPosRot) {
+        public void render(PoseStack stack, BookDataRenderState renderState, boolean leftPage, int light, PosRot bookPosRot) {
             if (leftPage || info.getItem(0).isEmpty()) return;
             if (fullLocation == null) {
                 String modId = Platform.isModLoaded("zenith") ? "zenith" : "apothic_enchanting";
@@ -209,8 +210,13 @@ public class EnchantingData {
         }
 
         @Override
-        public Vec3 getStartOffset(ClientBookData data, boolean leftPage, PosRot bookPosRot) {
+        public Vec3 getStartOffset(BookDataRenderState renderState, boolean leftPage, PosRot bookPosRot) {
             return offset;
+        }
+
+        @Override
+        public BookRenderable getRenderingCopy() {
+            return this;
         }
     }
 }
