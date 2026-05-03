@@ -65,13 +65,13 @@ public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<Comm
     }
 
     @Override
-    public boolean shouldRender(LecternInfo info) {
-        return !info.lecternData.book.isEmpty() && info.light > -1 && getHandler().isValidBlock(info.getBlockPosition(), Minecraft.getInstance().level);
+    public boolean shouldRender(LecternData<CommonBookData> renderState) {
+        return !renderState.lecternData.book.isEmpty() && renderState.light > -1 && getHandler().isValidBlock(renderState.getBlockPosition(), Minecraft.getInstance().level);
     }
 
     @Override
-    public void render(LecternInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
-        info.lecternData.bookData.render(stack, info.light, info.lecternData.getLecternPosRot(info.getBlockPosition()));
+    public void render(LecternData<CommonBookData> renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
+        renderState.lecternData.bookData.render(stack, renderState.light, renderState.lecternData.getLecternPosRot(renderState.getBlockPosition()));
     }
 
     @Override

@@ -35,7 +35,7 @@ import java.util.List;
  * @param <I> The {@link ImmersiveInfo} implementation this Immersive uses.
  * @param <S> The type of storage to use for sending Immersive data over the network.
  */
-public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
+public interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRenderState, S extends NetworkStorage> {
 
     /**
      * Get the collection of ImmersiveInfos currently active for this Immersive. The contents of the list may be
@@ -108,23 +108,23 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
     public boolean isInputHitbox(I info, int hitboxIndex);
 
     /**
-     * Whether the provided info should render in the world. It's good to return false here if this Immersive
+     * Whether the provided render state should render in the world. It's good to return false here if this Immersive
      * does not have its data ready for rendering.
-     * @param info The info to check.
-     * @return Whether the provided info should render to the world, which includes calling
-     *         {@link #render(ImmersiveInfo, PoseStack, ImmersiveRenderHelpers, float)}.
+     * @param renderState The render state to check.
+     * @return Whether the provided render state should render to the world, which includes calling
+     * {@link #render(ImmersiveRenderState, PoseStack, ImmersiveRenderHelpers, float)}.
      */
-    public boolean shouldRender(I info);
+    public boolean shouldRender(R renderState);
 
     /**
-     * Render the provided info.
+     * Render the provided render state.
      *
-     * @param info The info to render.
+     * @param renderState The render state to render.
      * @param stack The pose stack being rendered with.
      * @param helpers Some helper functions for rendering.
      * @param partialTick The fraction of time between the last tick and the current tick.
      */
-    public void render(I info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick);
+    public void render(R renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick);
 
     /**
      * @return The {@link ImmersiveHandler} this Immersive uses.
@@ -167,6 +167,21 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
      *         method.
      */
     public boolean isVROnly();
+
+    /**
+     * Creates a new render state not populated with any rendering-related details.
+     * @return Created render state, as described.
+     */
+    public R createRenderState();
+
+    /**
+     * Extract render state from the info into the provided render state object.
+     *
+     * @param info Info to extract render state from.
+     * @param renderState Render state to populate from the info.
+     * @param partialTicks The fraction of time between the last tick and the current tick.
+     */
+    public void extractRenderState(I info, R renderState, float partialTicks);
 
     /**
      * This is the same as {@link #tick(ImmersiveInfo)}, but called once per tick, instead of called once per tick

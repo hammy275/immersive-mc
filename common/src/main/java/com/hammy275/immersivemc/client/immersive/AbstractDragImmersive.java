@@ -72,16 +72,16 @@ public abstract class AbstractDragImmersive implements Immersive<DragImmersiveIn
     }
 
     @Override
-    public boolean shouldRender(DragImmersiveInfo info) {
+    public boolean shouldRender(NullStorage renderState) {
         return true;
     }
 
     @Override
-    public void render(DragImmersiveInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
-        for (int i = 0; i < info.hitboxes.size(); i++) {
-            HitboxInfo hitbox = info.hitboxes.get(i);
+    public void render(NullStorage renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
+        for (int i = 0; i < renderState.hitboxes.size(); i++) {
+            HitboxInfo hitbox = renderState.hitboxes.get(i);
             AutoDragSettings autoDrag = autoDragSettings();
-            float blue = info.startingHitboxIndex != i ? 1 : 0;
+            float blue = renderState.startingHitboxIndex != i ? 1 : 0;
             float red = !autoDrag.nonInteractables.contains(i) ? blue : 0;
             helpers.renderHitbox(stack, hitbox.getHitbox(), false, red, 1, blue);
         }

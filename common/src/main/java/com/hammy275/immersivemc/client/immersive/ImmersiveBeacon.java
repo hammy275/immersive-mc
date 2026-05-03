@@ -11,6 +11,7 @@ import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.client.immersive.info.HitboxItemPair;
+import com.hammy275.immersivemc.client.immersive.info.render_state.BeaconRenderState;
 import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
 import com.hammy275.immersivemc.client.immersive_item.info.HeldImageImmersiveInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
@@ -47,7 +48,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage> {
+public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconRenderState, BeaconStorage> {
 
     private static final double effectHitboxSize = 0.2;
     private static final double displayHitboxSize = 0.2;
@@ -165,61 +166,60 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
     }
 
     @Override
-    public boolean shouldRender(BeaconInfo info) {
-        return info.lastPlayerDir != null && info.areaAboveIsAir && info.hasHitboxes();
+    public boolean shouldRender(BeaconRenderState renderState) {
+        return renderState.lastPlayerDir != null && renderState.areaAboveIsAir && renderState.hasHitboxes();
     }
 
     @Override
-    public void render(BeaconInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
-        helpers.renderItemWithInfo(info.hitboxes.get(8).item, stack, ClientConstants.itemScaleSizeBeacon,
-                false, info.light, info, true, 8, null,
-                info.lastPlayerDir.getOpposite(), null);
+    public void render(BeaconRenderState renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
+        helpers.renderItemWithRenderState(renderState.items.get(8), stack, ClientConstants.itemScaleSizeBeacon,
+                false, renderState.light, renderState, true, 8, null,
+                renderState.lastPlayerDir.getOpposite(), null);
 
-        float transitionMultiplier = helpers.getTransitionMultiplier(info.getTicksExisted());
+        float transitionMultiplier = helpers.getTransitionMultiplier(renderState.ticksExisted);
 
         float effectSize = (float) effectHitboxSize * transitionMultiplier;
-        for (int i = 0; i < info.hitboxes.size() - 1; i++) {
-            HitboxItemPair hitbox = info.hitboxes.get(i);
-            if (hitbox.box != null) {
-                BoundingBox renderHitbox = hitbox.getRenderHitbox(partialTick);
-                helpers.renderHitbox(stack, renderHitbox);
+        for (int i = 0; i < renderState.hitboxes.size() - 1; i++) {
+            BoundingBox box = renderState.hitboxes.get(i);
+            if (box != null) {
+                helpers.renderHitbox(stack, box);
                 if (i <= 4) {
                     helpers.renderImage(stack, effectLocations[i],
-                            BoundingBox.getCenter(renderHitbox).add(0, -0.05, 0),
-                            info.effectSelected == i && !useGrabBeacon() ? effectSize * 1.5f : info.isSlotHovered(i) ? effectSize * 1.25f : effectSize,
-                            info.light, info.lastPlayerDir);
+                            BoundingBox.getCenter(box).add(0, -0.05, 0),
+                            renderState.effectSelected == i && !useGrabBeacon() ? effectSize * 1.5f : renderState.isSlotHovered(i) ? effectSize * 1.25f : effectSize,
+                            renderState.light, renderState.lastPlayerDir);
                 }
             }
         }
 
         float displaySize = (float) displayHitboxSize * transitionMultiplier;
 
-        if (info.effectSelected != -1 && !useGrabBeacon()) {
-            helpers.renderImage(stack, effectLocations[info.effectSelected], info.effectSelectedDisplayPos.add(0, -0.05, 0),
-                    displaySize, info.light, info.lastPlayerDir);
+        if (renderState.effectSelected != -1 && !useGrabBeacon()) {
+            helpers.renderImage(stack, effectLocations[renderState.effectSelected], renderState.effectSelectedDisplayPos.add(0, -0.05, 0),
+                    displaySize, renderState.light, renderState.lastPlayerDir);
         }
 
         for (int i = 5; i <= 6; i++) {
-            HitboxItemPair hitbox = info.hitboxes.get(i);
-            if (hitbox.box != null) {
+            BoundingBox box = renderState.hitboxes.get(i);
+            if (box != null) {
                 helpers.renderImage(stack, i == 5 ? regenerationLocation : addLocation,
-                        BoundingBox.getCenter(hitbox.box).add(0, -0.05, 0),
-                        info.isSlotHovered(i) ? displaySize * 1.25f : displaySize,
-                        info.light, info.lastPlayerDir);
+                        BoundingBox.getCenter(box).add(0, -0.05, 0),
+                        renderState.isSlotHovered(i) ? displaySize * 1.25f : displaySize,
+                        renderState.light, renderState.lastPlayerDir);
             }
         }
 
-        HitboxItemPair hitbox7 = info.hitboxes.get(7);
-        if (hitbox7.box != null && info.isEffectSelected()) {
+        BoundingBox box7 = renderState.hitboxes.get(7);
+        if (box7 != null && renderState.isEffectSelected()) {
             if (useGrabBeacon()) {
-                helpers.renderHitbox(stack, hitbox7.box);
-            } else if (info.isReadyForConfirm()) {
-                helpers.renderImage(stack, confirmLocation, BoundingBox.getCenter(hitbox7.box).add(0, -0.1, 0),
-                        info.isSlotHovered(7) ? ClientConstants.itemScaleSizeBeacon * 1.25f : ClientConstants.itemScaleSizeBeacon,
-                        info.light, info.lastPlayerDir);
+                helpers.renderHitbox(stack, box7);
+            } else if (renderState.isReadyForConfirm()) {
+                helpers.renderImage(stack, confirmLocation, BoundingBox.getCenter(box7).add(0, -0.1, 0),
+                        renderState.isSlotHovered(7) ? ClientConstants.itemScaleSizeBeacon * 1.25f : ClientConstants.itemScaleSizeBeacon,
+                        renderState.light, renderState.lastPlayerDir);
             }
 
-            Direction playerForward = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, info.getBlockPosition()).getOpposite();
+            Direction playerForward = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, renderState.pos).getOpposite();
             double xMult = 0;
             double zMult = 0;
             if (playerForward.getUnitVec3i().getX() != 0) {
@@ -229,16 +229,16 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
             }
             if (!useGrabBeacon()) {
                 helpers.renderHitbox(stack,
-                        AABB.ofSize(info.effectSelectedDisplayPos, displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
+                        AABB.ofSize(renderState.effectSelectedDisplayPos, displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
                         true, 0f, 1f, 0f);
-                if (info.regenSelected && info.hitboxes.get(5).box != null) {
+                if (renderState.regenSelected && renderState.hitboxes.get(5) != null) {
                     helpers.renderHitbox(stack,
-                            AABB.ofSize(BoundingBox.getCenter(info.hitboxes.get(5).box),
+                            AABB.ofSize(BoundingBox.getCenter(renderState.hitboxes.get(5)),
                                     displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
                             true, 0f, 1f, 0f);
-                } else if (!info.regenSelected && info.hitboxes.get(6).box != null) {
+                } else if (!renderState.regenSelected && renderState.hitboxes.get(6) != null) {
                     helpers.renderHitbox(stack,
-                            AABB.ofSize(BoundingBox.getCenter(info.hitboxes.get(6).box),
+                            AABB.ofSize(BoundingBox.getCenter(renderState.hitboxes.get(6)),
                                     displayHitboxSize * xMult, displayHitboxSize, displayHitboxSize * zMult),
                             true, 0f, 1f, 0f);
                 }
@@ -271,6 +271,22 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconStorage
     @Override
     public boolean isVROnly() {
         return false;
+    }
+
+    @Override
+    public BeaconRenderState createRenderState() {
+        return new BeaconRenderState();
+    }
+
+    @Override
+    public void extractRenderState(BeaconInfo info, BeaconRenderState renderState, float partialTicks) {
+        super.extractRenderState(info, renderState, partialTicks);
+        renderState.lastPlayerDir = info.lastPlayerDir;
+        renderState.areaAboveIsAir = info.areaAboveIsAir;
+        renderState.light = info.light;
+        renderState.effectSelected = info.effectSelected;
+        renderState.effectSelectedDisplayPos = info.effectSelectedDisplayPos;
+        renderState.regenSelected = info.regenSelected;
     }
 
     protected void setHitboxesAndPositions(BeaconInfo info) {
