@@ -156,7 +156,7 @@ public class SwapTracker {
         DRAG
     }
 
-    protected record LastImmersive<I extends ImmersiveInfo>(Immersive<I, ?> immersive, I info) {
+    protected record LastImmersive<I extends ImmersiveInfo>(Immersive<I, ?, ?> immersive, I info) {
 
         public int doHitboxInteract(List<Integer> slots, InteractionHand hand, int currentCooldown, boolean leftClickDown) {
             if (currentCooldown <= 0) {

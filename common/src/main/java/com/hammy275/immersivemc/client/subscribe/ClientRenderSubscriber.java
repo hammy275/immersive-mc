@@ -46,7 +46,7 @@ public class ClientRenderSubscriber {
     public static void onWorldRender(PoseStack stack) {
         setRenderColors();
         try {
-            for (Immersive<?, ?> singleton : Immersives.IMMERSIVES) {
+            for (Immersive<?, ?, ?> singleton : Immersives.IMMERSIVES) {
                 renderInfos(singleton, stack);
             }
             for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
@@ -105,7 +105,7 @@ public class ClientRenderSubscriber {
         cycleProgressRangedGrab = 0;
     }
 
-    protected static <I extends ImmersiveInfo> void renderInfos(Immersive<I, ?> singleton,
+    protected static <I extends ImmersiveInfo> void renderInfos(Immersive<I, ?, ?> singleton,
                                                                 PoseStack stack) {
         try {
             if (singleton.isVROnly() && !VRVerify.clientInVR()) {
