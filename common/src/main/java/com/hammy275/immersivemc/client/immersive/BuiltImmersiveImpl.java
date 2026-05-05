@@ -393,6 +393,7 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
         for (int i = 0; i < builder.hitboxes.size(); i++) {
             builder.hitboxes.get(i).extractRenderState(renderState.hitboxes.get(i), partialTicks);
         }
+        renderState.pos = info.getBlockPosition();
         renderState.ticksExisted = info.ticksExisted;
         renderState.airCheckPassed = info.airCheckPassed;
         renderState.light = info.light;

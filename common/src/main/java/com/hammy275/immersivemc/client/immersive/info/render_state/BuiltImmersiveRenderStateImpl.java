@@ -3,15 +3,17 @@ package com.hammy275.immersivemc.client.immersive.info.render_state;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveRenderState;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 
 import java.util.List;
 import java.util.Objects;
 
-public class BuiltImmersiveRenderStateImpl<ER> implements BuiltImmersiveRenderState {
+public class BuiltImmersiveRenderStateImpl<ER> implements BuiltImmersiveRenderState<ER> {
 
     public List<RelativeHitboxRenderState> hitboxes;
+    public BlockPos pos;
     public long ticksExisted;
     public boolean airCheckPassed;
     public int light;
@@ -40,7 +42,12 @@ public class BuiltImmersiveRenderStateImpl<ER> implements BuiltImmersiveRenderSt
     }
 
     @Override
-    public Object getExtraRenderData() {
+    public BlockPos getBlockPos() {
+        return pos;
+    }
+
+    @Override
+    public ER getExtraRenderData() {
         return extraData;
     }
 }
