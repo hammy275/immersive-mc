@@ -128,7 +128,7 @@ public class ClientLogicSubscriber {
 
         TickerInit.tickClient(player);
 
-        for (Immersive<? extends ImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
+        for (Immersive<? extends ImmersiveInfo, ?, ?> singleton : Immersives.IMMERSIVES) {
             tickInfos(singleton, player);
         }
         for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
@@ -202,7 +202,7 @@ public class ClientLogicSubscriber {
             if (looking != null && looking.getType() == HitResult.Type.BLOCK && ActiveConfig.active().disableVanillaInteractionsForSupportedImmersives) {
                 BlockPos pos = ((BlockHitResult) looking).getBlockPos();
                 // No similar check for AbstractPlayerAttachmentImmersive, since those aren't tied to blocks
-                for (Immersive<? extends ImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
+                for (Immersive<? extends ImmersiveInfo, ?, ?> singleton : Immersives.IMMERSIVES) {
                     // Don't bother checking this immersive if not in VR and immersive is VR only. Never skip those!
                     if (singleton.isVROnly() && !VRVerify.clientInVR()) {
                         continue;
@@ -238,7 +238,7 @@ public class ClientLogicSubscriber {
         // incoming player is a ServerPlayer, while Minecraft.getInstance().player is a local player (of course).
         if (Minecraft.getInstance().player == null ||
                 Minecraft.getInstance().player.getGameProfile().id().equals(player.getGameProfile().id())) {
-            for (Immersive<? extends ImmersiveInfo, ?> singleton : Immersives.IMMERSIVES) {
+            for (Immersive<? extends ImmersiveInfo, ?, ?> singleton : Immersives.IMMERSIVES) {
                 singleton.getTrackedObjects().clear();
             }
             for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {

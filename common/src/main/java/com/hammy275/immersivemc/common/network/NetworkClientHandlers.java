@@ -96,7 +96,7 @@ public class NetworkClientHandlers {
     @SuppressWarnings("unchecked")
     private static <I extends ImmersiveInfo, NS extends NetworkStorage> void processStorageFromNetwork(Immersive<?, ?, ?> immersive,
                                                                                                        I info, NS storage) {
-        Immersive<I, NS> immersiveCast = (Immersive<I, NS>) immersive;
+        Immersive<I, ?, NS> immersiveCast = (Immersive<I, ?, NS>) immersive;
         immersiveCast.processStorageFromNetwork(info, storage);
     }
 

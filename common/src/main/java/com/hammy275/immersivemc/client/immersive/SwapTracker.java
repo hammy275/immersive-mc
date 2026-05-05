@@ -56,7 +56,7 @@ public class SwapTracker {
      * @param inputHitbox  Input hitbox being interacted with. Should be negative if not interacting with one.
      * @param inDragHitbox Whether we're currently in the drag hitbox. Should be false if dragging is disabled.
      */
-    public <I extends ImmersiveInfo> void tick(@Nullable Immersive<I, ?> immersive, @Nullable I info, int inputHitbox, boolean inDragHitbox) {
+    public <I extends ImmersiveInfo> void tick(@Nullable Immersive<I, ?, ?> immersive, @Nullable I info, int inputHitbox, boolean inDragHitbox) {
         // Update state machine
         lastTickWasIdle = false;
         if (this.mostRecentHitbox < 0) {
