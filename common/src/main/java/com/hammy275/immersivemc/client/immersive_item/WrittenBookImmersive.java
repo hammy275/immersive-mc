@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.immersive_item;
 
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.client.immersive.book.WrittenBookHelpers;
+import com.hammy275.immersivemc.client.immersive.info.render_state.BookDataRenderState;
 import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.vr.VRUtil;
@@ -17,7 +18,9 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
     @Override
     protected void render(WrittenBookInfo info, PoseStack stack, VRBodyPartData hand) {
         if (info.light > -1) {
-            info.bookData.render(stack, info.light, VRUtil.posRot(hand));
+            BookDataRenderState renderState = new BookDataRenderState();
+            info.bookData.extractRenderState(renderState);
+            renderState.render(stack, info.light, VRUtil.posRot(hand));
         }
     }
 
