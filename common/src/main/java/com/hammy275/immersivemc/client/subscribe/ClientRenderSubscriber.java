@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.subscribe;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
@@ -105,15 +106,18 @@ public class ClientRenderSubscriber {
         cycleProgressRangedGrab = 0;
     }
 
-    protected static <I extends ImmersiveInfo> void renderInfos(Immersive<I, ?, ?> singleton,
-                                                                PoseStack stack) {
+    protected static <I extends ImmersiveInfo, R extends ImmersiveRenderState> void renderInfos(Immersive<I, R, ?> singleton,
+                                                                                                PoseStack stack) {
         try {
             if (singleton.isVROnly() && !VRVerify.clientInVR()) {
                 return;
             }
             for (I info : singleton.getTrackedObjects()) {
-                if (singleton.shouldRender(info)) {
-                    singleton.render(info, stack, ImmersiveRenderHelpers.instance(), Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true));
+                float partialTicks = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
+                R renderState = singleton.createRenderState();
+                singleton.extractRenderState(info, renderState, partialTicks);
+                if (singleton.shouldRender(renderState)) {
+                    singleton.render(renderState, stack, ImmersiveRenderHelpers.instance(), partialTicks);
                 }
             }
         } catch (ConcurrentModificationException ignored) {
