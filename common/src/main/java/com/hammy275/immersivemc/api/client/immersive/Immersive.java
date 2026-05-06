@@ -179,7 +179,10 @@ public interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRenderSta
      * Extract render state from the info into the provided render state object.
      *
      * @param info Info to extract render state from.
-     * @param renderState Render state to populate from the info.
+     * @param renderState Render state to populate from the info. Note that the API does NOT cover the state of this
+     *                    object when this function is called. It only defines that this should be fully populated from
+     *                    the provided info for rendering. As such, it's recommended to set the values for all fields
+     *                    in this object based on the provided info every time this method is called.
      * @param partialTicks The fraction of time between the last tick and the current tick.
      */
     public void extractRenderState(I info, R renderState, float partialTicks);
