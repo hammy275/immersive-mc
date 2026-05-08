@@ -21,7 +21,6 @@ import static com.hammy275.immersivemc.common.immersive.storage.network.impl.Che
 
 public class ChestInfo extends AbstractImmersiveInfo {
 
-    public List<HitboxItemPair> hitboxes = new ArrayList<>(54);
     public BlockEntity chest;
     public BlockEntity otherChest;
     public BlockPos otherPos = null;

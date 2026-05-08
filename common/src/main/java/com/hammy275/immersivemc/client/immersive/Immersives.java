@@ -182,7 +182,7 @@ public class Immersives {
                     (config, newVal) -> config.useCraftingTableImmersive = newVal))
             .build();
     public static final ImmersiveDoor immersiveDoor = new ImmersiveDoor();
-    public static final BuiltImmersive<EnchantingData, EnchantingTableExtraDataRenderState, ETableStorage> immersiveETable = ImmersiveBuilder.create(ImmersiveHandlers.enchantingTableHandler, EnchantingData.class, EnchantingTableExtraDataRenderState.class, null)
+    public static final BuiltImmersive<EnchantingData, EnchantingTableExtraDataRenderState, ETableStorage> immersiveETable = ImmersiveBuilder.create(ImmersiveHandlers.enchantingTableHandler, EnchantingData.class, EnchantingTableExtraDataRenderState.class, EnchantingTableExtraDataRenderState::extractRenderState)
             .setRenderSize(ClientConstants.itemScaleSizeETable)
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(0, 0.9, -0.5), ClientConstants.itemScaleSizeETable).build())
             .addHitbox(RelativeHitboxInfoBuilder.create((info) -> {

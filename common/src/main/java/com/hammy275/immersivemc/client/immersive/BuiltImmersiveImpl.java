@@ -390,8 +390,8 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
     public void extractRenderState(BuiltImmersiveInfo<E> infoIn, BuiltImmersiveRenderState<ER> renderStateIn, float partialTicks) {
         BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
         BuiltImmersiveRenderStateImpl<ER> renderState = asImpl(renderStateIn);
-        for (int i = 0; i < builder.hitboxes.size(); i++) {
-            builder.hitboxes.get(i).extractRenderState(renderState.hitboxes.get(i), partialTicks);
+        for (int i = 0; i < info.hitboxes.size(); i++) {
+            info.hitboxes.get(i).extractRenderState(renderState.hitboxes.get(i), partialTicks);
         }
         renderState.pos = info.getBlockPosition();
         renderState.ticksExisted = info.ticksExisted;
