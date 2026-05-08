@@ -41,11 +41,16 @@ public class SwapTracker {
         return c0.hasSlotHovered(renderState, slot) || c1.hasSlotHovered(renderState, slot);
     }
 
+    public static void updateRenderStatesFromInfo(ImmersiveInfo info, ImmersiveRenderState renderState) {
+        c0.updateRenderStateFromInfo(info, renderState);
+        c1.updateRenderStateFromInfo(info, renderState);
+    }
+
     public SwapTracker(InteractionHand hand) {
         this.hand = hand;
     }
 
-    public void setRenderStateFromInfo(ImmersiveInfo info, ImmersiveRenderState renderState) {
+    public void updateRenderStateFromInfo(ImmersiveInfo info, ImmersiveRenderState renderState) {
         if (lastImmersive != null && lastImmersive.info == info) {
             // Use a WeakReference so when the ImmersiveRenderState is gone otherwise, this gets cleared.
             this.renderState.immersiveRenderState = new WeakReference<>(renderState);
@@ -135,7 +140,7 @@ public class SwapTracker {
     }
 
     protected boolean hasSlotHovered(ImmersiveRenderState renderState, int slot) {
-        return this.renderState.immersiveRenderState == renderState && this.renderState.slotsHovered.contains(slot);
+        return this.renderState.immersiveRenderState.get() == renderState && this.renderState.slotsHovered.contains(slot);
     }
 
     protected void setState(SwapState newState, int newHitbox) {

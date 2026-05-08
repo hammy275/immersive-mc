@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.client.immersive_item.AbstractHandImmersive;
 import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
@@ -116,6 +117,7 @@ public class ClientRenderSubscriber {
                 float partialTicks = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
                 R renderState = singleton.createRenderState();
                 singleton.extractRenderState(info, renderState, partialTicks);
+                SwapTracker.updateRenderStatesFromInfo(info, renderState);
                 if (singleton.shouldRender(renderState)) {
                     singleton.render(renderState, stack, ImmersiveRenderHelpers.instance(), partialTicks);
                 }
