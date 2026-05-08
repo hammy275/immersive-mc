@@ -76,10 +76,6 @@ public class ChestInfo extends AbstractImmersiveInfo {
         return getDirectOpenness() >= CHEST_OPEN_THRESHOLD;
     }
 
-    public boolean slotVisible(int slot) {
-
-    }
-
     public void setOpennessStorage(ChestOpennessStorage opennessStorage) {
         this.opennessStorage = opennessStorage;
     }

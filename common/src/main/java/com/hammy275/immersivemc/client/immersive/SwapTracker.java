@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
 import com.hammy275.immersivemc.client.subscribe.ClientVRSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.vr.VRVerify;
@@ -10,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,13 +31,26 @@ public class SwapTracker {
     protected boolean leftClickWasDown = false;
     protected boolean lastTickWasIdle = false;
     protected int rightClickCooldown = 0; // Needs to be kept here, since Minecraft messes with it in ways that don't work for us
+    protected RenderState renderState = new RenderState();
 
     public static boolean slotHovered(ImmersiveInfo info, int slot) {
         return c0.hasSlotHovered(info, slot) || c1.hasSlotHovered(info, slot);
     }
 
+    public static boolean slotHovered(ImmersiveRenderState renderState, int slot) {
+        return c0.hasSlotHovered(renderState, slot) || c1.hasSlotHovered(renderState, slot);
+    }
+
     public SwapTracker(InteractionHand hand) {
         this.hand = hand;
+    }
+
+    public void setRenderStateFromInfo(ImmersiveInfo info, ImmersiveRenderState renderState) {
+        if (lastImmersive != null && lastImmersive.info == info) {
+            // Use a WeakReference so when the ImmersiveRenderState is gone otherwise, this gets cleared.
+            this.renderState.immersiveRenderState = new WeakReference<>(renderState);
+            this.renderState.slotsHovered = Set.copyOf(queuedPlacements);
+        }
     }
 
     /**
@@ -119,6 +134,10 @@ public class SwapTracker {
         return this.lastImmersive != null && this.lastImmersive.info == info && queuedPlacements.contains(slot);
     }
 
+    protected boolean hasSlotHovered(ImmersiveRenderState renderState, int slot) {
+        return this.renderState.immersiveRenderState == renderState && this.renderState.slotsHovered.contains(slot);
+    }
+
     protected void setState(SwapState newState, int newHitbox) {
         if (newHitbox != this.mostRecentHitbox) {
             this.ticksInMostRecent = 0;
@@ -174,5 +193,11 @@ public class SwapTracker {
             }
             return false;
         }
+    }
+
+    public static class RenderState {
+        public WeakReference<ImmersiveRenderState> immersiveRenderState = new WeakReference<>(null);
+        public Set<Integer> slotsHovered = Set.of();
+
     }
 }
