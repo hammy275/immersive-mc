@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 
 public class ImmersiveMCClient {
 
-    public static final Consumer<ImmersiveMCRegistrationEvent<Immersive<?, ?>>> immersiveIMCRegistrationHandler = (event) -> event.register(
+    public static final Consumer<ImmersiveMCRegistrationEvent<Immersive<?, ?, ?>>> immersiveIMCRegistrationHandler = (event) -> event.register(
             Immersives.immersiveAnvil, Immersives.immersiveBarrel, Immersives.immersiveBeacon,
             Immersives.immersiveBrewing, Immersives.immersiveChest,
             Immersives.immersiveCrafting, Immersives.immersiveETable, Immersives.immersiveFurnace,

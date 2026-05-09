@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive.book;
 
+import com.hammy275.immersivemc.client.immersive.info.render_state.BookDataRenderState;
 import com.hammy275.immersivemc.common.util.PosRot;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.world.phys.Vec3;
@@ -11,13 +12,14 @@ public interface BookRenderable {
 
     /**
      * Called to render this.
+     *
      * @param stack The PoseStack to use with rendering. This is already centered on the page and rotated appropriately.
-     * @param data The book data being rendered.
+     * @param renderState The render state of the book data being rendered.
      * @param leftPage Whether this is rendering on the left page or the right.
-     * @param light Light value.
+     * @param light  Light value.
      * @param bookPosRot The book's position and rotation.
      */
-    public void render(PoseStack stack, ClientBookData data, boolean leftPage, int light, PosRot bookPosRot);
+    public void render(PoseStack stack, BookDataRenderState renderState, boolean leftPage, int light, PosRot bookPosRot);
 
     /**
      * Called to get the offset on the page to start rendering from. +X is towards the book center, +Y is towards
@@ -30,10 +32,16 @@ public interface BookRenderable {
      *     <li>(0, 1, 0) is the top-center of the page</li>
      *     <li>(0, 0, 1) is an arbitrary unit closer to the player's face.</li>
      * </ul>
-     * @param data The book data being rendered.
+     * @param renderState The render state of book data being rendered.
      * @param leftPage Whether this is rendering on the left page or the right.
      * @param bookPosRot The book's position and rotation.
      * @return The offset to use as described above.
      */
-    public Vec3 getStartOffset(ClientBookData data, boolean leftPage, PosRot bookPosRot);
+    public Vec3 getStartOffset(BookDataRenderState renderState, boolean leftPage, PosRot bookPosRot);
+
+    /**
+     * Gets a copy of this renderable to use for rendering. If the object is already read-only the object can simply
+     * return itself here.
+     */
+    public BookRenderable getRenderingCopy();
 }
