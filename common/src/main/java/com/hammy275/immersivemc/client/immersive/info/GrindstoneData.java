@@ -38,6 +38,12 @@ public class GrindstoneData {
         return false;
     }
 
+    public void copy(GrindstoneData target) {
+        for (int i = 0; i < grindHands.length; i++) {
+            grindHands[i].copy(target.grindHands[i]);
+        }
+    }
+
     public static class GrindHand {
         public int startTick;
         public int lastTick;
@@ -63,6 +69,11 @@ public class GrindstoneData {
                 startTick = currentTick;
                 lastTick = currentTick;
             }
+        }
+
+        public void copy(GrindHand target) {
+            target.startTick = startTick;
+            target.lastTick = lastTick;
         }
     }
 }

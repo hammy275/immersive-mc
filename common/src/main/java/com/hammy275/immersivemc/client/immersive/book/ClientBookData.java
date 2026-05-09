@@ -1,22 +1,10 @@
 package com.hammy275.immersivemc.client.immersive.book;
 
 import com.hammy275.immersivemc.api.common.hitbox.OBB;
+import com.hammy275.immersivemc.client.immersive.info.render_state.BookDataRenderState;
 import com.hammy275.immersivemc.common.immersive.CommonBookData;
-import com.hammy275.immersivemc.common.obb.OBBClientUtil;
-import com.hammy275.immersivemc.common.util.PageChangeState;
 import com.hammy275.immersivemc.common.util.PosRot;
-import com.hammy275.immersivemc.common.util.Util;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.BookModel;
-import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +15,6 @@ import java.util.List;
  * only handled for VR users.
  */
 public class ClientBookData extends CommonBookData {
-    private static final BookModel bookModel = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
-    private static final ResourceLocation writtenBookTexture = Util.id("immersive/nahnotfox_written_book.png");
-
     public final List<BookInteractable> interactables = new ArrayList<>();
     public final List<BookRenderable> renderables = new ArrayList<>();
 
@@ -80,63 +65,6 @@ public class ClientBookData extends CommonBookData {
     }
 
     /**
-     * Should be called when rendering.
-     * @param stack The PoseStack to render with.
-     * @param light The light level being rendered at.
-     * @param bookPosRot The PosRot of the book.
-     */
-    public void render(PoseStack stack, int light, PosRot bookPosRot) {
-        stack.pushPose();
-        float partialTick = Minecraft.getInstance().getFrameTime();
-
-        Vec3 pos = bookPosRot.getPos();
-        Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
-        stack.translate(-cameraInfo.getPosition().x + pos.x,
-                -cameraInfo.getPosition().y + pos.y,
-                -cameraInfo.getPosition().z + pos.z);
-
-        stack.scale(scaleSize, scaleSize, scaleSize);
-
-        stack.mulPose(Axis.YN.rotation(bookPosRot.getYawF() + (float) Math.PI / 2f));
-        stack.mulPose(Axis.ZP.rotationDegrees(90f));
-        stack.mulPose(Axis.ZP.rotation(bookPosRot.getPitchF()));
-        stack.mulPose(Axis.YN.rotation(bookPosRot.getRollF()));
-
-        float bookOpenAmount = 1.1f;
-
-        bookModel.setupAnim(
-                0, // Partial tick time is always 0 to have page stay in one constant spot
-                Mth.lerp(partialTick, lastLeftPageTurn, leftPageTurn), // 0-1. How far the page is in the turn. Range is [0f, 1f] with 0f being left.
-                Mth.lerp(partialTick, lastRightPageTurn, rightPageTurn), // 0-1. How far across a different page is. Range is [0f, 1f] with 0f being left.
-                bookOpenAmount // How open the book is. A good range seems to be (0f,1.2f]
-        );
-        bookModel.render(stack,
-                Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderType.entitySolid(writtenBookTexture)),
-                light, OverlayTexture.NO_OVERLAY,
-                1, 1, 1, 1);
-
-        stack.popPose();
-
-        if (pageChangeState == PageChangeState.NONE) {
-            renderPage(stack, bookPosRot, true, light);
-            renderPage(stack, bookPosRot, false, light);
-        }
-
-        if (pageChangeState == PageChangeState.NONE) {
-            for (int i = 0; i <= 1; i++) {
-                OBBClientUtil.renderOBB(stack, pageTurnBoxes[i], false, 1f, 1f, 1f, 1f);
-            }
-        } else if (!pageChangeState.isAnim) {
-            OBBClientUtil.renderOBB(stack, pageTurnBoxes[2], false, 1f, 1f, 1f, 1f);
-        }
-
-        for (OBB obb : obbs) {
-            OBBClientUtil.renderOBB(stack, obb, false, 1f, 1f, 1f, 1f);
-        }
-    }
-
-    /**
      * Merges a {@link CommonBookData} instance from the server into this instance. Important to keep the
      * server and client in-sync.
      * @param fromServer Data from the server.
@@ -156,40 +84,23 @@ public class ClientBookData extends CommonBookData {
         return interactables.stream().map(BookInteractable::getOBB).toList();
     }
 
-    protected void renderPage(PoseStack stack, PosRot bookPosRot, boolean leftPage, int light) {
-        Vec3 awayFromBookUp = getAwayVector(bookPosRot);
-
-        Vec3 pageUp = bookPosRot.getDir();
-        Vec3 left = getLeftRightVector(bookPosRot, leftPage); // Should be called "right" for right page
-        Vec3 posBase = bookPosRot.getPos().add(left.scale(singlePageWidth / 2d))
-                .add(awayFromBookUp.scale(textUpAmount));
-
-        Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
-
-
-        for (BookRenderable renderable : renderables) {
-            stack.pushPose();
-            Vec3 renderableOffset = renderable.getStartOffset(this, leftPage, bookPosRot);
-            Vec3 pos = posBase.add(pageUp.scale(pageHalfHeight * renderableOffset.y))
-                    .add(left.scale(singlePageWidth / -2d * renderableOffset.x))
-                    .add(awayFromBookUp.scale(textUpAmount * renderableOffset.z));
-            stack.translate(-cameraInfo.getPosition().x + pos.x,
-                    -cameraInfo.getPosition().y + pos.y,
-                    -cameraInfo.getPosition().z + pos.z);
-            stack.mulPose(Axis.YN.rotation(bookPosRot.getYawF() + (float) Math.PI / 2f));
-            stack.mulPose(Axis.ZP.rotation(bookPosRot.getPitchF()));
-            stack.mulPose(Axis.XP.rotationDegrees(90f + (leftPage ? pageTilt : -pageTilt)));
-            stack.mulPose(Axis.ZP.rotationDegrees(270f));
-            stack.mulPose(Axis.YP.rotation(bookPosRot.getRollF()));
-            renderable.render(stack, this, leftPage, light, bookPosRot);
-            stack.popPose();
-        }
-    }
-
     @Override
     public void resetTurnState() {
         super.resetTurnState();
         lastLeftPageTurn = leftPageTurn;
         lastRightPageTurn = rightPageTurn;
+    }
+
+    public void extractRenderState(BookDataRenderState renderState) {
+        renderState.pageTurnBoxes = pageTurnBoxes.clone();
+        renderState.pageTurnPositions = pageTurnPositions.clone();
+        renderState.leftPageIndex = leftPageIndex;
+        renderState.leftPageTurn = leftPageTurn;
+        renderState.rightPageTurn = rightPageTurn;
+        renderState.pageChangeState = pageChangeState;
+        renderState.renderables = renderables.stream().map(BookRenderable::getRenderingCopy).toList();
+        renderState.obbs = List.copyOf(obbs);
+        renderState.lastLeftPageTurn = lastLeftPageTurn;
+        renderState.lastRightPageTurn = lastRightPageTurn;
     }
 }

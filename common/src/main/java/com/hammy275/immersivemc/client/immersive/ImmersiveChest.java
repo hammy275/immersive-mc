@@ -10,6 +10,7 @@ import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
+import com.hammy275.immersivemc.client.immersive.info.render_state.ChestRenderState;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
@@ -38,7 +39,9 @@ import org.joml.Vector3f;
 import java.util.List;
 import java.util.Objects;
 
-public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStorage> {
+import static com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage.CHEST_OPEN_THRESHOLD;
+
+public class ImmersiveChest extends AbstractImmersive<ChestInfo, ChestRenderState, ListOfItemsStorage> {
     public static final double spacing = 3d/16d;
 
     @Override
@@ -60,44 +63,42 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
 
     @Override
     public int handleHitboxInteract(ChestInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
-        if (!info.slotVisible(hitboxIndices.get(0))) return -1;
+        if (!slotVisible(info.getDirectOpenness(), hitboxIndices.get(0))) return -1;
         ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), hitboxIndices, hand, false);
         return ImmersiveClientConstants.instance().defaultCooldown();
     }
 
     @Override
-    public boolean shouldRender(ChestInfo info) {
-        return info.hasHitboxes();
+    public boolean shouldRender(ChestRenderState renderState) {
+        return renderState.hasHitboxes();
     }
 
     @Override
-    public void render(ChestInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
+    public void render(ChestRenderState renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
         for (int i = 0; i < 27; i++) {
-            if (info.slotVisible(i)) {
-                int startTop = 9 * info.getRowNum();
+            if (slotVisible(renderState.openness, i)) {
+                int startTop = 9 * renderState.rowNum;
                 int endTop = startTop + 9;
                 boolean showCount = i >= startTop && i <= endTop;
-                helpers.renderItemWithInfo(info.hitboxes.get(i).item, stack, ClientConstants.itemScaleSizeChest,
-                        showCount, info.light, info, true, i, null, info.forward, Direction.UP);
+                helpers.renderItemWithRenderState(renderState.items.get(i), stack, ClientConstants.itemScaleSizeChest,
+                        showCount, renderState.light, renderState, true, i, null, renderState.forward, Direction.UP);
             }
         }
 
-        if (info.otherChest != null) {
+        if (renderState.hasOtherChest) {
             for (int i = 27; i < 27 * 2; i++) {
-                if (info.slotVisible(i)) {
-                    int startTop = 9 * info.getRowNum() + 27;
+                if (slotVisible(renderState.openness, i)) {
+                    int startTop = 9 * renderState.rowNum + 27;
                     int endTop = startTop + 9 + 27;
                     boolean showCount = i >= startTop && i <= endTop;
-                    helpers.renderItemWithInfo(info.hitboxes.get(i).item, stack, ClientConstants.itemScaleSizeChest,
-                            showCount, info.light, info, true, i, null, info.forward, Direction.UP);
+                    helpers.renderItemWithRenderState(renderState.items.get(i), stack, ClientConstants.itemScaleSizeChest,
+                            showCount, renderState.light, renderState, true, i, null, renderState.forward, Direction.UP);
                 }
             }
         }
 
-        if (info.openClosePosition != null) {
-            for (BoundingBox box : info.openCloseHitboxes) {
-                helpers.renderHitbox(stack, box);
-            }
+        for (BoundingBox box : renderState.openCloseHitboxes) {
+            helpers.renderHitbox(stack, box);
         }
     }
 
@@ -224,6 +225,26 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
         return false;
     }
 
+    @Override
+    public ChestRenderState createRenderState() {
+        return new ChestRenderState();
+    }
+
+    @Override
+    public void extractRenderState(ChestInfo info, ChestRenderState renderState, float partialTicks) {
+        super.extractRenderState(info, renderState, partialTicks);
+        renderState.hasOtherChest = info.otherChest != null;
+        renderState.forward = info.forward;
+        renderState.rowNum = info.getRowNum();
+        if (info.openClosePosition != null) {
+            renderState.openCloseHitboxes = List.copyOf(info.openCloseHitboxes);
+        } else {
+            renderState.openCloseHitboxes = List.of();
+        }
+        renderState.light = info.light;
+        renderState.openness = info.getDirectOpenness();
+    }
+
     public boolean chestsValid(ChestInfo info) {
         boolean mainChestExists = getHandler().isValidBlock(info.getBlockPosition(), info.chest.getLevel());
         boolean otherChestExists = info.otherChest == null ||
@@ -245,6 +266,16 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ListOfItemsStor
         Network.INSTANCE.sendToServer(new ChestShulkerOpenPacket(info.getBlockPosition(), !info.isOpen()));
         if (info.isOpen()) {
             Lootr.lootrImpl.markOpener(Minecraft.getInstance().player, info.getBlockPosition());
+        }
+    }
+
+    public static boolean slotVisible(float openness, int slot) {
+        if (slot % 9 >= 6) { // Slot is in the front row
+            return openness >= CHEST_OPEN_THRESHOLD;
+        } else if (slot % 9 >= 3) { // Slot is in the middle row
+            return openness >= 0.3f;
+        } else { // Slot is in the back row
+            return openness >= 0.5f;
         }
     }
 }
