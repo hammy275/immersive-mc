@@ -148,7 +148,7 @@ public class ConfigScreen extends Screen {
     public static void onClientConfigChange() {
         writeAdjustingConfig();
         // Clear all immersives in-case we disabled one or adjusted a setting for one
-        for (Immersive<?, ?> immersive : Immersives.IMMERSIVES) {
+        for (Immersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
             immersive.getTrackedObjects().clear();
         }
         for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {

@@ -62,6 +62,6 @@ public interface ImmersiveMCClientRegistration {
      * @param registrationHandler Your object that will register Immersives when called.
      * @throws IllegalStateException This method was called after registration.
      */
-    public void addImmersiveRegistrationHandler(Consumer<ImmersiveMCRegistrationEvent<Immersive<?, ?>>> registrationHandler) throws IllegalStateException;
+    public void addImmersiveRegistrationHandler(Consumer<ImmersiveMCRegistrationEvent<Immersive<?, ?, ?>>> registrationHandler) throws IllegalStateException;
 
 }

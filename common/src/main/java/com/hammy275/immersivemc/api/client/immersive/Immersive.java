@@ -33,9 +33,10 @@ import java.util.List;
  * alternatively, build one using an {@link ImmersiveBuilder}). When combined with a {@link ImmersiveHandler}, you have
  * a fully-functioning (block-based) Immersive!
  * @param <I> The {@link ImmersiveInfo} implementation this Immersive uses.
+ * @param <R> The render state implementation this Immersive uses. See {@link #extractRenderState(ImmersiveInfo, ImmersiveRenderState, float)}.
  * @param <S> The type of storage to use for sending Immersive data over the network.
  */
-public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
+public interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRenderState, S extends NetworkStorage> {
 
     /**
      * Get the collection of ImmersiveInfos currently active for this Immersive. The contents of the list may be
@@ -108,23 +109,23 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
     public boolean isInputHitbox(I info, int hitboxIndex);
 
     /**
-     * Whether the provided info should render in the world. It's good to return false here if this Immersive
+     * Whether the provided render state should render in the world. It's good to return false here if this Immersive
      * does not have its data ready for rendering.
-     * @param info The info to check.
-     * @return Whether the provided info should render to the world, which includes calling
-     *         {@link #render(ImmersiveInfo, PoseStack, ImmersiveRenderHelpers, float)}.
+     * @param renderState The render state to check.
+     * @return Whether the provided render state should render to the world, which includes calling
+     * {@link #render(ImmersiveRenderState, PoseStack, ImmersiveRenderHelpers, float)}.
      */
-    public boolean shouldRender(I info);
+    public boolean shouldRender(R renderState);
 
     /**
-     * Render the provided info.
+     * Render the provided render state.
      *
-     * @param info The info to render.
+     * @param renderState The render state to render.
      * @param stack The pose stack being rendered with.
      * @param helpers Some helper functions for rendering.
      * @param partialTick The fraction of time between the last tick and the current tick.
      */
-    public void render(I info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick);
+    public void render(R renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick);
 
     /**
      * @return The {@link ImmersiveHandler} this Immersive uses.
@@ -167,6 +168,28 @@ public interface Immersive<I extends ImmersiveInfo, S extends NetworkStorage> {
      *         method.
      */
     public boolean isVROnly();
+
+    /**
+     * Creates a new render state not populated with any rendering-related details.
+     * @return Created render state, as described.
+     */
+    public R createRenderState();
+
+    /**
+     * Extract render state from the info into the provided render state object.
+     * <p>
+     * The extracted render state must be independent of the info it comes from such that mutations to the info
+     * do not affect the render state. For example, if the info contains a list of hitboxes, a modification to that
+     * list must NOT modify the list of hitboxes stored in the render state.
+     *
+     * @param info Info to extract render state from.
+     * @param renderState Render state to populate from the info. Note that the API does NOT cover the state of this
+     *                    object when this function is called. It only defines that this should be fully populated from
+     *                    the provided info for rendering. As such, it's recommended to set the values for all fields
+     *                    in this object based on the provided info every time this method is called.
+     * @param partialTicks The fraction of time between the last tick and the current tick.
+     */
+    public void extractRenderState(I info, R renderState, float partialTicks);
 
     /**
      * This is the same as {@link #tick(ImmersiveInfo)}, but called once per tick, instead of called once per tick

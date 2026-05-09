@@ -13,9 +13,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.*;
 
-public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements ImmersiveBuilder<E, S> {
+public class ImmersiveBuilderImpl<E, ER, S extends NetworkStorage> implements ImmersiveBuilder<E, ER, S> {
 
     // NOTE: Variables aren't prefixed with any visibility, so they're package-private
 
@@ -27,25 +28,31 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     List<RelativeHitboxInfoImpl> hitboxes = new ArrayList<>();
     List<Vec3i> lightPositionOffsets = new ArrayList<>();
     HitboxPositioningMode positioningMode = HitboxPositioningMode.HORIZONTAL_BLOCK_FACING;
-    Function<BuiltImmersiveInfo<E>, Boolean> extraRenderReady = (info) -> true;
     HitboxInteractHandler<E> hitboxInteractHandler = (a, b, c, d, e) -> -1;
     boolean vrOnly = false;
     List<Vec3i> airCheckPositionOffsets = new ArrayList<>();
     Class<E> extraInfoDataClazz;
+    @Nullable Class<ER> extraInfoDataRenderStateClazz;
+    @Nullable BiConsumer<BuiltImmersiveInfo<E>, ER> extraInfoDataRenderStateExtractor;
     BiConsumer<S, BuiltImmersiveInfo<E>> extraStorageConsumer = null;
     BiFunction<BuiltImmersiveInfo<E>, Integer, Boolean> slotActive = null;
     Consumer<BuiltImmersiveInfo<E>> onRemove = (info) -> {};
     boolean blockRightClickWhenGUIClickDisabled = true;
-    BiFunction<BuiltImmersiveInfo<E>, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
+    BiFunction<BuiltImmersiveRenderState<ER>, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
     ImmersiveConfigScreenInfo configScreenInfo = null;
-    ExtraRenderer<E> extraRenderer = (info, stack, helpers, partialTick, light) -> {};
+    ExtraRenderer<ER> extraRenderer = (info, stack, helpers, partialTick, light) -> {};
     Function<BuiltImmersiveInfo<E>, AABB> dragHitboxCreator = null;
 
-    public ImmersiveBuilderImpl(ImmersiveHandler<S> handler, @Nullable Class<E> extraInfoDataClazz) {
+    public ImmersiveBuilderImpl(ImmersiveHandler<S> handler, @Nullable Class<E> extraInfoDataClazz, @Nullable Class<ER> extraInfoDataRenderStateClazz, @Nullable BiConsumer<BuiltImmersiveInfo<E>, ER> extraInfoDataRenderStateExtractor) {
         this.handler = handler;
         this.extraInfoDataClazz = extraInfoDataClazz;
+        this.extraInfoDataRenderStateClazz = extraInfoDataRenderStateClazz;
+        this.extraInfoDataRenderStateExtractor = extraInfoDataRenderStateExtractor;
         if (handler instanceof MultiblockImmersiveHandler<?>) {
             throw new IllegalArgumentException("Cannot create an ImmersiveBuilder with a MultiblockImmersiveHandler.");
+        }
+        if (Objects.isNull(extraInfoDataRenderStateClazz) != Objects.isNull(extraInfoDataRenderStateExtractor)) {
+            throw new IllegalArgumentException("extraInfoDataRenderStateClazz and extraInfoDataRenderStateExtractor must both be null or both be non-null.");
         }
     }
 
@@ -56,7 +63,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilderImpl<E,S> setRenderSize(float size) {
+    public ImmersiveBuilder<E,ER,S> setRenderSize(float size) {
         this.renderSize = size;
         return this;
     }
@@ -68,7 +75,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilderImpl<E,S> addHitbox(RelativeHitboxInfo relativeHitboxInfo) {
+    public ImmersiveBuilder<E,ER,S> addHitbox(RelativeHitboxInfo relativeHitboxInfo) {
         this.hitboxes.add((RelativeHitboxInfoImpl) relativeHitboxInfo);
         return this;
     }
@@ -81,7 +88,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilderImpl<E,S> add3x3Grid(RelativeHitboxInfo relativeHitboxInfo, double distBetweenBoxes) {
+    public ImmersiveBuilder<E,ER,S> add3x3Grid(RelativeHitboxInfo relativeHitboxInfo, double distBetweenBoxes) {
         Vec3 left = new Vec3(-1, 0, 0).scale(distBetweenBoxes);
         Vec3 right = new Vec3(1, 0, 0).scale(distBetweenBoxes);
         Vec3 up = new Vec3(0, 1, 0).scale(distBetweenBoxes);
@@ -105,7 +112,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilderImpl<E,S> setPositioningMode(HitboxPositioningMode newMode) {
+    public ImmersiveBuilder<E,ER,S> setPositioningMode(HitboxPositioningMode newMode) {
         this.positioningMode = newMode;
         return this;
     }
@@ -119,7 +126,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilderImpl<E,S> setHitboxInteractHandler(HitboxInteractHandler<E> handler) {
+    public ImmersiveBuilder<E,ER,S> setHitboxInteractHandler(HitboxInteractHandler<E> handler) {
         this.hitboxInteractHandler = handler;
         return this;
     }
@@ -130,7 +137,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilderImpl<E,S> setVROnly(boolean vrOnly) {
+    public ImmersiveBuilder<E,ER,S> setVROnly(boolean vrOnly) {
         this.vrOnly = vrOnly;
         return this;
     }
@@ -142,7 +149,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilderImpl<E,S> setExtraStorageConsumer(BiConsumer<S, BuiltImmersiveInfo<E>> storageConsumer) {
+    public ImmersiveBuilder<E,ER,S> setExtraStorageConsumer(BiConsumer<S, BuiltImmersiveInfo<E>> storageConsumer) {
         this.extraStorageConsumer = storageConsumer;
         return this;
     }
@@ -153,7 +160,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilderImpl<E,S> setSlotActiveFunction(BiFunction<BuiltImmersiveInfo<E>, Integer, Boolean> slotActive) {
+    public ImmersiveBuilder<E,ER,S> setSlotActiveFunction(BiFunction<BuiltImmersiveInfo<E>, Integer, Boolean> slotActive) {
         this.slotActive = slotActive;
         return this;
     }
@@ -164,7 +171,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilderImpl<E,S> setOnRemove(Consumer<BuiltImmersiveInfo<E>> onRemove) {
+    public ImmersiveBuilder<E,ER,S> setOnRemove(Consumer<BuiltImmersiveInfo<E>> onRemove) {
         this.onRemove = onRemove;
         return this;
     }
@@ -176,7 +183,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilderImpl<E,S> shouldDisableRightClicksWhenInteractionsDisabled(boolean doDisable) {
+    public ImmersiveBuilder<E,ER,S> shouldDisableRightClicksWhenInteractionsDisabled(boolean doDisable) {
         this.blockRightClickWhenGUIClickDisabled = doDisable;
         return this;
     }
@@ -188,19 +195,19 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilderImpl<E,S> setShouldRenderItemGuideFunction(BiFunction<BuiltImmersiveInfo<E>, Integer, Boolean> itemGuideActive) {
+    public ImmersiveBuilder<E,ER,S> setShouldRenderItemGuideFunction(BiFunction<BuiltImmersiveRenderState<ER>, Integer, Boolean> itemGuideActive) {
         this.slotRendersItemGuide = itemGuideActive;
         return this;
     }
 
     @Override
-    public ImmersiveBuilder<E, S> setConfigScreenInfo(ImmersiveConfigScreenInfo info) {
+    public ImmersiveBuilder<E, ER, S> setConfigScreenInfo(ImmersiveConfigScreenInfo info) {
         this.configScreenInfo = info;
         return this;
     }
 
     @Override
-    public ImmersiveBuilder<E, S> setExtraRenderer(ExtraRenderer<E> renderer) {
+    public ImmersiveBuilder<E, ER, S> setExtraRenderer(ExtraRenderer<ER> renderer) {
         this.extraRenderer = renderer;
         return this;
     }
@@ -212,7 +219,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilderImpl<E,S> overwriteHitbox(int index, RelativeHitboxInfo relativeHitboxInfo) {
+    public ImmersiveBuilder<E,ER,S> overwriteHitbox(int index, RelativeHitboxInfo relativeHitboxInfo) {
         this.hitboxes.set(index, (RelativeHitboxInfoImpl) relativeHitboxInfo);
         return this;
     }
@@ -224,7 +231,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilderImpl<E,S> modifyHitbox(int index, Function<RelativeHitboxInfoBuilder, RelativeHitboxInfo> modifier) {
+    public ImmersiveBuilder<E,ER,S> modifyHitbox(int index, Function<RelativeHitboxInfoBuilder, RelativeHitboxInfo> modifier) {
         return modifyHitboxes(index, index, modifier);
     }
 
@@ -236,7 +243,7 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      * @return Builder object.
      */
     @Override
-    public ImmersiveBuilderImpl<E,S> modifyHitboxes(int startIndex, int endIndex, Function<RelativeHitboxInfoBuilder, RelativeHitboxInfo> modifier) {
+    public ImmersiveBuilder<E,ER,S> modifyHitboxes(int startIndex, int endIndex, Function<RelativeHitboxInfoBuilder, RelativeHitboxInfo> modifier) {
         if (startIndex < 0 || endIndex < 0 || startIndex > endIndex || endIndex >= hitboxes.size()) {
             throw new IllegalArgumentException("Invalid starting and ending index. Keep them in range of the hitboxes, and make sure startIndex < endIndex.");
         }
@@ -247,12 +254,12 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
     }
 
     @Override
-    public ImmersiveBuilder<E, S> setDragHitboxCreator(@Nullable Function<BuiltImmersiveInfo<E>, AABB> dragHitboxCreator) {
+    public ImmersiveBuilder<E, ER, S> setDragHitboxCreator(@Nullable Function<BuiltImmersiveInfo<E>, AABB> dragHitboxCreator) {
         this.dragHitboxCreator = dragHitboxCreator;
         return this;
     }
 
-    public BuiltImmersiveImpl<E, S> build() {
+    public BuiltImmersiveImpl<E, ER, S> build() {
         return new BuiltImmersiveImpl<>(this);
     }
 
@@ -261,13 +268,12 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
      * @return A best-effort copy of this ImmersiveBuilder.
      */
     @Override
-    public <T extends NetworkStorage> ImmersiveBuilderImpl<E, T> copy(ImmersiveHandler<T> newHandler) {
-        ImmersiveBuilderImpl<E, T> clone = new ImmersiveBuilderImpl<>(newHandler, this.extraInfoDataClazz);
+    public <T extends NetworkStorage> ImmersiveBuilderImpl<E, ER, T> copy(ImmersiveHandler<T> newHandler) {
+        ImmersiveBuilderImpl<E, ER, T> clone = new ImmersiveBuilderImpl<>(newHandler, this.extraInfoDataClazz, this.extraInfoDataRenderStateClazz, this.extraInfoDataRenderStateExtractor);
         clone.renderSize = this.renderSize;
         clone.hitboxes = new ArrayList<>(this.hitboxes);
         clone.lightPositionOffsets = new ArrayList<>(this.lightPositionOffsets);
         clone.positioningMode = this.positioningMode;
-        clone.extraRenderReady = this.extraRenderReady;
         clone.hitboxInteractHandler = this.hitboxInteractHandler;
         clone.vrOnly = this.vrOnly;
         clone.airCheckPositionOffsets = new ArrayList<>(this.airCheckPositionOffsets);
@@ -279,17 +285,18 @@ public class ImmersiveBuilderImpl<E, S extends NetworkStorage> implements Immers
         clone.configScreenInfo = null;
         clone.extraRenderer = this.extraRenderer;
         clone.dragHitboxCreator = this.dragHitboxCreator;
+        clone.extraInfoDataRenderStateClazz = this.extraInfoDataRenderStateClazz;
+        clone.extraInfoDataRenderStateExtractor = this.extraInfoDataRenderStateExtractor;
         return clone;
     }
 
     @Override
-    public <F, T extends NetworkStorage> ImmersiveBuilderImpl<F, T> copy(ImmersiveHandler<T> newHandler, Class<F> newExtraInfoDataClass) {
-        ImmersiveBuilderImpl<F, T> clone = new ImmersiveBuilderImpl<>(newHandler, newExtraInfoDataClass);
+    public <F, FR, T extends NetworkStorage> ImmersiveBuilderImpl<F, FR, T> copy(ImmersiveHandler<T> newHandler, Class<F> newExtraInfoDataClass, Class<FR> newExtraInfoDataRenderStateClass, BiConsumer<BuiltImmersiveInfo<F>, FR> newExtraInfoDataRenderStateExtractor) {
+        ImmersiveBuilderImpl<F, FR, T> clone = new ImmersiveBuilderImpl<>(newHandler, newExtraInfoDataClass, newExtraInfoDataRenderStateClass, newExtraInfoDataRenderStateExtractor);
         clone.renderSize = this.renderSize;
         clone.hitboxes = new ArrayList<>(this.hitboxes);
         clone.lightPositionOffsets = new ArrayList<>(this.lightPositionOffsets);
         clone.positioningMode = this.positioningMode;
-        clone.extraRenderReady = (info) -> true;
         clone.hitboxInteractHandler = (a, b, c, d, modifierPressed) -> -1;
         clone.vrOnly = this.vrOnly;
         clone.airCheckPositionOffsets = new ArrayList<>(this.airCheckPositionOffsets);
