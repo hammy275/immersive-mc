@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
 import com.hammy275.immersivemc.client.subscribe.ClientVRSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.vr.VRVerify;
@@ -10,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,13 +31,31 @@ public class SwapTracker {
     protected boolean leftClickWasDown = false;
     protected boolean lastTickWasIdle = false;
     protected int rightClickCooldown = 0; // Needs to be kept here, since Minecraft messes with it in ways that don't work for us
+    protected RenderState renderState = new RenderState();
 
     public static boolean slotHovered(ImmersiveInfo info, int slot) {
         return c0.hasSlotHovered(info, slot) || c1.hasSlotHovered(info, slot);
     }
 
+    public static boolean slotHovered(ImmersiveRenderState renderState, int slot) {
+        return c0.hasSlotHovered(renderState, slot) || c1.hasSlotHovered(renderState, slot);
+    }
+
+    public static void updateRenderStatesFromInfo(ImmersiveInfo info, ImmersiveRenderState renderState) {
+        c0.updateRenderStateFromInfo(info, renderState);
+        c1.updateRenderStateFromInfo(info, renderState);
+    }
+
     public SwapTracker(InteractionHand hand) {
         this.hand = hand;
+    }
+
+    public void updateRenderStateFromInfo(ImmersiveInfo info, ImmersiveRenderState renderState) {
+        if (lastImmersive != null && lastImmersive.info == info) {
+            // Use a WeakReference so when the ImmersiveRenderState is gone otherwise, this gets cleared.
+            this.renderState.immersiveRenderState = new WeakReference<>(renderState);
+            this.renderState.slotsHovered = Set.copyOf(queuedPlacements);
+        }
     }
 
     /**
@@ -56,7 +76,7 @@ public class SwapTracker {
      * @param inputHitbox  Input hitbox being interacted with. Should be negative if not interacting with one.
      * @param inDragHitbox Whether we're currently in the drag hitbox. Should be false if dragging is disabled.
      */
-    public <I extends ImmersiveInfo> void tick(@Nullable Immersive<I, ?> immersive, @Nullable I info, int inputHitbox, boolean inDragHitbox) {
+    public <I extends ImmersiveInfo> void tick(@Nullable Immersive<I, ?, ?> immersive, @Nullable I info, int inputHitbox, boolean inDragHitbox) {
         // Update state machine
         lastTickWasIdle = false;
         if (this.mostRecentHitbox < 0) {
@@ -119,6 +139,10 @@ public class SwapTracker {
         return this.lastImmersive != null && this.lastImmersive.info == info && queuedPlacements.contains(slot);
     }
 
+    protected boolean hasSlotHovered(ImmersiveRenderState renderState, int slot) {
+        return this.renderState.immersiveRenderState.get() == renderState && this.renderState.slotsHovered.contains(slot);
+    }
+
     protected void setState(SwapState newState, int newHitbox) {
         if (newHitbox != this.mostRecentHitbox) {
             this.ticksInMostRecent = 0;
@@ -156,7 +180,7 @@ public class SwapTracker {
         DRAG
     }
 
-    protected record LastImmersive<I extends ImmersiveInfo>(Immersive<I, ?> immersive, I info) {
+    protected record LastImmersive<I extends ImmersiveInfo>(Immersive<I, ?, ?> immersive, I info) {
 
         public int doHitboxInteract(List<Integer> slots, InteractionHand hand, int currentCooldown, boolean leftClickDown) {
             if (currentCooldown <= 0) {
@@ -174,5 +198,11 @@ public class SwapTracker {
             }
             return false;
         }
+    }
+
+    public static class RenderState {
+        public WeakReference<ImmersiveRenderState> immersiveRenderState = new WeakReference<>(null);
+        public Set<Integer> slotsHovered = Set.of();
+
     }
 }
