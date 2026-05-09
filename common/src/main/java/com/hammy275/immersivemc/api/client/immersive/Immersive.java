@@ -177,6 +177,10 @@ public interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRenderSta
 
     /**
      * Extract render state from the info into the provided render state object.
+     * <p>
+     * The extracted render state must be independent of the info it comes from such that mutations to the info
+     * do not affect the render state. For example, if the info contains a list of hitboxes, a modification to that
+     * list must NOT modify the list of hitboxes stored in the render state.
      *
      * @param info Info to extract render state from.
      * @param renderState Render state to populate from the info. Note that the API does NOT cover the state of this

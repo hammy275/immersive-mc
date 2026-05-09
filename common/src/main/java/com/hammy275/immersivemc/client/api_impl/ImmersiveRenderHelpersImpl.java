@@ -42,6 +42,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
     @Override
     public void renderItemWithRenderState(ItemStack item, PoseStack stack, float size, boolean renderItemCounts, int light, ImmersiveRenderState renderState, boolean shouldRenderItemGuide, int hitboxIndex, @Nullable Float spinDegrees, @Nullable Direction facing, @Nullable Direction upDown) {
         BoundingBox hitbox = renderState.hitboxes().get(hitboxIndex);
+        if (hitbox == null) return;
         boolean hovered = renderState.isSlotHovered(hitboxIndex) || SwapTracker.slotHovered(renderState, hitboxIndex);
         if (item == null || item.isEmpty()) {
             if (shouldRenderItemGuide) {

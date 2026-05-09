@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -19,7 +20,7 @@ public class BuiltImmersiveRenderStateImpl<ER> implements BuiltImmersiveRenderSt
     public int light;
     public Direction immersiveDir;
     public AABB dragHitbox;
-    public ER extraData;
+    public @Nullable ER extraData;
     public int[] slotsHovered;
 
     public boolean hasHitboxes() {
@@ -47,6 +48,7 @@ public class BuiltImmersiveRenderStateImpl<ER> implements BuiltImmersiveRenderSt
     }
 
     @Override
+    @Nullable
     public ER getExtraRenderData() {
         return extraData;
     }
