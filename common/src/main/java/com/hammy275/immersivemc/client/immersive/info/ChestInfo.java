@@ -21,7 +21,6 @@ import static com.hammy275.immersivemc.common.immersive.storage.network.impl.Che
 
 public class ChestInfo extends AbstractImmersiveInfo {
 
-    public List<HitboxItemPair> hitboxes = new ArrayList<>(54);
     public BlockEntity chest;
     public BlockEntity otherChest;
     public BlockPos otherPos = null;
@@ -76,17 +75,6 @@ public class ChestInfo extends AbstractImmersiveInfo {
         return getDirectOpenness() >= CHEST_OPEN_THRESHOLD;
     }
 
-    public boolean slotVisible(int slot) {
-        float openness = getDirectOpenness();
-        if (slot % 9 >= 6) { // Slot is in the front row
-            return openness >= CHEST_OPEN_THRESHOLD;
-        } else if (slot % 9 >= 3) { // Slot is in the middle row
-            return openness >= 0.3f;
-        } else { // Slot is in the back row
-            return openness >= 0.5f;
-        }
-    }
-
     public void setOpennessStorage(ChestOpennessStorage opennessStorage) {
         this.opennessStorage = opennessStorage;
     }
@@ -116,7 +104,7 @@ public class ChestInfo extends AbstractImmersiveInfo {
      * opening/closing chests doesn't modify forcedOpenness.
      * @return The openness of the chest as rendered in-world.
      */
-    private float getDirectOpenness() {
+    public float getDirectOpenness() {
         if (chest instanceof LidBlockEntity lbe) {
             return lbe.getOpenNess(1f);
         }
