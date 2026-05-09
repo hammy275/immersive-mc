@@ -12,6 +12,7 @@ public class BeaconRenderState extends AbstractImmersiveRenderState {
     public int effectSelected;
     public Vec3 effectSelectedDisplayPos;
     public boolean regenSelected;
+    public Direction playerForward;
 
     public boolean isEffectSelected() {
         return effectSelected > -1;

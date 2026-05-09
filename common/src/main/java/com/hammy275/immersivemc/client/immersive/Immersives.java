@@ -32,7 +32,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.properties.AttachFace;
@@ -297,15 +296,14 @@ public class Immersives {
             .setExtraRenderer((info, stack, helpers, partialTick, light) -> {
                 if (Apoth.apothImpl.enchantModuleEnabled() && info.getExtraRenderData().isTableOpen) {
                     BlockPos pos = info.getBlockPos();
-                    Player player = Minecraft.getInstance().level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 3.0, false);
-                    if (player != null) {
+                    if (info.getExtraRenderData().hasPlayerNearby) {
                         BookDataRenderState bookData = info.getExtraRenderData().bookDataRenderState;
                         if (bookData != null) {
                             float rot = info.getExtraRenderData().rot + (float) Math.PI / 2f;
                             PosRot posRot = new PosRot(Vec3.atBottomCenterOf(pos).add(0, 0.9, 0),
                                     Util.getLookAngle((float) -Math.PI / 8f, -rot),
                                     (float) Math.PI / 8f, rot, 0);
-                            bookData.render(stack, light, posRot);
+                            bookData.render(stack, light, posRot, partialTick);
                         }
                     }
                 }

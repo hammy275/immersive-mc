@@ -219,10 +219,9 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconRenderS
                         renderState.light, renderState.lastPlayerDir);
             }
 
-            Direction playerForward = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, renderState.pos).getOpposite();
             double xMult = 0;
             double zMult = 0;
-            if (playerForward.getUnitVec3i().getX() != 0) {
+            if (renderState.playerForward.getUnitVec3i().getX() != 0) {
                 zMult = 1;
             } else {
                 xMult = 1;
@@ -287,6 +286,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconRenderS
         renderState.effectSelected = info.effectSelected;
         renderState.effectSelectedDisplayPos = info.effectSelectedDisplayPos;
         renderState.regenSelected = info.regenSelected;
+        renderState.playerForward = ImmersiveLogicHelpers.instance().getHorizontalBlockForward(Minecraft.getInstance().player, renderState.pos).getOpposite();
     }
 
     protected void setHitboxesAndPositions(BeaconInfo info) {

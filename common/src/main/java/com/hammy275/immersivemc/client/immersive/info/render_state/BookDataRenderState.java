@@ -43,10 +43,10 @@ public class BookDataRenderState {
      * @param stack The PoseStack to render with.
      * @param light The light level being rendered at.
      * @param bookPosRot The PosRot of the book.
+     * @param partialTicks Partial ticks time between last frame and current frame
      */
-    public void render(PoseStack stack, int light, PosRot bookPosRot) {
+    public void render(PoseStack stack, int light, PosRot bookPosRot, float partialTicks) {
         stack.pushPose();
-        float partialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
 
         Vec3 pos = bookPosRot.getPos();
         Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
@@ -65,8 +65,8 @@ public class BookDataRenderState {
 
         bookModel.setupAnim(new BookModel.State(
                 0, // Partial tick time is always 0 to have page stay in one constant spot
-                Mth.lerp(partialTick, lastLeftPageTurn, leftPageTurn), // 0-1. How far the page is in the turn. Range is [0f, 1f] with 0f being left.
-                Mth.lerp(partialTick, lastRightPageTurn, rightPageTurn), // 0-1. How far across a different page is. Range is [0f, 1f] with 0f being left.
+                Mth.lerp(partialTicks, lastLeftPageTurn, leftPageTurn), // 0-1. How far the page is in the turn. Range is [0f, 1f] with 0f being left.
+                Mth.lerp(partialTicks, lastRightPageTurn, rightPageTurn), // 0-1. How far across a different page is. Range is [0f, 1f] with 0f being left.
                 bookOpenAmount // How open the book is. A good range seems to be (0f,1.2f]
         ));
         bookModel.renderToBuffer(stack,

@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.client.immersive_item.info.WrittenBookInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.vr.VRUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +21,7 @@ public class WrittenBookImmersive extends AbstractItemImmersive<WrittenBookInfo>
         if (info.light > -1) {
             BookDataRenderState renderState = new BookDataRenderState();
             info.bookData.extractRenderState(renderState);
-            renderState.render(stack, info.light, VRUtil.posRot(hand));
+            renderState.render(stack, info.light, VRUtil.posRot(hand), Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true));
         }
     }
 
