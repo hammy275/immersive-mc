@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.api.client;
 
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveRenderHelpersImpl;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -33,18 +33,18 @@ public interface ImmersiveRenderHelpers {
      * @param size The size of the item to render before automatic changes from ImmersiveMC
      * @param renderItemCounts Whether to render a number representing the item count with the item.
      * @param light The packed sky light and block light to render with.
-     * @param info The {@link ImmersiveInfo} that is rendering this item.
+     * @param renderState The {@link ImmersiveRenderState} that is rendering this item.
      * @param shouldRenderItemGuide Whether this slot should render an item guide if other conditions are met to do so.
-     * @param hitboxIndex The index into {@link ImmersiveInfo#getAllHitboxes()} that is being rendered.
+     * @param hitboxIndex The index into {@link ImmersiveRenderState#hitboxes()} that is being rendered.
      * @param spinDegrees The number of degrees to spin on x/z. Ignored if null.
      * @param facing The direction for the item to face. If null, the item will face the camera. This value should not
      *               be UP or DOWN. Ignored if spinDegrees is at least 0.
      * @param upDown Direction upwards or downwards for the item to face. Can be null if not facing up or down. If this
      *               is not null, facing instead controls the direction the item is rotated towards.
      */
-    public void renderItemWithInfo(@Nullable ItemStack item, PoseStack stack, float size, boolean renderItemCounts,
-                                   int light, ImmersiveInfo info, boolean shouldRenderItemGuide, int hitboxIndex,
-                                   @Nullable Float spinDegrees, @Nullable Direction facing, @Nullable Direction upDown);
+    public void renderItemWithRenderState(@Nullable ItemStack item, PoseStack stack, float size, boolean renderItemCounts,
+                                          int light, ImmersiveRenderState renderState, boolean shouldRenderItemGuide, int hitboxIndex,
+                                          @Nullable Float spinDegrees, @Nullable Direction facing, @Nullable Direction upDown);
 
     /**
      * Renders an item at the specified position facing the camera.
