@@ -11,6 +11,7 @@ import com.hammy275.immersivemc.common.network.packet.SelfHandlingNetworkStorage
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.mixin.ChestBlockEntityAccessor;
+import com.hammy275.immersivemc.mixin.ContainerOpenersCounterAccessor;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
@@ -214,7 +215,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
                 Util.getPlayersWithContainerOpen(openersCounter, level).forEach(cbe::stopOpen);
                 openersCounter.recheckOpeners(cbe.getLevel(), cbe.getBlockPos(), cbe.getLevel().getBlockState(cbe.getBlockPos()));
                 if (other != null) {
-                    ChestToOpenSet.closeForAll(controllingPlayer.level(), pos);
+                    ChestToOpenSet.closeForAll(controllingPlayer.level(), other.getBlockPos());
                     openersCounter = ((ChestBlockEntityAccessor) other).immersiveMC$openersCounter();
                     Util.getPlayersWithContainerOpen(openersCounter, level).forEach(other::stopOpen);
                     openersCounter.recheckOpeners(other.getLevel(), other.getBlockPos(), other.getLevel().getBlockState(other.getBlockPos()));
