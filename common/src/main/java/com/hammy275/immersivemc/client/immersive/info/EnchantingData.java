@@ -1,10 +1,10 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.book.BookRenderable;
 import com.hammy275.immersivemc.client.immersive.book.ClientBookData;
 import com.hammy275.immersivemc.client.immersive.book.WrittenBookHelpers;
+import com.hammy275.immersivemc.client.immersive.info.render_state.BookDataRenderState;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.compat.apotheosis.ApothStats;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
@@ -21,6 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -47,12 +48,12 @@ public class EnchantingData {
     }
 
     @Nullable
-    public ClientBookData getBookData(BuiltImmersiveInfo<EnchantingData> info) {
+    public ClientBookData getBookData(ItemStack firstItem) {
         if (bookData == null && Apoth.apothImpl.enchantModuleEnabled()) {
             bookData = new ClientBookData();
             bookData.renderables.add(new WrittenBookHelpers.BookTextRenderer(leftPage -> {
                 if (leftPage) {
-                    boolean hasItem = !info.getItem(0).isEmpty();
+                    boolean hasItem = !firstItem.isEmpty();
                     return FormattedText.composite(
                             Component.literal("\n"),
                             translate("gui.apotheosis.enchant.eterna").withStyle(ChatFormatting.GREEN),
@@ -75,14 +76,12 @@ public class EnchantingData {
                     return Component.EMPTY;
                 }
             }, textStackScaleSize * 1.5f, new Vec3(0.45, 4d/3d, 0)));
-            bookData.renderables.add(new ApothBarBookRenderable(() -> apothStats.eterna() / 50f, new Vec3(1, 0.5, 0),
-                    0f, 197f, false, info));
+            bookData.renderables.add(new ApothBarBookRenderable(() -> apothStats.eterna() / 100f, new Vec3(1, 0.5, 0),
+                    0f, 197f, false, firstItem));
             bookData.renderables.add(new ApothBarBookRenderable(() -> apothStats.quanta() / 100f, new Vec3(1, 0.1, 0),
-                    5f, 202f, false, info));
+                    5f, 202f, false, firstItem));
             bookData.renderables.add(new ApothBarBookRenderable(() -> apothStats.arcana() / 100f, new Vec3(1, -0.3, 0),
-                    10f, 207f, false, info));
-            bookData.renderables.add(new ApothBarBookRenderable(() -> apothStats.rectification() / 100f, new Vec3(1, -0.7, 0),
-                    15f, 20f, true, info));
+                    10f, 207f, false, firstItem));
         } else if (bookData != null && !Apoth.apothImpl.enchantModuleEnabled()) {
             bookData = null;
         }
@@ -139,7 +138,7 @@ public class EnchantingData {
 
     private record ApothBarBookRenderable(Supplier<Float> amountFullSupplier, Vec3 offset,
                                           float startYEmpty, float startYFull, boolean useOurImageForFull,
-                                          BuiltImmersiveInfo<EnchantingData> info) implements BookRenderable {
+                                          ItemStack firstItem) implements BookRenderable {
 
         private static ResourceLocation fullLocation = null;
         private static final ResourceLocation emptyLocation = Util.id("immersive/apoth_enchanting_table/apoth_bars.png");
@@ -147,8 +146,8 @@ public class EnchantingData {
         private static final float maxXY = 255f;
 
         @Override
-        public void render(PoseStack stack, ClientBookData data, boolean leftPage, int light, PosRot bookPosRot) {
-            if (leftPage || info.getItem(0).isEmpty()) return;
+        public void render(PoseStack stack, BookDataRenderState renderState, boolean leftPage, int light, PosRot bookPosRot) {
+            if (leftPage || firstItem.isEmpty()) return;
             if (fullLocation == null) {
                 String modId = Platform.isModLoaded("zenith") ? "zenith" : "apotheosis";
                 fullLocation = Util.id(modId, "textures/gui/enchanting_table.png");
@@ -218,8 +217,13 @@ public class EnchantingData {
         }
 
         @Override
-        public Vec3 getStartOffset(ClientBookData data, boolean leftPage, PosRot bookPosRot) {
+        public Vec3 getStartOffset(BookDataRenderState renderState, boolean leftPage, PosRot bookPosRot) {
             return offset;
+        }
+
+        @Override
+        public BookRenderable getRenderingCopy() {
+            return this;
         }
     }
 }

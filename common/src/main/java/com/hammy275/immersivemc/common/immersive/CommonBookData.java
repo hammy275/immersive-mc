@@ -279,7 +279,7 @@ public class CommonBookData implements NetworkStorage {
      * @param left Whether to get the left vector.
      * @return The left or right vector.
      */
-    public Vec3 getLeftRightVector(PosRot bookPosRot, boolean left) {
+    public static Vec3 getLeftRightVector(PosRot bookPosRot, boolean left) {
         Vector3f leftF = new Vector3f(0, 0, 1); // +Z is the default forward vector
         leftF.rotate(Axis.YN.rotationDegrees(left ? 270  : 90));
         leftF.rotate(Axis.ZP.rotation(bookPosRot.getRollF()));
@@ -293,7 +293,7 @@ public class CommonBookData implements NetworkStorage {
      * @return The vector pointing away from the book. This is the opposite of the look vector of an HMD looking
      * directly at the book.
      */
-    public Vec3 getAwayVector(PosRot hand) {
+    public static Vec3 getAwayVector(PosRot hand) {
         Vector3f awayFromBookF = new Vector3f(0, 1, 0);
         awayFromBookF.rotate(Axis.ZP.rotation(hand.getRollF()));
         awayFromBookF.rotate(Axis.XN.rotation(hand.getPitchF()));

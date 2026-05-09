@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.immersive.book;
 
 import com.hammy275.immersivemc.api.common.hitbox.OBB;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
+import com.hammy275.immersivemc.client.immersive.info.render_state.BookDataRenderState;
 import com.hammy275.immersivemc.client.workaround.ClickHandlerScreen;
 import com.hammy275.immersivemc.common.util.PageChangeState;
 import com.hammy275.immersivemc.common.util.PosRot;
@@ -177,7 +178,7 @@ public class WrittenBookHelpers {
     public record BookTextRenderer(Function<Boolean, FormattedText> textSupplier, float textStackScaleSize, Vec3 offset) implements BookRenderable {
 
         @Override
-        public void render(PoseStack stack, ClientBookData data, boolean leftPage, int light, PosRot bookPosRot) {
+        public void render(PoseStack stack, BookDataRenderState renderState, boolean leftPage, int light, PosRot bookPosRot) {
             stack.scale(textStackScaleSize, textStackScaleSize, textStackScaleSize);
             Font font = Minecraft.getInstance().font;
             FormattedText textRaw = textSupplier.apply(leftPage);
@@ -193,8 +194,13 @@ public class WrittenBookHelpers {
         }
 
         @Override
-        public Vec3 getStartOffset(ClientBookData data, boolean leftPage, PosRot bookPosRot) {
+        public Vec3 getStartOffset(BookDataRenderState renderState, boolean leftPage, PosRot bookPosRot) {
             return offset;
+        }
+
+        @Override
+        public BookRenderable getRenderingCopy() {
+            return this;
         }
     }
 

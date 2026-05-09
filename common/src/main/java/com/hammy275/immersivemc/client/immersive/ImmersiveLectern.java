@@ -9,6 +9,7 @@ import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.book.WrittenBookHelpers;
 import com.hammy275.immersivemc.client.immersive.info.LecternInfo;
+import com.hammy275.immersivemc.client.immersive.info.render_state.LecternRenderState;
 import com.hammy275.immersivemc.common.immersive.CommonBookData;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.LecternData;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<CommonBookData>> {
+public class ImmersiveLectern implements Immersive<LecternInfo, LecternRenderState, LecternData<CommonBookData>> {
 
     protected final List<LecternInfo> infos = new ArrayList<>();
 
@@ -65,13 +66,13 @@ public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<Comm
     }
 
     @Override
-    public boolean shouldRender(LecternInfo info) {
-        return !info.lecternData.book.isEmpty() && info.light > -1 && getHandler().isValidBlock(info.getBlockPosition(), Minecraft.getInstance().level);
+    public boolean shouldRender(LecternRenderState renderState) {
+        return !renderState.book.isEmpty() && renderState.light > -1;
     }
 
     @Override
-    public void render(LecternInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
-        info.lecternData.bookData.render(stack, info.light, info.lecternData.getLecternPosRot(info.getBlockPosition()));
+    public void render(LecternRenderState renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
+        renderState.bookData.render(stack, renderState.light, renderState.posRot, partialTick);
     }
 
     @Override
@@ -128,5 +129,19 @@ public class ImmersiveLectern implements Immersive<LecternInfo, LecternData<Comm
     @Override
     public boolean isVROnly() {
         return false;
+    }
+
+    @Override
+    public LecternRenderState createRenderState() {
+        return new LecternRenderState();
+    }
+
+    @Override
+    public void extractRenderState(LecternInfo info, LecternRenderState renderState, float partialTicks) {
+        renderState.book = info.getBook();
+        info.getData().extractRenderState(renderState.bookData);
+        renderState.posRot = info.lecternData.getLecternPosRot(info.getBlockPosition());
+        renderState.light = info.light;
+        renderState.ticksExisted = info.getTicksExisted();
     }
 }

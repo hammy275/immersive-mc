@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.immersive.info.DragImmersiveInfo;
+import com.hammy275.immersivemc.client.immersive.info.render_state.DragRenderState;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VR;
@@ -23,7 +24,7 @@ import java.util.List;
 /**
  * Immersive that's used for dragging between hitboxes, such as trapdoors.
  */
-public abstract class AbstractDragImmersive implements Immersive<DragImmersiveInfo, NullStorage> {
+public abstract class AbstractDragImmersive implements Immersive<DragImmersiveInfo, DragRenderState, NullStorage> {
 
     protected final List<DragImmersiveInfo> trackedObjects = new ArrayList<>();
 
@@ -72,16 +73,16 @@ public abstract class AbstractDragImmersive implements Immersive<DragImmersiveIn
     }
 
     @Override
-    public boolean shouldRender(DragImmersiveInfo info) {
+    public boolean shouldRender(DragRenderState renderState) {
         return true;
     }
 
     @Override
-    public void render(DragImmersiveInfo info, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
-        for (int i = 0; i < info.hitboxes.size(); i++) {
-            HitboxInfo hitbox = info.hitboxes.get(i);
+    public void render(DragRenderState renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
+        for (int i = 0; i < renderState.hitboxes.size(); i++) {
+            HitboxInfo hitbox = renderState.hitboxes.get(i);
             AutoDragSettings autoDrag = autoDragSettings();
-            float blue = info.startingHitboxIndex != i ? 1 : 0;
+            float blue = renderState.startingHitboxIndex != i ? 1 : 0;
             float red = !autoDrag.nonInteractables.contains(i) ? blue : 0;
             helpers.renderHitbox(stack, hitbox.getHitbox(), false, red, 1, blue);
         }
@@ -133,6 +134,18 @@ public abstract class AbstractDragImmersive implements Immersive<DragImmersiveIn
     @Override
     public boolean isVROnly() {
         return true;
+    }
+
+    @Override
+    public DragRenderState createRenderState() {
+        return new DragRenderState();
+    }
+
+    @Override
+    public void extractRenderState(DragImmersiveInfo info, DragRenderState renderState, float partialTicks) {
+        renderState.hitboxes = List.copyOf(info.hitboxes);
+        renderState.ticksExisted = info.ticksExisted;
+        renderState.startingHitboxIndex = info.startingHitboxIndex;
     }
 
     public record AutoDragSettings(Collection<Integer> nonInteractables,
