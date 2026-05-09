@@ -216,9 +216,9 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
                         .forEach(cbe::stopOpen);
                 openersCounter.recheckOpeners(cbe.getLevel(), cbe.getBlockPos(), cbe.getLevel().getBlockState(cbe.getBlockPos()));
                 if (other != null) {
-                    ChestToOpenSet.closeForAll(controllingPlayer.level(), pos);
+                    ChestToOpenSet.closeForAll(controllingPlayer.level(), other.getBlockPos());
                     openersCounter = ((ChestBlockEntityAccessor) other).immersiveMC$openersCounter();
-                    ((ContainerOpenersCounterAccessor) openersCounter).immersiveMC$getPlayersWithContainerOpen(controllingPlayer.level(), pos)
+                    ((ContainerOpenersCounterAccessor) openersCounter).immersiveMC$getPlayersWithContainerOpen(controllingPlayer.level(), other.getBlockPos())
                             .forEach(other::stopOpen);
                     openersCounter.recheckOpeners(other.getLevel(), other.getBlockPos(), other.getLevel().getBlockState(other.getBlockPos()));
                 }
