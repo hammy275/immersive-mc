@@ -68,4 +68,9 @@ public class ChestLikeData {
         }
         return offset;
     }
+
+    public void copy(ChestLikeData target) {
+        target.currentRow = currentRow;
+        target.isOpen = isOpen;
+    }
 }

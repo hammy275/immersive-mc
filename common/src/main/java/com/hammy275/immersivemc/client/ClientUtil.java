@@ -72,7 +72,7 @@ public class ClientUtil {
     }
 
     public static void clearDisabledImmersives() {
-        for (Immersive<?, ?> immersive : Immersives.IMMERSIVES) {
+        for (Immersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
             if (!immersive.getHandler().enabledInConfig(Minecraft.getInstance().player)) {
                 immersive.getTrackedObjects().clear();
             }
@@ -156,7 +156,7 @@ public class ClientUtil {
     }
 
     @Nullable
-    public static <I extends ImmersiveInfo> I findImmersive(Immersive<I, ?> immersive, BlockPos pos) {
+    public static <I extends ImmersiveInfo> I findImmersive(Immersive<I, ?, ?> immersive, BlockPos pos) {
         for (I info : immersive.getTrackedObjects()) {
             if (Util.getValidBlocks(immersive.getHandler(), info.getBlockPosition(), Minecraft.getInstance().level).contains(pos)) {
                 return info;

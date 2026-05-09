@@ -4,7 +4,6 @@ import com.hammy275.immersivemc.client.ClientUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -33,15 +32,6 @@ public class BeaconInfo extends AbstractImmersiveInfo {
         for (int i = 0; i <= 8; i++) {
             hitboxes.add(new HitboxItemPair(null, ItemStack.EMPTY, i != 8));
         }
-    }
-
-    public boolean isEffectSelected() {
-        return effectSelected > -1;
-    }
-
-    public boolean isReadyForConfirm() {
-        HitboxItemPair pair = hitboxes.get(8);
-        return isEffectSelected() && pair.item.is(ItemTags.BEACON_PAYMENT_ITEMS);
     }
 
     public int getEffectId() {

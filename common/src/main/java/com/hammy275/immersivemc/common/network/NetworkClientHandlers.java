@@ -75,7 +75,7 @@ public class NetworkClientHandlers {
         Level level = Minecraft.getInstance().player.level();
         // Search all immersives for the matching handler. If found and the block is the state we expect, create or refresh
         // the info and process storage on it.
-        for (Immersive<?, ?> immersive : Immersives.IMMERSIVES) {
+        for (Immersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
             if (immersive.getHandler() == handler && Util.isValidBlocks(handler, pos, level)) {
                 ImmersiveInfo info = ClientLogicSubscriber.doTrackIfNotTrackingAlready(immersive, pos, level);
                 if (info != null) {
@@ -94,9 +94,9 @@ public class NetworkClientHandlers {
     }
 
     @SuppressWarnings("unchecked")
-    private static <I extends ImmersiveInfo, NS extends NetworkStorage> void processStorageFromNetwork(Immersive<?, ?> immersive,
+    private static <I extends ImmersiveInfo, NS extends NetworkStorage> void processStorageFromNetwork(Immersive<?, ?, ?> immersive,
                                                                                                        I info, NS storage) {
-        Immersive<I, NS> immersiveCast = (Immersive<I, NS>) immersive;
+        Immersive<I, ?, NS> immersiveCast = (Immersive<I, ?, NS>) immersive;
         immersiveCast.processStorageFromNetwork(info, storage);
     }
 

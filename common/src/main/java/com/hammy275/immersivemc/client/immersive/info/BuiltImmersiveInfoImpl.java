@@ -41,7 +41,7 @@ public final class BuiltImmersiveInfoImpl<E> implements BuiltImmersiveInfo<E> {
         }
         this.pos = pos;
         try {
-            this.extraData = extraDataClazz == null ? null : extraDataClazz.getDeclaredConstructor(null).newInstance();
+            this.extraData = extraDataClazz == null ? null : extraDataClazz.getDeclaredConstructor().newInstance();
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
