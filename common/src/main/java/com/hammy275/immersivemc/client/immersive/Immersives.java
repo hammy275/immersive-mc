@@ -7,8 +7,9 @@ import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveMCClientRegistrationImpl;
 import com.hammy275.immersivemc.client.config.ClientConstants;
-import com.hammy275.immersivemc.client.immersive.book.ClientBookData;
 import com.hammy275.immersivemc.client.immersive.info.*;
+import com.hammy275.immersivemc.client.immersive.info.render_state.BookDataRenderState;
+import com.hammy275.immersivemc.client.immersive.info.render_state.EnchantingTableExtraDataRenderState;
 import com.hammy275.immersivemc.common.compat.IronFurnaces;
 import com.hammy275.immersivemc.common.compat.TinkersConstruct;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
@@ -31,30 +32,26 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.hammy275.immersivemc.client.ClientUtil.createConfigScreenInfo;
 
 public class Immersives {
 
-    public static final List<Immersive<? extends ImmersiveInfo, ? extends NetworkStorage>> IMMERSIVES =
+    public static final List<Immersive<? extends ImmersiveInfo, ? extends ImmersiveRenderState, ? extends NetworkStorage>> IMMERSIVES =
             new ArrayList<>();
     public static final List<AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ? extends NetworkStorage>> IMMERSIVE_ATTACHMENTS =
             new ArrayList<>();
 
-    public static final BuiltImmersive<?,?> immersiveAnvil = ImmersiveBuilder.create(ImmersiveHandlers.anvilHandler, AnvilData.class)
+    public static final BuiltImmersive<?,?,?> immersiveAnvil = ImmersiveBuilder.create(ImmersiveHandlers.anvilHandler, AnvilData.class, null, null)
             .setRenderSize(ClientConstants.itemScaleSizeAnvil)
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(0, -1d/3d, 0), // When you place an anvil, the anvil's look direction is rotated 90 degrees.
                     ClientConstants.itemScaleSizeAnvil).rotateItem(ItemRotationType.CLOCKWISE).build())
@@ -85,7 +82,7 @@ public class Immersives {
                     (config, newVal) -> config.useAnvilImmersive = newVal))
             .build();
     public static final ImmersiveBackpack immersiveBackpack = new ImmersiveBackpack();
-    public static final BuiltImmersive<ChestLikeData,?> immersiveBarrel = ImmersiveBuilder.create(ImmersiveHandlers.barrelHandler, ChestLikeData.class)
+    public static final BuiltImmersive<ChestLikeData,ChestLikeData,?> immersiveBarrel = ImmersiveBuilder.create(ImmersiveHandlers.barrelHandler, ChestLikeData.class, ChestLikeData.class, (source, target) -> source.getExtraData().copy(target))
             .setRenderSize(ClientConstants.itemScaleSizeBarrel)
             .add3x3Grid(RelativeHitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
             .add3x3Grid(RelativeHitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
@@ -124,7 +121,7 @@ public class Immersives {
                     (config, newVal) -> config.useBarrelImmersive = newVal))
             .build();
     public static final ImmersiveBeacon immersiveBeacon = new ImmersiveBeacon();
-    public static final BuiltImmersive<?,?> immersiveBrewing = ImmersiveBuilder.create(ImmersiveHandlers.brewingStandHandler)
+    public static final BuiltImmersive<?,?,?> immersiveBrewing = ImmersiveBuilder.create(ImmersiveHandlers.brewingStandHandler)
             .setRenderSize(ClientConstants.itemScaleSizeBrewing)
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(-0.25, -1d/6d, 0),
                     ClientConstants.itemScaleSizeBrewing / 1.5).build())
@@ -147,7 +144,7 @@ public class Immersives {
                     (config, newVal) -> config.useBrewingStandImmersive = newVal))
             .build();
     public static final ImmersiveChest immersiveChest = new ImmersiveChest();
-    public static final BuiltImmersive<?,?> immersiveChiseledBookshelf = ImmersiveBuilder.create(ImmersiveHandlers.chiseledBookshelfHandler)
+    public static final BuiltImmersive<?,?,?> immersiveChiseledBookshelf = ImmersiveBuilder.create(ImmersiveHandlers.chiseledBookshelfHandler)
             .shouldDisableRightClicksWhenInteractionsDisabled(false)
             .addHitbox(RelativeHitboxInfoBuilder.create(ChiseledBookshelfHandler.slotOffsets[0], 0.375, 0.5, 0.25).build())
             .addHitbox(RelativeHitboxInfoBuilder.create(ChiseledBookshelfHandler.slotOffsets[1], 0.3125, 0.5, 0.25).build())
@@ -165,7 +162,7 @@ public class Immersives {
                     config -> config.useChiseledBookshelfImmersive,
                     (config, newVal) -> config.useChiseledBookshelfImmersive = newVal))
             .build();
-    public static final BuiltImmersive<?,?> immersiveCrafting = ImmersiveBuilder.create(ImmersiveHandlers.craftingHandler)
+    public static final BuiltImmersive<?,?,?> immersiveCrafting = ImmersiveBuilder.create(ImmersiveHandlers.craftingHandler)
             .setRenderSize(ClientConstants.itemScaleSizeCrafting)
             .add3x3Grid(RelativeHitboxInfoBuilder.createItemInput(Vec3.ZERO,
                             ClientConstants.itemScaleSizeCrafting / 1.5f).needs3DResourcePackCompat(true).build(),
@@ -184,7 +181,7 @@ public class Immersives {
                     (config, newVal) -> config.useCraftingTableImmersive = newVal))
             .build();
     public static final ImmersiveDoor immersiveDoor = new ImmersiveDoor();
-    public static final BuiltImmersive<EnchantingData, ETableStorage> immersiveETable = ImmersiveBuilder.create(ImmersiveHandlers.enchantingTableHandler, EnchantingData.class)
+    public static final BuiltImmersive<EnchantingData, EnchantingTableExtraDataRenderState, ETableStorage> immersiveETable = ImmersiveBuilder.create(ImmersiveHandlers.enchantingTableHandler, EnchantingData.class, EnchantingTableExtraDataRenderState.class, EnchantingTableExtraDataRenderState::extractRenderState)
             .setRenderSize(ClientConstants.itemScaleSizeETable)
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(0, 0.9, -0.5), ClientConstants.itemScaleSizeETable).build())
             .addHitbox(RelativeHitboxInfoBuilder.create((info) -> {
@@ -297,29 +294,22 @@ public class Immersives {
                     config -> config.useEnchantingTableImmersive,
                     (config, newVal) -> config.useEnchantingTableImmersive = newVal))
             .setExtraRenderer((info, stack, helpers, partialTick, light) -> {
-                BlockEntity blockEntity = Minecraft.getInstance().level.getBlockEntity(info.getBlockPosition());
-                if (Apoth.apothImpl.enchantModuleEnabled() && blockEntity instanceof EnchantingTableBlockEntity table && table.open == 1f) {
-                    Optional<BuiltImmersiveInfo<EnchantingData>> infoOpt = Immersives.immersiveETable.getTrackedObjects().stream()
-                            .filter(i -> i.getBlockPosition().equals(table.getBlockPos()))
-                            .findFirst();
-                    if (infoOpt.isPresent()) {
-                        BlockPos pos = table.getBlockPos();
-                        Player player = Minecraft.getInstance().level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 3.0, false);
-                        if (player != null) {
-                            ClientBookData bookData = info.getExtraData().getBookData(info);
-                            if (bookData != null) {
-                                float rot = table.rot + (float) Math.PI / 2f;
-                                PosRot posRot = new PosRot(Vec3.atBottomCenterOf(pos).add(0, 0.9, 0),
-                                        Util.getLookAngle((float) -Math.PI / 8f, -rot),
-                                        (float) Math.PI / 8f, rot, 0);
-                                bookData.render(stack, light, posRot);
-                            }
+                if (Apoth.apothImpl.enchantModuleEnabled() && info.getExtraRenderData().isTableOpen) {
+                    BlockPos pos = info.getBlockPos();
+                    if (info.getExtraRenderData().hasPlayerNearby) {
+                        BookDataRenderState bookData = info.getExtraRenderData().bookDataRenderState;
+                        if (bookData != null) {
+                            float rot = info.getExtraRenderData().rot + (float) Math.PI / 2f;
+                            PosRot posRot = new PosRot(Vec3.atBottomCenterOf(pos).add(0, 0.9, 0),
+                                    Util.getLookAngle((float) -Math.PI / 8f, -rot),
+                                    (float) Math.PI / 8f, rot, 0);
+                            bookData.render(stack, light, posRot, partialTick);
                         }
                     }
                 }
             })
             .build();
-    public static final BuiltImmersive<?,?> immersiveFurnace = ImmersiveBuilder.create(ImmersiveHandlers.furnaceHandler)
+    public static final BuiltImmersive<?,?,?> immersiveFurnace = ImmersiveBuilder.create(ImmersiveHandlers.furnaceHandler)
             .setRenderSize(ClientConstants.itemScaleSizeFurnace)
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput((info) -> {
                 if (ActiveConfig.active().autoCenterFurnaceImmersive) {
@@ -377,7 +367,7 @@ public class Immersives {
                     config -> config.useFurnaceImmersive,
                     (config, newVal) -> config.useFurnaceImmersive = newVal))
             .build();
-    public static final BuiltImmersive<GrindstoneData,?> immersiveGrindstone = ImmersiveBuilder.create(ImmersiveHandlers.grindstoneHandler, GrindstoneData.class)
+    public static final BuiltImmersive<GrindstoneData,?,?> immersiveGrindstone = ImmersiveBuilder.create(ImmersiveHandlers.grindstoneHandler, GrindstoneData.class, null, null)
             .setRenderSize(ClientConstants.itemScaleSizeGrindstone)
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(info -> grindGrindstone() ? null : new Vec3(0, 0.5, -0.65), ClientConstants.itemScaleSizeGrindstone).build())
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(info -> grindGrindstone() ? null : new Vec3(0, 0.5, -0.35), ClientConstants.itemScaleSizeGrindstone).build())
@@ -430,7 +420,7 @@ public class Immersives {
                     (config, newVal) -> config.useGrindstoneImmersive = newVal))
             .build();
     public static final ImmersiveHitboxes immersiveHitboxes = new ImmersiveHitboxes();
-    public static final BuiltImmersive<?,?> immersiveHopper = ImmersiveBuilder.create(ImmersiveHandlers.hopperHandler)
+    public static final BuiltImmersive<?,?,?> immersiveHopper = ImmersiveBuilder.create(ImmersiveHandlers.hopperHandler)
             .setRenderSize(ClientConstants.itemScaleSizeHopper)
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput((info) -> {
                 Direction forward = Util.getForwardFromPlayerUpAndDown(Minecraft.getInstance().player, info.getBlockPosition());
@@ -469,7 +459,7 @@ public class Immersives {
                     config -> config.useHopperImmersive,
                     (config, newVal) -> config.useHopperImmersive = newVal))
             .build();
-    public static final BuiltImmersive<?,?> immersiveJukebox = ImmersiveBuilder.create(ImmersiveHandlers.jukeboxHandler)
+    public static final BuiltImmersive<?,?,?> immersiveJukebox = ImmersiveBuilder.create(ImmersiveHandlers.jukeboxHandler)
             .addHitbox(RelativeHitboxInfoBuilder.create(Vec3.ZERO, 0.125, 0.125, 0.625).build())
             .setPositioningMode(HitboxPositioningMode.TOP_LITERAL)
             .setHitboxInteractHandler((info, player, slots, hand, modifierPressed) -> {
@@ -487,7 +477,7 @@ public class Immersives {
     public static final ImmersiveLever immersiveLever = new ImmersiveLever();
 
     public static final ImmersiveRepeater immersiveRepeater = new ImmersiveRepeater();
-    public static final BuiltImmersive<ChestLikeData,?> immersiveShulker = ImmersiveBuilder.create(ImmersiveHandlers.shulkerBoxHandler, ChestLikeData.class)
+    public static final BuiltImmersive<ChestLikeData,ChestLikeData,?> immersiveShulker = ImmersiveBuilder.create(ImmersiveHandlers.shulkerBoxHandler, ChestLikeData.class, ChestLikeData.class, (source, target) -> source.getExtraData().copy(target))
             .setRenderSize(ClientConstants.itemScaleSizeShulker)
             .add3x3Grid(RelativeHitboxInfoBuilder.createItemInput((info) -> {
                 ChestLikeData extra = (ChestLikeData) info.getExtraData();
@@ -509,7 +499,7 @@ public class Immersives {
             .setSlotActiveFunction((info, slot) -> ((ChestLikeData) info.getExtraData()).isOpen)
             .setOnRemove((info) -> ((ChestLikeData) info.getExtraData()).forceClose(info.getBlockPosition()))
             .setShouldRenderItemGuideFunction((info, slot) -> {
-                ChestLikeData extra = (ChestLikeData) info.getExtraData();
+                ChestLikeData extra = (ChestLikeData) info.getExtraRenderData();
                 return slot >= extra.currentRow * 9 && slot < (extra.currentRow + 1) * 9;
             })
             .setNoDragHitbox()
@@ -518,7 +508,7 @@ public class Immersives {
                     (config, newVal) -> config.useShulkerImmersive = newVal))
             .build();
 
-    public static final BuiltImmersive<?,?> immersiveSmithingTable = ImmersiveBuilder.create(ImmersiveHandlers.smithingTableHandler)
+    public static final BuiltImmersive<?,?,?> immersiveSmithingTable = ImmersiveBuilder.create(ImmersiveHandlers.smithingTableHandler)
             .setRenderSize(ClientConstants.itemScaleSizeSmithingTable)
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(new Vec3(-1d/3d, 0, 0), ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput(Vec3.ZERO, ClientConstants.itemScaleSizeSmithingTable / 1.025).build())
@@ -535,14 +525,14 @@ public class Immersives {
                     (config, newVal) -> config.useSmithingTableImmersive = newVal))
             .build();
 
-    public static final Immersive<?, ?> immersiveTrapdoor = new ImmersiveTrapdoor();
+    public static final Immersive<?, ?, ?> immersiveTrapdoor = new ImmersiveTrapdoor();
 
-    public static final BuiltImmersive<?,?> immersiveIronFurnacesFurnace = CompatModule.create(
+    public static final BuiltImmersive<?,?,?> immersiveIronFurnacesFurnace = CompatModule.create(
             immersiveFurnace.getBuilderClone(ImmersiveHandlers.ironFurnacesFurnaceHandler).build(),
             BuiltImmersive.class,
             IronFurnaces.compatData);
 
-    public static final BuiltImmersive<?,?> immersiveTinkersConstructCraftingStation = CompatModule.create(
+    public static final BuiltImmersive<?,?,?> immersiveTinkersConstructCraftingStation = CompatModule.create(
             immersiveCrafting.getBuilderClone(ImmersiveHandlers.tcCraftingStationHandler)
             .modifyHitboxes(0, 8, (hitbox) -> hitbox.renderItem(false).build())
             .build(),
@@ -550,7 +540,7 @@ public class Immersives {
             TinkersConstruct.compatData
             );
 
-    public static final BuiltImmersive<?,?> immersiveApothSalvagingTable = CompatModule.create(
+    public static final BuiltImmersive<?,?,?> immersiveApothSalvagingTable = CompatModule.create(
             ImmersiveBuilder.create(ImmersiveHandlers.apothSalvagingTableHandler)
                     .setRenderSize(ClientConstants.itemScaleSizeApothSalvagingTable)
                     .add3x3Grid(RelativeHitboxInfoBuilder.createItemInput(Vec3.ZERO, ClientConstants.itemScaleSizeApothSalvagingTable).build(),
@@ -565,7 +555,7 @@ public class Immersives {
             Apoth.compatData
     );
 
-    public static final BuiltImmersive<?,?> immersiveVisualWorkbench =
+    public static final BuiltImmersive<?,?,?> immersiveVisualWorkbench =
             immersiveTinkersConstructCraftingStation.getBuilderClone(ImmersiveHandlers.visualWorkbenchHandler)
                     .modifyHitbox(9, hitbox -> hitbox.renderItem(false).build())
                     .build();

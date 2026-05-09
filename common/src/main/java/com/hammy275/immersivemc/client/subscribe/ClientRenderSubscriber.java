@@ -3,9 +3,11 @@ package com.hammy275.immersivemc.client.subscribe;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.client.immersive_item.AbstractHandImmersive;
 import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
@@ -46,7 +48,7 @@ public class ClientRenderSubscriber {
     public static void onWorldRender(PoseStack stack) {
         setRenderColors();
         try {
-            for (Immersive<?, ?> singleton : Immersives.IMMERSIVES) {
+            for (Immersive<?, ?, ?> singleton : Immersives.IMMERSIVES) {
                 renderInfos(singleton, stack);
             }
             for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
@@ -105,15 +107,19 @@ public class ClientRenderSubscriber {
         cycleProgressRangedGrab = 0;
     }
 
-    protected static <I extends ImmersiveInfo> void renderInfos(Immersive<I, ?> singleton,
-                                                                PoseStack stack) {
+    protected static <I extends ImmersiveInfo, R extends ImmersiveRenderState> void renderInfos(Immersive<I, R, ?> singleton,
+                                                                                                PoseStack stack) {
         try {
             if (singleton.isVROnly() && !VRVerify.clientInVR()) {
                 return;
             }
             for (I info : singleton.getTrackedObjects()) {
-                if (singleton.shouldRender(info)) {
-                    singleton.render(info, stack, ImmersiveRenderHelpers.instance(), Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true));
+                float partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
+                R renderState = singleton.createRenderState();
+                singleton.extractRenderState(info, renderState, partialTicks);
+                SwapTracker.updateRenderStatesFromInfo(info, renderState);
+                if (singleton.shouldRender(renderState)) {
+                    singleton.render(renderState, stack, ImmersiveRenderHelpers.instance(), partialTicks);
                 }
             }
         } catch (ConcurrentModificationException ignored) {

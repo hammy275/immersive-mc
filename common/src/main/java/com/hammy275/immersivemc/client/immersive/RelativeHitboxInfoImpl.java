@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfoImpl;
+import com.hammy275.immersivemc.client.immersive.info.render_state.RelativeHitboxRenderState;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VR;
@@ -511,5 +512,19 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
     @Override
     public boolean isTriggerHitbox() {
         return this.isTriggerHitbox;
+    }
+
+    public void extractRenderState(RelativeHitboxRenderState renderState, float partialTicks) {
+        renderState.aabb = hasAABB() ? getRenderHitbox(partialTicks) : null;
+        renderState.holdsItems = holdsItems;
+        renderState.renderItem = renderItem;
+        renderState.item = item;
+        renderState.itemSpins = itemSpins;
+        renderState.isInput = isInput;
+        renderState.itemRenderSizeMultiplier = itemRenderSizeMultiplier;
+        renderState.itemRotationType = itemRotationType;
+        renderState.renderItemCount = renderItemCount;
+        renderState.upDownRenderDir = upDownRenderDir;
+        renderState.textData = List.copyOf(textData);
     }
 }

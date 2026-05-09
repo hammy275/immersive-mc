@@ -1,9 +1,8 @@
 package com.hammy275.immersivemc.client.api_impl;
 
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
-import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
@@ -36,28 +35,24 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
 
     public static final ImmersiveRenderHelpers INSTANCE = new ImmersiveRenderHelpersImpl();
 
-    @Override
-    public void renderItemWithInfo(ItemStack item, PoseStack stack, float size, boolean renderItemCounts, int light, ImmersiveInfo info, boolean shouldRenderItemGuide, int hitboxIndex, @Nullable Float spinDegrees, @Nullable Direction facing, @Nullable Direction upDown) {
-        HitboxInfo hitbox = info.getAllHitboxes().get(hitboxIndex);
-        float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
-        boolean hovered = info.getSlotHovered(0) == hitboxIndex
-                || info.getSlotHovered(1) == hitboxIndex
-                || SwapTracker.slotHovered(info, hitboxIndex);
+    public void renderItemWithRenderState(ItemStack item, PoseStack stack, float size, boolean renderItemCounts, int light, ImmersiveRenderState renderState, boolean shouldRenderItemGuide, int hitboxIndex, @Nullable Float spinDegrees, @Nullable Direction facing, @Nullable Direction upDown) {
+        BoundingBox hitbox = renderState.hitboxes().get(hitboxIndex);
+        if (hitbox == null) return;
+        boolean hovered = renderState.isSlotHovered(hitboxIndex) || SwapTracker.slotHovered(renderState, hitboxIndex);
         if (item == null || item.isEmpty()) {
             if (shouldRenderItemGuide) {
-                renderItemGuide(stack, hitbox.getRenderHitbox(partialTick), hovered, light);
+                renderItemGuide(stack, hitbox, hovered, light);
             }
         } else {
-            long ticksExisted = info.getTicksExisted();
+            long ticksExisted = renderState.ticksExisted();
             if (ticksExisted < ClientConstants.transitionTime) {
                 // Adjust size based on transition
-                size *= getTransitionMultiplier(info.getTicksExisted());
+                size *= getTransitionMultiplier(renderState.ticksExisted());
             } else {
                 // Adjust size based on if it's hovered
                 size = hovered ? size * ClientConstants.sizeScaleForHover : size;
             }
-            BoundingBox bbox = hitbox.getRenderHitbox(partialTick);
-            renderItem(item, stack, size, bbox, renderItemCounts, light, spinDegrees, facing, upDown);
+            renderItem(item, stack, size, hitbox, renderItemCounts, light, spinDegrees, facing, upDown);
         }
     }
 
