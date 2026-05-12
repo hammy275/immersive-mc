@@ -1,3 +1,0 @@
-classTweaker v1 named
-
-inject-interface net/minecraft/world/phys/AABB com/hammy275/immersivemc/api/common/hitbox/BoundingBox

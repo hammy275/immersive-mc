@@ -17,9 +17,9 @@ import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -41,7 +41,7 @@ import java.util.List;
  * @param <I> Info type
  */
 public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractPlayerAttachmentInfo, S extends NetworkStorage> {
-    public static final int maxLight = LightTexture.pack(15, 15);
+    public static final int maxLight = LightCoordsUtil.pack(15, 15);
 
     protected final List<I> infos;
     public final int maxImmersives;

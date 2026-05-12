@@ -11,8 +11,9 @@ import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.SwapPacket;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.InteractionHand;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl i
     @Override
     public int getLight(BlockPos pos) {
         // TODO: Return maxLight here if full bright in ImmersiveMC settings
-        return Minecraft.getInstance().levelRenderer.getLightColor(Minecraft.getInstance().level, pos);
+        return LevelRenderer.getLightCoords(Minecraft.getInstance().level, pos);
     }
 
     @Override
@@ -60,8 +61,8 @@ public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl i
             }
 
             int packedLight = getLight(pos);
-            int blockLight = LightTexture.block(packedLight);
-            int skyLight = LightTexture.sky(packedLight);
+            int blockLight = LightCoordsUtil.block(packedLight);
+            int skyLight = LightCoordsUtil.sky(packedLight);
 
             if (blockLight > maxBlock) {
                 maxBlock = blockLight;
@@ -75,6 +76,6 @@ public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl i
                 break;
             }
         }
-        return LightTexture.pack(maxBlock, maxSky);
+        return LightCoordsUtil.pack(maxBlock, maxSky);
     }
 }

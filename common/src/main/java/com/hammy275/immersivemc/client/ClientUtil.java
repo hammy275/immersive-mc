@@ -17,14 +17,14 @@ import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.gizmos.DrawableGizmoPrimitives;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.gizmos.Gizmo;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
@@ -46,7 +46,7 @@ import java.util.function.Supplier;
 public class ClientUtil {
 
 
-    public static final int maxLight = LightTexture.pack(15, 15);
+    public static final int maxLight = LightCoordsUtil.pack(15, 15);
     public static int immersiveLeftClickCooldown = 0;
 
     /**
@@ -58,7 +58,7 @@ public class ClientUtil {
         Minecraft mc = Minecraft.getInstance();
         DrawableGizmoPrimitives gizmoPrimitives = new DrawableGizmoPrimitives();
         gizmo.emit(gizmoPrimitives, 1f);
-        CameraRenderState cameraRenderState = mc.gameRenderer.getLevelRenderState().cameraRenderState;
+        CameraRenderState cameraRenderState = mc.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState;
         // Frustum found via basically the same code as GameRenderer#renderLevel() in the one line below
         Matrix4f frustum = new Matrix4f().rotation(cameraRenderState.orientation.conjugate(new Quaternionf()));
         gizmoPrimitives.render(poseStack, mc.renderBuffers().bufferSource(), cameraRenderState, frustum);
@@ -167,11 +167,11 @@ public class ClientUtil {
                     }
                     Immersives.immersiveBackpack.doTrack();
                 } else {
-                    player.displayClientMessage(Component.translatable("message.immersivemc.not_in_vr"), false);
+                    player.sendSystemMessage(Component.translatable("message.immersivemc.not_in_vr"));
                 }
             } else {
-                player.displayClientMessage(Component.translatable("message.immersivemc.no_vivecraft",
-                        CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString()), false);
+                player.sendSystemMessage(Component.translatable("message.immersivemc.no_vivecraft",
+                        CommonConstants.vrAPIVersionAsString(), CommonConstants.firstNonCompatibleFutureVersionAsString()));
             }
         }
     }

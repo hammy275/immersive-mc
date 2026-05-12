@@ -4,6 +4,7 @@
   "package": "com.hammy275.immersivemc.fabric.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "FenceGateBlockMixin"
   ],
   "client": [
   ]

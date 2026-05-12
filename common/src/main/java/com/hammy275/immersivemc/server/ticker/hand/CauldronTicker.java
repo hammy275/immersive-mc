@@ -37,7 +37,7 @@ public class CauldronTicker extends AbstractHandTicker {
         Item handItem = handStack.getItem();
         PotionContents contents = handStack.get(DataComponents.POTION_CONTENTS);
         Holder<Potion> heldPotion = contents == null ? null : contents.potion().orElse(null);
-        CauldronInteraction interaction = ((AbstractCauldronBlockAccessor) cauldronBlock).immersiveMC$getInteractions().map().get(handItem);
+        CauldronInteraction interaction = ((AbstractCauldronBlockAccessor) cauldronBlock).immersiveMC$getInteractions().get(handStack);
 
         if (interaction == null) return;
 

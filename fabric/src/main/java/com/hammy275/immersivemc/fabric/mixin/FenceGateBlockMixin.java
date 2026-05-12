@@ -1,4 +1,4 @@
-package com.hammy275.immersivemc.mixin;
+package com.hammy275.immersivemc.fabric.mixin;
 
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.state.properties.WoodType;

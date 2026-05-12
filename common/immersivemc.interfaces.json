@@ -1,0 +1,5 @@
+{
+  "net/minecraft/world/phys/AABB": [
+    "com/hammy275/immersivemc/api/common/hitbox/BoundingBox"
+  ]
+}
