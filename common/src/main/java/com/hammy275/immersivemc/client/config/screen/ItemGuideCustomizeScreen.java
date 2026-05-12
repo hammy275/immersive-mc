@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.PlatformClient;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.model.Cube1x1;
@@ -75,7 +76,7 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
 
     private void renderPreview(GuiGraphics graphics, RGBA color, float heightMult, boolean renderSquare, double size) {
         GuiRenderState guiRenderState = ((GuiGraphicsAccessor) graphics).immersiveMC$getGuiRenderState();
-        ScreenRectangle peek = PlatformClient.peekScissorStack(graphics);
+        ScreenRectangle peek = Platform.CLIENT.peekScissorStack(graphics);
 
         guiRenderState.submitPicturesInPictureState(new CustomGuiRendererState(
                 this.width * 0.9, this.width, this.height * heightMult - 64f, this.height * heightMult + 64f, 0.5f, peek,

@@ -1,95 +1,98 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id 'multiloader-loader'
+    id 'net.minecraftforge.gradle' version '[7.0.17,8)'
 }
-
-architectury {
-    platformSetupLoomIde()
-    forge()
+base {
+    archivesName = "${mod_name}-forge-${minecraft_version}"
 }
-
-loom {
-    accessWidenerPath = project(":common").loom.accessWidenerPath
-
-    forge {
-        convertAccessWideners = true
-        mixinConfig "mixins.immersivemc.json"
-        mixinConfig "mixins.forge.immersivemc.json"
+jar {
+    manifest {
+        attributes["MixinConfigs"] = "mixins.${mod_id}.json,mixins.forge.${mod_id}.json"
     }
 }
 
+minecraft {
+    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformer = true
+    }
+
+    facade = files(["immersivemc.facade.cfg"])
+
+    runs {
+        configureEach {
+            workingDir = layout.projectDirectory.dir('run')
+            systemProperty 'eventbus.api.strictRuntimeChecks', 'true'
+            systemProperty 'forge.enabledGameTestNamespaces', mod_id
+            args "--mixin.config=mixins.${mod_id}.json"
+            args "--mixin.config=mixins.forge.${mod_id}.json"
+        }
+
+        register('client')
+
+        register('server') {
+            args '--nogui'
+        }
+
+        register('gameTestServer')
+
+        register('data') {
+            workingDir = layout.projectDirectory.dir('run-data')
+            args '--mod', mod_id, '--all', '--output', layout.projectDirectory.dir('src/generated/resources'), '--existing', layout.projectDirectory.dir('src/main/resources')
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
 repositories {
+    minecraft.mavenizer(it)
+    maven { url = uri(layout.projectDirectory.dir('../.gradle/mavenizer/repo')) }
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+    mavenCentral()
     maven {
         url = "https://cursemaven.com"
     }
 }
 
-configurations {
-    common
-    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
-    compileClasspath.extendsFrom common
-    runtimeClasspath.extendsFrom common
-    developmentForge.extendsFrom common
-}
-
 dependencies {
-    forge "net.minecraftforge:forge:${rootProject.forge_version}"
-    modApi "curse.maven:vivecraft-667903:${rootProject.vivecraft_forge_file_id}"
+    implementation minecraft.dependency("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
+    annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.1'
 
-    common(project(path: ":common", configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
-
-    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${rootProject.mixin_extras_version}"))
-    implementation(include("io.github.llamalad7:mixinextras-forge:${rootProject.mixin_extras_version}"))
+    api "curse.maven:vivecraft-667903:${vivecraft_forge_file_id}"
+    // Commented out, since the Kotlin it includes likes to break with MixinExtras.
+    // It's fine though, the code is all in common anyways.
+    //api "curse.maven:inventoryprofilesnext-495267:8038908"
+    //api "curse.maven:libipn-679177:8038726" // Inventory Profiles Next dependency
 }
 
-processResources {
-    inputs.property "version", project.version
-
-    filesMatching("META-INF/mods.toml") {
-        expand "version": project.version
-    }
+sourceSets.each {
+    def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
+    it.output.resourcesDir = dir
+    it.java.destinationDirectory = dir
 }
 
-shadowJar {
-    exclude "fabric.mod.json"
-    exclude "architectury.common.json"
-
-    configurations = [project.configurations.shadowCommon]
-    archiveClassifier = "dev-shadow"
-}
-
-remapJar {
-    input.set shadowJar.archiveFile
-    dependsOn shadowJar
-    archiveClassifier = null
-}
-
-jar {
-    archiveClassifier = "dev"
-}
-
-sourcesJar {
-    def commonSources = project(":common").sourcesJar
-    dependsOn commonSources
-    from commonSources.archiveFile.map { zipTree(it) }
-}
-
-components.java {
-    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
-        skip()
-    }
-}
-
-publishing {
-    publications {
-        mavenForge(MavenPublication) {
-            artifactId = rootProject.archives_base_name + "-" + project.name
-            from components.java
+// Implement mcgradleconventions loader attribute
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
+    configurations.named("$variant") {
+        attributes {
+            attribute(loaderAttribute, 'forge')
         }
     }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName].each { variant->
+        configurations.named("$variant") {
+            attributes {
+                attribute(loaderAttribute, 'forge')
+            }
+        }
     }
+}
+
+javadoc {
+    // Ignore .md files used for extra documentation added among code not intended for the Javadocs
+    exclude "**/*.md"
 }

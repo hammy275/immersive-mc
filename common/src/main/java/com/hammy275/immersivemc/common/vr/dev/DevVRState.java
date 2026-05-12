@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.vr.dev;
 
 import com.hammy275.immersivemc.ImmersiveMCClient;
+import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.PlatformClient;
 import com.hammy275.immersivemc.common.vr.dev.impl.DevVRBodyPartyData;
 import com.hammy275.immersivemc.common.vr.dev.impl.DevVRPose;
@@ -61,10 +62,10 @@ public class DevVRState {
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT, ImmersiveMCClient.vrKeyCategory);
         placeC1 = new KeyMapping("ImmersiveMC Dev VR: Place Off Hand",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT, ImmersiveMCClient.vrKeyCategory);
-        PlatformClient.registerKeyMapping(toggleVR);
-        PlatformClient.registerKeyMapping(placeHMD);
-        PlatformClient.registerKeyMapping(placeC0);
-        PlatformClient.registerKeyMapping(placeC1);
+        Platform.CLIENT.registerKeyMapping(toggleVR);
+        Platform.CLIENT.registerKeyMapping(placeHMD);
+        Platform.CLIENT.registerKeyMapping(placeC0);
+        Platform.CLIENT.registerKeyMapping(placeC1);
     }
 
     public static void clientTick() {

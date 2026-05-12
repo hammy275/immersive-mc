@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.common.network;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.client.ClientUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.RegistryAccess;
@@ -24,11 +25,11 @@ public class NetworkChannel {
     }
 
     public <T> void sendToServer(T message) {
-        Platform.sendToServer(encode(message, ClientUtil.getRegistryAccess()));
+        Platform.COMMON.sendToServer(encode(message, ClientUtil.getRegistryAccess()));
     }
 
     public <T> void sendToPlayer(ServerPlayer player, T message) {
-        Platform.sendToPlayer(player, encode(message, player.registryAccess()));
+        Platform.COMMON.sendToPlayer(player, encode(message, player.registryAccess()));
     }
 
     public <T> void sendToPlayers(Iterable<ServerPlayer> players, T message) {

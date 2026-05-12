@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.client.immersive.book.BookRenderable;
 import com.hammy275.immersivemc.client.immersive.book.ClientBookData;
 import com.hammy275.immersivemc.client.immersive.book.WrittenBookHelpers;
@@ -91,7 +92,7 @@ public class EnchantingData {
      * @return Zenith key
      */
     private MutableComponent translate(String key) {
-        if (Platform.isModLoaded("zenith")) {
+        if (Platform.COMMON.isModLoaded("zenith")) {
             return Component.translatable(key.replaceFirst("apothic_enchanting", "zenith"));
         }
         return Component.translatable(key);
@@ -147,7 +148,7 @@ public class EnchantingData {
         public void render(PoseStack stack, BookDataRenderState renderState, boolean leftPage, int light, PosRot bookPosRot) {
             if (leftPage || firstItem.isEmpty()) return;
             if (fullLocation == null) {
-                String modId = Platform.isModLoaded("zenith") ? "zenith" : "apothic_enchanting";
+                String modId = Platform.COMMON.isModLoaded("zenith") ? "zenith" : "apothic_enchanting";
                 fullLocation = Util.id(modId, "textures/gui/enchanting_table.png");
             }
             renderBar(stack, light, amountFullSupplier.get());

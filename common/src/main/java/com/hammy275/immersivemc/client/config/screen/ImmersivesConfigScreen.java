@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
@@ -33,17 +34,17 @@ public class ImmersivesConfigScreen extends OptionsSubScreen {
     protected void addOptions() {
         List<OptionInstance<Boolean>> options = new ArrayList<>();
         if (this.type.isNonVR()) {
-            if (Platform.isModLoaded("tconstruct")) {
+            if (Platform.COMMON.isModLoaded("tconstruct")) {
                 options.add(ScreenUtils.createOption("tinkers_construct_crafting_station",
                         config -> config.useTinkersConstructCraftingStationImmersive,
                         (config, newVal) -> config.useTinkersConstructCraftingStationImmersive = newVal));
             }
-            if (Platform.isModLoaded("ironfurnaces")) {
+            if (Platform.COMMON.isModLoaded("ironfurnaces")) {
                 options.add(ScreenUtils.createOption("iron_furnaces_furnace",
                         config -> config.useIronFurnacesFurnaceImmersive,
                         (config, newVal) -> config.useIronFurnacesFurnaceImmersive = newVal));
             }
-            if (Platform.isModLoaded("apotheosis") && Apoth.apothImpl.enchantModuleEnabled()) {
+            if (Platform.COMMON.isModLoaded("apotheosis") && Apoth.apothImpl.enchantModuleEnabled()) {
                 options.add(ScreenUtils.createOption("enchanting_table_apoth",
                         config -> config.useApotheosisEnchantmentTableImmersive,
                         (config, newVal) -> config.useApotheosisEnchantmentTableImmersive = newVal));

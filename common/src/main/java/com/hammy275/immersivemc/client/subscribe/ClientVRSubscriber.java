@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.subscribe;
 
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
@@ -38,7 +39,7 @@ public class ClientVRSubscriber {
     }
 
     public static void immersiveTickVR(Player player) {
-        if (!Platform.isClient()) return;
+        if (!Platform.COMMON.isClient()) return;
         if (Minecraft.getInstance().gameMode == null) return;
         if (!VRVerify.playerInVR(player)) return;
         VRPose vrPose = VR.API.getVRPose(player);

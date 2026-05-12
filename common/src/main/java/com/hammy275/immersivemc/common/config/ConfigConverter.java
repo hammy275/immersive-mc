@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.config;
 
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.common.util.RGBA;
 
 import java.io.File;
@@ -17,7 +18,7 @@ import java.util.function.BiConsumer;
  */
 public class ConfigConverter {
 
-    private static final File OLD_CONFIG_FILE = Paths.get(Platform.getConfigFolder().toString(), "immersive_mc.toml").toFile();
+    private static final File OLD_CONFIG_FILE = Paths.get(Platform.COMMON.getConfigFolder().toString(), "immersive_mc.toml").toFile();
     private static Map<String, OldConfigData<?, ActiveConfig>> OLD_CONFIG_MAP_SHARED;
     private static Map<String, OldConfigData<?, ClientActiveConfig>> OLD_CONFIG_MAP_CLIENT_ONLY;
 
@@ -119,7 +120,7 @@ public class ConfigConverter {
             // Delete old config and save
             OLD_CONFIG_FILE.delete();
             ActiveConfig.FILE_SERVER.writeConfigFile(ConfigType.SERVER);
-            if (Platform.isClient()) {
+            if (Platform.COMMON.isClient()) {
                 ActiveConfig.FILE_CLIENT.writeConfigFile(ConfigType.CLIENT);
             } else {
                 ActiveConfig.FILE_CLIENT = null; // Was set before since conversion assumes client. Make it null again.

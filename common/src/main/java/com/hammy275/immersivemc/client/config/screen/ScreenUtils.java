@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.config.ConfigType;
@@ -93,7 +94,7 @@ public class ScreenUtils {
 
     public static void addOptionIfModLoaded(String modId, String keyName, Function<ActiveConfig, Boolean> valueGetter,
                                             BiConsumer<ActiveConfig, Boolean> valueSetter, OptionsList list) {
-        if (Platform.isModLoaded(modId)) {
+        if (Platform.COMMON.isModLoaded(modId)) {
             addOption(keyName, valueGetter, valueSetter, list);
         }
     }

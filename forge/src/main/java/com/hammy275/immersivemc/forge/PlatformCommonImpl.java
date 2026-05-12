@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.forge;
 
+import com.hammy275.immersivemc.PlatformCommon;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -19,65 +20,78 @@ import net.minecraftforge.network.PacketDistributor;
 import java.io.File;
 import java.util.function.Consumer;
 
-public class PlatformImpl {
+public class PlatformCommonImpl implements PlatformCommon {
     // Platform information
-    public static boolean isClient() {
+    @Override
+    public boolean isClient() {
         return FMLEnvironment.dist == Dist.CLIENT;
     }
-    public static boolean isDevelopmentEnvironment() {
+    @Override
+    public boolean isDevelopmentEnvironment() {
         return !FMLEnvironment.production;
     }
-    public static boolean isForgeLike() {
+    @Override
+    public boolean isForgeLike() {
         return true;
     }
-    public static boolean isModLoaded(String modId) {
+    @Override
+    public boolean isModLoaded(String modId) {
         return ModList.get().isLoaded(modId);
     }
-    public static File getConfigFolder() {
+    @Override
+    public File getConfigFolder() {
         return FMLPaths.CONFIGDIR.get().toFile();
     }
 
     // Events
-    public static void registerServerPostTickListener(Consumer<MinecraftServer> listener) {
+    @Override
+    public void registerServerPostTickListener(Consumer<MinecraftServer> listener) {
         TickEvent.ServerTickEvent.Post.BUS.addListener((TickEvent.ServerTickEvent.Post event) -> {
             listener.accept(event.server());
         });
     }
-    public static void registerServerPlayerPostTickListener(Consumer<ServerPlayer> listener) {
+    @Override
+    public void registerServerPlayerPostTickListener(Consumer<ServerPlayer> listener) {
         TickEvent.ServerTickEvent.Post.BUS.addListener((TickEvent.ServerTickEvent.Post event) -> {
             event.server().getPlayerList().getPlayers().forEach(listener);
         });
     }
-    public static void registerServerPlayerJoinListener(Consumer<ServerPlayer> listener) {
+    @Override
+    public void registerServerPlayerJoinListener(Consumer<ServerPlayer> listener) {
         PlayerEvent.PlayerLoggedInEvent.BUS.addListener((PlayerEvent.PlayerLoggedInEvent event) -> {
             if (event.getEntity() instanceof ServerPlayer sp) {
                 listener.accept(sp);
             }
         });
     }
-    public static void registerServerPlayerLeaveListener(Consumer<ServerPlayer> listener) {
+    @Override
+    public void registerServerPlayerLeaveListener(Consumer<ServerPlayer> listener) {
         PlayerEvent.PlayerLoggedOutEvent.BUS.addListener((PlayerEvent.PlayerLoggedOutEvent event) -> {
             if (event.getEntity() instanceof ServerPlayer sp) {
                 listener.accept(sp);
             }
         });
     }
-    public static void registerCommands(Consumer<CommandDispatcher<CommandSourceStack>> listener) {
+    @Override
+    public void registerCommands(Consumer<CommandDispatcher<CommandSourceStack>> listener) {
         RegisterCommandsEvent.BUS.addListener((RegisterCommandsEvent event) -> {
             listener.accept(event.getDispatcher());
         });
     }
 
     // Networking
-    public static void sendToServer(RegistryFriendlyByteBuf message) {
+    @Override
+    public void sendToServer(RegistryFriendlyByteBuf message) {
         ImmersiveMCForge.NETWORK.send(new BufferPacket(message), PacketDistributor.SERVER.noArg());
     }
-    public static void sendToPlayer(ServerPlayer player, RegistryFriendlyByteBuf message) {
+    @Override
+    public void sendToPlayer(ServerPlayer player, RegistryFriendlyByteBuf message) {
         ImmersiveMCForge.NETWORK.send(new BufferPacket(message), PacketDistributor.PLAYER.with(player));
     }
 
     // Misc.
-    public static Fluid getFluid(BucketItem bucket) {
+    @Override
+    public Fluid getFluid(BucketItem bucket) {
         return bucket.getFluid();
     }
 }

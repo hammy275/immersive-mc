@@ -29,5 +29,6 @@
   "mixins": [
     "mixins.immersivemc.json",
     "mixins.fabric.immersivemc.json"
-  ]
+  ],
+  "accessWidener": "immersivemc.accesswidener"
 }

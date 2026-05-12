@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.compat.util;
 
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.compat.CompatModuleClient;
@@ -76,7 +77,7 @@ public class CompatModule<T> implements InvocationHandler {
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             System.out.println(sw);
-            if (Platform.isClient()) {
+            if (Platform.COMMON.isClient()) {
                 // Running on the client. Could be singleplayer/LAN host or could be on a multiplayer server.
                 CompatModuleClient.disableClient(compatData);
             } else {

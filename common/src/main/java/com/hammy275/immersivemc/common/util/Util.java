@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.common.util;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
@@ -68,7 +69,7 @@ public class Util {
 
     public static boolean hasTooLowVivecraftVersion() {
         // If missing Vivecraft or the API loaded successfully, we're on a compatible Vivecraft version
-        return Platform.isModLoaded("vivecraft") && !VRVerify.hasAPI;
+        return Platform.COMMON.isModLoaded("vivecraft") && !VRVerify.hasAPI;
     }
 
     public static ChestLidControllerAccessor getChestLidController(BlockEntity blockEntity) {

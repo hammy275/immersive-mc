@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.forge;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,6 +25,10 @@ public class ImmersiveMCForge {
             .build();
 
     public ImmersiveMCForge() {
+        Platform.COMMON = new PlatformCommonImpl();
+        if (Platform.COMMON.isClient()) {
+            Platform.CLIENT = new PlatformClientImpl();
+        }
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
                 () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (a, b) -> true));
         ImmersiveMC.init();

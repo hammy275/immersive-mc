@@ -59,28 +59,28 @@ public class ImmersiveMC {
     }
 
     public static void init() {
-        if (Platform.isClient()) {
+        if (Platform.COMMON.isClient()) {
             // ClientLogic
-            PlatformClient.registerOnClientJoinListener(ClientLogicSubscriber::onClientLogin);
-            PlatformClient.registerOnClientTickListener(ClientLogicSubscriber::onClientTick);
-            PlatformClient.registerOnClientDisconnectListener(ClientLogicSubscriber::onDisconnect);
-            PlatformClient.registerOnClientTickListener(CommonSubscriber::globalTick);
+            Platform.CLIENT.registerOnClientJoinListener(ClientLogicSubscriber::onClientLogin);
+            Platform.CLIENT.registerOnClientTickListener(ClientLogicSubscriber::onClientTick);
+            Platform.CLIENT.registerOnClientDisconnectListener(ClientLogicSubscriber::onDisconnect);
+            Platform.CLIENT.registerOnClientTickListener(CommonSubscriber::globalTick);
         }
 
         // ServerSubscriber
-        Platform.registerServerPostTickListener(ServerSubscriber::onServerTick);
-        Platform.registerServerPlayerPostTickListener(ServerSubscriber::onPlayerTick);
-        Platform.registerServerPlayerJoinListener(ServerSubscriber::onPlayerJoin);
-        Platform.registerServerPlayerLeaveListener(ServerSubscriber::onPlayerLeave);
-        Platform.registerServerPlayerPostTickListener(CommonSubscriber::onPlayerTick);
-        Platform.registerServerPostTickListener(CommonSubscriber::globalTick);
+        Platform.COMMON.registerServerPostTickListener(ServerSubscriber::onServerTick);
+        Platform.COMMON.registerServerPlayerPostTickListener(ServerSubscriber::onPlayerTick);
+        Platform.COMMON.registerServerPlayerJoinListener(ServerSubscriber::onPlayerJoin);
+        Platform.COMMON.registerServerPlayerLeaveListener(ServerSubscriber::onPlayerLeave);
+        Platform.COMMON.registerServerPlayerPostTickListener(CommonSubscriber::onPlayerTick);
+        Platform.COMMON.registerServerPostTickListener(CommonSubscriber::globalTick);
         
         // Commands
-        Platform.registerCommands(dispatcher -> {
+        Platform.COMMON.registerCommands(dispatcher -> {
             ImmersiveMCCommand.createCommand(dispatcher);
         });
 
-        if (Platform.isClient()) {
+        if (Platform.COMMON.isClient()) {
             ImmersiveMCClient.init();
         }
         networkSetup();

@@ -52,19 +52,19 @@ public class ImmersiveMCClient {
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_COMMA, globalKeyCategory);
         ImmersiveMC.RANGED_GRAB_KEY = new KeyMapping("key." + ImmersiveMC.MOD_ID + ".ranged_grab",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F24, vrKeyCategory);
-        PlatformClient.registerKeyMapping(ImmersiveMC.SUMMON_BACKPACK);
-        PlatformClient.registerKeyMapping(ImmersiveMC.OPEN_SETTINGS);
-        PlatformClient.registerKeyMapping(ImmersiveMC.RANGED_GRAB_KEY);
+        Platform.CLIENT.registerKeyMapping(ImmersiveMC.SUMMON_BACKPACK);
+        Platform.CLIENT.registerKeyMapping(ImmersiveMC.OPEN_SETTINGS);
+        Platform.CLIENT.registerKeyMapping(ImmersiveMC.RANGED_GRAB_KEY);
 
-        PlatformClient.registerEntityModelLayer(BackpackCraftingModel.LAYER_LOCATION, BackpackCraftingModel::createBodyLayer);
-        PlatformClient.registerEntityModelLayer(BackpackLowDetailModel.LAYER_LOCATION, BackpackLowDetailModel::createBodyLayer);
-        PlatformClient.registerEntityModelLayer(BackpackModel.LAYER_LOCATION, BackpackModel::createBodyLayer);
-        PlatformClient.registerEntityModelLayer(BackpackBundleModel.LAYER_LOCATION, BackpackBundleModel::createBodyLayer);
-        PlatformClient.registerEntityModelLayer(Cube1x1.LAYER_LOCATION, Cube1x1::createBodyLayer);
+        Platform.CLIENT.registerEntityModelLayer(BackpackCraftingModel.LAYER_LOCATION, BackpackCraftingModel::createBodyLayer);
+        Platform.CLIENT.registerEntityModelLayer(BackpackLowDetailModel.LAYER_LOCATION, BackpackLowDetailModel::createBodyLayer);
+        Platform.CLIENT.registerEntityModelLayer(BackpackModel.LAYER_LOCATION, BackpackModel::createBodyLayer);
+        Platform.CLIENT.registerEntityModelLayer(BackpackBundleModel.LAYER_LOCATION, BackpackBundleModel::createBodyLayer);
+        Platform.CLIENT.registerEntityModelLayer(Cube1x1.LAYER_LOCATION, Cube1x1::createBodyLayer);
 
-        PlatformClient.registerPictureInPictureRenderer(CustomGuiRendererState.class, CustomGuiRenderer::new);
+        Platform.CLIENT.registerPictureInPictureRenderer(CustomGuiRendererState.class, CustomGuiRenderer::new);
 
-        if (Platform.isModLoaded("inventoryprofilesnext")) {
+        if (Platform.COMMON.isModLoaded("inventoryprofilesnext")) {
             IPN.ipnCompat = CompatModule.create(new IPNCompatImpl(), IPNCompat.class, IPN.compatData);
         }
 

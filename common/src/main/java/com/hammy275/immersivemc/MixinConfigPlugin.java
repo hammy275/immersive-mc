@@ -31,7 +31,7 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
 
     @Override
     public List<String> getMixins() {
-        if (!Platform.isForgeLike()) {
+        if (!Platform.COMMON.isForgeLike()) {
             List<String> extraMixins = new LinkedList<>();
             extraMixins.add("FenceGateBlockMixin");
             return extraMixins;

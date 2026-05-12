@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.ticker;
 
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VR;
@@ -49,7 +50,7 @@ public class BottleAndBucketTicker extends AbstractTicker {
 
     private boolean stackMatches(ItemStack stackInHand) {
         return stackInHand.is(Items.GLASS_BOTTLE) ||
-                stackInHand.getItem() instanceof BucketItem bucketItem && Platform.getFluid(bucketItem).isSame(Fluids.EMPTY);
+                stackInHand.getItem() instanceof BucketItem bucketItem && Platform.COMMON.getFluid(bucketItem).isSame(Fluids.EMPTY);
     }
 
 

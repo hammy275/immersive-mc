@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.fabric;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.network.Network;
@@ -15,6 +16,10 @@ public class ImmersiveMCFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        Platform.COMMON = new PlatformCommonImpl();
+        if (Platform.COMMON.isClient()) {
+            Platform.CLIENT = new PlatformClientImpl();
+        }
         PayloadTypeRegistry.playS2C().register(BufferPacket.ID, BufferPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(BufferPacket.ID, BufferPacket.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(BufferPacket.ID, ((payload, context) -> {
@@ -27,7 +32,7 @@ public class ImmersiveMCFabric implements ModInitializer {
                 }
             });
         }));
-        if (Platform.isClient()) {
+        if (Platform.COMMON.isClient()) {
             ClientPlayNetworking.registerGlobalReceiver(BufferPacket.ID, (payload, context) -> {
                 payload.buffer().retain();
                 context.client().execute(() -> {
@@ -42,7 +47,7 @@ public class ImmersiveMCFabric implements ModInitializer {
                     ClientRenderSubscriber.onWorldRender(context.matrices()));
         }
         ImmersiveMC.init();
-        if (Platform.isModLoaded("lootr")) {
+        if (Platform.COMMON.isModLoaded("lootr")) {
             Lootr.lootrImpl = LootrCompatImpl.makeCompatImpl();
         }
     }

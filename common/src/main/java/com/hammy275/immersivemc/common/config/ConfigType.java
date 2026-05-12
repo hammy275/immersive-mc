@@ -2,13 +2,14 @@ package com.hammy275.immersivemc.common.config;
 
 
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.PlatformCommon;
 
 import java.io.File;
 import java.nio.file.Paths;
 
 public enum ConfigType {
-    CLIENT(Paths.get(Platform.getConfigFolder().toString(), "immersive_mc-client.json").toFile(), ClientActiveConfig.class),
-    SERVER(Paths.get(Platform.getConfigFolder().toString(), "immersive_mc-server.json").toFile(), ActiveConfig.class);
+    CLIENT(Paths.get(Platform.COMMON.getConfigFolder().toString(), "immersive_mc-client.json").toFile(), ClientActiveConfig.class),
+    SERVER(Paths.get(Platform.COMMON.getConfigFolder().toString(), "immersive_mc-server.json").toFile(), ActiveConfig.class);
 
     public final File configFile;
     public final Class<? extends ActiveConfig> configClass;
@@ -33,6 +34,6 @@ public enum ConfigType {
      * @return Whether this ConfigType is used on the current Platform side (client or dedicated server)
      */
     public boolean neededOnSide() {
-        return Platform.isClient() || this == SERVER;
+        return Platform.COMMON.isClient() || this == SERVER;
     }
 }

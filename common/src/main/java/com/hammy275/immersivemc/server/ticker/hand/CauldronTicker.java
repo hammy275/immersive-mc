@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.server.ticker.hand;
 
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.ticker.AbstractHandTicker;
 import com.hammy275.immersivemc.mixin.AbstractCauldronBlockAccessor;
@@ -41,13 +42,13 @@ public class CauldronTicker extends AbstractHandTicker {
         if (interaction == null) return;
 
         // If holding an empty bucket or glass bottle, see if we can fill it.
-        if (inCauldronBlock && (handItem instanceof BottleItem || (handItem instanceof BucketItem bucketItem && Platform.getFluid(bucketItem).isSame(Fluids.EMPTY)))) {
+        if (inCauldronBlock && (handItem instanceof BottleItem || (handItem instanceof BucketItem bucketItem && Platform.COMMON.getFluid(bucketItem).isSame(Fluids.EMPTY)))) {
             // Pointing up in any way
             if (Math.abs(handData.getRoll()) < Math.PI / 2) {
                 possiblySetCooldown(player, interaction.interact(cauldron, player.level(), cauldronPos, player, hand, handStack));
             }
         } else if ((handItem instanceof PotionItem && heldPotion == Potions.WATER) ||
-                (handItem instanceof BucketItem bucketItem && !Platform.getFluid(bucketItem).isSame(Fluids.EMPTY)) ||
+                (handItem instanceof BucketItem bucketItem && !Platform.COMMON.getFluid(bucketItem).isSame(Fluids.EMPTY)) ||
                 handItem instanceof SolidBucketItem) {
             // 20-degrees in either direction from straight down
             if (Math.abs(handData.getRoll()) > Math.PI - Math.toRadians(20)) {

@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,38 +15,17 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class PlatformClient {
+public interface PlatformClient {
     // Events
-    @ExpectPlatform
-    public static void registerOnClientJoinListener(Consumer<Minecraft> listener) {
-        throw new RuntimeException("@ExpectPlatform should have replaced this");
-    }
-    @ExpectPlatform
-    public static void registerOnClientTickListener(Consumer<Minecraft> listener) {
-        throw new RuntimeException("@ExpectPlatform should have replaced this");
-    }
-    @ExpectPlatform
-    public static void registerOnClientDisconnectListener(Consumer<Player> listener) {
-        throw new RuntimeException("@ExpectPlatform should have replaced this");
-    }
+    void registerOnClientJoinListener(Consumer<Minecraft> listener);
+    void registerOnClientTickListener(Consumer<Minecraft> listener);
+    void registerOnClientDisconnectListener(Consumer<Player> listener);
 
     // Registration
-    @ExpectPlatform
-    public static void registerKeyMapping(KeyMapping keyMapping) {
-        throw new RuntimeException("@ExpectPlatform should have replaced this");
-    }
-    @ExpectPlatform
-    public static void registerEntityModelLayer(ModelLayerLocation location, Supplier<LayerDefinition> definition) {
-        throw new RuntimeException("@ExpectPlatform should have replaced this");
-    }
-    @ExpectPlatform
-    public static <S extends PictureInPictureRenderState> void registerPictureInPictureRenderer(Class<S> renderStateClass, Function<MultiBufferSource.BufferSource, PictureInPictureRenderer<S>> pipFactory) {
-        throw new RuntimeException("@ExpectPlatform should have replaced this");
-    }
+    void registerKeyMapping(KeyMapping keyMapping);
+    void registerEntityModelLayer(ModelLayerLocation location, Supplier<LayerDefinition> definition);
+    <S extends PictureInPictureRenderState> void registerPictureInPictureRenderer(Class<S> renderStateClass, Function<MultiBufferSource.BufferSource, PictureInPictureRenderer<S>> pipFactory);
 
     // Rendering
-    @ExpectPlatform
-    public static ScreenRectangle peekScissorStack(GuiGraphics guiGraphics) {
-        throw new RuntimeException("@ExpectPlatform should have replaced this");
-    }
+    ScreenRectangle peekScissorStack(GuiGraphics guiGraphics);
 }

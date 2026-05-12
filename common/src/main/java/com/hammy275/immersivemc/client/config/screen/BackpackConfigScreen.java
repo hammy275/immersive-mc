@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.PlatformClient;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
 import com.hammy275.immersivemc.client.model.CustomGuiRendererState;
@@ -105,7 +106,7 @@ public class BackpackConfigScreen extends OptionsSubScreen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
         GuiRenderState guiRenderState = ((GuiGraphicsAccessor) graphics).immersiveMC$getGuiRenderState();
-        ScreenRectangle peek = PlatformClient.peekScissorStack(graphics);
+        ScreenRectangle peek = Platform.CLIENT.peekScissorStack(graphics);
         guiRenderState.submitPicturesInPictureState(new CustomGuiRendererState(
                 this.width * 0.85, this.width, 0, this.height, 50f, peek,
                 (poseStack, bufferSource) -> {

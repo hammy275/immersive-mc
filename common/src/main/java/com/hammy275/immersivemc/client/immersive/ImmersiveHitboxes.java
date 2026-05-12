@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
@@ -47,13 +48,13 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
         canOpenBackpack = false;
         if (ActiveConfig.active().reachBehindBagMode.usesBehindBack() && VRVerify.clientInVR()) {
             // centerPos is the center of the back of the player
-            VRBodyPartData hmdData = Platform.isDevelopmentEnvironment() ? null : VR.ClientAPI.getWorldRenderPose().getHead();
+            VRBodyPartData hmdData = Platform.COMMON.isDevelopmentEnvironment() ? null : VR.ClientAPI.getWorldRenderPose().getHead();
             Vec3 centerPos = hmdData != null ?
                     hmdData.getPos().add(0, -0.5, 0).add(hmdData.getDir().scale(-0.15)) :
                     mc.player.getEyePosition(mc.getDeltaTracker().getGameTimeDeltaPartialTick(true)).add(0, -0.5, 0).add(mc.player.getLookAngle().scale(-0.15));
             double yaw;
             Vec3 headLook;
-            if (VRVerify.playerInVR(mc.player) && !Platform.isDevelopmentEnvironment()) {
+            if (VRVerify.playerInVR(mc.player) && !Platform.COMMON.isDevelopmentEnvironment()) {
                 yaw = hmdData.getYaw();
                 headLook = hmdData.getDir();
             } else {

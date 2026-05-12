@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.forge;
 
+import com.hammy275.immersivemc.PlatformClient;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -18,19 +19,22 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class PlatformClientImpl {
+public class PlatformClientImpl implements PlatformClient {
     // Events
-    public static void registerOnClientJoinListener(Consumer<Minecraft> listener) {
+    @Override
+    public void registerOnClientJoinListener(Consumer<Minecraft> listener) {
         ClientPlayerNetworkEvent.LoggingIn.BUS.addListener((ClientPlayerNetworkEvent.LoggingIn event) -> {
             listener.accept(Minecraft.getInstance());
         });
     }
-    public static void registerOnClientTickListener(Consumer<Minecraft> listener) {
+    @Override
+    public void registerOnClientTickListener(Consumer<Minecraft> listener) {
         TickEvent.ClientTickEvent.Post.BUS.addListener((TickEvent.ClientTickEvent.Post event) -> {
             listener.accept(Minecraft.getInstance());
         });
     }
-    public static void registerOnClientDisconnectListener(Consumer<Player> listener) {
+    @Override
+    public void registerOnClientDisconnectListener(Consumer<Player> listener) {
         ClientPlayerNetworkEvent.LoggingOut.BUS.addListener((ClientPlayerNetworkEvent.LoggingOut event) -> {
             if (event.getPlayer() != null) {  // Fires with null player on login. Don't pass these fires on to listeners.
                 listener.accept(event.getPlayer());
@@ -39,18 +43,22 @@ public class PlatformClientImpl {
     }
 
     // Registration
-    public static void registerKeyMapping(KeyMapping keyMapping) {
+    @Override
+    public void registerKeyMapping(KeyMapping keyMapping) {
         ClientSetup.keyMappingsToRegister.add(keyMapping);
     }
-    public static void registerEntityModelLayer(ModelLayerLocation location, Supplier<LayerDefinition> definition) {
+    @Override
+    public void registerEntityModelLayer(ModelLayerLocation location, Supplier<LayerDefinition> definition) {
         ClientSetup.entityModelLayersToRegister.add(new Pair<>(location, definition));
     }
-    public static <S extends PictureInPictureRenderState> void registerPictureInPictureRenderer(Class<S> renderStateClass, Function<MultiBufferSource.BufferSource, PictureInPictureRenderer<S>> pipFactory) {
+    @Override
+    public <S extends PictureInPictureRenderState> void registerPictureInPictureRenderer(Class<S> renderStateClass, Function<MultiBufferSource.BufferSource, PictureInPictureRenderer<S>> pipFactory) {
         ClientSetup.pipRenderersToRegister.add(new ClientSetup.PiPRenderer<>(renderStateClass, pipFactory));
     }
 
     // Rendering
-    public static ScreenRectangle peekScissorStack(GuiGraphics guiGraphics) {
+    @Override
+    public ScreenRectangle peekScissorStack(GuiGraphics guiGraphics) {
         return guiGraphics.getScissorStack().peek();
     }
 }
