@@ -4,13 +4,13 @@ import com.hammy275.immersivemc.PlatformClient;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
@@ -59,7 +59,7 @@ public class PlatformClientImpl implements PlatformClient {
 
     // Rendering
     @Override
-    public ScreenRectangle peekScissorStack(GuiGraphics guiGraphics) {
-        return guiGraphics.peekScissorStack();
+    public ScreenRectangle peekScissorStack(GuiGraphicsExtractor guiGraphicsExtractor) {
+        return guiGraphicsExtractor.peekScissorStack();
     }
 }

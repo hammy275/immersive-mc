@@ -36,7 +36,7 @@
   "client": [
     "BackpackTrackerMixin",
     "EnchantTableRendererMixin",
-    "GuiGraphicsAccessor",
+    "GuiGraphicsExtractorAccessor",
     "ItemInHandRendererMixin",
     "LecternRendererMixin",
     "LocalPlayerMixin",

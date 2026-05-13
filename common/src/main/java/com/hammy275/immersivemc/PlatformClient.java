@@ -2,7 +2,7 @@ package com.hammy275.immersivemc;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -27,5 +27,5 @@ public interface PlatformClient {
     <S extends PictureInPictureRenderState> void registerPictureInPictureRenderer(Class<S> renderStateClass, Function<MultiBufferSource.BufferSource, PictureInPictureRenderer<S>> pipFactory);
 
     // Rendering
-    ScreenRectangle peekScissorStack(GuiGraphics guiGraphics);
+    ScreenRectangle peekScissorStack(GuiGraphicsExtractor guiGraphicsExtractor);
 }

@@ -2,22 +2,21 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.PlatformClient;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
 import com.hammy275.immersivemc.client.model.CustomGuiRendererState;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.BackpackMode;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.config.ReachBehindBackpackMode;
-import com.hammy275.immersivemc.mixin.GuiGraphicsAccessor;
+import com.hammy275.immersivemc.mixin.GuiGraphicsExtractorAccessor;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.gui.GuiRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Vec3i;
@@ -103,11 +102,11 @@ public class BackpackConfigScreen extends OptionsSubScreen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.render(graphics, mouseX, mouseY, partialTick);
-        GuiRenderState guiRenderState = ((GuiGraphicsAccessor) graphics).immersiveMC$getGuiRenderState();
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
+        GuiRenderState guiRenderState = ((GuiGraphicsExtractorAccessor) graphics).immersiveMC$getGuiRenderState();
         ScreenRectangle peek = Platform.CLIENT.peekScissorStack(graphics);
-        guiRenderState.submitPicturesInPictureState(new CustomGuiRendererState(
+        guiRenderState.addPicturesInPictureState(new CustomGuiRendererState(
                 this.width * 0.85, this.width, 0, this.height, 50f, peek,
                 (poseStack, bufferSource) -> {
                     poseStack.translate(0, -1.5f, 0); // Translate down (becoming up after XN rotation) since bag model's origin is the top

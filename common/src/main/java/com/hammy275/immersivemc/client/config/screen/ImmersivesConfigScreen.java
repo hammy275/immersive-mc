@@ -1,13 +1,12 @@
 package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.Component;
@@ -84,10 +83,10 @@ public class ImmersivesConfigScreen extends OptionsSubScreen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.render(graphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
 
-        graphics.drawCenteredString(this.font, Component.translatable("screen.immersivemc.immersives_config.subtitle"),
+        graphics.centeredText(this.font, Component.translatable("screen.immersivemc.immersives_config.subtitle"),
                 this.width / 2, this.font.lineHeight + 13, 0xFFFFFF);
     }
 

@@ -2,13 +2,13 @@ package com.hammy275.immersivemc.fabric;
 
 import com.hammy275.immersivemc.PlatformClient;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -39,20 +39,20 @@ public class PlatformClientImpl implements PlatformClient {
     // Registration
     @Override
     public void registerKeyMapping(KeyMapping keyMapping) {
-        KeyBindingHelper.registerKeyBinding(keyMapping);
+        KeyMappingHelper.registerKeyMapping(keyMapping);
     }
     @Override
     public void registerEntityModelLayer(ModelLayerLocation location, Supplier<LayerDefinition> definition) {
-        EntityModelLayerRegistry.registerModelLayer(location, definition::get);
+        ModelLayerRegistry.registerModelLayer(location, definition::get);
     }
     @Override
     public <S extends PictureInPictureRenderState> void registerPictureInPictureRenderer(Class<S> renderStateClass, Function<MultiBufferSource.BufferSource, PictureInPictureRenderer<S>> pipFactory) {
-        SpecialGuiElementRegistry.register(ctx -> pipFactory.apply(ctx.vertexConsumers()));
+        PictureInPictureRendererRegistry.register(ctx -> pipFactory.apply(ctx.bufferSource()));
     }
 
     // Rendering
     @Override
-    public ScreenRectangle peekScissorStack(GuiGraphics guiGraphics) {
-        return guiGraphics.scissorStack.peek();
+    public ScreenRectangle peekScissorStack(GuiGraphicsExtractor guiGraphicsExtractor) {
+        return guiGraphicsExtractor.scissorStack.peek();
     }
 }

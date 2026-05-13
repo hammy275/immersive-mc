@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.PlatformClient;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.model.Cube1x1;
 import com.hammy275.immersivemc.client.model.CustomGuiRendererState;
@@ -12,17 +11,17 @@ import com.hammy275.immersivemc.common.config.ItemGuideColorData;
 import com.hammy275.immersivemc.common.config.ItemGuidePreset;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.util.RGBA;
-import com.hammy275.immersivemc.mixin.GuiGraphicsAccessor;
+import com.hammy275.immersivemc.mixin.GuiGraphicsExtractorAccessor;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.gui.GuiRenderState;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.gizmos.CuboidGizmo;
 import net.minecraft.gizmos.GizmoStyle;
@@ -47,9 +46,9 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         ClientRenderSubscriber.setRenderColors();
-        super.render(graphics, mouseX, mouseY, partialTick);
+        super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         renderPreview(graphics, ClientRenderSubscriber.itemGuideColor(), 0.25f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSize);
         renderPreview(graphics, ClientRenderSubscriber.itemGuideSelectedColor(), 0.5f, false, ConfigScreen.getClientConfigIfAdjusting().itemGuideSelectedSize);
         // Render square for particle color by using our cube model lol
@@ -57,28 +56,28 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
                 this.height * 250 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 250 / 1000 + 16)) {
-            graphics.renderTooltip(this.font, List.of(ClientTooltipComponent.create(Component.translatable("config.immersivemc.item_guide.desc").getVisualOrderText())),
+            graphics.tooltip(this.font, List.of(ClientTooltipComponent.create(Component.translatable("config.immersivemc.item_guide.desc").getVisualOrderText())),
                     mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
         }
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
                 this.height * 500 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 500 / 1000 + 16)) {
-            graphics.renderTooltip(this.font, List.of(ClientTooltipComponent.create(Component.translatable("config.immersivemc.item_guide_selected.desc").getVisualOrderText())),
+            graphics.tooltip(this.font, List.of(ClientTooltipComponent.create(Component.translatable("config.immersivemc.item_guide_selected.desc").getVisualOrderText())),
                     mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
         }
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
                 this.height * 750 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 750 / 1000 + 16)) {
-            graphics.renderTooltip(this.font, List.of(ClientTooltipComponent.create(Component.translatable("config.immersivemc.ranged_grab_color.desc").getVisualOrderText())),
+            graphics.tooltip(this.font, List.of(ClientTooltipComponent.create(Component.translatable("config.immersivemc.ranged_grab_color.desc").getVisualOrderText())),
                     mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
         }
     }
 
-    private void renderPreview(GuiGraphics graphics, RGBA color, float heightMult, boolean renderSquare, double size) {
-        GuiRenderState guiRenderState = ((GuiGraphicsAccessor) graphics).immersiveMC$getGuiRenderState();
+    private void renderPreview(GuiGraphicsExtractor graphics, RGBA color, float heightMult, boolean renderSquare, double size) {
+        GuiRenderState guiRenderState = ((GuiGraphicsExtractorAccessor) graphics).immersiveMC$getGuiRenderState();
         ScreenRectangle peek = Platform.CLIENT.peekScissorStack(graphics);
 
-        guiRenderState.submitPicturesInPictureState(new CustomGuiRendererState(
+        guiRenderState.addPicturesInPictureState(new CustomGuiRendererState(
                 this.width * 0.9, this.width, this.height * heightMult - 64f, this.height * heightMult + 64f, 0.5f, peek,
                 (stack, bufferSource) -> {
                     float renderSize = (float) size / 2f; // Cut size in half on 1.21.11+ to match older versions for this parameter
