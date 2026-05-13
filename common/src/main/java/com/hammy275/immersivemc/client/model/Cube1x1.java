@@ -20,7 +20,7 @@ public class Cube1x1 extends Model<Void> {
     private final ModelPart bb_main;
 
     public Cube1x1(ModelPart root) {
-        super(root, RenderTypes::entityCutoutNoCull);
+        super(root, RenderTypes::entityCutout);
         this.bb_main = root.getChild("bb_main");
     }
 

@@ -50,7 +50,9 @@ public class ImmersiveMCLevelStorage extends SavedData {
         }
     };
     private static final SavedDataType<ImmersiveMCLevelStorage> savedDataType = new SavedDataType<>(
-            "immersivemc_data",
+            // Uses Minecraft namespace, since that's how world-upgrades should handle it.
+            // TODO: Use this only to load world data, then save to something in the "immersivemc" namespace.
+            Util.mcId("immersivemc_data"),
             ImmersiveMCLevelStorage::create,
             savedDataCodec,
             null

@@ -11,6 +11,7 @@
     "BeaconBlockEntityMixin",
     "BucketItemAccessor",
     "ButtonBlockMixin",
+    "CatInvoker",
     "ChestBlockEntityAccessor",
     "ChestBlockEntityMixin",
     "ChestLidControllerAccessor",

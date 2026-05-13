@@ -170,7 +170,7 @@ public class EnchantingData {
             if ((!isEmpty && fullAmount <= 0) || (isEmpty && 1 - fullAmount <= 0)) return;
             Identifier barLoc = !isEmpty && !useOurImageForFull ? fullLocation : emptyLocation;
             VertexConsumer consumer =
-                    Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderTypes.entityCutoutNoCull(barLoc));
+                    Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderTypes.entityCutout(barLoc));
             PoseStack.Pose lastPose = stack.last();
             Matrix4f pose = lastPose.pose();
 

@@ -235,7 +235,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
         stack.mulPose(Axis.ZN.rotationDegrees(roll));
 
         VertexConsumer consumer =
-                Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderTypes.entityCutoutNoCull(imageLocation));
+                Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderTypes.entityCutout(imageLocation));
         PoseStack.Pose pose = stack.last();
 
         consumer.addVertex(pose, -0.5f, -0.25f, 0)

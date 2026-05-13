@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(Wolf.class)
 public interface WolfInvoker {
 
-    @Invoker("getSoundVariant")
-    public Holder<WolfSoundVariant> immersiveMC$getSoundVariant();
+    @Invoker("getSoundSet")
+    public WolfSoundVariant.WolfSoundSet immersiveMC$getSoundSet();
 }

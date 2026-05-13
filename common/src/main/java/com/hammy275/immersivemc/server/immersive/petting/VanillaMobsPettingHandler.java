@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.server.immersive.petting;
 
 import com.hammy275.immersivemc.api.common.immersive.petting.PettingHandler;
+import com.hammy275.immersivemc.mixin.CatInvoker;
 import com.hammy275.immersivemc.mixin.WolfInvoker;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -31,11 +32,11 @@ public class VanillaMobsPettingHandler<P extends Animal> implements PettingHandl
         if (ThreadLocalRandom.current().nextInt(5) == 0) {
             SoundEvent sound = null;
             if (petEntity instanceof Wolf wolf) {
-                sound = ((WolfInvoker) wolf).immersiveMC$getSoundVariant().value().pantSound().value();
-            } else if (petEntity instanceof Cat) {
-                sound = SoundEvents.CAT_PURREOW;
+                sound = ((WolfInvoker) wolf).immersiveMC$getSoundSet().pantSound().value();
+            } else if (petEntity instanceof Cat cat) {
+                sound = ((CatInvoker) cat).immersiveMC$getSoundSet().purreowSound().value();
             } else if (petEntity instanceof Horse) {
-                sound = SoundEvents.HORSE_AMBIENT;
+                sound = petEntity.isBaby() ? SoundEvents.HORSE_AMBIENT_BABY : SoundEvents.HORSE_AMBIENT;
             } else if (petEntity instanceof Donkey) {
                 sound = SoundEvents.DONKEY_AMBIENT;
             } else if (petEntity instanceof Mule) {

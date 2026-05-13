@@ -257,7 +257,7 @@ public class Swap {
         Optional<RecipeHolder<CraftingRecipe>> res = player.level().getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING,
                 inv, player.level());
         if (res.isPresent()) {
-            return res.get().value().assemble(inv, player.level().registryAccess());
+            return res.get().value().assemble(inv);
         }
         return ItemStack.EMPTY;
     }

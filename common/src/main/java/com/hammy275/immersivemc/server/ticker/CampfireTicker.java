@@ -42,7 +42,7 @@ public class CampfireTicker extends AbstractTicker {
                     player.level().recipeAccess().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SingleRecipeInput(toSmelt), player.level());
             if (recipe.isPresent() && info.get(hand.ordinal()) >= recipe.get().value().cookingTime() / 2) { // Smelt the held controller's item if we reach cook time.
                 toSmelt.shrink(1);
-                ItemStack result = recipe.get().value().assemble(new SingleRecipeInput(toSmelt), player.level().registryAccess());
+                ItemStack result = recipe.get().value().assemble(new SingleRecipeInput(toSmelt));
                 boolean didGive = player.getInventory().add(result);
                 if (!didGive) {
                     Util.placeLeftovers(player, result);

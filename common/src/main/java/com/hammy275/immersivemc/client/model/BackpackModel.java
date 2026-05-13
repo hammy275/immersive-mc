@@ -20,7 +20,7 @@ public class BackpackModel extends Model<Void> {
     private final ModelPart bb_main;
 
     public BackpackModel(ModelPart root) {
-        super(root, RenderTypes::entityCutoutNoCull);
+        super(root, RenderTypes::entityCutout);
         this.wall = root.getChild("wall");
         this.bb_main = root.getChild("bb_main");
     }

@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.server.storage.world;
 
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.ServerUtil;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -38,7 +39,9 @@ public class ImmersiveMCPlayerStorages extends SavedData {
         }
     };
     private static final SavedDataType<ImmersiveMCPlayerStorages> savedDataType = new SavedDataType<>(
-            "immersivemc_player_data",
+            // Uses Minecraft namespace, since that's how world-upgrades should handle it.
+            // TODO: Use this only to load world data, then save to something in the "immersivemc" namespace.
+            Util.mcId("immersivemc_player_data"),
             ImmersiveMCPlayerStorages::create,
             savedDataCodec,
             null

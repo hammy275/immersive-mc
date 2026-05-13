@@ -90,13 +90,13 @@ public class DevVRClientAPI implements VRClientAPI {
 
     @Override
     public boolean openKeyboard(OpenKeyboardContext openKeyboardContext) {
-        Minecraft.getInstance().player.displayClientMessage(Component.literal("Opened VR keyboard"), false);
+        Minecraft.getInstance().player.sendSystemMessage(Component.literal("Opened VR keyboard"));
         return true;
     }
 
     @Override
     public boolean closeKeyboard(CloseKeyboardContext closeKeyboardContext) {
-        Minecraft.getInstance().player.displayClientMessage(Component.literal("Closed VR keyboard"), false);
+        Minecraft.getInstance().player.sendSystemMessage(Component.literal("Closed VR keyboard"));
         return true;
     }
 }
