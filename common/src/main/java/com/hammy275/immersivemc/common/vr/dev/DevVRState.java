@@ -79,11 +79,11 @@ public class DevVRState {
                             new DevVRBodyPartyData(Vec3.ZERO, new Vec3(1, 0, 0)),
                             new DevVRBodyPartyData(Vec3.ZERO, new Vec3(1, 0, 0))
                     );
-                    player.displayClientMessage(Component.literal("Toggled VR on!"), false);
+                    player.sendSystemMessage(Component.literal("Toggled VR on!"));
                 } else {
                     pose = null;
                     poseHistory.clear();
-                    player.displayClientMessage(Component.literal("Toggled VR off!"), false);
+                    player.sendSystemMessage(Component.literal("Toggled VR off!"));
                 }
             }
 

@@ -63,7 +63,7 @@ public class BookDataRenderState {
 
         float bookOpenAmount = 1.1f;
 
-        bookModel.setupAnim(new BookModel.State(
+        bookModel.setupAnim(BookModel.State.forAnimation(
                 0, // Partial tick time is always 0 to have page stay in one constant spot
                 Mth.lerp(partialTicks, lastLeftPageTurn, leftPageTurn), // 0-1. How far the page is in the turn. Range is [0f, 1f] with 0f being left.
                 Mth.lerp(partialTicks, lastRightPageTurn, rightPageTurn), // 0-1. How far across a different page is. Range is [0f, 1f] with 0f being left.

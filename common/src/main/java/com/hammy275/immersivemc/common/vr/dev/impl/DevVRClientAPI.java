@@ -65,7 +65,7 @@ public class DevVRClientAPI implements VRClientAPI {
     @Override
     public void triggerHapticPulse(VRBodyPart vrBodyPart, float v, float v1, float v2, float v3) {
         Player player = Minecraft.getInstance().player;
-        player.displayClientMessage(Component.literal("Client haptic pulse for %s and body part %s".formatted(player.getGameProfile().name(), vrBodyPart)), false);
+        player.sendSystemMessage(Component.literal("Client haptic pulse for %s and body part %s".formatted(player.getGameProfile().name(), vrBodyPart)));
     }
 
     @Override

@@ -286,7 +286,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
                     .addRot(-Math.atan2(ray.y, rayNoY.length()), RotType.PITCH);
             stack.mulPose(rotList.asQuaternion());
         } else {
-            stack.mulPose(Minecraft.getInstance().gameRenderer.getLevelRenderState().cameraRenderState.orientation);
+            stack.mulPose(Minecraft.getInstance().gameRenderer.getGameRenderState().levelRenderState.cameraRenderState.orientation);
         }
     }
 }

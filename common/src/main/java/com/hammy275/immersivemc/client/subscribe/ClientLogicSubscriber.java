@@ -73,7 +73,7 @@ public class ClientLogicSubscriber {
         if (!didLowVivecraftVersionCheck) {
             didLowVivecraftVersionCheck = true;
             if (Util.hasTooLowVivecraftVersion()) {
-                player.displayClientMessage(Component.translatable("message.immersivemc.vivecraft_low_version"), false);
+                player.sendSystemMessage(Component.translatable("message.immersivemc.vivecraft_low_version"));
             }
         }
 
