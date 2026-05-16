@@ -44,6 +44,8 @@ public class ImmersiveMCFabric implements ModInitializer {
             });
             LevelRenderEvents.COLLECT_SUBMITS.register(context ->
                     ClientRenderSubscriber.onWorldRender(context.poseStack()));
+            LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN.register(context ->
+                    ClientRenderSubscriber.onTransparentRender(context.poseStack()));
         }
         ImmersiveMC.init();
         if (Platform.COMMON.isModLoaded("lootr")) {

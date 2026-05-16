@@ -63,15 +63,16 @@ public class ClientRenderSubscriber {
             // Skip rendering if the list is modified mid-render
             // It's fine, since we were only going to read it anyway!!
         }
+        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+    }
 
-        Minecraft.getInstance().renderBuffers().bufferSource().endBatch(); // Render out immersives
-
-        // Render item guides separately so items behind item guides can be seen
+    public static void onTransparentRender(PoseStack stack) {
+        // Render item guides separately so items behind item guides can be seen and transparency works
         for (ItemGuideRenderData data : itemGuideRenderData) {
             renderItemGuide(data.stack, data.hitbox, data.alpha, data.isSelected, data.light);
         }
-        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
         itemGuideRenderData.clear();
+        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
     }
 
     public static void setRenderColors() {

@@ -33,6 +33,7 @@ public class ClientSetup {
         modBus.addListener((RegisterKeyMappingsEvent event) -> keyMappingsToRegister.forEach(event::register));
         modBus.addListener((EntityRenderersEvent.RegisterLayerDefinitions event) -> entityModelLayersToRegister.forEach(pair -> event.registerLayerDefinition(pair.getFirst(), pair.getSecond())));
         NeoForge.EVENT_BUS.addListener((SubmitCustomGeometryEvent event) -> ClientRenderSubscriber.onWorldRender(event.getPoseStack()));
+        NeoForge.EVENT_BUS.addListener((RenderLevelStageEvent.AfterTranslucentBlocks event) -> ClientRenderSubscriber.onTransparentRender(event.getPoseStack()));
         modBus.addListener((RegisterPictureInPictureRenderersEvent event) -> pipRenderersToRegister.forEach(renderer -> renderer.register(event)));
         modBus.addListener((RegisterClientPayloadHandlersEvent event) -> event.register(BufferPacket.ID,
                 (packet, ctx) -> Network.INSTANCE.doReceive(null, packet.buffer())));
