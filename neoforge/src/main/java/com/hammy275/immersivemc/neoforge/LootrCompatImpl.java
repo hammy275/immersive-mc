@@ -10,13 +10,13 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import noobanidus.mods.lootr.common.api.IOpeners;
 import noobanidus.mods.lootr.common.api.LootrAPI;
-import noobanidus.mods.lootr.common.api.data.DefaultLootFiller;
-import noobanidus.mods.lootr.common.api.data.ILootrInfo;
-import noobanidus.mods.lootr.common.api.data.ILootrInfoProvider;
+import noobanidus.mods.lootr.common.api.data.ILootrContainerInstance;
+import noobanidus.mods.lootr.common.api.data.ILootrData;
+import noobanidus.mods.lootr.common.api.filler.DefaultLootFiller;
+import noobanidus.mods.lootr.common.api.interfaces.IHasOpeners;
 import noobanidus.mods.lootr.common.block.entity.LootrBarrelBlockEntity;
-import noobanidus.mods.lootr.common.block.entity.LootrShulkerBlockEntity;
+import noobanidus.mods.lootr.common.block.entity.LootrShulkerBoxBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class LootrCompatImpl implements LootrCompat {
@@ -30,17 +30,17 @@ public class LootrCompatImpl implements LootrCompat {
     @Override
     public @Nullable Container getContainer(ServerPlayer player, BlockPos pos) {
         Level level = player.level();
-        ILootrInfoProvider provider = ILootrInfoProvider.of(pos, level);
+        ILootrContainerInstance provider = ILootrContainerInstance.of(pos, level);
         if (provider == null) {
             return null;
         }
-        return LootrAPI.getInventory(provider, player, DefaultLootFiller.getInstance());
+        return LootrAPI.getInventory(provider, player, DefaultLootFiller.getInstance(), null);
     }
 
     @Override
     public void markOpener(Player player, BlockPos pos) {
         BlockEntity blockEntity = player.level().getBlockEntity(pos);
-        if (blockEntity instanceof IOpeners lootrOpeners) {
+        if (blockEntity instanceof IHasOpeners lootrOpeners) {
             lootrOpeners.addOpener(player);
         }
     }
@@ -67,7 +67,7 @@ public class LootrCompatImpl implements LootrCompat {
 
     @Override
     public boolean openLootrShulkerBox(BlockPos pos, Player player, boolean nowOpen) {
-        if (player.level().getBlockEntity(pos) instanceof LootrShulkerBlockEntity lsbe) {
+        if (player.level().getBlockEntity(pos) instanceof LootrShulkerBoxBlockEntity lsbe) {
             if (nowOpen) {
                 lsbe.startOpen(player);
                 ChestToOpenSet.openChest(player, pos);
@@ -83,7 +83,7 @@ public class LootrCompatImpl implements LootrCompat {
     @Override
     public boolean isOpen(BlockPos pos, Player player) {
         BlockEntity be = player.level().getBlockEntity(pos);
-        if (be instanceof ILootrInfo lootrInfo) {
+        if (be instanceof ILootrData lootrInfo) {
             return lootrInfo.isPhysicallyOpen();
         }
         return false;
