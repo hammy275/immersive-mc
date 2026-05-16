@@ -42,7 +42,7 @@ public class ImmersiveMCFabric implements ModInitializer {
                     }
                 });
             });
-            LevelRenderEvents.AFTER_SOLID_FEATURES.register(context ->
+            LevelRenderEvents.COLLECT_SUBMITS.register(context ->
                     ClientRenderSubscriber.onWorldRender(context.poseStack()));
         }
         ImmersiveMC.init();
