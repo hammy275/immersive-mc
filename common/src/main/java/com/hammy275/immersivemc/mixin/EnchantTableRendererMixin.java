@@ -28,7 +28,7 @@ public class EnchantTableRendererMixin {
 
     @Shadow @Final public BookModel bookModel;
 
-    @Inject(method = "submit(Lnet/minecraft/client/renderer/blockentity/state/EnchantTableRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V",
+    @Inject(method = "Lnet/minecraft/client/renderer/blockentity/EnchantTableRenderer;submit(Lnet/minecraft/client/renderer/blockentity/state/EnchantTableRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V",
     at = @At("HEAD"), cancellable = true)
     private void immersiveMC$apothEnchantTableBook(EnchantTableRenderState table, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, CallbackInfo ci) {
         if (Apoth.apothImpl.enchantModuleEnabled() && table.open == 1f) {
