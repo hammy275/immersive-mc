@@ -1,16 +1,19 @@
 package com.hammy275.immersivemc.common.api_impl;
 
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
-import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.server.api_impl.SwapResultImpl;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.api.common.immersive.SwapResult;
+import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.server.api_impl.SwapResultImpl;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 public class ImmersiveLogicHelpersImpl implements ImmersiveLogicHelpers {
 
@@ -52,5 +55,25 @@ public class ImmersiveLogicHelpersImpl implements ImmersiveLogicHelpers {
         } else { // Player hand item can't hold any of immersive item. Set player item same and spawn leftovers.
             return new SwapResultImpl(stackFromPlayer, ItemStack.EMPTY, stackInImmersive.copy());
         }
+    }
+
+    @Override
+    public List<Vec3> getVerticesOfAABB(AABB box) {
+        double minX = box.minX;
+        double minY = box.minY;
+        double minZ = box.minZ;
+        double maxX = box.maxX;
+        double maxY = box.maxY;
+        double maxZ = box.maxZ;
+        return List.of(
+                new Vec3(minX, minY, minZ),
+                new Vec3(maxX, minY, minZ),
+                new Vec3(maxX, minY, maxZ),
+                new Vec3(minX, minY, maxZ),
+                new Vec3(minX, maxY, minZ),
+                new Vec3(maxX, maxY, minZ),
+                new Vec3(maxX, maxY, maxZ),
+                new Vec3(minX, maxY, maxZ)
+        );
     }
 }

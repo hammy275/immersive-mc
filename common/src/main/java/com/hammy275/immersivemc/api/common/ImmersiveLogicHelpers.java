@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.api.common;
 
+import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.api.common.immersive.SwapResult;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveLogicHelpersImpl;
@@ -7,6 +8,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 /**
  * Contains helpful methods that ensure the ImmersiveMC "style" is kept throughout API-implementors that wish
@@ -75,4 +80,13 @@ public interface ImmersiveLogicHelpers {
      *         the player some other way.
      */
     public SwapResult swapItemsWithOutput(ItemStack stackFromPlayer, ItemStack stackInImmersive, Player player);
+
+    /**
+     * Gets the vertices of the provided AABB as an 8-element list. This is equivalent to
+     * {@link com.hammy275.immersivemc.api.common.hitbox.BoundingBox#vertices(BoundingBox)} with explicitly an AABB
+     * provided. See the aforementioned method for more details.
+     * @param box The AABB to get the vertices of.
+     * @return The vertices of the provided AABB as described in the aforementioned method.
+     */
+    public List<Vec3> getVerticesOfAABB(AABB box);
 }
