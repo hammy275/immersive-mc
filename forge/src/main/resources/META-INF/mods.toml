@@ -30,6 +30,8 @@ Thanks to:
 Thanks to the Vivecraft developers for inspiration for the bag, and to various members of the ImmersiveMC Discord for ideas!
 
 Thanks to the guide from leo3418 for the original config screen implementation!
+
+Thanks to the developers of Fabric API, of which some mixins from it are used for other modloaders!
 '''
 #logoFile = ""
 

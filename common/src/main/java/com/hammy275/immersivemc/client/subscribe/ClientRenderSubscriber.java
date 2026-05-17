@@ -63,7 +63,6 @@ public class ClientRenderSubscriber {
             // Skip rendering if the list is modified mid-render
             // It's fine, since we were only going to read it anyway!!
         }
-        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
     }
 
     public static void onTransparentRender(PoseStack stack) {
@@ -72,7 +71,6 @@ public class ClientRenderSubscriber {
             renderItemGuide(data.stack, data.hitbox, data.alpha, data.isSelected, data.light);
         }
         itemGuideRenderData.clear();
-        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
     }
 
     public static void setRenderColors() {
