@@ -34,7 +34,7 @@ public class FetchBackpackStoragePacket {
     public static FetchBackpackStoragePacket decode(RegistryFriendlyByteBuf buffer) {
         if (buffer.readBoolean()) {
             int numItems = buffer.readInt();
-            List<ItemStack> items = new ArrayList<>(numItems);
+            List<ItemStack> items = new ArrayList<>(Math.min(numItems, 32));
             for (int i = 0; i < numItems; i++) {
                 items.add(ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer));
             }
