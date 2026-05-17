@@ -21,9 +21,9 @@ public class OBBClientUtil {
             DrawableGizmoPrimitives gizmoPrimitives = new DrawableGizmoPrimitives();
             List<Vec3> vertices = obb.getVertices();
             for (int i = 0; i <= 3; i++) {
-                gizmoPrimitives.addLine(vertices.get(i), vertices.get((i + 1) % 4), color, 1f);
-                gizmoPrimitives.addLine(vertices.get(i + 4), vertices.get((i + 1) % 4 + 4), color, 1f);
-                gizmoPrimitives.addLine(vertices.get(i), vertices.get(i + 4), color, 1f);
+                gizmoPrimitives.addLine(vertices.get(i), vertices.get((i + 1) % 4), color, 2.5f);
+                gizmoPrimitives.addLine(vertices.get(i + 4), vertices.get((i + 1) % 4 + 4), color, 2.5f);
+                gizmoPrimitives.addLine(vertices.get(i), vertices.get(i + 4), color, 2.5f);
             }
             ClientUtil.renderGizmoPrimitives(gizmoPrimitives, stack);
         }
