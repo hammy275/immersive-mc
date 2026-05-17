@@ -56,11 +56,11 @@ public class ETableStorage extends ListOfItemsStorage {
         public static SlotData decode(FriendlyByteBuf buffer) {
             int xpLevel = buffer.readInt();
             int numHints = buffer.readInt();
-            List<Integer> hints = new ArrayList<>(numHints);
+            List<Integer> hints = new ArrayList<>(Math.min(numHints, 8));
             for (int i = 0; i < numHints; i++) {
                 hints.add(buffer.readInt());
             }
-            List<Integer> hintLevels = new ArrayList<>(numHints);
+            List<Integer> hintLevels = new ArrayList<>(Math.min(numHints, 8));
             for (int i = 0; i < numHints; i++) {
                 hintLevels.add(buffer.readInt());
             }
