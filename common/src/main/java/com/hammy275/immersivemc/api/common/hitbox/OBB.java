@@ -4,6 +4,7 @@ import com.mojang.math.Quaternion;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -60,4 +61,12 @@ public interface OBB extends BoundingBox {
      * @return This OBB, but moved/translated by the provided movement.
      */
     public OBB move(Vec3 movement);
+
+    /**
+     * Gets the vertices of this OBB as an 8-element list. This is equivalent to
+     * {@link com.hammy275.immersivemc.api.common.hitbox.BoundingBox#vertices(BoundingBox)} with explicitly this OBB
+     * provided. See the aforementioned method for more details.
+     * @return The vertices of this OBB as described in the aforementioned method.
+     */
+    public List<Vec3> getVertices();
 }
