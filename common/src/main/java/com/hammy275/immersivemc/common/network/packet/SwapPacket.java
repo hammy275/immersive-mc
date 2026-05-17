@@ -52,7 +52,7 @@ public class SwapPacket {
 
     public static SwapPacket decode(RegistryFriendlyByteBuf buffer) {
         int size = buffer.readInt();
-        List<Integer> slots = new ArrayList<>(size);
+        List<Integer> slots = new ArrayList<>(Math.min(size, 32));
         for (int i = 0; i < size; i++) {
             slots.add(buffer.readInt());
         }

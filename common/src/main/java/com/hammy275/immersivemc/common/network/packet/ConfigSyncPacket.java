@@ -50,7 +50,7 @@ public class ConfigSyncPacket {
         List<ResourceLocation> handlerIDs = null;
         int numIDs = buffer.readInt();
         if (numIDs > 0) {
-            handlerIDs = new ArrayList<>();
+            handlerIDs = new ArrayList<>(Math.min(numIDs, 64));
             for (int i = 0; i < numIDs; i++) {
                 handlerIDs.add(buffer.readResourceLocation());
             }
