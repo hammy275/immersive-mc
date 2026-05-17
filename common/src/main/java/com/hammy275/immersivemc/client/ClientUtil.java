@@ -53,14 +53,27 @@ public class ClientUtil {
      * Renders a gizmo immediately. Should NOT add instances via {@link net.minecraft.gizmos.Gizmos}, since this renders
      * them directly instead.
      * @param gizmo Gizmo to render
+     * @param poseStack PoseStack for rendering.
      */
     public static void renderGizmo(Gizmo gizmo, PoseStack poseStack) {
-        Minecraft mc = Minecraft.getInstance();
         DrawableGizmoPrimitives gizmoPrimitives = new DrawableGizmoPrimitives();
         gizmo.emit(gizmoPrimitives, 1f);
+        renderGizmoPrimitives(gizmoPrimitives, poseStack);
+    }
+
+    /**
+     * Renders gizmo primitives immediately. Should NOT add instances via {@link net.minecraft.gizmos.Gizmos}, since
+     * this renders them directly instead.
+     * @param gizmoPrimitives Gizmo primitives to render
+     * @param poseStack PoseStack for rendering.
+     */
+    public static void renderGizmoPrimitives(DrawableGizmoPrimitives gizmoPrimitives, PoseStack poseStack) {
+        Minecraft mc = Minecraft.getInstance();
         CameraRenderState cameraRenderState = mc.gameRenderer.getLevelRenderState().cameraRenderState;
         // Frustum found via basically the same code as GameRenderer#renderLevel() in the one line below
-        Matrix4f frustum = new Matrix4f().rotation(cameraRenderState.orientation.conjugate(new Quaternionf()));
+        Matrix4f frustum = new Matrix4f().rotation(
+                mc.gameRenderer.getMainCamera().rotation().conjugate(new Quaternionf())
+        );
         gizmoPrimitives.render(poseStack, mc.renderBuffers().bufferSource(), cameraRenderState, frustum);
     }
 
