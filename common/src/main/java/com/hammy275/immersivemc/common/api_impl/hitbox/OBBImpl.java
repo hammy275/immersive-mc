@@ -1,14 +1,17 @@
 package com.hammy275.immersivemc.common.api_impl.hitbox;
 
+import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.OBB;
 import com.hammy275.immersivemc.common.obb.OBBRotList;
 import com.hammy275.immersivemc.common.obb.RotType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,6 +29,8 @@ public class OBBImpl implements BoundingBox, com.hammy275.immersivemc.api.common
     final Vec3 center;
     final Vector3f centerF;
     final Quaternionf rotation;
+    /** Cached vertices that make up this OBB. */
+    private @Nullable List<Vec3> vertices;
 
     /**
      * Create an OBB from an existing AABB.
@@ -128,6 +133,27 @@ public class OBBImpl implements BoundingBox, com.hammy275.immersivemc.api.common
     @Override
     public OBB move(Vec3 movement) {
         return new OBBImpl(this.aabb.move(movement), this.rotation);
+    }
+
+    @Override
+    public List<Vec3> getVertices() {
+        if (vertices == null) {
+            // Get the vertices of the AABB
+            vertices = ImmersiveLogicHelpers.instance().getVerticesOfAABB(this.getUnderlyingAABB()).stream()
+                    // Move point to be relative to the center.
+                    .map(point -> point.subtract(this.getCenter()))
+                    // Convert to Vector3f to allow for easy rotation.
+                    .map(point -> new Vector3f((float) point.x, (float) point.y, (float) point.z))
+                    // Perform the rotation.
+                    .map(point -> point.rotate(this.rotation))
+                    // Convert back to Vec3.
+                    .map(Vec3::new)
+                    // Move back to original position.
+                    .map(point -> point.add(this.getCenter()))
+                    // Make it a list (finally!)
+                    .toList();
+        }
+        return vertices;
     }
 
     @Override
