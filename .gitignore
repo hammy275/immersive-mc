@@ -18,3 +18,5 @@ classes/
 .settings
 *.launch
 *.log
+
+**/runs/
