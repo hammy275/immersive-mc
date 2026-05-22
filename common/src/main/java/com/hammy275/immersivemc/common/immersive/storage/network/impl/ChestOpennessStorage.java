@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.common.immersive.storage.network.impl;
 
-import com.hammy275.immersivemc.client.ClientMixinProxy;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
@@ -13,6 +12,7 @@ import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.mixin.ChestBlockEntityAccessor;
 import com.hammy275.immersivemc.mixin.ContainerOpenersCounterAccessor;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
+import com.hammy275.immersivemc.server.ServerMixinProxy;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import net.minecraft.core.BlockPos;
@@ -182,7 +182,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
     }
 
     private void doChestOpen(ServerPlayer controllingPlayer, @Nullable ChestBlockEntity other) {
-        ClientMixinProxy.skipIncrementDecrementChests = true;
+        ServerMixinProxy.skipIncrementDecrementChests = true;
         try {
             if (chest instanceof ChestBlockEntity cbe) {
                 ChestToOpenSet.openChest(controllingPlayer, pos);
@@ -199,13 +199,13 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
                 PiglinAi.angerNearbyPiglins(controllingPlayer, true);
             }
         } finally {
-            ClientMixinProxy.skipIncrementDecrementChests = false;
+            ServerMixinProxy.skipIncrementDecrementChests = false;
         }
 
     }
 
     private void doChestClose(ServerPlayer controllingPlayer, @Nullable ChestBlockEntity other) {
-        ClientMixinProxy.skipIncrementDecrementChests = true;
+        ServerMixinProxy.skipIncrementDecrementChests = true;
         // When closing, immediately recheckOpeners to sync the "closed" state to the client, which otherwise
         // thinks it's open.
         try {
@@ -230,7 +230,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
                 openersCounter.recheckOpeners(ecbe.getLevel(), ecbe.getBlockPos(), ecbe.getLevel().getBlockState(ecbe.getBlockPos()));
             }
         } finally {
-            ClientMixinProxy.skipIncrementDecrementChests = false;
+            ServerMixinProxy.skipIncrementDecrementChests = false;
         }
     }
 
