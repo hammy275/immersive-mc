@@ -328,14 +328,14 @@ public class Util {
     }
 
     @Nullable
-    public static ChestBlockEntity getOtherChest(ChestBlockEntity chest) {
+    public static ChestBlockEntity getOtherChest(BlockEntity chest) {
         return getOtherChest(chest, true);
     }
 
     @Nullable
-    protected static ChestBlockEntity getOtherChest(ChestBlockEntity chest, boolean checkOther) {
+    protected static ChestBlockEntity getOtherChest(BlockEntity chestIn, boolean checkOther) {
         // Gets the chest this one is connected to. Can be null.
-        if (chest == null) return null;
+        if (!(chestIn instanceof ChestBlockEntity chest)) return null;
         Direction otherDir = ChestBlock.getConnectedDirection(chest.getBlockState());
         BlockPos otherPos = chest.getBlockPos().relative(otherDir);
         if (chest.getLevel() != null && chest.getLevel().getBlockEntity(otherPos) instanceof ChestBlockEntity) {

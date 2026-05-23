@@ -253,9 +253,9 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
         this.lidTarget = newTarget;
         this.animationState = AnimationState.ANIMATED;
         if (newTarget == LidTarget.OPEN) {
-            doChestOpen(controllingPlayer, Util.getOtherChest((ChestBlockEntity) chest));
+            doChestOpen(controllingPlayer, Util.getOtherChest((BlockEntity) chest));
         } else {
-            doChestClose(controllingPlayer, Util.getOtherChest((ChestBlockEntity) chest));
+            doChestClose(controllingPlayer, Util.getOtherChest((BlockEntity) chest));
         }
     }
 
