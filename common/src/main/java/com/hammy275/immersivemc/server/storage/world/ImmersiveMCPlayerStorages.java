@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.server.storage.world;
 
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.mixin.SavedDataStorageAccessor;
 import com.hammy275.immersivemc.server.ServerUtil;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -10,12 +11,14 @@ import net.minecraft.SharedConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.EndTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
+import net.minecraft.world.level.storage.SavedDataStorage;
 
 import java.util.*;
 
@@ -25,6 +28,10 @@ import java.util.*;
 public class ImmersiveMCPlayerStorages extends SavedData {
 
     private static final int PLAYER_STORAGES_VERSION = 2;
+
+    // These are special identifiers caught by SavedDataStorageMixin
+    public static final Identifier V1_6_0_ALPHA3 = Util.mcId("immersivemc_player_data_v1_6_0_alpha3");
+    public static final Identifier MC1_21_11_BELOW = Util.id("immersivemc_player_data_1_21_11_and_below");
 
 
     private static final Codec<ImmersiveMCPlayerStorages> savedDataCodec = new Codec<>() {
@@ -40,8 +47,21 @@ public class ImmersiveMCPlayerStorages extends SavedData {
     };
     private static final SavedDataType<ImmersiveMCPlayerStorages> savedDataType = new SavedDataType<>(
             // Uses Minecraft namespace, since that's how world-upgrades should handle it.
-            // TODO: Use this only to load world data, then save to something in the "immersivemc" namespace.
-            Util.mcId("immersivemc_player_data"),
+            Util.id("immersivemc_player_data"),
+            ImmersiveMCPlayerStorages::create,
+            savedDataCodec,
+            null
+    );
+
+    private static final SavedDataType<ImmersiveMCPlayerStorages> savedDataType160Alpha3 = new SavedDataType<>(
+            // Uses Minecraft namespace, since that's how world-upgrades should handle it.
+            V1_6_0_ALPHA3,
+            ImmersiveMCPlayerStorages::create,
+            savedDataCodec,
+            null
+    );
+    private static final SavedDataType<ImmersiveMCPlayerStorages> savedDataTypeMC12111AndBelow = new SavedDataType<>(
+            MC1_21_11_BELOW,
             ImmersiveMCPlayerStorages::create,
             savedDataCodec,
             null
@@ -66,11 +86,57 @@ public class ImmersiveMCPlayerStorages extends SavedData {
 
     public static ImmersiveMCPlayerStorages getPlayerStorage(Player player) {
         if (!player.level().isClientSide()) {
-            ServerPlayer sPlayer = (ServerPlayer) player;
-            return sPlayer.level().getServer().overworld().getDataStorage()
-                    .computeIfAbsent(savedDataType);
+            SavedDataStorage dataStorage = ((ServerPlayer) player).level().getServer().overworld().getDataStorage();
+            ImmersiveMCPlayerStorages storages = dataStorage.computeIfAbsent(savedDataType);
+            // Upgrading from past versions in order of priority (data from MC 1.21.11 and below is preferred over
+            // 1.6.0 Alpha 3, since the latter was not out for long).
+            ImmersiveMCPlayerStorages mc12111AndBelow = dataStorage.get(savedDataTypeMC12111AndBelow);
+            ImmersiveMCPlayerStorages v160Alpha3 = dataStorage.get(savedDataType160Alpha3);
+            LinkedList<ImmersiveMCPlayerStorages> oldStorages = new LinkedList<>();
+            oldStorages.add(mc12111AndBelow);
+            oldStorages.add(v160Alpha3);
+            oldStorages.removeIf(Objects::isNull);
+
+            if (oldStorages.isEmpty()) {
+                // Empty. We're either creating a storage on a fresh install, or loading the pre-existing storage that's
+                // where we want it to be.
+                return storages;
+            }
+            // We have at least one storage we're upgrading from.
+            while (!oldStorages.isEmpty()) {
+                mergeInOldStorages(storages, oldStorages.removeFirst());
+            }
+            // We very much want to clean up the data we're upgrading from (to prevent constantly restoring from it),
+            // though only after we force a save.
+            storages.setDirty();
+            dataStorage.saveAndJoin();
+            SavedDataStorageAccessor dataStorageAccessor = (SavedDataStorageAccessor) dataStorage;
+            if (mc12111AndBelow != null) {
+                dataStorageAccessor.immersiveMC$getDataFile(MC1_21_11_BELOW).toFile().delete();
+                dataStorageAccessor.immersiveMC$getCache().remove(savedDataTypeMC12111AndBelow);
+            }
+            if (v160Alpha3 != null) {
+                dataStorageAccessor.immersiveMC$getDataFile(V1_6_0_ALPHA3).toFile().delete();
+                dataStorageAccessor.immersiveMC$getCache().remove(savedDataType160Alpha3);
+            }
+            return storages;
         }
         throw new IllegalArgumentException("Can only access storage on server-side!");
+    }
+
+    private static void mergeInOldStorages(ImmersiveMCPlayerStorages storages, ImmersiveMCPlayerStorages oldStorages) {
+        if (storages.disabledPlayers.isEmpty() && !oldStorages.disabledPlayers.isEmpty()) {
+            storages.disabledPlayers.addAll(oldStorages.disabledPlayers);
+        }
+        // Doing a loop like this, since for ImmersiveMC 1.6.0 Alpha 3, this upgrade process did not occur.
+        // As such, we don't want to remove data that may already be in the map.
+        // During a regular upgrade, every entry will get added on the first merge, since what's being merged into
+        // is in its default (empty) state.
+        for (Map.Entry<UUID, List<ItemStack>> entry : oldStorages.backpackCraftingItemsMap.entrySet()) {
+            if (!storages.backpackCraftingItemsMap.containsKey(entry.getKey())) {
+                storages.backpackCraftingItemsMap.put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
     public static boolean isPlayerDisabled(Player player) {

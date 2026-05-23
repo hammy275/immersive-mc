@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.SmithingTableStorage;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.mixin.SavedDataStorageAccessor;
 import com.hammy275.immersivemc.server.ServerUtil;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -26,10 +27,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
+import net.minecraft.world.level.storage.SavedDataStorage;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Holds ALL the save data for ImmersiveMC for a given world/dimension.
@@ -37,6 +41,10 @@ import java.util.Map;
 public class ImmersiveMCLevelStorage extends SavedData {
 
     private static final int LEVEL_STORAGE_VERSION = 2;
+
+    // These are special identifiers caught by SavedDataStorageMixin
+    public static final Identifier V1_6_0_ALPHA3 = Util.mcId("immersivemc_data_v1_6_0_alpha3");
+    public static final Identifier MC1_21_11_BELOW = Util.id("immersivemc_data_1_21_11_and_below");
 
     private static final Codec<ImmersiveMCLevelStorage> savedDataCodec = new Codec<>() {
         @Override
@@ -50,9 +58,21 @@ public class ImmersiveMCLevelStorage extends SavedData {
         }
     };
     private static final SavedDataType<ImmersiveMCLevelStorage> savedDataType = new SavedDataType<>(
+            Util.id("immersivemc_data"),
+            ImmersiveMCLevelStorage::create,
+            savedDataCodec,
+            null
+    );
+
+    private static final SavedDataType<ImmersiveMCLevelStorage> savedDataType160Alpha3 = new SavedDataType<>(
             // Uses Minecraft namespace, since that's how world-upgrades should handle it.
-            // TODO: Use this only to load world data, then save to something in the "immersivemc" namespace.
-            Util.mcId("immersivemc_data"),
+            V1_6_0_ALPHA3,
+            ImmersiveMCLevelStorage::create,
+            savedDataCodec,
+            null
+    );
+    private static final SavedDataType<ImmersiveMCLevelStorage> savedDataTypeMC12111AndBelow = new SavedDataType<>(
+            MC1_21_11_BELOW,
             ImmersiveMCLevelStorage::create,
             savedDataCodec,
             null
@@ -66,7 +86,52 @@ public class ImmersiveMCLevelStorage extends SavedData {
     }
 
     public static ImmersiveMCLevelStorage getLevelStorage(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(savedDataType);
+        SavedDataStorage dataStorage = level.getDataStorage();
+        ImmersiveMCLevelStorage storages = dataStorage.computeIfAbsent(savedDataType);
+        // Upgrading from past versions in order of priority (data from MC 1.21.11 and below is preferred over
+        // 1.6.0 Alpha 3, since the latter was not out for long).
+        ImmersiveMCLevelStorage mc12111AndBelow = dataStorage.get(savedDataTypeMC12111AndBelow);
+        ImmersiveMCLevelStorage v160Alpha3 = dataStorage.get(savedDataType160Alpha3);
+        LinkedList<ImmersiveMCLevelStorage> oldStorages = new LinkedList<>();
+        oldStorages.add(mc12111AndBelow);
+        oldStorages.add(v160Alpha3);
+        oldStorages.removeIf(Objects::isNull);
+
+        if (oldStorages.isEmpty()) {
+            // Empty. We're either creating a storage on a fresh install, or loading the pre-existing storage that's
+            // where we want it to be.
+            return storages;
+        }
+        // We have at least one storage we're upgrading from.
+        while (!oldStorages.isEmpty()) {
+            mergeInOldStorages(storages, oldStorages.removeFirst());
+        }
+        // We very much want to clean up the data we're upgrading from (to prevent constantly restoring from it),
+        // though only after we force a save.
+        storages.setDirty();
+        dataStorage.saveAndJoin();
+        SavedDataStorageAccessor dataStorageAccessor = (SavedDataStorageAccessor) dataStorage;
+        if (mc12111AndBelow != null) {
+            dataStorageAccessor.immersiveMC$getDataFile(MC1_21_11_BELOW).toFile().delete();
+            dataStorageAccessor.immersiveMC$getCache().remove(savedDataTypeMC12111AndBelow);
+        }
+        if (v160Alpha3 != null) {
+            dataStorageAccessor.immersiveMC$getDataFile(V1_6_0_ALPHA3).toFile().delete();
+            dataStorageAccessor.immersiveMC$getCache().remove(savedDataType160Alpha3);
+        }
+        return storages;
+    }
+
+    private static void mergeInOldStorages(ImmersiveMCLevelStorage storages, ImmersiveMCLevelStorage oldStorages) {
+        // Doing a loop like this, since for ImmersiveMC 1.6.0 Alpha 3, this upgrade process did not occur.
+        // As such, we don't want to remove data that may already be in the map.
+        // During a regular upgrade, every entry will get added on the first merge, since what's being merged into
+        // is in its default (empty) state.
+        for (Map.Entry<BlockPos, WorldStorage> entry : oldStorages.storageMap.entrySet()) {
+            if (!storages.storageMap.containsKey(entry.getKey())) {
+                storages.storageMap.put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
     @Nullable
