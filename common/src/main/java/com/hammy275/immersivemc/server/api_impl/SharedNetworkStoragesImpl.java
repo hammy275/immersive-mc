@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.server.api_impl;
 
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.server.storage.server.SharedNetworkStorages;
 import net.minecraft.core.BlockPos;
@@ -22,7 +22,7 @@ public class SharedNetworkStoragesImpl implements SharedNetworkStorages {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <S extends NetworkStorage> S getOrCreate(Level level, BlockPos pos, ImmersiveHandler<S> handler) {
+    public <S extends NetworkStorage> S getOrCreate(Level level, BlockPos pos, BlockBasedImmersiveHandler<S> handler) {
         S emptyNetworkStorage = handler.getEmptyNetworkStorage();
         return getOrCreate(level, pos, (Class<S>) emptyNetworkStorage.getClass(), () -> emptyNetworkStorage);
     }
@@ -39,7 +39,7 @@ public class SharedNetworkStoragesImpl implements SharedNetworkStorages {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <S extends NetworkStorage> @Nullable S get(Level level, BlockPos pos, ImmersiveHandler<S> handler) {
+    public <S extends NetworkStorage> @Nullable S get(Level level, BlockPos pos, BlockBasedImmersiveHandler<S> handler) {
         return (S) get(level, pos, handler.getEmptyNetworkStorage().getClass());
     }
 
@@ -57,7 +57,7 @@ public class SharedNetworkStoragesImpl implements SharedNetworkStorages {
     }
 
     @Override
-    public <S extends NetworkStorage> void remove(Level level, BlockPos pos, ImmersiveHandler<S> handler) {
+    public <S extends NetworkStorage> void remove(Level level, BlockPos pos, BlockBasedImmersiveHandler<S> handler) {
         remove(level, pos, handler.getEmptyNetworkStorage().getClass());
     }
 

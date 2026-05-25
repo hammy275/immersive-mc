@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.api.client.immersive;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.player.LocalPlayer;
@@ -16,27 +16,16 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Represents the client-side implementation of a block-based Immersive implementation.
- * <br>
- * To clarify what an Immersive is, from the user's perspective, an Immersive is a single category of thing that
- * ImmersiveMC supports. Whether that be furnaces, throwing, or petting, those are all considered Immersives.
- * <br>
- * From a programming perspective, the term Immersive is used to represent a few different concepts:
- * <ol>
- *     <li>The aforementioned user definition of an Immersive.</li>
- *     <li>The aforementioned user definition of an Immersive, but only for implementations that take advantage
- *     of this interface. This is also referred to as a block-based Immersive.</li>
- *     <li>The client-side exclusive logic of a block-based Immersive.</li>
- * </ol>
- * The final entry on that list is what this interface is; "The client-side exclusive logic of a block-based Immersive."
- * Developers implement this interface to create the client-side implementation of a block-based Immersive (or,
- * alternatively, build one using an {@link ImmersiveBuilder}). When combined with a {@link ImmersiveHandler}, you have
- * a fully-functioning (block-based) Immersive!
- * @param <I> The {@link ImmersiveInfo} implementation this Immersive uses.
- * @param <R> The render state implementation this Immersive uses. See {@link #extractRenderState(ImmersiveInfo, ImmersiveRenderState, float)}.
+ * Represents the client-side implementation of a block-based Immersive implementation. One should implement this
+ * interface to create the client-side implementation of a block-based Immersive (or, alternatively, build one using an
+ * {@link BlockBasedImmersiveBuilder}).
+ * <p>
+ * When combined with a {@link BlockBasedImmersiveHandler}, you have a fully-functioning block-based Immersive!
+ * @param <I> The {@link BlockBasedImmersiveInfo} implementation this Immersive uses.
+ * @param <R> The render state implementation this Immersive uses. See {@link #extractRenderState(BlockBasedImmersiveInfo, ImmersiveRenderState, float)}.
  * @param <S> The type of storage to use for sending Immersive data over the network.
  */
-public interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRenderState, S extends NetworkStorage> {
+public interface BlockBasedImmersive<I extends BlockBasedImmersiveInfo, R extends ImmersiveRenderState, S extends NetworkStorage> {
 
     /**
      * Get the collection of ImmersiveInfos currently active for this Immersive. The contents of the list may be
@@ -68,12 +57,12 @@ public interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRenderSta
      * The method called when a player interacts with a hitbox.
      * <br>
      * If multiple hitboxes are being interacted with at the same time, only the first hitbox in iteration order from
-     * {@link ImmersiveInfo#getAllHitboxes()} that is being interacted with will have this function called.
+     * {@link BlockBasedImmersiveInfo#getAllHitboxes()} that is being interacted with will have this function called.
      *
      * @param info The info containing the hitbox that was interacted with.
      * @param player The player that interacted with the hitbox. This player is always the player currently controlling
      *               the game window.
-     * @param hitboxIndices The indices into {@link ImmersiveInfo#getAllHitboxes()} that were interacted with. The list
+     * @param hitboxIndices The indices into {@link BlockBasedImmersiveInfo#getAllHitboxes()} that were interacted with. The list
      *                      is guaranteed to contain at least one element and all elements are not null.
      * @param hand The hand used for interaction.
      * @param modifierPressed Whether the modifier key (usually the button mapped to breaking blocks) was held for the
@@ -96,7 +85,7 @@ public interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRenderSta
     /**
      * @return The hitbox that determines whether dragging between multiple slots should continue or not. Can return
      * null here to not allow dragging. If non-null, the hitbox should contain all hitboxes where
-     * {@link #isInputHitbox(ImmersiveInfo, int)} returns true.
+     * {@link #isInputHitbox(BlockBasedImmersiveInfo, int)} returns true.
      */
     @Nullable
     public BoundingBox getDragHitbox(I info);
@@ -128,9 +117,9 @@ public interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRenderSta
     public void render(R renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick);
 
     /**
-     * @return The {@link ImmersiveHandler} this Immersive uses.
+     * @return The {@link BlockBasedImmersiveHandler} this Immersive uses.
      */
-    public ImmersiveHandler<S> getHandler();
+    public BlockBasedImmersiveHandler<S> getHandler();
 
     /**
      * The info needed to build a config screen button for this Immersive. If this method returns null, ImmersiveMC
@@ -157,7 +146,7 @@ public interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRenderSta
 
     /**
      * Process the storage from the server for this Immersive. Not called for Immersives that return
-     * true for {@link #getHandler()}'s {@link ImmersiveHandler#clientAuthoritative()}.
+     * true for {@link #getHandler()}'s {@link BlockBasedImmersiveHandler#clientAuthoritative()}.
      * @param info The info with storage being processed.
      * @param storage The storage to be processed.
      */
@@ -192,7 +181,7 @@ public interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRenderSta
     public void extractRenderState(I info, R renderState, float partialTicks);
 
     /**
-     * This is the same as {@link #tick(ImmersiveInfo)}, but called once per tick, instead of called once per tick
+     * This is the same as {@link #tick(BlockBasedImmersiveInfo)}, but called once per tick, instead of called once per tick
      * per info.
      */
     default void globalTick() {}

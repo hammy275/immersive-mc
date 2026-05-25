@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.network.packet;
 
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
@@ -12,10 +12,10 @@ import net.minecraft.server.level.ServerPlayer;
 public class FetchInventoryPacket<S extends NetworkStorage> {
 
     public final S storage;
-    public final ImmersiveHandler<S> handler;
+    public final BlockBasedImmersiveHandler<S> handler;
     public final BlockPos pos;
 
-    public FetchInventoryPacket(ImmersiveHandler<S> handler, S storage, BlockPos pos) {
+    public FetchInventoryPacket(BlockBasedImmersiveHandler<S> handler, S storage, BlockPos pos) {
         this.handler = handler;
         this.storage = storage;
         this.pos = pos;
@@ -30,12 +30,12 @@ public class FetchInventoryPacket<S extends NetworkStorage> {
     @SuppressWarnings("unchecked")
     public static <NS extends NetworkStorage> FetchInventoryPacket<NS> decode(RegistryFriendlyByteBuf buffer) {
         BlockPos pos = buffer.readBlockPos();
-        ImmersiveHandler<NS> handlerToSet = null;
+        BlockBasedImmersiveHandler<NS> handlerToSet = null;
         NS storage = null;
         Identifier id = buffer.readIdentifier();
-        for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
+        for (BlockBasedImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
             if (handler.getID().equals(id)) {
-                handlerToSet = (ImmersiveHandler<NS>) handler;
+                handlerToSet = (BlockBasedImmersiveHandler<NS>) handler;
                 storage = handlerToSet.getEmptyNetworkStorage();
                 storage.decode(buffer);
                 break;

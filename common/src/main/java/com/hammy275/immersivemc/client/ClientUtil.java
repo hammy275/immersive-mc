@@ -3,8 +3,8 @@ package com.hammy275.immersivemc.client;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveMCClientRegistration;
-import com.hammy275.immersivemc.api.client.immersive.Immersive;
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
@@ -106,7 +106,7 @@ public class ClientUtil {
     }
 
     public static void clearDisabledImmersives() {
-        for (Immersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
+        for (BlockBasedImmersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
             if (!immersive.getHandler().enabledInConfig(Minecraft.getInstance().player)) {
                 immersive.getTrackedObjects().clear();
             }
@@ -190,7 +190,7 @@ public class ClientUtil {
     }
 
     @Nullable
-    public static <I extends ImmersiveInfo> I findImmersive(Immersive<I, ?, ?> immersive, BlockPos pos) {
+    public static <I extends BlockBasedImmersiveInfo> I findImmersive(BlockBasedImmersive<I, ?, ?> immersive, BlockPos pos) {
         for (I info : immersive.getTrackedObjects()) {
             if (Util.getValidBlocks(immersive.getHandler(), info.getBlockPosition(), Minecraft.getInstance().level).contains(pos)) {
                 return info;

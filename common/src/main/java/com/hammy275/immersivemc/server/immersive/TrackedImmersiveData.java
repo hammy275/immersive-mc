@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.server.immersive;
 
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.common.network.packet.FetchInventoryPacket;
@@ -19,11 +19,11 @@ public class TrackedImmersiveData<S extends NetworkStorage> {
 
     public final UUID playerUUID;
     private final Set<BlockPos> pos;
-    private final ImmersiveHandler<S> handler;
+    private final BlockBasedImmersiveHandler<S> handler;
     private final Level level;
     private final Vec3 center;
 
-    public TrackedImmersiveData(UUID playerUUID, Set<BlockPos> pos, ImmersiveHandler<S> handler, Level level) {
+    public TrackedImmersiveData(UUID playerUUID, Set<BlockPos> pos, BlockBasedImmersiveHandler<S> handler, Level level) {
         this.playerUUID = playerUUID;
         this.pos = pos;
         this.handler = handler;
@@ -53,7 +53,7 @@ public class TrackedImmersiveData<S extends NetworkStorage> {
         return this.level;
     }
 
-    public ImmersiveHandler<S> getHandler() {
+    public BlockBasedImmersiveHandler<S> getHandler() {
         return this.handler;
     }
 

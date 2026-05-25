@@ -6,15 +6,15 @@ import net.minecraft.core.BlockPos;
 import java.util.List;
 
 /**
- * ImmersiveInfos are effectively containers of data for {@link Immersive}s. For example, with the furnace,
- * there is one {@link Immersive} instance, which declares how to handle rendering furnaces, interacting with
+ * ImmersiveInfos are effectively containers of data for {@link BlockBasedImmersive}s. For example, with the furnace,
+ * there is one {@link BlockBasedImmersive} instance, which declares how to handle rendering furnaces, interacting with
  * hitboxes, etc. Meanwhile, an ImmersiveInfo instance exists for each furnace that is being rendered in the world,
  * containing data such as what item it contains, where in the world that furnace is, etc.
  * <p>
  * Note that although ImmersiveInfos generally hold info needed for rendering, the actual rendering data is extracted
- * from ImmersiveInfos into {@link ImmersiveRenderState} using methods such as {@link Immersive#extractRenderState}.
+ * from ImmersiveInfos into {@link ImmersiveRenderState} using methods such as {@link BlockBasedImmersive#extractRenderState}.
  */
-public interface ImmersiveInfo {
+public interface BlockBasedImmersiveInfo {
 
     /**
      * @return The list of all hitboxes this Immersive uses. This can contain null elements, and can return an

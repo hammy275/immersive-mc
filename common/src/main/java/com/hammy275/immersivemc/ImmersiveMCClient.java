@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc;
 
-import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
 import com.hammy275.immersivemc.api.common.ImmersiveMCRegistrationEvent;
 import com.hammy275.immersivemc.client.compat.ipn.IPN;
 import com.hammy275.immersivemc.client.compat.ipn.IPNCompat;
@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 
 public class ImmersiveMCClient {
 
-    public static final Consumer<ImmersiveMCRegistrationEvent<Immersive<?, ?, ?>>> immersiveIMCRegistrationHandler = (event) -> event.register(
+    public static final Consumer<ImmersiveMCRegistrationEvent<BlockBasedImmersive<?, ?, ?>>> immersiveIMCRegistrationHandler = (event) -> event.register(
             Immersives.immersiveAnvil, Immersives.immersiveBarrel, Immersives.immersiveBeacon,
             Immersives.immersiveBrewing, Immersives.immersiveChest, Immersives.immersiveChiseledBookshelf,
             Immersives.immersiveCrafting, Immersives.immersiveETable, Immersives.immersiveFurnace,

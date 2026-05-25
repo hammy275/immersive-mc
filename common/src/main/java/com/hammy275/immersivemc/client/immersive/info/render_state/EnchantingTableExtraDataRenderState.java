@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.client.immersive.info.render_state;
 
-import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.BuiltBlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.book.ClientBookData;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
@@ -18,7 +18,7 @@ public class EnchantingTableExtraDataRenderState {
     public float rot;
     public boolean hasPlayerNearby;
 
-    public static void extractRenderState(BuiltImmersiveInfo<EnchantingData> info, EnchantingTableExtraDataRenderState target) {
+    public static void extractRenderState(BuiltBlockBasedImmersiveInfo<EnchantingData> info, EnchantingTableExtraDataRenderState target) {
         target.firstItem = info.getItem(0);
         ClientBookData bookData = info.getExtraData().getBookData(target.firstItem);
         if (bookData == null) {

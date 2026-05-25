@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.CommonBookData;
@@ -16,7 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
 
-public class LecternHandler implements ImmersiveHandler<LecternData<CommonBookData>> {
+public class LecternHandler implements BlockBasedImmersiveHandler<LecternData<CommonBookData>> {
     @Override
     public LecternData<CommonBookData> makeInventoryContents(ServerPlayer player, BlockPos pos) {
         LecternData<CommonBookData> storage = SharedNetworkStorages.instance().getOrCreate(player.level(), pos, this);

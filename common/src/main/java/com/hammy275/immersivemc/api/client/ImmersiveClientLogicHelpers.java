@@ -1,8 +1,9 @@
 package com.hammy275.immersivemc.api.client;
 
-import com.hammy275.immersivemc.api.client.immersive.Immersive;
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveClientLogicHelpersImpl;
 import net.minecraft.client.Minecraft;
@@ -32,7 +33,7 @@ public interface ImmersiveClientLogicHelpers extends ImmersiveLogicHelpers {
     /**
      * Sets both the vanilla, right-click cooldown and ImmersiveMC's VR cooldown for interacting with Immersives
      * (if the player is in VR) to some number of ticks. You likely don't need this, as the value returned from
-     * {@link Immersive#handleHitboxInteract(ImmersiveInfo, LocalPlayer, List, InteractionHand, boolean)} is set as the cooldown
+     * {@link BlockBasedImmersive#handleHitboxInteract(BlockBasedImmersiveInfo, LocalPlayer, List, InteractionHand, boolean)} is set as the cooldown
      * where appropriate. This is mainly useful if you're working outside of ImmersiveMC's hitbox system.
      * @param cooldown The cooldown to set in ticks. This will be increased for VR players, see the aforementioned
      *                 method for more info.
@@ -41,7 +42,7 @@ public interface ImmersiveClientLogicHelpers extends ImmersiveLogicHelpers {
 
     /**
      * Sends the packet to the server telling it to run
-     * {@link com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler#swap(int, InteractionHand, BlockPos, ServerPlayer, ItemSwapAmount)}
+     * {@link BlockBasedImmersiveHandler#swap(int, InteractionHand, BlockPos, ServerPlayer, ItemSwapAmount)}
      * for the provided block at the given position. You usually should call this when a hitbox is right-clicked in your
      * Immersive.
      *

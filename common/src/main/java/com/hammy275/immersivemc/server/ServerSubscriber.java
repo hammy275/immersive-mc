@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.server;
 
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
@@ -68,7 +68,7 @@ public class ServerSubscriber {
                     new ConfigSyncPacket(config,
                             ImmersiveHandlers.HANDLERS.stream()
                                     .filter((handler) -> !handler.clientAuthoritative())
-                                    .map(ImmersiveHandler::getID)
+                                    .map(BlockBasedImmersiveHandler::getID)
                                     .toList()
                     ));
         }

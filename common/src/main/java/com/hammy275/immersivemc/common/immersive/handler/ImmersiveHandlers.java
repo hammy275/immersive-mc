@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveMCRegistrationImpl;
 import com.hammy275.immersivemc.common.compat.IronFurnaces;
 import com.hammy275.immersivemc.common.compat.TinkersConstruct;
@@ -20,32 +20,32 @@ import java.util.List;
 
 public class ImmersiveHandlers {
 
-    public static final List<ImmersiveHandler<?>> HANDLERS = new ArrayList<>();
+    public static final List<BlockBasedImmersiveHandler<?>> HANDLERS = new ArrayList<>();
 
 
     public static final WorldStorageHandler<AnvilStorage> anvilHandler = new AnvilHandler();
     public static final WorldStorageHandler<ApothSalvagingTableStorage> apothSalvagingTableHandler = CompatModule.create(new ApothSalvagingTableHandler(), WorldStorageHandler.class, Apoth.compatData);
-    public static final ImmersiveHandler<?> barrelHandler = new BarrelHandler();
+    public static final BlockBasedImmersiveHandler<?> barrelHandler = new BarrelHandler();
     public static final WorldStorageHandler<BeaconStorage> beaconHandler = new BeaconHandler();
-    public static final ImmersiveHandler<?> brewingStandHandler = new BrewingStandHandler();
-    public static final ImmersiveHandler<ListOfItemsStorage> chestHandler = new ChestHandler();
-    public static final ImmersiveHandler<?> chiseledBookshelfHandler = new ChiseledBookshelfHandler();
+    public static final BlockBasedImmersiveHandler<?> brewingStandHandler = new BrewingStandHandler();
+    public static final BlockBasedImmersiveHandler<ListOfItemsStorage> chestHandler = new ChestHandler();
+    public static final BlockBasedImmersiveHandler<?> chiseledBookshelfHandler = new ChiseledBookshelfHandler();
     public static final WorldStorageHandler<CraftingTableStorage> craftingHandler = new CraftingHandler();
-    public static final ImmersiveHandler<NullStorage> doorHandler = new DoorHandler();
+    public static final BlockBasedImmersiveHandler<NullStorage> doorHandler = new DoorHandler();
     public static final WorldStorageHandler<ETableStorage> enchantingTableHandler = new ETableHandler();
-    public static final ImmersiveHandler<?> furnaceHandler = new FurnaceHandler();
+    public static final BlockBasedImmersiveHandler<?> furnaceHandler = new FurnaceHandler();
     public static final WorldStorageHandler<GrindstoneStorage> grindstoneHandler = new GrindstoneHandler();
-    public static final ImmersiveHandler<?> hopperHandler = new HopperHandler();
-    public static final ImmersiveHandler<?> ironFurnacesFurnaceHandler = CompatModule.create(new IronFurnacesFurnaceHandler(), IronFurnaces.compatData);
-    public static final ImmersiveHandler<?> jukeboxHandler = new JukeboxHandler();
-    public static final ImmersiveHandler<LecternData<CommonBookData>> lecternHandler = new LecternHandler();
-    public static final ImmersiveHandler<NullStorage> leverHandler = new LeverHandler();
-    public static final ImmersiveHandler<NullStorage> repeaterHandler = new RepeaterHandler();
-    public static final ImmersiveHandler<?> shulkerBoxHandler = new ShulkerBoxHandler();
+    public static final BlockBasedImmersiveHandler<?> hopperHandler = new HopperHandler();
+    public static final BlockBasedImmersiveHandler<?> ironFurnacesFurnaceHandler = CompatModule.create(new IronFurnacesFurnaceHandler(), IronFurnaces.compatData);
+    public static final BlockBasedImmersiveHandler<?> jukeboxHandler = new JukeboxHandler();
+    public static final BlockBasedImmersiveHandler<LecternData<CommonBookData>> lecternHandler = new LecternHandler();
+    public static final BlockBasedImmersiveHandler<NullStorage> leverHandler = new LeverHandler();
+    public static final BlockBasedImmersiveHandler<NullStorage> repeaterHandler = new RepeaterHandler();
+    public static final BlockBasedImmersiveHandler<?> shulkerBoxHandler = new ShulkerBoxHandler();
     public static final WorldStorageHandler<SmithingTableStorage> smithingTableHandler = new SmithingTableHandler();
-    public static final ImmersiveHandler<NullStorage> trapdoorHandler = new TrapdoorHandler();
-    public static final ImmersiveHandler<?> tcCraftingStationHandler = CompatModule.create(new TCCraftingStationHandler(), TinkersConstruct.compatData);
-    public static final ImmersiveHandler<?> visualWorkbenchHandler = new VisualWorkbenchHandler();
+    public static final BlockBasedImmersiveHandler<NullStorage> trapdoorHandler = new TrapdoorHandler();
+    public static final BlockBasedImmersiveHandler<?> tcCraftingStationHandler = CompatModule.create(new TCCraftingStationHandler(), TinkersConstruct.compatData);
+    public static final BlockBasedImmersiveHandler<?> visualWorkbenchHandler = new VisualWorkbenchHandler();
 
     static {
         ImmersiveMCRegistrationImpl.doImmersiveRegistration((handler) -> {

@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc;
 
 import com.hammy275.immersivemc.api.common.ImmersiveMCRegistrationEvent;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.petting.PettingHandler;
 import com.hammy275.immersivemc.client.subscribe.ClientLogicSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
@@ -37,7 +37,7 @@ public class ImmersiveMC {
     public static KeyMapping OPEN_SETTINGS = null;
     public static KeyMapping RANGED_GRAB_KEY = null;
 
-    public static final Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler<?>>> handlerIMCRegistrationHandler =
+    public static final Consumer<ImmersiveMCRegistrationEvent<BlockBasedImmersiveHandler<?>>> handlerIMCRegistrationHandler =
             (event) -> event.register(
                     ImmersiveHandlers.anvilHandler, ImmersiveHandlers.barrelHandler, ImmersiveHandlers.beaconHandler,
                     ImmersiveHandlers.brewingStandHandler, ImmersiveHandlers.chestHandler, ImmersiveHandlers.chiseledBookshelfHandler,

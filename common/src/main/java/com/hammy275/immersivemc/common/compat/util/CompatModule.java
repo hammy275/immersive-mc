@@ -1,8 +1,7 @@
 package com.hammy275.immersivemc.common.compat.util;
 
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.PlatformCommon;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.compat.CompatModuleClient;
 import com.hammy275.immersivemc.common.compat.CompatData;
@@ -56,15 +55,15 @@ public class CompatModule<T> implements InvocationHandler {
     }
 
     /**
-     * Creates a compatibility module for an {@link ImmersiveHandler}.
+     * Creates a compatibility module for an {@link BlockBasedImmersiveHandler}.
      * @param handler ImmersiveHandler to wrap.
      * @param compatData Compatibility data.
      * @return The ImmersiveHandler wrapped in compatibility.
      * @param <S> The NetworkStorage type of the ImmersiveHandler.
      */
     @SuppressWarnings("unchecked")
-    public static <S extends NetworkStorage> ImmersiveHandler<S> create(ImmersiveHandler<S> handler, CompatData compatData) {
-        return create(handler, ImmersiveHandler.class, compatData);
+    public static <S extends NetworkStorage> BlockBasedImmersiveHandler<S> create(BlockBasedImmersiveHandler<S> handler, CompatData compatData) {
+        return create(handler, BlockBasedImmersiveHandler.class, compatData);
     }
 
     @Override

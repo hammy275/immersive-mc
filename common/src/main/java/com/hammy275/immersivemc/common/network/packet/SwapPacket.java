@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.network.packet;
 
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.api.common.immersive.SwapMode;
@@ -68,7 +68,7 @@ public class SwapPacket {
         switch (message.destination) {
             case POS -> {
                 if (NetworkUtil.safeToRun(message.block, player)) {
-                    for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
+                    for (BlockBasedImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
                         if (handler.enabledInConfig(player) && Util.isValidBlocks(handler, message.block, player.level())) {
                             for (int i = 0; i < message.slots.size(); i++) {
                                 ItemSwapAmount swapAmount = new ItemSwapAmountImpl(message.mode, message.slots.size(), handStackSize, i);

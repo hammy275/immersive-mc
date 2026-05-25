@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.api.client.immersive;
 
 /**
- * The type of relative positioning to use for an Immersive built with {@link ImmersiveBuilder}. The API guarantees the
+ * The type of relative positioning to use for an Immersive built with {@link BlockBasedImmersiveBuilder}. The API guarantees the
  * below modes won't be removed and won't change names in terms of backwards-compatibility. Anything else, including
  * the ordering of the modes and the amount of them are NOT part of the API, and may change at anytime.
  * <br>

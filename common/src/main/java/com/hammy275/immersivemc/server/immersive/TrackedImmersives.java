@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.server.immersive;
 
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.AfterClientSyncHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
@@ -43,7 +43,7 @@ public class TrackedImmersives {
     }
 
     public static void maybeTrackImmersive(ServerPlayer player, BlockPos pos) {
-        for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
+        for (BlockBasedImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
             if (!handler.clientAuthoritative() && handler.enabledInConfig(player) && Util.isValidBlocks(handler, pos, player.level())) {
                 trackImmersive(player, handler, pos);
                 return;
@@ -71,7 +71,7 @@ public class TrackedImmersives {
                 .toList();
     }
 
-    private static void trackImmersive(ServerPlayer player, ImmersiveHandler<?> handler, BlockPos pos) {
+    private static void trackImmersive(ServerPlayer player, BlockBasedImmersiveHandler<?> handler, BlockPos pos) {
         if (TRACKED_IMMERSIVES.stream().anyMatch((data) ->
                 Util.getValidBlocks(data.getHandler(), data.getPos().iterator().next(), player.level()).contains(pos) &&
                         data.playerUUID.equals(player.getUUID()))) {

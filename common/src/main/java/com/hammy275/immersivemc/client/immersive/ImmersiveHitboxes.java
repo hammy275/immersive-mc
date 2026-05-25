@@ -1,10 +1,9 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.client.immersive.info.ImmersiveHitboxesInfo;
@@ -108,7 +107,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
     }
 
     @Override
-    public @Nullable ImmersiveHandler getHandler() {
+    public @Nullable BlockBasedImmersiveHandler getHandler() {
         return null;
     }
 

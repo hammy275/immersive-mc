@@ -50,7 +50,7 @@ public interface HitboxVRMovementInfoBuilder {
      * @param actionConsumer The callback to run when the threshold is met, taking the info and the hand(s) that met the threshold.
      * @return Builder object.
      */
-    public HitboxVRMovementInfoBuilder actionConsumer(BiConsumer<BuiltImmersiveInfo<?>, List<InteractionHand>> actionConsumer);
+    public HitboxVRMovementInfoBuilder actionConsumer(BiConsumer<BuiltBlockBasedImmersiveInfo<?>, List<InteractionHand>> actionConsumer);
 
     /**
      * Builds this builder into a {@link HitboxVRMovementInfo}.

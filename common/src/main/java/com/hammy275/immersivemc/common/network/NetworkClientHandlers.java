@@ -1,9 +1,9 @@
 package com.hammy275.immersivemc.common.network;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.api.client.immersive.Immersive;
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
@@ -28,7 +28,7 @@ import java.util.*;
 public class NetworkClientHandlers {
 
     public static void checkHandlerMatch(List<Identifier> serverHandlerIDs) {
-        Map<Identifier, ImmersiveHandler<?>> clientHandlers = new HashMap<>();
+        Map<Identifier, BlockBasedImmersiveHandler<?>> clientHandlers = new HashMap<>();
         ImmersiveHandlers.HANDLERS.forEach((handler) -> clientHandlers.put(handler.getID(), handler));
 
         List<Identifier> serverOnly = serverHandlerIDs.stream().filter((id) -> !clientHandlers.containsKey(id)).toList();
@@ -70,14 +70,14 @@ public class NetworkClientHandlers {
     }
 
     @SuppressWarnings("unchecked")
-    public static <NS extends NetworkStorage> void handleReceiveInvData(NS storage, BlockPos pos, ImmersiveHandler<NS> handler) {
+    public static <NS extends NetworkStorage> void handleReceiveInvData(NS storage, BlockPos pos, BlockBasedImmersiveHandler<NS> handler) {
         Objects.requireNonNull(storage);
         Level level = Minecraft.getInstance().player.level();
         // Search all immersives for the matching handler. If found and the block is the state we expect, create or refresh
         // the info and process storage on it.
-        for (Immersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
+        for (BlockBasedImmersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
             if (immersive.getHandler() == handler && Util.isValidBlocks(handler, pos, level)) {
-                ImmersiveInfo info = ClientLogicSubscriber.doTrackIfNotTrackingAlready(immersive, pos, level);
+                BlockBasedImmersiveInfo info = ClientLogicSubscriber.doTrackIfNotTrackingAlready(immersive, pos, level);
                 if (info != null) {
                     processStorageFromNetwork(immersive, info, storage);
                 }
@@ -94,9 +94,9 @@ public class NetworkClientHandlers {
     }
 
     @SuppressWarnings("unchecked")
-    private static <I extends ImmersiveInfo, NS extends NetworkStorage> void processStorageFromNetwork(Immersive<?, ?, ?> immersive,
-                                                                                                       I info, NS storage) {
-        Immersive<I, ?, NS> immersiveCast = (Immersive<I, ?, NS>) immersive;
+    private static <I extends BlockBasedImmersiveInfo, NS extends NetworkStorage> void processStorageFromNetwork(BlockBasedImmersive<?, ?, ?> immersive,
+                                                                                                                 I info, NS storage) {
+        BlockBasedImmersive<I, ?, NS> immersiveCast = (BlockBasedImmersive<I, ?, NS>) immersive;
         immersiveCast.processStorageFromNetwork(info, storage);
     }
 

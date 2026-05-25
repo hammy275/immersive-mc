@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
-import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.MultiblockBlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ChestHandler extends ChestLikeHandler<ListOfItemsStorage>
-        implements MultiblockImmersiveHandler<ListOfItemsStorage>, AfterClientSyncHandler {
+        implements MultiblockBlockBasedImmersiveHandler<ListOfItemsStorage>, AfterClientSyncHandler {
 
     @Override
     public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {

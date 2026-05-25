@@ -3,10 +3,10 @@ package com.hammy275.immersivemc.api.client.immersive;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * An implementation of {@link ImmersiveInfo} provided by ImmersiveMC that's used with Immersives built via
- * {@link ImmersiveBuilder}. The hitboxIndex below always references the order in which hitboxes were added.
+ * An implementation of {@link BlockBasedImmersiveInfo} provided by ImmersiveMC that's used with Immersives built via
+ * {@link BlockBasedImmersiveBuilder}. The hitboxIndex below always references the order in which hitboxes were added.
  */
-public interface BuiltImmersiveInfo<E> extends ImmersiveInfo {
+public interface BuiltBlockBasedImmersiveInfo<E> extends BlockBasedImmersiveInfo {
 
     /**
      * @return The number of times this Immersive has ticked.

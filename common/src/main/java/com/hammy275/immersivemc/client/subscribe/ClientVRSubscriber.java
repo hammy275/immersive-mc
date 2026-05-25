@@ -1,9 +1,8 @@
 package com.hammy275.immersivemc.client.subscribe;
 
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.PlatformCommon;
-import com.hammy275.immersivemc.api.client.immersive.Immersive;
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
@@ -59,7 +58,7 @@ public class ClientVRSubscriber {
         }
 
         for (InteractionHand hand : InteractionHand.values()) {
-            for (Immersive<?, ?, ?> singleton : Immersives.IMMERSIVES) {
+            for (BlockBasedImmersive<?, ?, ?> singleton : Immersives.IMMERSIVES) {
                 if (handleInfos(singleton, vrPose, hand)) {
                     return;
                 }
@@ -79,7 +78,7 @@ public class ClientVRSubscriber {
         }
     }
 
-    protected static <I extends ImmersiveInfo> boolean handleInfos(Immersive<I, ?, ?> singleton, VRPose vrPose, InteractionHand hand) {
+    protected static <I extends BlockBasedImmersiveInfo> boolean handleInfos(BlockBasedImmersive<I, ?, ?> singleton, VRPose vrPose, InteractionHand hand) {
         I infoWithDragHitbox = null;
         SwapTracker swapTracker = hand == InteractionHand.MAIN_HAND ? SwapTracker.c0 : SwapTracker.c1;
         for (I info : singleton.getTrackedObjects()) {
@@ -137,7 +136,7 @@ public class ClientVRSubscriber {
         return false;
     }
 
-    private static <I extends ImmersiveInfo> boolean inDragHitbox(Immersive<I, ?, ?> singleton, I info, Vec3 pos) {
+    private static <I extends BlockBasedImmersiveInfo> boolean inDragHitbox(BlockBasedImmersive<I, ?, ?> singleton, I info, Vec3 pos) {
         BoundingBox dragHitbox = singleton.getDragHitbox(info);
         return dragHitbox != null && Util.getFirstIntersect(pos, dragHitbox).isPresent();
     }

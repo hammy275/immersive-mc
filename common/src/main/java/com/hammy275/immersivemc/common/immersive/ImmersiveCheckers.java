@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.immersive;
 
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
@@ -16,7 +16,7 @@ public class ImmersiveCheckers {
     public static final List<ImmersiveChecker> CHECKERS = new LinkedList<>();
 
     static {
-        for (ImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
+        for (BlockBasedImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
             CHECKERS.add((pos, level) -> Util.isValidBlocks(handler, pos, level));
         }
     }

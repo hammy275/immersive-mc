@@ -1,19 +1,19 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractImmersiveInfo implements ImmersiveInfo {
+public abstract class AbstractBlockBasedImmersiveInfo implements BlockBasedImmersiveInfo {
 
     public final List<HitboxItemPair> hitboxes = new ArrayList<>();
     protected final BlockPos pos;
     protected final int[] slotsHovered = new int[]{-1, -1};
     protected long ticksExisted = 0;
 
-    public AbstractImmersiveInfo(BlockPos pos) {
+    public AbstractBlockBasedImmersiveInfo(BlockPos pos) {
         this.pos = pos;
     }
 

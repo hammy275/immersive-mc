@@ -31,5 +31,5 @@ public interface HitboxVRMovementInfo {
     /**
      * @return The consumer to run when a threshold is met.
      */
-    public BiConsumer<BuiltImmersiveInfo<?>, List<InteractionHand>> actionConsumer();
+    public BiConsumer<BuiltBlockBasedImmersiveInfo<?>, List<InteractionHand>> actionConsumer();
 }

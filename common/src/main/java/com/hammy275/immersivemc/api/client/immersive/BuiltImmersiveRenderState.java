@@ -1,16 +1,16 @@
 package com.hammy275.immersivemc.api.client.immersive;
 
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
 
 /**
- * Render state for {@link BuiltImmersive}. Allows access to the extra render data assuming the class and converter
+ * Render state for {@link BuiltBlockBasedImmersive}. Allows access to the extra render data assuming the class and converter
  * are non-null when creating the Immersive using
- * {@link ImmersiveBuilder#create(ImmersiveHandler, Class, Class, BiConsumer)} or
- * {@link ImmersiveBuilder#copy(ImmersiveHandler, Class, Class, BiConsumer)}.
+ * {@link BlockBasedImmersiveBuilder#create(BlockBasedImmersiveHandler, Class, Class, BiConsumer)} or
+ * {@link BlockBasedImmersiveBuilder#copy(BlockBasedImmersiveHandler, Class, Class, BiConsumer)}.
  * @param <ER> The type of the extra render data.
  */
 public interface BuiltImmersiveRenderState<ER> extends ImmersiveRenderState {

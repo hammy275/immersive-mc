@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveRenderHelpersImpl;
@@ -92,7 +92,7 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractPlayer
      * immersive doesn't receive item data from the server through FetchInventoryPacket.
      */
     @Nullable
-    public abstract ImmersiveHandler<S> getHandler();
+    public abstract BlockBasedImmersiveHandler<S> getHandler();
 
     public boolean hitboxesAvailable(AbstractPlayerAttachmentInfo info) {
         return true;

@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.api.common.immersive;
 
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -8,13 +9,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 /**
- * While an {@link com.hammy275.immersivemc.api.client.immersive.Immersive} defines how a client should work
+ * While an {@link BlockBasedImmersive} defines how a client should work
  * with a block-based Immersive, an ImmersiveHandler handles both the server-half of a block-based Immersive, along
  * with the shared, common portion. For example, retrieving what items are stored in a furnace to send to the client
  * (server-specific) and identifying what a furnace is (common) are both handled in an ImmersiveHandler.
  * @param <S>
  */
-public interface ImmersiveHandler<S extends NetworkStorage> {
+public interface BlockBasedImmersiveHandler<S extends NetworkStorage> {
 
     /**
      * Creates inventory contents on the server to send to clients.
