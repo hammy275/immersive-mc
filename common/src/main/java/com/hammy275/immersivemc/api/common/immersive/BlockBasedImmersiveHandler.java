@@ -2,10 +2,8 @@ package com.hammy275.immersivemc.api.common.immersive;
 
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 /**
@@ -15,7 +13,7 @@ import net.minecraft.world.level.Level;
  * (server-specific) and identifying what a furnace is (common) are both handled in an ImmersiveHandler.
  * @param <S>
  */
-public interface BlockBasedImmersiveHandler<S extends NetworkStorage> {
+public non-sealed interface BlockBasedImmersiveHandler<S extends NetworkStorage> extends ImmersiveHandler {
 
     /**
      * Creates inventory contents on the server to send to clients.
@@ -59,27 +57,6 @@ public interface BlockBasedImmersiveHandler<S extends NetworkStorage> {
      * @return Whether the supplied block matches what this handler handles.
      */
     boolean isValidBlock(BlockPos pos, Level level);
-
-    /**
-     * @param player The player we're checking the config of.
-     * @return Whether the immersive this handler handles is enabled. If you do not have a configuration system, this
-     * should always return true.
-     */
-    boolean enabledInConfig(Player player);
-
-    /**
-     * Whether blocks matching this Immersive should be initiated by the client. If this is true, the server should
-     * not send any data to the client about this Immersive, and will never track that a client isn't tracking the
-     * Immersive or {@link #makeInventoryContents(ServerPlayer, BlockPos)} for it.
-     * @return Whether this immersive should have tracking initiated by the client. The same value should always be
-     *         returned by this method.
-     */
-    public boolean clientAuthoritative();
-
-    /**
-     * @return A unique ID to identify this handler. The same value should always be returned by this method.
-     */
-    Identifier getID();
 
     /**
      * Function called whenever this immersive is no longer being tracked. Only ever called server-side.
