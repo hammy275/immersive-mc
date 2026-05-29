@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
  * @param <S> The type of storage to use for sending Immersive data over the network.
  */
 public non-sealed interface BlockBasedImmersive<I extends BlockBasedImmersiveInfo, R extends ImmersiveRenderState, S extends NetworkStorage>
-        extends Immersive<I, R, S, BlockBasedImmersiveHandler<S>> {
+        extends Immersive<I, R, S> {
 
     /**
      * Constructs a new ImmersiveInfo based on the provided block position. It's best to calculate initial hitboxes,
@@ -36,5 +36,10 @@ public non-sealed interface BlockBasedImmersive<I extends BlockBasedImmersiveInf
      *         enabled in ImmersiveMC.
      */
     public boolean shouldDisableRightClicksWhenVanillaInteractionsDisabled(I info);
+
+    /**
+     * @return The {@link BlockBasedImmersiveHandler} this Immersive uses.
+     */
+    BlockBasedImmersiveHandler<S> getHandler();
 
 }

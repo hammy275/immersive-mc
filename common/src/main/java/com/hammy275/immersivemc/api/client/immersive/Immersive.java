@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
-public sealed interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRenderState, S extends NetworkStorage, H extends ImmersiveHandler>
+public sealed interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRenderState, S extends NetworkStorage>
         permits BlockBasedImmersive {
     /**
      * Get the collection of ImmersiveInfos currently active for this Immersive. The contents of the list may be
@@ -25,11 +25,11 @@ public sealed interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRe
      * For example, if this Immersive represented a furnace, and the furnace was broken, ImmersiveMC would remove the
      * ImmersiveInfo from the collection returned by this function to indicate that this Immersive should no longer
      * handle the block, as it is no longer a furnace. As another example, if this Immersive represented a furnace, and
-     * a player placed a furnace, ImmersiveMC would add the result of {@link #buildInfo(BlockPos, Level)} to the collection
-     * returned by this function.
+     * a player placed a furnace, ImmersiveMC would add the result of
+     * {@link BlockBasedImmersive#buildInfo(BlockPos, Level)} to the collection returned by this function.
      * <br>
-     * In short, you should the actual collection of ImmersiveInfos used by this Immersive instead of a copy of it,
-     * unless you want to deal with a lot of extra work.
+     * In short, you should return the actual collection of ImmersiveInfos used by this Immersive instead of a copy of
+     * it.
      * @return The collection of all ImmersiveInfos tied to this Immersive.
      */
     Collection<I> getTrackedObjects();
@@ -97,9 +97,9 @@ public sealed interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRe
     void render(R renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick);
 
     /**
-     * @return The {@link BlockBasedImmersiveHandler} this Immersive uses.
+     * @return The {@link ImmersiveHandler} this Immersive uses.
      */
-    H getHandler();
+    ImmersiveHandler getHandler();
 
     /**
      * The info needed to build a config screen button for this Immersive. If this method returns null, ImmersiveMC
