@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveMCClientRegistration;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
@@ -106,7 +107,7 @@ public class ClientUtil {
     }
 
     public static void clearDisabledImmersives() {
-        for (BlockBasedImmersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
+        for (Immersive<?, ?, ?> immersive : Immersives.ALL_IMMERSIVES) {
             if (!immersive.getHandler().enabledInConfig(Minecraft.getInstance().player)) {
                 immersive.getTrackedObjects().clear();
             }

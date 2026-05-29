@@ -3,11 +3,13 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.api.client.ImmersiveClientConstants;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.immersive.*;
-import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveMCClientRegistrationImpl;
 import com.hammy275.immersivemc.client.config.ClientConstants;
-import com.hammy275.immersivemc.client.immersive.info.*;
+import com.hammy275.immersivemc.client.immersive.info.AnvilData;
+import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
+import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
+import com.hammy275.immersivemc.client.immersive.info.GrindstoneData;
 import com.hammy275.immersivemc.client.immersive.info.render_state.BookDataRenderState;
 import com.hammy275.immersivemc.client.immersive.info.render_state.EnchantingTableExtraDataRenderState;
 import com.hammy275.immersivemc.common.compat.IronFurnaces;
@@ -46,10 +48,9 @@ import static com.hammy275.immersivemc.client.ClientUtil.createConfigScreenInfo;
 
 public class Immersives {
 
-    public static final List<BlockBasedImmersive<? extends BlockBasedImmersiveInfo, ? extends ImmersiveRenderState, ? extends NetworkStorage>> IMMERSIVES =
-            new ArrayList<>();
-    public static final List<AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ? extends NetworkStorage>> IMMERSIVE_ATTACHMENTS =
-            new ArrayList<>();
+    public static final List<Immersive<?, ?, ?>> ALL_IMMERSIVES = new ArrayList<>();
+    public static final List<BlockBasedImmersive<?, ?, ?>> BLOCK_IMMERSIVES = new ArrayList<>();
+    public static final List<AbstractPlayerAttachmentImmersive<?, ?>> IMMERSIVE_ATTACHMENTS = new ArrayList<>();
 
     public static final BuiltBlockBasedImmersive<?,?,?> immersiveAnvil = BlockBasedImmersiveBuilder.create(ImmersiveHandlers.anvilHandler, AnvilData.class, null, null)
             .setRenderSize(ClientConstants.itemScaleSizeAnvil)
@@ -562,8 +563,11 @@ public class Immersives {
 
     static {
         ImmersiveMCClientRegistrationImpl.doImmersiveRegistration((immersive) -> {
-            if (!IMMERSIVES.contains(immersive)) {
-                IMMERSIVES.add(immersive);
+            if (!ALL_IMMERSIVES.contains(immersive)) {
+                ALL_IMMERSIVES.add(immersive);
+                if (immersive instanceof BlockBasedImmersive<?, ?, ?> blockBased) {
+                    BLOCK_IMMERSIVES.add(blockBased);
+                }
             }
         });
     }

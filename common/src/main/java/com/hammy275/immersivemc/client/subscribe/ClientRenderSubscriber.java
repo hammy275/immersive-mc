@@ -1,9 +1,7 @@
 package com.hammy275.immersivemc.client.subscribe;
 
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
-import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
-import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
+import com.hammy275.immersivemc.api.client.immersive.*;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
@@ -48,7 +46,7 @@ public class ClientRenderSubscriber {
     public static void onWorldRender(PoseStack stack) {
         setRenderColors();
         try {
-            for (BlockBasedImmersive<?, ?, ?> singleton : Immersives.IMMERSIVES) {
+            for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
                 renderInfos(singleton, stack);
             }
             for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
@@ -106,8 +104,7 @@ public class ClientRenderSubscriber {
         cycleProgressRangedGrab = 0;
     }
 
-    protected static <I extends BlockBasedImmersiveInfo, R extends ImmersiveRenderState> void renderInfos(BlockBasedImmersive<I, R, ?> singleton,
-                                                                                                          PoseStack stack) {
+    protected static <I extends ImmersiveInfo, R extends ImmersiveRenderState> void renderInfos(Immersive<I, R, ?> singleton, PoseStack stack) {
         try {
             if (singleton.isVROnly() && !VRVerify.clientInVR()) {
                 return;

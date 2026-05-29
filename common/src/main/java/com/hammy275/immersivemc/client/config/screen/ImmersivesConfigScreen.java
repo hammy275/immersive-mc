@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import net.minecraft.client.Minecraft;
@@ -68,9 +68,9 @@ public class ImmersivesConfigScreen extends OptionsSubScreen {
             options.add(ScreenUtils.createOption("written_book", config -> config.useWrittenBookImmersive, (config, newVal) -> config.useWrittenBookImmersive = newVal));
         }
 
-        Immersives.IMMERSIVES.stream()
+        Immersives.ALL_IMMERSIVES.stream()
                 .filter((immersive) -> (this.type.isVR() || (this.type.isNonVR() && !immersive.isVROnly())))
-                .map(BlockBasedImmersive::configScreenInfo)
+                .map(Immersive::configScreenInfo)
                 .filter(Objects::nonNull)
                 .map((configInfo) -> ScreenUtils.createOption(configInfo.getOptionTranslation(), configInfo.getOptionTooltip(),
                         configInfo::isEnabled, configInfo::setEnabled))

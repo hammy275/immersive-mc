@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc;
 
-import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.common.ImmersiveMCRegistrationEvent;
 import com.hammy275.immersivemc.client.compat.ipn.IPN;
 import com.hammy275.immersivemc.client.compat.ipn.IPNCompat;
@@ -13,9 +13,9 @@ import com.hammy275.immersivemc.client.ticker.FishingReelTicker;
 import com.hammy275.immersivemc.client.ticker.RangedGrabTickerClient;
 import com.hammy275.immersivemc.client.ticker.ThrowTicker;
 import com.hammy275.immersivemc.common.compat.util.CompatModule;
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.ticker.TickerInit;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.common.vr.dev.DevVRState;
@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 
 public class ImmersiveMCClient {
 
-    public static final Consumer<ImmersiveMCRegistrationEvent<BlockBasedImmersive<?, ?, ?>>> immersiveIMCRegistrationHandler = (event) -> event.register(
+    public static final Consumer<ImmersiveMCRegistrationEvent<Immersive<?, ?, ?>>> immersiveIMCRegistrationHandler = (event) -> event.register(
             Immersives.immersiveAnvil, Immersives.immersiveBarrel, Immersives.immersiveBeacon,
             Immersives.immersiveBrewing, Immersives.immersiveChest, Immersives.immersiveChiseledBookshelf,
             Immersives.immersiveCrafting, Immersives.immersiveETable, Immersives.immersiveFurnace,

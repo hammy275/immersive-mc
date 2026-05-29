@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.api.client;
 
-import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.common.ImmersiveMCRegistrationEvent;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveMCClientRegistrationImpl;
 import com.hammy275.immersivemc.client.immersive.Immersives;
@@ -62,6 +62,6 @@ public interface ImmersiveMCClientRegistration {
      * @param registrationHandler Your object that will register Immersives when called.
      * @throws IllegalStateException This method was called after registration.
      */
-    public void addImmersiveRegistrationHandler(Consumer<ImmersiveMCRegistrationEvent<BlockBasedImmersive<?, ?, ?>>> registrationHandler) throws IllegalStateException;
+    public void addImmersiveRegistrationHandler(Consumer<ImmersiveMCRegistrationEvent<Immersive<?, ?, ?>>> registrationHandler) throws IllegalStateException;
 
 }

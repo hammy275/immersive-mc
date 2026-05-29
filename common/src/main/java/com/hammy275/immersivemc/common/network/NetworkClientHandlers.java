@@ -75,7 +75,7 @@ public class NetworkClientHandlers {
         Level level = Minecraft.getInstance().player.level();
         // Search all immersives for the matching handler. If found and the block is the state we expect, create or refresh
         // the info and process storage on it.
-        for (BlockBasedImmersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
+        for (BlockBasedImmersive<?, ?, ?> immersive : Immersives.BLOCK_IMMERSIVES) {
             if (immersive.getHandler() == handler && Util.isValidBlocks(handler, pos, level)) {
                 BlockBasedImmersiveInfo info = ClientLogicSubscriber.doTrackIfNotTrackingAlready(immersive, pos, level);
                 if (info != null) {

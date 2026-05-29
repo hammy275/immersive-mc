@@ -3,9 +3,7 @@ package com.hammy275.immersivemc.client.subscribe;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.client.ImmersiveClientConstants;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
-import com.hammy275.immersivemc.api.client.immersive.BuiltBlockBasedImmersiveInfo;
-import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
-import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.*;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
@@ -86,7 +84,7 @@ public class ClientLogicSubscriber {
         if (currentVRState != lastVRState) {
             lastVRState = currentVRState;
             if (!currentVRState && ActiveConfig.FILE_CLIENT.disableImmersiveMCOutsideVR) {
-                for (BlockBasedImmersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
+                for (Immersive<?, ?, ?> immersive : Immersives.BLOCK_IMMERSIVES) {
                     immersive.getTrackedObjects().clear();
                 }
                 for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
@@ -128,7 +126,7 @@ public class ClientLogicSubscriber {
 
         TickerInit.tickClient(player);
 
-        for (BlockBasedImmersive<? extends BlockBasedImmersiveInfo, ?, ?> singleton : Immersives.IMMERSIVES) {
+        for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
             tickInfos(singleton, player);
         }
         for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
@@ -167,7 +165,7 @@ public class ClientLogicSubscriber {
 
     public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         // No similar loop for AbstractPlayerAttachmentImmersive since those don't run from blocks
-        for (BlockBasedImmersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
+        for (BlockBasedImmersive<?, ?, ?> immersive : Immersives.BLOCK_IMMERSIVES) {
             if (immersive.getHandler().clientAuthoritative() &&
                     immersive.getHandler().enabledInConfig(Minecraft.getInstance().player) &&
                     Util.isValidBlocks(immersive.getHandler(), pos, level)) {
@@ -202,7 +200,7 @@ public class ClientLogicSubscriber {
             if (looking != null && looking.getType() == HitResult.Type.BLOCK && ActiveConfig.active().disableVanillaInteractionsForSupportedImmersives) {
                 BlockPos pos = ((BlockHitResult) looking).getBlockPos();
                 // No similar check for AbstractPlayerAttachmentImmersive, since those aren't tied to blocks
-                for (BlockBasedImmersive<? extends BlockBasedImmersiveInfo, ?, ?> singleton : Immersives.IMMERSIVES) {
+                for (BlockBasedImmersive<? extends BlockBasedImmersiveInfo, ?, ?> singleton : Immersives.BLOCK_IMMERSIVES) {
                     // Don't bother checking this immersive if not in VR and immersive is VR only. Never skip those!
                     if (singleton.isVROnly() && !VRVerify.clientInVR()) {
                         continue;
@@ -238,7 +236,7 @@ public class ClientLogicSubscriber {
         // incoming player is a ServerPlayer, while Minecraft.getInstance().player is a local player (of course).
         if (Minecraft.getInstance().player == null ||
                 Minecraft.getInstance().player.getGameProfile().id().equals(player.getGameProfile().id())) {
-            for (BlockBasedImmersive<? extends BlockBasedImmersiveInfo, ?, ?> singleton : Immersives.IMMERSIVES) {
+            for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
                 singleton.getTrackedObjects().clear();
             }
             for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
@@ -253,15 +251,19 @@ public class ClientLogicSubscriber {
         }
     }
 
-    protected static <I extends BlockBasedImmersiveInfo> void tickInfos(BlockBasedImmersive<I, ?, ?> singleton, Player player) {
+    protected static <I extends ImmersiveInfo> void tickInfos(Immersive<I, ?, ?> singleton, Player player) {
         // Don't tick if VR only and not in VR
         if (singleton.isVROnly() && !VRVerify.clientInVR()) {
             return;
         }
-        singleton.getTrackedObjects().removeIf((info) -> {
-            Set<BlockPos> positions = Util.getValidBlocks(singleton.getHandler(), info.getBlockPosition(), Minecraft.getInstance().level);
-            return positions.isEmpty() || player.distanceToSqr(Util.average(positions)) > CommonConstants.distanceSquaredToRemoveImmersive;
-        });
+        // For block-based ones, attempt to remove if the blocks no longer match
+        if (singleton instanceof BlockBasedImmersive<?, ?, ?> blockBased) {
+            blockBased.getTrackedObjects().removeIf((info) -> {
+                Set<BlockPos> positions = Util.getValidBlocks(blockBased.getHandler(), info.getBlockPosition(), Minecraft.getInstance().level);
+                return positions.isEmpty() || player.distanceToSqr(Util.average(positions)) > CommonConstants.distanceSquaredToRemoveImmersive;
+            });
+        }
+
         singleton.globalTick();
         Collection<I> infos = singleton.getTrackedObjects();
 
@@ -455,8 +457,8 @@ public class ClientLogicSubscriber {
         }
 
         // Just before returning false, see if we're in a hitbox, so we can do a full stack place and return true
-        for (BlockBasedImmersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
-            for (BlockBasedImmersiveInfo info : immersive.getTrackedObjects()) {
+        for (Immersive<?, ?, ?> immersive : Immersives.ALL_IMMERSIVES) {
+            for (ImmersiveInfo info : immersive.getTrackedObjects()) {
                 if (info.getSlotHovered(0) != -1 || info.getSlotHovered(1) != -1) {
                     return true;
                 }
@@ -484,7 +486,7 @@ public class ClientLogicSubscriber {
         Vec3 end = startAndEnd.getB();
 
         if (!inVR || ActiveConfig.active().rightClickImmersiveInteractionsInVR) { // Don't handle right clicks for VR players, they have hands (unless they config to!)!
-            for (BlockBasedImmersive<?, ?, ?> singleton : Immersives.IMMERSIVES) {
+            for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
                 if (singleton.isVROnly() && !inVR) continue;
                 Integer fromInfos = handleRightClickInfos(singleton, start, end);
                 if (fromInfos != null && fromInfos >= 0) {
@@ -529,7 +531,7 @@ public class ClientLogicSubscriber {
         return -1;
     }
 
-    private static <I extends BlockBasedImmersiveInfo> Integer handleRightClickInfos(BlockBasedImmersive<I, ?, ?> singleton, Vec3 start, Vec3 end) {
+    private static <I extends ImmersiveInfo> Integer handleRightClickInfos(Immersive<I, ?, ?> singleton, Vec3 start, Vec3 end) {
         Integer cooldownOut = null;
         I infoToSwapTick = null;
         for (I info : singleton.getTrackedObjects()) {
@@ -603,7 +605,7 @@ public class ClientLogicSubscriber {
         return -1; // Still here in case if we need it later
     }
 
-    private static <I extends BlockBasedImmersiveInfo> boolean inDragHitbox(BlockBasedImmersive<I, ?, ?> singleton, I info, Vec3 rayStart, Vec3 rayEnd) {
+    private static <I extends ImmersiveInfo> boolean inDragHitbox(Immersive<I, ?, ?> singleton, I info, Vec3 rayStart, Vec3 rayEnd) {
         BoundingBox dragHitbox = singleton.getDragHitbox(info);
         return dragHitbox != null && Util.rayTraceClosest(rayStart, rayEnd, dragHitbox).isPresent();
     }
