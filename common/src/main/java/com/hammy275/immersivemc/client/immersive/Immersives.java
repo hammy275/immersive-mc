@@ -420,7 +420,7 @@ public class Immersives {
                     config -> config.useGrindstoneImmersive,
                     (config, newVal) -> config.useGrindstoneImmersive = newVal))
             .build();
-    public static final ImmersiveHitboxesOld immersiveHitboxes = new ImmersiveHitboxesOld();
+    public static final ImmersiveHitboxes immersiveHitboxes = new ImmersiveHitboxes();
     public static final BuiltBlockBasedImmersive<?,?,?> immersiveHopper = BlockBasedImmersiveBuilder.create(ImmersiveHandlers.hopperHandler)
             .setRenderSize(ClientConstants.itemScaleSizeHopper)
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput((info) -> {

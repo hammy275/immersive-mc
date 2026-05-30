@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.common.api_impl;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.common.ImmersiveMCRegistration;
 import com.hammy275.immersivemc.api.common.ImmersiveMCRegistrationEvent;
-import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.petting.PettingHandler;
 
 import java.util.HashSet;
@@ -14,18 +14,18 @@ public class ImmersiveMCRegistrationImpl implements ImmersiveMCRegistration {
 
     public static final ImmersiveMCRegistration INSTANCE = new ImmersiveMCRegistrationImpl();
 
-    private static final Set<Consumer<ImmersiveMCRegistrationEvent<BlockBasedImmersiveHandler<?>>>> HANDLERS = new HashSet<>();
+    private static final Set<Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler>>> HANDLERS = new HashSet<>();
     private static boolean didRegistration = false;
 
     private static final Set<Consumer<ImmersiveMCRegistrationEvent<PettingHandler<?>>>> PETTING_HANDLERS = new HashSet<>();
     private static boolean didPettingRegistration = false;
 
-    public static void doImmersiveRegistration(Consumer<BlockBasedImmersiveHandler<?>> immersiveHandlerConsumer) {
+    public static void doImmersiveRegistration(Consumer<ImmersiveHandler> immersiveHandlerConsumer) {
         if (didRegistration) {
             throw new IllegalStateException("Already did ImmersiveHandler registration!");
         }
-        ImmersiveMCRegistrationEvent<BlockBasedImmersiveHandler<?>> event = new ImmersiveMCRegistrationEventImpl<>(immersiveHandlerConsumer);
-        for (Consumer<ImmersiveMCRegistrationEvent<BlockBasedImmersiveHandler<?>>> handler : HANDLERS) {
+        ImmersiveMCRegistrationEvent<ImmersiveHandler> event = new ImmersiveMCRegistrationEventImpl<>(immersiveHandlerConsumer);
+        for (Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler>> handler : HANDLERS) {
             handler.accept(event);
         }
         ImmersiveMC.handlerIMCRegistrationHandler.accept(event); // Register ImmersiveMC's handlers last
@@ -33,7 +33,7 @@ public class ImmersiveMCRegistrationImpl implements ImmersiveMCRegistration {
     }
 
     @Override
-    public void addImmersiveHandlerRegistrationHandler(Consumer<ImmersiveMCRegistrationEvent<BlockBasedImmersiveHandler<?>>> registrationHandler) throws IllegalStateException {
+    public void addImmersiveHandlerRegistrationHandler(Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler>> registrationHandler) throws IllegalStateException {
         synchronized (this) {
             if (didRegistration) {
                 throw new IllegalStateException("Can't add a registration handler for ImmersiveHandlers after Immersives have been registered.");

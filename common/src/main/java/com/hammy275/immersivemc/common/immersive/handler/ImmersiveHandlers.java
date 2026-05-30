@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveMCRegistrationImpl;
 import com.hammy275.immersivemc.common.compat.IronFurnaces;
 import com.hammy275.immersivemc.common.compat.TinkersConstruct;
@@ -35,6 +36,7 @@ public class ImmersiveHandlers {
     public static final WorldStorageHandler<ETableStorage> enchantingTableHandler = new ETableHandler();
     public static final BlockBasedImmersiveHandler<?> furnaceHandler = new FurnaceHandler();
     public static final WorldStorageHandler<GrindstoneStorage> grindstoneHandler = new GrindstoneHandler();
+    public static final PlayerAttachmentImmersiveHandler<NullStorage> hitboxesHandler = new HitboxesHandler();
     public static final BlockBasedImmersiveHandler<?> hopperHandler = new HopperHandler();
     public static final BlockBasedImmersiveHandler<?> ironFurnacesFurnaceHandler = CompatModule.create(new IronFurnacesFurnaceHandler(), IronFurnaces.compatData);
     public static final BlockBasedImmersiveHandler<?> jukeboxHandler = new JukeboxHandler();
@@ -49,8 +51,8 @@ public class ImmersiveHandlers {
 
     static {
         ImmersiveMCRegistrationImpl.doImmersiveRegistration((handler) -> {
-            if (!HANDLERS.contains(handler)) {
-                HANDLERS.add(handler);
+            if (!HANDLERS.contains(handler) && handler instanceof BlockBasedImmersiveHandler<?> blockHandler) {
+                HANDLERS.add(blockHandler);
             }
         });
     }

@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc;
 
 import com.hammy275.immersivemc.api.common.ImmersiveMCRegistrationEvent;
-import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.petting.PettingHandler;
 import com.hammy275.immersivemc.client.subscribe.ClientLogicSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
@@ -17,11 +17,11 @@ import com.hammy275.immersivemc.server.immersive.petting.AnythingLivingPettingHa
 import com.hammy275.immersivemc.server.immersive.petting.VanillaMobsPettingHandler;
 import com.hammy275.immersivemc.server.ticker.CampfireTicker;
 import com.hammy275.immersivemc.server.ticker.FeedAnimalsTicker;
+import com.hammy275.immersivemc.server.ticker.RangedGrabTickerServer;
 import com.hammy275.immersivemc.server.ticker.hand.ArmorTicker;
 import com.hammy275.immersivemc.server.ticker.hand.ButtonPushTicker;
 import com.hammy275.immersivemc.server.ticker.hand.CauldronTicker;
 import com.hammy275.immersivemc.server.ticker.hand.PetTicker;
-import com.hammy275.immersivemc.server.ticker.RangedGrabTickerServer;
 import net.minecraft.client.KeyMapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,7 +37,7 @@ public class ImmersiveMC {
     public static KeyMapping OPEN_SETTINGS = null;
     public static KeyMapping RANGED_GRAB_KEY = null;
 
-    public static final Consumer<ImmersiveMCRegistrationEvent<BlockBasedImmersiveHandler<?>>> handlerIMCRegistrationHandler =
+    public static final Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler>> handlerIMCRegistrationHandler =
             (event) -> event.register(
                     ImmersiveHandlers.anvilHandler, ImmersiveHandlers.barrelHandler, ImmersiveHandlers.beaconHandler,
                     ImmersiveHandlers.brewingStandHandler, ImmersiveHandlers.chestHandler, ImmersiveHandlers.chiseledBookshelfHandler,
@@ -46,7 +46,7 @@ public class ImmersiveMC {
                     ImmersiveHandlers.leverHandler, ImmersiveHandlers.repeaterHandler, ImmersiveHandlers.shulkerBoxHandler,
                     ImmersiveHandlers.smithingTableHandler, ImmersiveHandlers.tcCraftingStationHandler, ImmersiveHandlers.lecternHandler,
                     ImmersiveHandlers.trapdoorHandler, ImmersiveHandlers.apothSalvagingTableHandler, ImmersiveHandlers.doorHandler,
-                    ImmersiveHandlers.grindstoneHandler, ImmersiveHandlers.visualWorkbenchHandler
+                    ImmersiveHandlers.grindstoneHandler, ImmersiveHandlers.visualWorkbenchHandler, ImmersiveHandlers.hitboxesHandler
             );
 
     public static final Consumer<ImmersiveMCRegistrationEvent<PettingHandler<?>>> pettingIMCRegistrationHandler =
