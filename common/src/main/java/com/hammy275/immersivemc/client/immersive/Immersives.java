@@ -50,7 +50,7 @@ public class Immersives {
 
     public static final List<Immersive<?, ?, ?>> ALL_IMMERSIVES = new ArrayList<>();
     public static final List<BlockBasedImmersive<?, ?, ?>> BLOCK_IMMERSIVES = new ArrayList<>();
-    public static final List<AbstractPlayerAttachmentImmersive<?, ?>> IMMERSIVE_ATTACHMENTS = new ArrayList<>();
+    public static final List<AbstractPlayerAttachmentImmersiveOld<?, ?>> IMMERSIVE_ATTACHMENTS = new ArrayList<>();
 
     public static final BuiltBlockBasedImmersive<?,?,?> immersiveAnvil = BlockBasedImmersiveBuilder.create(ImmersiveHandlers.anvilHandler, AnvilData.class, null, null)
             .setRenderSize(ClientConstants.itemScaleSizeAnvil)
@@ -82,7 +82,7 @@ public class Immersives {
                     config -> config.useAnvilImmersive,
                     (config, newVal) -> config.useAnvilImmersive = newVal))
             .build();
-    public static final ImmersiveBackpack immersiveBackpack = new ImmersiveBackpack();
+    public static final ImmersiveBackpackOld immersiveBackpack = new ImmersiveBackpackOld();
     public static final BuiltBlockBasedImmersive<ChestLikeData,ChestLikeData,?> immersiveBarrel = BlockBasedImmersiveBuilder.create(ImmersiveHandlers.barrelHandler, ChestLikeData.class, ChestLikeData.class, (source, target) -> source.getExtraData().copy(target))
             .setRenderSize(ClientConstants.itemScaleSizeBarrel)
             .add3x3Grid(RelativeHitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)
@@ -420,7 +420,7 @@ public class Immersives {
                     config -> config.useGrindstoneImmersive,
                     (config, newVal) -> config.useGrindstoneImmersive = newVal))
             .build();
-    public static final ImmersiveHitboxes immersiveHitboxes = new ImmersiveHitboxes();
+    public static final ImmersiveHitboxesOld immersiveHitboxes = new ImmersiveHitboxesOld();
     public static final BuiltBlockBasedImmersive<?,?,?> immersiveHopper = BlockBasedImmersiveBuilder.create(ImmersiveHandlers.hopperHandler)
             .setRenderSize(ClientConstants.itemScaleSizeHopper)
             .addHitbox(RelativeHitboxInfoBuilder.createItemInput((info) -> {

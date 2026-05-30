@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 
-public class ImmersiveHitboxesInfo extends AbstractPlayerAttachmentInfo implements InfoTriggerHitboxes {
+public class ImmersiveHitboxesInfo extends AbstractPlayerAttachmentInfoOld implements InfoTriggerHitboxes {
 
     // NOTE: This class should have the regular hitboxes and trigger hitboxes share the same
     // index numbers. Have the actual immersive handle both behaviors.

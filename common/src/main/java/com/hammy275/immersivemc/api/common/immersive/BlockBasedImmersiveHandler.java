@@ -24,8 +24,8 @@ public non-sealed interface BlockBasedImmersiveHandler<S extends NetworkStorage>
     S makeInventoryContents(ServerPlayer player, BlockPos pos);
 
     /**
-     * @return A new instance of the same type of NetworkStorage as made with makeInventoryContents(), but in an empty
-     * state for purposes such as being decoded into by the client.
+     * @return A new instance of the same type of NetworkStorage as made with {@link #makeInventoryContents}, but in an
+     * empty state for purposes such as being decoded into by the client.
      */
     S getEmptyNetworkStorage();
 

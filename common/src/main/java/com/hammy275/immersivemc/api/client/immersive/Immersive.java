@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 public sealed interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRenderState, S extends NetworkStorage>
-        permits BlockBasedImmersive {
+        permits BlockBasedImmersive, PlayerAttachmentImmersive {
     /**
      * Get the collection of ImmersiveInfos currently active for this Immersive. The contents of the list may be
      * modified by ImmersiveMC with the intention of updating the actual set of active ImmersiveInfos.

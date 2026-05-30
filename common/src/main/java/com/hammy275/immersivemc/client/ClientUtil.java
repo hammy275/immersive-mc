@@ -7,7 +7,7 @@ import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
-import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
+import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersiveOld;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
@@ -112,7 +112,7 @@ public class ClientUtil {
                 immersive.getTrackedObjects().clear();
             }
         }
-        for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
+        for (AbstractPlayerAttachmentImmersiveOld<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
             if (!immersive.enabledInConfig()) {
                 immersive.clearImmersives();
             }

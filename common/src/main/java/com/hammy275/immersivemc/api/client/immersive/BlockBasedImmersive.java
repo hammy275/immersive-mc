@@ -19,12 +19,12 @@ public non-sealed interface BlockBasedImmersive<I extends BlockBasedImmersiveInf
         extends Immersive<I, R, S> {
 
     /**
-     * Constructs a new ImmersiveInfo based on the provided block position. It's best to calculate initial hitboxes,
-     * etc. in this method to make the Immersive available for interaction as soon as possible.
+     * Constructs a new BlockBasedImmersiveInfo based on the provided block position. It's best to calculate initial
+     * hitboxes, etc. in this method to make the Immersive is available for interaction as soon as possible.
      *
      * @param pos The position of a block that matches this Immersive.
      * @param level The level in which this info is being built.
-     * @return An instance of an ImmersiveInfo implementation with the same position as provided.
+     * @return An instance of a BlockBasedImmersiveInfo implementation with the same position as provided.
      */
     public I buildInfo(BlockPos pos, Level level);
 

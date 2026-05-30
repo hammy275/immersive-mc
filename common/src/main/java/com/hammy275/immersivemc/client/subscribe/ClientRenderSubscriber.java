@@ -3,10 +3,10 @@ package com.hammy275.immersivemc.client.subscribe;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.*;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
-import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
+import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersiveOld;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
-import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
+import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfoOld;
 import com.hammy275.immersivemc.client.immersive_item.AbstractHandImmersive;
 import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
 import com.hammy275.immersivemc.client.model.Cube1x1;
@@ -49,7 +49,7 @@ public class ClientRenderSubscriber {
             for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
                 renderInfos(singleton, stack);
             }
-            for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+            for (AbstractPlayerAttachmentImmersiveOld<? extends AbstractPlayerAttachmentInfoOld, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
                 renderInfos(singleton, stack);
             }
             if (VRVerify.clientInVR()) {
@@ -124,8 +124,8 @@ public class ClientRenderSubscriber {
         }
     }
 
-    protected static <I extends AbstractPlayerAttachmentInfo> void renderInfos(AbstractPlayerAttachmentImmersive<I, ?> singleton,
-                                                                               PoseStack stack) {
+    protected static <I extends AbstractPlayerAttachmentInfoOld> void renderInfos(AbstractPlayerAttachmentImmersiveOld<I, ?> singleton,
+                                                                                  PoseStack stack) {
         try {
             if (singleton.isVROnly() && !VRVerify.clientInVR()) {
                 return;

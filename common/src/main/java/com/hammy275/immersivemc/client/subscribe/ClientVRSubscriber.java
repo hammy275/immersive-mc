@@ -1,15 +1,13 @@
 package com.hammy275.immersivemc.client.subscribe;
 
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
-import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
-import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
+import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersiveOld;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
-import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
+import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfoOld;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRVerify;
@@ -70,8 +68,8 @@ public class ClientVRSubscriber {
         }
 
         if (cooldown <= 0) {
-            for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
-                for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
+            for (AbstractPlayerAttachmentImmersiveOld<? extends AbstractPlayerAttachmentInfoOld, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+                for (AbstractPlayerAttachmentInfoOld info : singleton.getTrackedObjects()) {
                     if (handleInfo(singleton, info, vrPose)) {
                         return;
                     }
@@ -117,7 +115,7 @@ public class ClientVRSubscriber {
         return infoWithDragHitbox != null;
     }
 
-    protected static boolean handleInfo(AbstractPlayerAttachmentImmersive<?, ?> singleton, AbstractPlayerAttachmentInfo info, VRPose vrPose) {
+    protected static boolean handleInfo(AbstractPlayerAttachmentImmersiveOld<?, ?> singleton, AbstractPlayerAttachmentInfoOld info, VRPose vrPose) {
         if (info.hasHitboxes() && singleton.hitboxesAvailable(info)) {
             for (InteractionHand hand : InteractionHand.values()) {
                 VRBodyPartData controller = vrPose.getHand(hand);

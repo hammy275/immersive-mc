@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
-import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
+import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfoOld;
 import com.hammy275.immersivemc.client.immersive.info.ImmersiveHitboxesInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
@@ -26,7 +26,7 @@ import org.vivecraft.api.data.VRBodyPartData;
 /**
  * Used for hitboxes attached to the player
  */
-public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<ImmersiveHitboxesInfo, NullStorage> {
+public class ImmersiveHitboxesOld extends AbstractPlayerAttachmentImmersiveOld<ImmersiveHitboxesInfo, NullStorage> {
 
     private static final Minecraft mc = Minecraft.getInstance();
     
@@ -35,7 +35,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
     private int backpackCooldown = 0; // Used for those with trigger-hit for opening the bag disabled
     private boolean canOpenBackpack = false;
 
-    public ImmersiveHitboxes() {
+    public ImmersiveHitboxesOld() {
         super(1);
         this.forceDisableItemGuide = true;
         this.forceTickEvenIfNoTrack = true;
@@ -162,7 +162,7 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
     }
 
     @Override
-    public boolean shouldBlockClickIfEnabled(AbstractPlayerAttachmentInfo info) {
+    public boolean shouldBlockClickIfEnabled(AbstractPlayerAttachmentInfoOld info) {
         return false; // Doesn't really matter, never hooked into a block anyways
     }
 
@@ -172,12 +172,12 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
     }
 
     @Override
-    public void handleRightClick(AbstractPlayerAttachmentInfo info, Player player, int closest, InteractionHand hand) {
+    public void handleRightClick(AbstractPlayerAttachmentInfoOld info, Player player, int closest, InteractionHand hand) {
         // Intentionally empty, all hitbox logic is handled from ticking
     }
 
     @Override
-    public void processStorageFromNetwork(AbstractPlayerAttachmentInfo info, NullStorage storage) {
+    public void processStorageFromNetwork(AbstractPlayerAttachmentInfoOld info, NullStorage storage) {
         // Intentional NO-OP
     }
 

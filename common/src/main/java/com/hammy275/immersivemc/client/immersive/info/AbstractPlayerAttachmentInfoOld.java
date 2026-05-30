@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
-public abstract class AbstractPlayerAttachmentInfo {
+public abstract class AbstractPlayerAttachmentInfoOld {
 
     protected int ticksLeft;
     protected int itemTransitionCountdown = 10; // Used for transitions for the items
@@ -17,7 +17,7 @@ public abstract class AbstractPlayerAttachmentInfo {
     public int slotHovered2 = -1; // Only used in VR for secondary hand slot hovering.
     public int triggerHitboxSlotHovered = -1;
 
-    public AbstractPlayerAttachmentInfo(int ticksToExist) {
+    public AbstractPlayerAttachmentInfoOld(int ticksToExist) {
         this.ticksLeft = ticksToExist;
     }
 

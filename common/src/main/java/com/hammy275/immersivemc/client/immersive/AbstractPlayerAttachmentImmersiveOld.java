@@ -7,7 +7,7 @@ import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveRenderHelpersImpl;
 import com.hammy275.immersivemc.client.config.ClientConstants;
-import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
+import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfoOld;
 import com.hammy275.immersivemc.client.immersive.info.InfoTriggerHitboxes;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
@@ -25,7 +25,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -40,7 +39,7 @@ import java.util.List;
  * Abstract immersive anything
  * @param <I> Info type
  */
-public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractPlayerAttachmentInfo, S extends NetworkStorage> {
+public abstract class AbstractPlayerAttachmentImmersiveOld<I extends AbstractPlayerAttachmentInfoOld, S extends NetworkStorage> {
     public static final int maxLight = LightCoordsUtil.pack(15, 15);
 
     protected final List<I> infos;
@@ -48,7 +47,7 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractPlayer
     protected boolean forceDisableItemGuide = false;
     public boolean forceTickEvenIfNoTrack = false;
 
-    public AbstractPlayerAttachmentImmersive(int maxImmersives) {
+    public AbstractPlayerAttachmentImmersiveOld(int maxImmersives) {
         Immersives.IMMERSIVE_ATTACHMENTS.add(this);
         this.maxImmersives = maxImmersives;
         this.infos = new ArrayList<>(maxImmersives > 0 ? maxImmersives + 1 : 16);
@@ -94,7 +93,7 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractPlayer
     @Nullable
     public abstract BlockBasedImmersiveHandler<S> getHandler();
 
-    public boolean hitboxesAvailable(AbstractPlayerAttachmentInfo info) {
+    public boolean hitboxesAvailable(AbstractPlayerAttachmentInfoOld info) {
         return true;
     }
 
@@ -112,7 +111,7 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractPlayer
     public abstract I refreshOrTrackObject(BlockPos pos, Level level);
 
     // Whether to block a right-click if the option to block right clicks to open GUIs is enabled
-    public abstract boolean shouldBlockClickIfEnabled(AbstractPlayerAttachmentInfo info);
+    public abstract boolean shouldBlockClickIfEnabled(AbstractPlayerAttachmentInfoOld info);
 
     /**
      * Initializes an `info` instance after it's constructed.
@@ -126,7 +125,7 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractPlayer
      * Called just before handleRightClick() and handleTriggerHitboxRightClick()
      * @param info Info instance that had a hitbox click
      */
-    public void onAnyRightClick(AbstractPlayerAttachmentInfo info) {
+    public void onAnyRightClick(AbstractPlayerAttachmentInfoOld info) {
 
     }
 
@@ -134,7 +133,7 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractPlayer
         return false;
     }
 
-    public abstract void handleRightClick(AbstractPlayerAttachmentInfo info, Player player, int closest,
+    public abstract void handleRightClick(AbstractPlayerAttachmentInfoOld info, Player player, int closest,
                                           InteractionHand hand);
 
     public void handleTriggerHitboxRightClick(InfoTriggerHitboxes info, Player player, int hitboxNum) {
@@ -147,7 +146,7 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractPlayer
         return info.slotHovered(slotNum);
     }
 
-    public abstract void processStorageFromNetwork(AbstractPlayerAttachmentInfo info, S storage);
+    public abstract void processStorageFromNetwork(AbstractPlayerAttachmentInfoOld info, S storage);
 
     public void tick(I info, boolean isInVR) {
         if (enabledInConfig()) {
@@ -329,77 +328,6 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractPlayer
         ImmersiveRenderHelpersImpl.INSTANCE.renderHitbox(stack, hitbox, alwaysRender, red, green, blue, alpha);
     }
 
-    /**
-     * Gets the direction to the left from the Direction's perspective, assuming the Direction is
-     * looking at the player. This makes it to the right for the player.
-     * @param forward Forward direction of the block
-     * @return The aforementioned left
-     */
-    public static Direction getLeftOfDirection(Direction forward) {
-        if (forward == Direction.UP || forward == Direction.DOWN) {
-            throw new IllegalArgumentException("Direction cannot be up or down!");
-        }
-        if (forward == Direction.NORTH) {
-            return Direction.WEST;
-        } else if (forward == Direction.WEST) {
-            return Direction.SOUTH;
-        } else if (forward == Direction.SOUTH) {
-            return Direction.EAST;
-        }
-        return Direction.NORTH;
-    }
-
-    public static Vec3 getTopCenterOfBlock(BlockPos pos) {
-        // Only add 0.5 to y since atCenterOf moves it up 0.5 for us
-        return Vec3.upFromBottomCenterOf(pos, 1);
-    }
-
-    /**
-     * Gets the forward direction of the block based on the player
-     *
-     * Put simply, this returns the best direction such that the block is "facing" the play by looking that direction.
-     * @param player Player to get forward from
-     * @param pos Blosck position of the
-     * @return The forward direction of a block to use.
-     */
-    public static Direction getForwardFromPlayer(Player player, BlockPos pos) {
-        Vec3 blockPos = Vec3.atBottomCenterOf(pos);
-        Vec3 playerPos = player.position();
-        Vec3 diff = playerPos.subtract(blockPos);
-        Direction.Axis axis = Math.abs(diff.x) > Math.abs(diff.z) ? Direction.Axis.X : Direction.Axis.Z;
-        if (axis == Direction.Axis.X) {
-            return diff.x < 0 ? Direction.WEST : Direction.EAST;
-        } else {
-            return diff.z < 0 ? Direction.NORTH : Direction.SOUTH;
-        }
-    }
-
-    public static Vec3[] get3x3HorizontalGrid(BlockPos blockPos, double spacing, Direction blockForward,
-                                       boolean use3DCompat) {
-        Vec3 pos = getTopCenterOfBlock(blockPos);
-        if (use3DCompat) {
-            pos = pos.add(0, 1d/16d, 0);
-        }
-        Direction left = getLeftOfDirection(blockForward);
-
-        Vec3 leftOffset = new Vec3(
-                left.getUnitVec3i().getX() * -spacing, 0, left.getUnitVec3i().getZ() * -spacing);
-        Vec3 rightOffset = new Vec3(
-                left.getUnitVec3i().getX() * spacing, 0, left.getUnitVec3i().getZ() * spacing);
-
-        Vec3 topOffset = new Vec3(
-                blockForward.getUnitVec3i().getX() * -spacing, 0, blockForward.getUnitVec3i().getZ() * -spacing);
-        Vec3 botOffset = new Vec3(
-                blockForward.getUnitVec3i().getX() * spacing, 0, blockForward.getUnitVec3i().getZ() * spacing);
-
-
-        return new Vec3[]{
-                pos.add(leftOffset).add(topOffset), pos.add(topOffset), pos.add(rightOffset).add(topOffset),
-                pos.add(leftOffset), pos, pos.add(rightOffset),
-                pos.add(leftOffset).add(botOffset), pos.add(botOffset), pos.add(rightOffset).add(botOffset)
-        };
-    }
-
     public int getLight(BlockPos pos) {
         return ImmersiveClientLogicHelpers.instance().getLight(pos);
     }
@@ -410,63 +338,6 @@ public abstract class AbstractPlayerAttachmentImmersive<I extends AbstractPlayer
 
     public void clearImmersives() {
         this.infos.clear();
-    }
-
-    public static Direction getForwardFromPlayerUpAndDown(Player player, BlockPos pos) {
-        return getForwardFromPlayerUpAndDownFilterBlockFacing(player, pos, false);
-    }
-
-    /**
-     * Same as getForwardFromPlayer, but can return the block facing up or down, alongside any of the four
-     * directions of N/E/S/W.
-     * @param player Player.
-     * @param pos Position of block.
-     * @param filterOnBlockFacing If true, the axis of the block's DirectionalBlock.FACING will not be returned from
-     *                            this function. The block should have this property if this is true, of course!
-     * @return Any Direction, representing what direction the block should be facing based on the player's position.
-     */
-    public static Direction getForwardFromPlayerUpAndDownFilterBlockFacing(Player player, BlockPos pos, boolean filterOnBlockFacing) {
-        Direction.Axis filter = filterOnBlockFacing ? player.level().getBlockState(pos).getValue(DirectionalBlock.FACING).getAxis() : null;
-        Vec3 playerPos = player.position();
-        if (playerPos.y >= pos.getY() + 0.625 && filter != Direction.Axis.Y) {
-            return Direction.UP;
-        } else if (playerPos.y <= pos.getY() - 0.625 && filter != Direction.Axis.Y) {
-            return Direction.DOWN;
-        } else {
-            Direction forward = getForwardFromPlayer(player, pos);
-            if (forward.getAxis() != filter) {
-                return forward;
-            } else {
-                // We filter on non-Y axis, and getForwardFromPlayer was on our filter. Find the closest and get it.
-                Direction blockFacing = player.level().getBlockState(pos).getValue(DirectionalBlock.FACING);
-                Vec3 blockCenter = Vec3.atCenterOf(pos);
-                Direction blockLeftDir = blockFacing.getCounterClockWise();
-                Vec3 blockLeftVec = blockLeftDir.getUnitVec3();
-                Vec3 counterClockwisePos = blockCenter.add(blockLeftVec.scale(0.5));
-                Vec3 clockwisePos = blockCenter.add(blockLeftVec.scale(-0.5));
-                Vec3 upPos = blockCenter.add(0, 0.5, 0);
-                Vec3 downPos = blockCenter.add(0, -0.5, 0);
-
-                double counterClockwiseDist = counterClockwisePos.distanceToSqr(playerPos);
-                double clockwiseDist = clockwisePos.distanceToSqr(playerPos);
-                double upDist = upPos.distanceToSqr(playerPos);
-                double downDist = downPos.distanceToSqr(playerPos);
-
-                double min = Math.min(counterClockwiseDist, clockwiseDist);
-                min = Math.min(min, upDist);
-                min = Math.min(min, downDist);
-
-                if (min == counterClockwiseDist) {
-                    return forward.getCounterClockWise();
-                } else if (min == clockwiseDist) {
-                    return forward.getClockWise();
-                } else if (min == upDist) {
-                    return Direction.UP;
-                } else {
-                    return Direction.DOWN;
-                }
-            }
-        }
     }
 
 }

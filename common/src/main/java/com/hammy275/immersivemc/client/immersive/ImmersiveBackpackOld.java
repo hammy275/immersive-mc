@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.SwapMode;
 import com.hammy275.immersivemc.client.compat.ipn.IPN;
 import com.hammy275.immersivemc.client.config.ClientConstants;
-import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
+import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfoOld;
 import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
 import com.hammy275.immersivemc.client.model.BackpackBundleModel;
 import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
@@ -44,7 +44,7 @@ import org.vivecraft.api.data.VRPose;
 
 import java.util.List;
 
-public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<BackpackInfo, NullStorage> {
+public class ImmersiveBackpackOld extends AbstractPlayerAttachmentImmersiveOld<BackpackInfo, NullStorage> {
     public static final BackpackBundleModel bundleModel =
             new BackpackBundleModel(Minecraft.getInstance().getEntityModels().bakeLayer(BackpackBundleModel.LAYER_LOCATION));
 
@@ -59,7 +59,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
 
     private final double spacing = 3d/8d;
 
-    public ImmersiveBackpack() {
+    public ImmersiveBackpackOld() {
         super(1); // A player only has one backpack
     }
 
@@ -219,7 +219,7 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     }
 
     @Override
-    public boolean shouldBlockClickIfEnabled(AbstractPlayerAttachmentInfo info) {
+    public boolean shouldBlockClickIfEnabled(AbstractPlayerAttachmentInfoOld info) {
         return false;
     }
 
@@ -230,10 +230,10 @@ public class ImmersiveBackpack extends AbstractPlayerAttachmentImmersive<Backpac
     }
 
     @Override
-    public void handleRightClick(AbstractPlayerAttachmentInfo info, Player player, int closest, InteractionHand hand) {}
+    public void handleRightClick(AbstractPlayerAttachmentInfoOld info, Player player, int closest, InteractionHand hand) {}
 
     @Override
-    public void processStorageFromNetwork(AbstractPlayerAttachmentInfo info, NullStorage storage) {
+    public void processStorageFromNetwork(AbstractPlayerAttachmentInfoOld info, NullStorage storage) {
         // Intentional NO-OP
     }
 

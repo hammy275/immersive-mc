@@ -9,7 +9,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.Arrays;
 
-public class BackpackInfo extends AbstractPlayerAttachmentInfo {
+public class BackpackInfo extends AbstractPlayerAttachmentInfoOld {
 
     protected final Vec3[] positions = new Vec3[32];
     protected final BoundingBox[] hitboxes = new BoundingBox[32];

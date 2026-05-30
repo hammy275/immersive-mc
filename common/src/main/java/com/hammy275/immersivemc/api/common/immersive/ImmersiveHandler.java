@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.api.common.immersive;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 
-public sealed interface ImmersiveHandler permits BlockBasedImmersiveHandler {
+public sealed interface ImmersiveHandler permits BlockBasedImmersiveHandler, PlayerAttachmentImmersiveHandler {
     /**
      * @param player The player we're checking the config of.
      * @return Whether the immersive this handler handles is enabled. If you do not have a configuration system, this

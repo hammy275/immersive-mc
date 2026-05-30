@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
-import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
+import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersiveOld;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
@@ -150,7 +150,7 @@ public class ConfigScreen extends Screen {
         for (Immersive<?, ?, ?> immersive : Immersives.ALL_IMMERSIVES) {
             immersive.getTrackedObjects().clear();
         }
-        for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
+        for (AbstractPlayerAttachmentImmersiveOld<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
             immersive.clearImmersives();
         }
         if (currentConfigAdjusting == ConfigType.SERVER) {

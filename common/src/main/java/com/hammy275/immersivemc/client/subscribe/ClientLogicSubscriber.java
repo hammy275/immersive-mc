@@ -87,7 +87,7 @@ public class ClientLogicSubscriber {
                 for (Immersive<?, ?, ?> immersive : Immersives.BLOCK_IMMERSIVES) {
                     immersive.getTrackedObjects().clear();
                 }
-                for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
+                for (AbstractPlayerAttachmentImmersiveOld<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
                     immersive.clearImmersives();
                 }
             }
@@ -129,7 +129,7 @@ public class ClientLogicSubscriber {
         for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
             tickInfos(singleton, player);
         }
-        for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+        for (AbstractPlayerAttachmentImmersiveOld<? extends AbstractPlayerAttachmentInfoOld, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
             tickInfos(singleton, player);
         }
         if (VRVerify.clientInVR()) {
@@ -239,7 +239,7 @@ public class ClientLogicSubscriber {
             for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
                 singleton.getTrackedObjects().clear();
             }
-            for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+            for (AbstractPlayerAttachmentImmersiveOld<? extends AbstractPlayerAttachmentInfoOld, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
                 singleton.clearImmersives();
             }
             ActiveConfig.FROM_SERVER = (ClientActiveConfig) ClientActiveConfig.DISABLED.clone();
@@ -291,7 +291,7 @@ public class ClientLogicSubscriber {
 
     }
 
-    protected static <I extends AbstractPlayerAttachmentInfo> void tickInfos(AbstractPlayerAttachmentImmersive<I, ?> singleton, Player player) {
+    protected static <I extends AbstractPlayerAttachmentInfoOld> void tickInfos(AbstractPlayerAttachmentImmersiveOld<I, ?> singleton, Player player) {
         // Don't tick if VR only and not in VR
         if (singleton.isVROnly() && !VRVerify.clientInVR()) {
             return;
@@ -388,13 +388,13 @@ public class ClientLogicSubscriber {
                 Immersives.immersiveBackpack.getTrackedObjects().get(0) : null;
         // Move to next row on left click if backpack is out
         if (backpackInfo != null && backpackInfo.slotHovered > -1) {
-            ImmersiveBackpack.onHitboxInteract(player, backpackInfo, backpackInfo.slotHovered);
+            ImmersiveBackpackOld.onHitboxInteract(player, backpackInfo, backpackInfo.slotHovered);
             return true;
         }
 
         if (inVR) {
-            for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
-                for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
+            for (AbstractPlayerAttachmentImmersiveOld<? extends AbstractPlayerAttachmentInfoOld, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+                for (AbstractPlayerAttachmentInfoOld info : singleton.getTrackedObjects()) {
                     if (!(info instanceof InfoTriggerHitboxes)) break;
                     InfoTriggerHitboxes triggerInfo = (InfoTriggerHitboxes) info;
                     VRBodyPartData data = VR.API.getVRPose(player).getHand(triggerInfo.getVRHand());
@@ -465,8 +465,8 @@ public class ClientLogicSubscriber {
             }
         }
 
-        for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
-            for (AbstractPlayerAttachmentInfo info : immersive.getTrackedObjects()) {
+        for (AbstractPlayerAttachmentImmersiveOld<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
+            for (AbstractPlayerAttachmentInfoOld info : immersive.getTrackedObjects()) {
                 if (info.slotHovered != -1 || info.slotHovered2 != -1) {
                     return true;
                 }
@@ -498,9 +498,9 @@ public class ClientLogicSubscriber {
                 SwapTracker.c0.tick(null, null, -1, false);
             }
             if (SwapTracker.c0.getCooldown() > 0) return SwapTracker.c0.getCooldown();
-            for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+            for (AbstractPlayerAttachmentImmersiveOld<? extends AbstractPlayerAttachmentInfoOld, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
                 if (singleton.isVROnly() && !inVR) continue;
-                for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
+                for (AbstractPlayerAttachmentInfoOld info : singleton.getTrackedObjects()) {
                     if (info.hasHitboxes() && singleton.hitboxesAvailable(info)) {
                         Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
                         if (closest.isPresent()) {

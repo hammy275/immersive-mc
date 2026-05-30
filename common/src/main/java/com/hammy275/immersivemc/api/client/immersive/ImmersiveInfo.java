@@ -4,7 +4,7 @@ import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 
 import java.util.List;
 
-public sealed interface ImmersiveInfo permits BlockBasedImmersiveInfo {
+public sealed interface ImmersiveInfo permits BlockBasedImmersiveInfo, PlayerAttachmentImmersiveInfo {
     /**
      * @return The list of all hitboxes this Immersive uses. This can contain null elements, and can return an
      *         immutable list implementation if desired.
