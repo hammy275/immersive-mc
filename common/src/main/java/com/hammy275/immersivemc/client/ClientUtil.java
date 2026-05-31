@@ -7,7 +7,6 @@ import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
-import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersiveOld;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.BagInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
@@ -111,11 +110,6 @@ public class ClientUtil {
         for (Immersive<?, ?, ?> immersive : Immersives.ALL_IMMERSIVES) {
             if (!immersive.getHandler().enabledInConfig(Minecraft.getInstance().player)) {
                 immersive.getTrackedObjects().clear();
-            }
-        }
-        for (AbstractPlayerAttachmentImmersiveOld<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
-            if (!immersive.enabledInConfig()) {
-                immersive.clearImmersives();
             }
         }
     }

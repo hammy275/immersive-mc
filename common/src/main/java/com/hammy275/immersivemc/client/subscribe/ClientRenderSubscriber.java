@@ -1,12 +1,12 @@
 package com.hammy275.immersivemc.client.subscribe;
 
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
-import com.hammy275.immersivemc.api.client.immersive.*;
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
-import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersiveOld;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
-import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfoOld;
 import com.hammy275.immersivemc.client.immersive_item.AbstractHandImmersive;
 import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
 import com.hammy275.immersivemc.client.model.Cube1x1;
@@ -47,9 +47,6 @@ public class ClientRenderSubscriber {
         setRenderColors();
         try {
             for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
-                renderInfos(singleton, stack);
-            }
-            for (AbstractPlayerAttachmentImmersiveOld<? extends AbstractPlayerAttachmentInfoOld, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
                 renderInfos(singleton, stack);
             }
             if (VRVerify.clientInVR()) {
@@ -117,21 +114,6 @@ public class ClientRenderSubscriber {
                 if (singleton.shouldRender(renderState)) {
                     singleton.render(renderState, stack, ImmersiveRenderHelpers.instance(), partialTicks);
                 }
-            }
-        } catch (ConcurrentModificationException ignored) {
-            // Skip rendering if the list is modified mid-render
-            // It's fine, since we were only going to read it anyway!!
-        }
-    }
-
-    protected static <I extends AbstractPlayerAttachmentInfoOld> void renderInfos(AbstractPlayerAttachmentImmersiveOld<I, ?> singleton,
-                                                                                  PoseStack stack) {
-        try {
-            if (singleton.isVROnly() && !VRVerify.clientInVR()) {
-                return;
-            }
-            for (I info : singleton.getTrackedObjects()) {
-                singleton.doRender(info, stack, VRVerify.clientInVR());
             }
         } catch (ConcurrentModificationException ignored) {
             // Skip rendering if the list is modified mid-render

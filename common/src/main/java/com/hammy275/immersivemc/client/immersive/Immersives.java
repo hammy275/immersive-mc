@@ -50,7 +50,7 @@ public class Immersives {
 
     public static final List<Immersive<?, ?, ?>> ALL_IMMERSIVES = new ArrayList<>();
     public static final List<BlockBasedImmersive<?, ?, ?>> BLOCK_IMMERSIVES = new ArrayList<>();
-    public static final List<AbstractPlayerAttachmentImmersiveOld<?, ?>> IMMERSIVE_ATTACHMENTS = new ArrayList<>();
+    public static final List<PlayerAttachmentImmersive<?, ?, ?>> ATTACHMENT_IMMERSIVES = new ArrayList<>();
 
     public static final BuiltBlockBasedImmersive<?,?,?> immersiveAnvil = BlockBasedImmersiveBuilder.create(ImmersiveHandlers.anvilHandler, AnvilData.class, null, null)
             .setRenderSize(ClientConstants.itemScaleSizeAnvil)
@@ -567,6 +567,9 @@ public class Immersives {
                 ALL_IMMERSIVES.add(immersive);
                 if (immersive instanceof BlockBasedImmersive<?, ?, ?> blockBased) {
                     BLOCK_IMMERSIVES.add(blockBased);
+                }
+                if (immersive instanceof PlayerAttachmentImmersive<?, ?, ?> attachment) {
+                    ATTACHMENT_IMMERSIVES.add(attachment);
                 }
             }
         });
