@@ -87,7 +87,7 @@ public class ClientLogicSubscriber {
         if (currentVRState != lastVRState) {
             lastVRState = currentVRState;
             if (!currentVRState && ActiveConfig.FILE_CLIENT.disableImmersiveMCOutsideVR) {
-                for (Immersive<?, ?, ?> immersive : Immersives.BLOCK_IMMERSIVES) {
+                for (Immersive<?, ?, ?> immersive : Immersives.ALL_IMMERSIVES) {
                     immersive.getTrackedObjects().clear();
                 }
             }
