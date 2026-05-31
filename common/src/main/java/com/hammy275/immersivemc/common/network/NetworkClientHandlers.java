@@ -3,12 +3,13 @@ package com.hammy275.immersivemc.common.network;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.PlayerAttachmentImmersiveInfo;
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersiveOld;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfoOld;
-import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
+import com.hammy275.immersivemc.client.immersive.info.BagInfo;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.client.subscribe.ClientLogicSubscriber;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
@@ -63,9 +64,9 @@ public class NetworkClientHandlers {
     }
 
     public static void setBackpackOutput(ItemStack output) {
-        if (Immersives.immersiveBackpack.getTrackedObjects().size() > 0) {
-            BackpackInfo info = Immersives.immersiveBackpack.getTrackedObjects().get(0);
-            info.craftingOutput = output;
+        BagInfo info = Immersives.immersiveBag.getTrackedObjects().stream().filter(PlayerAttachmentImmersiveInfo::ownerIsLocalPlayer).findAny().orElse(null);
+        if (info != null) {
+            info.hitboxes.get(31).item = output;
         }
     }
 

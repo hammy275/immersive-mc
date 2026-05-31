@@ -9,6 +9,7 @@ import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
 import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersiveOld;
 import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive.info.BagInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.util.Util;
@@ -179,7 +180,7 @@ public class ClientUtil {
                     if (doRumble) {
                         VRRumble.rumbleIfVR(Minecraft.getInstance().player, ActiveConfig.active().swapBagHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, CommonConstants.vibrationTimePlayerActionAlert);
                     }
-                    Immersives.immersiveBackpack.doTrack();
+                    Immersives.immersiveBag.getTrackedObjects().add(new BagInfo(Minecraft.getInstance().player));
                 } else {
                     player.sendSystemMessage(Component.translatable("message.immersivemc.not_in_vr"));
                 }

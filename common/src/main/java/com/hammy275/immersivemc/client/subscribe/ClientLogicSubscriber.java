@@ -384,14 +384,6 @@ public class ClientLogicSubscriber {
             }
         }
 
-        BackpackInfo backpackInfo = Immersives.immersiveBackpack.getTrackedObjects().size() > 0 ?
-                Immersives.immersiveBackpack.getTrackedObjects().get(0) : null;
-        // Move to next row on left click if backpack is out
-        if (backpackInfo != null && backpackInfo.slotHovered > -1) {
-            ImmersiveBackpackOld.onHitboxInteract(player, backpackInfo, backpackInfo.slotHovered);
-            return true;
-        }
-
         if (inVR) {
             for (AbstractPlayerAttachmentImmersiveOld<? extends AbstractPlayerAttachmentInfoOld, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
                 for (AbstractPlayerAttachmentInfoOld info : singleton.getTrackedObjects()) {
@@ -451,8 +443,8 @@ public class ClientLogicSubscriber {
                     }
                 }
             }
-        } else if (backpackInfo != null) {
-            backpackInfo.gotoNextRow();
+        } else if (bagInfo != null) {
+            bagInfo.gotoNextRow();
             return true;
         }
 

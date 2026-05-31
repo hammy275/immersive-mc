@@ -82,7 +82,7 @@ public class Immersives {
                     config -> config.useAnvilImmersive,
                     (config, newVal) -> config.useAnvilImmersive = newVal))
             .build();
-    public static final ImmersiveBackpackOld immersiveBackpack = new ImmersiveBackpackOld();
+    public static final ImmersiveBag immersiveBag = new ImmersiveBag();
     public static final BuiltBlockBasedImmersive<ChestLikeData,ChestLikeData,?> immersiveBarrel = BlockBasedImmersiveBuilder.create(ImmersiveHandlers.barrelHandler, ChestLikeData.class, ChestLikeData.class, (source, target) -> source.getExtraData().copy(target))
             .setRenderSize(ClientConstants.itemScaleSizeBarrel)
             .add3x3Grid(RelativeHitboxInfoBuilder.createItemInput(Vec3.ZERO, 0.175).build(), ImmersiveChest.spacing)

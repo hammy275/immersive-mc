@@ -1,6 +1,8 @@
 package com.hammy275.immersivemc.common.network.packet;
 
+import com.hammy275.immersivemc.api.client.immersive.PlayerAttachmentImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive.info.BagInfo;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -54,6 +56,11 @@ public class FetchBackpackStoragePacket {
     }
 
     public static void handleClient(FetchBackpackStoragePacket message) {
-        Immersives.immersiveBackpack.processFromNetwork(message.backpackCraftingItems);
+        BagInfo info = Immersives.immersiveBag.getTrackedObjects().stream().filter(PlayerAttachmentImmersiveInfo::ownerIsLocalPlayer).findAny().orElse(null);
+        if (info != null) {
+            for (int i = 0; i <= 4; i++) {
+                info.hitboxes.get(27 + i).item = message.backpackCraftingItems.get(i);
+            }
+        }
     }
 }

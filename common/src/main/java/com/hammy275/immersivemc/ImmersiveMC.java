@@ -46,7 +46,8 @@ public class ImmersiveMC {
                     ImmersiveHandlers.leverHandler, ImmersiveHandlers.repeaterHandler, ImmersiveHandlers.shulkerBoxHandler,
                     ImmersiveHandlers.smithingTableHandler, ImmersiveHandlers.tcCraftingStationHandler, ImmersiveHandlers.lecternHandler,
                     ImmersiveHandlers.trapdoorHandler, ImmersiveHandlers.apothSalvagingTableHandler, ImmersiveHandlers.doorHandler,
-                    ImmersiveHandlers.grindstoneHandler, ImmersiveHandlers.visualWorkbenchHandler, ImmersiveHandlers.hitboxesHandler
+                    ImmersiveHandlers.grindstoneHandler, ImmersiveHandlers.visualWorkbenchHandler, ImmersiveHandlers.hitboxesHandler,
+                    ImmersiveHandlers.bagHandler
             );
 
     public static final Consumer<ImmersiveMCRegistrationEvent<PettingHandler<?>>> pettingIMCRegistrationHandler =

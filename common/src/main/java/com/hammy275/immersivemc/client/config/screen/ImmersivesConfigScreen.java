@@ -56,7 +56,6 @@ public class ImmersivesConfigScreen extends OptionsSubScreen {
         if (this.type.isVR()) {
             options.add(ScreenUtils.createOption("animals", config -> config.useFeedingAnimalsImmersive, (config, newVal) -> config.useFeedingAnimalsImmersive = newVal));
             options.add(ScreenUtils.createOption("armor",config -> config.useArmorImmersive, (config, newVal) -> config.useArmorImmersive = newVal));
-            options.add(ScreenUtils.createOption("backpack_button", config -> config.useBagImmersive, (config, newVal) -> config.useBagImmersive = newVal));
             options.add(ScreenUtils.createOption("bottle_bucket", config -> config.useBucketAndBottleImmersive, (config, newVal) -> config.useBucketAndBottleImmersive = newVal));
             options.add(ScreenUtils.createOption("button", config -> config.useButtonImmersive, (config, newVal) -> config.useButtonImmersive = newVal));
             options.add(ScreenUtils.createOption("campfire", config -> config.useCampfireImmersive, (config, newVal) -> config.useCampfireImmersive = newVal));
