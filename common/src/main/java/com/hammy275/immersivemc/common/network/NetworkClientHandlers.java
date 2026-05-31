@@ -3,7 +3,6 @@ package com.hammy275.immersivemc.common.network;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
-import com.hammy275.immersivemc.api.client.immersive.PlayerAttachmentImmersiveInfo;
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.immersive.Immersives;
@@ -62,7 +61,7 @@ public class NetworkClientHandlers {
     }
 
     public static void setBackpackOutput(ItemStack output) {
-        BagInfo info = Immersives.immersiveBag.getTrackedObjects().stream().filter(PlayerAttachmentImmersiveInfo::ownerIsLocalPlayer).findAny().orElse(null);
+        BagInfo info = Immersives.immersiveBag.getLocalPlayerInfo();
         if (info != null) {
             info.hitboxes.get(31).item = output;
         }

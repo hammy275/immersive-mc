@@ -5,6 +5,8 @@ import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import net.minecraft.client.player.AbstractClientPlayer;
 
+import javax.annotation.Nullable;
+
 public non-sealed interface PlayerAttachmentImmersive<I extends PlayerAttachmentImmersiveInfo, R extends ImmersiveRenderState, S extends NetworkStorage>
         extends Immersive<I, R, S> {
 
@@ -23,4 +25,18 @@ public non-sealed interface PlayerAttachmentImmersive<I extends PlayerAttachment
      * @return The {@link PlayerAttachmentImmersiveHandler} this Immersive uses.
      */
     PlayerAttachmentImmersiveHandler<S> getHandler();
+
+    /**
+     * @return The PlayerAttachmentImmersiveInfo for the local player for this Immersive, or null if this Immersive
+     * isn't active for the local player.
+     */
+    @Nullable
+    default I getLocalPlayerInfo() {
+        for (I info : getTrackedObjects()) {
+            if (info.ownerIsLocalPlayer()) {
+                return info;
+            }
+        }
+        return null;
+    }
 }

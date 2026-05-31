@@ -299,7 +299,7 @@ public class ClientLogicSubscriber {
         }
 
         HitResult looking = Minecraft.getInstance().hitResult;
-        BagInfo bagInfo = Immersives.immersiveBag.getTrackedObjects().stream().filter(BagInfo::ownerIsLocalPlayer).findAny().orElse(null);
+        BagInfo bagInfo = Immersives.immersiveBag.getLocalPlayerInfo();
         if (looking != null && looking.getType() == HitResult.Type.BLOCK) {
             BlockPos pos = ((BlockHitResult) looking).getBlockPos();
             BlockState state = player.level().getBlockState(pos);
