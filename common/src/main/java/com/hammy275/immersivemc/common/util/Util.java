@@ -11,8 +11,6 @@ import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.MultiblockBlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.common.immersive.ImmersiveChecker;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.mixin.ChestBlockEntityAccessor;
@@ -217,16 +215,6 @@ public class Util {
         }
     }
 
-    public static boolean isHittingImmersive(BlockHitResult result, Level level) {
-        BlockPos pos = result.getBlockPos();
-        for (ImmersiveChecker checker : ImmersiveCheckers.CHECKERS) {
-            if (checker.apply(pos, level)) {
-                return true; // "I'm totally not crouching" if SHIFT+Right-clicking an immersive
-            }
-        }
-        return false;
-    }
-
     public static boolean hasItemInInventoryWithStackSpace(Player player, ItemStack stack) {
         for (ItemStack invItem : player.getInventory().getNonEquipmentItems()) {
             if (Util.stacksEqualBesidesCount(invItem, stack) && invItem.getCount() < invItem.getMaxStackSize()) {
@@ -409,7 +397,7 @@ public class Util {
     }
 
     public static void useLever(Player player, BlockPos pos) {
-        if (ImmersiveCheckers.isLever(pos, player.level())) {
+        if (ImmersiveHandlers.leverHandler.isValidBlock(pos, player.level())) {
             BlockState lever = player.level().getBlockState(pos);
             lever.useWithoutItem(player.level(), player,
                     new BlockHitResult(Vec3.atCenterOf(pos), Direction.NORTH, pos, true));

@@ -3,7 +3,6 @@ package com.hammy275.immersivemc.common.immersive.handler;
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
@@ -12,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.RepeaterBlock;
 
 public class RepeaterHandler implements BlockBasedImmersiveHandler<NullStorage> {
     @Override
@@ -36,7 +36,7 @@ public class RepeaterHandler implements BlockBasedImmersiveHandler<NullStorage> 
 
     @Override
     public boolean isValidBlock(BlockPos pos, Level level) {
-        return ImmersiveCheckers.isRepeater(pos, level);
+        return level.getBlockState(pos).getBlock() instanceof RepeaterBlock;
     }
 
     @Override
