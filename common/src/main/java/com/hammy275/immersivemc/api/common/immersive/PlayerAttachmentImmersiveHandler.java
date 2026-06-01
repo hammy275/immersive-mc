@@ -7,10 +7,12 @@ public non-sealed interface PlayerAttachmentImmersiveHandler<S extends NetworkSt
 
     /**
      * Creates inventory contents on the server to send to clients.
-     * @param player Player whose inventory contents are being made.
+     *
+     * @param tracker Player who's receiving the inventory contents.
+     * @param owner Player whose inventory contents are being made.
      * @return A NetworkStorage to be sent over the network.
      */
-    S makeInventoryContents(ServerPlayer player);
+    S makeInventoryContents(ServerPlayer tracker, ServerPlayer owner);
 
     /**
      * @return A new instance of the same type of NetworkStorage as made with {@link #makeInventoryContents}, but in an
@@ -23,20 +25,22 @@ public non-sealed interface PlayerAttachmentImmersiveHandler<S extends NetworkSt
      *
      * @param slot Slot being swapped with in this immersive.
      * @param hand Player's hand being swapped with.
-     * @param player Player who is swapping.
-     * @param amount An object representing the amount of items to swap. Use
-     *               {@link ItemSwapAmount#getNumItemsToSwap()}, passing in the item stack size of the item in the
-     *               player's hand to get the amount of items to swap.
+     * @param owner Player whose inventory is being swapped with.
+     * @param tracker Player who's performing the swapping.
+     * @param amount  An object representing the amount of items to swap. Use
+     *                {@link ItemSwapAmount#getNumItemsToSwap()}, passing in the item stack size of the item in the
+     *                player's hand to get the amount of items to swap.
      */
-    void swap(int slot, InteractionHand hand, ServerPlayer player, ItemSwapAmount amount);
+    void swap(int slot, InteractionHand hand, ServerPlayer owner, ServerPlayer tracker, ItemSwapAmount amount);
 
     /**
      * Function to determine whether the Immersive's data has changed its contents to sync to the client since its last
      * sync. Dirtiness is addressed every tick, so for every tick, you should clear ALL flags used for dirtiness.
-     * @param player Player to potentially send new data to.
+     * @param tracker Player to potentially send new data to.
+     * @param owner Player whose data may be dirty.
      * @return Whether this Immersive for the provided player has changed since it was last synced.
      */
-    boolean isDirtyForClientSync(ServerPlayer player);
+    boolean isDirtyForClientSync(ServerPlayer tracker, ServerPlayer owner);
 
     /**
      * Function called whenever this immersive is no longer being tracked. Only ever called server-side.

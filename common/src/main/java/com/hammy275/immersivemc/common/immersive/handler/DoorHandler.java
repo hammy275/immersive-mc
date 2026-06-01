@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class DoorHandler implements BlockBasedImmersiveHandler<NullStorage> {
     @Override
-    public NullStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public NullStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
         return new NullStorage();
     }
 
@@ -26,12 +26,12 @@ public class DoorHandler implements BlockBasedImmersiveHandler<NullStorage> {
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
         // Doors don't swap
     }
 
     @Override
-    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
+    public boolean isDirtyForClientSync(ServerPlayer tracker, BlockPos pos) {
         return false;
     }
 

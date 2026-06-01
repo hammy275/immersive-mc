@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Player;
 
 public class HitboxesHandler implements PlayerAttachmentImmersiveHandler<NullStorage> {
     @Override
-    public NullStorage makeInventoryContents(ServerPlayer player) {
+    public NullStorage makeInventoryContents(ServerPlayer tracker, ServerPlayer owner) {
         return new NullStorage();
     }
 
@@ -21,12 +21,12 @@ public class HitboxesHandler implements PlayerAttachmentImmersiveHandler<NullSto
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, ServerPlayer player, ItemSwapAmount amount) {
+    public void swap(int slot, InteractionHand hand, ServerPlayer owner, ServerPlayer tracker, ItemSwapAmount amount) {
 
     }
 
     @Override
-    public boolean isDirtyForClientSync(ServerPlayer player) {
+    public boolean isDirtyForClientSync(ServerPlayer tracker, ServerPlayer owner) {
         return false;
     }
 

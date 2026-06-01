@@ -19,16 +19,16 @@ public class VisualWorkbenchHandler extends TCCraftingStationHandler {
     private static final String visualWorkbenchClass = "fuzs.visualworkbench.world.level.block.CraftingTableWithInventoryBlock";
 
     @Override
-    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        return DirtyTracker.isDirty(player.level(), pos);
+    public boolean isDirtyForClientSync(ServerPlayer tracker, BlockPos pos) {
+        return DirtyTracker.isDirty(tracker.level(), pos);
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        super.swap(slot, hand, pos, player, amount);
-        BaseContainerBlockEntity table = (BaseContainerBlockEntity) player.level().getBlockEntity(pos);
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
+        super.swap(slot, hand, pos, tracker, amount);
+        BaseContainerBlockEntity table = (BaseContainerBlockEntity) tracker.level().getBlockEntity(pos);
         // Menu creation is the way to update the client of the changed block entity state.
-        table.createMenu(-1, player.getInventory(), player);
+        table.createMenu(-1, tracker.getInventory(), tracker);
     }
 
     @Override

@@ -9,8 +9,8 @@ import net.minecraft.server.level.ServerPlayer;
 public abstract class ContainerHandler<S extends NetworkStorage> implements BlockBasedImmersiveHandler<S> {
 
     @Override
-    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        return DirtyTracker.isDirty(player.level(), pos);
+    public boolean isDirtyForClientSync(ServerPlayer tracker, BlockPos pos) {
+        return DirtyTracker.isDirty(tracker.level(), pos);
     }
 
     @Override

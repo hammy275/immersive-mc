@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 
 public class JukeboxHandler implements BlockBasedImmersiveHandler<NullStorage> {
     @Override
-    public NullStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public NullStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
         return new NullStorage();
     }
 
@@ -30,21 +30,21 @@ public class JukeboxHandler implements BlockBasedImmersiveHandler<NullStorage> {
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        if (player.level().getBlockEntity(pos) instanceof JukeboxBlockEntity jukebox) {
-            ItemStack playerItem = player.getItemInHand(hand);
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
+        if (tracker.level().getBlockEntity(pos) instanceof JukeboxBlockEntity jukebox) {
+            ItemStack playerItem = tracker.getItemInHand(hand);
             if (jukebox.getTheItem().isEmpty() &&
                     playerItem.has(DataComponents.JUKEBOX_PLAYABLE)) {
                 jukebox.setTheItem(playerItem.copyWithCount(1));
                 playerItem.shrink(1);
-                player.awardStat(Stats.PLAY_RECORD);
-                VRRumble.rumbleIfVR(player, hand, CommonConstants.vibrationTimeWorldInteraction);
+                tracker.awardStat(Stats.PLAY_RECORD);
+                VRRumble.rumbleIfVR(tracker, hand, CommonConstants.vibrationTimeWorldInteraction);
             }
         }
     }
 
     @Override
-    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
+    public boolean isDirtyForClientSync(ServerPlayer tracker, BlockPos pos) {
         return false; // Jukebox doesn't have data to sync to the client.
     }
 

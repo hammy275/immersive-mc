@@ -17,8 +17,8 @@ public class HopperHandler extends ChestLikeHandler<ListOfItemsStorage> {
     }
 
     @Override
-    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return makeBaseInventoryContents(player, pos);
+    public ListOfItemsStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
+        return makeBaseInventoryContents(tracker, pos);
     }
 
     @Override

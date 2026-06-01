@@ -17,11 +17,11 @@ public non-sealed interface BlockBasedImmersiveHandler<S extends NetworkStorage>
 
     /**
      * Creates inventory contents on the server to send to clients.
-     * @param player Player being sent to.
+     * @param tracker Player being sent to.
      * @param pos Position of the block being sent about.
      * @return A NetworkStorage to be sent over the network.
      */
-    S makeInventoryContents(ServerPlayer player, BlockPos pos);
+    S makeInventoryContents(ServerPlayer tracker, BlockPos pos);
 
     /**
      * @return A new instance of the same type of NetworkStorage as made with {@link #makeInventoryContents}, but in an
@@ -35,21 +35,21 @@ public non-sealed interface BlockBasedImmersiveHandler<S extends NetworkStorage>
      * @param slot Slot being swapped with in this immersive.
      * @param hand Player's hand being swapped with.
      * @param pos Position of block being swapped with.
-     * @param player Player who is swapping.
+     * @param tracker Player who is swapping.
      * @param amount An object representing the amount of items to swap. Use
      *               {@link ItemSwapAmount#getNumItemsToSwap()}, passing in the item stack size of the item in the
      *               player's hand to get the amount of items to swap.
      */
-    void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount);
+    void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount);
 
     /**
      * Function to determine whether the block has changed its contents to sync to the client since its last sync.
      * Dirtiness is addressed every tick, so for every tick, you should clear ALL flags used for dirtiness.
-     * @param player Player to potentially send new data to.
+     * @param tracker Player to potentially send new data to.
      * @param pos Position of block to check.
      * @return Whether the given block has changed since it was last synced to the client
      */
-    boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos);
+    boolean isDirtyForClientSync(ServerPlayer tracker, BlockPos pos);
 
     /**
      * @param pos Position to check.
@@ -60,8 +60,8 @@ public non-sealed interface BlockBasedImmersiveHandler<S extends NetworkStorage>
 
     /**
      * Function called whenever this immersive is no longer being tracked. Only ever called server-side.
-     * @param player Player who is no longer tracking this immersive.
+     * @param tracker Player who is no longer tracking this immersive.
      * @param pos Position of the block no longer being tracked.
      */
-    default void onStopTracking(ServerPlayer player, BlockPos pos) {}
+    default void onStopTracking(ServerPlayer tracker, BlockPos pos) {}
 }

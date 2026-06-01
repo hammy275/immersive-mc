@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Player;
 
 public class BagHandler implements PlayerAttachmentImmersiveHandler<ListOfItemsStorage> {
     @Override
-    public ListOfItemsStorage makeInventoryContents(ServerPlayer player) {
+    public ListOfItemsStorage makeInventoryContents(ServerPlayer tracker, ServerPlayer owner) {
         return new ListOfItemsStorage();
     }
 
@@ -22,12 +22,12 @@ public class BagHandler implements PlayerAttachmentImmersiveHandler<ListOfItemsS
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, ServerPlayer player, ItemSwapAmount amount) {
+    public void swap(int slot, InteractionHand hand, ServerPlayer owner, ServerPlayer tracker, ItemSwapAmount amount) {
 
     }
 
     @Override
-    public boolean isDirtyForClientSync(ServerPlayer player) {
+    public boolean isDirtyForClientSync(ServerPlayer tracker, ServerPlayer owner) {
         return false;
     }
 

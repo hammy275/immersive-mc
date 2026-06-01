@@ -18,12 +18,12 @@ import net.minecraft.world.level.block.entity.LecternBlockEntity;
 
 public class LecternHandler implements BlockBasedImmersiveHandler<LecternData<CommonBookData>> {
     @Override
-    public LecternData<CommonBookData> makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        LecternData<CommonBookData> storage = SharedNetworkStorages.instance().getOrCreate(player.level(), pos, this);
-        LecternBlockEntity lectern = (LecternBlockEntity) player.level().getBlockEntity(pos);
+    public LecternData<CommonBookData> makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
+        LecternData<CommonBookData> storage = SharedNetworkStorages.instance().getOrCreate(tracker.level(), pos, this);
+        LecternBlockEntity lectern = (LecternBlockEntity) tracker.level().getBlockEntity(pos);
         storage.setBook(lectern.getBook(), lectern);
         storage.pos = pos;
-        storage.level = player.level();
+        storage.level = tracker.level();
         return storage;
     }
 
@@ -33,8 +33,8 @@ public class LecternHandler implements BlockBasedImmersiveHandler<LecternData<Co
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        LecternData<CommonBookData> storage = SharedNetworkStorages.instance().get(player.level(), pos, this);
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
+        LecternData<CommonBookData> storage = SharedNetworkStorages.instance().get(tracker.level(), pos, this);
         if (storage != null && !storage.book.isEmpty()) {
             if (slot == 0) {
                 storage.bookData.lastPage();
@@ -45,9 +45,9 @@ public class LecternHandler implements BlockBasedImmersiveHandler<LecternData<Co
     }
 
     @Override
-    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        LecternData<CommonBookData> storage = SharedNetworkStorages.instance().get(player.level(), pos, this);
-        return DirtyTracker.isDirty(player.level(), pos) ||
+    public boolean isDirtyForClientSync(ServerPlayer tracker, BlockPos pos) {
+        LecternData<CommonBookData> storage = SharedNetworkStorages.instance().get(tracker.level(), pos, this);
+        return DirtyTracker.isDirty(tracker.level(), pos) ||
                 storage != null && storage.bookData.isDirty();
     }
 
