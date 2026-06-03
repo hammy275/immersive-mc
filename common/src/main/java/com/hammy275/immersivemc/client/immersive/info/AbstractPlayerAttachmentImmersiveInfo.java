@@ -13,6 +13,6 @@ public class AbstractPlayerAttachmentImmersiveInfo extends AbstractImmersiveInfo
 
     @Override
     public AbstractClientPlayer getOwner() {
-        return null;
+        return owner;
     }
 }

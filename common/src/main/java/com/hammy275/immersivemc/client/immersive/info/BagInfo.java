@@ -22,6 +22,7 @@ public class BagInfo extends AbstractPlayerAttachmentImmersiveInfo {
     public int argb = 0;
     public int topRow = 0;
     public int light = -1;
+    public boolean clearLastPos = false;
 
     public BagInfo(AbstractClientPlayer owner) {
         super(owner);
@@ -42,6 +43,7 @@ public class BagInfo extends AbstractPlayerAttachmentImmersiveInfo {
         if (++this.topRow > 2) {
             this.topRow = 0;
         }
+        clearLastPos = true;
     }
 
     public int getMidRow() {

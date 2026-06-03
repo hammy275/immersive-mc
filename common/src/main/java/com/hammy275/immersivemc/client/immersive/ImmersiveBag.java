@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
+import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.PlayerAttachmentImmersive;
@@ -11,6 +12,7 @@ import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.compat.ipn.IPN;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BagInfo;
+import com.hammy275.immersivemc.client.immersive.info.HitboxItemPair;
 import com.hammy275.immersivemc.client.model.BackpackBundleModel;
 import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
 import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
@@ -182,6 +184,14 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         }
 
         info.setHitbox(31, OBBFactory.instance().create(AABB.ofSize(centerCraftingPos.add(upVec.scale(0.125)), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, info.handRoll));
+
+        info.light = ImmersiveClientLogicHelpers.instance().getLight(BlockPos.containing(backpackData.getPos()));
+
+        if (info.clearLastPos) {
+            for (HitboxItemPair hitbox : info.hitboxes) {
+                hitbox.lastPos = null;
+            }
+        }
     }
 
     @Override

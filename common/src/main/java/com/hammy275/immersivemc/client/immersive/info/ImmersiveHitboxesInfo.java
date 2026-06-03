@@ -8,6 +8,8 @@ import com.hammy275.immersivemc.common.api_impl.hitbox.HitboxInfoImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +22,9 @@ public class ImmersiveHitboxesInfo implements PlayerAttachmentImmersiveInfo {
     public int slotHovered = -1;
     public long tickCount;
 
-    public ImmersiveHitboxesInfo() { }
+    public ImmersiveHitboxesInfo() {
+        hitboxes.add(new HitboxInfoImpl(AABB.ofSize(Vec3.ZERO, 0, 0, 0), false));
+    }
 
     @Override
     public AbstractClientPlayer getOwner() {

@@ -4,8 +4,7 @@ import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import net.minecraft.client.player.AbstractClientPlayer;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public non-sealed interface PlayerAttachmentImmersive<I extends PlayerAttachmentImmersiveInfo, R extends ImmersiveRenderState, S extends NetworkStorage>
         extends Immersive<I, R, S> {

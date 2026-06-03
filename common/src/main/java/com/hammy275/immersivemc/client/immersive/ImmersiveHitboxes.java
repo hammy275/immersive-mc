@@ -52,11 +52,15 @@ public class ImmersiveHitboxes implements PlayerAttachmentImmersive<ImmersiveHit
 
     @Override
     public int handleHitboxInteract(ImmersiveHitboxesInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
-        if (hand == InteractionHand.OFF_HAND && modifierPressed) {
+        if (hand == InteractionHand.OFF_HAND) {
             int index = hitboxIndices.get(0);
-            if (index == ImmersiveHitboxesInfo.BAG_BACK_INDEX && !ActiveConfig.active().requireTriggerForBagOpen) {
-                ClientUtil.openBag(mc.player, true);
-                return 50;
+            if (index == ImmersiveHitboxesInfo.BAG_BACK_INDEX) {
+                if (ActiveConfig.active().requireTriggerForBagOpen) {
+                    info.canOpen = true;
+                } else {
+                    ClientUtil.openBag(mc.player, true);
+                    return 50;
+                }
             }
         }
         return -1;
@@ -137,7 +141,7 @@ public class ImmersiveHitboxes implements PlayerAttachmentImmersive<ImmersiveHit
     public void render(ImmersiveHitboxesInfo.RenderState renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
         for (int i = 0; i < renderState.hitboxes.size(); i++) {
             BoundingBox hitbox = renderState.hitboxes.get(i);
-            helpers.renderHitbox(stack, hitbox, false, 0f, 0f, i == renderState.slotHovered ? 1f : 0f);
+            helpers.renderHitbox(stack, hitbox, false, i == renderState.slotHovered ? 0f : 1f, i == renderState.slotHovered ? 0f : 1f, 1f);
         }
     }
 

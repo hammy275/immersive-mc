@@ -174,7 +174,12 @@ public class ClientUtil {
                     if (doRumble) {
                         VRRumble.rumbleIfVR(Minecraft.getInstance().player, ActiveConfig.active().swapBagHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, CommonConstants.vibrationTimePlayerActionAlert);
                     }
-                    Immersives.immersiveBag.getTrackedObjects().add(new BagInfo(Minecraft.getInstance().player));
+                    BagInfo alreadyOpenBagInfo = Immersives.immersiveBag.getLocalPlayerInfo();
+                    if (alreadyOpenBagInfo == null) {
+                        Immersives.immersiveBag.getTrackedObjects().add(new BagInfo(Minecraft.getInstance().player));
+                    } else {
+                        Immersives.immersiveBag.getTrackedObjects().remove(alreadyOpenBagInfo);
+                    }
                 } else {
                     player.sendSystemMessage(Component.translatable("message.immersivemc.not_in_vr"));
                 }
