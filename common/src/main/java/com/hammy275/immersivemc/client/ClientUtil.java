@@ -6,11 +6,13 @@ import com.hammy275.immersivemc.api.client.ImmersiveMCClientRegistration;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.BagInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRRumble;
@@ -176,9 +178,9 @@ public class ClientUtil {
                     }
                     BagInfo alreadyOpenBagInfo = Immersives.immersiveBag.getLocalPlayerInfo();
                     if (alreadyOpenBagInfo == null) {
-                        Immersives.immersiveBag.getTrackedObjects().add(new BagInfo(Minecraft.getInstance().player));
+                        ImmersiveLogicHelpers.instance().startTrackingOnServer(ImmersiveHandlers.bagHandler, Minecraft.getInstance().player);
                     } else {
-                        Immersives.immersiveBag.getTrackedObjects().remove(alreadyOpenBagInfo);
+                        ImmersiveLogicHelpers.instance().stopTrackingOnServer(ImmersiveHandlers.bagHandler, Minecraft.getInstance().player);
                     }
                 } else {
                     player.sendSystemMessage(Component.translatable("message.immersivemc.not_in_vr"));

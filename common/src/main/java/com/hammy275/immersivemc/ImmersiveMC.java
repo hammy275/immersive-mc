@@ -134,5 +134,7 @@ public class ImmersiveMC {
                 FetchAttachmentInventoryPacket::decode, FetchAttachmentInventoryPacket::handle);
         Network.INSTANCE.register(AttachmentSwapPacket.class, AttachmentSwapPacket::encode,
                 AttachmentSwapPacket::decode, AttachmentSwapPacket::handle);
+        Network.INSTANCE.register(StopTrackPacketWithOwner.class, StopTrackPacketWithOwner::encode,
+                StopTrackPacketWithOwner::decode, StopTrackPacketWithOwner::handle);
     }
 }

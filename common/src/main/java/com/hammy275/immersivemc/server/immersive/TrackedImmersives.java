@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHa
 import com.hammy275.immersivemc.common.immersive.handler.AfterClientSyncHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.packet.StopTrackPacketWithOwner;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
@@ -81,8 +82,8 @@ public class TrackedImmersives {
         while (iterator.hasNext()) {
             TrackedAttachmentImmersiveData<?> data = iterator.next();
             if (data.handler() == handler && data.owner() == owner) {
+                Network.INSTANCE.sendToPlayer(data.tracker(), new StopTrackPacketWithOwner(handler.getID(), owner.getUUID()));
                 iterator.remove();
-                return;
             }
         }
     }
