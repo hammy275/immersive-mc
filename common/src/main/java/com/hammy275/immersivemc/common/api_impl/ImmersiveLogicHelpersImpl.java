@@ -84,6 +84,9 @@ public class ImmersiveLogicHelpersImpl implements ImmersiveLogicHelpers {
 
     @Override
     public void startTrackingOnServer(PlayerAttachmentImmersiveHandler<?> handler, Player player) throws IllegalArgumentException {
+        if (handler.clientAuthoritative()) {
+            throw new IllegalArgumentException(handler.getID() + " is a client-authoritative handler, it cannot call startTrackingOnServer().");
+        }
         if (player instanceof ServerPlayer serverPlayer) {
             TrackedImmersives.maybeTrackImmersive(serverPlayer, serverPlayer, null);
         } else {
@@ -93,6 +96,9 @@ public class ImmersiveLogicHelpersImpl implements ImmersiveLogicHelpers {
 
     @Override
     public void stopTrackingOnServer(PlayerAttachmentImmersiveHandler<?> handler, Player player) throws IllegalArgumentException {
+        if (handler.clientAuthoritative()) {
+            throw new IllegalArgumentException(handler.getID() + " is a client-authoritative handler, it cannot call stopTrackingOnServer().");
+        }
         if (player instanceof ServerPlayer serverPlayer) {
             TrackedImmersives.stopTracking(handler, serverPlayer);
         } else {
