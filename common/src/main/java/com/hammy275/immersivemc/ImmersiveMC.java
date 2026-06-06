@@ -100,10 +100,10 @@ public class ImmersiveMC {
     }
 
     protected static void networkSetup() {
-        Network.INSTANCE.register(SwapPacket.class, SwapPacket::encode,
-                SwapPacket::decode, SwapPacket::handle);
-        Network.INSTANCE.register(FetchInventoryPacket.class, FetchInventoryPacket::encode,
-                FetchInventoryPacket::decode, FetchInventoryPacket::handle);
+        Network.INSTANCE.register(BlockSwapPacket.class, BlockSwapPacket::encode,
+                BlockSwapPacket::decode, BlockSwapPacket::handle);
+        Network.INSTANCE.register(FetchBlockInventoryPacket.class, FetchBlockInventoryPacket::encode,
+                FetchBlockInventoryPacket::decode, FetchBlockInventoryPacket::handle);
         Network.INSTANCE.register(ChestShulkerOpenPacket.class, ChestShulkerOpenPacket::encode,
                 ChestShulkerOpenPacket::decode, ChestShulkerOpenPacket::handle);
         Network.INSTANCE.register(GrabItemPacket.class, GrabItemPacket::encode,
@@ -112,8 +112,6 @@ public class ImmersiveMC {
                 ConfigSyncPacket::decode, ConfigSyncPacket::handle);
         Network.INSTANCE.register(SetRepeaterPacket.class, SetRepeaterPacket::encode,
                 SetRepeaterPacket::decode, SetRepeaterPacket::handle);
-        Network.INSTANCE.register(FetchBackpackStoragePacket.class, FetchBackpackStoragePacket::encode,
-                FetchBackpackStoragePacket::decode, FetchBackpackStoragePacket::handle);
         Network.INSTANCE.register(BeaconConfirmPacket.class, BeaconConfirmPacket::encode,
                 BeaconConfirmPacket::decode, BeaconConfirmPacket::handle);
         Network.INSTANCE.register(ThrowPacket.class, ThrowPacket::encode,
@@ -130,6 +128,11 @@ public class ImmersiveMC {
                 PageTurnPacket::decode, PageTurnPacket::handle);
         Network.INSTANCE.register(SelfHandlingNetworkStorageSyncPacket.class, SelfHandlingNetworkStorageSyncPacket::encode,
                 SelfHandlingNetworkStorageSyncPacket::decode, SelfHandlingNetworkStorageSyncPacket::handle);
-
+        Network.INSTANCE.register(StartStopTrackPacket.class, StartStopTrackPacket::encode,
+                StartStopTrackPacket::decode, StartStopTrackPacket::handle);
+        Network.INSTANCE.register(FetchAttachmentInventoryPacket.class, FetchAttachmentInventoryPacket::encode,
+                FetchAttachmentInventoryPacket::decode, FetchAttachmentInventoryPacket::handle);
+        Network.INSTANCE.register(AttachmentSwapPacket.class, AttachmentSwapPacket::encode,
+                AttachmentSwapPacket::decode, AttachmentSwapPacket::handle);
     }
 }

@@ -1,10 +1,11 @@
 package com.hammy275.immersivemc.common.network;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
-import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.*;
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
+import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.BagInfo;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
@@ -14,10 +15,12 @@ import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.DisconnectionDetails;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -26,8 +29,8 @@ import java.util.*;
 public class NetworkClientHandlers {
 
     public static void checkHandlerMatch(List<Identifier> serverHandlerIDs) {
-        Map<Identifier, BlockBasedImmersiveHandler<?>> clientHandlers = new HashMap<>();
-        ImmersiveHandlers.HANDLERS.forEach((handler) -> clientHandlers.put(handler.getID(), handler));
+        Map<Identifier, ImmersiveHandler> clientHandlers = new HashMap<>();
+        ImmersiveHandlers.ALL_HANDLERS.forEach((handler) -> clientHandlers.put(handler.getID(), handler));
 
         List<Identifier> serverOnly = serverHandlerIDs.stream().filter((id) -> !clientHandlers.containsKey(id)).toList();
         List<Identifier> clientOnly = clientHandlers.entrySet().stream().filter((entry) ->
@@ -84,9 +87,27 @@ public class NetworkClientHandlers {
     }
 
     @SuppressWarnings("unchecked")
-    private static <I extends BlockBasedImmersiveInfo, NS extends NetworkStorage> void processStorageFromNetwork(BlockBasedImmersive<?, ?, ?> immersive,
+    public static <NS extends NetworkStorage, I extends PlayerAttachmentImmersiveInfo> void handleReceiveInvData(NS storage, UUID ownerUUID, PlayerAttachmentImmersiveHandler<NS> handler) {
+        Player ownerPlayer = Minecraft.getInstance().player.level().getPlayerByUUID(ownerUUID);
+        if (ownerPlayer instanceof AbstractClientPlayer owner) {
+            for (PlayerAttachmentImmersive<?, ?, ?> immersive : Immersives.ATTACHMENT_IMMERSIVES) {
+                PlayerAttachmentImmersiveInfo info = immersive.getTrackedObjects().stream()
+                        .filter(i -> i.getOwner() == owner).findAny().orElse(null);
+                if (info == null) {
+                    PlayerAttachmentImmersive<I, ?, ?> castImmersive = (PlayerAttachmentImmersive<I, ?, ?>) immersive;
+                    I newInfo = castImmersive.buildInfo(owner);
+                    castImmersive.getTrackedObjects().add(newInfo);
+                    info = newInfo;
+                }
+                processStorageFromNetwork(immersive, info, storage);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <I extends ImmersiveInfo, NS extends NetworkStorage> void processStorageFromNetwork(Immersive<?, ?, ?> immersive,
                                                                                                                  I info, NS storage) {
-        BlockBasedImmersive<I, ?, NS> immersiveCast = (BlockBasedImmersive<I, ?, NS>) immersive;
+        Immersive<I, ?, NS> immersiveCast = (Immersive<I, ?, NS>) immersive;
         immersiveCast.processStorageFromNetwork(info, storage);
     }
 

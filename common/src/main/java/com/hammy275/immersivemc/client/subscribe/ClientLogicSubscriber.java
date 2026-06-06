@@ -250,12 +250,17 @@ public class ClientLogicSubscriber {
         if (singleton.isVROnly() && !VRVerify.clientInVR()) {
             return;
         }
-        // For block-based ones, attempt to remove if the blocks no longer match
         if (singleton instanceof BlockBasedImmersive<?, ?, ?> blockBased) {
+            // For block-based ones, attempt to remove if the blocks no longer match or if too far away
             blockBased.getTrackedObjects().removeIf((info) -> {
                 Set<BlockPos> positions = Util.getValidBlocks(blockBased.getHandler(), info.getBlockPosition(), Minecraft.getInstance().level);
                 return positions.isEmpty() || player.distanceToSqr(Util.average(positions)) > CommonConstants.distanceSquaredToRemoveImmersive;
             });
+        } else if (singleton instanceof PlayerAttachmentImmersive<?, ?, ?> attachment) {
+            // For player attachment ones, attempt to remove if simply too far away or if the level no longer matches
+            attachment.getTrackedObjects().removeIf(info ->
+                    player.distanceToSqr(info.getOwner().position()) > CommonConstants.distanceSquaredToRemoveAttachmentImmersive
+                            || info.getOwner().level() != player.level());
         }
 
         singleton.globalTick();

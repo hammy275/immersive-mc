@@ -5,8 +5,10 @@ import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
+import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveClientLogicHelpersImpl;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -41,7 +43,7 @@ public interface ImmersiveClientLogicHelpers extends ImmersiveLogicHelpers {
     public void setCooldown(int cooldown);
 
     /**
-     * Sends the packet to the server telling it to run
+     * Sends a packet to the server telling it to run
      * {@link BlockBasedImmersiveHandler#swap(int, InteractionHand, BlockPos, ServerPlayer, ItemSwapAmount)}
      * for the provided block at the given position. You usually should call this when a hitbox is right-clicked in your
      * Immersive.
@@ -53,6 +55,22 @@ public interface ImmersiveClientLogicHelpers extends ImmersiveLogicHelpers {
      *                        interaction.
      */
     public void sendSwapPacket(BlockPos pos, List<Integer> slots, InteractionHand hand, boolean modifierPressed);
+
+    /**
+     * Sends a packet to the server telling it to run
+     * {@link PlayerAttachmentImmersiveHandler#swap(int, InteractionHand, ServerPlayer, ServerPlayer, ItemSwapAmount)}
+     * for the provided handler with the provided owner. You usually should call this when a hitbox is right-clicked in
+     * your Immersive.
+     *
+     * @param handler The handler for the Immersive being swapped in.
+     * @param owner The owner of the Immersive to swap into.
+     * @param slots The slot numbers that the right-click is taking place for.
+     * @param hand The hand which is performing the swap.
+     * @param modifierPressed Whether the modifier key (usually the button mapped to breaking blocks) was held for the
+     *                        interaction.
+     */
+    public void sendSwapPacket(PlayerAttachmentImmersiveHandler<?> handler, AbstractClientPlayer owner,
+                               List<Integer> slots, InteractionHand hand, boolean modifierPressed);
 
     /**
      * Given the local player and the position of an immersive block, returns the best direction the block should face

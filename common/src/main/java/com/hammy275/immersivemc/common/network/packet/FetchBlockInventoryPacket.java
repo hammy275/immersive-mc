@@ -9,31 +9,31 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
-public class FetchInventoryPacket<S extends NetworkStorage> {
+public class FetchBlockInventoryPacket<S extends NetworkStorage> {
 
     public final S storage;
     public final BlockBasedImmersiveHandler<S> handler;
     public final BlockPos pos;
 
-    public FetchInventoryPacket(BlockBasedImmersiveHandler<S> handler, S storage, BlockPos pos) {
+    public FetchBlockInventoryPacket(BlockBasedImmersiveHandler<S> handler, S storage, BlockPos pos) {
         this.handler = handler;
         this.storage = storage;
         this.pos = pos;
     }
 
-    public static <NS extends NetworkStorage> void encode(FetchInventoryPacket<NS> packet, RegistryFriendlyByteBuf buffer) {
+    public static <NS extends NetworkStorage> void encode(FetchBlockInventoryPacket<NS> packet, RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos);
         buffer.writeIdentifier(packet.handler.getID());
         packet.storage.encode(buffer);
     }
 
     @SuppressWarnings("unchecked")
-    public static <NS extends NetworkStorage> FetchInventoryPacket<NS> decode(RegistryFriendlyByteBuf buffer) {
+    public static <NS extends NetworkStorage> FetchBlockInventoryPacket<NS> decode(RegistryFriendlyByteBuf buffer) {
         BlockPos pos = buffer.readBlockPos();
         BlockBasedImmersiveHandler<NS> handlerToSet = null;
         NS storage = null;
         Identifier id = buffer.readIdentifier();
-        for (BlockBasedImmersiveHandler<?> handler : ImmersiveHandlers.HANDLERS) {
+        for (BlockBasedImmersiveHandler<?> handler : ImmersiveHandlers.BLOCK_HANDLERS) {
             if (handler.getID().equals(id)) {
                 handlerToSet = (BlockBasedImmersiveHandler<NS>) handler;
                 storage = handlerToSet.getEmptyNetworkStorage();
@@ -44,10 +44,10 @@ public class FetchInventoryPacket<S extends NetworkStorage> {
         if (storage == null) {
             throw new IllegalArgumentException("ID " + id + " not found!");
         }
-        return new FetchInventoryPacket<>(handlerToSet, storage, pos);
+        return new FetchBlockInventoryPacket<>(handlerToSet, storage, pos);
     }
 
-    public static <NS extends NetworkStorage> void handle(final FetchInventoryPacket<NS> message, ServerPlayer player) {
+    public static <NS extends NetworkStorage> void handle(final FetchBlockInventoryPacket<NS> message, ServerPlayer player) {
         if (player == null) {
             NetworkClientHandlers.handleReceiveInvData(message.storage, message.pos, message.handler);
         }

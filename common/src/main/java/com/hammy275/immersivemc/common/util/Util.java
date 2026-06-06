@@ -100,7 +100,7 @@ public class Util {
             }
             return false;
         } else {
-            return TrackedImmersives.TRACKED_IMMERSIVES.stream()
+            return TrackedImmersives.TRACKED_BLOCK_IMMERSIVES.stream()
                     .anyMatch(data -> data.playerUUID.equals(player.getUUID()) && data.getPos().contains(pos));
         }
     }

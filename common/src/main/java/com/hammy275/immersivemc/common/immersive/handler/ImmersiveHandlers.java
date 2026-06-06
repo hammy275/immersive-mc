@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveMCRegistrationImpl;
 import com.hammy275.immersivemc.common.compat.IronFurnaces;
@@ -21,7 +22,9 @@ import java.util.List;
 
 public class ImmersiveHandlers {
 
-    public static final List<BlockBasedImmersiveHandler<?>> HANDLERS = new ArrayList<>();
+    public static final List<ImmersiveHandler> ALL_HANDLERS = new ArrayList<>();
+    public static final List<BlockBasedImmersiveHandler<?>> BLOCK_HANDLERS = new ArrayList<>();
+    public static final List<PlayerAttachmentImmersiveHandler<?>> ATTACHMENT_HANDLERS = new ArrayList<>();
 
 
     public static final WorldStorageHandler<AnvilStorage> anvilHandler = new AnvilHandler();
@@ -52,8 +55,14 @@ public class ImmersiveHandlers {
 
     static {
         ImmersiveMCRegistrationImpl.doImmersiveRegistration((handler) -> {
-            if (!HANDLERS.contains(handler) && handler instanceof BlockBasedImmersiveHandler<?> blockHandler) {
-                HANDLERS.add(blockHandler);
+            if (!ALL_HANDLERS.contains(handler)) {
+                ALL_HANDLERS.add(handler);
+                if (handler instanceof BlockBasedImmersiveHandler<?> blockHandler) {
+                    BLOCK_HANDLERS.add(blockHandler);
+                }
+                if (handler instanceof PlayerAttachmentImmersiveHandler<?> attachmentHandler) {
+                    ATTACHMENT_HANDLERS.add(attachmentHandler);
+                }
             }
         });
     }

@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.server;
 
-import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
@@ -66,9 +66,9 @@ public class ServerSubscriber {
             ActiveConfig config = ImmersiveMCPlayerStorages.isPlayerDisabled(serverPlayer) ? ActiveConfig.DISABLED : ActiveConfig.FILE_SERVER;
             Network.INSTANCE.sendToPlayer(serverPlayer,
                     new ConfigSyncPacket(config,
-                            ImmersiveHandlers.HANDLERS.stream()
+                            ImmersiveHandlers.ALL_HANDLERS.stream()
                                     .filter((handler) -> !handler.clientAuthoritative())
-                                    .map(BlockBasedImmersiveHandler::getID)
+                                    .map(ImmersiveHandler::getID)
                                     .toList()
                     ));
         }

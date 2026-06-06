@@ -2,12 +2,17 @@ package com.hammy275.immersivemc.common.api_impl;
 
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
+import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.SwapResult;
+import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.packet.StartStopTrackPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.server.api_impl.SwapResultImpl;
+import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import com.hammy275.immersivemc.server.swap.Swap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
@@ -75,5 +80,23 @@ public class ImmersiveLogicHelpersImpl implements ImmersiveLogicHelpers {
                 new Vec3(maxX, maxY, maxZ),
                 new Vec3(minX, maxY, maxZ)
         );
+    }
+
+    @Override
+    public void startTrackingOnServer(PlayerAttachmentImmersiveHandler<?> handler, Player player) throws IllegalArgumentException {
+        if (player instanceof ServerPlayer serverPlayer) {
+            TrackedImmersives.maybeTrackImmersive(serverPlayer, serverPlayer, null);
+        } else {
+            Network.INSTANCE.sendToServer(new StartStopTrackPacket(handler.getID(), false));
+        }
+    }
+
+    @Override
+    public void stopTrackingOnServer(PlayerAttachmentImmersiveHandler<?> handler, Player player) throws IllegalArgumentException {
+        if (player instanceof ServerPlayer serverPlayer) {
+            TrackedImmersives.stopTracking(handler, serverPlayer);
+        } else {
+            Network.INSTANCE.sendToServer(new StartStopTrackPacket(handler.getID(), true));
+        }
     }
 }

@@ -7,7 +7,6 @@ import com.hammy275.immersivemc.api.client.immersive.PlayerAttachmentImmersive;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
-import com.hammy275.immersivemc.api.common.immersive.SwapMode;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.compat.ipn.IPN;
 import com.hammy275.immersivemc.client.config.ClientConstants;
@@ -20,12 +19,7 @@ import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
-import com.hammy275.immersivemc.common.network.Network;
-import com.hammy275.immersivemc.common.network.packet.FetchBackpackStoragePacket;
-import com.hammy275.immersivemc.common.network.packet.SwapPacket;
-import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VR;
-import com.hammy275.immersivemc.server.swap.Swap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
@@ -38,7 +32,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
@@ -79,18 +72,12 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
 
     @Override
     public int handleHitboxInteract(BagInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
-        int slot = hitboxIndices.get(0);
-        if (slot <= 26) { // Inventory handle
-            Inventory inventory = player.getInventory();
-            if (IPN.ipnCompat.available() && !Util.stacksEqualBesidesCount(inventory.getItem(slot + 9), inventory.getItem(inventory.getSelectedSlot()))) {
-                IPN.ipnCompat.doInventorySwap(slot + 9, inventory.getSelectedSlot());
-            } else {
-                Network.INSTANCE.sendToServer(new SwapPacket(BlockPos.ZERO, List.of(slot + 9), InteractionHand.MAIN_HAND, SwapMode.SINGLE, SwapPacket.SwapDestination.INVENTORY));
-                Swap.handleInventorySwap(player, slot + 9, InteractionHand.MAIN_HAND); // Do swap on both sides
+        if (IPN.ipnCompat.available()) {
+            for (int slot : hitboxIndices) {
+                IPN.ipnCompat.doInventorySwap(slot + 9, player.getInventory().getSelectedSlot());
             }
         } else {
-            Network.INSTANCE.sendToServer(new SwapPacket(BlockPos.ZERO, List.of(slot), InteractionHand.MAIN_HAND, SwapMode.SINGLE, SwapPacket.SwapDestination.BAG_CRAFTING));
-            Network.INSTANCE.sendToServer(new FetchBackpackStoragePacket());
+            ImmersiveClientLogicHelpers.instance().sendSwapPacket(getHandler(), player, hitboxIndices, hand, modifierPressed);
         }
         return 12;
     }
@@ -202,7 +189,7 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
 
     @Override
     public boolean isInputHitbox(BagInfo info, int hitboxIndex) {
-        return hitboxIndex < 27;
+        return hitboxIndex < 31;
     }
 
     @Override
@@ -268,7 +255,9 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
 
     @Override
     public void processStorageFromNetwork(BagInfo info, ListOfItemsStorage storage) {
-
+        for (int i = 0; i <= 31; i++) {
+            info.hitboxes.get(i).item = storage.getItems().get(i);
+        }
     }
 
     @Override
