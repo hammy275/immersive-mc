@@ -36,7 +36,7 @@ public class ChestHandler extends ChestLikeHandler<ListOfItemsStorage>
             ListOfItemsStorage storage = makeBaseInventoryContents(player, pos);
             ChestBlockEntity otherChest = Util.getOtherChest(cbe);
             if (otherChest != null) {
-                ListOfItemsStorage otherStorage = makeBaseInventoryContents(player, pos);
+                ListOfItemsStorage otherStorage = makeBaseInventoryContents(player, otherChest.getBlockPos());
                 storage.getItems().addAll(otherStorage.getItems());
             }
             return storage;
