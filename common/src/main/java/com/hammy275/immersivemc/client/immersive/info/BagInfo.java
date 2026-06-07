@@ -73,6 +73,8 @@ public class BagInfo extends AbstractPlayerAttachmentImmersiveInfo {
         public float handRoll;
         public int argb;
         public long tickCount;
+        public int slotHovered;
+        public boolean ownedByLocalPlayer;
 
         @Override
         public List<BoundingBox> hitboxes() {
@@ -81,12 +83,12 @@ public class BagInfo extends AbstractPlayerAttachmentImmersiveInfo {
 
         @Override
         public long ticksExisted() {
-            return 0;
+            return tickCount;
         }
 
         @Override
         public boolean isSlotHovered(int slot) {
-            return false;
+            return slotHovered == slot;
         }
     }
 }

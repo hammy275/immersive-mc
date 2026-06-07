@@ -89,13 +89,20 @@ public class TrackedImmersives {
     }
 
     public static void clearForPlayer(ServerPlayer player) {
-        // Only clears block-based. Attachment based ones clear themselves.
-        Iterator<TrackedBlockImmersiveData<?>> dataIterator = TRACKED_BLOCK_IMMERSIVES.iterator();
-        while (dataIterator.hasNext()) {
-            TrackedBlockImmersiveData<?> data = dataIterator.next();
+        Iterator<TrackedBlockImmersiveData<?>> blockDataIterator = TRACKED_BLOCK_IMMERSIVES.iterator();
+        while (blockDataIterator.hasNext()) {
+            TrackedBlockImmersiveData<?> data = blockDataIterator.next();
             if (data.playerUUID.equals(player.getUUID())) {
                 data.getHandler().onStopTracking(player, data.getPos().iterator().next());
-                dataIterator.remove();
+                blockDataIterator.remove();
+            }
+        }
+        Iterator<TrackedAttachmentImmersiveData<?>> attachmentDataIterator = TRACKED_ATTACHMENT_IMMERSIVES.iterator();
+        while (attachmentDataIterator.hasNext()) {
+            TrackedAttachmentImmersiveData<?> data = attachmentDataIterator.next();
+            if (data.tracker() == player) {
+                data.handler().onStopTracking(data.tracker(), data.owner());
+                attachmentDataIterator.remove();
             }
         }
     }

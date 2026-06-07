@@ -20,6 +20,7 @@ import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.vr.VR;
+import com.hammy275.immersivemc.server.swap.Swap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
@@ -72,18 +73,26 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
 
     @Override
     public int handleHitboxInteract(BagInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
-        if (IPN.ipnCompat.available()) {
-            for (int slot : hitboxIndices) {
-                IPN.ipnCompat.doInventorySwap(slot + 9, player.getInventory().getSelectedSlot());
+        int firstSlot = hitboxIndices.get(0);
+        if (firstSlot < 27) {
+            if (IPN.ipnCompat.available()) {
+                IPN.ipnCompat.doInventorySwap(firstSlot + 9, player.getInventory().getSelectedSlot());
+            } else {
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(getHandler(), player, List.of(firstSlot), hand, modifierPressed);
+                Swap.handleInventorySwap(player, firstSlot, hand);
+
             }
         } else {
-            ImmersiveClientLogicHelpers.instance().sendSwapPacket(getHandler(), player, hitboxIndices, hand, modifierPressed);
+            ImmersiveClientLogicHelpers.instance().sendSwapPacket(getHandler(), player,
+                    hitboxIndices.stream().filter(slot -> slot >= 27).toList(), hand, modifierPressed);
         }
         return 12;
     }
 
     @Override
     public void tick(BagInfo info) {
+        info.tick();
+
         VRPose vrPose = VR.ClientAPI.getPreTickWorldPose();
         VRBodyPartData backpackData = vrPose.getHand(getBagHand());
         info.handPos = backpackData.getPos();
@@ -172,6 +181,10 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
 
         info.setHitbox(31, OBBFactory.instance().create(AABB.ofSize(centerCraftingPos.add(upVec.scale(0.125)), 0.1f, 0.1f, 0.1f), info.handPitch, info.handYaw, info.handRoll));
 
+        for (int i = 0; i < 27; i++) {
+            info.hitboxes.get(i).item = Minecraft.getInstance().player.getInventory().getItem(i + 9);
+        }
+
         info.light = ImmersiveClientLogicHelpers.instance().getLight(BlockPos.containing(backpackData.getPos()));
 
         if (info.clearLastPos) {
@@ -200,7 +213,8 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
     @Override
     public void render(BagInfo.RenderState renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
         boolean leftHanded = leftHanded();
-        for (int i = 0; i <= 31; i++) {
+        int start = renderState.ownedByLocalPlayer ? 0 : 27;
+        for (int i = start; i <= 31; i++) {
             helpers.renderItemWithRenderState(renderState.items.get(i), stack, ClientConstants.itemScaleSizeBackpack,
                     true, renderState.light, renderState, true, i, null, null, null);
         }
@@ -255,8 +269,8 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
 
     @Override
     public void processStorageFromNetwork(BagInfo info, ListOfItemsStorage storage) {
-        for (int i = 0; i <= 31; i++) {
-            info.hitboxes.get(i).item = storage.getItems().get(i);
+        for (int i = 0; i <= 4; i++) {
+            info.hitboxes.get(i + 27).item = storage.getItems().get(i);
         }
     }
 
@@ -281,6 +295,8 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         renderState.handRoll = info.handRoll;
         renderState.argb = info.argb;
         renderState.tickCount = info.getTicksExisted();
+        renderState.slotHovered = info.getSlotHovered(0);
+        renderState.ownedByLocalPlayer = info.ownerIsLocalPlayer();
     }
 
     public static int getBackpackColor() {

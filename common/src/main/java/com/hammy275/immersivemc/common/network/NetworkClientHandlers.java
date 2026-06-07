@@ -90,17 +90,18 @@ public class NetworkClientHandlers {
     public static <NS extends NetworkStorage, I extends PlayerAttachmentImmersiveInfo> void handleReceiveInvData(NS storage, UUID ownerUUID, PlayerAttachmentImmersiveHandler<NS> handler) {
         Player ownerPlayer = Minecraft.getInstance().player.level().getPlayerByUUID(ownerUUID);
         if (ownerPlayer instanceof AbstractClientPlayer owner) {
-            for (PlayerAttachmentImmersive<?, ?, ?> immersive : Immersives.ATTACHMENT_IMMERSIVES) {
-                PlayerAttachmentImmersiveInfo info = immersive.getTrackedObjects().stream()
-                        .filter(i -> i.getOwner() == owner).findAny().orElse(null);
-                if (info == null) {
-                    PlayerAttachmentImmersive<I, ?, ?> castImmersive = (PlayerAttachmentImmersive<I, ?, ?>) immersive;
-                    I newInfo = castImmersive.buildInfo(owner);
-                    castImmersive.getTrackedObjects().add(newInfo);
-                    info = newInfo;
-                }
-                processStorageFromNetwork(immersive, info, storage);
+            PlayerAttachmentImmersive<?, ?, ?> immersive = Immersives.ATTACHMENT_IMMERSIVES.stream()
+                    .filter(i -> i.getHandler() == handler)
+                    .findAny().orElseThrow();
+            PlayerAttachmentImmersiveInfo info = immersive.getTrackedObjects().stream()
+                    .filter(i -> i.getOwner() == owner).findAny().orElse(null);
+            if (info == null) {
+                PlayerAttachmentImmersive<I, ?, ?> castImmersive = (PlayerAttachmentImmersive<I, ?, ?>) immersive;
+                I newInfo = castImmersive.buildInfo(owner);
+                castImmersive.getTrackedObjects().add(newInfo);
+                info = newInfo;
             }
+            processStorageFromNetwork(immersive, info, storage);
         }
     }
 
