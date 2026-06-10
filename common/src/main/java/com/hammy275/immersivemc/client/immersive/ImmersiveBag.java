@@ -18,7 +18,7 @@ import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
 import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
-import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.BagStorage;
 import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.server.swap.Swap;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.RenderState, ListOfItemsStorage> {
+public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.RenderState, BagStorage> {
 
     public static final BackpackBundleModel bundleModel =
             new BackpackBundleModel(Minecraft.getInstance().getEntityModels().bakeLayer(BackpackBundleModel.LAYER_LOCATION));
@@ -93,7 +93,8 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
     public void tick(BagInfo info) {
         info.tick();
 
-        VRPose vrPose = VR.ClientAPI.getPreTickWorldPose();
+        VRPose vrPose = VR.API.getVRPose(info.getOwner());
+        info.leftHanded = leftHanded(vrPose, info);
         VRBodyPartData backpackData = vrPose.getHand(getBagHand());
         info.handPos = backpackData.getPos();
         info.handPitch = (float) backpackData.getPitch();
@@ -102,7 +103,7 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         info.lookVec = backpackData.getDir();
 
         Vec3 rightVec = getRightVec(info).scale(0.25);
-        if (leftHanded()) {
+        if (info.leftHanded) {
             // Means we can imagine for right-handed players, and the code will work for left-handed players
             rightVec = rightVec.scale(-1);
         }
@@ -212,7 +213,6 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
 
     @Override
     public void render(BagInfo.RenderState renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
-        boolean leftHanded = leftHanded();
         int start = renderState.ownedByLocalPlayer ? 0 : 27;
         for (int i = start; i <= 31; i++) {
             helpers.renderItemWithRenderState(renderState.items.get(i), stack, ClientConstants.itemScaleSizeBackpack,
@@ -244,7 +244,7 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
 
         // Translate and render the crafting on the side of the backpack and down a bit
         // (yes, positive y in this context moves it down lol)
-        stack.translate(leftHanded ? -0.75 : 0.75, 0.25, 0);
+        stack.translate(renderState.leftHanded ? -0.75 : 0.75, 0.25, 0);
         craftingModel.renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
                         .getBuffer(RenderTypes.entityCutout(BackpackCraftingModel.textureLocation)),
@@ -255,7 +255,7 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
     }
 
     @Override
-    public PlayerAttachmentImmersiveHandler<ListOfItemsStorage> getHandler() {
+    public PlayerAttachmentImmersiveHandler<BagStorage> getHandler() {
         return ImmersiveHandlers.bagHandler;
     }
 
@@ -268,9 +268,12 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
     }
 
     @Override
-    public void processStorageFromNetwork(BagInfo info, ListOfItemsStorage storage) {
+    public void processStorageFromNetwork(BagInfo info, BagStorage storage) {
         for (int i = 0; i <= 4; i++) {
             info.hitboxes.get(i + 27).item = storage.getItems().get(i);
+        }
+        if (!info.ownerIsLocalPlayer()) {
+            info.otherPlayerSwappedHands = storage.useSwappedHands;
         }
     }
 
@@ -297,6 +300,7 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         renderState.tickCount = info.getTicksExisted();
         renderState.slotHovered = info.getSlotHovered(0);
         renderState.ownedByLocalPlayer = info.ownerIsLocalPlayer();
+        renderState.leftHanded = info.leftHanded;
     }
 
     public static int getBackpackColor() {
@@ -353,9 +357,9 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         return new Vec3(leftF.x(), leftF.y(), leftF.z());
     }
 
-    private static boolean leftHanded() {
-        boolean vrLeftHanded = VR.ClientAPI.isLeftHanded();
-        boolean useSwappedHands = ActiveConfig.active().swapBagHand;
+    private static boolean leftHanded(VRPose pose, BagInfo info) {
+        boolean vrLeftHanded = pose.isLeftHanded();
+        boolean useSwappedHands = info.ownerIsLocalPlayer() ? ActiveConfig.active().swapBagHand : info.otherPlayerSwappedHands;
         return vrLeftHanded != useSwappedHands; // If both are true or both are false, we're using the right hand.
     }
 

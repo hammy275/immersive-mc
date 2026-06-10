@@ -23,6 +23,8 @@ public class BagInfo extends AbstractPlayerAttachmentImmersiveInfo {
     public int topRow = 0;
     public int light = -1;
     public boolean clearLastPos = false;
+    public boolean leftHanded = false;
+    public boolean otherPlayerSwappedHands = false;
 
     public BagInfo(AbstractClientPlayer owner) {
         super(owner);
@@ -75,6 +77,7 @@ public class BagInfo extends AbstractPlayerAttachmentImmersiveInfo {
         public long tickCount;
         public int slotHovered;
         public boolean ownedByLocalPlayer;
+        public boolean leftHanded;
 
         @Override
         public List<BoundingBox> hitboxes() {

@@ -3,8 +3,9 @@ package com.hammy275.immersivemc.common.immersive.handler;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
-import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.BagStorage;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -13,15 +14,16 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 
-public class BagHandler implements PlayerAttachmentImmersiveHandler<ListOfItemsStorage> {
+public class BagHandler implements PlayerAttachmentImmersiveHandler<BagStorage> {
     @Override
-    public ListOfItemsStorage makeInventoryContents(ServerPlayer tracker, ServerPlayer owner) {
-        return new ListOfItemsStorage(ImmersiveMCPlayerStorages.getBackpackCraftingStorage(owner));
+    public BagStorage makeInventoryContents(ServerPlayer tracker, ServerPlayer owner) {
+        return new BagStorage(ImmersiveMCPlayerStorages.getBackpackCraftingStorage(owner),
+                VR.API.getVRPose(owner).isLeftHanded());
     }
 
     @Override
-    public ListOfItemsStorage getEmptyNetworkStorage() {
-        return new ListOfItemsStorage();
+    public BagStorage getEmptyNetworkStorage() {
+        return new BagStorage();
     }
 
     @Override

@@ -29,7 +29,7 @@ public class ImmersiveHandlers {
 
     public static final WorldStorageHandler<AnvilStorage> anvilHandler = new AnvilHandler();
     public static final WorldStorageHandler<ApothSalvagingTableStorage> apothSalvagingTableHandler = CompatModule.create(new ApothSalvagingTableHandler(), WorldStorageHandler.class, Apoth.compatData);
-    public static final PlayerAttachmentImmersiveHandler<ListOfItemsStorage> bagHandler = new BagHandler();
+    public static final PlayerAttachmentImmersiveHandler<BagStorage> bagHandler = new BagHandler();
     public static final BlockBasedImmersiveHandler<?> barrelHandler = new BarrelHandler();
     public static final WorldStorageHandler<BeaconStorage> beaconHandler = new BeaconHandler();
     public static final BlockBasedImmersiveHandler<?> brewingStandHandler = new BrewingStandHandler();
