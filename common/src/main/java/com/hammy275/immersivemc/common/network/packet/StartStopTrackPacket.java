@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.common.network.packet;
 
 import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.Identifier;
@@ -25,7 +26,7 @@ public record StartStopTrackPacket(Identifier handlerID, boolean isStop) {
             if (handler != null) {
                 if (packet.isStop) {
                     TrackedImmersives.stopTracking(handler, player);
-                } else {
+                } else if (VRVerify.playerInVR(player)) {
                     TrackedImmersives.maybeTrackImmersive(player, player, handler);
                 }
             }

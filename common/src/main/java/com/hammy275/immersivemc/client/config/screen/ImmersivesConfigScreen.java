@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import net.minecraft.client.Minecraft;
@@ -68,7 +69,7 @@ public class ImmersivesConfigScreen extends OptionsSubScreen {
         }
 
         Immersives.ALL_IMMERSIVES.stream()
-                .filter((immersive) -> (this.type.isVR() || (this.type.isNonVR() && !immersive.isVROnly())))
+                .filter((immersive) -> (this.type.isVR() || (this.type.isNonVR() && !ClientUtil.isVROnly(immersive))))
                 .map(Immersive::configScreenInfo)
                 .filter(Objects::nonNull)
                 .map((configInfo) -> ScreenUtils.createOption(configInfo.getOptionTranslation(), configInfo.getOptionTooltip(),

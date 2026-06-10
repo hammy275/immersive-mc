@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.StopTrackPacketWithOwner;
 import com.hammy275.immersivemc.common.util.Util;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -70,7 +71,7 @@ public class TrackedImmersives {
 
     public static void maybeTrackImmersive(ServerPlayer tracker, ServerPlayer owner, PlayerAttachmentImmersiveHandler<?> handler) {
         Optional<TrackedAttachmentImmersiveData<?>> existingData = getTrackedData(tracker, owner, handler);
-        if (existingData.isEmpty()) {
+        if (existingData.isEmpty() && VRVerify.playerInVR(owner)) {
             TrackedAttachmentImmersiveData<?> data = new TrackedAttachmentImmersiveData<>(tracker, owner, handler);
             TRACKED_ATTACHMENT_IMMERSIVES.add(data);
             syncDataToClient(data);

@@ -42,4 +42,10 @@ public non-sealed interface BlockBasedImmersive<I extends BlockBasedImmersiveInf
      */
     BlockBasedImmersiveHandler<S> getHandler();
 
+    /**
+     * @return Whether this Immersive should only exist for VR users. The same value should always be returned by this
+     *         method.
+     */
+    boolean isVROnly();
+
 }

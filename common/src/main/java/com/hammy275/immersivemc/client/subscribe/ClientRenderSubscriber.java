@@ -102,22 +102,14 @@ public class ClientRenderSubscriber {
     }
 
     protected static <I extends ImmersiveInfo, R extends ImmersiveRenderState> void renderInfos(Immersive<I, R, ?> singleton, PoseStack stack) {
-        try {
-            if (singleton.isVROnly() && !VRVerify.clientInVR()) {
-                return;
+        for (I info : singleton.getTrackedObjects()) {
+            float partialTicks = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
+            R renderState = singleton.createRenderState();
+            singleton.extractRenderState(info, renderState, partialTicks);
+            SwapTracker.updateRenderStatesFromInfo(info, renderState);
+            if (singleton.shouldRender(renderState)) {
+                singleton.render(renderState, stack, ImmersiveRenderHelpers.instance(), partialTicks);
             }
-            for (I info : singleton.getTrackedObjects()) {
-                float partialTicks = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
-                R renderState = singleton.createRenderState();
-                singleton.extractRenderState(info, renderState, partialTicks);
-                SwapTracker.updateRenderStatesFromInfo(info, renderState);
-                if (singleton.shouldRender(renderState)) {
-                    singleton.render(renderState, stack, ImmersiveRenderHelpers.instance(), partialTicks);
-                }
-            }
-        } catch (ConcurrentModificationException ignored) {
-            // Skip rendering if the list is modified mid-render
-            // It's fine, since we were only going to read it anyway!!
         }
     }
 

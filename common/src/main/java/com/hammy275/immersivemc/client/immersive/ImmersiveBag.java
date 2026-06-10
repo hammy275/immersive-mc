@@ -278,11 +278,6 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
     }
 
     @Override
-    public boolean isVROnly() {
-        return true;
-    }
-
-    @Override
     public BagInfo.RenderState createRenderState() {
         return new BagInfo.RenderState();
     }

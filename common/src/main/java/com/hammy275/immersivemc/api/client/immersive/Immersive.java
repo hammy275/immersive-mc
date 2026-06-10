@@ -123,12 +123,6 @@ public sealed interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRe
     void processStorageFromNetwork(I info, S storage);
 
     /**
-     * @return Whether this Immersive should only exist for VR users. The same value should always be returned by this
-     *         method.
-     */
-    boolean isVROnly();
-
-    /**
      * Creates a new render state not populated with any rendering-related details.
      * @return Created render state, as described.
      */

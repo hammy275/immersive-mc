@@ -161,11 +161,6 @@ public class ImmersiveHitboxes implements PlayerAttachmentImmersive<ImmersiveHit
     }
 
     @Override
-    public boolean isVROnly() {
-        return true;
-    }
-
-    @Override
     public ImmersiveHitboxesInfo.RenderState createRenderState() {
         return new ImmersiveHitboxesInfo.RenderState();
     }

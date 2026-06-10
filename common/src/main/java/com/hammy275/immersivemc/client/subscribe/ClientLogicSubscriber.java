@@ -246,11 +246,11 @@ public class ClientLogicSubscriber {
     }
 
     protected static <I extends ImmersiveInfo> void tickInfos(Immersive<I, ?, ?> singleton, Player player) {
-        // Don't tick if VR only and not in VR
-        if (singleton.isVROnly() && !VRVerify.clientInVR()) {
-            return;
-        }
         if (singleton instanceof BlockBasedImmersive<?, ?, ?> blockBased) {
+            // Don't tick if VR only and not in VR
+            if (blockBased.isVROnly() && !VRVerify.clientInVR()) {
+                return;
+            }
             // For block-based ones, attempt to remove if the blocks no longer match or if too far away
             blockBased.getTrackedObjects().removeIf((info) -> {
                 Set<BlockPos> positions = Util.getValidBlocks(blockBased.getHandler(), info.getBlockPosition(), Minecraft.getInstance().level);
@@ -375,7 +375,7 @@ public class ClientLogicSubscriber {
 
         if (!inVR || ActiveConfig.active().rightClickImmersiveInteractionsInVR) { // Don't handle right clicks for VR players, they have hands (unless they config to!)!
             for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
-                if (singleton.isVROnly() && !inVR) continue;
+                if (ClientUtil.isVROnly(singleton) && !inVR) continue;
                 Integer fromInfos = handleRightClickInfos(singleton, start, end);
                 if (fromInfos != null && fromInfos >= 0) {
                     return fromInfos;

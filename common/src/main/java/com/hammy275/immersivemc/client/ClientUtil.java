@@ -52,6 +52,14 @@ public class ClientUtil {
     public static final int maxLight = LightCoordsUtil.pack(15, 15);
     public static int immersiveLeftClickCooldown = 0;
 
+    public static boolean isVROnly(Immersive<?, ?, ?> immersive) {
+        if (immersive instanceof BlockBasedImmersive<?, ?, ?> blockBased) {
+            return blockBased.isVROnly();
+        } else {
+            return true;
+        }
+    }
+
     /**
      * Renders a gizmo immediately. Should NOT add instances via {@link net.minecraft.gizmos.Gizmos}, since this renders
      * them directly instead.
