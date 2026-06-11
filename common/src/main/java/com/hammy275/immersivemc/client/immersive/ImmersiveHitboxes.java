@@ -96,7 +96,7 @@ public class ImmersiveHitboxes implements PlayerAttachmentImmersive<ImmersiveHit
                             0, yaw, 0), true));
         } else {
             // In case setting changes mid-game
-            info.hitboxes.set(0, null);
+            info.hitboxes.set(ImmersiveHitboxesInfo.BAG_BACK_INDEX, new HitboxInfoImpl(AABB.ofSize(Vec3.ZERO, 0, 0, 0), true));
         }
 
         if (!info.canOpen && ActiveConfig.active().reachBehindBagMode.usesOverShoulder() && VRVerify.clientInVR()) {
