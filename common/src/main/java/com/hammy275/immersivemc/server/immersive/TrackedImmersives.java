@@ -49,12 +49,9 @@ public class TrackedImmersives {
                 attachmentDataIterator.remove();
             } else if (data.owner() == data.tracker()) {
                 ServerLevel level = data.owner().level();
-                for (ServerPlayer potentialTracker : level.getPlayers(player -> true)) {
-                    if (potentialTracker != data.owner() &&
-                            potentialTracker.distanceToSqr(data.owner()) < CommonConstants.distanceSquaredToRemoveAttachmentImmersive) {
-                        maybeTrackPairs.add(new Pair<>(data, potentialTracker));
-                    }
-                }
+                level.getPlayers(potentialTracker -> potentialTracker != data.owner() &&
+                        potentialTracker.distanceToSqr(data.owner()) < CommonConstants.distanceSquaredToRemoveAttachmentImmersive)
+                        .forEach(potentialTracker -> maybeTrackPairs.add(new Pair<>(data, potentialTracker)));
             }
         }
         maybeTrackPairs.forEach(pair ->
