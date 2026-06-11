@@ -349,7 +349,7 @@ public class ClientLogicSubscriber {
                     }
                 }
             }
-        } else if (bagInfo != null) {
+        } else if (bagInfo != null && !bagInfo.hasSlotHovered()) {
             bagInfo.gotoNextRow();
             return true;
         }

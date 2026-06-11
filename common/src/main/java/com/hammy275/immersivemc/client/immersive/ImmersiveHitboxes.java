@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.PlayerAttachmentImmersive;
@@ -72,20 +71,10 @@ public class ImmersiveHitboxes implements PlayerAttachmentImmersive<ImmersiveHit
         info.tickCount++;
         if (ActiveConfig.active().reachBehindBagMode.usesBehindBack() && VRVerify.clientInVR()) {
             // centerPos is the center of the back of the player
-            VRBodyPartData hmdData = Platform.COMMON.isDevelopmentEnvironment() ? null : VR.ClientAPI.getWorldRenderPose().getHead();
-            Vec3 centerPos = hmdData != null ?
-                    hmdData.getPos().add(0, -0.5, 0).add(hmdData.getDir().scale(-0.15)) :
-                    mc.player.getEyePosition(mc.getDeltaTracker().getGameTimeDeltaPartialTick(true)).add(0, -0.5, 0).add(mc.player.getLookAngle().scale(-0.15));
-            double yaw;
-            Vec3 headLook;
-            if (VRVerify.playerInVR(mc.player) && !Platform.COMMON.isDevelopmentEnvironment()) {
-                yaw = hmdData.getYaw();
-                headLook = hmdData.getDir();
-            } else {
-                // Yaw based on player's yaw for testing in dev
-                yaw = Math.toRadians(mc.player.getYRot());
-                headLook = mc.player.getLookAngle();
-            }
+            VRBodyPartData hmdData = VR.ClientAPI.getWorldRenderPose().getHead();
+            Vec3 centerPos = hmdData.getPos().add(0, -0.5, 0).add(hmdData.getDir().scale(-0.15));
+            double yaw = hmdData.getYaw();
+            Vec3 headLook = hmdData.getDir();
             headLook = headLook.multiply(1, 0, 1).normalize(); // Ignore y rotation
             centerPos = centerPos.add(headLook.scale(-0.25));
             // Back is 0.5 blocks across from center, making size 0.35 longways (full back has funny accidental detections).
@@ -93,10 +82,10 @@ public class ImmersiveHitboxes implements PlayerAttachmentImmersive<ImmersiveHit
             // Add 0.2 to have some sane minimum
             info.hitboxes.set(ImmersiveHitboxesInfo.BAG_BACK_INDEX,
                     new HitboxInfoImpl(OBBFactory.instance().create(AABB.ofSize(centerPos, 0.35, backpackHeight, 0.2),
-                            0, yaw, 0), true));
+                            0, yaw, 0), false));
         } else {
             // In case setting changes mid-game
-            info.hitboxes.set(ImmersiveHitboxesInfo.BAG_BACK_INDEX, new HitboxInfoImpl(AABB.ofSize(Vec3.ZERO, 0, 0, 0), true));
+            info.hitboxes.set(ImmersiveHitboxesInfo.BAG_BACK_INDEX, new HitboxInfoImpl(AABB.ofSize(Vec3.ZERO, 0, 0, 0), false));
         }
 
         if (!info.canOpen && ActiveConfig.active().reachBehindBagMode.usesOverShoulder() && VRVerify.clientInVR()) {

@@ -75,12 +75,8 @@ public class BagInfo extends AbstractPlayerAttachmentImmersiveInfo {
         return midRow;
     }
 
-    public int getBotRow() {
-        int botRow = getMidRow() + 1;
-        if (botRow > 2) {
-            return 0;
-        }
-        return botRow;
+    public boolean hasSlotHovered() {
+        return slotsHovered[0] > -1 || slotsHovered[1] > -1;
     }
 
     public static class RenderState implements ImmersiveRenderState {

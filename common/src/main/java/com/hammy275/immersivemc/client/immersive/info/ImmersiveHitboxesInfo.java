@@ -38,7 +38,7 @@ public class ImmersiveHitboxesInfo implements PlayerAttachmentImmersiveInfo {
 
     @Override
     public boolean hasHitboxes() {
-        return hitboxes.get(0) != null;
+        return true;
     }
 
     @Override

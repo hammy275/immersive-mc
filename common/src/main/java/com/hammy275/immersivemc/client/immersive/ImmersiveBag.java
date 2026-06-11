@@ -19,6 +19,7 @@ import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.BagStorage;
+import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.server.swap.Swap;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -79,7 +80,7 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
                 IPN.ipnCompat.doInventorySwap(firstSlot + 9, player.getInventory().getSelectedSlot());
             } else {
                 ImmersiveClientLogicHelpers.instance().sendSwapPacket(getHandler(), player, List.of(firstSlot), hand, modifierPressed);
-                Swap.handleInventorySwap(player, firstSlot, hand);
+                Swap.handleInventorySwap(player, firstSlot + 9, hand);
 
             }
         } else {
@@ -307,7 +308,7 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         renderState.handRoll = info.handRoll;
         renderState.argb = info.argb;
         renderState.tickCount = info.getTicksExisted();
-        renderState.slotHovered = info.getSlotHovered(0);
+        renderState.slotHovered = info.getSlotHovered(Util.otherHand(getBagHand()).ordinal());
         renderState.ownedByLocalPlayer = info.ownerIsLocalPlayer();
         renderState.leftHanded = info.leftHanded;
     }

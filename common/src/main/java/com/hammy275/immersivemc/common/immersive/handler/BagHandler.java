@@ -29,7 +29,7 @@ public class BagHandler implements PlayerAttachmentImmersiveHandler<BagStorage> 
     public void swap(int slot, InteractionHand hand, ServerPlayer owner, ServerPlayer tracker, ItemSwapAmount amount) {
         if (tracker == owner) { // Only owner should be able to modify contents of bag
             if (slot < 27) {
-                Swap.handleInventorySwap(owner, slot, InteractionHand.MAIN_HAND);
+                Swap.handleInventorySwap(owner, slot + 9, InteractionHand.MAIN_HAND);
             } else {
                 Swap.handleBackpackCraftingSwap(slot - 27, hand,
                         ImmersiveMCPlayerStorages.getBackpackCraftingStorage(owner), owner, amount);
