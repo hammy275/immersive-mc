@@ -92,8 +92,12 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
     @Override
     public void tick(BagInfo info) {
         info.tick();
+        calculatePositions(info, VR.API.getVRPose(info.getOwner()));
+        info.light = ImmersiveClientLogicHelpers.instance().getLight(BlockPos.containing(info.handPos));
 
-        VRPose vrPose = VR.API.getVRPose(info.getOwner());
+    }
+
+    private void calculatePositions(BagInfo info, VRPose vrPose) {
         info.leftHanded = leftHanded(vrPose, info);
         VRBodyPartData backpackData = vrPose.getHand(getBagHand());
         info.handPos = backpackData.getPos();
@@ -185,8 +189,6 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         for (int i = 0; i < 27; i++) {
             info.hitboxes.get(i).item = Minecraft.getInstance().player.getInventory().getItem(i + 9);
         }
-
-        info.light = ImmersiveClientLogicHelpers.instance().getLight(BlockPos.containing(backpackData.getPos()));
 
         if (info.clearLastPos) {
             for (HitboxItemPair hitbox : info.hitboxes) {
@@ -284,7 +286,19 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
 
     @Override
     public void extractRenderState(BagInfo info, BagInfo.RenderState renderState, float partialTicks) {
-        renderState.hitboxes = info.hitboxes.stream().map(hitbox -> hitbox.getRenderHitbox(partialTicks)).toList();
+        // We can't really approximate the hitboxes ourselves, so we need to do the same math as tick() but with the
+        // render pose.
+        info = new BagInfo(info);
+        VRPose pose;
+        // Need the render pose for the local player, but otherwise just get the pose Vivecraft knows of for the other
+        // player, since that's what it's already displaying.
+        if (info.ownerIsLocalPlayer()) {
+            pose = VR.ClientAPI.getWorldRenderPose();
+        } else {
+            pose = VR.API.getVRPose(info.getOwner());
+        }
+        calculatePositions(info, pose);
+        renderState.hitboxes = info.hitboxes.stream().map(hitbox -> hitbox.box).toList();
         renderState.items = info.hitboxes.stream().map(hitbox -> hitbox.item).toList();
         renderState.light = info.light;
         renderState.renderPos = info.renderPos;

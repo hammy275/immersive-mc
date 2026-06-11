@@ -33,6 +33,25 @@ public class BagInfo extends AbstractPlayerAttachmentImmersiveInfo {
         }
     }
 
+    public BagInfo(BagInfo info) {
+        super(info);
+        this.handPos = info.handPos;
+        this.lookVec = info.lookVec;
+        this.renderPos = info.renderPos;
+        this.centerTopPos = info.centerTopPos;
+        this.downVec = info.downVec;
+        this.handPitch = info.handPitch;
+        this.handYaw = info.handYaw;
+        this.handRoll = info.handRoll;
+        this.backVec = info.backVec;
+        this.argb = info.argb;
+        this.topRow = info.topRow;
+        this.light = info.light;
+        this.clearLastPos = info.clearLastPos;
+        this.leftHanded = info.leftHanded;
+        this.otherPlayerSwappedHands = info.otherPlayerSwappedHands;
+    }
+
     public void setHitbox(int index, BoundingBox box) {
         HitboxItemPair pair = hitboxes.get(index);
         if (pair.box != null) {

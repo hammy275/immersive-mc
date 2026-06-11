@@ -5,7 +5,6 @@ import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHa
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.BagStorage;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.server.immersive.DirtyTracker;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -18,7 +17,7 @@ public class BagHandler implements PlayerAttachmentImmersiveHandler<BagStorage> 
     @Override
     public BagStorage makeInventoryContents(ServerPlayer tracker, ServerPlayer owner) {
         return new BagStorage(ImmersiveMCPlayerStorages.getBackpackCraftingStorage(owner),
-                VR.API.getVRPose(owner).isLeftHanded());
+                ActiveConfig.getActiveConfigCommon(owner).swapBagHand);
     }
 
     @Override

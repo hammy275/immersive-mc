@@ -9,6 +9,7 @@ import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.StopTrackPacketWithOwner;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRVerify;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -40,6 +41,7 @@ public class TrackedImmersives {
             }
         }
         Iterator<TrackedAttachmentImmersiveData<?>> attachmentDataIterator = TRACKED_ATTACHMENT_IMMERSIVES.iterator();
+        List<Pair<TrackedAttachmentImmersiveData<?>, ServerPlayer>> maybeTrackPairs = new ArrayList<>();
         while (attachmentDataIterator.hasNext()) {
             TrackedAttachmentImmersiveData<?> data = attachmentDataIterator.next();
             if (!data.stillValid()) {
@@ -50,11 +52,13 @@ public class TrackedImmersives {
                 for (ServerPlayer potentialTracker : level.getPlayers(player -> true)) {
                     if (potentialTracker != data.owner() &&
                             potentialTracker.distanceToSqr(data.owner()) < CommonConstants.distanceSquaredToRemoveAttachmentImmersive) {
-                        maybeTrackImmersive(potentialTracker, data.owner(), data.handler());
+                        maybeTrackPairs.add(new Pair<>(data, potentialTracker));
                     }
                 }
             }
         }
+        maybeTrackPairs.forEach(pair ->
+                maybeTrackImmersive(pair.getSecond(), pair.getFirst().owner(), pair.getFirst().handler()));
 
         // Sync all immersives for all players if inventory contents have changed
         TRACKED_BLOCK_IMMERSIVES.forEach((data) -> {

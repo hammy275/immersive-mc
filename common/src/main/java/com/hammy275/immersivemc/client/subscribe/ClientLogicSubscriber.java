@@ -257,8 +257,10 @@ public class ClientLogicSubscriber {
                 return positions.isEmpty() || player.distanceToSqr(Util.average(positions)) > CommonConstants.distanceSquaredToRemoveImmersive;
             });
         } else if (singleton instanceof PlayerAttachmentImmersive<?, ?, ?> attachment) {
-            // For player attachment ones, attempt to remove if simply too far away or if the level no longer matches
+            // For player attachment ones, attempt to remove if simply too far away, if the level no longer matches,
+            // or if the owner is no longer in VR (which also covers disconnecting).
             attachment.getTrackedObjects().removeIf(info ->
+                    !VRVerify.playerInVR(info.getOwner()) ||
                     player.distanceToSqr(info.getOwner().position()) > CommonConstants.distanceSquaredToRemoveAttachmentImmersive
                             || info.getOwner().level() != player.level());
         }

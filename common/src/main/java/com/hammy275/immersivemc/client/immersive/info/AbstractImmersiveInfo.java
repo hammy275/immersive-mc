@@ -11,6 +11,13 @@ public abstract class AbstractImmersiveInfo {
 
     public AbstractImmersiveInfo() { }
 
+    public AbstractImmersiveInfo(AbstractImmersiveInfo info) {
+        this.hitboxes.addAll(info.hitboxes);
+        this.slotsHovered[0] = info.slotsHovered[0];
+        this.slotsHovered[1] = info.slotsHovered[1];
+        this.ticksExisted = info.ticksExisted;
+    }
+
     public void tick() {
         ticksExisted++;
     }

@@ -11,6 +11,11 @@ public class AbstractPlayerAttachmentImmersiveInfo extends AbstractImmersiveInfo
         this.owner = owner;
     }
 
+    public AbstractPlayerAttachmentImmersiveInfo(AbstractPlayerAttachmentImmersiveInfo info) {
+        super(info);
+        this.owner = info.owner;
+    }
+
     @Override
     public AbstractClientPlayer getOwner() {
         return owner;
