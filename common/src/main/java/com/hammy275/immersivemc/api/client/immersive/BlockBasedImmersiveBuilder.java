@@ -178,7 +178,7 @@ public interface BlockBasedImmersiveBuilder<E, ER, S extends NetworkStorage> {
     public BlockBasedImmersiveBuilder<E,ER,S> modifyHitboxes(int startIndex, int endIndex, Function<RelativeHitboxInfoBuilder, RelativeHitboxInfo> modifier);
 
     /**
-     * Sets the function used to generate the drag hitbox. See {@link BlockBasedImmersive#getDragHitbox(BlockBasedImmersiveInfo)} for info
+     * Sets the function used to generate the drag hitbox. See {@link Immersive#getDragHitbox(ImmersiveInfo)} for info
      * about what the drag hitbox is.
      * @param dragHitboxCreator The drag hitbox creator or null (the default) to let ImmersiveMC generate one for you.
      * @return Builder object.

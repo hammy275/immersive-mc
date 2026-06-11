@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.api.client;
 
-import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
-import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
@@ -35,8 +35,8 @@ public interface ImmersiveClientLogicHelpers extends ImmersiveLogicHelpers {
     /**
      * Sets both the vanilla, right-click cooldown and ImmersiveMC's VR cooldown for interacting with Immersives
      * (if the player is in VR) to some number of ticks. You likely don't need this, as the value returned from
-     * {@link BlockBasedImmersive#handleHitboxInteract(BlockBasedImmersiveInfo, LocalPlayer, List, InteractionHand, boolean)} is set as the cooldown
-     * where appropriate. This is mainly useful if you're working outside of ImmersiveMC's hitbox system.
+     * {@link Immersive#handleHitboxInteract(ImmersiveInfo, LocalPlayer, List, InteractionHand, boolean)} is set as the
+     * cooldown where appropriate. This is mainly useful if you're working outside of ImmersiveMC's hitbox system.
      * @param cooldown The cooldown to set in ticks. This will be increased for VR players, see the aforementioned
      *                 method for more info.
      */
