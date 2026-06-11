@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.server.immersive;
 
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.AfterClientSyncHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.Network;
@@ -10,6 +11,7 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 
@@ -43,6 +45,14 @@ public class TrackedImmersives {
             if (!data.stillValid()) {
                 data.handler().onStopTracking(data.tracker(), data.owner());
                 attachmentDataIterator.remove();
+            } else if (data.owner() == data.tracker()) {
+                ServerLevel level = data.owner().level();
+                for (ServerPlayer potentialTracker : level.getPlayers(player -> true)) {
+                    if (potentialTracker != data.owner() &&
+                            potentialTracker.distanceToSqr(data.owner()) < CommonConstants.distanceSquaredToRemoveAttachmentImmersive) {
+                        maybeTrackImmersive(potentialTracker, data.owner(), data.handler());
+                    }
+                }
             }
         }
 
