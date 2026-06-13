@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.PlayerAttachmentImmersive;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.api.common.hitbox.OBB;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
@@ -19,6 +20,7 @@ import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.BagStorage;
+import com.hammy275.immersivemc.common.obb.OBBUtil;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.server.swap.Swap;
@@ -200,8 +202,12 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
 
     @Override
     public @Nullable BoundingBox getDragHitbox(BagInfo info) {
-        // TODO: Drag hitbox
-        return null;
+        if (!info.ownerIsLocalPlayer()) {
+            return null;
+        }
+        OBB obb = OBBUtil.getEncompassingOBB(info.hitboxes.subList(27, 31).stream()
+                .map(pair -> (OBB) pair.getHitbox()).toList());
+        return OBBFactory.instance().create(obb.getUnderlyingAABB().inflate(0.0625), obb.getRotation());
     }
 
     @Override
@@ -220,6 +226,10 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         for (int i = start; i <= 31; i++) {
             helpers.renderItemWithRenderState(renderState.items.get(i), stack, ClientConstants.itemScaleSizeBackpack,
                     true, renderState.light, renderState, renderState.ownedByLocalPlayer, i, null, null, null);
+        }
+
+        if (renderState.dragHitbox != null) {
+            helpers.renderHitbox(stack, renderState.dragHitbox, false, 0, 1, 1);
         }
 
         stack.pushPose();
@@ -311,6 +321,7 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         renderState.slotHovered = info.getSlotHovered(Util.otherHand(getBagHand()).ordinal());
         renderState.ownedByLocalPlayer = info.ownerIsLocalPlayer();
         renderState.leftHanded = info.leftHanded;
+        renderState.dragHitbox = getDragHitbox(info);
     }
 
     public static int getBackpackColor() {

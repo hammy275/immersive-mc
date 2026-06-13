@@ -93,6 +93,7 @@ public class BagInfo extends AbstractPlayerAttachmentImmersiveInfo {
         public int slotHovered;
         public boolean ownedByLocalPlayer;
         public boolean leftHanded;
+        public BoundingBox dragHitbox;
 
         @Override
         public List<BoundingBox> hitboxes() {
