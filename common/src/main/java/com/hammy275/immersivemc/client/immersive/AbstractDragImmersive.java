@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
-import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.immersive.info.DragImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.render_state.DragRenderState;
@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Immersive that's used for dragging between hitboxes, such as trapdoors.
  */
-public abstract class AbstractDragImmersive implements Immersive<DragImmersiveInfo, DragRenderState, NullStorage> {
+public abstract class AbstractDragImmersive implements BlockBasedImmersive<DragImmersiveInfo, DragRenderState, NullStorage> {
 
     protected final List<DragImmersiveInfo> trackedObjects = new ArrayList<>();
 

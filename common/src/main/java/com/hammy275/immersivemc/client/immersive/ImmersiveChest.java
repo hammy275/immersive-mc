@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
@@ -41,7 +41,7 @@ import java.util.Objects;
 
 import static com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage.CHEST_OPEN_THRESHOLD;
 
-public class ImmersiveChest extends AbstractImmersive<ChestInfo, ChestRenderState, ListOfItemsStorage> {
+public class ImmersiveChest extends AbstractBlockBasedImmersive<ChestInfo, ChestRenderState, ListOfItemsStorage> {
     public static final double spacing = 3d/16d;
 
     @Override
@@ -197,7 +197,7 @@ public class ImmersiveChest extends AbstractImmersive<ChestInfo, ChestRenderStat
     }
 
     @Override
-    public ImmersiveHandler<ListOfItemsStorage> getHandler() {
+    public BlockBasedImmersiveHandler<ListOfItemsStorage> getHandler() {
         return ImmersiveHandlers.chestHandler;
     }
 

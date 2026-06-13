@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 /**
- * An object representing VR movement detection. These can be built from {@link HitboxVRMovementInfoBuilder}, which you
- * can see for more info.
+ * An object representing VR movement detection. These can be built from {@link HitboxVRMovementInfoBuilder}.
+ *
+ * @see HitboxVRMovementInfoBuilder Information on this system.
  */
 public interface HitboxVRMovementInfo {
 
@@ -31,5 +32,5 @@ public interface HitboxVRMovementInfo {
     /**
      * @return The consumer to run when a threshold is met.
      */
-    public BiConsumer<BuiltImmersiveInfo<?>, List<InteractionHand>> actionConsumer();
+    public BiConsumer<BuiltBlockBasedImmersiveInfo<?>, List<InteractionHand>> actionConsumer();
 }

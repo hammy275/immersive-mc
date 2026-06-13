@@ -29,9 +29,9 @@ dependencies {
     compileOnly "curse.maven:lootr-615106:7919279" // Waiting on 1.21.11 build
     compileOnly "curse.maven:clothconfigapi-348521:7817582" // lootr dependency
 
-    api "curse.maven:inventoryprofilesnext-495267:8038912"
-    api "curse.maven:libipn-679177:8038718" // Inventory Profiles Next dependency
-    api "curse.maven:fabriclanguagekotlin-308769:7976268" // Inventory Profiles Next dependency
+    compileOnly "curse.maven:inventoryprofilesnext-495267:8038912"
+    compileOnly "curse.maven:libipn-679177:8038718" // Inventory Profiles Next dependency
+    compileOnly "curse.maven:fabriclanguagekotlin-308769:7976268" // Inventory Profiles Next dependency
 }
 
 loom {

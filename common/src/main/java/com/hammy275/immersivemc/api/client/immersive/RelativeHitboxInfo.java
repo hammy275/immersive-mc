@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.api.client.immersive;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * A built relative hitbox. These are used with {@link ImmersiveBuilder}s, placed relative to a center defined by
+ * A built relative hitbox. These are used with {@link BlockBasedImmersiveBuilder}s, placed relative to a center defined by
  * the builder's selected {@link HitboxPositioningMode}, and can potentially hold items. They can be created using
  * {@link RelativeHitboxInfoBuilder}s.
  */

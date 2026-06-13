@@ -1,14 +1,12 @@
 package com.hammy275.immersivemc.client.subscribe;
 
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.PlatformCommon;
+import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
-import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
-import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRVerify;
@@ -59,23 +57,13 @@ public class ClientVRSubscriber {
         }
 
         for (InteractionHand hand : InteractionHand.values()) {
-            for (Immersive<?, ?, ?> singleton : Immersives.IMMERSIVES) {
+            for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
                 if (handleInfos(singleton, vrPose, hand)) {
                     return;
                 }
             }
             SwapTracker swapTracker = hand == InteractionHand.MAIN_HAND ? SwapTracker.c0 : SwapTracker.c1;
             swapTracker.tick(null, null, -1, false);
-        }
-
-        if (cooldown <= 0) {
-            for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
-                for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
-                    if (handleInfo(singleton, info, vrPose)) {
-                        return;
-                    }
-                }
-            }
         }
     }
 
@@ -96,10 +84,7 @@ public class ClientVRSubscriber {
                         swapTracker.tick(singleton, info, -1, inDragHitbox(singleton, info, pos));
                         if (cooldown <= 0) {
                             int cooldown = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(hit.get()), hand, Minecraft.getInstance().options.keyAttack.isDown());
-                            if (singleton.isVROnly()) {
-                                cooldown = (int) (cooldown / 1.5);
-                            }
-                            setCooldown(cooldown);
+                            ImmersiveClientLogicHelpers.instance().setCooldown(cooldown);
                         }
                         return cooldown >= 0;
                     }
@@ -114,27 +99,6 @@ public class ClientVRSubscriber {
             swapTracker.tick(singleton, infoWithDragHitbox, -1, true);
         }
         return infoWithDragHitbox != null;
-    }
-
-    protected static boolean handleInfo(AbstractPlayerAttachmentImmersive<?, ?> singleton, AbstractPlayerAttachmentInfo info, VRPose vrPose) {
-        if (info.hasHitboxes() && singleton.hitboxesAvailable(info)) {
-            for (InteractionHand hand : InteractionHand.values()) {
-                VRBodyPartData controller = vrPose.getHand(hand);
-                Vec3 pos = controller.getPos();
-                Optional<Integer> hit = Util.getFirstIntersect(pos, info.getAllHitboxes());
-                if (hit.isPresent()) {
-                    singleton.onAnyRightClick(info);
-                    singleton.handleRightClick(info, Minecraft.getInstance().player, hit.get(), hand);
-                    if (Minecraft.getInstance().options.keyAttack.isDown()) {
-                        cooldown = 20; // Set long cooldown if whole stack is placed
-                    } else {
-                        cooldown = singleton.getCooldownVR();
-                    }
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private static <I extends ImmersiveInfo> boolean inDragHitbox(Immersive<I, ?, ?> singleton, I info, Vec3 pos) {

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-public class BuiltImmersiveRenderStateImpl<ER> implements BuiltImmersiveRenderState<ER> {
+public class BuiltBlockBasedImmersiveRenderStateImpl<ER> implements BuiltImmersiveRenderState<ER> {
 
     public List<RelativeHitboxRenderState> hitboxes;
     public BlockPos pos;

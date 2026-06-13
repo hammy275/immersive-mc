@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
@@ -13,9 +13,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class TrapdoorHandler implements ImmersiveHandler<NullStorage> {
+public class TrapdoorHandler implements BlockBasedImmersiveHandler<NullStorage> {
     @Override
-    public NullStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public NullStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
         return new NullStorage();
     }
 
@@ -25,12 +25,12 @@ public class TrapdoorHandler implements ImmersiveHandler<NullStorage> {
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
         // Trapdoors don't swap
     }
 
     @Override
-    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
+    public boolean isDirtyForClientSync(ServerPlayer tracker, BlockPos pos) {
         return false;
     }
 

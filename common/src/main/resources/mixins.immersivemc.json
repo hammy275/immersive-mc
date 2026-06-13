@@ -26,6 +26,7 @@
     "ProjectileAccessor",
     "SavedDataStorageAccessor",
     "SavedDataStorageMixin",
+    "ServerEntityMixin",
     "ServerPlayerGameModeMixin",
     "WolfInvoker",
     "throw_redirectors.BottleOEnchantingRedirect",

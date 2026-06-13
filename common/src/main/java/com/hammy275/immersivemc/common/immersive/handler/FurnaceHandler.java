@@ -19,8 +19,8 @@ import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 
 public class FurnaceHandler extends ContainerHandler<ListOfItemsStorage> {
     @Override
-    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return HandlerUtil.makeInventoryContentsFromContainer(player, (Container) player.level().getBlockEntity(pos), 3);
+    public ListOfItemsStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
+        return HandlerUtil.makeInventoryContentsFromContainer(tracker, (Container) tracker.level().getBlockEntity(pos), 3);
     }
 
     @Override
@@ -29,23 +29,23 @@ public class FurnaceHandler extends ContainerHandler<ListOfItemsStorage> {
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
         // Cast is done to WorldlyContainer to handle Iron Furnaces
-        WorldlyContainer furnace = (WorldlyContainer) player.level().getBlockEntity(pos);
+        WorldlyContainer furnace = (WorldlyContainer) tracker.level().getBlockEntity(pos);
         ItemStack furnaceItem = furnace.getItem(slot).copy();
-        ItemStack playerItem = player.getItemInHand(hand).copy();
+        ItemStack playerItem = tracker.getItemInHand(hand).copy();
         if (slot != 2) {
             if (slot != 1 || furnace.canPlaceItem(1, playerItem) || playerItem.isEmpty()) {
-                SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, furnaceItem, amount, player);
-                result.giveToPlayer(player, hand);
+                SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, furnaceItem, amount, tracker);
+                result.giveToPlayer(tracker, hand);
                 furnace.setItem(slot, result.immersiveStack());
                 furnace.setChanged();
             }
         } else {
-            SwapResult result = ImmersiveLogicHelpers.instance().swapItemsWithOutput(playerItem, furnaceItem, player);
-            result.giveToPlayer(player, hand);
+            SwapResult result = ImmersiveLogicHelpers.instance().swapItemsWithOutput(playerItem, furnaceItem, tracker);
+            result.giveToPlayer(tracker, hand);
             furnace.setItem(2, result.immersiveStack());
-            awardXP(furnace, player);
+            awardXP(furnace, tracker);
             furnace.setChanged();
         }
     }

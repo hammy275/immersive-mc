@@ -23,20 +23,20 @@ import java.util.List;
 
 public class TCCraftingStationHandler extends ContainerHandler<ListOfItemsStorage> {
     @Override
-    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public ListOfItemsStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
         List<ItemStack> items = new ArrayList<>();
-        Container inv = (Container) player.level().getBlockEntity(pos);
+        Container inv = (Container) tracker.level().getBlockEntity(pos);
         for (int i = 0; i < inv.getContainerSize(); i++) {
             items.add(inv.getItem(i));
         }
-        items.add(Swap.getRecipeOutput(player, items.toArray(new ItemStack[inv.getContainerSize()])));
+        items.add(Swap.getRecipeOutput(tracker, items.toArray(new ItemStack[inv.getContainerSize()])));
         return new ListOfItemsStorage(items, items.size());
     }
 
     @Override
-    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
+    public boolean isDirtyForClientSync(ServerPlayer tracker, BlockPos pos) {
         // Sync often since taking station output doesn't update dirtiness
-        return super.isDirtyForClientSync(player, pos) || player.tickCount % 2 == 0;
+        return super.isDirtyForClientSync(tracker, pos) || tracker.tickCount % 2 == 0;
     }
 
     @Override
@@ -45,16 +45,16 @@ public class TCCraftingStationHandler extends ContainerHandler<ListOfItemsStorag
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        Container table = (Container) player.level().getBlockEntity(pos);
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
+        Container table = (Container) tracker.level().getBlockEntity(pos);
         BlockEntity tableBE = (BlockEntity) table;
-        ItemStack playerItem = player.getItemInHand(hand).copy();
+        ItemStack playerItem = tracker.getItemInHand(hand).copy();
         if (slot < 9) {
             // Just place the item in. Recipe result is calculated in makeInventoryContents() to show the client
             // and at actual crafting time (else block below).
             ItemStack craftingItem = table.getItem(slot).copy();
-            SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, craftingItem, amount, player);
-            result.giveToPlayer(player, hand);
+            SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, craftingItem, amount, tracker);
+            result.giveToPlayer(tracker, hand);
             table.setItem(slot, result.immersiveStack());
         } else {
             // Get the items into an array, do the craft, then put the items back.
@@ -62,7 +62,7 @@ public class TCCraftingStationHandler extends ContainerHandler<ListOfItemsStorag
             for (int i = 0; i <= 8; i++) {
                 items[i] = table.getItem(i).copy();
             }
-            items = Swap.handleDoCraft(player, items, pos, amount);
+            items = Swap.handleDoCraft(tracker, items, pos, amount);
             if (items == null) return;
             for (int i = 0; i <= 8; i++) {
                 table.setItem(i, items[i]);
