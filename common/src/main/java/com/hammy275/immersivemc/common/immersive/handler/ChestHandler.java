@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
-import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.MultiblockBlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
@@ -27,50 +27,50 @@ import java.util.List;
 import java.util.Set;
 
 public class ChestHandler extends ChestLikeHandler<ListOfItemsStorage>
-        implements MultiblockImmersiveHandler<ListOfItemsStorage>, AfterClientSyncHandler {
+        implements MultiblockBlockBasedImmersiveHandler<ListOfItemsStorage>, AfterClientSyncHandler {
 
     @Override
-    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        BlockEntity blockEntity = player.level().getBlockEntity(pos);
+    public ListOfItemsStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
+        BlockEntity blockEntity = tracker.level().getBlockEntity(pos);
         if (blockEntity instanceof ChestBlockEntity cbe) {
-            ListOfItemsStorage storage = makeBaseInventoryContents(player, pos);
+            ListOfItemsStorage storage = makeBaseInventoryContents(tracker, pos);
             ChestBlockEntity otherChest = Util.getOtherChest(cbe);
             if (otherChest != null) {
-                ListOfItemsStorage otherStorage = makeBaseInventoryContents(player, otherChest.getBlockPos());
+                ListOfItemsStorage otherStorage = makeBaseInventoryContents(tracker, otherChest.getBlockPos());
                 storage.getItems().addAll(otherStorage.getItems());
             }
             return storage;
         } else { // Is an ender chest
             // NOTE: On (1.19.2) Forge, PlayerEnderChestContainer#items is private; hence why we for loop here
             // instead of just initializing directly from the items list.
-            List<ItemStack> items = new ArrayList<>(player.getEnderChestInventory().getContainerSize());
-            for (int i = 0; i < player.getEnderChestInventory().getContainerSize(); i++) {
-                items.add(player.getEnderChestInventory().getItem(i));
+            List<ItemStack> items = new ArrayList<>(tracker.getEnderChestInventory().getContainerSize());
+            for (int i = 0; i < tracker.getEnderChestInventory().getContainerSize(); i++) {
+                items.add(tracker.getEnderChestInventory().getItem(i));
             }
             return new ListOfItemsStorage(items, 27);
         }
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        BlockEntity blockEntity = player.level().getBlockEntity(pos);
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
+        BlockEntity blockEntity = tracker.level().getBlockEntity(pos);
         if (blockEntity instanceof ChestBlockEntity cbe) {
-            Swap.handleChest(cbe, player, hand, slot);
+            Swap.handleChest(cbe, tracker, hand, slot);
         } else if (blockEntity instanceof EnderChestBlockEntity) {
-            Swap.handleEnderChest(player, hand, slot);
+            Swap.handleEnderChest(tracker, hand, slot);
         }
     }
 
     @Override
-    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        BlockEntity blockEntity = player.level().getBlockEntity(pos);
+    public boolean isDirtyForClientSync(ServerPlayer tracker, BlockPos pos) {
+        BlockEntity blockEntity = tracker.level().getBlockEntity(pos);
         if (blockEntity instanceof EnderChestBlockEntity) {
-            return player.tickCount % 2 == 0; // Every other tick for dirtiness. Not ideal, but works.
+            return tracker.tickCount % 2 == 0; // Every other tick for dirtiness. Not ideal, but works.
         } else {
-            boolean isDirtyForClientSync = super.isDirtyForClientSync(player, pos);
-            ChestBlockEntity otherChest = Util.getOtherChest((ChestBlockEntity) player.level().getBlockEntity(pos));
+            boolean isDirtyForClientSync = super.isDirtyForClientSync(tracker, pos);
+            ChestBlockEntity otherChest = Util.getOtherChest((ChestBlockEntity) tracker.level().getBlockEntity(pos));
             if (otherChest != null) {
-                isDirtyForClientSync = isDirtyForClientSync || super.isDirtyForClientSync(player, otherChest.getBlockPos());
+                isDirtyForClientSync = isDirtyForClientSync || super.isDirtyForClientSync(tracker, otherChest.getBlockPos());
             }
             return isDirtyForClientSync;
         }

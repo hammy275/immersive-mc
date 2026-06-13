@@ -1,6 +1,5 @@
 package com.hammy275.immersivemc.common.network.packet;
 
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraft.core.BlockPos;
@@ -27,7 +26,7 @@ public class UsePacket {
     public static void handle(final UsePacket packet, ServerPlayer player) {
         if (player != null) {
             Level level = player.level();
-            if (ImmersiveCheckers.isLever(packet.pos, level)) {
+            if (ImmersiveHandlers.leverHandler.isValidBlock(packet.pos, level)) {
                 Util.useLever(player, packet.pos);
             } else if (ImmersiveHandlers.trapdoorHandler.isValidBlock(packet.pos, level)) {
                 Util.useTrapdoor(player, level, packet.pos);

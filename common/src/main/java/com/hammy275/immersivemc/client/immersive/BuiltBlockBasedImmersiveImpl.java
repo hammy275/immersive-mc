@@ -3,15 +3,15 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
-import com.hammy275.immersivemc.api.client.immersive.BuiltImmersive;
-import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.BuiltBlockBasedImmersive;
+import com.hammy275.immersivemc.api.client.immersive.BuiltBlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveRenderState;
 import com.hammy275.immersivemc.api.client.immersive.HitboxPositioningMode;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
-import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfoImpl;
-import com.hammy275.immersivemc.client.immersive.info.render_state.BuiltImmersiveRenderStateImpl;
+import com.hammy275.immersivemc.client.immersive.info.BuiltBlockBasedImmersiveInfoImpl;
+import com.hammy275.immersivemc.client.immersive.info.render_state.BuiltBlockBasedImmersiveRenderStateImpl;
 import com.hammy275.immersivemc.client.immersive.info.render_state.RelativeHitboxRenderState;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.ItemStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
@@ -40,17 +40,17 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implements BuiltImmersive<E, ER, S> {
+public final class BuiltBlockBasedImmersiveImpl<E, ER, S extends NetworkStorage> implements BuiltBlockBasedImmersive<E, ER, S> {
 
-    private final ImmersiveBuilderImpl<E, ER, S> builder;
-    private final List<BuiltImmersiveInfo<E>> infos = new ArrayList<>();
+    private final BlockBasedImmersiveBuilderImpl<E, ER, S> builder;
+    private final List<BuiltBlockBasedImmersiveInfo<E>> infos = new ArrayList<>();
 
-    public BuiltImmersiveImpl(ImmersiveBuilderImpl<E, ER, S> builder) {
+    public BuiltBlockBasedImmersiveImpl(BlockBasedImmersiveBuilderImpl<E, ER, S> builder) {
         this.builder = builder;
     }
 
     @Override
-    public ImmersiveHandler<S> getHandler() {
+    public BlockBasedImmersiveHandler<S> getHandler() {
         return builder.handler;
     }
 
@@ -60,8 +60,8 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
     }
 
     @Override
-    public void tick(BuiltImmersiveInfo<E> infoIn) {
-        BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
+    public void tick(BuiltBlockBasedImmersiveInfo<E> infoIn) {
+        BuiltBlockBasedImmersiveInfoImpl<E> info = asImpl(infoIn);
         info.ticksExisted++;
         Direction currentDir;
         switch (builder.positioningMode) {
@@ -138,25 +138,25 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
 
     @Override
     @Nullable
-    public AABB getDragHitbox(BuiltImmersiveInfo<E> info) {
+    public AABB getDragHitbox(BuiltBlockBasedImmersiveInfo<E> info) {
         return asImpl(info).dragHitbox;
     }
 
     @Override
-    public boolean isInputHitbox(BuiltImmersiveInfo<E> infoIn, int hitboxIndex) {
-        BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
+    public boolean isInputHitbox(BuiltBlockBasedImmersiveInfo<E> infoIn, int hitboxIndex) {
+        BuiltBlockBasedImmersiveInfoImpl<E> info = asImpl(infoIn);
         return info.hitboxes.get(hitboxIndex).isInput;
     }
 
     @Override
     public boolean shouldRender(BuiltImmersiveRenderState<ER> renderStateIn) {
-        BuiltImmersiveRenderStateImpl<ER> renderState = asImpl(renderStateIn);
+        BuiltBlockBasedImmersiveRenderStateImpl<ER> renderState = asImpl(renderStateIn);
         return renderState.hasHitboxes() && renderState.airCheckPassed;
     }
 
     @Override
     public void render(BuiltImmersiveRenderState<ER> renderStateIn, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
-        BuiltImmersiveRenderStateImpl<ER> renderState = asImpl(renderStateIn);
+        BuiltBlockBasedImmersiveRenderStateImpl<ER> renderState = asImpl(renderStateIn);
         float size = ImmersiveRenderHelpers.instance().getTransitionMultiplier(renderState.ticksExisted) * builder.renderSize;
         for (int i = 0; i < renderState.hitboxes.size(); i++) {
             RelativeHitboxRenderState hitbox = renderState.hitboxes.get(i);
@@ -199,32 +199,32 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
     }
 
     @Override
-    public BuiltImmersiveInfo<E> buildInfo(BlockPos pos, Level level) {
+    public BuiltBlockBasedImmersiveInfo<E> buildInfo(BlockPos pos, Level level) {
         BlockState state = level.getBlockState(pos);
-        BuiltImmersiveInfoImpl<E> info;
+        BuiltBlockBasedImmersiveInfoImpl<E> info;
         if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING) {
-            info = new BuiltImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
+            info = new BuiltBlockBasedImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
             info.immersiveDir = state.getValue(HorizontalDirectionalBlock.FACING);
         } else if (builder.positioningMode == HitboxPositioningMode.TOP_PLAYER_FACING) {
-          info = new BuiltImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
+          info = new BuiltBlockBasedImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
         } else if (builder.positioningMode == HitboxPositioningMode.TOP_LITERAL) {
-          info = new BuiltImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
+          info = new BuiltBlockBasedImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
         } else if (builder.positioningMode == HitboxPositioningMode.TOP_BLOCK_FACING) {
-            info = new BuiltImmersiveInfoImpl<>(builder.hitboxes, pos,
+            info = new BuiltBlockBasedImmersiveInfoImpl<>(builder.hitboxes, pos,
                     builder.extraInfoDataClazz);
             info.immersiveDir = state.getValue(HorizontalDirectionalBlock.FACING);
         } else if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_PLAYER_FACING) {
-            info = new BuiltImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
+            info = new BuiltBlockBasedImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
         } else if (builder.positioningMode == HitboxPositioningMode.BLOCK_FACING_NEG_X) {
-            info = new BuiltImmersiveInfoImpl<>(builder.hitboxes, pos,
+            info = new BuiltBlockBasedImmersiveInfoImpl<>(builder.hitboxes, pos,
                     builder.extraInfoDataClazz);
             info.immersiveDir = state.getValue(BlockStateProperties.FACING);
         } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING_NO_DOWN) {
-            info = new BuiltImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
+            info = new BuiltBlockBasedImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
         } else if (builder.positioningMode == HitboxPositioningMode.PLAYER_FACING_FILTER_BLOCK_FACING) {
-            info = new BuiltImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
+            info = new BuiltBlockBasedImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
         } else if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING_ATTACHED_FLOOR_CEILING_REVERSED) {
-            info = new BuiltImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
+            info = new BuiltBlockBasedImmersiveInfoImpl<>(builder.hitboxes, pos, builder.extraInfoDataClazz);
             info.immersiveDir = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
             if (state.getValue(BlockStateProperties.ATTACH_FACE) != AttachFace.WALL) {
                 info.immersiveDir = info.immersiveDir.getOpposite();
@@ -236,24 +236,24 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
     }
 
     @Override
-    public boolean shouldDisableRightClicksWhenVanillaInteractionsDisabled(BuiltImmersiveInfo<E> info) {
+    public boolean shouldDisableRightClicksWhenVanillaInteractionsDisabled(BuiltBlockBasedImmersiveInfo<E> info) {
         return builder.blockRightClickWhenGUIClickDisabled;
     }
 
 
     @Override
-    public Collection<BuiltImmersiveInfo<E>> getTrackedObjects() {
+    public Collection<BuiltBlockBasedImmersiveInfo<E>> getTrackedObjects() {
         return this.infos;
     }
 
     @Override
-    public int handleHitboxInteract(BuiltImmersiveInfo<E> infoIn, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
-        BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
+    public int handleHitboxInteract(BuiltBlockBasedImmersiveInfo<E> infoIn, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
+        BuiltBlockBasedImmersiveInfoImpl<E> info = asImpl(infoIn);
         return builder.hitboxInteractHandler.apply(info, player, hitboxIndices, hand, modifierPressed);
     }
 
-    private boolean airCheck(BuiltImmersiveInfo<E> infoIn) {
-        BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
+    private boolean airCheck(BuiltBlockBasedImmersiveInfo<E> infoIn) {
+        BuiltBlockBasedImmersiveInfoImpl<E> info = asImpl(infoIn);
         Collection<BlockPos> positions;
         if (builder.airCheckPositionOffsets.isEmpty()) {
             positions = new HashSet<>();
@@ -294,7 +294,7 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
         return true;
     }
 
-    public List<BlockPos> getLightPositions(BuiltImmersiveInfo<E> info) {
+    public List<BlockPos> getLightPositions(BuiltBlockBasedImmersiveInfo<E> info) {
         if (builder.lightPositionOffsets.size() > 1) {
             List<BlockPos> lightPositions = new ArrayList<>();
             for (Vec3i offset : builder.lightPositionOffsets) {
@@ -315,8 +315,8 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
         }
     }
 
-    public BlockPos getLightPos(BuiltImmersiveInfo<E> infoIn) {
-        BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
+    public BlockPos getLightPos(BuiltBlockBasedImmersiveInfo<E> infoIn) {
+        BuiltBlockBasedImmersiveInfoImpl<E> info = asImpl(infoIn);
         if (builder.lightPositionOffsets.isEmpty()) {
             if (builder.positioningMode == HitboxPositioningMode.HORIZONTAL_BLOCK_FACING) {
                 return info.getBlockPosition().relative(info.immersiveDir);
@@ -348,8 +348,8 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
     }
 
     @Override
-    public void processStorageFromNetwork(BuiltImmersiveInfo<E> infoIn, S storage) {
-        BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
+    public void processStorageFromNetwork(BuiltBlockBasedImmersiveInfo<E> infoIn, S storage) {
+        BuiltBlockBasedImmersiveInfoImpl<E> info = asImpl(infoIn);
         if (storage instanceof ListOfItemsStorage itemsStorage) {
             for (int i = 0; i < itemsStorage.getItems().size(); i++) {
                 info.hitboxes.get(i).item = itemsStorage.getItems().get(i);
@@ -360,7 +360,7 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
             }
         }
         if (builder.extraStorageConsumer != null) {
-            builder.extraStorageConsumer.accept(storage, (BuiltImmersiveInfoImpl) info);
+            builder.extraStorageConsumer.accept(storage, (BuiltBlockBasedImmersiveInfoImpl) info);
         }
     }
 
@@ -371,7 +371,7 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
 
     @Override
     public BuiltImmersiveRenderState<ER> createRenderState() {
-        BuiltImmersiveRenderStateImpl<ER> renderState = new BuiltImmersiveRenderStateImpl<ER>();
+        BuiltBlockBasedImmersiveRenderStateImpl<ER> renderState = new BuiltBlockBasedImmersiveRenderStateImpl<ER>();
         if (builder.extraInfoDataRenderStateClazz != null) {
             try {
                 renderState.extraData = builder.extraInfoDataRenderStateClazz.getDeclaredConstructor().newInstance();
@@ -387,9 +387,9 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
     }
 
     @Override
-    public void extractRenderState(BuiltImmersiveInfo<E> infoIn, BuiltImmersiveRenderState<ER> renderStateIn, float partialTicks) {
-        BuiltImmersiveInfoImpl<E> info = asImpl(infoIn);
-        BuiltImmersiveRenderStateImpl<ER> renderState = asImpl(renderStateIn);
+    public void extractRenderState(BuiltBlockBasedImmersiveInfo<E> infoIn, BuiltImmersiveRenderState<ER> renderStateIn, float partialTicks) {
+        BuiltBlockBasedImmersiveInfoImpl<E> info = asImpl(infoIn);
+        BuiltBlockBasedImmersiveRenderStateImpl<ER> renderState = asImpl(renderStateIn);
         for (int i = 0; i < info.hitboxes.size(); i++) {
             info.hitboxes.get(i).extractRenderState(renderState.hitboxes.get(i), partialTicks);
         }
@@ -405,17 +405,17 @@ public final class BuiltImmersiveImpl<E, ER, S extends NetworkStorage> implement
         renderState.slotsHovered = info.slotsHovered.clone();
     }
 
-    public <T extends NetworkStorage> ImmersiveBuilderImpl<E, ER, T> getBuilderClone(ImmersiveHandler<T> newHandler) {
+    public <T extends NetworkStorage> BlockBasedImmersiveBuilderImpl<E, ER, T> getBuilderClone(BlockBasedImmersiveHandler<T> newHandler) {
         return builder.copy(newHandler);
     }
 
     @SuppressWarnings("unchecked")
-    private BuiltImmersiveInfoImpl<E> asImpl(BuiltImmersiveInfo<E> infoIn) {
-        return (BuiltImmersiveInfoImpl<E>) infoIn;
+    private BuiltBlockBasedImmersiveInfoImpl<E> asImpl(BuiltBlockBasedImmersiveInfo<E> infoIn) {
+        return (BuiltBlockBasedImmersiveInfoImpl<E>) infoIn;
     }
 
     @SuppressWarnings("unchecked")
-    private BuiltImmersiveRenderStateImpl<ER> asImpl(BuiltImmersiveRenderState<ER> renderStateIn) {
-        return (BuiltImmersiveRenderStateImpl<ER>) renderStateIn;
+    private BuiltBlockBasedImmersiveRenderStateImpl<ER> asImpl(BuiltImmersiveRenderState<ER> renderStateIn) {
+        return (BuiltBlockBasedImmersiveRenderStateImpl<ER>) renderStateIn;
     }
 }
