@@ -1,7 +1,8 @@
 package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.client.immersive.ImmersiveBackpack;
+import com.hammy275.immersivemc.PlatformClient;
+import com.hammy275.immersivemc.client.immersive.ImmersiveBag;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.BackpackMode;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
@@ -106,7 +107,7 @@ public class BackpackConfigScreen extends OptionsSubScreen {
     protected void renderBackpack(PoseStack stack) {
         stack.pushPose();
 
-        int rgb = ImmersiveBackpack.getBackpackColor();
+        int rgb = ImmersiveBag.getBackpackColor();
 
         float size = 72f;
 
@@ -122,9 +123,9 @@ public class BackpackConfigScreen extends OptionsSubScreen {
         stack.translate(0, size * 1.75, 0);
         stack.scale(size, -size, size); // Negative multiplications here to turn it back from being inside-out
 
-        ImmersiveBackpack.getBackpackModel().renderToBuffer(stack,
+        ImmersiveBag.getBackpackModel().renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderType.entityCutout(ImmersiveBackpack.getBackpackTexture())),
+                        .getBuffer(RenderType.entityCutout(ImmersiveBag.getBackpackTexture())),
                 15728880, OverlayTexture.NO_OVERLAY, rgb);
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
 

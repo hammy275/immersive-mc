@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.api.client.immersive.Immersive;
-import com.hammy275.immersivemc.client.immersive.info.AbstractImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
+import com.hammy275.immersivemc.client.immersive.info.AbstractBlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.client.immersive.info.render_state.AbstractImmersiveRenderState;
 
@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class AbstractImmersive<I extends AbstractImmersiveInfo, R extends AbstractImmersiveRenderState, S extends NetworkStorage>
-        implements Immersive<I, R, S> {
+public abstract class AbstractBlockBasedImmersive<I extends AbstractBlockBasedImmersiveInfo, R extends AbstractImmersiveRenderState, S extends NetworkStorage>
+        implements BlockBasedImmersive<I, R, S> {
 
-    public AbstractImmersive() {
+    public AbstractBlockBasedImmersive() {
 
     }
 
