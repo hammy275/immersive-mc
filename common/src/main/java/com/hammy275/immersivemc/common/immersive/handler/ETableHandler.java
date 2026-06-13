@@ -36,25 +36,25 @@ import java.util.List;
 
 public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
     @Override
-    public ETableStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        ETableWorldStorage worldStorage = (ETableWorldStorage) WorldStoragesImpl.getOrCreateS(pos, player.level());
+    public ETableStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
+        ETableWorldStorage worldStorage = (ETableWorldStorage) WorldStoragesImpl.getOrCreateS(pos, tracker.level());
         ETableStorage storage = new ETableStorage(Arrays.asList(worldStorage.getItemsRaw()));
 
         if (worldStorage.getItem(0) != null && !worldStorage.getItem(0).isEmpty()) {
-            BlockEntity tileEnt = player.level().getBlockEntity(pos);
+            BlockEntity tileEnt = tracker.level().getBlockEntity(pos);
             if (tileEnt instanceof EnchantingTableBlockEntity) {
                 if (Apoth.apothImpl.enchantModuleEnabled()) {
                     // Null checking is done here in case of an exception causing CompatModule to give us a null value
-                    ETableStorage.SlotData[] slots = Apoth.apothImpl.getEnchData(player, pos, worldStorage.getItem(0));
+                    ETableStorage.SlotData[] slots = Apoth.apothImpl.getEnchData(tracker, pos, worldStorage.getItem(0));
                     if (slots != null) storage.slots = slots;
                     Enchantable enchantable =  worldStorage.getItem(0).get(DataComponents.ENCHANTABLE);
                     if (enchantable != null) {
-                        ApothStats stats = Apoth.apothImpl.getStats(player.level(), pos, enchantable.value());
+                        ApothStats stats = Apoth.apothImpl.getStats(tracker.level(), pos, enchantable.value());
                         if (stats != null) storage.apothStats = stats;
                     }
                 } else {
                     EnchantmentMenu container = new EnchantmentMenu(-1,
-                            player.getInventory(), ContainerLevelAccess.create(player.level(), pos));
+                            tracker.getInventory(), ContainerLevelAccess.create(tracker.level(), pos));
                     container.setItem(1, 0, new ItemStack(Items.LAPIS_LAZULI, 64));
                     container.setItem(0, 0, worldStorage.getItem(0));
                     for (int i = 0; i <= 2; i++) {
@@ -68,14 +68,14 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
     }
 
     @Override
-    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
+    public boolean isDirtyForClientSync(ServerPlayer tracker, BlockPos pos) {
         if (Apoth.apothImpl.enchantModuleEnabled()) {
-            WorldStorage storage = WorldStoragesImpl.getS(pos, player.level());
+            WorldStorage storage = WorldStoragesImpl.getS(pos, tracker.level());
             if (storage instanceof ETableWorldStorage ews) {
-                ews.setDirtyFromApothStats(Apoth.apothImpl.getStats(player.level(), pos, 1));
+                ews.setDirtyFromApothStats(Apoth.apothImpl.getStats(tracker.level(), pos, 1));
             }
         }
-        return super.isDirtyForClientSync(player, pos);
+        return super.isDirtyForClientSync(tracker, pos);
     }
 
     @Override
@@ -84,28 +84,28 @@ public class ETableHandler extends ItemWorldStorageHandler<ETableStorage> {
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        if (player == null) return;
-        ETableWorldStorage enchStorage = (ETableWorldStorage) WorldStoragesImpl.getOrCreateS(pos, player.level());
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
+        if (tracker == null) return;
+        ETableWorldStorage enchStorage = (ETableWorldStorage) WorldStoragesImpl.getOrCreateS(pos, tracker.level());
         if (slot == 0) {
-            ItemStack toEnchant = player.getItemInHand(hand);
+            ItemStack toEnchant = tracker.getItemInHand(hand);
             // Apotheosis allows placing any item in
             if (!toEnchant.isEmpty() && (!toEnchant.isEnchantable() && !Apoth.apothImpl.enchantModuleEnabled())) return;
             if (enchStorage.getItem(0).isEmpty()) {
-                enchStorage.placeItem(player, hand, slot, new ConstantItemSwapAmount(1));
+                enchStorage.placeItem(tracker, hand, slot, new ConstantItemSwapAmount(1));
             } else {
-                SwapResult result = ImmersiveLogicHelpers.instance().swapItems(toEnchant, enchStorage.getItem(0), amount, player);
-                result.giveToPlayer(player, hand);
-                enchStorage.setItem(0, result.immersiveStack(), player);
+                SwapResult result = ImmersiveLogicHelpers.instance().swapItems(toEnchant, enchStorage.getItem(0), amount, tracker);
+                result.giveToPlayer(tracker, hand);
+                enchStorage.setItem(0, result.immersiveStack(), tracker);
             }
         } else {
-            boolean res = Swap.doEnchanting(slot, pos, player, hand);
+            boolean res = Swap.doEnchanting(slot, pos, tracker, hand);
             if (!res) {
                 return;
             }
-            VRRumble.rumbleIfVR(player, hand, CommonConstants.vibrationTimeWorldInteraction);
+            VRRumble.rumbleIfVR(tracker, hand, CommonConstants.vibrationTimeWorldInteraction);
         }
-        enchStorage.setDirty(player.level());
+        enchStorage.setDirty(tracker.level());
     }
 
     @Override

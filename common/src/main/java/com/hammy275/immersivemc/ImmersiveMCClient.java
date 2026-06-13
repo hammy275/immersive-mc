@@ -13,9 +13,9 @@ import com.hammy275.immersivemc.client.ticker.FishingReelTicker;
 import com.hammy275.immersivemc.client.ticker.RangedGrabTickerClient;
 import com.hammy275.immersivemc.client.ticker.ThrowTicker;
 import com.hammy275.immersivemc.common.compat.util.CompatModule;
+import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.ticker.TickerInit;
 import com.hammy275.immersivemc.common.util.Util;
-import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.common.vr.dev.DevVRState;
@@ -36,7 +36,8 @@ public class ImmersiveMCClient {
             Immersives.immersiveLever, Immersives.immersiveRepeater, Immersives.immersiveShulker,
             Immersives.immersiveSmithingTable, Immersives.immersiveTinkersConstructCraftingStation,
             Immersives.immersiveTrapdoor, Immersives.immersiveApothSalvagingTable,
-            Immersives.immersiveDoor, Immersives.immersiveGrindstone, Immersives.immersiveVisualWorkbench
+            Immersives.immersiveDoor, Immersives.immersiveGrindstone, Immersives.immersiveVisualWorkbench,
+            Immersives.immersiveHitboxes, Immersives.immersiveBag
     );
 
     public static KeyMapping.Category globalKeyCategory;

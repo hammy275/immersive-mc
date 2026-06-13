@@ -10,10 +10,23 @@ import java.util.function.Function;
  */
 @Beta
 public enum ItemRotationType {
+    /**
+     * Rotate the item clockwise from the default rotation for the Immersive.
+     */
     CLOCKWISE(Direction::getClockWise),
+    /**
+     * Rotate the item counterclockwise from the default rotation for the Immersive.
+     */
     COUNTERCLOCKWISE(Direction::getCounterClockWise),
+    /**
+     * Rotate the item to face the opposite direction from the default rotation for the Immersive.
+     */
     OPPOSITE(Direction::getOpposite);
 
+    /**
+     * Internal object that specifies how the rotation is performed. This is not covered under the API, and may change
+     * in any way at any time!
+     */
     private final Function<Direction, Direction> transformer;
 
     ItemRotationType(Function<Direction, Direction> transformer) {

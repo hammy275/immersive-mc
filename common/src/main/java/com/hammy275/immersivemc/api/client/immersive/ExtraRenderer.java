@@ -1,8 +1,16 @@
 package com.hammy275.immersivemc.api.client.immersive;
 
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import java.util.function.BiConsumer;
+
+/**
+ * A functional interface for {@link BuiltBlockBasedImmersive}s for providing additional rendering functionality.
+ * @param <ER> The extra data passed to rendering. This is the second class passed to
+ *             {@link BlockBasedImmersiveBuilder#copy(BlockBasedImmersiveHandler, Class, Class, BiConsumer)}.
+ */
 @FunctionalInterface
 public interface ExtraRenderer<ER> {
     /**

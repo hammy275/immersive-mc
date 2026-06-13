@@ -3,16 +3,14 @@ package com.hammy275.immersivemc.common.util;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.api.client.immersive.Immersive;
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
-import com.hammy275.immersivemc.api.common.immersive.MultiblockImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.MultiblockBlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.common.immersive.ImmersiveChecker;
-import com.hammy275.immersivemc.common.immersive.ImmersiveCheckers;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.mixin.ChestBlockEntityAccessor;
@@ -83,10 +81,10 @@ public class Util {
     public static boolean blockIsActiveImmersive(Player player, BlockPos pos) {
         Level level = player.level();
         if (level.isClientSide()) {
-            for (Immersive<?, ?, ?> singleton : Immersives.IMMERSIVES) {
-                if (singleton.getHandler() instanceof MultiblockImmersiveHandler<?> handler) {
+            for (BlockBasedImmersive<?, ?, ?> singleton : Immersives.BLOCK_IMMERSIVES) {
+                if (singleton.getHandler() instanceof MultiblockBlockBasedImmersiveHandler<?> handler) {
                     // Need to actually do blockstate checks if a multiblock handler, since that data isn't known
-                    for (ImmersiveInfo info : singleton.getTrackedObjects()) {
+                    for (BlockBasedImmersiveInfo info : singleton.getTrackedObjects()) {
                         Set<BlockPos> handledBlocks = handler.getHandledBlocks(pos, level);
                         if (handledBlocks != null && handledBlocks.contains(info.getBlockPosition())) {
                             return true;
@@ -94,7 +92,7 @@ public class Util {
                     }
                 } else {
                     // Can just look at stored block positions
-                    for (ImmersiveInfo info : singleton.getTrackedObjects()) {
+                    for (BlockBasedImmersiveInfo info : singleton.getTrackedObjects()) {
                         if (info.getBlockPosition().equals(pos)) {
                             return true;
                         }
@@ -103,7 +101,7 @@ public class Util {
             }
             return false;
         } else {
-            return TrackedImmersives.TRACKED_IMMERSIVES.stream()
+            return TrackedImmersives.TRACKED_BLOCK_IMMERSIVES.stream()
                     .anyMatch(data -> data.playerUUID.equals(player.getUUID()) && data.getPos().contains(pos));
         }
     }
@@ -135,16 +133,16 @@ public class Util {
     }
 
     /**
-     * Check if Immersive has valid blocks. This is equivalent to {@link ImmersiveHandler#isValidBlock(BlockPos, Level)}
+     * Check if Immersive has valid blocks. This is equivalent to {@link BlockBasedImmersiveHandler#isValidBlock(BlockPos, Level)}
      * for single-block Immersives, and running the
-     * former method on all blocks in {@link MultiblockImmersiveHandler#getHandledBlocks(BlockPos, Level)} for
+     * former method on all blocks in {@link MultiblockBlockBasedImmersiveHandler#getHandledBlocks(BlockPos, Level)} for
      * multiblock Immersives.
      * @param handler Handler to run on.
      * @param pos Position to check, or a position to check if part of a multiblock.
      * @param level Level to check in.
      * @return Whether all blocks are valid or not.
      */
-    public static boolean isValidBlocks(ImmersiveHandler<?> handler, BlockPos pos, Level level) {
+    public static boolean isValidBlocks(BlockBasedImmersiveHandler<?> handler, BlockPos pos, Level level) {
         return getValidBlocks(handler, pos, level).contains(pos);
     }
 
@@ -155,7 +153,7 @@ public class Util {
      * @param level Level.
      * @return Whether the provided set of positions match the Immersive as it exists in-world.
      */
-    public static boolean isValidBlocks(ImmersiveHandler<?> handler, Set<BlockPos> pos, Level level) {
+    public static boolean isValidBlocks(BlockBasedImmersiveHandler<?> handler, Set<BlockPos> pos, Level level) {
         return getValidBlocks(handler, pos.iterator().next(), level).equals(pos);
     }
 
@@ -166,10 +164,10 @@ public class Util {
      * @param level The level to get in.
      * @return A set of valid positions for the Immersive, or an empty set if not valid.
      */
-    public static Set<BlockPos> getValidBlocks(ImmersiveHandler<?> handler, BlockPos pos, Level level) {
+    public static Set<BlockPos> getValidBlocks(BlockBasedImmersiveHandler<?> handler, BlockPos pos, Level level) {
         boolean valid = handler.isValidBlock(pos, level);
         if (valid) {
-            if (handler instanceof MultiblockImmersiveHandler<?> mih) {
+            if (handler instanceof MultiblockBlockBasedImmersiveHandler<?> mih) {
                 Set<BlockPos> positions = mih.getHandledBlocks(pos, level);
                 if (positions != null && positions.stream().allMatch(p -> handler.isValidBlock(p, level))) {
                     return positions;
@@ -216,16 +214,6 @@ public class Util {
         } else {
             return look.z < 0 ? Direction.NORTH : Direction.SOUTH;
         }
-    }
-
-    public static boolean isHittingImmersive(BlockHitResult result, Level level) {
-        BlockPos pos = result.getBlockPos();
-        for (ImmersiveChecker checker : ImmersiveCheckers.CHECKERS) {
-            if (checker.apply(pos, level)) {
-                return true; // "I'm totally not crouching" if SHIFT+Right-clicking an immersive
-            }
-        }
-        return false;
     }
 
     public static boolean hasItemInInventoryWithStackSpace(Player player, ItemStack stack) {
@@ -410,7 +398,7 @@ public class Util {
     }
 
     public static void useLever(Player player, BlockPos pos) {
-        if (ImmersiveCheckers.isLever(pos, player.level())) {
+        if (ImmersiveHandlers.leverHandler.isValidBlock(pos, player.level())) {
             BlockState lever = player.level().getBlockState(pos);
             lever.useWithoutItem(player.level(), player,
                     new BlockHitResult(Vec3.atCenterOf(pos), Direction.NORTH, pos, true));

@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.server.immersive;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 
 import java.util.*;
@@ -9,6 +10,7 @@ import java.util.*;
 public class DirtyTracker {
     // Technically speaking, this marks dirty for a given position in all levels
     public static final Map<ResourceKey<Level>, Set<BlockPos>> dirtyPositions = new HashMap<>();
+    public static final Set<ServerPlayer> dirtyBagStorages = new HashSet<>();
 
     public static boolean isDirty(Level level, BlockPos pos) {
         if (dirtyPositions.containsKey(level.dimension())) {
@@ -26,5 +28,6 @@ public class DirtyTracker {
     public static void unmarkAllDirty() {
         // Only clear values, since we'll likely use the keys next tick.
         dirtyPositions.forEach((key, value) -> value.clear());
+        dirtyBagStorages.clear();
     }
 }

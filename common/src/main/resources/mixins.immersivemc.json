@@ -24,6 +24,7 @@
     "LecternBlockEntityAccessor",
     "LevelMixin",
     "ProjectileAccessor",
+    "ServerEntityMixin",
     "ServerPlayerGameModeMixin",
     "WolfInvoker",
     "throw_redirectors.BottleOEnchantingRedirect",
