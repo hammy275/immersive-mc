@@ -4,8 +4,8 @@ import com.hammy275.immersivemc.api.client.ImmersiveClientConstants;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
-import com.hammy275.immersivemc.api.client.immersive.Immersive;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.book.WrittenBookHelpers;
 import com.hammy275.immersivemc.client.immersive.info.LecternInfo;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ImmersiveLectern implements Immersive<LecternInfo, LecternRenderState, LecternData<CommonBookData>> {
+public class ImmersiveLectern implements BlockBasedImmersive<LecternInfo, LecternRenderState, LecternData<CommonBookData>> {
 
     protected final List<LecternInfo> infos = new ArrayList<>();
 
@@ -102,7 +102,7 @@ public class ImmersiveLectern implements Immersive<LecternInfo, LecternRenderSta
     }
 
     @Override
-    public ImmersiveHandler<LecternData<CommonBookData>> getHandler() {
+    public BlockBasedImmersiveHandler<LecternData<CommonBookData>> getHandler() {
         return ImmersiveHandlers.lecternHandler;
     }
 

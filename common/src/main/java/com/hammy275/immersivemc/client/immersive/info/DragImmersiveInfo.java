@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import net.minecraft.core.BlockPos;
 
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Info for Immersives that work by going to a hitbox, then dragging to other hitboxes, such as trapdoors.
  */
-public class DragImmersiveInfo implements ImmersiveInfo {
+public class DragImmersiveInfo implements BlockBasedImmersiveInfo {
 
     /**
      * The hitbox that needs to be started at to begin dragging, or -1 if one can start anywhere.

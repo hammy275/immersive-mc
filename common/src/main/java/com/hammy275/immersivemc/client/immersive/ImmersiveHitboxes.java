@@ -1,83 +1,96 @@
 package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
+import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.client.immersive.PlayerAttachmentImmersive;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
-import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
+import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.ImmersiveHitboxesInfo;
+import com.hammy275.immersivemc.common.api_impl.hitbox.HitboxInfoImpl;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.NullStorage;
 import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.debug.DebugScreenEntries;
-import net.minecraft.core.BlockPos;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.vivecraft.api.data.VRBodyPartData;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Used for hitboxes attached to the player
  */
-public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<ImmersiveHitboxesInfo, NullStorage> {
+public class ImmersiveHitboxes implements PlayerAttachmentImmersive<ImmersiveHitboxesInfo, ImmersiveHitboxesInfo.RenderState, NullStorage> {
 
     private static final Minecraft mc = Minecraft.getInstance();
-    
     private static final double backpackHeight = 0.625;
     private static final Vec3 DOWN = new Vec3(0, -1, 0);
-    private int backpackCooldown = 0; // Used for those with trigger-hit for opening the bag disabled
-    private boolean canOpenBackpack = false;
 
-    public ImmersiveHitboxes() {
-        super(1);
-        this.forceDisableItemGuide = true;
-        this.forceTickEvenIfNoTrack = true;
+    protected final List<ImmersiveHitboxesInfo> trackedObjects = new ArrayList<>();
+
+    @Override
+    public ImmersiveHitboxesInfo buildInfo(AbstractClientPlayer player) {
+        return new ImmersiveHitboxesInfo();
     }
 
     @Override
-    protected void renderTick(ImmersiveHitboxesInfo info, boolean isInVR) {
-        super.renderTick(info, isInVR);
-        canOpenBackpack = false;
+    public Collection<ImmersiveHitboxesInfo> getTrackedObjects() {
+        return trackedObjects;
+    }
+
+    @Override
+    public int handleHitboxInteract(ImmersiveHitboxesInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
+        if (hand == InteractionHand.OFF_HAND) {
+            int index = hitboxIndices.get(0);
+            if (index == ImmersiveHitboxesInfo.BAG_BACK_INDEX) {
+                if (ActiveConfig.active().requireTriggerForBagOpen) {
+                    info.canOpen = true;
+                } else {
+                    ClientUtil.openBag(mc.player, true);
+                    return ClientConstants.bagOpenCloseCooldown;
+                }
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public void tick(ImmersiveHitboxesInfo info) {
+        info.canOpen = false;
+        info.tickCount++;
         if (ActiveConfig.active().reachBehindBagMode.usesBehindBack() && VRVerify.clientInVR()) {
             // centerPos is the center of the back of the player
-            VRBodyPartData hmdData = Platform.isDevelopmentEnvironment() ? null : VR.ClientAPI.getWorldRenderPose().getHead();
-            Vec3 centerPos = hmdData != null ?
-                    hmdData.getPos().add(0, -0.5, 0).add(hmdData.getDir().scale(-0.15)) :
-                    mc.player.getEyePosition(mc.getDeltaTracker().getGameTimeDeltaPartialTick(true)).add(0, -0.5, 0).add(mc.player.getLookAngle().scale(-0.15));
-            double yaw;
-            Vec3 headLook;
-            if (VRVerify.playerInVR(mc.player) && !Platform.isDevelopmentEnvironment()) {
-                yaw = hmdData.getYaw();
-                headLook = hmdData.getDir();
-            } else {
-                // Yaw based on player's yaw for testing in dev
-                yaw = Math.toRadians(mc.player.getYRot());
-                headLook = mc.player.getLookAngle();
-            }
+            VRBodyPartData hmdData = VR.ClientAPI.getWorldRenderPose().getHead();
+            Vec3 centerPos = hmdData.getPos().add(0, -0.5, 0).add(hmdData.getDir().scale(-0.15));
+            double yaw = hmdData.getYaw();
+            Vec3 headLook = hmdData.getDir();
             headLook = headLook.multiply(1, 0, 1).normalize(); // Ignore y rotation
             centerPos = centerPos.add(headLook.scale(-0.25));
             // Back is 0.5 blocks across from center, making size 0.35 longways (full back has funny accidental detections).
             // Since +Z is 0 yaw, we make the length across the back 0.35 on the X-axis.
             // Add 0.2 to have some sane minimum
-            info.setHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX,
-                    OBBFactory.instance().create(AABB.ofSize(centerPos, 0.35, backpackHeight, 0.2),
-                            0, yaw, 0));
-            if (BoundingBox.contains(info.getHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX), VR.ClientAPI.getWorldRenderPose().getHand(getBagHand()).getPos())) {
-                canOpenBackpack = true;
-            }
+            info.hitboxes.set(ImmersiveHitboxesInfo.BAG_BACK_INDEX,
+                    new HitboxInfoImpl(OBBFactory.instance().create(AABB.ofSize(centerPos, 0.35, backpackHeight, 0.2),
+                            0, yaw, 0), false));
         } else {
             // In case setting changes mid-game
-            info.setHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX, null);
+            info.hitboxes.set(ImmersiveHitboxesInfo.BAG_BACK_INDEX, new HitboxInfoImpl(AABB.ofSize(Vec3.ZERO, 0, 0, 0), false));
         }
 
-        if (!canOpenBackpack && ActiveConfig.active().reachBehindBagMode.usesOverShoulder() && VRVerify.clientInVR()) {
+        if (!info.canOpen && ActiveConfig.active().reachBehindBagMode.usesOverShoulder() && VRVerify.clientInVR()) {
             InteractionHand hand = getBagHand();
             VRBodyPartData hmdData = VR.ClientAPI.getWorldRenderPose().getHead();
             VRBodyPartData handData = VR.ClientAPI.getWorldRenderPose().getHand(hand);
@@ -95,109 +108,73 @@ public class ImmersiveHitboxes extends AbstractPlayerAttachmentImmersive<Immersi
             boolean behindHMD = cHMDAngleDiff > 2 * Math.PI / 3d;
 
             if (pointingDown && behindHMD) {
-                canOpenBackpack = true;
+                info.canOpen = true;
             }
-        }
-
-        // Handle those that don't use the trigger press to open the bag
-        if (!ActiveConfig.active().requireTriggerForBagOpen && canOpenBackpack && backpackCooldown <= 0) {
-            ClientUtil.openBag(mc.player, true);
-            backpackCooldown = 50;
         }
     }
 
     @Override
-    public @Nullable ImmersiveHandler getHandler() {
+    public @Nullable BoundingBox getDragHitbox(ImmersiveHitboxesInfo info) {
         return null;
     }
 
     @Override
-    protected void doTick(ImmersiveHitboxesInfo info, boolean isInVR) {
-        super.doTick(info, isInVR);
-        if (backpackCooldown > 0) {
-            backpackCooldown--;
-        }
+    public boolean isInputHitbox(ImmersiveHitboxesInfo info, int hitboxIndex) {
+        return false;
     }
 
     @Override
-    public boolean shouldRender(ImmersiveHitboxesInfo info, boolean isInVR) {
+    public boolean shouldRender(ImmersiveHitboxesInfo.RenderState renderState) {
         return true;
     }
 
     @Override
-    protected void render(ImmersiveHitboxesInfo info, PoseStack stack, boolean isInVR) {
-        BoundingBox backpackHitbox = info.getHitbox(ImmersiveHitboxesInfo.BACKPACK_BACK_INDEX);
-        if (backpackHitbox != null) {
-            renderHitbox(stack, backpackHitbox);
-            if (VRVerify.playerInVR(mc.player) && mc.debugEntries.isCurrentlyEnabled(DebugScreenEntries.ENTITY_HITBOXES)) {
-                VRBodyPartData c = VR.API.getVRPose(mc.player).getHand(getBagHand());
-                if (BoundingBox.contains(backpackHitbox, c.getPos())) {
-                    renderHitbox(stack, AABB.ofSize(c.getPos(), 0.25, 0.25, 0.25),
-                            true,
-                            0f, 1f, 0f);
-                }
-            }
+    public void render(ImmersiveHitboxesInfo.RenderState renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
+        for (int i = 0; i < renderState.hitboxes.size(); i++) {
+            BoundingBox hitbox = renderState.hitboxes.get(i);
+            helpers.renderHitbox(stack, hitbox, false, i == renderState.slotHovered ? 0f : 1f, i == renderState.slotHovered ? 0f : 1f, 1f);
         }
     }
 
     @Override
-    public boolean enabledInConfig() {
-        return true; // We always have this enabled in config
+    public PlayerAttachmentImmersiveHandler<NullStorage> getHandler() {
+        return ImmersiveHandlers.hitboxesHandler;
     }
 
     @Override
-    protected boolean inputSlotShouldRenderHelpHitbox(ImmersiveHitboxesInfo info, int slotNum) {
-        return false; // No help hitboxes
-    }
-
-    @Override
-    public boolean shouldTrack(BlockPos pos, Level level) {
-        return true; // Prevents info instances from being removed. Okay to do since trackObject() is a no-op.
-    }
-
-    @Override
-    public ImmersiveHitboxesInfo refreshOrTrackObject(BlockPos pos, Level level) {
-        // Return null. Never tracking any objects.
+    public @Nullable ImmersiveConfigScreenInfo configScreenInfo() {
         return null;
     }
 
     @Override
-    public boolean shouldBlockClickIfEnabled(AbstractPlayerAttachmentInfo info) {
-        return false; // Doesn't really matter, never hooked into a block anyways
+    public void processStorageFromNetwork(ImmersiveHitboxesInfo info, NullStorage storage) {
+        // Client-authoritative, no networking
     }
 
     @Override
-    protected void initInfo(ImmersiveHitboxesInfo info) {
-        // No need to init, all init things are done in doTick, which needs to run every tick anyways
+    public ImmersiveHitboxesInfo.RenderState createRenderState() {
+        return new ImmersiveHitboxesInfo.RenderState();
     }
 
     @Override
-    public void handleRightClick(AbstractPlayerAttachmentInfo info, Player player, int closest, InteractionHand hand) {
-        // Intentionally empty, all hitbox logic is handled from ticking
-    }
-
-    @Override
-    public void processStorageFromNetwork(AbstractPlayerAttachmentInfo info, NullStorage storage) {
-        // Intentional NO-OP
-    }
-
-    @Override
-    public BlockPos getLightPos(ImmersiveHitboxesInfo info) {
-        return info.getBlockPosition();
+    public void extractRenderState(ImmersiveHitboxesInfo info, ImmersiveHitboxesInfo.RenderState renderState, float partialTicks) {
+        renderState.hitboxes = info.hitboxes.stream().map(HitboxInfoImpl::getHitbox).toList();
+        renderState.ticksExisted = info.tickCount;
+        renderState.slotHovered = info.slotHovered;
     }
 
     public void initImmersiveIfNeeded() {
-        if (this.infos.isEmpty()) {
-            this.infos.add(new ImmersiveHitboxesInfo());
+        if (trackedObjects.isEmpty()) {
+            trackedObjects.add(new ImmersiveHitboxesInfo());
         }
     }
 
     public boolean canOpenBagFromInteractModule(InteractionHand bagHand) {
-        return bagHand == getBagHand() && canOpenBackpack && ActiveConfig.active().requireTriggerForBagOpen;
+        return bagHand == getBagHand() && !trackedObjects.isEmpty() &&
+                trackedObjects.get(0).canOpen && ActiveConfig.active().requireTriggerForBagOpen;
     }
 
     private static InteractionHand getBagHand() {
         return ActiveConfig.active().swapBagHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
     }
-
 }

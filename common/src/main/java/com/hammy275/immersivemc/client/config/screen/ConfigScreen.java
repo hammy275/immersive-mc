@@ -1,7 +1,6 @@
 package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
-import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
@@ -147,11 +146,8 @@ public class ConfigScreen extends Screen {
     public static void onClientConfigChange() {
         writeAdjustingConfig();
         // Clear all immersives in-case we disabled one or adjusted a setting for one
-        for (Immersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
+        for (Immersive<?, ?, ?> immersive : Immersives.ALL_IMMERSIVES) {
             immersive.getTrackedObjects().clear();
-        }
-        for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
-            immersive.clearImmersives();
         }
         if (currentConfigAdjusting == ConfigType.SERVER) {
             // If host of a LAN server or playing in singleplayer, send the new config state to other players

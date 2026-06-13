@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.mixin;
 
-import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.BuiltBlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.book.ClientBookData;
 import com.hammy275.immersivemc.client.immersive.info.EnchantingData;
@@ -33,13 +33,13 @@ public class EnchantTableRendererMixin {
     private void immersiveMC$apothEnchantTableBook(EnchantTableRenderState table, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, CallbackInfo ci) {
         if (Apoth.apothImpl.enchantModuleEnabled() && table.open == 1f) {
             BlockPos pos = table.blockPos;
-            Optional<BuiltImmersiveInfo<EnchantingData>> infoOpt = Immersives.immersiveETable.getTrackedObjects().stream()
+            Optional<BuiltBlockBasedImmersiveInfo<EnchantingData>> infoOpt = Immersives.immersiveETable.getTrackedObjects().stream()
                     .filter(i -> i.getBlockPosition().equals(pos))
                     .findFirst();
             if (infoOpt.isPresent()) {
                 Player player = Minecraft.getInstance().level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 3.0, false);
                 if (player != null) {
-                    BuiltImmersiveInfo<EnchantingData> info = infoOpt.get();
+                    BuiltBlockBasedImmersiveInfo<EnchantingData> info = infoOpt.get();
                     ClientBookData bookData = info.getExtraData().getBookData(info.getItem(0));
                     if (bookData != null) {
                         ci.cancel();
