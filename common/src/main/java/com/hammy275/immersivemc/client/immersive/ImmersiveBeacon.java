@@ -6,7 +6,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
@@ -48,7 +48,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconRenderState, BeaconStorage> {
+public class ImmersiveBeacon extends AbstractBlockBasedImmersive<BeaconInfo, BeaconRenderState, BeaconStorage> {
 
     private static final double effectHitboxSize = 0.2;
     private static final double displayHitboxSize = 0.2;
@@ -246,7 +246,7 @@ public class ImmersiveBeacon extends AbstractImmersive<BeaconInfo, BeaconRenderS
     }
 
     @Override
-    public ImmersiveHandler<BeaconStorage> getHandler() {
+    public BlockBasedImmersiveHandler<BeaconStorage> getHandler() {
         return ImmersiveHandlers.beaconHandler;
     }
 

@@ -20,8 +20,8 @@ import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 
 public class BeaconHandler extends ItemWorldStorageHandler<BeaconStorage> {
     @Override
-    public BeaconStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return (BeaconStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+    public BeaconStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
+        return (BeaconStorage) WorldStoragesImpl.getOrCreateS(pos, tracker.serverLevel());
     }
 
     @Override
@@ -30,15 +30,15 @@ public class BeaconHandler extends ItemWorldStorageHandler<BeaconStorage> {
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        ItemStack playerItem = player.getItemInHand(hand);
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
+        ItemStack playerItem = tracker.getItemInHand(hand);
         if (!playerItem.is(ItemTags.BEACON_PAYMENT_ITEMS) && !playerItem.isEmpty()) return;
-        BeaconStorage beaconStorage = (BeaconStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+        BeaconStorage beaconStorage = (BeaconStorage) WorldStoragesImpl.getOrCreateS(pos, tracker.serverLevel());
         ItemStack beaconItem = beaconStorage.getItem(0);
-        SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, beaconItem, amount, player, 1);
-        result.giveToPlayer(player, hand);
-        beaconStorage.setItem(0, result.immersiveStack(), player);
-        beaconStorage.setDirty(player.serverLevel());
+        SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, beaconItem, amount, tracker, 1);
+        result.giveToPlayer(tracker, hand);
+        beaconStorage.setItem(0, result.immersiveStack(), tracker);
+        beaconStorage.setDirty(tracker.serverLevel());
     }
 
     @Override

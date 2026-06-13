@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.ClientUtil;
-import com.hammy275.immersivemc.client.immersive.info.BuiltImmersiveInfoImpl;
+import com.hammy275.immersivemc.client.immersive.info.BuiltBlockBasedImmersiveInfoImpl;
 import com.hammy275.immersivemc.client.immersive.info.render_state.RelativeHitboxRenderState;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.util.Util;
@@ -38,7 +38,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
     // Settings
     private final RelativeHitboxInfoBuilderImpl usedBuilder;
 
-    public final Function<BuiltImmersiveInfo<?>, Vec3> centerOffset;
+    public final Function<BuiltBlockBasedImmersiveInfo<?>, Vec3> centerOffset;
     public final double sizeX;
     public final double sizeY;
     public final double sizeZ;
@@ -47,8 +47,8 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
     public final boolean itemSpins;
     public final float itemRenderSizeMultiplier;
     public final boolean isTriggerHitbox;
-    public final Function<BuiltImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier;
-    public final Function<BuiltImmersiveInfo<?>, ForcedUpDownRenderDir> forcedUpDownRenderDir;
+    public final Function<BuiltBlockBasedImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier;
+    public final Function<BuiltBlockBasedImmersiveInfo<?>, ForcedUpDownRenderDir> forcedUpDownRenderDir;
     // Not directly configured by programmers. This is whether the offset from centerOffset returns a constant value.
     public final boolean constantOffset;
     public final boolean needs3dCompat;
@@ -89,7 +89,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
      * @param holdsItems Whether this hitbox holds items.
      * @param isInput Whether this hitbox is an input hitbox.
      * @param itemSpins Whether the item in this hitbox should spin.
-     * @param itemRenderSizeMultiplier Multiplier to the size passed in the {@link ImmersiveBuilderImpl} for the size the
+     * @param itemRenderSizeMultiplier Multiplier to the size passed in the {@link BlockBasedImmersiveBuilderImpl} for the size the
      *                                 item should render at.
      * @param isTriggerHitbox Whether this hitbox is a trigger hitbox.
      * @param textSupplier A function taking an info instance and returning a list of text components.
@@ -101,10 +101,10 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
      * @param renderItemCount Whether to render the item count in this hitbox if it can contain an item.
      */
     public RelativeHitboxInfoImpl(RelativeHitboxInfoBuilderImpl usedBuilder,
-                                  Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
+                                  Function<BuiltBlockBasedImmersiveInfo<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
                                   boolean holdsItems, boolean isInput, boolean itemSpins, float itemRenderSizeMultiplier,
-                                  boolean isTriggerHitbox, Function<BuiltImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier,
-                                  Function<BuiltImmersiveInfo<?>, ForcedUpDownRenderDir> forcedUpDownDir, boolean constantOffset, boolean needs3dCompat,
+                                  boolean isTriggerHitbox, Function<BuiltBlockBasedImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier,
+                                  Function<BuiltBlockBasedImmersiveInfo<?>, ForcedUpDownRenderDir> forcedUpDownDir, boolean constantOffset, boolean needs3dCompat,
                                   HitboxVRMovementInfo vrMovementInfo, boolean renderItem, boolean renderItemCount, boolean forcedUpDownRenderDirConstant,
                                   boolean lerps, ItemRotationType itemRotationType) {
         this.usedBuilder = usedBuilder;
@@ -146,7 +146,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
      * @param mode Positioning mode. See {@link HitboxPositioningMode} for what each mode does.
      * @param info Info instance.
      */
-    public void recalculate(Level level, HitboxPositioningMode mode, BuiltImmersiveInfoImpl<?> info) {
+    public void recalculate(Level level, HitboxPositioningMode mode, BuiltBlockBasedImmersiveInfoImpl<?> info) {
         this.lastPos = this.pos;
         Vec3 offset = this.centerOffset.apply(info);
         if (offset == null) {
@@ -327,7 +327,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
     /**
      * See below docstring for recalcHorizBlockFacing().
      */
-    private void recalcHorizBlockFacing(Direction blockFacing, BuiltImmersiveInfoImpl<?> info, Vec3 offset) {
+    private void recalcHorizBlockFacing(Direction blockFacing, BuiltBlockBasedImmersiveInfoImpl<?> info, Vec3 offset) {
         recalcHorizBlockFacing(blockFacing, info, offset, Direction.UP);
     }
 
@@ -340,7 +340,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
      * @param blockLiteralFacing The direction the block is facing in the world, or more precisely,
      *                           the direction that +Y should be.
      */
-    private void recalcHorizBlockFacing(Direction blockFacing, BuiltImmersiveInfoImpl<?> info, Vec3 offset, Direction blockLiteralFacing) {
+    private void recalcHorizBlockFacing(Direction blockFacing, BuiltBlockBasedImmersiveInfoImpl<?> info, Vec3 offset, Direction blockLiteralFacing) {
         BlockPos pos = info.getBlockPosition();
 
         // Vectors that are combined with centerOffset. May not necessarily correspond to the actual in-game axis.
@@ -370,7 +370,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
     /**
      * Helper function for recalculate().
      */
-    private void recalcTopBottomBlockFacing(Direction blockFacing, BuiltImmersiveInfoImpl<?> info, Vec3 offset, boolean bottomOfBlock) {
+    private void recalcTopBottomBlockFacing(Direction blockFacing, BuiltBlockBasedImmersiveInfoImpl<?> info, Vec3 offset, boolean bottomOfBlock) {
 
         BlockPos pos = info.getBlockPosition();
 
@@ -388,7 +388,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
         this.box = AABB.ofSize(this.pos, actualXSize, actualYSize, actualZSize);
     }
 
-    private void recalcTopPlayerFacing(Direction playerFacing, BuiltImmersiveInfoImpl<?> info, Vec3 offset) {
+    private void recalcTopPlayerFacing(Direction playerFacing, BuiltBlockBasedImmersiveInfoImpl<?> info, Vec3 offset) {
         BlockPos pos = info.getBlockPosition();
         xVec = Vec3.atLowerCornerOf(playerFacing.getCounterClockWise().getNormal());
         yVec = Vec3.atLowerCornerOf(playerFacing.getOpposite().getNormal());
@@ -407,7 +407,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
     /**
      * Helper function for recalculate(). Calculates the textData list.
      */
-    private void calcTextOffsets(BuiltImmersiveInfoImpl<?> info) {
+    private void calcTextOffsets(BuiltBlockBasedImmersiveInfoImpl<?> info) {
         if (textSupplier != null) {
             List<Pair<Component, Vec3>> textList = textSupplier.apply(info);
             textData.clear();
@@ -481,7 +481,7 @@ public class RelativeHitboxInfoImpl implements RelativeHitboxInfo, HitboxInfo, C
      * @param newOffset New offset for the clone.
      * @return Clone with the offset replaced with newOffset.
      */
-    public RelativeHitboxInfoImpl cloneWithNewOffset(Function<BuiltImmersiveInfo<?>, Vec3> newOffset) {
+    public RelativeHitboxInfoImpl cloneWithNewOffset(Function<BuiltBlockBasedImmersiveInfo<?>, Vec3> newOffset) {
         return getBuilderClone().setCenterOffset(newOffset).build();
     }
 

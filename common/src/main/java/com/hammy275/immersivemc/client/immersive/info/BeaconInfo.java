@@ -8,7 +8,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
-public class BeaconInfo extends AbstractImmersiveInfo {
+public class BeaconInfo extends AbstractBlockBasedImmersiveInfo {
 
     public boolean regenSelected = false;
     public int effectSelected = -1;

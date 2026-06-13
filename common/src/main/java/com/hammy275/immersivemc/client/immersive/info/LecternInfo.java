@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfoFactory;
 import com.hammy275.immersivemc.client.immersive.book.ClientBookData;
@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LecternInfo implements ImmersiveInfo, WrittenBookDataHolder {
+public class LecternInfo implements BlockBasedImmersiveInfo, WrittenBookDataHolder {
 
     public ClientLecternData lecternData = new ClientLecternData();
     public long tickCount = 0;

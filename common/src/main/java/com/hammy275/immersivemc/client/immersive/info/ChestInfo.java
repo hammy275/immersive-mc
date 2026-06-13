@@ -19,7 +19,7 @@ import java.util.List;
 
 import static com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage.CHEST_OPEN_THRESHOLD;
 
-public class ChestInfo extends AbstractImmersiveInfo {
+public class ChestInfo extends AbstractBlockBasedImmersiveInfo {
 
     public BlockEntity chest;
     public BlockEntity otherChest;

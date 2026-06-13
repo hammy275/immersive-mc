@@ -24,6 +24,7 @@
     "LecternBlockEntityAccessor",
     "LevelMixin",
     "ProjectileAccessor",
+    "ServerEntityMixin",
     "ServerPlayerGameModeMixin",
     "throw_redirectors.BottleOEnchantingRedirect",
     "throw_redirectors.EggRedirect",

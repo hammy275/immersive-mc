@@ -19,8 +19,8 @@ import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 
 public class BrewingStandHandler extends ContainerHandler<ListOfItemsStorage> {
     @Override
-    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return HandlerUtil.makeInventoryContentsFromContainer(player, (Container) player.level().getBlockEntity(pos), 5);
+    public ListOfItemsStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
+        return HandlerUtil.makeInventoryContentsFromContainer(tracker, (Container) tracker.level().getBlockEntity(pos), 5);
     }
 
     @Override
@@ -29,19 +29,19 @@ public class BrewingStandHandler extends ContainerHandler<ListOfItemsStorage> {
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        Container stand = (Container) player.level().getBlockEntity(pos);
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
+        Container stand = (Container) tracker.level().getBlockEntity(pos);
         ItemStack standItem = stand.getItem(slot).copy();
-        ItemStack playerItem = player.getItemInHand(hand).copy();
+        ItemStack playerItem = tracker.getItemInHand(hand).copy();
         if (slot < 3) { // Potions
             if (!stand.canPlaceItem(slot, playerItem) && !playerItem.isEmpty()
                     && !(standItem.getItem() instanceof PotionItem)) return;
-            player.setItemInHand(hand, standItem);
+            tracker.setItemInHand(hand, standItem);
             stand.setItem(slot, playerItem);
         } else { // Ingredient and Fuel
             if (!stand.canPlaceItem(slot, playerItem) && !playerItem.isEmpty()) return;
-            SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, standItem, amount, player);
-            result.giveToPlayer(player, hand);
+            SwapResult result = ImmersiveLogicHelpers.instance().swapItems(playerItem, standItem, amount, tracker);
+            result.giveToPlayer(tracker, hand);
             stand.setItem(slot, result.immersiveStack());
         }
         stand.setChanged();

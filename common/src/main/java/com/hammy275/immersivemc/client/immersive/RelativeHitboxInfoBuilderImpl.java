@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.client.immersive;
 
-import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.BuiltBlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.ForcedUpDownRenderDir;
 import com.hammy275.immersivemc.api.client.immersive.HitboxVRMovementInfo;
 import com.hammy275.immersivemc.api.client.immersive.ItemRotationType;
@@ -23,7 +23,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
      * on the player, so for the furnace, -0.5, 0, 0 moves the box to the leftmost edge from the
      * player's perspective, or the rightmost edge if one were spectating the furnace.
      */
-    private Function<BuiltImmersiveInfo<?>, Vec3> centerOffset;
+    private Function<BuiltBlockBasedImmersiveInfo<?>, Vec3> centerOffset;
     /**
      * Left/right size of the hitbox. See X axis for centerOffset.
      */
@@ -66,12 +66,12 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
      * The Vec3 is run through the usual relative math in the same way the centerOffset is, but the position
      * is offset from centerOffset.
      */
-    private Function<BuiltImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier = null;
+    private Function<BuiltBlockBasedImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier = null;
     /**
      * For hitboxes containing an item, this forces the item to render facing UP, DOWN, or null instead of
      * the default for the given HitboxPositioningMode.
      */
-    private Function<BuiltImmersiveInfo<?>, ForcedUpDownRenderDir> forcedUpDown = ignored -> ForcedUpDownRenderDir.NOT_FORCED;
+    private Function<BuiltBlockBasedImmersiveInfo<?>, ForcedUpDownRenderDir> forcedUpDown = ignored -> ForcedUpDownRenderDir.NOT_FORCED;
     /**
      * Whether the function above is constant
      */
@@ -107,12 +107,12 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
     private final boolean constantOffset;
 
 
-    public RelativeHitboxInfoBuilderImpl(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double size, boolean constantOffset) {
+    public RelativeHitboxInfoBuilderImpl(Function<BuiltBlockBasedImmersiveInfo<?>, Vec3> centerOffset, double size, boolean constantOffset) {
         this(centerOffset, size, size, size, constantOffset);
     }
 
-    public RelativeHitboxInfoBuilderImpl(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
-                                          boolean constantOffset) {
+    public RelativeHitboxInfoBuilderImpl(Function<BuiltBlockBasedImmersiveInfo<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ,
+                                         boolean constantOffset) {
         this.centerOffset = centerOffset;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -128,7 +128,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
         this((info) -> centerOffset, sizeX, sizeY, sizeZ, true);
     }
 
-    public RelativeHitboxInfoBuilderImpl setCenterOffset(Function<BuiltImmersiveInfo<?>, Vec3> newOffset) {
+    public RelativeHitboxInfoBuilderImpl setCenterOffset(Function<BuiltBlockBasedImmersiveInfo<?>, Vec3> newOffset) {
         this.centerOffset = newOffset;
         return this;
     }
@@ -163,7 +163,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
         return this;
     }
 
-    public RelativeHitboxInfoBuilderImpl textSupplier(Function<BuiltImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier) {
+    public RelativeHitboxInfoBuilderImpl textSupplier(Function<BuiltBlockBasedImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier) {
         this.textSupplier = textSupplier;
         return this;
     }
@@ -175,7 +175,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
     }
 
     @Override
-    public RelativeHitboxInfoBuilder forceUpDownRenderDir(Function<BuiltImmersiveInfo<?>, ForcedUpDownRenderDir> forcedDirFunction) {
+    public RelativeHitboxInfoBuilder forceUpDownRenderDir(Function<BuiltBlockBasedImmersiveInfo<?>, ForcedUpDownRenderDir> forcedDirFunction) {
         this.forcedUpDown = forcedDirFunction;
         this.forcedUpDownConstant = false;
         return this;
@@ -236,7 +236,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
         return new RelativeHitboxInfoBuilderImpl(centerOffset, size);
     }
 
-    public static RelativeHitboxInfoBuilderImpl create(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double size) {
+    public static RelativeHitboxInfoBuilderImpl create(Function<BuiltBlockBasedImmersiveInfo<?>, Vec3> centerOffset, double size) {
         return new RelativeHitboxInfoBuilderImpl(centerOffset, size, false);
     }
 
@@ -244,7 +244,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
         return new RelativeHitboxInfoBuilderImpl(centerOffset, sizeX, sizeY, sizeZ);
     }
 
-    public static RelativeHitboxInfoBuilderImpl create(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ) {
+    public static RelativeHitboxInfoBuilderImpl create(Function<BuiltBlockBasedImmersiveInfo<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ) {
         return new RelativeHitboxInfoBuilderImpl(centerOffset, sizeX, sizeY, sizeZ, false);
     }
 
@@ -252,7 +252,7 @@ public class RelativeHitboxInfoBuilderImpl implements RelativeHitboxInfoBuilder,
         return new RelativeHitboxInfoBuilderImpl(centerOffset, size).holdsItems(true).isInput(true);
     }
 
-    public static RelativeHitboxInfoBuilderImpl createItemInput(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double size) {
+    public static RelativeHitboxInfoBuilderImpl createItemInput(Function<BuiltBlockBasedImmersiveInfo<?>, Vec3> centerOffset, double size) {
         return new RelativeHitboxInfoBuilderImpl(centerOffset, size, false).holdsItems(true).isInput(true);
     }
 
