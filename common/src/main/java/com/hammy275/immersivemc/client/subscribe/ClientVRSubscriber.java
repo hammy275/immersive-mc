@@ -1,10 +1,10 @@
 package com.hammy275.immersivemc.client.subscribe;
 
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
-import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.common.util.Util;
@@ -84,10 +84,7 @@ public class ClientVRSubscriber {
                         swapTracker.tick(singleton, info, -1, inDragHitbox(singleton, info, pos));
                         if (cooldown <= 0) {
                             int cooldown = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(hit.get()), hand, Minecraft.getInstance().options.keyAttack.isDown());
-                            if (ClientUtil.isVROnly(singleton)) {
-                                cooldown = (int) (cooldown / 1.5);
-                            }
-                            setCooldown(cooldown);
+                            ImmersiveClientLogicHelpers.instance().setCooldown(cooldown);
                         }
                         return cooldown >= 0;
                     }

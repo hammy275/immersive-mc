@@ -3,13 +3,10 @@ package com.hammy275.immersivemc.api.client.immersive;
 import net.minecraft.core.BlockPos;
 
 /**
- * ImmersiveInfos are effectively containers of data for {@link BlockBasedImmersive}s. For example, with the furnace,
- * there is one {@link BlockBasedImmersive} instance, which declares how to handle rendering furnaces, interacting with
- * hitboxes, etc. Meanwhile, an ImmersiveInfo instance exists for each furnace that is being rendered in the world,
- * containing data such as what item it contains, where in the world that furnace is, etc.
- * <p>
- * Note that although ImmersiveInfos generally hold info needed for rendering, the actual rendering data is extracted
- * from ImmersiveInfos into {@link ImmersiveRenderState} using methods such as {@link BlockBasedImmersive#extractRenderState}.
+ * The {@link ImmersiveInfo} implementation for block-based Immersives.
+ *
+ * @see BlockBasedImmersive Information on block-based Immersives.
+ * @see ImmersiveInfo Information on what ImmersiveInfos are.
  */
 public non-sealed interface BlockBasedImmersiveInfo extends ImmersiveInfo {
 

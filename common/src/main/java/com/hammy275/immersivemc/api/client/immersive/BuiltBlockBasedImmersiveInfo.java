@@ -5,6 +5,8 @@ import net.minecraft.world.item.ItemStack;
 /**
  * An implementation of {@link BlockBasedImmersiveInfo} provided by ImmersiveMC that's used with Immersives built via
  * {@link BlockBasedImmersiveBuilder}. The hitboxIndex below always references the order in which hitboxes were added.
+ * <p>
+ * Do not implement this interface yourself! Instead, implement {@link BlockBasedImmersiveInfo} directly.
  */
 public interface BuiltBlockBasedImmersiveInfo<E> extends BlockBasedImmersiveInfo {
 

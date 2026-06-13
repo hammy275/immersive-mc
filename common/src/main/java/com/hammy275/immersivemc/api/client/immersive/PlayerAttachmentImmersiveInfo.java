@@ -2,6 +2,12 @@ package com.hammy275.immersivemc.api.client.immersive;
 
 import net.minecraft.client.player.AbstractClientPlayer;
 
+/**
+ * The {@link ImmersiveInfo} implementation for player-attachment Immersives.
+ *
+ * @see BlockBasedImmersive Information on player-attachment Immersives.
+ * @see ImmersiveInfo Information on what ImmersiveInfos are.
+ */
 public non-sealed interface PlayerAttachmentImmersiveInfo extends ImmersiveInfo {
 
     /**

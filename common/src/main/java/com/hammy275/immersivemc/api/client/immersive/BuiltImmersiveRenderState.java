@@ -11,6 +11,8 @@ import java.util.function.BiConsumer;
  * are non-null when creating the Immersive using
  * {@link BlockBasedImmersiveBuilder#create(BlockBasedImmersiveHandler, Class, Class, BiConsumer)} or
  * {@link BlockBasedImmersiveBuilder#copy(BlockBasedImmersiveHandler, Class, Class, BiConsumer)}.
+ * <p>
+ * Do not implement this interface yourself! Instead implement {@link ImmersiveRenderState} directly.
  * @param <ER> The type of the extra render data.
  */
 public interface BuiltImmersiveRenderState<ER> extends ImmersiveRenderState {

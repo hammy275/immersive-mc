@@ -2,11 +2,10 @@ package com.hammy275.immersivemc.client.api_impl;
 
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
-import com.hammy275.immersivemc.client.config.ClientConstants;
+import com.hammy275.immersivemc.api.common.immersive.SwapMode;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.client.subscribe.ClientVRSubscriber;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveLogicHelpersImpl;
-import com.hammy275.immersivemc.api.common.immersive.SwapMode;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.AttachmentSwapPacket;
@@ -28,7 +27,7 @@ public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl i
     @Override
     public void setCooldown(int cooldown) {
         SwapTracker.c0.setCooldown(cooldown);
-        ClientVRSubscriber.setCooldown((int) (cooldown * ClientConstants.cooldownVRMultiplier));
+        ClientVRSubscriber.setCooldown(cooldown);
     }
 
     @Override

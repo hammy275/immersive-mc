@@ -5,11 +5,13 @@ import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import java.util.List;
 
 /**
- * State for rendering a {@link BlockBasedImmersiveInfo}. Unlike ImmersiveInfos, these classes only need to hold information
+ * State for rendering a {@link ImmersiveInfo}. Unlike ImmersiveInfos, these classes only need to hold information
  * related to rendering.
  * <p>
- * Importantly, data in render states should be independent of data in the infos they come from, see
- * {@link BlockBasedImmersive#extractRenderState} for more info.
+ * Importantly, data in render states should be independent of data in the infos they come from.
+ *
+ * @see BlockBasedImmersive#extractRenderState More information on the independence of data between implementations of
+ *                                             this interface and the {@link ImmersiveInfo}s from which they originate.
  */
 public interface ImmersiveRenderState {
 

@@ -6,8 +6,20 @@ package com.hammy275.immersivemc.api.common.immersive;
  * Immersive.
  */
 public enum SwapMode {
-    SINGLE, // Only swap one item
-    SPLIT, // Swap the held stack, split evenly into multiple slots
-    ALL, // Swap as many items as possible
-    CONSTANT // Swap a constant number of items
+    /**
+     * Only swap one item.
+     */
+    SINGLE,
+    /**
+     * Swap the held stack, split evenly into multiple slots.
+     */
+    SPLIT,
+    /**
+     * Swap as many items as possible.
+     */
+    ALL,
+    /**
+     * Swap a constant number of items.
+     */
+    CONSTANT
 }

@@ -3,6 +3,15 @@ package com.hammy275.immersivemc.api.common.immersive;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 
+/**
+ * While an {@link com.hammy275.immersivemc.api.client.immersive.Immersive} defines how a client should work
+ * with an Immersive, an ImmersiveHandler handles both the server-half of a block-based Immersive, along
+ * with the shared, common portion. For example, retrieving what items are stored in a furnace to send to the client
+ * (server-specific) and identifying what a furnace is (common) are both handled in an ImmersiveHandler.
+ *
+ * @see BlockBasedImmersiveHandler The subinterface of this interface for block-based Immersives.
+ * @see PlayerAttachmentImmersiveHandler The subinterface of this interface for player-attachment Immersives.
+ */
 public sealed interface ImmersiveHandler permits BlockBasedImmersiveHandler, PlayerAttachmentImmersiveHandler {
     /**
      * @param player The player we're checking the config of.

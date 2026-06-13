@@ -65,8 +65,8 @@ public class AttachmentSwapPacket {
                 && tracker.distanceToSqr(owner) <= CommonConstants.distanceSquaredToRemoveAttachmentImmersive) {
             for (PlayerAttachmentImmersiveHandler<?> handler : ImmersiveHandlers.ATTACHMENT_HANDLERS) {
                 if (handler.getID().equals(message.handlerID)) {
-                    if (handler.enabledInConfig(tracker) && !handler.clientAuthoritative() &&
-                            TrackedImmersives.getTrackedData(tracker, owner, handler).isPresent()) {
+                    if (handler.enabledInConfig(tracker)
+                            && TrackedImmersives.getTrackedData(tracker, owner, handler).isPresent()) {
                         for (int i = 0; i < message.slots.size(); i++) {
                             ItemSwapAmount swapAmount = new ItemSwapAmountImpl(message.mode, message.slots.size(), handStackSize, i);
                             handler.swap(message.slots.get(i), message.hand, owner, tracker, swapAmount);

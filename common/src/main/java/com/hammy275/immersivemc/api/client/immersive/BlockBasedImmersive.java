@@ -14,6 +14,8 @@ import net.minecraft.world.level.Level;
  * @param <I> The {@link BlockBasedImmersiveInfo} implementation this Immersive uses.
  * @param <R> The render state implementation this Immersive uses. See {@link Immersive#extractRenderState}.
  * @param <S> The type of storage to use for sending Immersive data over the network.
+ *
+ * @see Immersive Information on what an Immersive is.
  */
 public non-sealed interface BlockBasedImmersive<I extends BlockBasedImmersiveInfo, R extends ImmersiveRenderState, S extends NetworkStorage>
         extends Immersive<I, R, S> {
@@ -31,6 +33,10 @@ public non-sealed interface BlockBasedImmersive<I extends BlockBasedImmersiveInf
     /**
      * Whether normal right-click behavior for this block should be disabled when the option to disable interactions is
      * enabled in ImmersiveMC. This should usually return true if the block opens a GUI on right-click.
+     * <p>
+     * For example, ImmersiveMC's furnace Immersive returns true here, since those not wanting to interact with vanilla
+     * UIs do not have any need to access the furnace UI. On the other hand, ImmersiveMC's door Immersive returns false
+     * here, as players should still be able to open/close doors with the right-click/use action.
      * @param info The info for the block that may want to disable right-clicks.
      * @return Whether to skip right-click behavior for this block when the option to disable click interactions is
      *         enabled in ImmersiveMC.

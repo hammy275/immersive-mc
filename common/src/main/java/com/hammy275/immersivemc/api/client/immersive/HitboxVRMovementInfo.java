@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 /**
- * An object representing VR movement detection. These can be built from {@link HitboxVRMovementInfoBuilder}, which you
- * can see for more info.
+ * An object representing VR movement detection. These can be built from {@link HitboxVRMovementInfoBuilder}.
+ *
+ * @see HitboxVRMovementInfoBuilder Information on this system.
  */
 public interface HitboxVRMovementInfo {
 

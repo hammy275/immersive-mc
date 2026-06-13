@@ -188,7 +188,7 @@ public class ClientLogicSubscriber {
         if (button == 1) {
             int cooldown = handleRightClick(Minecraft.getInstance().player);
             if (cooldown >= 0) {
-                SwapTracker.c0.setCooldown(cooldown);
+                ImmersiveClientLogicHelpers.instance().setCooldown(cooldown);
                 return true;
             }
 

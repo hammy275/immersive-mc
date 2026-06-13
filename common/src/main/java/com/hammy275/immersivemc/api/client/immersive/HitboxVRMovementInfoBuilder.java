@@ -8,6 +8,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+/**
+ * Creates info for determining movement in VR for use with the {@link RelativeHitboxInfoBuilder}s used for creating
+ * {@link BlockBasedImmersiveBuilder}s. This info allows for running {@link #actionConsumer(BiConsumer)} when
+ * the movement within this hitbox reaches the criteria defined in this interface. Note that this does NOT call
+ * regular hitbox interaction code, meaning your set {@link HitboxInteractHandler} will NOT be called!
+ */
 public interface HitboxVRMovementInfoBuilder {
 
     /**
@@ -63,9 +69,21 @@ public interface HitboxVRMovementInfoBuilder {
      * The controllers to detect for passing the threshold for movement.
      */
     public enum ControllerMode {
-        PRIMARY, // Only the primary controller is checked.
-        SECONDARY, // Only the secondary controller is checked.
-        EITHER, // Both controllers are checked and only one needs to meet the threshold.
-        BOTH // Both controllers are checked and both need to meet the threshold.
+        /**
+         * Only the primary controller is checked.
+         */
+        PRIMARY,
+        /**
+         * Only the secondary controller is checked.
+         */
+        SECONDARY,
+        /**
+         * Both controllers are checked and only one needs to meet the threshold.
+         */
+        EITHER,
+        /**
+         * Both controllers are checked and both need to meet the threshold.
+         */
+        BOTH
     }
 }

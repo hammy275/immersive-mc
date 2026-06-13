@@ -4,7 +4,23 @@ import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 
 import java.util.List;
 
+/**
+ * ImmersiveInfos are effectively containers of data for {@link Immersive}s. For example, with the furnace,
+ * there is one {@link Immersive} instance, which declares how to handle rendering furnaces, interacting with
+ * hitboxes, etc. Meanwhile, an ImmersiveInfo instance exists for each furnace that is being rendered in the world,
+ * containing data such as what item it contains, where in the world that furnace is, etc.
+ * <p>
+ * Note that although ImmersiveInfos generally hold info needed for rendering, the actual rendering data is extracted
+ * from ImmersiveInfos into {@link ImmersiveRenderState} objects using methods such as
+ * {@link BlockBasedImmersive#extractRenderState}.
+ *
+ * @see BlockBasedImmersiveInfo The subinterface for block-based Immersives.
+ * @see BuiltBlockBasedImmersiveInfo The subinterface for block-based Immersives built using the
+ *                                   {@link BlockBasedImmersiveBuilder}.
+ * @see PlayerAttachmentImmersiveInfo The subinterface for player-attachment Immersives.
+ */
 public sealed interface ImmersiveInfo permits BlockBasedImmersiveInfo, PlayerAttachmentImmersiveInfo {
+
     /**
      * @return The list of all hitboxes this Immersive uses. This can contain null elements, and can return an
      *         immutable list implementation if desired.

@@ -3,6 +3,12 @@ package com.hammy275.immersivemc.api.common.immersive;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 
+/**
+ * The {@link ImmersiveHandler} for player-attachment Immersives.
+ * @param <S> The type of {@link NetworkStorage} used to sync data from server to client if
+ *            {@link #clientAuthoritative()} returns false.
+ * @see ImmersiveHandler Information on what ImmersiveHandlers are.
+ */
 public non-sealed interface PlayerAttachmentImmersiveHandler<S extends NetworkStorage> extends ImmersiveHandler {
 
     /**
