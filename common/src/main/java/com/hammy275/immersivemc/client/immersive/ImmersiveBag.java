@@ -87,7 +87,7 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
             ImmersiveClientLogicHelpers.instance().sendSwapPacket(getHandler(), player,
                     hitboxIndices.stream().filter(slot -> slot >= 27).toList(), hand, modifierPressed);
         }
-        return 12;
+        return 8;
     }
 
     @Override
@@ -219,7 +219,7 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         int start = renderState.ownedByLocalPlayer ? 0 : 27;
         for (int i = start; i <= 31; i++) {
             helpers.renderItemWithRenderState(renderState.items.get(i), stack, ClientConstants.itemScaleSizeBackpack,
-                    true, renderState.light, renderState, true, i, null, null, null);
+                    true, renderState.light, renderState, renderState.ownedByLocalPlayer, i, null, null, null);
         }
 
         stack.pushPose();

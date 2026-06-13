@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
+import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.ImmersiveHitboxesInfo;
 import com.hammy275.immersivemc.common.api_impl.hitbox.HitboxInfoImpl;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
@@ -58,7 +59,7 @@ public class ImmersiveHitboxes implements PlayerAttachmentImmersive<ImmersiveHit
                     info.canOpen = true;
                 } else {
                     ClientUtil.openBag(mc.player, true);
-                    return 50;
+                    return ClientConstants.bagOpenCloseCooldown;
                 }
             }
         }

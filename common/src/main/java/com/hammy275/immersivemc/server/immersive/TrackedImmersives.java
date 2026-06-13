@@ -1,5 +1,7 @@
 package com.hammy275.immersivemc.server.immersive;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import com.hammy275.immersivemc.common.config.CommonConstants;
@@ -25,6 +27,8 @@ public class TrackedImmersives {
 
     public static final List<TrackedBlockImmersiveData<?>> TRACKED_BLOCK_IMMERSIVES = new ArrayList<>();
     public static final List<TrackedAttachmentImmersiveData<?>> TRACKED_ATTACHMENT_IMMERSIVES = new ArrayList<>();
+
+    public static final Multimap<ServerPlayer, ServerPlayer> PLAYER_TRACKING = HashMultimap.create();
 
     public static void tick(MinecraftServer server) {
         // Remove for all logged out players or invalid states (blocks no longer match or player too far away)
@@ -82,7 +86,8 @@ public class TrackedImmersives {
 
     public static void maybeTrackImmersive(ServerPlayer tracker, ServerPlayer owner, PlayerAttachmentImmersiveHandler<?> handler) {
         Optional<TrackedAttachmentImmersiveData<?>> existingData = getTrackedData(tracker, owner, handler);
-        if (existingData.isEmpty() && VRVerify.playerInVR(owner)) {
+        if (existingData.isEmpty() && VRVerify.playerInVR(owner) &&
+                (tracker == owner || PLAYER_TRACKING.containsEntry(tracker, owner))) {
             TrackedAttachmentImmersiveData<?> data = new TrackedAttachmentImmersiveData<>(tracker, owner, handler);
             TRACKED_ATTACHMENT_IMMERSIVES.add(data);
             syncDataToClient(data);
@@ -117,6 +122,7 @@ public class TrackedImmersives {
                 attachmentDataIterator.remove();
             }
         }
+        PLAYER_TRACKING.removeAll(player);
     }
 
     public static List<ServerPlayer> getPlayersTrackingPos(MinecraftServer server, Level level, BlockPos pos) {

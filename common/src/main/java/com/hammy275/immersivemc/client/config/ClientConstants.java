@@ -37,6 +37,8 @@ public class ClientConstants {
     public static final double cooldownVRMultiplier = 1.5;
     public static final float sizeScaleForHover = 1.25f;
 
+    public static final int bagOpenCloseCooldown = 20;
+
     static {
         hotswitchVivecraftItemRenderingClass = getClassOrNull("org.vivecraft.client_vr.render.VivecraftItemRendering");
     }
