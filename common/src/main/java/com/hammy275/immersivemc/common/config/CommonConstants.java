@@ -7,12 +7,15 @@ public class CommonConstants {
     // 2.0: 1.5.0
     // 3.0: 1.6.0 Alpha 1
     // 4.0: 1.6.0 Alpha 3
-    public static final int API_MAJOR_VERSION = 4;
+    // 5.0: 1.6.0 Alpha 4
+    public static final int API_MAJOR_VERSION = 5;
     public static final int API_MINOR_VERSION = 0;
 
     public static final int distanceToRemoveImmersive = 16; // Distance to stop tracking immersives from
+    public static final int distanceToRemoveAttachmentImmersive = 32;
     public static final int distanceSquaredToRemoveImmersive = distanceToRemoveImmersive * distanceToRemoveImmersive;
-    public static final int registerImmersivePickRange = distanceToRemoveImmersive - 1;
+    public static final int distanceSquaredToRemoveAttachmentImmersive = distanceToRemoveAttachmentImmersive * distanceToRemoveAttachmentImmersive;
+    public static final double registerImmersivePickRange = distanceToRemoveImmersive - 1;
 
     public static final int[] minimumVRAPIVersion = new int[]{3, 0, 3};
 

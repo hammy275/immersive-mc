@@ -28,8 +28,8 @@ public class ShulkerBoxHandler extends ChestLikeHandler<ListOfItemsStorage> {
     }
 
     @Override
-    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return makeBaseInventoryContents(player, pos);
+    public ListOfItemsStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
+        return makeBaseInventoryContents(tracker, pos);
     }
 
     @Override
@@ -43,13 +43,13 @@ public class ShulkerBoxHandler extends ChestLikeHandler<ListOfItemsStorage> {
     }
 
     @Override
-    public void onStopTracking(ServerPlayer player, BlockPos pos) {
-        super.onStopTracking(player, pos);
-        BlockEntity shulkerBox = player.level.getBlockEntity(pos);
+    public void onStopTracking(ServerPlayer tracker, BlockPos pos) {
+        super.onStopTracking(tracker, pos);
+        BlockEntity shulkerBox = tracker.level.getBlockEntity(pos);
         if (shulkerBox instanceof ShulkerBoxBlockEntity sbbe) {
-            sbbe.stopOpen(player);
+            sbbe.stopOpen(tracker);
         }
-        Lootr.lootrImpl.openLootrShulkerBox(pos, player, false);
+        Lootr.lootrImpl.openLootrShulkerBox(pos, tracker, false);
     }
 
     @Override

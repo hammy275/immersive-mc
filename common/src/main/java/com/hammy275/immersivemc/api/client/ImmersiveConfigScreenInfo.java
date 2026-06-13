@@ -32,7 +32,7 @@ public interface ImmersiveConfigScreenInfo {
      * Get the translation string for the button label, not including the enabled/disabled state.
      * <br>
      * For example, as of writing, the Furnace Immersive returns "config.immersivemc.furnace", which becomes
-     * "Use Furnace Immersion" when the language is set to U.S. English.
+     * "Use Furnace Immersive" when the language is set to U.S. English.
      * @return The String for a translation key for the title of this option.
      */
     public String getOptionTranslation();

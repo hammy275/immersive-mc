@@ -5,10 +5,8 @@ import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
-import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
-import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
 import com.hammy275.immersivemc.client.immersive_item.AbstractHandImmersive;
 import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
 import com.hammy275.immersivemc.client.model.Cube1x1;
@@ -48,10 +46,7 @@ public class ClientRenderSubscriber {
     public static void onWorldRender(PoseStack stack) {
         setRenderColors();
         try {
-            for (Immersive<?, ?, ?> singleton : Immersives.IMMERSIVES) {
-                renderInfos(singleton, stack);
-            }
-            for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+            for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
                 renderInfos(singleton, stack);
             }
             if (VRVerify.clientInVR()) {
@@ -107,39 +102,15 @@ public class ClientRenderSubscriber {
         cycleProgressRangedGrab = 0;
     }
 
-    protected static <I extends ImmersiveInfo, R extends ImmersiveRenderState> void renderInfos(Immersive<I, R, ?> singleton,
-                                                                                                PoseStack stack) {
-        try {
-            if (singleton.isVROnly() && !VRVerify.clientInVR()) {
-                return;
+    protected static <I extends ImmersiveInfo, R extends ImmersiveRenderState> void renderInfos(Immersive<I, R, ?> singleton, PoseStack stack) {
+        for (I info : singleton.getTrackedObjects()) {
+            float partialTicks = Minecraft.getInstance().getFrameTime();
+            R renderState = singleton.createRenderState();
+            singleton.extractRenderState(info, renderState, partialTicks);
+            SwapTracker.updateRenderStatesFromInfo(info, renderState);
+            if (singleton.shouldRender(renderState)) {
+                singleton.render(renderState, stack, ImmersiveRenderHelpers.instance(), partialTicks);
             }
-            for (I info : singleton.getTrackedObjects()) {
-                float partialTicks = Minecraft.getInstance().getFrameTime();
-                R renderState = singleton.createRenderState();
-                singleton.extractRenderState(info, renderState, partialTicks);
-                SwapTracker.updateRenderStatesFromInfo(info, renderState);
-                if (singleton.shouldRender(renderState)) {
-                    singleton.render(renderState, stack, ImmersiveRenderHelpers.instance(), partialTicks);
-                }
-            }
-        } catch (ConcurrentModificationException ignored) {
-            // Skip rendering if the list is modified mid-render
-            // It's fine, since we were only going to read it anyway!!
-        }
-    }
-
-    protected static <I extends AbstractPlayerAttachmentInfo> void renderInfos(AbstractPlayerAttachmentImmersive<I, ?> singleton,
-                                                                               PoseStack stack) {
-        try {
-            if (singleton.isVROnly() && !VRVerify.clientInVR()) {
-                return;
-            }
-            for (I info : singleton.getTrackedObjects()) {
-                singleton.doRender(info, stack, VRVerify.clientInVR());
-            }
-        } catch (ConcurrentModificationException ignored) {
-            // Skip rendering if the list is modified mid-render
-            // It's fine, since we were only going to read it anyway!!
         }
     }
 

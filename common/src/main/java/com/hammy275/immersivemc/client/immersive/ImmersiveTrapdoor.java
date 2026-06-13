@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfoFactory;
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.info.DragImmersiveInfo;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
@@ -55,7 +55,7 @@ public class ImmersiveTrapdoor extends AbstractDragImmersive {
     }
 
     @Override
-    public ImmersiveHandler<NullStorage> getHandler() {
+    public BlockBasedImmersiveHandler<NullStorage> getHandler() {
         return ImmersiveHandlers.trapdoorHandler;
     }
 
