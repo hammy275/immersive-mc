@@ -32,8 +32,8 @@ public class ApothSalvagingTableHandler extends ItemWorldStorageHandler<ApothSal
     }
 
     @Override
-    public ApothSalvagingTableStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return (ApothSalvagingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.getLevel());
+    public ApothSalvagingTableStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
+        return (ApothSalvagingTableStorage) WorldStoragesImpl.getOrCreateS(pos, tracker.getLevel());
     }
 
     @Override
@@ -42,23 +42,23 @@ public class ApothSalvagingTableHandler extends ItemWorldStorageHandler<ApothSal
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        ApothSalvagingTableStorage storage = (ApothSalvagingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.getLevel());
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
+        ApothSalvagingTableStorage storage = (ApothSalvagingTableStorage) WorldStoragesImpl.getOrCreateS(pos, tracker.getLevel());
         if (slot < 9) { // Placing input
-            ItemStack handItem = player.getItemInHand(hand);
-            if (handItem.isEmpty() || Apoth.apothImpl.isSalvagable(handItem, player.level)) {
-                storage.placeItem(player, hand, slot, amount, 1);
+            ItemStack handItem = tracker.getItemInHand(hand);
+            if (handItem.isEmpty() || Apoth.apothImpl.isSalvagable(handItem, tracker.level)) {
+                storage.placeItem(tracker, hand, slot, amount, 1);
             }
         } else { // Doing craft to outputs
-            List<ItemStack> outputs = Apoth.apothImpl.doSalvage(player, Arrays.stream(storage.getItemsRaw()).toList(), pos);
+            List<ItemStack> outputs = Apoth.apothImpl.doSalvage(tracker, Arrays.stream(storage.getItemsRaw()).toList(), pos);
             for (ItemStack stack : outputs) {
-                Util.placeLeftovers(player, stack, Vec3.atBottomCenterOf(pos).add(0, 1, 0));
+                Util.placeLeftovers(tracker, stack, Vec3.atBottomCenterOf(pos).add(0, 1, 0));
             }
             for (int i = 0; i < storage.getNumItems(); i++) {
                 storage.setItem(i, ItemStack.EMPTY);
             }
         }
-        storage.setDirty(player.getLevel());
+        storage.setDirty(tracker.getLevel());
     }
 
     @Override

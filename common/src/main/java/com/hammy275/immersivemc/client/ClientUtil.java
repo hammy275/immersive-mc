@@ -3,13 +3,16 @@ package com.hammy275.immersivemc.client;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveMCClientRegistration;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
+import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
-import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
 import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive.info.BagInfo;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRRumble;
@@ -42,6 +45,14 @@ public class ClientUtil {
     public static final int maxLight = LightTexture.pack(15, 15);
     public static int immersiveLeftClickCooldown = 0;
 
+    public static boolean isVROnly(Immersive<?, ?, ?> immersive) {
+        if (immersive instanceof BlockBasedImmersive<?, ?, ?> blockBased) {
+            return blockBased.isVROnly();
+        } else {
+            return true;
+        }
+    }
+
     // Doesn't exist in older Minecraft versions ImmersiveMC supports
     public static Vec3 lerpVec3(Vec3 start, Vec3 end, float partialTick) {
         return new Vec3(
@@ -67,14 +78,9 @@ public class ClientUtil {
     }
 
     public static void clearDisabledImmersives() {
-        for (Immersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
+        for (Immersive<?, ?, ?> immersive : Immersives.ALL_IMMERSIVES) {
             if (!immersive.getHandler().enabledInConfig(Minecraft.getInstance().player)) {
                 immersive.getTrackedObjects().clear();
-            }
-        }
-        for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
-            if (!immersive.enabledInConfig()) {
-                immersive.clearImmersives();
             }
         }
     }
@@ -139,7 +145,12 @@ public class ClientUtil {
                     if (doRumble) {
                         VRRumble.rumbleIfVR(Minecraft.getInstance().player, ActiveConfig.active().swapBagHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, CommonConstants.vibrationTimePlayerActionAlert);
                     }
-                    Immersives.immersiveBackpack.doTrack();
+                    BagInfo alreadyOpenBagInfo = Immersives.immersiveBag.getLocalPlayerInfo();
+                    if (alreadyOpenBagInfo == null) {
+                        ImmersiveLogicHelpers.instance().startTrackingOnServer(ImmersiveHandlers.bagHandler, Minecraft.getInstance().player);
+                    } else {
+                        ImmersiveLogicHelpers.instance().stopTrackingOnServer(ImmersiveHandlers.bagHandler, Minecraft.getInstance().player);
+                    }
                 } else {
                     player.displayClientMessage(new TranslatableComponent("message.immersivemc.not_in_vr"), false);
                 }
@@ -151,7 +162,7 @@ public class ClientUtil {
     }
 
     @Nullable
-    public static <I extends ImmersiveInfo> I findImmersive(Immersive<I, ?, ?> immersive, BlockPos pos) {
+    public static <I extends BlockBasedImmersiveInfo> I findImmersive(BlockBasedImmersive<I, ?, ?> immersive, BlockPos pos) {
         for (I info : immersive.getTrackedObjects()) {
             if (Util.getValidBlocks(immersive.getHandler(), info.getBlockPosition(), Minecraft.getInstance().level).contains(pos)) {
                 return info;

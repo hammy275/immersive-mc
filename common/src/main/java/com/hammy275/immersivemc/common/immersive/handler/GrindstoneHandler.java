@@ -21,8 +21,8 @@ import net.minecraft.world.level.block.Blocks;
 public class GrindstoneHandler extends ItemWorldStorageHandler<GrindstoneStorage> {
 
     @Override
-    public GrindstoneStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return (GrindstoneStorage) WorldStoragesImpl.getOrCreateS(pos, player.getLevel());
+    public GrindstoneStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
+        return (GrindstoneStorage) WorldStoragesImpl.getOrCreateS(pos, tracker.getLevel());
     }
 
     @Override
@@ -41,15 +41,15 @@ public class GrindstoneHandler extends ItemWorldStorageHandler<GrindstoneStorage
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        GrindstoneStorage storage = makeInventoryContents(player, pos);
-        ItemStack stackIn = player.getItemInHand(hand).copy();
-        GrindstoneMenu menu = new GrindstoneMenu(-1, player.getInventory(), ContainerLevelAccess.create(player.level, pos));
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
+        GrindstoneStorage storage = makeInventoryContents(tracker, pos);
+        ItemStack stackIn = tracker.getItemInHand(hand).copy();
+        GrindstoneMenu menu = new GrindstoneMenu(-1, tracker.getInventory(), ContainerLevelAccess.create(tracker.level, pos));
         if (slot == 0 || slot == 1) {
-            if (menu.getSlot(slot).mayPlace(stackIn) || player.getItemInHand(hand).isEmpty()) {
+            if (menu.getSlot(slot).mayPlace(stackIn) || tracker.getItemInHand(hand).isEmpty()) {
                 ItemStack stackToPlayer = storage.getItem(slot);
-                player.setItemInHand(hand, stackToPlayer.copy());
-                storage.setItem(slot, stackIn, player);
+                tracker.setItemInHand(hand, stackToPlayer.copy());
+                storage.setItem(slot, stackIn, tracker);
                 for (int i = 0; i <= 1; i++) {
                     menu.setItem(i, 0, storage.getItem(i));
                 }
@@ -59,19 +59,19 @@ public class GrindstoneHandler extends ItemWorldStorageHandler<GrindstoneStorage
             for (int i = 0; i <= 1; i++) {
                 menu.setItem(i, 0, storage.getItem(i));
             }
-            Util.giveStackHandFirst(player, hand, storage.getItem(2).copy());
-            menu.getSlot(2).onTake(player, storage.getItem(2));
+            Util.giveStackHandFirst(tracker, hand, storage.getItem(2).copy());
+            menu.getSlot(2).onTake(tracker, storage.getItem(2));
             for (int i = 0; i <= 2; i++) {
                 storage.setItem(i, ItemStack.EMPTY);
             }
         } else if (slot == 3) { // VR grindstone movement action.
             menu.setItem(0, 0, stackIn);
             if (!menu.getSlot(2).getItem().isEmpty()) {
-                player.setItemInHand(hand, menu.getSlot(2).getItem().copy());
-                menu.getSlot(2).onTake(player, storage.getItem(2));
+                tracker.setItemInHand(hand, menu.getSlot(2).getItem().copy());
+                menu.getSlot(2).onTake(tracker, storage.getItem(2));
             }
         }
-        storage.setDirty(player.getLevel());
+        storage.setDirty(tracker.getLevel());
     }
 
     @Override

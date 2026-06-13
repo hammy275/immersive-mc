@@ -66,7 +66,7 @@ public class ServerSubscriber {
             ActiveConfig config = ImmersiveMCPlayerStorages.isPlayerDisabled(serverPlayer) ? ActiveConfig.DISABLED : ActiveConfig.FILE_SERVER;
             Network.INSTANCE.sendToPlayer(serverPlayer,
                     new ConfigSyncPacket(config,
-                            ImmersiveHandlers.HANDLERS.stream()
+                            ImmersiveHandlers.ALL_HANDLERS.stream()
                                     .filter((handler) -> !handler.clientAuthoritative())
                                     .map(ImmersiveHandler::getID)
                                     .toList()

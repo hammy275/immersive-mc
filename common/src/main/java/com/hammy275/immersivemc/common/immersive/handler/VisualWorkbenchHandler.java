@@ -20,11 +20,11 @@ public class VisualWorkbenchHandler extends TCCraftingStationHandler {
     // 1.18 dirtiness setting doesn't seem to work on its own, so we defer to the parent class which checks every other tick
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        super.swap(slot, hand, pos, player, amount);
-        BaseContainerBlockEntity table = (BaseContainerBlockEntity) player.level.getBlockEntity(pos);
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
+        super.swap(slot, hand, pos, tracker, amount);
+        BaseContainerBlockEntity table = (BaseContainerBlockEntity) tracker.level.getBlockEntity(pos);
         // Menu creation is the way to update the client of the changed block entity state.
-        table.createMenu(-1, player.getInventory(), player).slotsChanged(table);
+        table.createMenu(-1, tracker.getInventory(), tracker).slotsChanged(table);
         table.setChanged();
     }
 

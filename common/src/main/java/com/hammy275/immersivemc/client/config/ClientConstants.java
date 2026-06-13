@@ -37,12 +37,10 @@ public class ClientConstants {
 
     // Default cooldown time for interactions for desktop users
     public static final int defaultCooldownTicks = 8;
-    // Multiplier for the cooldown time in ticks for VR users
-    public static final double cooldownVRMultiplier = 1.5;
     public static final float sizeScaleForHover = 1.25f;
 
-
     public static final Map<Enchantment, Integer> fakeEnch = new HashMap<>();
+    public static final int bagOpenCloseCooldown = 20;
 
     static {
         fakeEnch.put(Enchantments.MENDING, 32767);

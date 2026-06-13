@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
@@ -21,9 +21,9 @@ import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class JukeboxHandler implements ImmersiveHandler<NullStorage> {
+public class JukeboxHandler implements BlockBasedImmersiveHandler<NullStorage> {
     @Override
-    public NullStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public NullStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
         return new NullStorage();
     }
 
@@ -33,27 +33,27 @@ public class JukeboxHandler implements ImmersiveHandler<NullStorage> {
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        if (player.level.getBlockEntity(pos) instanceof JukeboxBlockEntity jukebox) {
-            BlockState state = player.level.getBlockState(pos);
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
+        if (tracker.level.getBlockEntity(pos) instanceof JukeboxBlockEntity jukebox) {
+            BlockState state = tracker.level.getBlockState(pos);
             JukeboxBlock block = (JukeboxBlock) state.getBlock();
-            ItemStack playerItem = player.getItemInHand(hand);
+            ItemStack playerItem = tracker.getItemInHand(hand);
             if (jukebox.getRecord().isEmpty() &&
                     playerItem.is(ItemTags.MUSIC_DISCS)) {
                 ItemStack copiedItem = playerItem.copy();
                 copiedItem.setCount(1);
-                block.setRecord(player.level, pos, state, copiedItem);
-                player.level.levelEvent(null, 1010, pos, Item.getId(playerItem.getItem()));
+                block.setRecord(tracker.level, pos, state, copiedItem);
+                tracker.level.levelEvent(null, 1010, pos, Item.getId(playerItem.getItem()));
                 playerItem.shrink(1);
-                player.awardStat(Stats.PLAY_RECORD);
+                tracker.awardStat(Stats.PLAY_RECORD);
                 jukebox.setChanged();
-                VRRumble.rumbleIfVR(player, hand, CommonConstants.vibrationTimeWorldInteraction);
+                VRRumble.rumbleIfVR(tracker, hand, CommonConstants.vibrationTimeWorldInteraction);
             }
         }
     }
 
     @Override
-    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
+    public boolean isDirtyForClientSync(ServerPlayer tracker, BlockPos pos) {
         return false; // Jukebox doesn't have data to sync to the client.
     }
 

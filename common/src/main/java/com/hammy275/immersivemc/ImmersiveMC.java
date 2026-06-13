@@ -17,11 +17,11 @@ import com.hammy275.immersivemc.server.immersive.petting.AnythingLivingPettingHa
 import com.hammy275.immersivemc.server.immersive.petting.VanillaMobsPettingHandler;
 import com.hammy275.immersivemc.server.ticker.CampfireTicker;
 import com.hammy275.immersivemc.server.ticker.FeedAnimalsTicker;
+import com.hammy275.immersivemc.server.ticker.RangedGrabTickerServer;
 import com.hammy275.immersivemc.server.ticker.hand.ArmorTicker;
 import com.hammy275.immersivemc.server.ticker.hand.ButtonPushTicker;
 import com.hammy275.immersivemc.server.ticker.hand.CauldronTicker;
 import com.hammy275.immersivemc.server.ticker.hand.PetTicker;
-import com.hammy275.immersivemc.server.ticker.RangedGrabTickerServer;
 import net.minecraft.client.KeyMapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +39,7 @@ public class ImmersiveMC {
     public static KeyMapping OPEN_SETTINGS = null;
     public static KeyMapping RANGED_GRAB_KEY = null;
 
-    public static final Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler<?>>> handlerIMCRegistrationHandler =
+    public static final Consumer<ImmersiveMCRegistrationEvent<ImmersiveHandler>> handlerIMCRegistrationHandler =
             (event) -> event.register(
                     ImmersiveHandlers.anvilHandler, ImmersiveHandlers.barrelHandler, ImmersiveHandlers.beaconHandler,
                     ImmersiveHandlers.brewingStandHandler, ImmersiveHandlers.chestHandler,
@@ -48,7 +48,8 @@ public class ImmersiveMC {
                     ImmersiveHandlers.leverHandler, ImmersiveHandlers.repeaterHandler, ImmersiveHandlers.shulkerBoxHandler,
                     ImmersiveHandlers.smithingTableHandler, ImmersiveHandlers.tcCraftingStationHandler, ImmersiveHandlers.lecternHandler,
                     ImmersiveHandlers.trapdoorHandler, ImmersiveHandlers.apothSalvagingTableHandler, ImmersiveHandlers.doorHandler,
-                    ImmersiveHandlers.grindstoneHandler, ImmersiveHandlers.visualWorkbenchHandler
+                    ImmersiveHandlers.grindstoneHandler, ImmersiveHandlers.visualWorkbenchHandler, ImmersiveHandlers.hitboxesHandler,
+                    ImmersiveHandlers.bagHandler
             );
 
     public static final Consumer<ImmersiveMCRegistrationEvent<PettingHandler<?>>> pettingIMCRegistrationHandler =
@@ -101,10 +102,10 @@ public class ImmersiveMC {
     }
 
     protected static void networkSetup() {
-        Network.INSTANCE.register(SwapPacket.class, SwapPacket::encode,
-                SwapPacket::decode, SwapPacket::handle);
-        Network.INSTANCE.register(FetchInventoryPacket.class, FetchInventoryPacket::encode,
-                FetchInventoryPacket::decode, FetchInventoryPacket::handle);
+        Network.INSTANCE.register(BlockSwapPacket.class, BlockSwapPacket::encode,
+                BlockSwapPacket::decode, BlockSwapPacket::handle);
+        Network.INSTANCE.register(FetchBlockInventoryPacket.class, FetchBlockInventoryPacket::encode,
+                FetchBlockInventoryPacket::decode, FetchBlockInventoryPacket::handle);
         Network.INSTANCE.register(ChestShulkerOpenPacket.class, ChestShulkerOpenPacket::encode,
                 ChestShulkerOpenPacket::decode, ChestShulkerOpenPacket::handle);
         Network.INSTANCE.register(GrabItemPacket.class, GrabItemPacket::encode,
@@ -113,8 +114,6 @@ public class ImmersiveMC {
                 ConfigSyncPacket::decode, ConfigSyncPacket::handle);
         Network.INSTANCE.register(SetRepeaterPacket.class, SetRepeaterPacket::encode,
                 SetRepeaterPacket::decode, SetRepeaterPacket::handle);
-        Network.INSTANCE.register(FetchBackpackStoragePacket.class, FetchBackpackStoragePacket::encode,
-                FetchBackpackStoragePacket::decode, FetchBackpackStoragePacket::handle);
         Network.INSTANCE.register(BeaconConfirmPacket.class, BeaconConfirmPacket::encode,
                 BeaconConfirmPacket::decode, BeaconConfirmPacket::handle);
         Network.INSTANCE.register(ThrowPacket.class, ThrowPacket::encode,
@@ -131,6 +130,13 @@ public class ImmersiveMC {
                 PageTurnPacket::decode, PageTurnPacket::handle);
         Network.INSTANCE.register(SelfHandlingNetworkStorageSyncPacket.class, SelfHandlingNetworkStorageSyncPacket::encode,
                 SelfHandlingNetworkStorageSyncPacket::decode, SelfHandlingNetworkStorageSyncPacket::handle);
-
+        Network.INSTANCE.register(StartStopTrackPacket.class, StartStopTrackPacket::encode,
+                StartStopTrackPacket::decode, StartStopTrackPacket::handle);
+        Network.INSTANCE.register(FetchAttachmentInventoryPacket.class, FetchAttachmentInventoryPacket::encode,
+                FetchAttachmentInventoryPacket::decode, FetchAttachmentInventoryPacket::handle);
+        Network.INSTANCE.register(AttachmentSwapPacket.class, AttachmentSwapPacket::encode,
+                AttachmentSwapPacket::decode, AttachmentSwapPacket::handle);
+        Network.INSTANCE.register(StopTrackPacketWithOwner.class, StopTrackPacketWithOwner::encode,
+                StopTrackPacketWithOwner::decode, StopTrackPacketWithOwner::handle);
     }
 }

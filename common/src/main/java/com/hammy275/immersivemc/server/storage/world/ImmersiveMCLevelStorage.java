@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.server.storage.world;
 
-import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.handler.WorldStorageHandler;
 import com.hammy275.immersivemc.common.immersive.storage.dual.impl.AnvilStorage;
@@ -49,7 +49,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
     @Nullable
     public WorldStorage get(BlockPos pos, Level level) {
         WorldStorage storage = storageMap.get(pos);
-        for (ImmersiveHandler<?> handlerMaybeWS : ImmersiveHandlers.HANDLERS) {
+        for (BlockBasedImmersiveHandler<?> handlerMaybeWS : ImmersiveHandlers.BLOCK_HANDLERS) {
             if (handlerMaybeWS instanceof WorldStorageHandler<?> handler) {
                 if (handler.getWorldStorageClass().isInstance(storage) && Util.isValidBlocks(handler, pos, level)) {
                     return storage;
@@ -73,7 +73,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
 
         // At this point, we either didn't find a storage or the storage we found doesn't match with any handler.
         // Either way, attempt to make a new one.
-        for (ImmersiveHandler<?> handlerMaybeWS : ImmersiveHandlers.HANDLERS) {
+        for (BlockBasedImmersiveHandler<?> handlerMaybeWS : ImmersiveHandlers.BLOCK_HANDLERS) {
             if (handlerMaybeWS instanceof WorldStorageHandler<?> handler) {
                 if (Util.isValidBlocks(handler, pos, level)) {
                     storage = handler.getEmptyWorldStorage();
@@ -135,7 +135,7 @@ public class ImmersiveMCLevelStorage extends SavedData {
 
             ResourceLocation id = Util.getResourceLocation(storageInfo, "id");
             WorldStorage storage = null;
-            for (ImmersiveHandler<?> handlerMaybeWS : ImmersiveHandlers.HANDLERS) {
+            for (BlockBasedImmersiveHandler<?> handlerMaybeWS : ImmersiveHandlers.BLOCK_HANDLERS) {
                 if (handlerMaybeWS.getID().equals(id) && handlerMaybeWS instanceof WorldStorageHandler<?> handler) {
                     storage = handler.getEmptyWorldStorage();
                     storage.load(storageInfo.getCompound("data"), lastVanillaDataVersion);
