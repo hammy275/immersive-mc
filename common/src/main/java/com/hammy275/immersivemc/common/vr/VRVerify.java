@@ -32,6 +32,12 @@ public class VRVerify {
     }
 
     public static boolean playerInVR(Player player) {
-        return player instanceof ServerPlayer sp ? (hasAPI && VRProxy.vrAPIIInVR(sp)) : clientInVR();
+        if (player instanceof ServerPlayer sp) {
+            return hasAPI && VRProxy.vrAPIIInVR(sp);
+        } else if (player != null && player.isLocalPlayer()) {
+            return clientInVR();
+        } else {
+            return hasAPI && player != null && VR.API.getVRPose(player) != null;
+        }
     }
 }

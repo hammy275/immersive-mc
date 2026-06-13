@@ -1,14 +1,13 @@
 package com.hammy275.immersivemc.common.network;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.api.client.immersive.Immersive;
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.*;
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
-import com.hammy275.immersivemc.client.immersive.AbstractPlayerAttachmentImmersive;
+import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import com.hammy275.immersivemc.client.immersive.Immersives;
-import com.hammy275.immersivemc.client.immersive.info.AbstractPlayerAttachmentInfo;
-import com.hammy275.immersivemc.client.immersive.info.BackpackInfo;
+import com.hammy275.immersivemc.client.immersive.info.BagInfo;
 import com.hammy275.immersivemc.client.immersive.info.BeaconInfo;
 import com.hammy275.immersivemc.client.subscribe.ClientLogicSubscriber;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
@@ -16,9 +15,11 @@ import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -27,8 +28,8 @@ import java.util.*;
 public class NetworkClientHandlers {
 
     public static void checkHandlerMatch(List<ResourceLocation> serverHandlerIDs) {
-        Map<ResourceLocation, ImmersiveHandler<?>> clientHandlers = new HashMap<>();
-        ImmersiveHandlers.HANDLERS.forEach((handler) -> clientHandlers.put(handler.getID(), handler));
+        Map<ResourceLocation, ImmersiveHandler> clientHandlers = new HashMap<>();
+        ImmersiveHandlers.ALL_HANDLERS.forEach((handler) -> clientHandlers.put(handler.getID(), handler));
 
         List<ResourceLocation> serverOnly = serverHandlerIDs.stream().filter((id) -> !clientHandlers.containsKey(id)).toList();
         List<ResourceLocation> clientOnly = clientHandlers.entrySet().stream().filter((entry) ->
@@ -62,39 +63,50 @@ public class NetworkClientHandlers {
     }
 
     public static void setBackpackOutput(ItemStack output) {
-        if (Immersives.immersiveBackpack.getTrackedObjects().size() > 0) {
-            BackpackInfo info = Immersives.immersiveBackpack.getTrackedObjects().get(0);
-            info.craftingOutput = output;
+        BagInfo info = Immersives.immersiveBag.getLocalPlayerInfo();
+        if (info != null) {
+            info.hitboxes.get(31).item = output;
         }
     }
 
     @SuppressWarnings("unchecked")
-    public static <NS extends NetworkStorage> void handleReceiveInvData(NS storage, BlockPos pos, ImmersiveHandler<NS> handler) {
+    public static <NS extends NetworkStorage> void handleReceiveInvData(NS storage, BlockPos pos, BlockBasedImmersiveHandler<NS> handler) {
         Objects.requireNonNull(storage);
         Level level = Minecraft.getInstance().player.level();
         // Search all immersives for the matching handler. If found and the block is the state we expect, create or refresh
         // the info and process storage on it.
-        for (Immersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
+        for (BlockBasedImmersive<?, ?, ?> immersive : Immersives.BLOCK_IMMERSIVES) {
             if (immersive.getHandler() == handler && Util.isValidBlocks(handler, pos, level)) {
-                ImmersiveInfo info = ClientLogicSubscriber.doTrackIfNotTrackingAlready(immersive, pos, level);
+                BlockBasedImmersiveInfo info = ClientLogicSubscriber.doTrackIfNotTrackingAlready(immersive, pos, level);
                 if (info != null) {
                     processStorageFromNetwork(immersive, info, storage);
                 }
             }
         }
-        for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
-            if (immersive.getHandler() == handler && immersive.shouldTrack(pos, level)) {
-                AbstractPlayerAttachmentInfo info = immersive.refreshOrTrackObject(pos, level);
-                if (info != null) {
-                    ((AbstractPlayerAttachmentImmersive<?, NS>) immersive).processStorageFromNetwork(info, storage);
-                }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <NS extends NetworkStorage, I extends PlayerAttachmentImmersiveInfo> void handleReceiveInvData(NS storage, UUID ownerUUID, PlayerAttachmentImmersiveHandler<NS> handler) {
+        Player ownerPlayer = Minecraft.getInstance().player.level().getPlayerByUUID(ownerUUID);
+        if (ownerPlayer instanceof AbstractClientPlayer owner) {
+            PlayerAttachmentImmersive<?, ?, ?> immersive = Immersives.ATTACHMENT_IMMERSIVES.stream()
+                    .filter(i -> i.getHandler() == handler)
+                    .findAny().orElseThrow();
+            PlayerAttachmentImmersiveInfo info = immersive.getTrackedObjects().stream()
+                    .filter(i -> i.getOwner() == owner).findAny().orElse(null);
+            if (info == null) {
+                PlayerAttachmentImmersive<I, ?, ?> castImmersive = (PlayerAttachmentImmersive<I, ?, ?>) immersive;
+                I newInfo = castImmersive.buildInfo(owner);
+                castImmersive.getTrackedObjects().add(newInfo);
+                info = newInfo;
             }
+            processStorageFromNetwork(immersive, info, storage);
         }
     }
 
     @SuppressWarnings("unchecked")
     private static <I extends ImmersiveInfo, NS extends NetworkStorage> void processStorageFromNetwork(Immersive<?, ?, ?> immersive,
-                                                                                                       I info, NS storage) {
+                                                                                                                 I info, NS storage) {
         Immersive<I, ?, NS> immersiveCast = (Immersive<I, ?, NS>) immersive;
         immersiveCast.processStorageFromNetwork(info, storage);
     }

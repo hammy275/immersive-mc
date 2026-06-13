@@ -29,7 +29,7 @@ public class ChiseledBookshelfHandler extends ContainerHandler<NullStorage> {
     };
 
     @Override
-    public NullStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
+    public NullStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
         return new NullStorage();
     }
 
@@ -39,8 +39,8 @@ public class ChiseledBookshelfHandler extends ContainerHandler<NullStorage> {
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        BlockState state = player.level().getBlockState(pos);
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
+        BlockState state = tracker.level().getBlockState(pos);
         if (state.getBlock() instanceof ChiseledBookShelfBlock block) {
             Direction blockFacing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
             Vec3 blockEdgePos = Vec3.atBottomCenterOf(pos).add(Vec3.atLowerCornerOf(blockFacing.getNormal()).scale(0.5)).add(0, 0.5, 0);
@@ -58,7 +58,7 @@ public class ChiseledBookshelfHandler extends ContainerHandler<NullStorage> {
             if (blockFacing.getAxis() == Direction.Axis.X) {
                 offset = new Vec3(offset.z, offset.y, offset.x);
             }
-            block.use(player.level().getBlockState(pos), player.level(), pos, player, hand,
+            block.use(tracker.level().getBlockState(pos), tracker.level(), pos, tracker, hand,
                     new BlockHitResult(blockEdgePos.add(offset), blockFacing, pos, false));
         }
     }

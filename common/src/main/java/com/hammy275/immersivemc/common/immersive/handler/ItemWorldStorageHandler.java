@@ -14,34 +14,34 @@ import net.minecraft.world.phys.Vec3;
 public abstract class ItemWorldStorageHandler<S extends NetworkStorage> implements WorldStorageHandler<S> {
 
     @Override
-    public boolean isDirtyForClientSync(ServerPlayer player, BlockPos pos) {
-        if (WorldStoragesImpl.getS(pos, player.serverLevel()) instanceof ItemStorage iws) {
+    public boolean isDirtyForClientSync(ServerPlayer tracker, BlockPos pos) {
+        if (WorldStoragesImpl.getS(pos, tracker.serverLevel()) instanceof ItemStorage iws) {
             return iws.isDirtyForClientSync();
         }
         return false;
     }
 
     @Override
-    public void onStopTracking(ServerPlayer player, BlockPos pos) {
-        if (WorldStoragesImpl.getWithoutVerificationS(pos, player.serverLevel()) instanceof ItemStorage iws) {
-            if (Util.isValidBlocks(this, pos, player.level())) {
-                if (ActiveConfig.getConfigForPlayer(player).returnItemsWhenLeavingImmersives) { // Player left block range
-                    iws.returnItems(player);
-                    updateStorageOutputAfterItemReturn(player, pos, iws);
-                    iws.setDirty(player.serverLevel());
+    public void onStopTracking(ServerPlayer tracker, BlockPos pos) {
+        if (WorldStoragesImpl.getWithoutVerificationS(pos, tracker.serverLevel()) instanceof ItemStorage iws) {
+            if (Util.isValidBlocks(this, pos, tracker.level())) {
+                if (ActiveConfig.getConfigForPlayer(tracker).returnItemsWhenLeavingImmersives) { // Player left block range
+                    iws.returnItems(tracker);
+                    updateStorageOutputAfterItemReturn(tracker, pos, iws);
+                    iws.setDirty(tracker.serverLevel());
                 }
-            } else if (player.level().getBlockState(pos).isAir()) {
+            } else if (tracker.level().getBlockState(pos).isAir()) {
                 // Block was destroyed. Need to air check above, since getting block entities returns null when paused
                 // such as with the config screen.
                 for (int i = 0; i <= iws.maxInputIndex; i++) {
                     Vec3 vecPos = Vec3.atCenterOf(pos);
                     ItemStack stack = iws.getItem(i);
                     if (stack != null && !stack.isEmpty()) {
-                        ItemEntity itemEnt = new ItemEntity(player.level(), vecPos.x, vecPos.y, vecPos.z, stack);
-                        player.level().addFreshEntity(itemEnt);
+                        ItemEntity itemEnt = new ItemEntity(tracker.level(), vecPos.x, vecPos.y, vecPos.z, stack);
+                        tracker.level().addFreshEntity(itemEnt);
                     }
                 }
-                WorldStoragesImpl.removeS(pos, player.serverLevel());
+                WorldStoragesImpl.removeS(pos, tracker.serverLevel());
             }
         }
     }

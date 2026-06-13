@@ -1,49 +1,39 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
-import com.hammy275.immersivemc.client.config.ClientConstants;
+import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
+import com.hammy275.immersivemc.api.client.immersive.PlayerAttachmentImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
+import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
+import com.hammy275.immersivemc.common.api_impl.hitbox.HitboxInfoImpl;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public class ImmersiveHitboxesInfo extends AbstractPlayerAttachmentInfo implements InfoTriggerHitboxes {
+import java.util.ArrayList;
+import java.util.List;
 
-    // NOTE: This class should have the regular hitboxes and trigger hitboxes share the same
-    // index numbers. Have the actual immersive handle both behaviors.
-    public static final int BACKPACK_BACK_INDEX = 0;
+public class ImmersiveHitboxesInfo implements PlayerAttachmentImmersiveInfo {
+    public static final int BAG_BACK_INDEX = 0;
 
-    private BoundingBox backpackBackHitbox = null;
+    public final List<HitboxInfoImpl> hitboxes = new ArrayList<>(1);
+    public boolean canOpen = false;
+    public int slotHovered = -1;
+    public long tickCount;
 
     public ImmersiveHitboxesInfo() {
-        super(ClientConstants.ticksToRenderHitboxesImmersive);
-        this.inputHitboxes = new BoundingBox[0];
+        hitboxes.add(new HitboxInfoImpl(AABB.ofSize(Vec3.ZERO, 0, 0, 0), false));
     }
 
     @Override
-    public void setInputSlots() {
-        // No input boxes, so no setting done here
+    public AbstractClientPlayer getOwner() {
+        return Minecraft.getInstance().player;
     }
 
     @Override
-    public BoundingBox getHitbox(int slot) {
-        if (slot == BACKPACK_BACK_INDEX) {
-            return backpackBackHitbox;
-        }
-        throw new IllegalArgumentException(String.format("ImmersiveHitboxes: " +
-                "%d out of range for %d hitboxes.", slot, getAllHitboxes().length));
-    }
-
-    @Override
-    public BoundingBox[] getAllHitboxes() {
-        return new BoundingBox[]{backpackBackHitbox};
-    }
-
-    @Override
-    public void setHitbox(int slot, BoundingBox hitbox) {
-        if (slot == BACKPACK_BACK_INDEX) {
-            this.backpackBackHitbox = hitbox;
-        }
+    public List<? extends HitboxInfo> getAllHitboxes() {
+        return hitboxes;
     }
 
     @Override
@@ -52,52 +42,43 @@ public class ImmersiveHitboxesInfo extends AbstractPlayerAttachmentInfo implemen
     }
 
     @Override
-    public Vec3 getPosition(int slot) {
-        return backpackBackHitbox.asOBB().getCenter();
-    }
-
-    @Override
-    public Vec3[] getAllPositions() {
-        BoundingBox[] hitboxes = getAllHitboxes();
-        Vec3[] positions = new Vec3[hitboxes.length];
-        for (int i = 0; i < hitboxes.length; i++) {
-            positions[i] = hitboxes[i].asOBB().getCenter();
+    public void setSlotHovered(int hitboxIndex, int handIndex) {
+        if (handIndex == InteractionHand.OFF_HAND.ordinal()) {
+            slotHovered = hitboxIndex;
         }
-        return positions;
     }
 
     @Override
-    public void setPosition(int slot, Vec3 position) {
-        throw new UnsupportedOperationException("Cannot set position for ImmersiveHitbox. Set hitbox instead!");
+    public int getSlotHovered(int handIndex) {
+        return handIndex == InteractionHand.MAIN_HAND.ordinal() ? -1 : slotHovered;
     }
 
     @Override
-    public boolean hasPositions() {
-        return true;
+    public long getTicksExisted() {
+        return tickCount;
     }
 
-    @Override
-    public boolean readyToRender() {
-        return true;
-    }
+    public static class RenderState implements ImmersiveRenderState {
 
-    @Override
-    public BlockPos getBlockPosition() {
-        return Minecraft.getInstance().player.blockPosition();
-    }
+        public List<BoundingBox> hitboxes;
+        public long ticksExisted;
+        public int slotHovered;
 
-    @Override
-    public BoundingBox getTriggerHitbox(int hitboxNum) {
-        return getHitbox(hitboxNum);
-    }
+        public RenderState() { }
 
-    @Override
-    public BoundingBox[] getTriggerHitboxes() {
-        return getAllHitboxes();
-    }
+        @Override
+        public List<BoundingBox> hitboxes() {
+            return hitboxes;
+        }
 
-    @Override
-    public InteractionHand getVRHand() {
-        return InteractionHand.OFF_HAND;
+        @Override
+        public long ticksExisted() {
+            return ticksExisted;
+        }
+
+        @Override
+        public boolean isSlotHovered(int slot) {
+            return slot == slotHovered;
+        }
     }
 }

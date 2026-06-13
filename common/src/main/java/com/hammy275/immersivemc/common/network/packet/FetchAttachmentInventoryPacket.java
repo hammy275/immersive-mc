@@ -1,0 +1,57 @@
+package com.hammy275.immersivemc.common.network.packet;
+
+import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
+import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.network.NetworkClientHandlers;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+
+import java.util.UUID;
+
+public class FetchAttachmentInventoryPacket<S extends NetworkStorage> {
+
+    public final S storage;
+    public final PlayerAttachmentImmersiveHandler<S> handler;
+    public final UUID ownerUUID;
+
+    public FetchAttachmentInventoryPacket(PlayerAttachmentImmersiveHandler<S> handler, S storage, UUID ownerUUID) {
+        this.handler = handler;
+        this.storage = storage;
+        this.ownerUUID = ownerUUID;
+    }
+
+    public static <NS extends NetworkStorage> void encode(FetchAttachmentInventoryPacket<NS> packet, FriendlyByteBuf buffer) {
+        buffer.writeUUID(packet.ownerUUID);
+        buffer.writeResourceLocation(packet.handler.getID());
+        packet.storage.encode(buffer);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <NS extends NetworkStorage> FetchAttachmentInventoryPacket<NS> decode(FriendlyByteBuf buffer) {
+        UUID uuid = buffer.readUUID();
+        PlayerAttachmentImmersiveHandler<NS> handlerToSet = null;
+        NS storage = null;
+        ResourceLocation id = buffer.readResourceLocation();
+        for (PlayerAttachmentImmersiveHandler<?> handler : ImmersiveHandlers.ATTACHMENT_HANDLERS) {
+            if (handler.getID().equals(id)) {
+                handlerToSet = (PlayerAttachmentImmersiveHandler<NS>) handler;
+                storage = handlerToSet.getEmptyNetworkStorage();
+                storage.decode(buffer);
+                break;
+            }
+        }
+        if (storage == null) {
+            throw new IllegalArgumentException("ID " + id + " not found!");
+        }
+        return new FetchAttachmentInventoryPacket<>(handlerToSet, storage, uuid);
+    }
+
+    public static <NS extends NetworkStorage> void handle(final FetchAttachmentInventoryPacket<NS> message, ServerPlayer player) {
+        if (player == null) {
+            NetworkClientHandlers.handleReceiveInvData(message.storage, message.ownerUUID, message.handler);
+        }
+    }
+
+}
