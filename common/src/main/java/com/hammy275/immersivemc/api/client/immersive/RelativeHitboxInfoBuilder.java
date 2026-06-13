@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * A builder for {@link RelativeHitboxInfo} instances. For all {@link BuiltImmersiveInfo} instances provided by this
- * class, {@link BuiltImmersiveInfo#getExtraData()} is safe to use, and will give an object with your valid data. You
+ * A builder for {@link RelativeHitboxInfo} instances. For all {@link BuiltBlockBasedImmersiveInfo} instances provided by this
+ * class, {@link BuiltBlockBasedImmersiveInfo#getExtraData()} is safe to use, and will give an object with your valid data. You
  * only need to cast it to your object type.
  */
 public interface RelativeHitboxInfoBuilder {
@@ -36,7 +36,7 @@ public interface RelativeHitboxInfoBuilder {
      *                 The function can return null if this hitbox shouldn't render or be interacted with.
      * @return This builder object.
      */
-    public RelativeHitboxInfoBuilder setCenterOffset(Function<BuiltImmersiveInfo<?>, Vec3> newOffset);
+    public RelativeHitboxInfoBuilder setCenterOffset(Function<BuiltBlockBasedImmersiveInfo<?>, Vec3> newOffset);
 
     /**
      * @param holdsItems Whether this relative hitbox should hold items.
@@ -76,7 +76,7 @@ public interface RelativeHitboxInfoBuilder {
      *                     the center offset to render the text at.
      * @return This builder object.
      */
-    public RelativeHitboxInfoBuilder textSupplier(Function<BuiltImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier);
+    public RelativeHitboxInfoBuilder textSupplier(Function<BuiltBlockBasedImmersiveInfo<?>, List<Pair<Component, Vec3>>> textSupplier);
 
     /**
      * @param forcedDir Forces the direction passed to upDown {@link com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers#renderItem(ItemStack, PoseStack, float, BoundingBox, boolean, int, Float, Direction, Direction)}
@@ -90,7 +90,7 @@ public interface RelativeHitboxInfoBuilder {
      *                  instead of determining it based on the hitbox positioning mode.
      * @return This builder object.
      */
-    public RelativeHitboxInfoBuilder forceUpDownRenderDir(Function<BuiltImmersiveInfo<?>, ForcedUpDownRenderDir> forcedDirFunction);
+    public RelativeHitboxInfoBuilder forceUpDownRenderDir(Function<BuiltBlockBasedImmersiveInfo<?>, ForcedUpDownRenderDir> forcedDirFunction);
 
     /**
      * @param needs3dCompat Whether this hitbox should be moved on the Z axis for 3D resource packs.
@@ -152,7 +152,7 @@ public interface RelativeHitboxInfoBuilder {
      * @param size The size of this hitbox, in blocks.
      * @return A builder object.
      */
-    public static RelativeHitboxInfoBuilder create(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double size) {
+    public static RelativeHitboxInfoBuilder create(Function<BuiltBlockBasedImmersiveInfo<?>, Vec3> centerOffset, double size) {
         return new RelativeHitboxInfoBuilderImpl(centerOffset, size, false);
     }
 
@@ -177,7 +177,7 @@ public interface RelativeHitboxInfoBuilder {
      * @param sizeZ The size of this box on the relative z-axis.
      * @return A builder object.
      */
-    public static RelativeHitboxInfoBuilder create(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ) {
+    public static RelativeHitboxInfoBuilder create(Function<BuiltBlockBasedImmersiveInfo<?>, Vec3> centerOffset, double sizeX, double sizeY, double sizeZ) {
         return new RelativeHitboxInfoBuilderImpl(centerOffset, sizeX, sizeY, sizeZ, false);
     }
 
@@ -198,7 +198,7 @@ public interface RelativeHitboxInfoBuilder {
      * @param size The size of this hitbox, in blocks.
      * @return A builder object.
      */
-    public static RelativeHitboxInfoBuilder createItemInput(Function<BuiltImmersiveInfo<?>, Vec3> centerOffset, double size) {
+    public static RelativeHitboxInfoBuilder createItemInput(Function<BuiltBlockBasedImmersiveInfo<?>, Vec3> centerOffset, double size) {
         return new RelativeHitboxInfoBuilderImpl(centerOffset, size, false).holdsItems(true).isInput(true);
     }
 }

@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
@@ -81,7 +82,6 @@ public class ImmersivesConfigScreen extends Screen {
         if (this.type.isVR()) {
             options.add(ScreenUtils.createOption("animals", config -> config.useFeedingAnimalsImmersive, (config, newVal) -> config.useFeedingAnimalsImmersive = newVal));
             options.add(ScreenUtils.createOption("armor",config -> config.useArmorImmersive, (config, newVal) -> config.useArmorImmersive = newVal));
-            options.add(ScreenUtils.createOption("backpack_button", config -> config.useBagImmersive, (config, newVal) -> config.useBagImmersive = newVal));
             options.add(ScreenUtils.createOption("bottle_bucket", config -> config.useBucketAndBottleImmersive, (config, newVal) -> config.useBucketAndBottleImmersive = newVal));
             options.add(ScreenUtils.createOption("button", config -> config.useButtonImmersive, (config, newVal) -> config.useButtonImmersive = newVal));
             options.add(ScreenUtils.createOption("campfire", config -> config.useCampfireImmersive, (config, newVal) -> config.useCampfireImmersive = newVal));
@@ -93,8 +93,8 @@ public class ImmersivesConfigScreen extends Screen {
             options.add(ScreenUtils.createOption("written_book", config -> config.useWrittenBookImmersive, (config, newVal) -> config.useWrittenBookImmersive = newVal));
         }
 
-        Immersives.IMMERSIVES.stream()
-                .filter((immersive) -> (this.type.isVR() || (this.type.isNonVR() && !immersive.isVROnly())))
+        Immersives.ALL_IMMERSIVES.stream()
+                .filter((immersive) -> (this.type.isVR() || (this.type.isNonVR() && !ClientUtil.isVROnly(immersive))))
                 .map(Immersive::configScreenInfo)
                 .filter(Objects::nonNull)
                 .map((configInfo) -> ScreenUtils.createOption(configInfo.getOptionTranslation(), configInfo.getOptionTooltip(),

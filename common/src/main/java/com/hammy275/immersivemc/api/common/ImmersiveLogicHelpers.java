@@ -2,12 +2,14 @@ package com.hammy275.immersivemc.api.common;
 
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
+import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.SwapResult;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveLogicHelpersImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -89,4 +91,31 @@ public interface ImmersiveLogicHelpers {
      * @return The vertices of the provided AABB as described in the aforementioned method.
      */
     public List<Vec3> getVerticesOfAABB(AABB box);
+
+    /**
+     * Begins tracking the provided {@link PlayerAttachmentImmersiveHandler}, that is NOT client authoritative, with an
+     * owner and tracker of the provided {@code player}.
+     * <p>
+     * This method may be called on either the server or client.
+     * <p>
+     * If you are attempting to begin tracking a
+     * {@link com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler}, you should instead provide
+     * an implementation of {@link com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler#isValidBlock(BlockPos, Level)}
+     * that would begin the tracking under the condition you desire.
+     * @param handler The handler to begin tracking for.
+     * @param player The player who will be the owner and tracker of the Immersive instance.
+     * @throws IllegalArgumentException If the provided {@code handler} is client authoritative.
+     */
+    public void startTrackingOnServer(PlayerAttachmentImmersiveHandler<?> handler, Player player)
+            throws IllegalArgumentException;
+
+    /**
+     * Stops tracking the provided {@link PlayerAttachmentImmersiveHandler}, that is NOT client authoritative, with an
+     * owner of the provided {@code player} for all trackers.
+     * @param handler The handler to stop tracking for.
+     * @param player The player who is no longer having this Immersive tracked for them.
+     * @throws IllegalArgumentException If the provided {@code handler} is client authoritative.
+     */
+    public void stopTrackingOnServer(PlayerAttachmentImmersiveHandler<?> handler, Player player)
+            throws IllegalArgumentException;
 }

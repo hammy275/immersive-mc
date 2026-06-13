@@ -19,8 +19,8 @@ public class BarrelHandler extends ChestLikeHandler<ListOfItemsStorage> {
     }
 
     @Override
-    public ListOfItemsStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return makeBaseInventoryContents(player, pos);
+    public ListOfItemsStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
+        return makeBaseInventoryContents(tracker, pos);
     }
 
     @Override
@@ -34,9 +34,9 @@ public class BarrelHandler extends ChestLikeHandler<ListOfItemsStorage> {
     }
 
     @Override
-    public void onStopTracking(ServerPlayer player, BlockPos pos) {
-        super.onStopTracking(player, pos);
-        if (ChestToOpenSet.getOpenCount(pos, player.level) == 0 && player.level.getBlockEntity(pos) instanceof BarrelBlockEntity barrel) {
+    public void onStopTracking(ServerPlayer tracker, BlockPos pos) {
+        super.onStopTracking(tracker, pos);
+        if (ChestToOpenSet.getOpenCount(pos, tracker.level) == 0 && tracker.level.getBlockEntity(pos) instanceof BarrelBlockEntity barrel) {
             barrel.recheckOpen();
         }
     }

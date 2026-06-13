@@ -23,8 +23,8 @@ import net.minecraft.world.level.block.SmithingTableBlock;
 
 public class CraftingHandler extends ItemWorldStorageHandler<CraftingTableStorage> {
     @Override
-    public CraftingTableStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return (CraftingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.getLevel());
+    public CraftingTableStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
+        return (CraftingTableStorage) WorldStoragesImpl.getOrCreateS(pos, tracker.getLevel());
     }
 
     @Override
@@ -33,13 +33,13 @@ public class CraftingHandler extends ItemWorldStorageHandler<CraftingTableStorag
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        CraftingTableStorage storage = (CraftingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.getLevel());
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
+        CraftingTableStorage storage = (CraftingTableStorage) WorldStoragesImpl.getOrCreateS(pos, tracker.getLevel());
         if (slot < 9) {
-            storage.placeItem(player, hand, slot, amount);
-            storage.setItem(9, Swap.getRecipeOutput(player, storage.getItemsRaw()));
+            storage.placeItem(tracker, hand, slot, amount);
+            storage.setItem(9, Swap.getRecipeOutput(tracker, storage.getItemsRaw()));
         } else {
-            ItemStack[] newSlots = Swap.handleDoCraft(player, storage.getItemsRaw(), pos, amount);
+            ItemStack[] newSlots = Swap.handleDoCraft(tracker, storage.getItemsRaw(), pos, amount);
             if (newSlots == null) return;
             for (int i = 0; i <= 8; i++) {
                 ItemStack storageItem = storage.getItem(i);
@@ -48,13 +48,13 @@ public class CraftingHandler extends ItemWorldStorageHandler<CraftingTableStorag
                         int diff = storageItem.getCount() - newSlots[i].getCount();
                         storage.shrinkSlot(i, diff);
                     } else {
-                        storage.setItem(i, newSlots[i], player);
+                        storage.setItem(i, newSlots[i], tracker);
                     }
                 }
             }
             storage.setItem(9, newSlots[9]);
         }
-        storage.setDirty(player.getLevel());
+        storage.setDirty(tracker.getLevel());
     }
 
     @Override

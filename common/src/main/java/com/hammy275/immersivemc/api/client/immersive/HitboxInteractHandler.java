@@ -1,11 +1,19 @@
 package com.hammy275.immersivemc.api.client.immersive;
 
+import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
+/**
+ * A functional interface for {@link BuiltBlockBasedImmersive}s for determining what should happen when a hitbox is
+ * interacted with.
+ * @param <E> The extra data class for this Immersive. This is the first class passed to
+ *             {@link BlockBasedImmersiveBuilder#copy(BlockBasedImmersiveHandler, Class, Class, BiConsumer)}.
+ */
 @FunctionalInterface
 public interface HitboxInteractHandler<E> {
     /**
@@ -19,5 +27,5 @@ public interface HitboxInteractHandler<E> {
      * @return A cooldown time. See {@link Immersive#handleHitboxInteract(ImmersiveInfo, LocalPlayer, List, InteractionHand, boolean)}
      * for more info.
      */
-    int apply(BuiltImmersiveInfo<E> info, Player player, List<Integer> slots, InteractionHand hand, boolean modifierPressed);
+    int apply(BuiltBlockBasedImmersiveInfo<E> info, Player player, List<Integer> slots, InteractionHand hand, boolean modifierPressed);
 }
