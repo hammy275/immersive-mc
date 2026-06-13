@@ -1,6 +1,6 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
-import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.BuiltBlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.RelativeHitboxInfoImpl;
@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Base class for infos that Immersives constructed with the builder can use.
  */
-public final class BuiltImmersiveInfoImpl<E> implements BuiltImmersiveInfo<E> {
+public final class BuiltBlockBasedImmersiveInfoImpl<E> implements BuiltBlockBasedImmersiveInfo<E> {
 
     public final List<RelativeHitboxInfoImpl> hitboxes;
     public final List<HitboxInfo> hitboxesOut;
@@ -31,7 +31,7 @@ public final class BuiltImmersiveInfoImpl<E> implements BuiltImmersiveInfo<E> {
     public long ticksExisted = 0;
     public AABB dragHitbox = null;
 
-    public BuiltImmersiveInfoImpl(List<RelativeHitboxInfoImpl> hitboxes, BlockPos pos, Class<E> extraDataClazz) {
+    public BuiltBlockBasedImmersiveInfoImpl(List<RelativeHitboxInfoImpl> hitboxes, BlockPos pos, Class<E> extraDataClazz) {
         this.hitboxes = new ArrayList<>(hitboxes.size());
         this.hitboxesOut = new ArrayList<>(hitboxes.size());
         for (RelativeHitboxInfoImpl hitbox : hitboxes) {

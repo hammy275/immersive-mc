@@ -1,47 +1,43 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
-import net.minecraft.core.BlockPos;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractImmersiveInfo implements ImmersiveInfo {
+public abstract class AbstractImmersiveInfo {
 
     public final List<HitboxItemPair> hitboxes = new ArrayList<>();
-    protected final BlockPos pos;
     protected final int[] slotsHovered = new int[]{-1, -1};
     protected long ticksExisted = 0;
 
-    public AbstractImmersiveInfo(BlockPos pos) {
-        this.pos = pos;
+    public AbstractImmersiveInfo() { }
+
+    public AbstractImmersiveInfo(AbstractImmersiveInfo info) {
+        this.hitboxes.addAll(info.hitboxes);
+        this.slotsHovered[0] = info.slotsHovered[0];
+        this.slotsHovered[1] = info.slotsHovered[1];
+        this.ticksExisted = info.ticksExisted;
     }
 
     public void tick() {
         ticksExisted++;
     }
 
-    @Override
+    // Overrides from ImmersiveInfo
     public List<HitboxItemPair> getAllHitboxes() {
         return hitboxes;
     }
 
-    @Override
+    // Overrides from ImmersiveInfo
     public boolean hasHitboxes() {
         return !hitboxes.isEmpty();
     }
 
-    @Override
-    public BlockPos getBlockPosition() {
-        return pos;
-    }
-
-    @Override
+    // Overrides from ImmersiveInfo
     public void setSlotHovered(int hitboxIndex, int handIndex) {
         slotsHovered[handIndex] = hitboxIndex;
     }
 
-    @Override
+    // Overrides from ImmersiveInfo
     public int getSlotHovered(int handIndex) {
         return slotsHovered[handIndex];
     }
@@ -50,7 +46,7 @@ public abstract class AbstractImmersiveInfo implements ImmersiveInfo {
         return slotsHovered[0] == hitboxIndex || slotsHovered[1] == hitboxIndex;
     }
 
-    @Override
+    // Overrides from ImmersiveInfo
     public long getTicksExisted() {
         return ticksExisted;
     }

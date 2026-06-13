@@ -3,14 +3,16 @@ package com.hammy275.immersivemc.client.subscribe;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.client.ImmersiveClientConstants;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
-import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveInfo;
-import com.hammy275.immersivemc.api.client.immersive.Immersive;
-import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.*;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
-import com.hammy275.immersivemc.client.immersive.*;
-import com.hammy275.immersivemc.client.immersive.info.*;
+import com.hammy275.immersivemc.client.immersive.ImmersiveChest;
+import com.hammy275.immersivemc.client.immersive.Immersives;
+import com.hammy275.immersivemc.client.immersive.SwapTracker;
+import com.hammy275.immersivemc.client.immersive.info.BagInfo;
+import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
+import com.hammy275.immersivemc.client.immersive.info.ChestLikeData;
 import com.hammy275.immersivemc.client.immersive_item.AbstractHandImmersive;
 import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
 import com.hammy275.immersivemc.client.interact_module.ChestLidInteractModule;
@@ -44,7 +46,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.vivecraft.api.data.VRBodyPartData;
 import org.vivecraft.api.data.VRPose;
 
 import java.util.*;
@@ -86,11 +87,8 @@ public class ClientLogicSubscriber {
         if (currentVRState != lastVRState) {
             lastVRState = currentVRState;
             if (!currentVRState && ActiveConfig.FILE_CLIENT.disableImmersiveMCOutsideVR) {
-                for (Immersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
+                for (Immersive<?, ?, ?> immersive : Immersives.ALL_IMMERSIVES) {
                     immersive.getTrackedObjects().clear();
-                }
-                for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
-                    immersive.clearImmersives();
                 }
             }
         }
@@ -128,10 +126,7 @@ public class ClientLogicSubscriber {
 
         TickerInit.tickClient(player);
 
-        for (Immersive<? extends ImmersiveInfo, ?, ?> singleton : Immersives.IMMERSIVES) {
-            tickInfos(singleton, player);
-        }
-        for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
+        for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
             tickInfos(singleton, player);
         }
         if (VRVerify.clientInVR()) {
@@ -167,7 +162,7 @@ public class ClientLogicSubscriber {
 
     public static void possiblyTrack(BlockPos pos, BlockState state, BlockEntity tileEntity, Level level) {
         // No similar loop for AbstractPlayerAttachmentImmersive since those don't run from blocks
-        for (Immersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
+        for (BlockBasedImmersive<?, ?, ?> immersive : Immersives.BLOCK_IMMERSIVES) {
             if (immersive.getHandler().clientAuthoritative() &&
                     immersive.getHandler().enabledInConfig(Minecraft.getInstance().player) &&
                     Util.isValidBlocks(immersive.getHandler(), pos, level)) {
@@ -176,7 +171,7 @@ public class ClientLogicSubscriber {
         }
     }
 
-    public static <I extends ImmersiveInfo> I doTrackIfNotTrackingAlready(Immersive<I, ?, ?> immersive, BlockPos pos, Level level) {
+    public static <I extends BlockBasedImmersiveInfo> I doTrackIfNotTrackingAlready(BlockBasedImmersive<I, ?, ?> immersive, BlockPos pos, Level level) {
         I info = ClientUtil.findImmersive(immersive, pos);
         if (info != null) {
             return info;
@@ -193,7 +188,7 @@ public class ClientLogicSubscriber {
         if (button == 1) {
             int cooldown = handleRightClick(Minecraft.getInstance().player);
             if (cooldown >= 0) {
-                SwapTracker.c0.setCooldown(cooldown);
+                ImmersiveClientLogicHelpers.instance().setCooldown(cooldown);
                 return true;
             }
 
@@ -202,7 +197,7 @@ public class ClientLogicSubscriber {
             if (looking != null && looking.getType() == HitResult.Type.BLOCK && ActiveConfig.active().disableVanillaInteractionsForSupportedImmersives) {
                 BlockPos pos = ((BlockHitResult) looking).getBlockPos();
                 // No similar check for AbstractPlayerAttachmentImmersive, since those aren't tied to blocks
-                for (Immersive<? extends ImmersiveInfo, ?, ?> singleton : Immersives.IMMERSIVES) {
+                for (BlockBasedImmersive<? extends BlockBasedImmersiveInfo, ?, ?> singleton : Immersives.BLOCK_IMMERSIVES) {
                     // Don't bother checking this immersive if not in VR and immersive is VR only. Never skip those!
                     if (singleton.isVROnly() && !VRVerify.clientInVR()) {
                         continue;
@@ -224,7 +219,7 @@ public class ClientLogicSubscriber {
         return false;
     }
 
-    private static <I extends ImmersiveInfo> boolean skipRightClick(Immersive<I, ?, ?> immersive, BlockPos clickPos) {
+    private static <I extends BlockBasedImmersiveInfo> boolean skipRightClick(BlockBasedImmersive<I, ?, ?> immersive, BlockPos clickPos) {
         I info = ClientUtil.findImmersive(immersive, clickPos);
         // Cancel right click. We can use this immersive, it's enabled, and
         // the immersive wants us to block it (jukebox may not want to so it can eject disc,
@@ -238,11 +233,8 @@ public class ClientLogicSubscriber {
         // incoming player is a ServerPlayer, while Minecraft.getInstance().player is a local player (of course).
         if (Minecraft.getInstance().player == null ||
                 Minecraft.getInstance().player.getGameProfile().getId().equals(player.getGameProfile().getId())) {
-            for (Immersive<? extends ImmersiveInfo, ?, ?> singleton : Immersives.IMMERSIVES) {
+            for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
                 singleton.getTrackedObjects().clear();
-            }
-            for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
-                singleton.clearImmersives();
             }
             ActiveConfig.FROM_SERVER = (ClientActiveConfig) ClientActiveConfig.DISABLED.clone();
             alreadyInServer = false;
@@ -254,14 +246,25 @@ public class ClientLogicSubscriber {
     }
 
     protected static <I extends ImmersiveInfo> void tickInfos(Immersive<I, ?, ?> singleton, Player player) {
-        // Don't tick if VR only and not in VR
-        if (singleton.isVROnly() && !VRVerify.clientInVR()) {
-            return;
+        if (singleton instanceof BlockBasedImmersive<?, ?, ?> blockBased) {
+            // Don't tick if VR only and not in VR
+            if (blockBased.isVROnly() && !VRVerify.clientInVR()) {
+                return;
+            }
+            // For block-based ones, attempt to remove if the blocks no longer match or if too far away
+            blockBased.getTrackedObjects().removeIf((info) -> {
+                Set<BlockPos> positions = Util.getValidBlocks(blockBased.getHandler(), info.getBlockPosition(), Minecraft.getInstance().level);
+                return positions.isEmpty() || player.distanceToSqr(Util.average(positions)) > CommonConstants.distanceSquaredToRemoveImmersive;
+            });
+        } else if (singleton instanceof PlayerAttachmentImmersive<?, ?, ?> attachment) {
+            // For player attachment ones, attempt to remove if simply too far away, if the level no longer matches,
+            // or if the owner is no longer in VR (which also covers disconnecting).
+            attachment.getTrackedObjects().removeIf(info ->
+                    !VRVerify.playerInVR(info.getOwner()) ||
+                    player.distanceToSqr(info.getOwner().position()) > CommonConstants.distanceSquaredToRemoveAttachmentImmersive
+                            || info.getOwner().level() != player.level());
         }
-        singleton.getTrackedObjects().removeIf((info) -> {
-            Set<BlockPos> positions = Util.getValidBlocks(singleton.getHandler(), info.getBlockPosition(), Minecraft.getInstance().level);
-            return positions.isEmpty() || player.distanceToSqr(Util.average(positions)) > CommonConstants.distanceSquaredToRemoveImmersive;
-        });
+
         singleton.globalTick();
         Collection<I> infos = singleton.getTrackedObjects();
 
@@ -289,86 +292,6 @@ public class ClientLogicSubscriber {
 
     }
 
-    protected static <I extends AbstractPlayerAttachmentInfo> void tickInfos(AbstractPlayerAttachmentImmersive<I, ?> singleton, Player player) {
-        // Don't tick if VR only and not in VR
-        if (singleton.isVROnly() && !VRVerify.clientInVR()) {
-            return;
-        }
-        singleton.globalTick();
-        if (singleton.getTrackedObjects().size() == 0) {
-            singleton.noInfosTick(); // Run onNoInfos() function if we don't have any infos right now
-        } else {
-            List<I> infos = singleton.getTrackedObjects();
-            List<I> toRemove = new LinkedList<>();
-            boolean hasTooManyImmersives = infos.size() > singleton.maxImmersives &&
-                    singleton.maxImmersives > -1; // Can't have too many immersives if we want a negative amount!
-            int minIndex = -1;
-            int minTicksLeft = Integer.MAX_VALUE;
-            int i = 0;
-
-            for (I info : infos) {
-                // Make sure we can safely use this immersion before ticking it.
-                if (singleton.shouldTrack(info.getBlockPosition(), Minecraft.getInstance().level)
-                        || singleton.forceTickEvenIfNoTrack) {
-                    singleton.tick(info, VRVerify.clientInVR());
-                } else {
-                    info.remove();
-                }
-                if (info.hasHitboxes()) {
-                    boolean inBox = false;
-                    if (VRVerify.clientInVR()) {
-                        VRPose vrPose = VR.API.getVRPose(Minecraft.getInstance().player);
-                        info.slotHovered = Util.getFirstIntersect(vrPose.getMainHand().getPos(),
-                                info.getAllHitboxes()).orElse(-1);
-                        inBox = info.slotHovered != -1;
-                        info.slotHovered2 = Util.getFirstIntersect(vrPose.getOffHand().getPos(),
-                                info.getAllHitboxes()).orElse(-1);
-                        if (info instanceof InfoTriggerHitboxes tInfo) {
-                            info.triggerHitboxSlotHovered = Util.getFirstIntersect(vrPose.getHand(tInfo.getVRHand()).getPos(),
-                                    tInfo.getTriggerHitboxes()).orElse(-1);
-                            inBox = inBox || info.triggerHitboxSlotHovered != -1;
-                        } else {
-                            info.triggerHitboxSlotHovered = -1;
-                        }
-                    }
-                    if (!VRVerify.clientInVR() || (ActiveConfig.active().rightClickImmersiveInteractionsInVR && !inBox)) {
-                        Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
-                        info.slotHovered = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
-                                info.getAllHitboxes()).orElse(-1);
-                        info.slotHovered2 = -1;
-                        if (info.slotHovered == -1 && info instanceof InfoTriggerHitboxes tInfo) {
-                            info.triggerHitboxSlotHovered = Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(),
-                                    tInfo.getTriggerHitboxes()).orElse(-1);
-                        } else {
-                            info.triggerHitboxSlotHovered = -1;
-                        }
-                    }
-                }
-                if (info.getTicksLeft() <= 0) {
-                    toRemove.add(info);
-                }
-                if (hasTooManyImmersives) {
-                    if (info.getTicksLeft() < minTicksLeft) {
-                        minTicksLeft = info.getTicksLeft();
-                        minIndex = i;
-                    }
-                }
-                i++;
-            }
-            if (minIndex > -1) {
-                I toRem = infos.get(minIndex);
-                if (!toRemove.contains(toRem)) {
-                    toRemove.add(toRem);
-                }
-            }
-
-            for (I info : toRemove) {
-                singleton.onRemove(info);
-                infos.remove(info);
-            }
-        }
-    }
-
     public static boolean handleLeftClick(Player player) {
         if (Minecraft.getInstance().player == null || (!VRVerify.clientInVR() && ActiveConfig.FILE_CLIENT.disableImmersiveMCOutsideVR)) return false;
 
@@ -382,31 +305,8 @@ public class ClientLogicSubscriber {
             }
         }
 
-        BackpackInfo backpackInfo = Immersives.immersiveBackpack.getTrackedObjects().size() > 0 ?
-                Immersives.immersiveBackpack.getTrackedObjects().get(0) : null;
-        // Move to next row on left click if backpack is out
-        if (backpackInfo != null && backpackInfo.slotHovered > -1) {
-            ImmersiveBackpack.onHitboxInteract(player, backpackInfo, backpackInfo.slotHovered);
-            return true;
-        }
-
-        if (inVR) {
-            for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
-                for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
-                    if (!(info instanceof InfoTriggerHitboxes)) break;
-                    InfoTriggerHitboxes triggerInfo = (InfoTriggerHitboxes) info;
-                    VRBodyPartData data = VR.API.getVRPose(player).getHand(triggerInfo.getVRHand());
-                    Optional<Integer> triggerHit = Util.getFirstIntersect(data.getPos(), triggerInfo.getTriggerHitboxes());
-                    if (triggerHit.isPresent()) {
-                        singleton.onAnyRightClick(info);
-                        singleton.handleTriggerHitboxRightClick(triggerInfo, player, triggerHit.get());
-                        return true;
-                    }
-                }
-            }
-        }
-
         HitResult looking = Minecraft.getInstance().hitResult;
+        BagInfo bagInfo = Immersives.immersiveBag.getLocalPlayerInfo();
         if (looking != null && looking.getType() == HitResult.Type.BLOCK) {
             BlockPos pos = ((BlockHitResult) looking).getBlockPos();
             BlockState state = player.level().getBlockState(pos);
@@ -419,7 +319,7 @@ public class ClientLogicSubscriber {
                     return true;
                 }
             } else if (ImmersiveHandlers.shulkerBoxHandler.isValidBlock(pos, player.level())) {
-                BuiltImmersiveInfo<ChestLikeData> info = ClientUtil.findImmersive(Immersives.immersiveShulker, pos);
+                BuiltBlockBasedImmersiveInfo<ChestLikeData> info = ClientUtil.findImmersive(Immersives.immersiveShulker, pos);
                 if (info != null) {
                     ChestLikeData data = info.getExtraData();
                     if (data.isOpen) {
@@ -429,7 +329,7 @@ public class ClientLogicSubscriber {
 
                 }
             } else if (ImmersiveHandlers.barrelHandler.isValidBlock(pos, player.level())) {
-                BuiltImmersiveInfo<ChestLikeData> info = ClientUtil.findImmersive(Immersives.immersiveBarrel, pos);
+                BuiltBlockBasedImmersiveInfo<ChestLikeData> info = ClientUtil.findImmersive(Immersives.immersiveBarrel, pos);
                 if (info != null) {
                     ChestLikeData data = info.getExtraData();
                     if (data.isOpen) {
@@ -438,7 +338,7 @@ public class ClientLogicSubscriber {
                     }
                 }
             } else if (ImmersiveHandlers.apothSalvagingTableHandler.isValidBlock(pos, player.level())) {
-                BuiltImmersiveInfo<?> info = ClientUtil.findImmersive(Immersives.immersiveApothSalvagingTable, pos);
+                BuiltBlockBasedImmersiveInfo<?> info = ClientUtil.findImmersive(Immersives.immersiveApothSalvagingTable, pos);
                 if (info != null) {
                     int numHitboxes = info.getAllHitboxes().size();
                     for (int i = 0; i < numHitboxes; i++) {
@@ -449,23 +349,15 @@ public class ClientLogicSubscriber {
                     }
                 }
             }
-        } else if (backpackInfo != null) {
-            backpackInfo.gotoNextRow();
+        } else if (bagInfo != null && !bagInfo.hasSlotHovered()) {
+            bagInfo.gotoNextRow();
             return true;
         }
 
         // Just before returning false, see if we're in a hitbox, so we can do a full stack place and return true
-        for (Immersive<?, ?, ?> immersive : Immersives.IMMERSIVES) {
+        for (Immersive<?, ?, ?> immersive : Immersives.ALL_IMMERSIVES) {
             for (ImmersiveInfo info : immersive.getTrackedObjects()) {
                 if (info.getSlotHovered(0) != -1 || info.getSlotHovered(1) != -1) {
-                    return true;
-                }
-            }
-        }
-
-        for (AbstractPlayerAttachmentImmersive<?, ?> immersive : Immersives.IMMERSIVE_ATTACHMENTS) {
-            for (AbstractPlayerAttachmentInfo info : immersive.getTrackedObjects()) {
-                if (info.slotHovered != -1 || info.slotHovered2 != -1) {
                     return true;
                 }
             }
@@ -484,8 +376,8 @@ public class ClientLogicSubscriber {
         Vec3 end = startAndEnd.getB();
 
         if (!inVR || ActiveConfig.active().rightClickImmersiveInteractionsInVR) { // Don't handle right clicks for VR players, they have hands (unless they config to!)!
-            for (Immersive<?, ?, ?> singleton : Immersives.IMMERSIVES) {
-                if (singleton.isVROnly() && !inVR) continue;
+            for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
+                if (ClientUtil.isVROnly(singleton) && !inVR) continue;
                 Integer fromInfos = handleRightClickInfos(singleton, start, end);
                 if (fromInfos != null && fromInfos >= 0) {
                     return fromInfos;
@@ -496,27 +388,6 @@ public class ClientLogicSubscriber {
                 SwapTracker.c0.tick(null, null, -1, false);
             }
             if (SwapTracker.c0.getCooldown() > 0) return SwapTracker.c0.getCooldown();
-            for (AbstractPlayerAttachmentImmersive<? extends AbstractPlayerAttachmentInfo, ?> singleton : Immersives.IMMERSIVE_ATTACHMENTS) {
-                if (singleton.isVROnly() && !inVR) continue;
-                for (AbstractPlayerAttachmentInfo info : singleton.getTrackedObjects()) {
-                    if (info.hasHitboxes() && singleton.hitboxesAvailable(info)) {
-                        Optional<Integer> closest = Util.rayTraceClosest(start, end, info.getAllHitboxes());
-                        if (closest.isPresent()) {
-                            singleton.onAnyRightClick(info);
-                            singleton.handleRightClick(info, player, closest.get(), InteractionHand.MAIN_HAND);
-                            return singleton.getCooldownDesktop();
-                        } else if (info instanceof InfoTriggerHitboxes) {
-                            InfoTriggerHitboxes triggerInfo = (InfoTriggerHitboxes) info;
-                            Optional<Integer> closestTrigger = Util.rayTraceClosest(start, end, triggerInfo.getTriggerHitboxes());
-                            if (closestTrigger.isPresent()) {
-                                singleton.onAnyRightClick(info);
-                                singleton.handleTriggerHitboxRightClick(triggerInfo, player, closestTrigger.get());
-                                return singleton.getCooldownDesktop();
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         // Can get here from a right-click chest interaction while in VR. VR ticks the swap tracker.
@@ -582,7 +453,7 @@ public class ClientLogicSubscriber {
         // Direction check is so we only open when right-clicking the front of the barrel
         if (ActiveConfig.active().useBarrelImmersive &&
                 ImmersiveHandlers.barrelHandler.isValidBlock(pos, player.level())) {
-            BuiltImmersiveInfo<ChestLikeData> info = ClientUtil.findImmersive(Immersives.immersiveBarrel, pos);
+            BuiltBlockBasedImmersiveInfo<ChestLikeData> info = ClientUtil.findImmersive(Immersives.immersiveBarrel, pos);
             if (info != null && ((((BlockHitResult) looking).getDirection() == state.getValue(BlockStateProperties.FACING))
                     || ActiveConfig.active().disableVanillaInteractionsForSupportedImmersives
                     || info.getExtraData().isOpen)) {
@@ -592,7 +463,7 @@ public class ClientLogicSubscriber {
         }
         if (ActiveConfig.active().useShulkerImmersive &&
                 ImmersiveHandlers.shulkerBoxHandler.isValidBlock(pos, player.level())) {
-            for (BuiltImmersiveInfo<ChestLikeData> info : Immersives.immersiveShulker.getTrackedObjects()) {
+            for (BuiltBlockBasedImmersiveInfo<ChestLikeData> info : Immersives.immersiveShulker.getTrackedObjects()) {
                 if (info.getBlockPosition().equals(pos)) {
                     info.getExtraData().toggleOpen(info.getBlockPosition());
                     return 6;

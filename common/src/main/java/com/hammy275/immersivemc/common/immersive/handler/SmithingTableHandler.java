@@ -21,8 +21,8 @@ import net.minecraft.world.level.block.SmithingTableBlock;
 
 public class SmithingTableHandler extends ItemWorldStorageHandler<SmithingTableStorage> {
     @Override
-    public SmithingTableStorage makeInventoryContents(ServerPlayer player, BlockPos pos) {
-        return (SmithingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+    public SmithingTableStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
+        return (SmithingTableStorage) WorldStoragesImpl.getOrCreateS(pos, tracker.serverLevel());
     }
 
     @Override
@@ -31,23 +31,23 @@ public class SmithingTableHandler extends ItemWorldStorageHandler<SmithingTableS
     }
 
     @Override
-    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer player, ItemSwapAmount amount) {
-        SmithingTableStorage storage = (SmithingTableStorage) WorldStoragesImpl.getOrCreateS(pos, player.serverLevel());
+    public void swap(int slot, InteractionHand hand, BlockPos pos, ServerPlayer tracker, ItemSwapAmount amount) {
+        SmithingTableStorage storage = (SmithingTableStorage) WorldStoragesImpl.getOrCreateS(pos, tracker.serverLevel());
         if (slot != 3) {
-            storage.placeItem(player, hand, slot, amount);
+            storage.placeItem(tracker, hand, slot, amount);
             storage.setItem(3, ItemStack.EMPTY);
             if (!storage.getItem(0).isEmpty() && !storage.getItem(1).isEmpty() && !storage.getItem(2).isEmpty()) {
                 ItemStack output = Swap.getSmithingTableOutput(storage.getItem(0),
-                        storage.getItem(1), storage.getItem(2), player);
+                        storage.getItem(1), storage.getItem(2), tracker);
                 storage.setItem(3, output);
             }
         } else if (!storage.getItem(3).isEmpty()) { // Craft our result!
-            boolean res = Swap.handleSmithingTableCraft(storage, pos, player, hand);
+            boolean res = Swap.handleSmithingTableCraft(storage, pos, tracker, hand);
             if (res) {
-                VRRumble.rumbleIfVR(player, hand, CommonConstants.vibrationTimeWorldInteraction);
+                VRRumble.rumbleIfVR(tracker, hand, CommonConstants.vibrationTimeWorldInteraction);
             }
         }
-        storage.setDirty(player.serverLevel());
+        storage.setDirty(tracker.serverLevel());
     }
 
     @Override
