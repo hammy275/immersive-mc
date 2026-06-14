@@ -193,6 +193,13 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
             info.hitboxes.get(i).item = Minecraft.getInstance().player.getInventory().getItem(i + 9);
         }
 
+        if (info.ownerIsLocalPlayer()) {
+            OBB obb = OBBUtil.getEncompassingOBB(info.hitboxes.subList(27, 31).stream()
+                    .map(pair -> (OBB) pair.getHitbox()).toList());
+            info.dragHitbox = OBBFactory.instance().create(obb.getUnderlyingAABB().inflate(0.0625), obb.getRotation());
+        }
+
+
         if (info.clearLastPos) {
             for (HitboxItemPair hitbox : info.hitboxes) {
                 hitbox.lastPos = null;
@@ -202,12 +209,7 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
 
     @Override
     public @Nullable BoundingBox getDragHitbox(BagInfo info) {
-        if (!info.ownerIsLocalPlayer()) {
-            return null;
-        }
-        OBB obb = OBBUtil.getEncompassingOBB(info.hitboxes.subList(27, 31).stream()
-                .map(pair -> (OBB) pair.getHitbox()).toList());
-        return OBBFactory.instance().create(obb.getUnderlyingAABB().inflate(0.0625), obb.getRotation());
+        return info.dragHitbox;
     }
 
     @Override
@@ -321,7 +323,7 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         renderState.slotHovered = info.getSlotHovered(Util.otherHand(getBagHand()).ordinal());
         renderState.ownedByLocalPlayer = info.ownerIsLocalPlayer();
         renderState.leftHanded = info.leftHanded;
-        renderState.dragHitbox = getDragHitbox(info);
+        renderState.dragHitbox = info.dragHitbox;
     }
 
     public static int getBackpackColor() {
@@ -386,5 +388,10 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
 
     private static InteractionHand getBagHand() {
         return ActiveConfig.active().swapBagHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+    }
+
+    public static boolean canGotoNextRowFromClick(BagInfo info) {
+        return !info.hasSlotHovered() && (info.dragHitbox == null
+                || BoundingBox.contains(info.dragHitbox, VR.ClientAPI.getPreTickWorldPose().getHand(getBagHand()).getPos()));
     }
 }
