@@ -13,7 +13,7 @@ import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
  * @param <ER> The type of the extracted render state for the "extra data" stored on info instances of this Immersive.
  * @param <S> The type of storage to use for sending Immersive data over the network.
  */
-public interface BuiltBlockBasedImmersive<E, ER, S extends NetworkStorage> extends BlockBasedImmersive<BuiltBlockBasedImmersiveInfo<E>, BuiltImmersiveRenderState<ER>, S> {
+public interface BuiltBlockBasedImmersive<E, ER, S extends NetworkStorage> extends BlockBasedImmersive<BuiltBlockBasedImmersiveInfo<E>, BuiltBlockBasedImmersiveRenderState<ER>, S> {
 
     /**
      * Creates a clone of this Immersive for creating an Immersive similar to this one.

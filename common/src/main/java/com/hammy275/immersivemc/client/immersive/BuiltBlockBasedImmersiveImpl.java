@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.BuiltBlockBasedImmersive;
 import com.hammy275.immersivemc.api.client.immersive.BuiltBlockBasedImmersiveInfo;
-import com.hammy275.immersivemc.api.client.immersive.BuiltImmersiveRenderState;
+import com.hammy275.immersivemc.api.client.immersive.BuiltBlockBasedImmersiveRenderState;
 import com.hammy275.immersivemc.api.client.immersive.HitboxPositioningMode;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
@@ -149,13 +149,13 @@ public final class BuiltBlockBasedImmersiveImpl<E, ER, S extends NetworkStorage>
     }
 
     @Override
-    public boolean shouldRender(BuiltImmersiveRenderState<ER> renderStateIn) {
+    public boolean shouldRender(BuiltBlockBasedImmersiveRenderState<ER> renderStateIn) {
         BuiltBlockBasedImmersiveRenderStateImpl<ER> renderState = asImpl(renderStateIn);
         return renderState.hasHitboxes() && renderState.airCheckPassed;
     }
 
     @Override
-    public void render(BuiltImmersiveRenderState<ER> renderStateIn, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
+    public void render(BuiltBlockBasedImmersiveRenderState<ER> renderStateIn, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick) {
         BuiltBlockBasedImmersiveRenderStateImpl<ER> renderState = asImpl(renderStateIn);
         float size = ImmersiveRenderHelpers.instance().getTransitionMultiplier(renderState.ticksExisted) * builder.renderSize;
         for (int i = 0; i < renderState.hitboxes.size(); i++) {
@@ -370,7 +370,7 @@ public final class BuiltBlockBasedImmersiveImpl<E, ER, S extends NetworkStorage>
     }
 
     @Override
-    public BuiltImmersiveRenderState<ER> createRenderState() {
+    public BuiltBlockBasedImmersiveRenderState<ER> createRenderState() {
         BuiltBlockBasedImmersiveRenderStateImpl<ER> renderState = new BuiltBlockBasedImmersiveRenderStateImpl<ER>();
         if (builder.extraInfoDataRenderStateClazz != null) {
             try {
@@ -387,7 +387,7 @@ public final class BuiltBlockBasedImmersiveImpl<E, ER, S extends NetworkStorage>
     }
 
     @Override
-    public void extractRenderState(BuiltBlockBasedImmersiveInfo<E> infoIn, BuiltImmersiveRenderState<ER> renderStateIn, float partialTicks) {
+    public void extractRenderState(BuiltBlockBasedImmersiveInfo<E> infoIn, BuiltBlockBasedImmersiveRenderState<ER> renderStateIn, float partialTicks) {
         BuiltBlockBasedImmersiveInfoImpl<E> info = asImpl(infoIn);
         BuiltBlockBasedImmersiveRenderStateImpl<ER> renderState = asImpl(renderStateIn);
         for (int i = 0; i < info.hitboxes.size(); i++) {
@@ -415,7 +415,7 @@ public final class BuiltBlockBasedImmersiveImpl<E, ER, S extends NetworkStorage>
     }
 
     @SuppressWarnings("unchecked")
-    private BuiltBlockBasedImmersiveRenderStateImpl<ER> asImpl(BuiltImmersiveRenderState<ER> renderStateIn) {
+    private BuiltBlockBasedImmersiveRenderStateImpl<ER> asImpl(BuiltBlockBasedImmersiveRenderState<ER> renderStateIn) {
         return (BuiltBlockBasedImmersiveRenderStateImpl<ER>) renderStateIn;
     }
 }

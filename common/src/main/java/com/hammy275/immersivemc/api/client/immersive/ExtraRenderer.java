@@ -21,5 +21,5 @@ public interface ExtraRenderer<ER> {
      * @param partialTick The fraction of time between the last tick and the current tick.
      * @param light The light value for the Immersive.
      */
-    void render(BuiltImmersiveRenderState<ER> renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick, int light);
+    void render(BuiltBlockBasedImmersiveRenderState<ER> renderState, PoseStack stack, ImmersiveRenderHelpers helpers, float partialTick, int light);
 }
