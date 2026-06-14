@@ -15,7 +15,7 @@ import java.util.function.BiConsumer;
  * Do not implement this interface yourself! Instead implement {@link ImmersiveRenderState} directly.
  * @param <ER> The type of the extra render data.
  */
-public interface BuiltImmersiveRenderState<ER> extends ImmersiveRenderState {
+public interface BuiltBlockBasedImmersiveRenderState<ER> extends ImmersiveRenderState {
 
     /**
      * @return The position of the block this render state represents.
