@@ -7,6 +7,7 @@ import com.hammy275.immersivemc.api.client.immersive.*;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
+import com.hammy275.immersivemc.client.immersive.ImmersiveBag;
 import com.hammy275.immersivemc.client.immersive.ImmersiveChest;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
@@ -348,7 +349,7 @@ public class ClientLogicSubscriber {
                     }
                 }
             }
-        } else if (bagInfo != null && !bagInfo.hasSlotHovered()) {
+        } else if (bagInfo != null && ImmersiveBag.canGotoNextRowFromClick(bagInfo)) {
             bagInfo.gotoNextRow();
             return true;
         }
