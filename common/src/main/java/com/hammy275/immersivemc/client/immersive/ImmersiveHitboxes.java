@@ -164,7 +164,7 @@ public class ImmersiveHitboxes implements PlayerAttachmentImmersive<ImmersiveHit
     }
 
     public void initImmersiveIfNeeded() {
-        if (trackedObjects.isEmpty()) {
+        if (trackedObjects.isEmpty() && VRVerify.clientInVR()) {
             trackedObjects.add(new ImmersiveHitboxesInfo());
         }
     }
