@@ -38,7 +38,7 @@ public class BlockBasedImmersiveBuilderImpl<E, ER, S extends NetworkStorage> imp
     BiFunction<BuiltBlockBasedImmersiveInfo<E>, Integer, Boolean> slotActive = null;
     Consumer<BuiltBlockBasedImmersiveInfo<E>> onRemove = (info) -> {};
     boolean blockRightClickWhenGUIClickDisabled = true;
-    BiFunction<BuiltImmersiveRenderState<ER>, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
+    BiFunction<BuiltBlockBasedImmersiveRenderState<ER>, Integer, Boolean> slotRendersItemGuide = (info, slotNum) -> true;
     ImmersiveConfigScreenInfo configScreenInfo = null;
     ExtraRenderer<ER> extraRenderer = (info, stack, helpers, partialTick, light) -> {};
     Function<BuiltBlockBasedImmersiveInfo<E>, AABB> dragHitboxCreator = null;
@@ -195,7 +195,7 @@ public class BlockBasedImmersiveBuilderImpl<E, ER, S extends NetworkStorage> imp
      * @return Builder object.
      */
     @Override
-    public BlockBasedImmersiveBuilder<E,ER,S> setShouldRenderItemGuideFunction(BiFunction<BuiltImmersiveRenderState<ER>, Integer, Boolean> itemGuideActive) {
+    public BlockBasedImmersiveBuilder<E,ER,S> setShouldRenderItemGuideFunction(BiFunction<BuiltBlockBasedImmersiveRenderState<ER>, Integer, Boolean> itemGuideActive) {
         this.slotRendersItemGuide = itemGuideActive;
         return this;
     }
