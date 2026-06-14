@@ -136,7 +136,7 @@ public interface BlockBasedImmersiveBuilder<E, ER, S extends NetworkStorage> {
      * @param itemGuideActive Function that returns whether the given slot is active given the info.
      * @return Builder object.
      */
-    public BlockBasedImmersiveBuilder<E,ER,S> setShouldRenderItemGuideFunction(BiFunction<BuiltImmersiveRenderState<ER>, Integer, Boolean> itemGuideActive);
+    public BlockBasedImmersiveBuilder<E,ER,S> setShouldRenderItemGuideFunction(BiFunction<BuiltBlockBasedImmersiveRenderState<ER>, Integer, Boolean> itemGuideActive);
 
     /**
      * Set the config screen info associated with this Immersive.
