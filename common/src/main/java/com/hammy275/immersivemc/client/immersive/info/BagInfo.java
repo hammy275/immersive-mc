@@ -26,6 +26,7 @@ public class BagInfo extends AbstractPlayerAttachmentImmersiveInfo {
     public boolean clearLastPos = false;
     public boolean leftHanded = false;
     public boolean otherPlayerSwappedHands = false;
+    public BoundingBox dragHitbox;
 
     public BagInfo(AbstractClientPlayer owner) {
         super(owner);
