@@ -139,9 +139,8 @@ public class ClientLogicSubscriber {
 
         if (VRVerify.hasAPI) {
             ClientVRSubscriber.immersiveTickVR(player);
+            ChestLidInteractModule.INSTANCE.removeInvalid();
         }
-
-        ChestLidInteractModule.INSTANCE.removeInvalid();
 
         if (CommonConstants.devFakeVRMode) {
             DevVRState.clientTick();
