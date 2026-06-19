@@ -14,6 +14,7 @@ import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.network.packet.BeaconDataPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VRRumble;
+import com.hammy275.immersivemc.common.vr.VRVerify;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
@@ -87,6 +88,15 @@ public class NetworkClientHandlers {
 
     @SuppressWarnings("unchecked")
     public static <NS extends NetworkStorage, I extends PlayerAttachmentImmersiveInfo> void handleReceiveInvData(NS storage, UUID ownerUUID, PlayerAttachmentImmersiveHandler<NS> handler) {
+        // Never process player attachments if we don't have Vivecraft to rely on for data. In theory we'd let the
+        // server know via the ConfigSyncPacket (or another packet), but I don't want to modify ConfigSyncPacket, for
+        // backwards-compatibility during the join process, and I'm fine leaving this given a more permanent, proper
+        // fix is on the way.
+        // TODO: When Vivecraft adds the API function to see if a client has Vivecraft or not, use that on the
+        //       server-side instead of this on the client-side.
+        if (!VRVerify.hasAPI) {
+            return;
+        }
         Player ownerPlayer = Minecraft.getInstance().player.level().getPlayerByUUID(ownerUUID);
         if (ownerPlayer instanceof AbstractClientPlayer owner) {
             PlayerAttachmentImmersive<?, ?, ?> immersive = Immersives.ATTACHMENT_IMMERSIVES.stream()
