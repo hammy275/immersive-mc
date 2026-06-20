@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
 import com.hammy275.immersivemc.api.common.immersive.MultiblockBlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.SelfHandlingNetworkStorageSyncPacket;
@@ -26,18 +27,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class ChestHandler extends ChestLikeHandler<ListOfItemsStorage>
-        implements MultiblockBlockBasedImmersiveHandler<ListOfItemsStorage>, AfterClientSyncHandler {
+public class ChestHandler extends ChestLikeHandler<ChestStorage>
+        implements MultiblockBlockBasedImmersiveHandler<ChestStorage>, AfterClientSyncHandler {
 
     @Override
-    public ListOfItemsStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
+    public ChestStorage makeInventoryContents(ServerPlayer tracker, BlockPos pos) {
         BlockEntity blockEntity = tracker.level().getBlockEntity(pos);
         if (blockEntity instanceof ChestBlockEntity cbe) {
-            ListOfItemsStorage storage = makeBaseInventoryContents(tracker, pos);
+            ChestStorage storage = new ChestStorage(pos, makeBaseInventoryContents(tracker, pos));
             ChestBlockEntity otherChest = Util.getOtherChest(cbe);
             if (otherChest != null) {
                 ListOfItemsStorage otherStorage = makeBaseInventoryContents(tracker, otherChest.getBlockPos());
-                storage.getItems().addAll(otherStorage.getItems());
+                storage.items.put(otherChest.getBlockPos(), otherStorage);
             }
             return storage;
         } else { // Is an ender chest
@@ -47,7 +48,7 @@ public class ChestHandler extends ChestLikeHandler<ListOfItemsStorage>
             for (int i = 0; i < tracker.getEnderChestInventory().getContainerSize(); i++) {
                 items.add(tracker.getEnderChestInventory().getItem(i));
             }
-            return new ListOfItemsStorage(items, 27);
+            return new ChestStorage(blockEntity.getBlockPos(), new ListOfItemsStorage(items, 27));
         }
     }
 
@@ -77,8 +78,8 @@ public class ChestHandler extends ChestLikeHandler<ListOfItemsStorage>
     }
 
     @Override
-    public ListOfItemsStorage getEmptyNetworkStorage() {
-        return getBaseEmptyNetworkStorage();
+    public ChestStorage getEmptyNetworkStorage() {
+        return new ChestStorage();
     }
 
     @Override
