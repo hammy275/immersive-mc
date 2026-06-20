@@ -25,9 +25,9 @@ dependencies {
 
     api "curse.maven:vivecraft-667903:${vivecraft_fabric_file_id}"
 
-    api "com.terraformersmc:modmenu:18.0.0-beta.1"
-    compileOnly "curse.maven:lootr-615106:7919279" // Waiting on 1.21.11 build
-    compileOnly "curse.maven:clothconfigapi-348521:7817582" // lootr dependency
+    api "com.terraformersmc:modmenu:20.0.0-beta.3"
+    compileOnly "curse.maven:lootr-615106:8283691" // Waiting on 1.21.11 build
+    compileOnly "curse.maven:clothconfigapi-348521:8269699" // lootr dependency
 
     compileOnly "curse.maven:inventoryprofilesnext-495267:8038912"
     compileOnly "curse.maven:libipn-679177:8038718" // Inventory Profiles Next dependency

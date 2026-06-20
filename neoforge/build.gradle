@@ -12,10 +12,10 @@ repositories {
 dependencies {
     api "curse.maven:vivecraft-667903:${rootProject.vivecraft_neoforge_file_id}"
 
-    api "curse.maven:lootr-361276:7919278"
-    api "curse.maven:inventoryprofilesnext-495267:8038909"
-    api "curse.maven:libipn-679177:8038724" // Inventory Profiles Next dependency
-    api "curse.maven:kotlinforforge-351264:7736203" // Inventory Profiles Next dependency
+    api "curse.maven:lootr-361276:8283692"
+    compileOnly "curse.maven:inventoryprofilesnext-495267:8038909"
+    compileOnly "curse.maven:libipn-679177:8038724" // Inventory Profiles Next dependency
+    compileOnly "curse.maven:kotlinforforge-351264:7736203" // Inventory Profiles Next dependency
 }
 
 neoForge {
