@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.common.immersive.handler;
 
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
+import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.util.Util;
@@ -15,7 +16,7 @@ import net.minecraft.world.level.Level;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ChestLikeHandler<S extends ListOfItemsStorage> extends ContainerHandler<S> {
+public abstract class ChestLikeHandler<S extends NetworkStorage> extends ContainerHandler<S> {
 
     // NOTE: Inheritors should && with isValidBlock() if they might be a Lootr block!
     @Override
