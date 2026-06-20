@@ -12,7 +12,7 @@ import java.util.List;
  * <p>
  * Note that although ImmersiveInfos generally hold info needed for rendering, the actual rendering data is extracted
  * from ImmersiveInfos into {@link ImmersiveRenderState} objects using methods such as
- * {@link BlockBasedImmersive#extractRenderState}.
+ * {@link Immersive#extractRenderState}.
  *
  * @see BlockBasedImmersiveInfo The subinterface for block-based Immersives.
  * @see BuiltBlockBasedImmersiveInfo The subinterface for block-based Immersives built using the
