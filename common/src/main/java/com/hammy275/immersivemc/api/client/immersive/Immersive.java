@@ -3,7 +3,6 @@ package com.hammy275.immersivemc.api.client.immersive;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
-import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.ImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -49,12 +48,12 @@ public sealed interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRe
      * The method called when a player interacts with a hitbox.
      * <br>
      * If multiple hitboxes are being interacted with at the same time, only the first hitbox in iteration order from
-     * {@link BlockBasedImmersiveInfo#getAllHitboxes()} that is being interacted with will have this function called.
+     * {@link ImmersiveInfo#getAllHitboxes()} that is being interacted with will have this function called.
      *
      * @param info The info containing the hitbox that was interacted with.
      * @param player The player that interacted with the hitbox. This player is always the player currently controlling
      *               the game window.
-     * @param hitboxIndices The indices into {@link BlockBasedImmersiveInfo#getAllHitboxes()} that were interacted with. The list
+     * @param hitboxIndices The indices into {@link ImmersiveInfo#getAllHitboxes()} that were interacted with. The list
      *                      is guaranteed to contain at least one element and all elements are not null.
      * @param hand The hand used for interaction.
      * @param modifierPressed Whether the modifier key (usually the button mapped to breaking blocks) was held for the
@@ -124,7 +123,7 @@ public sealed interface Immersive<I extends ImmersiveInfo, R extends ImmersiveRe
 
     /**
      * Process the storage from the server for this Immersive. Not called for Immersives that return
-     * true for {@link #getHandler()}'s {@link BlockBasedImmersiveHandler#clientAuthoritative()}.
+     * true for {@link #getHandler()}'s {@link ImmersiveHandler#clientAuthoritative()}.
      * @param info The info with storage being processed.
      * @param storage The storage to be processed.
      */
