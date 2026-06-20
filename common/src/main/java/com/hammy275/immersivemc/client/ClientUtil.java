@@ -24,7 +24,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -103,7 +102,7 @@ public class ClientUtil {
         return Minecraft.getInstance().player.getPosition(Minecraft.getInstance().getFrameTime());
     }
 
-    public static Tuple<Vec3, Vec3> getStartAndEndOfLookTrace(Player player) {
+    public static Pair<Vec3, Vec3> getStartAndEndOfLookTrace(Player player) {
         double dist = Minecraft.getInstance().gameMode.getPickRange();
         Vec3 start;
         Vec3 viewVec;
@@ -119,7 +118,7 @@ public class ClientUtil {
             dist = bhr.getLocation().distanceTo(start);
         }
         end = start.add(viewVec.x * dist, viewVec.y * dist, viewVec.z * dist);
-        return new Tuple<>(start, end);
+        return new Pair<>(start, end);
     }
 
     /**
