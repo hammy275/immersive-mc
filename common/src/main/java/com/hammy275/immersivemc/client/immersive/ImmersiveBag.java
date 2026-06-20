@@ -237,7 +237,7 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         stack.pushPose();
         Vec3 pos = renderState.renderPos;
 
-        Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Camera cameraInfo = Minecraft.getInstance().gameRenderer.mainCamera();
         stack.translate(-cameraInfo.position().x + pos.x,
                 -cameraInfo.position().y + pos.y,
                 -cameraInfo.position().z + pos.z);

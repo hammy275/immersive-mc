@@ -68,7 +68,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
 
     @Override
     public void renderItem(ItemStack item, PoseStack stack, float size, BoundingBox hitbox, boolean renderItemCounts, int light, @Nullable Float spinDegrees, @Nullable Direction facing, @Nullable Direction upDown) {
-        Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Camera renderInfo = Minecraft.getInstance().gameRenderer.mainCamera();
         Vec3 pos = BoundingBox.getCenter(hitbox);
         if (item != null && item != ItemStack.EMPTY) {
             stack.pushPose();
@@ -183,7 +183,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
 
     @Override
     public void renderText(Component text, PoseStack stack, Vec3 pos, int light, float textSize) {
-        Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Camera renderInfo = Minecraft.getInstance().gameRenderer.mainCamera();
         textSize *= ActiveConfig.active().textScale;
         stack.pushPose();
         stack.translate(-renderInfo.position().x + pos.x,
@@ -214,7 +214,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
 
     @Override
     public void renderImage(PoseStack stack, Identifier imageLocation, float minImageU, float minImageV, float maxImageU, float maxImageV, Vec3 pos, float size, int light, float roll, @Nullable Direction facing) {
-        Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Camera renderInfo = Minecraft.getInstance().gameRenderer.mainCamera();
         stack.pushPose();
         stack.translate(-renderInfo.position().x + pos.x,
                 -renderInfo.position().y + pos.y,
@@ -286,7 +286,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
                     .addRot(-Math.atan2(ray.y, rayNoY.length()), RotType.PITCH);
             stack.mulPose(rotList.asQuaternion());
         } else {
-            stack.mulPose(Minecraft.getInstance().gameRenderer.getGameRenderState().levelRenderState.cameraRenderState.orientation);
+            stack.mulPose(Minecraft.getInstance().gameRenderer.gameRenderState().levelRenderState.cameraRenderState.orientation);
         }
     }
 }

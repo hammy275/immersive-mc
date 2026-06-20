@@ -94,8 +94,8 @@ public class ClientLogicSubscriber {
             }
         }
 
-        if (ImmersiveMC.OPEN_SETTINGS.isDown() && Minecraft.getInstance().screen == null) {
-            Minecraft.getInstance().setScreen(new ConfigScreen(null));
+        if (ImmersiveMC.OPEN_SETTINGS.isDown() && Minecraft.getInstance().gui.screen() == null) {
+            Minecraft.getInstance().gui.setScreen(new ConfigScreen(null));
         }
 
         // Stop ticking operations if not in VR and we don't want to use ImmersiveMC outside VR

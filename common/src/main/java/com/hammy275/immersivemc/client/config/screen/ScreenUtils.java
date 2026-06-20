@@ -73,7 +73,7 @@ public class ScreenUtils {
     }
 
     public static Button createScreenButton(int x, int y, int width, int height, String translationString, Screen screen) {
-        return createButton(x, y, width, height, translationString, (button) -> Minecraft.getInstance().setScreen(screen));
+        return createButton(x, y, width, height, translationString, (button) -> Minecraft.getInstance().gui.setScreen(screen));
     }
 
     public static Button createDoneButton(int x, int y, int width, int height, Screen currentScreen) {

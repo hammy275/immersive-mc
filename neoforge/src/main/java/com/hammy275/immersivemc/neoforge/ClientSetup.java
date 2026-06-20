@@ -8,7 +8,6 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
@@ -19,7 +18,6 @@ import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ClientSetup {
@@ -39,7 +37,7 @@ public class ClientSetup {
                 (packet, ctx) -> Network.INSTANCE.doReceive(null, packet.buffer())));
     }
 
-    public record PiPRenderer<S extends PictureInPictureRenderState>(Class<S> stateClass, Function<MultiBufferSource.BufferSource, PictureInPictureRenderer<S>> factory) {
+    public record PiPRenderer<S extends PictureInPictureRenderState>(Class<S> stateClass, Supplier<PictureInPictureRenderer<S>> factory) {
         public void register(RegisterPictureInPictureRenderersEvent event) {
             event.register(stateClass, factory);
         }

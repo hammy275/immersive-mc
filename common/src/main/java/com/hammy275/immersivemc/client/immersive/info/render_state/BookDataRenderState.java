@@ -49,7 +49,7 @@ public class BookDataRenderState {
         stack.pushPose();
 
         Vec3 pos = bookPosRot.getPos();
-        Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Camera cameraInfo = Minecraft.getInstance().gameRenderer.mainCamera();
         stack.translate(-cameraInfo.position().x + pos.x,
                 -cameraInfo.position().y + pos.y,
                 -cameraInfo.position().z + pos.z);
@@ -103,7 +103,7 @@ public class BookDataRenderState {
         Vec3 posBase = bookPosRot.getPos().add(left.scale(singlePageWidth / 2d))
                 .add(awayFromBookUp.scale(textUpAmount));
 
-        Camera cameraInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Camera cameraInfo = Minecraft.getInstance().gameRenderer.mainCamera();
 
 
         for (BookRenderable renderable : renderables) {

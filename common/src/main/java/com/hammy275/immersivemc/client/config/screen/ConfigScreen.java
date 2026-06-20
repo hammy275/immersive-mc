@@ -82,7 +82,7 @@ public class ConfigScreen extends Screen {
                     if (clickedYes) {
                         Util.getPlatform().openUri(WIKI_URL);
                     }
-                    Minecraft.getInstance().setScreen(this);
+                    Minecraft.getInstance().gui.setScreen(this);
                 }, Component.translatable("config.immersivemc.open_wiki_message"),
                         Component.empty(),
                         WIKI_URL,
@@ -139,7 +139,7 @@ public class ConfigScreen extends Screen {
     @Override
     public void onClose() {
         onClientConfigChange();
-        Minecraft.getInstance().setScreen(lastScreen);
+        Minecraft.getInstance().gui.setScreen(lastScreen);
         currentConfigAdjusting = ConfigType.CLIENT;
     }
 
@@ -178,9 +178,9 @@ public class ConfigScreen extends Screen {
     private static void changeConfigAdjusting() {
         onClientConfigChange();
         currentConfigAdjusting = currentConfigAdjusting == ConfigType.CLIENT ? ConfigType.SERVER : ConfigType.CLIENT;
-        Screen current = Minecraft.getInstance().screen;
+        Screen current = Minecraft.getInstance().gui.screen();
         if (current instanceof ConfigScreen cs) {
-            Minecraft.getInstance().setScreen(new ConfigScreen(cs.lastScreen));
+            Minecraft.getInstance().gui.setScreen(new ConfigScreen(cs.lastScreen));
         }
     }
 

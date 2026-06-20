@@ -6,7 +6,6 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -16,7 +15,6 @@ import net.minecraftforge.fml.ModLoadingContext;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ClientSetup {
@@ -34,9 +32,9 @@ public class ClientSetup {
         RegisterPictureInPictureRendererEvent.BUS.addListener((RegisterPictureInPictureRendererEvent event) -> pipRenderersToRegister.forEach(renderer -> renderer.register(event)));
     }
 
-    public record PiPRenderer<S extends PictureInPictureRenderState>(Class<S> stateClass, Function<MultiBufferSource.BufferSource, PictureInPictureRenderer<S>> factory) {
+    public record PiPRenderer<S extends PictureInPictureRenderState>(Class<S> stateClass, Supplier<PictureInPictureRenderer<S>> factory) {
         public void register(RegisterPictureInPictureRendererEvent event) {
-            event.register(factory.apply(event.getBufferSource()));
+            event.register(factory.get());
         }
     }
 }

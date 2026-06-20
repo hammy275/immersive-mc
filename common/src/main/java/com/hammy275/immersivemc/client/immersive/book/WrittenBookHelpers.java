@@ -231,7 +231,7 @@ public class WrittenBookHelpers {
                     } catch (Exception ignored) {}
                 } else {
                     ClickHandlerScreen tempScreen = new ClickHandlerScreen();
-                    Minecraft.getInstance().setScreen(tempScreen);
+                    Minecraft.getInstance().gui.setScreen(tempScreen);
                     tempScreen.handleComponentClicked(style);
                 }
             }

@@ -51,7 +51,7 @@ public class BackpackConfigScreen extends OptionsSubScreen {
                         // Also set ACTIVE mode since that's what getBackpackModel() looks at in renderBackpack()
                         ActiveConfig.activeRaw().bagMode = newMode;
                         if (oldMode.colorable != newMode.colorable) {
-                            Minecraft.getInstance().setScreen(new BackpackConfigScreen(lastScreen));
+                            Minecraft.getInstance().gui.setScreen(new BackpackConfigScreen(lastScreen));
                         }
                     }
         ));
@@ -64,7 +64,7 @@ public class BackpackConfigScreen extends OptionsSubScreen {
                     () -> ConfigScreen.getClientConfigIfAdjusting().reachBehindBagMode,
                     (newModeIndex, newMode) -> {
                         ConfigScreen.getClientConfigIfAdjusting().reachBehindBagMode = newMode;
-                        Minecraft.getInstance().setScreen(new BackpackConfigScreen(lastScreen));
+                        Minecraft.getInstance().gui.setScreen(new BackpackConfigScreen(lastScreen));
                     }
             ));
 

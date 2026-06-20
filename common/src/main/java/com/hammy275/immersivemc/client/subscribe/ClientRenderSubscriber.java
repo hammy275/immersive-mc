@@ -19,7 +19,8 @@ import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SectionBufferBuilderPack;
+import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -114,12 +115,12 @@ public class ClientRenderSubscriber {
     }
 
     private static void renderItemGuide(PoseStack stack, BoundingBox hitbox, float alpha, boolean isSelected, int light) {
-        if (hitbox != null && !Minecraft.getInstance().options.hideGui) {
+        if (hitbox != null && !Minecraft.getInstance().gameRenderer.gameRenderState().guiRenderState.isHudHidden) {
             RGBA color = isSelected ? itemGuideSelectedColor() : itemGuideColor();
             AABB aabb = hitbox.isAABB() ? hitbox.asAABB() : hitbox.asOBB().getUnderlyingAABB();
             float size = (float) aabb.getSize() * (isSelected ? (float) ActiveConfig.active().itemGuideSelectedSize : (float) ActiveConfig.active().itemGuideSize);
             if (ActiveConfig.active().placementGuideMode == PlacementGuideMode.CUBE) {
-                Camera renderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+                Camera renderInfo = Minecraft.getInstance().gameRenderer.mainCamera();
                 Vec3 pos = aabb.getCenter();
                 stack.pushPose();
                 stack.translate(-renderInfo.position().x + pos.x,

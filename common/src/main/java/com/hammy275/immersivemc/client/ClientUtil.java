@@ -79,10 +79,10 @@ public class ClientUtil {
      */
     public static void renderGizmoPrimitives(DrawableGizmoPrimitives gizmoPrimitives, PoseStack poseStack) {
         Minecraft mc = Minecraft.getInstance();
-        CameraRenderState cameraRenderState = mc.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState;
+        CameraRenderState cameraRenderState = mc.gameRenderer.gameRenderState().levelRenderState.cameraRenderState;
         // Frustum found via basically the same code as GameRenderer#renderLevel() in the one line below
         Matrix4f frustum = new Matrix4f().rotation(
-                mc.gameRenderer.getMainCamera().rotation().conjugate(new Quaternionf())
+                mc.gameRenderer.mainCamera().rotation().conjugate(new Quaternionf())
         );
         gizmoPrimitives.render(poseStack, mc.renderBuffers().bufferSource(), cameraRenderState, frustum);
     }

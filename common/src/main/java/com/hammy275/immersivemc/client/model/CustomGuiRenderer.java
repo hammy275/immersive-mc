@@ -3,12 +3,9 @@ package com.hammy275.immersivemc.client.model;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 
 public class CustomGuiRenderer extends PictureInPictureRenderer<CustomGuiRendererState> {
-    public CustomGuiRenderer(MultiBufferSource.BufferSource bufferSource) {
-        super(bufferSource);
-    }
 
     @Override
     public Class<CustomGuiRendererState> getRenderStateClass() {
@@ -16,9 +13,9 @@ public class CustomGuiRenderer extends PictureInPictureRenderer<CustomGuiRendere
     }
 
     @Override
-    protected void renderToTexture(CustomGuiRendererState renderState, PoseStack poseStack) {
+    protected void renderToTexture(CustomGuiRendererState renderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector) {
         poseStack.pushPose();
-        renderState.renderer().accept(poseStack, bufferSource);
+        renderState.renderer().accept(poseStack, submitNodeCollector);
         poseStack.popPose();
     }
 

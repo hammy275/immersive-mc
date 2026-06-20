@@ -8,6 +8,6 @@ import net.minecraft.network.chat.Component;
 public class Buttons {
 
     public static Button.Builder getScreenButton(Screen screen, String translationString) {
-        return Button.builder(Component.translatable(translationString), (button) -> Minecraft.getInstance().setScreen(screen));
+        return Button.builder(Component.translatable(translationString), (button) -> Minecraft.getInstance().gui.setScreen(screen));
     }
 }

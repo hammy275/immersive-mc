@@ -23,7 +23,7 @@ public class ClickHandlerScreen extends Screen {
             if (action == ClickEvent.Action.RUN_COMMAND || action == ClickEvent.Action.COPY_TO_CLIPBOARD ||
                 action == ClickEvent.Action.SUGGEST_COMMAND) {
                 // SUGGEST_COMMAND seems to not work in vanilla, so no need to make it work here
-                Minecraft.getInstance().setScreen(null);
+                Minecraft.getInstance().gui.setScreen(null);
             } else if (action == ClickEvent.Action.OPEN_URL) {
                 this.closeWhenAble = true; // Need to wait until this screen is restored to close
             }
@@ -34,7 +34,7 @@ public class ClickHandlerScreen extends Screen {
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         super.extractRenderState(graphics, mouseX, mouseY, a);
         if (closeWhenAble) {
-            Minecraft.getInstance().setScreen(null); // Hacky, but Screens don't have a tick()
+            Minecraft.getInstance().gui.setScreen(null); // Hacky, but Screens don't have a tick()
         }
     }
 }
