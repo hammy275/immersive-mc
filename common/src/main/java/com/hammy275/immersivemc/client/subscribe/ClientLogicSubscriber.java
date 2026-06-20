@@ -28,11 +28,11 @@ import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.common.vr.dev.DevVRState;
 import com.hammy275.immersivemc.server.ChestToOpenSet;
 import com.hammy275.immersivemc.server.api_impl.SharedNetworkStoragesImpl;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -280,8 +280,8 @@ public class ClientLogicSubscriber {
                         }
                     }
                     if (!VRVerify.clientInVR() || ActiveConfig.active().rightClickImmersiveInteractionsInVR) {
-                        Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
-                        info.setSlotHovered(Util.rayTraceClosest(startAndEnd.getA(), startAndEnd.getB(), info.getAllHitboxes()).orElse(-1), 0);
+                        Pair<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(player);
+                        info.setSlotHovered(Util.rayTraceClosest(startAndEnd.getFirst(), startAndEnd.getSecond(), info.getAllHitboxes()).orElse(-1), 0);
                         info.setSlotHovered(-1, 1);
                     }
                 }
@@ -371,9 +371,9 @@ public class ClientLogicSubscriber {
         if (ActiveConfig.active().crouchMode.bypassImmersive() && Minecraft.getInstance().player.isCrouching()) return -1;
         boolean inVR = VRVerify.playerInVR(player);
 
-        Tuple<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(Minecraft.getInstance().player);
-        Vec3 start = startAndEnd.getA();
-        Vec3 end = startAndEnd.getB();
+        Pair<Vec3, Vec3> startAndEnd = ClientUtil.getStartAndEndOfLookTrace(Minecraft.getInstance().player);
+        Vec3 start = startAndEnd.getFirst();
+        Vec3 end = startAndEnd.getSecond();
 
         if (!inVR || ActiveConfig.active().rightClickImmersiveInteractionsInVR) { // Don't handle right clicks for VR players, they have hands (unless they config to!)!
             for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
