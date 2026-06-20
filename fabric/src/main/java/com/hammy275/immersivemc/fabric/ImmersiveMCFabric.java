@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 
 public class ImmersiveMCFabric implements ModInitializer {
 
@@ -43,7 +44,7 @@ public class ImmersiveMCFabric implements ModInitializer {
                 });
             });
             LevelRenderEvents.COLLECT_SUBMITS.register(context ->
-                    ClientRenderSubscriber.onWorldRender(context.poseStack()));
+                    ClientRenderSubscriber.onWorldRender(context.poseStack(), (SubmitNodeStorage) context.submitNodeCollector()));
             LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN.register(context ->
                     ClientRenderSubscriber.onTransparentRender(context.poseStack()));
         }

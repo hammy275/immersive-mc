@@ -32,7 +32,7 @@ import java.util.List;
 
 public class ClientRenderSubscriber {
 
-    public static final SubmitNodeStorage collector = new SubmitNodeStorage();
+    public static SubmitNodeStorage collector;
 
     public static final Cube1x1 cubeModel = new Cube1x1(Minecraft.getInstance().getEntityModels().bakeLayer(Cube1x1.LAYER_LOCATION));
 
@@ -46,7 +46,8 @@ public class ClientRenderSubscriber {
     private static RGBA rangedGrabColor;
     private static float cycleProgressRangedGrab;
 
-    public static void onWorldRender(PoseStack stack) {
+    public static void onWorldRender(PoseStack stack, SubmitNodeStorage collector) {
+        ClientRenderSubscriber.collector = collector;
         setRenderColors();
         try {
             for (Immersive<?, ?, ?> singleton : Immersives.ALL_IMMERSIVES) {
@@ -61,7 +62,6 @@ public class ClientRenderSubscriber {
             // Skip rendering if the list is modified mid-render
             // It's fine, since we were only going to read it anyway!!
         }
-        Minecraft.getInstance().gameRenderer.featureRenderDispatcher().renderAllFeatures(collector);
     }
 
     public static void onTransparentRender(PoseStack stack) {
@@ -132,7 +132,7 @@ public class ClientRenderSubscriber {
                 if (hitbox.isOBB()) {
                     OBBClientUtil.rotateStackForOBB(stack, hitbox.asOBB());
                 }
-                stack.scale(size / 2f, size / 2f, size / 2f);
+                stack.scale(size * 8f, size * 8f, size * 8f);
                 ClientRenderSubscriber.collector.submitModel(cubeModel, null, stack,
                         RenderTypes.entityTranslucent(Cube1x1.textureLocation), light, OverlayTexture.NO_OVERLAY,
                         (int) color.toLong(), null, 0x00000000, null);
