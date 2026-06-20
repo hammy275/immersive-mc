@@ -33,7 +33,7 @@ public class ImmersiveHandlers {
     public static final BlockBasedImmersiveHandler<?> barrelHandler = new BarrelHandler();
     public static final WorldStorageHandler<BeaconStorage> beaconHandler = new BeaconHandler();
     public static final BlockBasedImmersiveHandler<?> brewingStandHandler = new BrewingStandHandler();
-    public static final BlockBasedImmersiveHandler<ListOfItemsStorage> chestHandler = new ChestHandler();
+    public static final BlockBasedImmersiveHandler<ChestStorage> chestHandler = new ChestHandler();
     public static final BlockBasedImmersiveHandler<?> chiseledBookshelfHandler = new ChiseledBookshelfHandler();
     public static final WorldStorageHandler<CraftingTableStorage> craftingHandler = new CraftingHandler();
     public static final BlockBasedImmersiveHandler<NullStorage> doorHandler = new DoorHandler();
