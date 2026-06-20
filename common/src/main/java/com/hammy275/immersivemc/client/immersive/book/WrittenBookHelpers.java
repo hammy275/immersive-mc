@@ -188,7 +188,7 @@ public class WrittenBookHelpers {
             for (FormattedCharSequence seq : text) {
                 // -56f is used to make the text left-aligned.
                 ClientRenderSubscriber.collector.submitText(stack, -56f, 32 + lineNum++ * 9, seq, false, Font.DisplayMode.NORMAL, light,
-                        0xFFFFFFFF, 0x00000000, 0x00000000);
+                        0xFF000000, 0x00000000, 0x00000000);
             }
         }
 
