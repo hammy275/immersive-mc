@@ -5,16 +5,17 @@ import com.hammy275.immersivemc.client.immersive.book.BookRenderable;
 import com.hammy275.immersivemc.client.immersive.book.ClientBookData;
 import com.hammy275.immersivemc.client.immersive.book.WrittenBookHelpers;
 import com.hammy275.immersivemc.client.immersive.info.render_state.BookDataRenderState;
+import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.compat.apotheosis.ApothStats;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
 import com.hammy275.immersivemc.common.util.PosRot;
 import com.hammy275.immersivemc.common.util.Util;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -167,45 +168,45 @@ public class EnchantingData {
         private void renderBarPart(boolean isEmpty, PoseStack stack, int light, float startX, float startY, float fullAmount) {
             if ((!isEmpty && fullAmount <= 0) || (isEmpty && 1 - fullAmount <= 0)) return;
             Identifier barLoc = !isEmpty && !useOurImageForFull ? fullLocation : emptyLocation;
-            VertexConsumer consumer =
-                    Minecraft.getInstance().renderBuffers().bufferSource().getBuffer();
-            PoseStack.Pose lastPose = stack.last();
-            Matrix4f pose = lastPose.pose();
+            ClientRenderSubscriber.collector.submitCustomGeometry(stack, RenderTypes.entityCutout(barLoc),
+                    (pose, consumer) -> {
+                        Matrix4f poseMatr = pose.pose();
 
-            float minImageU = startX / maxXY;
-            float maxImageU = (startX + barMaxX * (isEmpty ? 1 - fullAmount : fullAmount)) / maxXY;
-            float minImageV = startY / maxXY;
-            float maxImageV = (startY + 4) / maxXY;
+                        float minImageU = startX / maxXY;
+                        float maxImageU = (startX + barMaxX * (isEmpty ? 1 - fullAmount : fullAmount)) / maxXY;
+                        float minImageV = startY / maxXY;
+                        float maxImageV = (startY + 4) / maxXY;
 
-            float minX = isEmpty ? barMaxX * fullAmount : 0f;
-            float minY = 0f;
-            float maxX = isEmpty ? barMaxX : barMaxX * fullAmount;
-            float maxY = 16f; // Normal bar sizing would be 4f, but want it to be taller
+                        float minX = isEmpty ? barMaxX * fullAmount : 0f;
+                        float minY = 0f;
+                        float maxX = isEmpty ? barMaxX : barMaxX * fullAmount;
+                        float maxY = 16f; // Normal bar sizing would be 4f, but want it to be taller
 
-            consumer.addVertex(pose, minX, minY, 0)
-                    .setColor(255, 255, 255, 255)
-                    .setUv(minImageU, maxImageV)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(light)
-                    .setNormal(0, 1, 0);
-            consumer.addVertex(pose, maxX, minY, 0)
-                    .setColor(255, 255, 255, 255)
-                    .setUv(maxImageU, maxImageV)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(light)
-                    .setNormal(0, 1, 0);
-            consumer.addVertex(pose, maxX, maxY, 0)
-                    .setColor(255, 255, 255, 255)
-                    .setUv(maxImageU, minImageV)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(light)
-                    .setNormal(0, 1, 0);
-            consumer.addVertex(pose, minX, maxY, 0)
-                    .setColor(255, 255, 255, 255)
-                    .setUv(minImageU, minImageV)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(light)
-                    .setNormal(0, 1, 0);
+                        consumer.addVertex(poseMatr, minX, minY, 0)
+                                .setColor(255, 255, 255, 255)
+                                .setUv(minImageU, maxImageV)
+                                .setOverlay(OverlayTexture.NO_OVERLAY)
+                                .setLight(light)
+                                .setNormal(0, 1, 0);
+                        consumer.addVertex(poseMatr, maxX, minY, 0)
+                                .setColor(255, 255, 255, 255)
+                                .setUv(maxImageU, maxImageV)
+                                .setOverlay(OverlayTexture.NO_OVERLAY)
+                                .setLight(light)
+                                .setNormal(0, 1, 0);
+                        consumer.addVertex(poseMatr, maxX, maxY, 0)
+                                .setColor(255, 255, 255, 255)
+                                .setUv(maxImageU, minImageV)
+                                .setOverlay(OverlayTexture.NO_OVERLAY)
+                                .setLight(light)
+                                .setNormal(0, 1, 0);
+                        consumer.addVertex(poseMatr, minX, maxY, 0)
+                                .setColor(255, 255, 255, 255)
+                                .setUv(minImageU, minImageV)
+                                .setOverlay(OverlayTexture.NO_OVERLAY)
+                                .setLight(light)
+                                .setNormal(0, 1, 0);
+                    });
         }
 
         @Override
