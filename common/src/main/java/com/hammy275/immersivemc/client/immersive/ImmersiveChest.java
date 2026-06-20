@@ -13,6 +13,7 @@ import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.client.immersive.info.render_state.ChestRenderState;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
+import com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestStorage;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ListOfItemsStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ChestShulkerOpenPacket;
@@ -37,11 +38,12 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.hammy275.immersivemc.common.immersive.storage.network.impl.ChestOpennessStorage.CHEST_OPEN_THRESHOLD;
 
-public class ImmersiveChest extends AbstractBlockBasedImmersive<ChestInfo, ChestRenderState, ListOfItemsStorage> {
+public class ImmersiveChest extends AbstractBlockBasedImmersive<ChestInfo, ChestRenderState, ChestStorage> {
     public static final double spacing = 3d/16d;
 
     @Override
@@ -197,7 +199,7 @@ public class ImmersiveChest extends AbstractBlockBasedImmersive<ChestInfo, Chest
     }
 
     @Override
-    public BlockBasedImmersiveHandler<ListOfItemsStorage> getHandler() {
+    public BlockBasedImmersiveHandler<ChestStorage> getHandler() {
         return ImmersiveHandlers.chestHandler;
     }
 
@@ -214,9 +216,20 @@ public class ImmersiveChest extends AbstractBlockBasedImmersive<ChestInfo, Chest
     }
 
     @Override
-    public void processStorageFromNetwork(ChestInfo info, ListOfItemsStorage storage) {
-        for (int i = 0; i < storage.getItems().size(); i++) {
-            info.hitboxes.get(i).item = storage.getItems().get(i);
+    public void processStorageFromNetwork(ChestInfo info, ChestStorage storage) {
+        for (Map.Entry<BlockPos, ListOfItemsStorage> entry : storage.items.entrySet()) {
+            List<ItemStack> items = entry.getValue().getItems();
+            if (entry.getKey().equals(info.otherPos)) {
+                setItemsToHitboxes(info, 27, items);
+            } else {
+                setItemsToHitboxes(info, 0, items);
+            }
+        }
+    }
+
+    private void setItemsToHitboxes(ChestInfo info, int start, List<ItemStack> items) {
+        for (int i = start; i < start + 27; i++) {
+            info.hitboxes.get(i).item = items.get(i % 27);
         }
     }
 
