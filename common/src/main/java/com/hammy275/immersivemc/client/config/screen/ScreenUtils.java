@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.client.config.screen;
 
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
 import com.hammy275.immersivemc.common.config.ConfigType;
@@ -28,10 +27,10 @@ public class ScreenUtils {
                                                           Function<Integer, Component> displayTextCreator,
                                                           int minValue, int maxValue, Supplier<Integer> valueGetter,
                                                           Consumer<Integer> valueSetter) {
-        return new OptionInstance<>(titleTranslationKey, OptionInstance.noTooltip(),
+        return new OptionInstance<Integer>(titleTranslationKey, OptionInstance.noTooltip(),
                 (component, integer) -> displayTextCreator.apply(integer),
                 new OptionInstance.IntRange(minValue, maxValue),
-                valueGetter.get(), valueSetter);
+                valueGetter.get(), valueSetter::accept);
     }
 
     public static OptionInstance<Boolean> createOption(String keyName, Function<ActiveConfig, Boolean> valueGetter,
@@ -50,7 +49,7 @@ public class ScreenUtils {
                 keyName,
                 tooltip == null ? (obj) -> null : OptionInstance.cachedConstantTooltip(tooltip),
                 getter.get(),
-                setter
+                setter::accept
         );
     }
 
