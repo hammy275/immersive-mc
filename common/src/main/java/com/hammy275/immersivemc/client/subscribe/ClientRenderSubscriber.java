@@ -19,9 +19,9 @@ import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.SectionBufferBuilderPack;
-import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -31,6 +31,8 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 
 public class ClientRenderSubscriber {
+
+    public static final SubmitNodeStorage collector = new SubmitNodeStorage();
 
     public static final Cube1x1 cubeModel = new Cube1x1(Minecraft.getInstance().getEntityModels().bakeLayer(Cube1x1.LAYER_LOCATION));
 
@@ -59,6 +61,7 @@ public class ClientRenderSubscriber {
             // Skip rendering if the list is modified mid-render
             // It's fine, since we were only going to read it anyway!!
         }
+        Minecraft.getInstance().gameRenderer.featureRenderDispatcher().renderAllFeatures(collector);
     }
 
     public static void onTransparentRender(PoseStack stack) {
@@ -126,12 +129,13 @@ public class ClientRenderSubscriber {
                 stack.translate(-renderInfo.position().x + pos.x,
                         -renderInfo.position().y + pos.y,
                         -renderInfo.position().z + pos.z);
-                MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
                 if (hitbox.isOBB()) {
                     OBBClientUtil.rotateStackForOBB(stack, hitbox.asOBB());
                 }
-                cubeModel.render(stack, buffer.getBuffer(RenderTypes.entityTranslucent(Cube1x1.textureLocation)),
-                        (int) color.toLong(), size / 2, light);
+                stack.scale(size / 2f, size / 2f, size / 2f);
+                ClientRenderSubscriber.collector.submitModel(cubeModel, null, stack,
+                        RenderTypes.entityTranslucent(Cube1x1.textureLocation), light, OverlayTexture.NO_OVERLAY,
+                        (int) color.toLong(), null, 0x00000000, null);
                 stack.popPose();
             } else if (ActiveConfig.active().placementGuideMode == PlacementGuideMode.OUTLINE) {
                 if (hitbox.isAABB()) {

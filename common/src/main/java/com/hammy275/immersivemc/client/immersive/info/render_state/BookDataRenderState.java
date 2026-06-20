@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.immersive.info.render_state;
 
 import com.hammy275.immersivemc.api.common.hitbox.OBB;
 import com.hammy275.immersivemc.client.immersive.book.BookRenderable;
+import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.util.PageChangeState;
 import com.hammy275.immersivemc.common.util.PosRot;
@@ -63,17 +64,16 @@ public class BookDataRenderState {
 
         float bookOpenAmount = 1.1f;
 
-        bookModel.setupAnim(BookModel.State.forAnimation(
+        BookModel.State state = BookModel.State.forAnimation(
                 0, // Partial tick time is always 0 to have page stay in one constant spot
                 Mth.lerp(partialTicks, lastLeftPageTurn, leftPageTurn), // 0-1. How far the page is in the turn. Range is [0f, 1f] with 0f being left.
                 Mth.lerp(partialTicks, lastRightPageTurn, rightPageTurn), // 0-1. How far across a different page is. Range is [0f, 1f] with 0f being left.
                 bookOpenAmount // How open the book is. A good range seems to be (0f,1.2f]
-        ));
-        bookModel.renderToBuffer(stack,
-                Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderTypes.entitySolid(writtenBookTexture)),
-                light, OverlayTexture.NO_OVERLAY,
-                0xFFFFFFFF);
+        );
+        bookModel.setupAnim(state);
+        ClientRenderSubscriber.collector.submitModel(bookModel, state, stack,
+                RenderTypes.entitySolid(writtenBookTexture), light, OverlayTexture.NO_OVERLAY,
+                0xFFFFFFFF, null, 0x00000000, null);
 
         stack.popPose();
 

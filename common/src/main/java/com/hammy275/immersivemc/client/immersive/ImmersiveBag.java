@@ -13,10 +13,8 @@ import com.hammy275.immersivemc.client.compat.ipn.IPN;
 import com.hammy275.immersivemc.client.config.ClientConstants;
 import com.hammy275.immersivemc.client.immersive.info.BagInfo;
 import com.hammy275.immersivemc.client.immersive.info.HitboxItemPair;
-import com.hammy275.immersivemc.client.model.BackpackBundleModel;
-import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
-import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
-import com.hammy275.immersivemc.client.model.BackpackModel;
+import com.hammy275.immersivemc.client.model.*;
+import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.BagStorage;
@@ -251,20 +249,16 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         stack.translate(0, -3, 0); // Move model up since the model center is not the visual center
 
         // Render the model (finally!)
-        getBackpackModel().renderToBuffer(stack,
-                Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderTypes.entityCutout(getBackpackTexture())),
-                renderState.light, OverlayTexture.NO_OVERLAY,
-                renderState.argb);
+        ClientRenderSubscriber.collector.submitModel(getBackpackModel(), null, stack,
+                RenderTypes.entityCutout(getBackpackTexture()), renderState.light, OverlayTexture.NO_OVERLAY,
+                renderState.argb, null, 0x00000000, null);
 
         // Translate and render the crafting on the side of the backpack and down a bit
         // (yes, positive y in this context moves it down lol)
         stack.translate(renderState.leftHanded ? -0.75 : 0.75, 0.25, 0);
-        craftingModel.renderToBuffer(stack,
-                Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderTypes.entityCutout(BackpackCraftingModel.textureLocation)),
-                renderState.light, OverlayTexture.NO_OVERLAY,
-                0xFFFFFFFF);
+        ClientRenderSubscriber.collector.submitModel(craftingModel, null, stack,
+                RenderTypes.entityCutout(BackpackCraftingModel.textureLocation), renderState.light, OverlayTexture.NO_OVERLAY,
+                0xFFFFFFFF, null, 0x00000000, null);
 
         stack.popPose();
     }

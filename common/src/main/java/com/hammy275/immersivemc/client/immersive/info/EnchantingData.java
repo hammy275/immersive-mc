@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.client.immersive.book.BookRenderable;
 import com.hammy275.immersivemc.client.immersive.book.ClientBookData;
 import com.hammy275.immersivemc.client.immersive.book.WrittenBookHelpers;
 import com.hammy275.immersivemc.client.immersive.info.render_state.BookDataRenderState;
+import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.compat.apotheosis.ApothStats;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
@@ -170,7 +171,7 @@ public class EnchantingData {
             if ((!isEmpty && fullAmount <= 0) || (isEmpty && 1 - fullAmount <= 0)) return;
             Identifier barLoc = !isEmpty && !useOurImageForFull ? fullLocation : emptyLocation;
             VertexConsumer consumer =
-                    Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderTypes.entityCutout(barLoc));
+                    Minecraft.getInstance().renderBuffers().bufferSource().getBuffer();
             PoseStack.Pose lastPose = stack.last();
             Matrix4f pose = lastPose.pose();
 
