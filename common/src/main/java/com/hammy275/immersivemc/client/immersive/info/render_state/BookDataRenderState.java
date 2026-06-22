@@ -71,7 +71,7 @@ public class BookDataRenderState {
                 bookOpenAmount // How open the book is. A good range seems to be (0f,1.2f]
         );
         bookModel.setupAnim(state);
-        ImmersiveRenderHelpers.instance().nodeStorage().submitModel(bookModel, state, stack,
+        ImmersiveRenderHelpers.instance().submitNodeCollector().submitModel(bookModel, state, stack,
                 RenderTypes.entitySolid(writtenBookTexture), light, OverlayTexture.NO_OVERLAY,
                 0xFFFFFFFF, null, 0x00000000, null);
 

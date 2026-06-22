@@ -44,7 +44,7 @@ public class ImmersiveMCFabric implements ModInitializer {
                 });
             });
             LevelRenderEvents.COLLECT_SUBMITS.register(context ->
-                    ClientRenderSubscriber.onWorldRender(context.poseStack(), (SubmitNodeStorage) context.submitNodeCollector()));
+                    ClientRenderSubscriber.onWorldRender(context.poseStack(), context.submitNodeCollector()));
         }
         ImmersiveMC.init();
         if (Platform.COMMON.isModLoaded("lootr")) {

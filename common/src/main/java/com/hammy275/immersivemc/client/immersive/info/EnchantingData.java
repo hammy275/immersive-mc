@@ -168,7 +168,7 @@ public class EnchantingData {
         private void renderBarPart(boolean isEmpty, PoseStack stack, int light, float startX, float startY, float fullAmount) {
             if ((!isEmpty && fullAmount <= 0) || (isEmpty && 1 - fullAmount <= 0)) return;
             Identifier barLoc = !isEmpty && !useOurImageForFull ? fullLocation : emptyLocation;
-            ImmersiveRenderHelpers.instance().nodeStorage().submitCustomGeometry(stack, RenderTypes.entityCutout(barLoc),
+            ImmersiveRenderHelpers.instance().submitNodeCollector().submitCustomGeometry(stack, RenderTypes.entityCutout(barLoc),
                     (pose, consumer) -> {
                         Matrix4f poseMatr = pose.pose();
 

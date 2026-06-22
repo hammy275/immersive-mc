@@ -19,7 +19,7 @@ import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.SubmitNodeStorage;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.phys.AABB;
@@ -34,9 +34,9 @@ public class ClientRenderSubscriber {
 
     /**
      * The collector as provided by level rendering for renders to be submitted to. Exposed in the API via
-     * {@link ImmersiveRenderHelpers#nodeStorage()}.
+     * {@link ImmersiveRenderHelpers#submitNodeCollector()}.
      */
-    public static SubmitNodeStorage collector;
+    public static SubmitNodeCollector collector;
 
     public static final Cube1x1 cubeModel = new Cube1x1(Minecraft.getInstance().getEntityModels().bakeLayer(Cube1x1.LAYER_LOCATION));
 
@@ -50,7 +50,7 @@ public class ClientRenderSubscriber {
     private static RGBA rangedGrabColor;
     private static float cycleProgressRangedGrab;
 
-    public static void onWorldRender(PoseStack stack, SubmitNodeStorage collector) {
+    public static void onWorldRender(PoseStack stack, SubmitNodeCollector collector) {
         ClientRenderSubscriber.collector = collector;
         setRenderColors();
         try {
@@ -134,7 +134,7 @@ public class ClientRenderSubscriber {
                     OBBClientUtil.rotateStackForOBB(stack, hitbox.asOBB());
                 }
                 stack.scale(size * 8f, size * 8f, size * 8f);
-                ImmersiveRenderHelpers.instance().nodeStorage().submitModel(cubeModel, null, stack,
+                ImmersiveRenderHelpers.instance().submitNodeCollector().submitModel(cubeModel, null, stack,
                         RenderTypes.entityTranslucent(Cube1x1.textureLocation), light, OverlayTexture.NO_OVERLAY,
                         (int) color.toLong(), null, 0x00000000, null);
                 stack.popPose();

@@ -181,7 +181,7 @@ public class WrittenBookHelpers {
             int lineNum = 0;
             for (FormattedCharSequence seq : text) {
                 // -56f is used to make the text left-aligned.
-                ImmersiveRenderHelpers.instance().nodeStorage().submitText(stack, -56f, 32 + lineNum++ * 9, seq, false, Font.DisplayMode.NORMAL, light,
+                ImmersiveRenderHelpers.instance().submitNodeCollector().submitText(stack, -56f, 32 + lineNum++ * 9, seq, false, Font.DisplayMode.NORMAL, light,
                         0xFF000000, 0x00000000, 0x00000000);
             }
         }

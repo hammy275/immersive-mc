@@ -5,7 +5,7 @@ import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveRenderHelpersImpl;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.SubmitNodeStorage;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -219,9 +219,13 @@ public interface ImmersiveRenderHelpers {
     public float hoverScaleSizeMultiplier();
 
     /**
-     * Gets the SubmitNodeStorage for rendering within ImmersiveMC.
+     * Gets the SubmitNodeCollector for rendering within ImmersiveMC.
+     * <p>
+     * The @Beta annotation applies to this method, as it may be refactored, renamed, modified, or removed in response
+     * to Minecraft version updates. It is unlikely to significantly change for Minecraft versions ImmersiveMC has
+     * already released with this method provided, however.
      * @return The node storage currently being used for rendering.
      */
     @Beta
-    public SubmitNodeStorage nodeStorage();
+    public SubmitNodeCollector submitNodeCollector();
 }

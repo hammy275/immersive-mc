@@ -8,11 +8,13 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
-import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.RegisterPictureInPictureRenderersEvent;
+import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -31,7 +33,7 @@ public class ClientSetup {
         ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () -> (modContainer, screen) -> new ConfigScreen(screen));
         modBus.addListener((RegisterKeyMappingsEvent event) -> keyMappingsToRegister.forEach(event::register));
         modBus.addListener((EntityRenderersEvent.RegisterLayerDefinitions event) -> entityModelLayersToRegister.forEach(pair -> event.registerLayerDefinition(pair.getFirst(), pair.getSecond())));
-        NeoForge.EVENT_BUS.addListener((SubmitCustomGeometryEvent event) -> ClientRenderSubscriber.onWorldRender(event.getPoseStack(), (SubmitNodeStorage) event.getSubmitNodeCollector()));
+        NeoForge.EVENT_BUS.addListener((SubmitCustomGeometryEvent event) -> ClientRenderSubscriber.onWorldRender(event.getPoseStack(), event.getSubmitNodeCollector()));
         modBus.addListener((RegisterPictureInPictureRenderersEvent event) -> pipRenderersToRegister.forEach(renderer -> renderer.register(event)));
         modBus.addListener((RegisterClientPayloadHandlersEvent event) -> event.register(BufferPacket.ID,
                 (packet, ctx) -> Network.INSTANCE.doReceive(null, packet.buffer())));

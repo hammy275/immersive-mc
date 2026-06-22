@@ -85,7 +85,7 @@ public class ClientUtil {
         Matrix4f frustum = new Matrix4f().rotation(
                 mc.gameRenderer.mainCamera().rotation().conjugate(new Quaternionf())
         );
-        gizmoPrimitives.submit(ImmersiveRenderHelpers.instance().nodeStorage(), cameraRenderState, false);
+        gizmoPrimitives.submit(ImmersiveRenderHelpers.instance().submitNodeCollector(), cameraRenderState, false);
     }
 
     public static RegistryAccess getRegistryAccess() {

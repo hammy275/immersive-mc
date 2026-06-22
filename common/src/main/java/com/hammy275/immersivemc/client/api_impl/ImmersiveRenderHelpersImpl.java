@@ -19,7 +19,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.debug.DebugScreenEntries;
-import net.minecraft.client.renderer.SubmitNodeStorage;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -134,7 +134,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
 
             ItemStackRenderState renderState = new ItemStackRenderState();
             Minecraft.getInstance().getItemModelResolver().updateForLiving(renderState, item, type, Minecraft.getInstance().player);
-            renderState.submit(stack, nodeStorage(), light, OverlayTexture.NO_OVERLAY, 0);
+            renderState.submit(stack, submitNodeCollector(), light, OverlayTexture.NO_OVERLAY, 0);
 
             stack.popPose();
 
@@ -193,7 +193,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
         stack.scale(textSize, -textSize, textSize);
         Font font = Minecraft.getInstance().font;
         float size = -font.width(text) / 2f;
-        nodeStorage().submitText(stack, size, 0, text.getVisualOrderText(), false, Font.DisplayMode.NORMAL, light,
+        submitNodeCollector().submitText(stack, size, 0, text.getVisualOrderText(), false, Font.DisplayMode.NORMAL, light,
                 0xFFFFFFFF, 0x00000000, 0x00000000);
         stack.popPose();
     }
@@ -233,7 +233,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
         }
         stack.mulPose(Axis.ZN.rotationDegrees(roll));
 
-        nodeStorage().submitCustomGeometry(stack, RenderTypes.entityCutout(imageLocation),
+        submitNodeCollector().submitCustomGeometry(stack, RenderTypes.entityCutout(imageLocation),
                 (pose, consumer) -> {
                     consumer.addVertex(pose, -0.5f, -0.25f, 0)
                             .setColor(0xFFFFFFFF)
@@ -274,7 +274,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
     }
 
     @Override
-    public SubmitNodeStorage nodeStorage() {
+    public SubmitNodeCollector submitNodeCollector() {
         return ClientRenderSubscriber.collector;
     }
 
