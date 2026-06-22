@@ -1,8 +1,8 @@
 package com.hammy275.immersivemc.client.immersive.info.render_state;
 
+import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.OBB;
 import com.hammy275.immersivemc.client.immersive.book.BookRenderable;
-import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.obb.OBBClientUtil;
 import com.hammy275.immersivemc.common.util.PageChangeState;
 import com.hammy275.immersivemc.common.util.PosRot;
@@ -71,7 +71,7 @@ public class BookDataRenderState {
                 bookOpenAmount // How open the book is. A good range seems to be (0f,1.2f]
         );
         bookModel.setupAnim(state);
-        ClientRenderSubscriber.collector.submitModel(bookModel, state, stack,
+        ImmersiveRenderHelpers.instance().nodeStorage().submitModel(bookModel, state, stack,
                 RenderTypes.entitySolid(writtenBookTexture), light, OverlayTexture.NO_OVERLAY,
                 0xFFFFFFFF, null, 0x00000000, null);
 

@@ -95,8 +95,8 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
                     if (ConfigScreen.getClientConfigIfAdjusting().placementGuideMode == PlacementGuideMode.CUBE || renderSquare) {
                         RGBA renderColor = renderSquare ? new RGBA(color.toLong() | 0xFF000000L) : color;
                         stack.pushPose();
-                        stack.scale(64f * renderSize, 64f * renderSize, 64f * renderSize);
-                        ClientRenderSubscriber.collector.submitModel(ClientRenderSubscriber.cubeModel, null, stack,
+                        stack.scale(1024f * renderSize, 1024f * renderSize, 1024f * renderSize);
+                        bufferSource.submitModel(ClientRenderSubscriber.cubeModel, null, stack,
                                 RenderTypes.entityTranslucent(Cube1x1.textureLocation), ClientUtil.maxLight, OverlayTexture.NO_OVERLAY,
                                 (int) renderColor.toLong(), null, 0x00000000, null);
                         stack.popPose();

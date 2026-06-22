@@ -219,6 +219,7 @@ public interface ImmersiveRenderHelpers {
     public float hoverScaleSizeMultiplier();
 
     /**
+     * Gets the SubmitNodeStorage for rendering within ImmersiveMC.
      * @return The node storage currently being used for rendering.
      */
     @Beta

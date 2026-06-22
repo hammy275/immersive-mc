@@ -32,6 +32,10 @@ import java.util.List;
 
 public class ClientRenderSubscriber {
 
+    /**
+     * The collector as provided by level rendering for renders to be submitted to. Exposed in the API via
+     * {@link ImmersiveRenderHelpers#nodeStorage()}.
+     */
     public static SubmitNodeStorage collector;
 
     public static final Cube1x1 cubeModel = new Cube1x1(Minecraft.getInstance().getEntityModels().bakeLayer(Cube1x1.LAYER_LOCATION));
@@ -130,7 +134,7 @@ public class ClientRenderSubscriber {
                     OBBClientUtil.rotateStackForOBB(stack, hitbox.asOBB());
                 }
                 stack.scale(size * 8f, size * 8f, size * 8f);
-                ClientRenderSubscriber.collector.submitModel(cubeModel, null, stack,
+                ImmersiveRenderHelpers.instance().nodeStorage().submitModel(cubeModel, null, stack,
                         RenderTypes.entityTranslucent(Cube1x1.textureLocation), light, OverlayTexture.NO_OVERLAY,
                         (int) color.toLong(), null, 0x00000000, null);
                 stack.popPose();

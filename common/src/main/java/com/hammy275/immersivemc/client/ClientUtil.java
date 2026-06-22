@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveMCClientRegistration;
+import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
@@ -10,7 +11,6 @@ import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.BagInfo;
-import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
@@ -85,7 +85,7 @@ public class ClientUtil {
         Matrix4f frustum = new Matrix4f().rotation(
                 mc.gameRenderer.mainCamera().rotation().conjugate(new Quaternionf())
         );
-        gizmoPrimitives.submit(ClientRenderSubscriber.collector, cameraRenderState, false);
+        gizmoPrimitives.submit(ImmersiveRenderHelpers.instance().nodeStorage(), cameraRenderState, false);
     }
 
     public static RegistryAccess getRegistryAccess() {

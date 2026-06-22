@@ -4,7 +4,6 @@ import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.client.immersive.ImmersiveBag;
 import com.hammy275.immersivemc.client.model.CustomGuiRendererState;
-import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.BackpackMode;
 import com.hammy275.immersivemc.common.config.ClientActiveConfig;
@@ -117,7 +116,7 @@ public class BackpackConfigScreen extends OptionsSubScreen {
                             (2f * (float) Math.PI);
                     poseStack.mulPose(Axis.XN.rotationDegrees(335f));
                     poseStack.mulPose(Axis.YP.rotation(rot));
-                    ClientRenderSubscriber.collector.submitModel(ImmersiveBag.getBackpackModel(), null, poseStack,
+                    bufferSource.submitModel(ImmersiveBag.getBackpackModel(), null, poseStack,
                             RenderTypes.entityCutout(ImmersiveBag.getBackpackTexture()), 15728880, OverlayTexture.NO_OVERLAY,
                             ImmersiveBag.getBackpackColor(), null, 0x00000000, null);
                 }

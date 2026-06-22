@@ -1,11 +1,11 @@
 package com.hammy275.immersivemc.client.immersive.info;
 
 import com.hammy275.immersivemc.Platform;
+import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.client.immersive.book.BookRenderable;
 import com.hammy275.immersivemc.client.immersive.book.ClientBookData;
 import com.hammy275.immersivemc.client.immersive.book.WrittenBookHelpers;
 import com.hammy275.immersivemc.client.immersive.info.render_state.BookDataRenderState;
-import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.compat.apotheosis.Apoth;
 import com.hammy275.immersivemc.common.compat.apotheosis.ApothStats;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.ETableStorage;
@@ -168,7 +168,7 @@ public class EnchantingData {
         private void renderBarPart(boolean isEmpty, PoseStack stack, int light, float startX, float startY, float fullAmount) {
             if ((!isEmpty && fullAmount <= 0) || (isEmpty && 1 - fullAmount <= 0)) return;
             Identifier barLoc = !isEmpty && !useOurImageForFull ? fullLocation : emptyLocation;
-            ClientRenderSubscriber.collector.submitCustomGeometry(stack, RenderTypes.entityCutout(barLoc),
+            ImmersiveRenderHelpers.instance().nodeStorage().submitCustomGeometry(stack, RenderTypes.entityCutout(barLoc),
                     (pose, consumer) -> {
                         Matrix4f poseMatr = pose.pose();
 

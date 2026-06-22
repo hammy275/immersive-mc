@@ -1,9 +1,9 @@
 package com.hammy275.immersivemc.client.immersive.book;
 
+import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.OBB;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.client.immersive.info.render_state.BookDataRenderState;
-import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.client.workaround.ClickHandlerScreen;
 import com.hammy275.immersivemc.common.util.PageChangeState;
 import com.hammy275.immersivemc.common.util.PosRot;
@@ -25,13 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.hammy275.immersivemc.common.immersive.CommonBookData.leftPageRot;
-import static com.hammy275.immersivemc.common.immersive.CommonBookData.pageHalfHeight;
-import static com.hammy275.immersivemc.common.immersive.CommonBookData.pixelsPerLine;
-import static com.hammy275.immersivemc.common.immersive.CommonBookData.scaleSize;
-import static com.hammy275.immersivemc.common.immersive.CommonBookData.singlePageWidth;
-import static com.hammy275.immersivemc.common.immersive.CommonBookData.textStackScaleSize;
-import static com.hammy275.immersivemc.common.immersive.CommonBookData.textUpAmount;
+import static com.hammy275.immersivemc.common.immersive.CommonBookData.*;
 
 /**
  * Some helpers used with both the written book Immersive and the lectern Immersive.
@@ -187,7 +181,7 @@ public class WrittenBookHelpers {
             int lineNum = 0;
             for (FormattedCharSequence seq : text) {
                 // -56f is used to make the text left-aligned.
-                ClientRenderSubscriber.collector.submitText(stack, -56f, 32 + lineNum++ * 9, seq, false, Font.DisplayMode.NORMAL, light,
+                ImmersiveRenderHelpers.instance().nodeStorage().submitText(stack, -56f, 32 + lineNum++ * 9, seq, false, Font.DisplayMode.NORMAL, light,
                         0xFF000000, 0x00000000, 0x00000000);
             }
         }
