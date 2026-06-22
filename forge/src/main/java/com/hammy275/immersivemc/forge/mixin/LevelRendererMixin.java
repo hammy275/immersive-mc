@@ -239,12 +239,4 @@ public class LevelRendererMixin {
         this.immersiveMC$poseStack = poseStack;
         return poseStack;
     }
-
-    // This is from Fabric API for its LevelRenderEvents#BEFORE_TRANSLUCENT_TERRAIN and
-    // LevelRenderEvents#AFTER_TRANSLUCENT_TERRAIN
-    @WrapOperation(method = "lambda$addMainPass$0", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/ChunkSectionsToRender;renderGroup(Lnet/minecraft/client/renderer/chunk/ChunkSectionLayerGroup;Lcom/mojang/blaze3d/textures/GpuSampler;)V", ordinal = 1))
-    private void wrapRenderTranslucentTerrain(ChunkSectionsToRender chunkSectionsToRender, ChunkSectionLayerGroup group, GpuSampler sampler, Operation<Void> original) {
-        original.call(chunkSectionsToRender, group, sampler);
-        ClientRenderSubscriber.onTransparentRender(immersiveMC$poseStack);
-    }
 }

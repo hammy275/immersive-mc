@@ -19,6 +19,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.debug.DebugScreenEntries;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -270,6 +271,11 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
     @Override
     public float hoverScaleSizeMultiplier() {
         return ClientConstants.sizeScaleForHover;
+    }
+
+    @Override
+    public SubmitNodeStorage nodeStorage() {
+        return ClientRenderSubscriber.collector;
     }
 
     private void faceTowardsPlayer(PoseStack stack, Vec3 renderPos) {

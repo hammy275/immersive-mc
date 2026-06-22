@@ -1,9 +1,11 @@
 package com.hammy275.immersivemc.api.client;
 
+import com.google.common.annotations.Beta;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.api_impl.ImmersiveRenderHelpersImpl;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -215,4 +217,10 @@ public interface ImmersiveRenderHelpers {
      *         hovered over (pointed at or has a VR hand placed inside).
      */
     public float hoverScaleSizeMultiplier();
+
+    /**
+     * @return The node storage currently being used for rendering.
+     */
+    @Beta
+    public SubmitNodeStorage nodeStorage();
 }

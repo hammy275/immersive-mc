@@ -62,10 +62,7 @@ public class ClientRenderSubscriber {
             // Skip rendering if the list is modified mid-render
             // It's fine, since we were only going to read it anyway!!
         }
-    }
-
-    public static void onTransparentRender(PoseStack stack) {
-        // Render item guides separately so items behind item guides can be seen and transparency works
+        // Since 26.2, this can be rendered here as well and all is fine (items still show behind item guide cubes).
         for (ItemGuideRenderData data : itemGuideRenderData) {
             renderItemGuide(data.stack, data.hitbox, data.alpha, data.isSelected, data.light);
         }
