@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.common.obb;
 
+import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.OBB;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -25,7 +26,7 @@ public class OBBClientUtil {
                 gizmoPrimitives.addLine(vertices.get(i + 4), vertices.get((i + 1) % 4 + 4), color, 2.5f);
                 gizmoPrimitives.addLine(vertices.get(i), vertices.get(i + 4), color, 2.5f);
             }
-            ClientUtil.renderGizmoPrimitives(gizmoPrimitives, stack);
+            ClientUtil.renderGizmoPrimitives(gizmoPrimitives, ImmersiveRenderHelpers.instance().submitNodeCollector());
         }
     }
 

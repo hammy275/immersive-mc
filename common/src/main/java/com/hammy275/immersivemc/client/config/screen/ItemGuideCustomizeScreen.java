@@ -101,7 +101,7 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
                                 (int) renderColor.toLong(), null, 0x00000000, null);
                         stack.popPose();
                     } else if (ConfigScreen.getClientConfigIfAdjusting().placementGuideMode == PlacementGuideMode.OUTLINE) {
-                        ClientUtil.renderGizmo(new CuboidGizmo(AABB.ofSize(Vec3.ZERO, 128 * renderSize, 128 * renderSize, 128 * renderSize), GizmoStyle.stroke((int) color.toLong() | 0xFF000000), false), stack);
+                        ClientUtil.renderGizmo(new CuboidGizmo(AABB.ofSize(Vec3.ZERO, 128 * renderSize, 128 * renderSize, 128 * renderSize), GizmoStyle.stroke((int) color.toLong() | 0xFF000000), false), bufferSource);
                     }
                 }
         ));

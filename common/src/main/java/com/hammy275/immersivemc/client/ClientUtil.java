@@ -3,7 +3,6 @@ package com.hammy275.immersivemc.client;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveMCClientRegistration;
-import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
@@ -18,9 +17,9 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.common.vr.VRVerify;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.gizmos.DrawableGizmoPrimitives;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
@@ -37,8 +36,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.vivecraft.api.data.VRBodyPartData;
 import org.vivecraft.api.data.VRPose;
 
@@ -64,28 +61,24 @@ public class ClientUtil {
      * Renders a gizmo immediately. Should NOT add instances via {@link net.minecraft.gizmos.Gizmos}, since this renders
      * them directly instead.
      * @param gizmo Gizmo to render
-     * @param poseStack PoseStack for rendering.
+     * @param nodeCollector Node collector for rendering.
      */
-    public static void renderGizmo(Gizmo gizmo, PoseStack poseStack) {
+    public static void renderGizmo(Gizmo gizmo, SubmitNodeCollector nodeCollector) {
         DrawableGizmoPrimitives gizmoPrimitives = new DrawableGizmoPrimitives();
         gizmo.emit(gizmoPrimitives, 1f);
-        renderGizmoPrimitives(gizmoPrimitives, poseStack);
+        renderGizmoPrimitives(gizmoPrimitives, nodeCollector);
     }
 
     /**
      * Renders gizmo primitives immediately. Should NOT add instances via {@link net.minecraft.gizmos.Gizmos}, since
      * this renders them directly instead.
      * @param gizmoPrimitives Gizmo primitives to render
-     * @param poseStack PoseStack for rendering.
+     * @param nodeCollector Node collector for rendering.
      */
-    public static void renderGizmoPrimitives(DrawableGizmoPrimitives gizmoPrimitives, PoseStack poseStack) {
+    public static void renderGizmoPrimitives(DrawableGizmoPrimitives gizmoPrimitives, SubmitNodeCollector nodeCollector) {
         Minecraft mc = Minecraft.getInstance();
         CameraRenderState cameraRenderState = mc.gameRenderer.gameRenderState().levelRenderState.cameraRenderState;
-        // Frustum found via basically the same code as GameRenderer#renderLevel() in the one line below
-        Matrix4f frustum = new Matrix4f().rotation(
-                mc.gameRenderer.mainCamera().rotation().conjugate(new Quaternionf())
-        );
-        gizmoPrimitives.submit(ImmersiveRenderHelpers.instance().submitNodeCollector(), cameraRenderState, false);
+        gizmoPrimitives.submit(nodeCollector, cameraRenderState, false);
     }
 
     public static RegistryAccess getRegistryAccess() {
