@@ -64,9 +64,14 @@ public class ClientUtil {
      * @param nodeCollector Node collector for rendering.
      */
     public static void renderGizmo(Gizmo gizmo, SubmitNodeCollector nodeCollector) {
+        renderGizmo(gizmo, nodeCollector, null);
+    }
+
+    public static void renderGizmo(Gizmo gizmo, SubmitNodeCollector nodeCollector,
+                                   @Nullable CameraRenderState cameraRenderState) {
         DrawableGizmoPrimitives gizmoPrimitives = new DrawableGizmoPrimitives();
         gizmo.emit(gizmoPrimitives, 1f);
-        renderGizmoPrimitives(gizmoPrimitives, nodeCollector);
+        renderGizmoPrimitives(gizmoPrimitives, nodeCollector, cameraRenderState);
     }
 
     /**
@@ -76,8 +81,15 @@ public class ClientUtil {
      * @param nodeCollector Node collector for rendering.
      */
     public static void renderGizmoPrimitives(DrawableGizmoPrimitives gizmoPrimitives, SubmitNodeCollector nodeCollector) {
+        renderGizmoPrimitives(gizmoPrimitives, nodeCollector, null);
+    }
+
+    public static void renderGizmoPrimitives(DrawableGizmoPrimitives gizmoPrimitives, SubmitNodeCollector nodeCollector,
+                                             @Nullable CameraRenderState cameraRenderState) {
         Minecraft mc = Minecraft.getInstance();
-        CameraRenderState cameraRenderState = mc.gameRenderer.gameRenderState().levelRenderState.cameraRenderState;
+        if (cameraRenderState == null) {
+            cameraRenderState = mc.gameRenderer.gameRenderState().levelRenderState.cameraRenderState;
+        }
         gizmoPrimitives.submit(nodeCollector, cameraRenderState, false);
     }
 

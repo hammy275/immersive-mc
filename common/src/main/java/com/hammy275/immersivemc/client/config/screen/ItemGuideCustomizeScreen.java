@@ -12,6 +12,8 @@ import com.hammy275.immersivemc.common.config.ItemGuidePreset;
 import com.hammy275.immersivemc.common.config.PlacementGuideMode;
 import com.hammy275.immersivemc.common.util.RGBA;
 import com.hammy275.immersivemc.mixin.GuiGraphicsExtractorAccessor;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -24,11 +26,7 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.gizmos.CuboidGizmo;
-import net.minecraft.gizmos.GizmoStyle;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -101,10 +99,40 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
                                 (int) renderColor.toLong(), null, 0x00000000, null);
                         stack.popPose();
                     } else if (ConfigScreen.getClientConfigIfAdjusting().placementGuideMode == PlacementGuideMode.OUTLINE) {
-                        ClientUtil.renderGizmo(new CuboidGizmo(AABB.ofSize(Vec3.ZERO, 128 * renderSize, 128 * renderSize, 128 * renderSize), GizmoStyle.stroke((int) color.toLong() | 0xFF000000), false), bufferSource);
+                        stack.scale(128f * renderSize, 128f * renderSize, 128f * renderSize);
+                        bufferSource.submitCustomGeometry(stack, RenderTypes.lines(), this::cube);
                     }
                 }
         ));
+    }
+
+    private void cube(PoseStack.Pose pose, VertexConsumer buffer) {
+        for (float y = -0.5f; y <= 0.5f; y++) {
+            for (float xz = -0.5f; xz <= 0.5f; xz++) {
+                line(pose, buffer, xz, y, -0.5f, xz, y, 0.5f);
+                line(pose, buffer, -0.5f, y, xz, 0.5f, y, xz);
+            }
+        }
+        // TODO: These below lines flash for whatever reason. Fix this!
+        for (float x = -0.5f; x <= 0.5f; x++) {
+            for (float z = -0.5f; z <= 0.5f; z++) {
+                line(pose, buffer, x, -0.5f, z, x, 0.5f, z);
+            }
+        }
+    }
+
+    private void line(PoseStack.Pose pose, VertexConsumer buffer, float startX, float startY, float startZ, float endX, float endY, float endZ) {
+        float diffX = endX - startX;
+        float diffY = endY - startY;
+        float diffZ = endZ - startZ;
+        buffer.addVertex(pose, startX, startY, startZ)
+                .setNormal(pose, diffX, diffY, diffZ)
+                .setColor(0xFFFFFFFF)
+                .setLineWidth(2.5F);
+        buffer.addVertex(pose, endX, endY, endZ)
+                .setNormal(pose, diffX, diffY, diffZ)
+                .setColor(0xFFFFFFFF)
+                .setLineWidth(2.5F);
     }
 
     @Override
