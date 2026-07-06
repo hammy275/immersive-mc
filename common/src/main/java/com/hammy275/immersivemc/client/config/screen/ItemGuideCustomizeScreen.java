@@ -76,8 +76,13 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
         GuiRenderState guiRenderState = ((GuiGraphicsExtractorAccessor) graphics).immersiveMC$getGuiRenderState();
         ScreenRectangle peek = Platform.CLIENT.peekScissorStack(graphics);
 
+        // Starting with Minecraft 26.2, line rendering uses the screen size for drawing the line's width properly,
+        // even if we're only drawing in a picture-in-picture. To work around this, the picture-in-picture is made
+        // the same size as the screen, while still positioning its center where it needs to go.
         guiRenderState.addPicturesInPictureState(new CustomGuiRendererState(
-                this.width * 0.9, this.width, this.height * heightMult - 64f, this.height * heightMult + 64f, 0.5f, peek,
+                // Width is centered at this.width * 0.95
+                // Height is centered at this.height * heightMult
+                this.width * 0.45, this.width * 1.45, this.height * heightMult - this.height * 0.5f, this.height * heightMult + this.height * 0.5f, 0.5f, peek,
                 (stack, bufferSource) -> {
                     float renderSize = (float) size / 2f; // Cut size in half on 1.21.11+ to match older versions for this parameter
                     if (!renderSquare) {
@@ -125,14 +130,16 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
         float diffX = endX - startX;
         float diffY = endY - startY;
         float diffZ = endZ - startZ;
+        // Although the default hitbox line width is 2.5, use 2 here instead so lines don't switch between taking up
+        // 2 pixels and 3 pixels arbitrarily.
         buffer.addVertex(pose, startX, startY, startZ)
                 .setNormal(pose, diffX, diffY, diffZ)
                 .setColor(color)
-                .setLineWidth(2.5F);
+                .setLineWidth(2f);
         buffer.addVertex(pose, endX, endY, endZ)
                 .setNormal(pose, diffX, diffY, diffZ)
                 .setColor(color)
-                .setLineWidth(2.5F);
+                .setLineWidth(2f);
     }
 
     @Override
