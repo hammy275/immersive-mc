@@ -2,14 +2,12 @@ package com.hammy275.immersivemc.forge.mixin;
 
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.mojang.blaze3d.textures.GpuSampler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayerGroup;
-import net.minecraft.client.renderer.chunk.ChunkSectionsToRender;
+import net.minecraft.client.renderer.SubmitNodeStorage;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -224,17 +222,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
 
+    @Shadow
+    @Final
+    private SubmitNodeStorage submitNodeStorage;
     @Unique
     private PoseStack immersiveMC$poseStack = new PoseStack();
 
     // This is from Fabric API for its LevelRenderEvents#COLLECT_SUBMITS
-    @Inject(method = "lambda$addMainPass$0", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V", args = "ldc=renderSolidFeatures"))
+    @Inject(method = "submitFeatures", at = @At("RETURN"))
     private void afterCollectSubmits(CallbackInfo ci) {
-        ClientRenderSubscriber.onWorldRender(immersiveMC$poseStack);
+        ClientRenderSubscriber.onWorldRender(immersiveMC$poseStack, submitNodeStorage);
     }
 
     // This is from Fabric API for all its LevelRenderEvents
-    @ModifyExpressionValue(method = "lambda$addMainPass$0", at = @At(value = "NEW", target = "Lcom/mojang/blaze3d/vertex/PoseStack;"))
+    @ModifyExpressionValue(method = "submitFeatures", at = @At(value = "NEW", target = "Lcom/mojang/blaze3d/vertex/PoseStack;"))
     private PoseStack onCreatePoseStack(PoseStack poseStack) {
         this.immersiveMC$poseStack = poseStack;
         return poseStack;

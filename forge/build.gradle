@@ -61,10 +61,9 @@ dependencies {
     annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.1'
 
     api "curse.maven:vivecraft-667903:${vivecraft_forge_file_id}"
-    // Commented out, since the Kotlin it includes likes to break with MixinExtras.
-    // It's fine though, the code is all in common anyways.
-    //api "curse.maven:inventoryprofilesnext-495267:8038908"
-    //api "curse.maven:libipn-679177:8038726" // Inventory Profiles Next dependency
+
+    compileOnly "curse.maven:inventoryprofilesnext-495267:8346095"
+    compileOnly "curse.maven:libipn-679177:8346015" // Inventory Profiles Next dependency
 }
 
 sourceSets.each {
