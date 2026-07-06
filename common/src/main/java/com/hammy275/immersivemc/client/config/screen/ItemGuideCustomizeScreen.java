@@ -100,38 +100,38 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
                         stack.popPose();
                     } else if (ConfigScreen.getClientConfigIfAdjusting().placementGuideMode == PlacementGuideMode.OUTLINE) {
                         stack.scale(128f * renderSize, 128f * renderSize, 128f * renderSize);
-                        bufferSource.submitCustomGeometry(stack, RenderTypes.lines(), this::cube);
+                        bufferSource.submitCustomGeometry(stack, RenderTypes.lines(), (pose, vertexConsumer) -> cube(pose, vertexConsumer, (int) color.toLong()));
                     }
                 }
         ));
     }
 
-    private void cube(PoseStack.Pose pose, VertexConsumer buffer) {
+    private void cube(PoseStack.Pose pose, VertexConsumer buffer, int color) {
         for (float y = -0.5f; y <= 0.5f; y++) {
             for (float xz = -0.5f; xz <= 0.5f; xz++) {
-                line(pose, buffer, xz, y, -0.5f, xz, y, 0.5f);
-                line(pose, buffer, -0.5f, y, xz, 0.5f, y, xz);
+                line(pose, buffer, xz, y, -0.5f, xz, y, 0.5f, color);
+                line(pose, buffer, -0.5f, y, xz, 0.5f, y, xz, color);
             }
         }
         // TODO: These below lines flash for whatever reason. Fix this!
         for (float x = -0.5f; x <= 0.5f; x++) {
             for (float z = -0.5f; z <= 0.5f; z++) {
-                line(pose, buffer, x, -0.5f, z, x, 0.5f, z);
+                line(pose, buffer, x, -0.5f, z, x, 0.5f, z, color);
             }
         }
     }
 
-    private void line(PoseStack.Pose pose, VertexConsumer buffer, float startX, float startY, float startZ, float endX, float endY, float endZ) {
+    private void line(PoseStack.Pose pose, VertexConsumer buffer, float startX, float startY, float startZ, float endX, float endY, float endZ, int color) {
         float diffX = endX - startX;
         float diffY = endY - startY;
         float diffZ = endZ - startZ;
         buffer.addVertex(pose, startX, startY, startZ)
                 .setNormal(pose, diffX, diffY, diffZ)
-                .setColor(0xFFFFFFFF)
+                .setColor(color)
                 .setLineWidth(2.5F);
         buffer.addVertex(pose, endX, endY, endZ)
                 .setNormal(pose, diffX, diffY, diffZ)
-                .setColor(0xFFFFFFFF)
+                .setColor(color)
                 .setLineWidth(2.5F);
     }
 
