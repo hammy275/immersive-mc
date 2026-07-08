@@ -17,7 +17,7 @@ public class BagHandler implements PlayerAttachmentImmersiveHandler<BagStorage> 
     @Override
     public BagStorage makeInventoryContents(ServerPlayer tracker, ServerPlayer owner) {
         return new BagStorage(ImmersiveMCPlayerStorages.getBackpackCraftingStorage(owner),
-                ActiveConfig.getActiveConfigCommon(owner).swapBagHand);
+                ActiveConfig.getActiveConfigCommon(owner));
     }
 
     @Override
