@@ -116,8 +116,8 @@ public class BackpackConfigScreen extends OptionsSubScreen {
                             (2f * (float) Math.PI);
                     poseStack.mulPose(Axis.XN.rotationDegrees(335f));
                     poseStack.mulPose(Axis.YP.rotation(rot));
-                    ImmersiveBag.getBackpackModel().renderToBuffer(poseStack,
-                            bufferSource.getBuffer(RenderType.entityCutout(ImmersiveBag.getBackpackTexture())),
+                    ImmersiveBag.getBackpackModel(ActiveConfig.active().bagMode).renderToBuffer(poseStack,
+                            bufferSource.getBuffer(RenderType.entityCutout(ImmersiveBag.getBackpackTexture(ActiveConfig.active().bagMode))),
                             15728880, OverlayTexture.NO_OVERLAY, ImmersiveBag.getBackpackColor());
                 }
         ));
