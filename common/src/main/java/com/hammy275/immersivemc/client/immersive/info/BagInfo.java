@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive.info;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.mojang.math.Vector3f;
+import com.hammy275.immersivemc.common.config.BackpackMode;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -27,6 +28,7 @@ public class BagInfo extends AbstractPlayerAttachmentImmersiveInfo {
     public boolean leftHanded = false;
     public boolean otherPlayerSwappedHands = false;
     public BoundingBox dragHitbox;
+    public BackpackMode bagMode;
 
     public BagInfo(AbstractClientPlayer owner) {
         super(owner);
@@ -52,6 +54,8 @@ public class BagInfo extends AbstractPlayerAttachmentImmersiveInfo {
         this.clearLastPos = info.clearLastPos;
         this.leftHanded = info.leftHanded;
         this.otherPlayerSwappedHands = info.otherPlayerSwappedHands;
+        this.dragHitbox = info.dragHitbox;
+        this.bagMode = info.bagMode;
     }
 
     public void setHitbox(int index, BoundingBox box) {
@@ -96,6 +100,7 @@ public class BagInfo extends AbstractPlayerAttachmentImmersiveInfo {
         public boolean ownedByLocalPlayer;
         public boolean leftHanded;
         public BoundingBox dragHitbox;
+        public BackpackMode bagMode;
 
         @Override
         public List<BoundingBox> hitboxes() {

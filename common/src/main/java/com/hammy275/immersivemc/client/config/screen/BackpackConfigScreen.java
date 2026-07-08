@@ -157,9 +157,9 @@ public class BackpackConfigScreen extends Screen {
         stack.translate(0, size * 1.75, 0);
         stack.scale(size, -size, size); // Negative multiplications here to turn it back from being inside-out
 
-        ImmersiveBag.getBackpackModel().renderToBuffer(stack,
+        ImmersiveBag.getBackpackModel(ActiveConfig.active().bagMode).renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderType.entityCutout(ImmersiveBag.getBackpackTexture())),
+                        .getBuffer(RenderType.entityCutout(ImmersiveBag.getBackpackTexture(ActiveConfig.active().bagMode))),
                 15728880, OverlayTexture.NO_OVERLAY,
                 rgb.x(),rgb.y(), rgb.z(), 1);
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
