@@ -76,7 +76,7 @@ public class ServerSubscriber {
 
     public static void onPlayerLeave(Player playerIn) {
         if (playerIn instanceof ServerPlayer player) {
-            TrackedImmersives.clearForPlayer(player);
+            TrackedImmersives.onDisconnect(player);
             ChestToOpenSet.clearForPlayer(player);
             TickerInit.onPlayerDisconnectServer(player);
         }
