@@ -18,6 +18,7 @@ import com.hammy275.immersivemc.client.model.BackpackCraftingModel;
 import com.hammy275.immersivemc.client.model.BackpackLowDetailModel;
 import com.hammy275.immersivemc.client.model.BackpackModel;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
+import com.hammy275.immersivemc.common.config.BackpackMode;
 import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.impl.BagStorage;
 import com.hammy275.immersivemc.common.obb.OBBUtil;
@@ -128,7 +129,10 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         info.renderPos = info.renderPos.add(info.backVec.scale(1d/6d));
         info.renderPos = info.renderPos.add(rightVec);
 
-        info.argb = getBackpackColor();
+        if (info.ownerIsLocalPlayer()) {
+            info.argb = getBackpackColor();
+            info.bagMode = ActiveConfig.active().bagMode;
+        }
 
         info.centerTopPos = info.renderPos.add(info.downVec.scale(-0.7));
 
@@ -251,9 +255,9 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         stack.translate(0, -3, 0); // Move model up since the model center is not the visual center
 
         // Render the model (finally!)
-        getBackpackModel().renderToBuffer(stack,
+        getBackpackModel(renderState.bagMode).renderToBuffer(stack,
                 Minecraft.getInstance().renderBuffers().bufferSource()
-                        .getBuffer(RenderTypes.entityCutout(getBackpackTexture())),
+                        .getBuffer(RenderTypes.entityCutout(getBackpackTexture(renderState.bagMode))),
                 renderState.light, OverlayTexture.NO_OVERLAY,
                 renderState.argb);
 
@@ -289,6 +293,8 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         }
         if (!info.ownerIsLocalPlayer()) {
             info.otherPlayerSwappedHands = storage.useSwappedHands;
+            info.argb = storage.bagColor;
+            info.bagMode = storage.bagMode;
         }
     }
 
@@ -324,6 +330,7 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         renderState.ownedByLocalPlayer = info.ownerIsLocalPlayer();
         renderState.leftHanded = info.leftHanded;
         renderState.dragHitbox = info.dragHitbox;
+        renderState.bagMode = info.bagMode;
     }
 
     public static int getBackpackColor() {
@@ -334,8 +341,8 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         }
     }
 
-    public static Model getBackpackModel() {
-        switch (ActiveConfig.active().bagMode) {
+    public static Model getBackpackModel(BackpackMode bagMode) {
+        switch (bagMode) {
             case BUNDLE, BUNDLE_COLORABLE -> {
                 return bundleModel;
             }
@@ -349,8 +356,8 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         }
     }
 
-    public static Identifier getBackpackTexture() {
-        switch (ActiveConfig.active().bagMode) {
+    public static Identifier getBackpackTexture(BackpackMode bagMode) {
+        switch (bagMode) {
             case BUNDLE -> {
                 return BackpackBundleModel.textureLocation;
             }
