@@ -122,6 +122,11 @@ public class TrackedImmersives {
                 attachmentDataIterator.remove();
             }
         }
+    }
+
+    public static void onDisconnect(ServerPlayer player) {
+        clearForPlayer(player);
+        // Only clear PLAYER_TRACKING on disconnect since clearForPlayer() is also called when closing the config menu
         PLAYER_TRACKING.removeAll(player);
     }
 
