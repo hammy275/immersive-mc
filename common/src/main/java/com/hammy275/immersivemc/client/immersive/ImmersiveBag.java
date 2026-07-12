@@ -405,6 +405,6 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
 
     public static boolean canGotoNextRowFromClick(BagInfo info) {
         return !info.hasSlotHovered() && (info.dragHitbox == null
-                || BoundingBox.contains(info.dragHitbox, VR.ClientAPI.getPreTickWorldPose().getHand(getBagHand()).getPos()));
+                || !BoundingBox.contains(info.dragHitbox, VR.ClientAPI.getPreTickWorldPose().getHand(getBagHand()).getPos()));
     }
 }
