@@ -43,7 +43,10 @@ public class ServerSubscriber {
         DirtyTracker.unmarkAllDirty(); // Remove dirtiness for block entities
         ImmersiveMCLevelStorage.unmarkAllItemStoragesDirty(server);
         SharedNetworkStorages.instance().getAll(LecternData.class).forEach(data -> data.bookData.setNoLongerDirty());
-        SharedNetworkStorages.instance().getAll(ChestOpennessStorage.class).forEach(ChestOpennessStorage::serverTick);
+        // Tick ChestOpennessStorages while also removing all the invalid ones (those that return false from the tick)
+        SharedNetworkStorages.instance().getAll(ChestOpennessStorage.class).stream()
+                .filter(storage -> !storage.serverTick())
+                .forEach(storage -> SharedNetworkStorages.instance().remove(storage.getLevel(), storage.getPos(), ChestOpennessStorage.class));
     }
 
     public static void onPlayerTick(Player playerIn) {
