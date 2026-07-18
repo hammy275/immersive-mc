@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.PlatformCommon;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.storage.world.ImmersiveMCPlayerStorages;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -17,12 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class ActiveConfig implements Cloneable {
     // The settings representing a disabled config.
@@ -97,6 +91,7 @@ public class ActiveConfig implements Cloneable {
     public boolean useApotheosisEnchantmentTableImmersive = true;
     public boolean useApotheosisSalvagingTableImmersive = true;
     public boolean useGrindstoneImmersive = true;
+    public boolean useTrialVaultImmersive = true;
 
     public int commonConfigVersion = 3;
     public static final String COMMON_CONFIG_VERSION = "commonConfigVersion";
@@ -310,6 +305,7 @@ public class ActiveConfig implements Cloneable {
         useApotheosisEnchantmentTableImmersive = useApotheosisEnchantmentTableImmersive && other.useApotheosisEnchantmentTableImmersive;
         useApotheosisSalvagingTableImmersive = useApotheosisSalvagingTableImmersive && other.useApotheosisSalvagingTableImmersive;
         useGrindstoneImmersive = useGrindstoneImmersive && other.useGrindstoneImmersive;
+        useTrialVaultImmersive = useTrialVaultImmersive && other.useTrialVaultImmersive;
     }
 
     /**
@@ -354,6 +350,7 @@ public class ActiveConfig implements Cloneable {
         useApotheosisEnchantmentTableImmersive = false;
         useApotheosisSalvagingTableImmersive = false;
         useGrindstoneImmersive = false;
+        useTrialVaultImmersive = false;
     }
 
     /**

@@ -28,6 +28,8 @@
     "SavedDataStorageMixin",
     "ServerEntityMixin",
     "ServerPlayerGameModeMixin",
+    "VaultBlockEntityServerInvoker",
+    "VaultSharedDataAccessor",
     "WolfInvoker",
     "throw_redirectors.BottleOEnchantingRedirect",
     "throw_redirectors.EggRedirect",
