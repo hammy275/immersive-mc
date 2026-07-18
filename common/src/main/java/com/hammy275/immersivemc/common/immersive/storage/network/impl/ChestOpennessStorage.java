@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.Immersives;
 import com.hammy275.immersivemc.client.immersive.info.ChestInfo;
 import com.hammy275.immersivemc.common.compat.Lootr;
+import com.hammy275.immersivemc.common.immersive.handler.ImmersiveHandlers;
 import com.hammy275.immersivemc.common.immersive.storage.network.SelfHandlingNetworkStorage;
 import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.SelfHandlingNetworkStorageSyncPacket;
@@ -122,7 +123,14 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
         isDirty = false;
     }
 
-    public void serverTick() {
+    /**
+     * Runs tick logic for this, returning whether the instance is still valid.
+     * @return true if this instance is valid, false if it no longer is valid.
+     */
+    public boolean serverTick() {
+        if (!ImmersiveHandlers.chestHandler.isValidBlock(pos, level)) {
+            return false;
+        }
         ServerPlayer controllingPlayer = getControllingPlayer(level);
         if (controllingPlayer == null) {
             if (controllingPlayerUUID != null) {
@@ -179,6 +187,7 @@ public class ChestOpennessStorage implements SelfHandlingNetworkStorage {
             isDirty = false;
         }
         oldOpenness = Math.max(openness, 0f);
+        return true;
     }
 
     private void doChestOpen(ServerPlayer controllingPlayer, @Nullable ChestBlockEntity other) {
