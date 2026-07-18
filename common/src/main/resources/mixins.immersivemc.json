@@ -26,6 +26,8 @@
     "ProjectileAccessor",
     "ServerEntityMixin",
     "ServerPlayerGameModeMixin",
+    "VaultBlockEntityServerInvoker",
+    "VaultSharedDataAccessor",
     "throw_redirectors.BottleOEnchantingRedirect",
     "throw_redirectors.EggRedirect",
     "throw_redirectors.EnderPearlRedirect",

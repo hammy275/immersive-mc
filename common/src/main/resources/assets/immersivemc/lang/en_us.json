@@ -117,6 +117,8 @@
   "config.immersivemc.throw.desc": "Enables/disables the ability for VR users to throw items (Tridents, Fishing Rods, and throwables such as snowballs, eggs, ender pearls, etc.). Hold the 'break block' button, then release as you throw!",
   "config.immersivemc.trapdoor": "Use Trapdoor Immersive [VR Only]",
   "config.immersivemc.trapdoor.desc": "Enables/disables the ability to open and close trapdoors using hand motions.",
+  "config.immersivemc.vault": "Use Vault Immersive [VR Only]",
+  "config.immersivemc.vault.desc": "Enables/disables the ability to physically insert the key for vaults.",
   "config.immersivemc.written_book": "Use Written Book [VR Only]",
   "config.immersivemc.written_book.desc": "Enables/disables the ability for VR players to physically interact with written books.",
 

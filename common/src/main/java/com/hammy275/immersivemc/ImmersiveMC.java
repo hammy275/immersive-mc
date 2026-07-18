@@ -15,9 +15,7 @@ import com.hammy275.immersivemc.server.ServerSubscriber;
 import com.hammy275.immersivemc.server.command.ImmersiveMCCommand;
 import com.hammy275.immersivemc.server.immersive.petting.AnythingLivingPettingHandler;
 import com.hammy275.immersivemc.server.immersive.petting.VanillaMobsPettingHandler;
-import com.hammy275.immersivemc.server.ticker.CampfireTicker;
-import com.hammy275.immersivemc.server.ticker.FeedAnimalsTicker;
-import com.hammy275.immersivemc.server.ticker.RangedGrabTickerServer;
+import com.hammy275.immersivemc.server.ticker.*;
 import com.hammy275.immersivemc.server.ticker.hand.ArmorTicker;
 import com.hammy275.immersivemc.server.ticker.hand.ButtonPushTicker;
 import com.hammy275.immersivemc.server.ticker.hand.CauldronTicker;
@@ -99,6 +97,7 @@ public class ImmersiveMC {
         TickerInit.addServerTicker(new FeedAnimalsTicker());
         TickerInit.addServerTicker(new PetTicker());
         TickerInit.addServerTicker(RangedGrabTickerServer.INSTANCE);
+        TickerInit.addServerTicker(new VaultTicker());
     }
 
     protected static void networkSetup() {

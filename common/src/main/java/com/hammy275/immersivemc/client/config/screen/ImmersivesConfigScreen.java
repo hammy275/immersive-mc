@@ -65,6 +65,7 @@ public class ImmersivesConfigScreen extends OptionsSubScreen {
             options.add(ScreenUtils.createOption("pet", config -> config.allowPetting, (config, newVal) -> config.allowPetting = newVal));
             options.add(ScreenUtils.createOption("ranged_grab", config -> config.useRangedGrabImmersive, (config, newVal) -> config.useRangedGrabImmersive = newVal));
             options.add(ScreenUtils.createOption("throw", config -> config.useThrowingImmersive, (config, newVal) -> config.useThrowingImmersive = newVal));
+            options.add(ScreenUtils.createOption("vault", config -> config.useTrialVaultImmersive, (config, newVal) -> config.useTrialVaultImmersive = newVal));
             options.add(ScreenUtils.createOption("written_book", config -> config.useWrittenBookImmersive, (config, newVal) -> config.useWrittenBookImmersive = newVal));
         }
 
