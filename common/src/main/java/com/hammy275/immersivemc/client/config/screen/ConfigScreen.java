@@ -9,6 +9,7 @@ import com.hammy275.immersivemc.common.network.Network;
 import com.hammy275.immersivemc.common.network.packet.ConfigSyncPacket;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.hammy275.immersivemc.server.immersive.TrackedImmersives;
+import com.mojang.blaze3d.Blaze3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -17,7 +18,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Util;
+
+import java.net.URI;
 
 public class ConfigScreen extends Screen {
 
@@ -30,7 +32,7 @@ public class ConfigScreen extends Screen {
     protected static int BUTTON_SPACING = BUTTON_HEIGHT + BUTTON_HEIGHT / 5;
     protected static int BUTTON_START_HEIGHT = 24;
 
-    protected static final String WIKI_URL = "https://hammy275.com/immersivemcwiki";
+    protected static final URI WIKI_URL = URI.create("https://hammy275.com/immersivemcwiki");
 
     public ConfigScreen(Screen screen) {
         super(Component.translatable("screen.immersivemc.config.title"));
@@ -80,7 +82,7 @@ public class ConfigScreen extends Screen {
                 "config.immersivemc.wiki_button",
                 new ConfirmLinkScreen((clickedYes) -> {
                     if (clickedYes) {
-                        Util.getPlatform().openUri(WIKI_URL);
+                        Blaze3D.openUri(WIKI_URL);
                     }
                     Minecraft.getInstance().gui.setScreen(this);
                 }, Component.translatable("config.immersivemc.open_wiki_message"),

@@ -31,6 +31,6 @@ public class OBBClientUtil {
     }
 
     public static void rotateStackForOBB(PoseStack stack, OBB obb) {
-        stack.mulPose(obb.getRotation());
+        stack.rotate(obb.getRotation());
     }
 }

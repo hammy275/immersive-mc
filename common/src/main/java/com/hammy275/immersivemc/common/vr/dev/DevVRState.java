@@ -2,7 +2,6 @@ package com.hammy275.immersivemc.common.vr.dev;
 
 import com.hammy275.immersivemc.ImmersiveMCClient;
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.PlatformClient;
 import com.hammy275.immersivemc.common.vr.dev.impl.DevVRBodyPartyData;
 import com.hammy275.immersivemc.common.vr.dev.impl.DevVRPose;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -13,7 +12,6 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
-import org.lwjgl.glfw.GLFW;
 import org.vivecraft.api.client.HeldInteractModule;
 import org.vivecraft.api.client.InteractModule;
 import org.vivecraft.api.client.Tracker;
@@ -55,13 +53,13 @@ public class DevVRState {
         // As it turns out, translation keys here can be strings written like this, so I'll just use that and let the
         // lack of translation not matter.
         toggleVR = new KeyMapping("ImmersiveMC Dev VR: Toggle VR",
-                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UP, ImmersiveMCClient.vrKeyCategory);
+                InputConstants.Type.KEYBOARD, InputConstants.KEY_UP, ImmersiveMCClient.vrKeyCategory);
         placeHMD = new KeyMapping("ImmersiveMC Dev VR: Place HMD",
-                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_DOWN, ImmersiveMCClient.vrKeyCategory);
+                InputConstants.Type.KEYBOARD, InputConstants.KEY_DOWN, ImmersiveMCClient.vrKeyCategory);
         placeC0 = new KeyMapping("ImmersiveMC Dev VR: Place Main Hand",
-                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT, ImmersiveMCClient.vrKeyCategory);
+                InputConstants.Type.KEYBOARD, InputConstants.KEY_RIGHT, ImmersiveMCClient.vrKeyCategory);
         placeC1 = new KeyMapping("ImmersiveMC Dev VR: Place Off Hand",
-                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT, ImmersiveMCClient.vrKeyCategory);
+                InputConstants.Type.KEYBOARD, InputConstants.KEY_LEFT, ImmersiveMCClient.vrKeyCategory);
         Platform.CLIENT.registerKeyMapping(toggleVR);
         Platform.CLIENT.registerKeyMapping(placeHMD);
         Platform.CLIENT.registerKeyMapping(placeC0);

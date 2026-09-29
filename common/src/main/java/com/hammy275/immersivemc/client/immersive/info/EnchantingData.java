@@ -157,7 +157,7 @@ public class EnchantingData {
             // Most UIs render the empty bar, then draw the full one on top.
             // Here we need to draw part of the empty and part of the full instead to prevent z-fighting issues.
             stack.pushPose();
-            stack.mulPose(Axis.YP.rotation((float) Math.PI));
+            stack.rotate(Axis.YP.rotation((float) Math.PI));
             float size = 1f / (109f * 4f);
             stack.scale(size, size, size);
             renderBarPart(false, stack, light, 0, startYFull, fullAmount);

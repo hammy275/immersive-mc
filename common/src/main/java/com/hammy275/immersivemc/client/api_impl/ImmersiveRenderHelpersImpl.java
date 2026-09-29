@@ -112,7 +112,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
                 textPos = textPos.add(0, 0, -0.15);
             } else if (facing == null) {
                 faceTowardsPlayer(stack, BoundingBox.getCenter(hitbox));
-                stack.mulPose(Axis.YP.rotationDegrees(180));
+                stack.rotate(Axis.YP.rotationDegrees(180));
                 Vec3 textMove;
                 if (VRVerify.hasAPI && VRVerify.clientInVR()) {
                     VRPose textMovePose = VR.ClientAPI.getWorldRenderPose();
@@ -125,8 +125,8 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
             }
 
             if (facing != null) {
-                stack.mulPose(Axis.YP.rotationDegrees(degreesRotation));
-                stack.mulPose(Axis.XP.rotationDegrees(upDownRot));
+                stack.rotate(Axis.YP.rotationDegrees(degreesRotation));
+                stack.rotate(Axis.XP.rotationDegrees(upDownRot));
             }
 
             ItemDisplayContext type = facing == null ? ItemDisplayContext.GROUND :
@@ -189,7 +189,7 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
         stack.translate(-renderInfo.position().x + pos.x,
                 -renderInfo.position().y + pos.y,
                 -renderInfo.position().z + pos.z);
-        stack.mulPose(renderInfo.rotation());
+        stack.rotate(renderInfo.rotation());
         stack.scale(textSize, -textSize, textSize);
         Font font = Minecraft.getInstance().font;
         float size = -font.width(text) / 2f;
@@ -222,16 +222,16 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
 
         // If north, we're good to go
         if (facing == Direction.WEST) {
-            stack.mulPose(Axis.YP.rotationDegrees(90));
+            stack.rotate(Axis.YP.rotationDegrees(90));
         } else if (facing == Direction.SOUTH) {
-            stack.mulPose(Axis.YP.rotationDegrees(180));
+            stack.rotate(Axis.YP.rotationDegrees(180));
         } else if (facing == Direction.EAST) {
-            stack.mulPose(Axis.YP.rotationDegrees(270));
+            stack.rotate(Axis.YP.rotationDegrees(270));
         } else if (facing == null) {
             faceTowardsPlayer(stack, pos);
-            stack.mulPose(Axis.YP.rotationDegrees(180));
+            stack.rotate(Axis.YP.rotationDegrees(180));
         }
-        stack.mulPose(Axis.ZN.rotationDegrees(roll));
+        stack.rotate(Axis.ZN.rotationDegrees(roll));
 
         submitNodeCollector().submitCustomGeometry(stack, RenderTypes.entityCutout(imageLocation),
                 (pose, consumer) -> {
@@ -286,9 +286,9 @@ public class ImmersiveRenderHelpersImpl implements ImmersiveRenderHelpers {
             OBBRotList rotList = OBBRotList.create()
                     .addRot(Math.atan2(ray.z, ray.x) + Math.PI / 2, RotType.YAW)
                     .addRot(-Math.atan2(ray.y, rayNoY.length()), RotType.PITCH);
-            stack.mulPose(rotList.asQuaternion());
+            stack.rotate(rotList.asQuaternion());
         } else {
-            stack.mulPose(Minecraft.getInstance().gameRenderer.gameRenderState().levelRenderState.cameraRenderState.orientation);
+            stack.rotate(Minecraft.getInstance().gameRenderer.gameRenderState().levelRenderState.cameraRenderState.orientation);
         }
     }
 }

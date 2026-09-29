@@ -38,7 +38,7 @@ public class RangedGrabTickerServer extends AbstractTicker {
             info.item.lookAt(EntityAnchorArgument.Anchor.EYES, player.position().add(0, 1, 0));
             Vec3 move = info.item.getLookAngle().multiply(moveMultiplier, moveMultiplier, moveMultiplier).add(baseVelocity);
             info.item.setDeltaMovement(move.x, move.y, move.z);
-            info.item.hurtMarked = true; // velocityChanged from MCP
+            info.item.syncVelocity = true;
             VRRumble.rumbleIfVR(player, InteractionHand.MAIN_HAND, CommonConstants.vibrationTimeRangedGrab);
         }
     }

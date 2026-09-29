@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.client.ClientUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.component.SwingAnimation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,7 +24,7 @@ public class MinecraftMixin {
     public void immersiveMC$preRightClick(CallbackInfo ci) {
         boolean doCancel = ClientLogicSubscriber.onClick(1);
         if (doCancel) {
-            this.player.swing(InteractionHand.MAIN_HAND);
+            this.player.swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT, false);
             ci.cancel();
         }
     }
@@ -40,7 +41,7 @@ public class MinecraftMixin {
         boolean doCancel = ClientLogicSubscriber.onClick(0);
         if (doCancel) {
             this.missTime = ClientUtil.immersiveLeftClickCooldown;
-            this.player.swing(InteractionHand.MAIN_HAND);
+            this.player.swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT, false);
             cir.setReturnValue(false);
         }
     }

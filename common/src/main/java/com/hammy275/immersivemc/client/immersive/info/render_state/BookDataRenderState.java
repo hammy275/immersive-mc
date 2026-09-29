@@ -57,10 +57,10 @@ public class BookDataRenderState {
 
         stack.scale(scaleSize, scaleSize, scaleSize);
 
-        stack.mulPose(Axis.YN.rotation(bookPosRot.getYawF() + (float) Math.PI / 2f));
-        stack.mulPose(Axis.ZP.rotationDegrees(90f));
-        stack.mulPose(Axis.ZP.rotation(bookPosRot.getPitchF()));
-        stack.mulPose(Axis.YN.rotation(bookPosRot.getRollF()));
+        stack.rotate(Axis.YN.rotation(bookPosRot.getYawF() + (float) Math.PI / 2f));
+        stack.rotate(Axis.ZP.rotationDegrees(90f));
+        stack.rotate(Axis.ZP.rotation(bookPosRot.getPitchF()));
+        stack.rotate(Axis.YN.rotation(bookPosRot.getRollF()));
 
         float bookOpenAmount = 1.1f;
 
@@ -115,11 +115,11 @@ public class BookDataRenderState {
             stack.translate(-cameraInfo.position().x + pos.x,
                     -cameraInfo.position().y + pos.y,
                     -cameraInfo.position().z + pos.z);
-            stack.mulPose(Axis.YN.rotation(bookPosRot.getYawF() + (float) Math.PI / 2f));
-            stack.mulPose(Axis.ZP.rotation(bookPosRot.getPitchF()));
-            stack.mulPose(Axis.XP.rotationDegrees(90f + (leftPage ? pageTilt : -pageTilt)));
-            stack.mulPose(Axis.ZP.rotationDegrees(270f));
-            stack.mulPose(Axis.YP.rotation(bookPosRot.getRollF()));
+            stack.rotate(Axis.YN.rotation(bookPosRot.getYawF() + (float) Math.PI / 2f));
+            stack.rotate(Axis.ZP.rotation(bookPosRot.getPitchF()));
+            stack.rotate(Axis.XP.rotationDegrees(90f + (leftPage ? pageTilt : -pageTilt)));
+            stack.rotate(Axis.ZP.rotationDegrees(270f));
+            stack.rotate(Axis.YP.rotation(bookPosRot.getRollF()));
             renderable.render(stack, this, leftPage, light, bookPosRot);
             stack.popPose();
         }

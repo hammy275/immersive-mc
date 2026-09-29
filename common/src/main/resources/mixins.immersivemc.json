@@ -43,7 +43,7 @@
     "BackpackTrackerMixin",
     "EnchantTableRendererMixin",
     "GuiGraphicsExtractorAccessor",
-    "ItemInHandRendererMixin",
+    "HumanoidMobRendererMixin",
     "LecternRendererMixin",
     "LocalPlayerMixin",
     "MinecraftMixin",

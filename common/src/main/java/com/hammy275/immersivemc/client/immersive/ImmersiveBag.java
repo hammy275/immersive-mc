@@ -248,9 +248,9 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
 
         stack.scale(0.5f, 0.5f, 0.5f);
 
-        stack.mulPose(Axis.YN.rotation(renderState.handYaw));
-        stack.mulPose(Axis.XN.rotation(renderState.handPitch));
-        stack.mulPose(Axis.ZP.rotation((float) Math.PI + renderState.handRoll)); // Rotate
+        stack.rotate(Axis.YN.rotation(renderState.handYaw));
+        stack.rotate(Axis.XN.rotation(renderState.handPitch));
+        stack.rotate(Axis.ZP.rotation((float) Math.PI + renderState.handRoll)); // Rotate
 
         stack.translate(0, -3, 0); // Move model up since the model center is not the visual center
 

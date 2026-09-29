@@ -90,7 +90,7 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
                         long millisPerRot = 8000;
                         float rot = (((float) (currentTimeMilli % millisPerRot)) / millisPerRot) *
                                 (2f * (float) Math.PI);
-                        stack.mulPose(Axis.YN.rotation(rot));
+                        stack.rotate(Axis.YN.rotation(rot));
                     } else {
                         renderSize = color.alphaF() / 2f;
                     }
