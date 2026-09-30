@@ -136,7 +136,7 @@ public class ClientRenderSubscriber {
                 stack.scale(size * 8f, size * 8f, size * 8f);
                 ImmersiveRenderHelpers.instance().submitNodeCollector().submitModel(cubeModel, null, stack,
                         RenderTypes.entityTranslucent(Cube1x1.textureLocation), light, OverlayTexture.NO_OVERLAY,
-                        (int) color.toLong(), null, 0x00000000, null);
+                        (int) color.toLong(), null, 0x00000000);
                 stack.popPose();
             } else if (ActiveConfig.active().placementGuideMode == PlacementGuideMode.OUTLINE) {
                 if (hitbox.isAABB()) {

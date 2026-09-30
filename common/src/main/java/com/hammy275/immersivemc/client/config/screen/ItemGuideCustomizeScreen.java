@@ -56,19 +56,19 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
                 this.height * 250 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 250 / 1000 + 16)) {
             graphics.tooltip(this.font, List.of(ClientTooltipComponent.create(Component.translatable("config.immersivemc.item_guide.desc").getVisualOrderText())),
-                    mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
+                    mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null, false);
         }
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
                 this.height * 500 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 500 / 1000 + 16)) {
             graphics.tooltip(this.font, List.of(ClientTooltipComponent.create(Component.translatable("config.immersivemc.item_guide_selected.desc").getVisualOrderText())),
-                    mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
+                    mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null, false);
         }
 
         if (ScreenUtils.mouseInBox(mouseX, mouseY, this.width * 19 / 20 - 16,
                 this.height * 750 / 1000 - 16, this.width * 19 / 20 + 16, this.height * 750 / 1000 + 16)) {
             graphics.tooltip(this.font, List.of(ClientTooltipComponent.create(Component.translatable("config.immersivemc.ranged_grab_color.desc").getVisualOrderText())),
-                    mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
+                    mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null, false);
         }
     }
 
@@ -101,7 +101,7 @@ public class ItemGuideCustomizeScreen extends OptionsSubScreen {
                         stack.scale(1024f * renderSize, 1024f * renderSize, 1024f * renderSize);
                         bufferSource.submitModel(ClientRenderSubscriber.cubeModel, null, stack,
                                 RenderTypes.entityTranslucent(Cube1x1.textureLocation), ClientUtil.maxLight, OverlayTexture.NO_OVERLAY,
-                                (int) renderColor.toLong(), null, 0x00000000, null);
+                                (int) renderColor.toLong(), null, 0x00000000);
                         stack.popPose();
                     } else if (ConfigScreen.getClientConfigIfAdjusting().placementGuideMode == PlacementGuideMode.OUTLINE) {
                         stack.scale(128f * renderSize, 128f * renderSize, 128f * renderSize);

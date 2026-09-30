@@ -50,6 +50,5 @@
     "MinecraftMixinAccessor",
     "MultiPlayerGameModeMixin",
     "VRPlayerMixin",
-    "throw_render_helpers.vivecraft.VivecraftItemRenderingMixin"
   ]
 }

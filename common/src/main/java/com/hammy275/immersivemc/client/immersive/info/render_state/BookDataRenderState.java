@@ -73,7 +73,7 @@ public class BookDataRenderState {
         bookModel.setupAnim(state);
         ImmersiveRenderHelpers.instance().submitNodeCollector().submitModel(bookModel, state, stack,
                 RenderTypes.entitySolid(writtenBookTexture), light, OverlayTexture.NO_OVERLAY,
-                0xFFFFFFFF, null, 0x00000000, null);
+                0xFFFFFFFF, null, 0x00000000);
 
         stack.popPose();
 

@@ -257,14 +257,14 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
         // Render the model (finally!)
         ImmersiveRenderHelpers.instance().submitNodeCollector().submitModel(getBackpackModel(renderState.bagMode), null, stack,
                 RenderTypes.entityCutout(getBackpackTexture(renderState.bagMode)), renderState.light, OverlayTexture.NO_OVERLAY,
-                renderState.argb, null, 0x00000000, null);
+                renderState.argb, null, 0x00000000);
 
         // Translate and render the crafting on the side of the backpack and down a bit
         // (yes, positive y in this context moves it down lol)
         stack.translate(renderState.leftHanded ? -0.75 : 0.75, 0.25, 0);
         ImmersiveRenderHelpers.instance().submitNodeCollector().submitModel(craftingModel, null, stack,
                 RenderTypes.entityCutout(BackpackCraftingModel.textureLocation), renderState.light, OverlayTexture.NO_OVERLAY,
-                0xFFFFFFFF, null, 0x00000000, null);
+                0xFFFFFFFF, null, 0x00000000);
 
         stack.popPose();
     }
