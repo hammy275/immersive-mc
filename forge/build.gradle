@@ -62,8 +62,8 @@ dependencies {
 
     api "curse.maven:vivecraft-667903:${vivecraft_forge_file_id}"
 
-    compileOnly "curse.maven:inventoryprofilesnext-495267:8346095"
-    compileOnly "curse.maven:libipn-679177:8346015" // Inventory Profiles Next dependency
+    compileOnly "curse.maven:inventoryprofilesnext-495267:8990411"
+    compileOnly "curse.maven:libipn-679177:8990265" // Inventory Profiles Next dependency
 }
 
 sourceSets.each {
