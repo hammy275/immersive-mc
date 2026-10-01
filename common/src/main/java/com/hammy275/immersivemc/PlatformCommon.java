@@ -1,8 +1,8 @@
 package com.hammy275.immersivemc;
 
+import com.hammy275.immersivemc.common.network.NetworkPacket;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.BucketItem;
@@ -27,8 +27,8 @@ public interface PlatformCommon {
     void registerCommands(Consumer<CommandDispatcher<CommandSourceStack>> listener);
 
     // Networking
-    void sendToServer(RegistryFriendlyByteBuf message);
-    void sendToPlayer(ServerPlayer player, RegistryFriendlyByteBuf message);
+    <T> void sendToServer(NetworkPacket<T> message);
+    <T> void sendToPlayer(ServerPlayer player, NetworkPacket<T> message);
 
     // Misc.
     Fluid getFluid(BucketItem bucket);

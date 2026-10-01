@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.fabric;
 
 import com.hammy275.immersivemc.PlatformCommon;
+import com.hammy275.immersivemc.common.network.NetworkPacket;
 import com.hammy275.immersivemc.mixin.BucketItemAccessor;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.api.EnvType;
@@ -11,7 +12,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.BucketItem;
@@ -68,12 +68,12 @@ public class PlatformCommonImpl implements PlatformCommon {
 
     // Networking
     @Override
-    public void sendToServer(RegistryFriendlyByteBuf message) {
-        ClientPlayNetworking.send(new BufferPacket(message));
+    public <T> void sendToServer(NetworkPacket<T> message) {
+        ClientPlayNetworking.send(message);
     }
     @Override
-    public void sendToPlayer(ServerPlayer player, RegistryFriendlyByteBuf message) {
-        ServerPlayNetworking.send(player, new BufferPacket(message));
+    public <T> void sendToPlayer(ServerPlayer player, NetworkPacket<T> message) {
+        ServerPlayNetworking.send(player, message);
     }
 
     // Misc.

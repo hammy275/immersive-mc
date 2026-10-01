@@ -2,7 +2,7 @@ package com.hammy275.immersivemc.neoforge;
 
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
-import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.NetworkPacket;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
@@ -35,8 +35,9 @@ public class ClientSetup {
         NeoForge.EVENT_BUS.addListener((SubmitCustomGeometryEvent event) -> ClientRenderSubscriber.onWorldRender(event.getPoseStack()));
         NeoForge.EVENT_BUS.addListener((RenderLevelStageEvent.AfterTranslucentBlocks event) -> ClientRenderSubscriber.onTransparentRender(event.getPoseStack()));
         modBus.addListener((RegisterPictureInPictureRenderersEvent event) -> pipRenderersToRegister.forEach(renderer -> renderer.register(event)));
-        modBus.addListener((RegisterClientPayloadHandlersEvent event) -> event.register(BufferPacket.ID,
-                (packet, ctx) -> Network.INSTANCE.doReceive(null, packet.buffer())));
+        modBus.addListener((RegisterClientPayloadHandlersEvent event) -> event.register(NetworkPacket.ID,
+                (packet, ctx) -> ctx.enqueueWork(() ->
+                        packet.handle(null))));
     }
 
     public record PiPRenderer<S extends PictureInPictureRenderState>(Class<S> stateClass, Function<MultiBufferSource.BufferSource, PictureInPictureRenderer<S>> factory) {

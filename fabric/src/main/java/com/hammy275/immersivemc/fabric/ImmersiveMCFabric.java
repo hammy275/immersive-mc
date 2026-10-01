@@ -4,7 +4,7 @@ import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.compat.Lootr;
-import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.NetworkPacket;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
@@ -19,29 +19,15 @@ public class ImmersiveMCFabric implements ModInitializer {
         if (Platform.COMMON.isClient()) {
             Platform.CLIENT = new PlatformClientImpl();
         }
-        PayloadTypeRegistry.clientboundPlay().register(BufferPacket.ID, BufferPacket.CODEC);
-        PayloadTypeRegistry.serverboundPlay().register(BufferPacket.ID, BufferPacket.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(BufferPacket.ID, ((payload, context) -> {
-            payload.buffer().retain();
-            context.server().execute(() -> {
-                try {
-                    Network.INSTANCE.doReceive(context.player(), payload.buffer());
-                } finally {
-                    payload.buffer().release();
-                }
-            });
-        }));
+        PayloadTypeRegistry.clientboundPlay().register(NetworkPacket.ID, NetworkPacket.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(NetworkPacket.ID, NetworkPacket.CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(NetworkPacket.ID,
+                ((payload, context) ->
+                        context.server().execute(() -> payload.handle(context.player()))));
         if (Platform.COMMON.isClient()) {
-            ClientPlayNetworking.registerGlobalReceiver(BufferPacket.ID, (payload, context) -> {
-                payload.buffer().retain();
-                context.client().execute(() -> {
-                    try {
-                        Network.INSTANCE.doReceive(null, payload.buffer());
-                    } finally {
-                        payload.buffer().release();
-                    }
-                });
-            });
+            ClientPlayNetworking.registerGlobalReceiver(NetworkPacket.ID,
+                    (payload, context) ->
+                            context.client().execute(() -> payload.handle(null)));
             LevelRenderEvents.COLLECT_SUBMITS.register(context ->
                     ClientRenderSubscriber.onWorldRender(context.poseStack()));
             LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN.register(context ->

@@ -1,15 +1,8 @@
 package com.hammy275.immersivemc.common.network;
 
-import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
-import com.hammy275.immersivemc.PlatformCommon;
-import com.hammy275.immersivemc.client.ClientUtil;
-import io.netty.buffer.Unpooled;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import org.apache.logging.log4j.Level;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +18,11 @@ public class NetworkChannel {
     }
 
     public <T> void sendToServer(T message) {
-        Platform.COMMON.sendToServer(encode(message, ClientUtil.getRegistryAccess()));
+        Platform.COMMON.sendToServer(new NetworkPacket<>(message, getRegistrationData(message)));
     }
 
     public <T> void sendToPlayer(ServerPlayer player, T message) {
-        Platform.COMMON.sendToPlayer(player, encode(message, player.registryAccess()));
+        Platform.COMMON.sendToPlayer(player, new NetworkPacket<>(message, getRegistrationData(message)));
     }
 
     public <T> void sendToPlayers(Iterable<ServerPlayer> players, T message) {
@@ -37,35 +30,19 @@ public class NetworkChannel {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> void doReceive(@Nullable ServerPlayer player, RegistryFriendlyByteBuf buffer) {
-        NetworkRegistrationData<T> data = (NetworkRegistrationData<T>) packets.get(buffer.readInt());
-        T message;
-        try {
-            message = data.decoder.apply(buffer);
-        } catch (Exception e) {
-            ImmersiveMC.LOGGER.log(Level.ERROR, "Error while decoding packet.", e);
-            return;
-        }
-        data.handler.accept(message, player);
-    }
-
-    private <T> RegistryFriendlyByteBuf encode(T message, RegistryAccess access) {
-        NetworkRegistrationData<T> data = getData(message);
-        RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), access);
-        buffer.writeInt(data.id());
-        data.encoder().accept(message, buffer);
-        return buffer;
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> NetworkRegistrationData<T> getData(T message) {
-        NetworkRegistrationData<T> data = (NetworkRegistrationData<T>) packets.stream()
+    public <T> NetworkChannel.NetworkRegistrationData<T> getRegistrationData(T message) {
+        NetworkChannel.NetworkRegistrationData<T> data = (NetworkChannel.NetworkRegistrationData<T>) packets.stream()
                 .filter(d -> d.clazz == message.getClass())
                 .findFirst().orElse(null);
         if (data == null) {
             throw new IllegalArgumentException("Packet type %s not registered!".formatted(message.getClass().getName()));
         }
         return data;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> NetworkChannel.NetworkRegistrationData<T> getRegistrationData(int index) {
+        return (NetworkRegistrationData<T>) packets.get(index);
     }
 
     public record NetworkRegistrationData<T>(int id, Class<T> clazz, BiConsumer<T, RegistryFriendlyByteBuf> encoder,
