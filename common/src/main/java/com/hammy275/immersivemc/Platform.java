@@ -1,9 +1,9 @@
 package com.hammy275.immersivemc;
 
+import com.hammy275.immersivemc.common.network.NetworkPacket;
 import com.mojang.brigadier.CommandDispatcher;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.BucketItem;
@@ -60,11 +60,11 @@ public class Platform {
 
     // Networking
     @ExpectPlatform
-    public static void sendToServer(RegistryFriendlyByteBuf message) {
+    public static <T> void sendToServer(NetworkPacket<T> message) {
         throw new RuntimeException("@ExpectPlatform should have replaced this");
     }
     @ExpectPlatform
-    public static void sendToPlayer(ServerPlayer player, RegistryFriendlyByteBuf message) {
+    public static <T> void sendToPlayer(ServerPlayer player, NetworkPacket<T> message) {
         throw new RuntimeException("@ExpectPlatform should have replaced this");
     }
 

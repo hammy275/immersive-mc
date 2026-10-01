@@ -1,7 +1,7 @@
 package com.hammy275.immersivemc.forge;
 
 import com.hammy275.immersivemc.ImmersiveMC;
-import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.NetworkPacket;
 import com.hammy275.immersivemc.common.util.Util;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.IExtensionPoint;
@@ -17,8 +17,8 @@ public class ImmersiveMCForge {
     public static final SimpleChannel NETWORK = ChannelBuilder.named(Util.id("network"))
             .optional()
             .simpleChannel()
-            .play().bidirectional().add(BufferPacket.class, BufferPacket.CODEC, (bufferPacket, context) -> {
-                context.enqueueWork(() -> Network.INSTANCE.doReceive(context.getSender(), bufferPacket.buffer()));
+            .play().bidirectional().add(NetworkPacket.class, NetworkPacket.CODEC, (networkPacket, context) -> {
+                context.enqueueWork(() -> networkPacket.handle(context.getSender()));
                 context.setPacketHandled(true);
             })
             .build();
