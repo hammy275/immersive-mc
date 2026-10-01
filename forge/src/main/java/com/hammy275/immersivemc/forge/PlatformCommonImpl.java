@@ -1,9 +1,9 @@
 package com.hammy275.immersivemc.forge;
 
 import com.hammy275.immersivemc.PlatformCommon;
+import com.hammy275.immersivemc.common.network.NetworkPacket;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.BucketItem;
@@ -81,12 +81,12 @@ public class PlatformCommonImpl implements PlatformCommon {
 
     // Networking
     @Override
-    public void sendToServer(RegistryFriendlyByteBuf message) {
-        ImmersiveMCForge.NETWORK.send(new BufferPacket(message), PacketDistributor.SERVER.noArg());
+    public <T> void sendToServer(NetworkPacket<T> message) {
+        ImmersiveMCForge.NETWORK.send(message, PacketDistributor.SERVER.noArg());
     }
     @Override
-    public void sendToPlayer(ServerPlayer player, RegistryFriendlyByteBuf message) {
-        ImmersiveMCForge.NETWORK.send(new BufferPacket(message), PacketDistributor.PLAYER.with(player));
+    public <T> void sendToPlayer(ServerPlayer player, NetworkPacket<T> message) {
+        ImmersiveMCForge.NETWORK.send(message, PacketDistributor.PLAYER.with(player));
     }
 
     // Misc.
