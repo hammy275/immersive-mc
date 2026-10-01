@@ -3,7 +3,7 @@ package com.hammy275.immersivemc.neoforge;
 import com.hammy275.immersivemc.ImmersiveMC;
 import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.common.compat.Lootr;
-import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.NetworkPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -17,8 +17,10 @@ public class ImmersiveMCNeoForge {
     public ImmersiveMCNeoForge(IEventBus modBus) {
         modBus.addListener((RegisterPayloadHandlersEvent event) -> {
             PayloadRegistrar registrar = event.registrar(ImmersiveMC.MOD_ID);
-            registrar.optional().playBidirectional(BufferPacket.ID, BufferPacket.CODEC,
-                    (packet, ctx) -> ctx.enqueueWork(() -> Network.INSTANCE.doReceive((ServerPlayer) ctx.player(), packet.buffer())));
+            registrar.optional().playBidirectional(NetworkPacket.ID, NetworkPacket.CODEC,
+                    (packet, ctx) ->
+                            ctx.enqueueWork(() ->
+                                    packet.handle((ServerPlayer) ctx.player())));
         });
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
             ClientSetup.doClientSetup(modBus);

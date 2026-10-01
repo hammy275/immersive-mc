@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.compat.Lootr;
 import com.hammy275.immersivemc.common.network.Network;
+import com.hammy275.immersivemc.common.network.NetworkPacket;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
@@ -15,29 +16,15 @@ public class ImmersiveMCFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        PayloadTypeRegistry.playS2C().register(BufferPacket.ID, BufferPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(BufferPacket.ID, BufferPacket.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(BufferPacket.ID, ((payload, context) -> {
-            payload.buffer().retain();
-            context.server().execute(() -> {
-                try {
-                    Network.INSTANCE.doReceive(context.player(), payload.buffer());
-                } finally {
-                    payload.buffer().release();
-                }
-            });
-        }));
+        PayloadTypeRegistry.playS2C().register(NetworkPacket.ID, NetworkPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(NetworkPacket.ID, NetworkPacket.CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(NetworkPacket.ID,
+                ((payload, context) ->
+                        context.server().execute(() -> payload.handle(context.player()))));
         if (Platform.isClient()) {
-            ClientPlayNetworking.registerGlobalReceiver(BufferPacket.ID, (payload, context) -> {
-                payload.buffer().retain();
-                context.client().execute(() -> {
-                    try {
-                        Network.INSTANCE.doReceive(null, payload.buffer());
-                    } finally {
-                        payload.buffer().release();
-                    }
-                });
-            });
+            ClientPlayNetworking.registerGlobalReceiver(NetworkPacket.ID,
+                    (payload, context) ->
+                            context.client().execute(() -> payload.handle(null)));
             WorldRenderEvents.AFTER_ENTITIES.register(context ->
                     ClientRenderSubscriber.onWorldRender(context.matrices()));
         }
