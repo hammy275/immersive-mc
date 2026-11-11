@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.client.immersive.ModifierPressState;
 import com.hammy275.immersivemc.api.client.immersive.PlayerAttachmentImmersive;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
@@ -51,7 +52,7 @@ public class ImmersiveHitboxes implements PlayerAttachmentImmersive<ImmersiveHit
     }
 
     @Override
-    public int handleHitboxInteract(ImmersiveHitboxesInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
+    public int handleHitboxInteract(ImmersiveHitboxesInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, ModifierPressState modifierState) {
         if (hand == InteractionHand.OFF_HAND) {
             int index = hitboxIndices.get(0);
             if (index == ImmersiveHitboxesInfo.BAG_BACK_INDEX) {

@@ -297,7 +297,7 @@ public class BlockBasedImmersiveBuilderImpl<E, ER, S extends NetworkStorage> imp
         clone.hitboxes = new ArrayList<>(this.hitboxes);
         clone.lightPositionOffsets = new ArrayList<>(this.lightPositionOffsets);
         clone.positioningMode = this.positioningMode;
-        clone.hitboxInteractHandler = (a, b, c, d, modifierPressed) -> -1;
+        clone.hitboxInteractHandler = (a, b, c, d, modifierState) -> -1;
         clone.vrOnly = this.vrOnly;
         clone.airCheckPositionOffsets = new ArrayList<>(this.airCheckPositionOffsets);
         clone.extraStorageConsumer = null;

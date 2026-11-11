@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveClientConstants;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.client.immersive.ModifierPressState;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
@@ -73,7 +74,7 @@ public class ImmersiveBeacon extends AbstractBlockBasedImmersive<BeaconInfo, Bea
     }
 
     @Override
-    public int handleHitboxInteract(BeaconInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
+    public int handleHitboxInteract(BeaconInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, ModifierPressState modifierState) {
         Identifier id = getHandler().getID();
         BiConsumer<HeldImageImmersiveInfo<Integer>, VRBodyPartData> heldItemTicker = !useGrabBeacon() ? null : (imageInfo, handData) -> {
             if (!Immersives.immersiveBeacon.getTrackedObjects().contains(info)) {
@@ -136,7 +137,7 @@ public class ImmersiveBeacon extends AbstractBlockBasedImmersive<BeaconInfo, Bea
                 return -1;
             }
         } else {
-            ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(0), hand, false);
+            ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(0), hand, ModifierPressState.NOT_PRESSED);
         }
         return ImmersiveClientConstants.instance().defaultCooldown();
     }

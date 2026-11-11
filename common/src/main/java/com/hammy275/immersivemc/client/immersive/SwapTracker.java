@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveRenderState;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.subscribe.ClientVRSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.vr.VRVerify;
@@ -89,21 +90,21 @@ public class SwapTracker {
             this.rightClickCooldown--;
         }
 
-        if (this.state == SwapState.NONE && inputHitbox >= 0) {
-            if (Minecraft.getInstance().options.keyAttack.isDown()) {
+        if (this.state == SwapState.NONE && inputHitbox >= 0 && ClientUtil.interactionsAllowed()) {
+            if (ClientUtil.getLeftClick().isDown()) {
                 setState(SwapState.DRAG, inputHitbox);
             } else {
                 setState(SwapState.PLACE, inputHitbox);
             }
         } else if (!inDragHitbox) {
             setState(SwapState.NONE, -1);
-        } else if (this.state != SwapState.DRAG && Minecraft.getInstance().options.keyAttack.isDown()) {
+        } else if (this.state != SwapState.DRAG && ClientUtil.getLeftClick().isDown() && ClientUtil.interactionsAllowed()) {
             setState(SwapState.DRAG, inputHitbox);
-        } else if (this.state == SwapState.PLACE && inDragHitbox && inputHitbox != this.mostRecentHitbox) {
+        } else if (this.state == SwapState.PLACE && inDragHitbox && inputHitbox != this.mostRecentHitbox && ClientUtil.interactionsAllowed()) {
             setState(SwapState.DRAG, inputHitbox);
-        } else if (this.state == SwapState.DRAG && this.ticksInMostRecent >= 8 && this.mostRecentHitbox == inputHitbox) {
+        } else if (this.state == SwapState.DRAG && this.ticksInMostRecent >= 8 && this.mostRecentHitbox == inputHitbox && ClientUtil.interactionsAllowed()) {
             setState(SwapState.PLACE, inputHitbox);
-        } else if (this.state == SwapState.DRAG && !Minecraft.getInstance().options.keyAttack.isDown() && this.leftClickWasDown) {
+        } else if (this.state == SwapState.DRAG && !ClientUtil.getLeftClick().isDown() && this.leftClickWasDown && ClientUtil.interactionsAllowed()) {
             setState(SwapState.PLACE, inputHitbox);
         }
 
@@ -116,7 +117,7 @@ public class SwapTracker {
             this.lastImmersive = newLI;
         }
         if (this.state == SwapState.PLACE) {
-            this.rightClickCooldown = this.lastImmersive.doHitboxInteract(List.of(inputHitbox), this.hand, getCooldownToPass(), Minecraft.getInstance().options.keyAttack.isDown());
+            this.rightClickCooldown = this.lastImmersive.doHitboxInteract(List.of(inputHitbox), this.hand, getCooldownToPass(), ClientUtil.getLeftClick().isDown());
         } else if (this.state == SwapState.DRAG && inputHitbox >= 0) {
             queuedPlacements.add(inputHitbox);
         }
@@ -151,7 +152,7 @@ public class SwapTracker {
             maybeDoDragPlace();
             this.leftClickWasDown = false;
         } else {
-            this.leftClickWasDown = this.leftClickWasDown || Minecraft.getInstance().options.keyAttack.isDown();
+            this.leftClickWasDown = this.leftClickWasDown || ClientUtil.getLeftClick().isDown();
         }
         if (newState == SwapState.NONE) {
             this.lastImmersive = null;
@@ -184,7 +185,7 @@ public class SwapTracker {
 
         public int doHitboxInteract(List<Integer> slots, InteractionHand hand, int currentCooldown, boolean leftClickDown) {
             if (currentCooldown <= 0) {
-                int cooldown = immersive.handleHitboxInteract(info, Minecraft.getInstance().player, slots, hand, leftClickDown);
+                int cooldown = immersive.handleHitboxInteract(info, Minecraft.getInstance().player, slots, hand, ClientUtil.getPressState(leftClickDown));
                 ImmersiveClientLogicHelpers.instance().setCooldown(cooldown);
                 return cooldown;
             }

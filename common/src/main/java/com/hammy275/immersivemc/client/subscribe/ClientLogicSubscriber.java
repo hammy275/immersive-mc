@@ -343,7 +343,7 @@ public class ClientLogicSubscriber {
                     int numHitboxes = info.getAllHitboxes().size();
                     for (int i = 0; i < numHitboxes; i++) {
                         if (!info.getItem(i).isEmpty()) {
-                            ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(9), InteractionHand.MAIN_HAND, false);
+                            ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), List.of(9), InteractionHand.MAIN_HAND, ModifierPressState.NOT_PRESSED);
                             return true;
                         }
                     }
@@ -413,7 +413,7 @@ public class ClientLogicSubscriber {
                     } else {
                         SwapTracker.c0.tick(null, null, -1, inDragHitbox(singleton, info, start, end));
                         if (SwapTracker.c0.getCooldown() <= 0) {
-                            int res = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(closest.get()), InteractionHand.MAIN_HAND, Minecraft.getInstance().options.keyAttack.isDown());
+                            int res = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(closest.get()), InteractionHand.MAIN_HAND, ClientUtil.getPressState());
                             return res >= 0 ? res : null;
                         } else {
                             return SwapTracker.c0.getCooldown(); // Return cooldown instead of null so we don't do another SwapTracker tick

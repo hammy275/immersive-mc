@@ -5,6 +5,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
+import com.hammy275.immersivemc.api.client.immersive.ModifierPressState;
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.book.WrittenBookHelpers;
@@ -47,7 +48,7 @@ public class ImmersiveLectern implements BlockBasedImmersive<LecternInfo, Lecter
     }
 
     @Override
-    public int handleHitboxInteract(LecternInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
+    public int handleHitboxInteract(LecternInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, ModifierPressState modifierState) {
         int hitboxIndex = hitboxIndices.get(0);
         if (hitboxIndex <= 2) {
             if (VRVerify.clientInVR()) { // Page turning handled in ClientBookData#tick() for VR players

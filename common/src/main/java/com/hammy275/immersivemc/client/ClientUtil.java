@@ -6,6 +6,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveMCClientRegistration;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersiveInfo;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
+import com.hammy275.immersivemc.api.client.immersive.ModifierPressState;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.client.config.screen.ConfigScreen;
 import com.hammy275.immersivemc.client.immersive.Immersives;
@@ -18,6 +19,7 @@ import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.gizmos.DrawableGizmoPrimitives;
@@ -38,6 +40,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.vivecraft.api.data.VRBodyPartData;
 import org.vivecraft.api.data.VRPose;
+import org.vivecraft.client.VivecraftVRMod;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -48,6 +51,34 @@ public class ClientUtil {
 
     public static final int maxLight = LightCoordsUtil.pack(15, 15);
     public static int immersiveLeftClickCooldown = 0;
+
+    public static ModifierPressState getPressState() {
+        return getPressState(getLeftClick().isDown());
+    }
+
+    public static ModifierPressState getPressState(boolean leftClickDown) {
+        if (ActiveConfig.active().requireTriggerForImmersiveInteractions) {
+            return ModifierPressState.FORCE_PRESSED;
+        }
+        return leftClickDown ? ModifierPressState.PRESSED : ModifierPressState.NOT_PRESSED;
+    }
+
+    public static boolean interactionsAllowed() {
+        return !VRVerify.clientInVR() || getLeftClick().isDown() || !ActiveConfig.active().requireTriggerForImmersiveInteractions;
+    }
+
+    /**
+     * Get the left click key for interaction. Returns actual left-click in flatscreen and Vivecraft's trigger key
+     * in VR.
+     * @return The "left click" key for ImmersiveMC interaction.
+     */
+    public static KeyMapping getLeftClick() {
+        if (VRVerify.clientInVR() && !VR.usingDevVR) {
+            return VivecraftVRMod.INSTANCE.keyVRInteract;
+        } else {
+            return Minecraft.getInstance().options.keyAttack;
+        }
+    }
 
     public static boolean isVROnly(Immersive<?, ?, ?> immersive) {
         if (immersive instanceof BlockBasedImmersive<?, ?, ?> blockBased) {

@@ -22,10 +22,9 @@ public interface HitboxInteractHandler<E> {
      * @param player The player interacting with the hitbox.
      * @param slots The slots or hitboxIndices being interacted with.
      * @param hand Which hand is interacting with the hitbox.
-     * @param modifierPressed Whether the modifier key (usually the button mapped to breaking blocks) was held for the
-     *                        interaction.
-     * @return A cooldown time. See {@link Immersive#handleHitboxInteract(ImmersiveInfo, LocalPlayer, List, InteractionHand, boolean)}
+     * @param modifierState The state of the modifier key. See {@link ModifierPressState}.
+     * @return A cooldown time. See {@link Immersive#handleHitboxInteract(ImmersiveInfo, LocalPlayer, List, InteractionHand, ModifierPressState)}
      * for more info.
      */
-    int apply(BuiltBlockBasedImmersiveInfo<E> info, Player player, List<Integer> slots, InteractionHand hand, boolean modifierPressed);
+    int apply(BuiltBlockBasedImmersiveInfo<E> info, Player player, List<Integer> slots, InteractionHand hand, ModifierPressState modifierState);
 }

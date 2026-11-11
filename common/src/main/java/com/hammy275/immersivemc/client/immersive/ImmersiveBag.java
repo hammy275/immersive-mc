@@ -3,6 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.client.immersive.ModifierPressState;
 import com.hammy275.immersivemc.api.client.immersive.PlayerAttachmentImmersive;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.OBB;
@@ -76,19 +77,19 @@ public class ImmersiveBag implements PlayerAttachmentImmersive<BagInfo, BagInfo.
     }
 
     @Override
-    public int handleHitboxInteract(BagInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
+    public int handleHitboxInteract(BagInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, ModifierPressState modifierState) {
         int firstSlot = hitboxIndices.get(0);
         if (firstSlot < 27) {
             if (IPN.ipnCompat.available()) {
                 IPN.ipnCompat.doInventorySwap(firstSlot + 9, player.getInventory().getSelectedSlot());
             } else {
-                ImmersiveClientLogicHelpers.instance().sendSwapPacket(getHandler(), player, List.of(firstSlot), hand, modifierPressed);
+                ImmersiveClientLogicHelpers.instance().sendSwapPacket(getHandler(), player, List.of(firstSlot), hand, modifierState);
                 Swap.handleInventorySwap(player, firstSlot + 9, hand);
 
             }
         } else {
             ImmersiveClientLogicHelpers.instance().sendSwapPacket(getHandler(), player,
-                    hitboxIndices.stream().filter(slot -> slot >= 27).toList(), hand, modifierPressed);
+                    hitboxIndices.stream().filter(slot -> slot >= 27).toList(), hand, modifierState);
         }
         return 8;
     }

@@ -14,8 +14,11 @@ public class VR {
     public static VRClientAPI ClientAPI = VRClientAPI.instance();
     public static VRServerAPI ServerAPI = VRServerAPI.instance();
 
+    public static final boolean usingDevVR;
+
     static {
-        if (CommonConstants.devFakeVRMode) {
+        usingDevVR = CommonConstants.devFakeVRMode;
+        if (usingDevVR) {
             API = new DevVRAPI();
             ClientAPI = new DevVRClientAPI();
             ServerAPI = new DevVRServerAPI();

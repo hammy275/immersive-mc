@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.client.immersive;
 
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
 import com.hammy275.immersivemc.api.client.immersive.BlockBasedImmersive;
+import com.hammy275.immersivemc.api.client.immersive.ModifierPressState;
 import com.hammy275.immersivemc.api.common.hitbox.HitboxInfo;
 import com.hammy275.immersivemc.client.immersive.info.DragImmersiveInfo;
 import com.hammy275.immersivemc.client.immersive.info.render_state.DragRenderState;
@@ -68,7 +69,7 @@ public abstract class AbstractDragImmersive implements BlockBasedImmersive<DragI
     }
 
     @Override
-    public int handleHitboxInteract(DragImmersiveInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
+    public int handleHitboxInteract(DragImmersiveInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, ModifierPressState modifierState) {
         return -1; // Cooldown isn't handled by Immersive system since we interact with hitboxes nonstop
     }
 

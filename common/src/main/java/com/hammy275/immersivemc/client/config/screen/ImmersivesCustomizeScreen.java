@@ -22,6 +22,9 @@ public class ImmersivesCustomizeScreen extends OptionsSubScreen {
 
     @Override
     protected void addOptions() {
+        if (VRVerify.clientInVR()) {
+            ScreenUtils.addOptionIfClient("always_need_trigger", config -> config.requireTriggerForImmersiveInteractions, (config, newVal) -> config.requireTriggerForImmersiveInteractions = newVal, this.list);
+        }
         ScreenUtils.addOptionIfClient("disable_vanilla_guis", config -> config.disableVanillaInteractionsForSupportedImmersives, (config, newVal) -> config.disableVanillaInteractionsForSupportedImmersives = newVal, this.list);
         ScreenUtils.addOptionIfClient("return_items", config -> config.returnItemsWhenLeavingImmersives, (config, newVal) -> config.returnItemsWhenLeavingImmersives = newVal, this.list);
         ScreenUtils.addOptionIfClient("do_rumble", config -> config.doVRControllerRumble, (config, newVal) -> config.doVRControllerRumble = newVal, this.list);

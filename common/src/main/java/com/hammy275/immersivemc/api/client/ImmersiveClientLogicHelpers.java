@@ -2,6 +2,7 @@ package com.hammy275.immersivemc.api.client;
 
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.ModifierPressState;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.ItemSwapAmount;
@@ -35,7 +36,7 @@ public interface ImmersiveClientLogicHelpers extends ImmersiveLogicHelpers {
     /**
      * Sets both the vanilla, right-click cooldown and ImmersiveMC's VR cooldown for interacting with Immersives
      * (if the player is in VR) to some number of ticks. You likely don't need this, as the value returned from
-     * {@link Immersive#handleHitboxInteract(ImmersiveInfo, LocalPlayer, List, InteractionHand, boolean)} is set as the
+     * {@link Immersive#handleHitboxInteract(ImmersiveInfo, LocalPlayer, List, InteractionHand, com.hammy275.immersivemc.api.client.immersive.ModifierPressState)} is set as the
      * cooldown where appropriate. This is mainly useful if you're working outside of ImmersiveMC's hitbox system.
      * @param cooldown The cooldown to set in ticks. This will be increased for VR players, see the aforementioned
      *                 method for more info.
@@ -51,10 +52,9 @@ public interface ImmersiveClientLogicHelpers extends ImmersiveLogicHelpers {
      * @param pos The position of the block that a swap is being performed at.
      * @param slots The slot numbers that the right-click is taking place for.
      * @param hand The hand which is performing the swap.
-     * @param modifierPressed Whether the modifier key (usually the button mapped to breaking blocks) was held for the
-     *                        interaction.
+     * @param modifierState The state of the modifier key. See {@link ModifierPressState}.
      */
-    public void sendSwapPacket(BlockPos pos, List<Integer> slots, InteractionHand hand, boolean modifierPressed);
+    public void sendSwapPacket(BlockPos pos, List<Integer> slots, InteractionHand hand, ModifierPressState modifierState);
 
     /**
      * Sends a packet to the server telling it to run
@@ -66,11 +66,10 @@ public interface ImmersiveClientLogicHelpers extends ImmersiveLogicHelpers {
      * @param owner The owner of the Immersive to swap into.
      * @param slots The slot numbers that the right-click is taking place for.
      * @param hand The hand which is performing the swap.
-     * @param modifierPressed Whether the modifier key (usually the button mapped to breaking blocks) was held for the
-     *                        interaction.
+     * @param modifierState The state of the modifier key. See {@link ModifierPressState}.
      */
     public void sendSwapPacket(PlayerAttachmentImmersiveHandler<?> handler, AbstractClientPlayer owner,
-                               List<Integer> slots, InteractionHand hand, boolean modifierPressed);
+                               List<Integer> slots, InteractionHand hand, ModifierPressState modifierState);
 
     /**
      * Given the local player and the position of an immersive block, returns the best direction the block should face

@@ -8,7 +8,8 @@ public class CommonConstants {
     // 3.0: 1.6.0 Alpha 1
     // 4.0: 1.6.0 Alpha 3
     // 5.0: 1.6.0 Alpha 4
-    public static final int API_MAJOR_VERSION = 5;
+    // 6.0: 1.6.0 Beta 2
+    public static final int API_MAJOR_VERSION = 6;
     public static final int API_MINOR_VERSION = 0;
 
     public static final int distanceToRemoveImmersive = 16; // Distance to stop tracking immersives from

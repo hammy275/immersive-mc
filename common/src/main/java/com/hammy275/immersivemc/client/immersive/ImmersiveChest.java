@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveClientConstants;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
+import com.hammy275.immersivemc.api.client.immersive.ModifierPressState;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.api.common.hitbox.OBBFactory;
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
@@ -64,9 +65,9 @@ public class ImmersiveChest extends AbstractBlockBasedImmersive<ChestInfo, Chest
     }
 
     @Override
-    public int handleHitboxInteract(ChestInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
+    public int handleHitboxInteract(ChestInfo info, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, ModifierPressState modifierState) {
         if (!slotVisible(info.getDirectOpenness(), hitboxIndices.get(0))) return -1;
-        ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), hitboxIndices, hand, false);
+        ImmersiveClientLogicHelpers.instance().sendSwapPacket(info.getBlockPosition(), hitboxIndices, hand, ModifierPressState.NOT_PRESSED);
         return ImmersiveClientConstants.instance().defaultCooldown();
     }
 

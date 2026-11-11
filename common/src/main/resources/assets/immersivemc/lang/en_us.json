@@ -123,6 +123,8 @@
   "config.immersivemc.written_book.desc": "Enables/disables the ability for VR players to physically interact with written books.",
 
   "screen.immersivemc.immersives_customize.title": "Customize Immersives",
+  "config.immersivemc.always_need_trigger": "Require Trigger Press for Immersive Interactions [VR Only]",
+  "config.immersivemc.always_need_trigger.desc": "Always require the trigger button to be pressed to interact with any Immersives.",
   "config.immersivemc.disable_vanilla_guis": "Disable Vanilla Interactions",
   "config.immersivemc.disable_vanilla_guis.desc": "Disables the vanilla GUIs and other vanilla interactions for any immersives that can be interacted with and enabled in the ImmersiveMC settings.",
   "config.immersivemc.return_items": "Return Items",

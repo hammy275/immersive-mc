@@ -3,10 +3,7 @@ package com.hammy275.immersivemc.client.immersive;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.ImmersiveConfigScreenInfo;
 import com.hammy275.immersivemc.api.client.ImmersiveRenderHelpers;
-import com.hammy275.immersivemc.api.client.immersive.BuiltBlockBasedImmersive;
-import com.hammy275.immersivemc.api.client.immersive.BuiltBlockBasedImmersiveInfo;
-import com.hammy275.immersivemc.api.client.immersive.BuiltBlockBasedImmersiveRenderState;
-import com.hammy275.immersivemc.api.client.immersive.HitboxPositioningMode;
+import com.hammy275.immersivemc.api.client.immersive.*;
 import com.hammy275.immersivemc.api.common.ImmersiveLogicHelpers;
 import com.hammy275.immersivemc.api.common.immersive.BlockBasedImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.NetworkStorage;
@@ -247,9 +244,9 @@ public final class BuiltBlockBasedImmersiveImpl<E, ER, S extends NetworkStorage>
     }
 
     @Override
-    public int handleHitboxInteract(BuiltBlockBasedImmersiveInfo<E> infoIn, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, boolean modifierPressed) {
+    public int handleHitboxInteract(BuiltBlockBasedImmersiveInfo<E> infoIn, LocalPlayer player, List<Integer> hitboxIndices, InteractionHand hand, ModifierPressState modifierState) {
         BuiltBlockBasedImmersiveInfoImpl<E> info = asImpl(infoIn);
-        return builder.hitboxInteractHandler.apply(info, player, hitboxIndices, hand, modifierPressed);
+        return builder.hitboxInteractHandler.apply(info, player, hitboxIndices, hand, modifierState);
     }
 
     private boolean airCheck(BuiltBlockBasedImmersiveInfo<E> infoIn) {

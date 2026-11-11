@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.api_impl;
 
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
+import com.hammy275.immersivemc.api.client.immersive.ModifierPressState;
 import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.SwapMode;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
@@ -30,21 +31,21 @@ public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl i
     }
 
     @Override
-    public void sendSwapPacket(BlockPos pos, List<Integer> slots, InteractionHand hand, boolean modifierPressed) {
-        Network.INSTANCE.sendToServer(new BlockSwapPacket(pos, slots, hand, getSwapMode(slots.size(), modifierPressed)));
+    public void sendSwapPacket(BlockPos pos, List<Integer> slots, InteractionHand hand, ModifierPressState modifierState) {
+        Network.INSTANCE.sendToServer(new BlockSwapPacket(pos, slots, hand, getSwapMode(slots.size(), modifierState)));
     }
 
     @Override
-    public void sendSwapPacket(PlayerAttachmentImmersiveHandler<?> handler, AbstractClientPlayer owner, List<Integer> slots, InteractionHand hand, boolean modifierPressed) {
-        Network.INSTANCE.sendToServer(new AttachmentSwapPacket(handler.getID(), owner.getUUID(), slots, hand, getSwapMode(slots.size(), modifierPressed)));
+    public void sendSwapPacket(PlayerAttachmentImmersiveHandler<?> handler, AbstractClientPlayer owner, List<Integer> slots, InteractionHand hand, ModifierPressState modifierState) {
+        Network.INSTANCE.sendToServer(new AttachmentSwapPacket(handler.getID(), owner.getUUID(), slots, hand, getSwapMode(slots.size(), modifierState)));
     }
 
-    private SwapMode getSwapMode(int numSlots, boolean modifierPressed) {
+    private SwapMode getSwapMode(int numSlots, ModifierPressState modifierState) {
         if (numSlots > 1) {
-            return modifierPressed ? SwapMode.SPLIT : SwapMode.SINGLE;
+            return modifierState.isDeliberatelyHeld() ? SwapMode.SPLIT : SwapMode.SINGLE;
         } else {
             if ((Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCrouching() && ActiveConfig.active().crouchMode.swapAll())
-                    || (modifierPressed && !VRVerify.clientInVR())) {
+                    || (modifierState.isDeliberatelyHeld() && !VRVerify.clientInVR())) {
                 return SwapMode.ALL;
             } else {
                 return SwapMode.SINGLE;
