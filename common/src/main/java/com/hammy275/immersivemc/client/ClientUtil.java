@@ -19,7 +19,6 @@ import com.hammy275.immersivemc.common.vr.VR;
 import com.hammy275.immersivemc.common.vr.VRRumble;
 import com.hammy275.immersivemc.common.vr.VRVerify;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.gizmos.DrawableGizmoPrimitives;
@@ -41,6 +40,8 @@ import org.jetbrains.annotations.Nullable;
 import org.vivecraft.api.data.VRBodyPartData;
 import org.vivecraft.api.data.VRPose;
 import org.vivecraft.client.VivecraftVRMod;
+import org.vivecraft.client_vr.provider.ControllerType;
+import org.vivecraft.client_vr.provider.HandedKeyBinding;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -52,8 +53,19 @@ public class ClientUtil {
     public static final int maxLight = LightCoordsUtil.pack(15, 15);
     public static int immersiveLeftClickCooldown = 0;
 
-    public static ModifierPressState getPressState() {
-        return getPressState(getLeftClick().isDown());
+    public static boolean leftClickDown(InteractionHand hand) {
+        if (VRVerify.clientInVR() && !VR.usingDevVR) {
+            HandedKeyBinding keyBinding = VivecraftVRMod.INSTANCE.keyVRInteract;
+            // Just grabbing by index here is what's intended, not doing a full "actual hand" to "interaction hand"
+            // conversion. See InteractTracker in Vivecraft which does the same for InteractModules.
+            return keyBinding.isDown(ControllerType.values()[hand.ordinal()]);
+        } else {
+            return Minecraft.getInstance().options.keyAttack.isDown();
+        }
+    }
+
+    public static ModifierPressState getPressState(InteractionHand hand) {
+        return getPressState(leftClickDown(hand));
     }
 
     public static ModifierPressState getPressState(boolean leftClickDown) {
@@ -63,21 +75,8 @@ public class ClientUtil {
         return leftClickDown ? ModifierPressState.PRESSED : ModifierPressState.NOT_PRESSED;
     }
 
-    public static boolean interactionsAllowed() {
-        return !VRVerify.clientInVR() || getLeftClick().isDown() || !ActiveConfig.active().requireTriggerForImmersiveInteractions;
-    }
-
-    /**
-     * Get the left click key for interaction. Returns actual left-click in flatscreen and Vivecraft's trigger key
-     * in VR.
-     * @return The "left click" key for ImmersiveMC interaction.
-     */
-    public static KeyMapping getLeftClick() {
-        if (VRVerify.clientInVR() && !VR.usingDevVR) {
-            return VivecraftVRMod.INSTANCE.keyVRInteract;
-        } else {
-            return Minecraft.getInstance().options.keyAttack;
-        }
+    public static boolean interactionsAllowed(InteractionHand hand) {
+        return !VRVerify.clientInVR() || !ActiveConfig.active().requireTriggerForImmersiveInteractions || leftClickDown(hand);
     }
 
     public static boolean isVROnly(Immersive<?, ?, ?> immersive) {

@@ -90,21 +90,21 @@ public class SwapTracker {
             this.rightClickCooldown--;
         }
 
-        if (this.state == SwapState.NONE && inputHitbox >= 0 && ClientUtil.interactionsAllowed()) {
-            if (ClientUtil.getLeftClick().isDown()) {
+        if (this.state == SwapState.NONE && inputHitbox >= 0 && ClientUtil.interactionsAllowed(hand)) {
+            if (ClientUtil.leftClickDown(hand)) {
                 setState(SwapState.DRAG, inputHitbox);
             } else {
                 setState(SwapState.PLACE, inputHitbox);
             }
         } else if (!inDragHitbox) {
             setState(SwapState.NONE, -1);
-        } else if (this.state != SwapState.DRAG && ClientUtil.getLeftClick().isDown() && ClientUtil.interactionsAllowed()) {
+        } else if (this.state != SwapState.DRAG && ClientUtil.leftClickDown(hand) && ClientUtil.interactionsAllowed(hand)) {
             setState(SwapState.DRAG, inputHitbox);
-        } else if (this.state == SwapState.PLACE && inDragHitbox && inputHitbox != this.mostRecentHitbox && ClientUtil.interactionsAllowed()) {
+        } else if (this.state == SwapState.PLACE && inDragHitbox && inputHitbox != this.mostRecentHitbox && ClientUtil.interactionsAllowed(hand)) {
             setState(SwapState.DRAG, inputHitbox);
-        } else if (this.state == SwapState.DRAG && this.ticksInMostRecent >= 8 && this.mostRecentHitbox == inputHitbox && ClientUtil.interactionsAllowed()) {
+        } else if (this.state == SwapState.DRAG && this.ticksInMostRecent >= 8 && this.mostRecentHitbox == inputHitbox && ClientUtil.interactionsAllowed(hand)) {
             setState(SwapState.PLACE, inputHitbox);
-        } else if (this.state == SwapState.DRAG && !ClientUtil.getLeftClick().isDown() && this.leftClickWasDown && ClientUtil.interactionsAllowed()) {
+        } else if (this.state == SwapState.DRAG && !ClientUtil.leftClickDown(hand) && this.leftClickWasDown && ClientUtil.interactionsAllowed(hand)) {
             setState(SwapState.PLACE, inputHitbox);
         }
 
@@ -117,7 +117,7 @@ public class SwapTracker {
             this.lastImmersive = newLI;
         }
         if (this.state == SwapState.PLACE) {
-            this.rightClickCooldown = this.lastImmersive.doHitboxInteract(List.of(inputHitbox), this.hand, getCooldownToPass(), ClientUtil.getLeftClick().isDown());
+            this.rightClickCooldown = this.lastImmersive.doHitboxInteract(List.of(inputHitbox), this.hand, getCooldownToPass(), ClientUtil.leftClickDown(hand));
         } else if (this.state == SwapState.DRAG && inputHitbox >= 0) {
             queuedPlacements.add(inputHitbox);
         }
@@ -152,7 +152,7 @@ public class SwapTracker {
             maybeDoDragPlace();
             this.leftClickWasDown = false;
         } else {
-            this.leftClickWasDown = this.leftClickWasDown || ClientUtil.getLeftClick().isDown();
+            this.leftClickWasDown = this.leftClickWasDown || ClientUtil.leftClickDown(hand);
         }
         if (newState == SwapState.NONE) {
             this.lastImmersive = null;

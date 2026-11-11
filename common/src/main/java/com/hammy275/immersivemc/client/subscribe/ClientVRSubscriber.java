@@ -84,7 +84,7 @@ public class ClientVRSubscriber {
                     } else {
                         swapTracker.tick(singleton, info, -1, inDragHitbox(singleton, info, pos));
                         if (cooldown <= 0) {
-                            int cooldown = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(hit.get()), hand, ClientUtil.getPressState());
+                            int cooldown = singleton.handleHitboxInteract(info, Minecraft.getInstance().player, List.of(hit.get()), hand, ClientUtil.getPressState(hand));
                             ImmersiveClientLogicHelpers.instance().setCooldown(cooldown);
                         }
                         return cooldown >= 0;
