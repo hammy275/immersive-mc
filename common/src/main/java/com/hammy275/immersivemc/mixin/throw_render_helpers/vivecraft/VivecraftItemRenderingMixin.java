@@ -1,12 +1,12 @@
 package com.hammy275.immersivemc.mixin.throw_render_helpers.vivecraft;
 
+import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.client.immersive_item.AbstractHandImmersive;
 import com.hammy275.immersivemc.client.immersive_item.HandImmersives;
 import com.hammy275.immersivemc.client.ticker.ThrowTicker;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.state.level.PlayerRenderState;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +24,8 @@ public class VivecraftItemRenderingMixin {
         if (!playerState.hasPlayer) {
             original.call(poseStack, itemTransformType, mainHand, playerState, equippedProgress, partialTick, itemStack, hand);
         } else if (hand == InteractionHand.MAIN_HAND && itemStack.getItem() instanceof TridentItem
-                && Minecraft.getInstance().options.keyAttack.isDown() && ThrowTicker.INSTANCE.readyToThrow()) {
+                && ImmersiveClientLogicHelpers.instance().getModifierPressState(hand).isPhysicallyHeld()
+                && ThrowTicker.INSTANCE.readyToThrow()) {
             FirstPersonHandsAdditions playerAdditions = ((FirstPersonHandsAndItemsStateExtension)playerState.firstPersonHandsAndItems).vivecraft$getAdditions();
             playerAdditions.mainHandItemUseDuration = 72000;
             playerAdditions.useItemRemainingTicks = 72000 - 21;

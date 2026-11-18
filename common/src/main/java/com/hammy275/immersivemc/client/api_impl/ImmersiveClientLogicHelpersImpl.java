@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.immersive.ModifierPressState;
 import com.hammy275.immersivemc.api.common.immersive.PlayerAttachmentImmersiveHandler;
 import com.hammy275.immersivemc.api.common.immersive.SwapMode;
+import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.SwapTracker;
 import com.hammy275.immersivemc.client.subscribe.ClientVRSubscriber;
 import com.hammy275.immersivemc.common.api_impl.ImmersiveLogicHelpersImpl;
@@ -23,6 +24,11 @@ import java.util.List;
 public class ImmersiveClientLogicHelpersImpl extends ImmersiveLogicHelpersImpl implements ImmersiveClientLogicHelpers {
 
     public static final ImmersiveClientLogicHelpers INSTANCE = new ImmersiveClientLogicHelpersImpl();
+
+    @Override
+    public ModifierPressState getModifierPressState(InteractionHand hand) {
+        return ClientUtil.getPressState(hand);
+    }
 
     @Override
     public void setCooldown(int cooldown) {

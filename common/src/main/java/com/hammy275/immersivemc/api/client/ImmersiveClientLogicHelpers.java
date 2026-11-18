@@ -34,6 +34,14 @@ public interface ImmersiveClientLogicHelpers extends ImmersiveLogicHelpers {
     }
 
     /**
+     * Get the state of the modifier key for the provided hand.
+     * @param hand The hand to get the state of the modifier key for.
+     * @return The state of the modifier key for the provided hand.
+     * @see ModifierPressState
+     */
+    public ModifierPressState getModifierPressState(InteractionHand hand);
+
+    /**
      * Sets both the vanilla, right-click cooldown and ImmersiveMC's VR cooldown for interacting with Immersives
      * (if the player is in VR) to some number of ticks. You likely don't need this, as the value returned from
      * {@link Immersive#handleHitboxInteract(ImmersiveInfo, LocalPlayer, List, InteractionHand, com.hammy275.immersivemc.api.client.immersive.ModifierPressState)} is set as the

@@ -1,10 +1,12 @@
 package com.hammy275.immersivemc.client.immersive.book;
 
+import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.common.hitbox.OBB;
 import com.hammy275.immersivemc.client.immersive.info.render_state.BookDataRenderState;
 import com.hammy275.immersivemc.common.immersive.CommonBookData;
 import com.hammy275.immersivemc.common.util.PosRot;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.InteractionHand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +57,7 @@ public class ClientBookData extends CommonBookData {
 
         for (int o = 0; o < others.length; o++) {
             if (interacted[o] != null) {
-                if (Minecraft.getInstance().options.keyAttack.isDown()) {
+                if (ImmersiveClientLogicHelpers.instance().getModifierPressState(InteractionHand.values()[o]).isPhysicallyHeld()) {
                     interacted[o].interact(this, bookPosRot, others[o]);
                 } else {
                     interacted[o].hover(this, bookPosRot, others[o]);

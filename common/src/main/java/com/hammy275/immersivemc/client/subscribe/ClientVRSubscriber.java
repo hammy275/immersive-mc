@@ -4,6 +4,7 @@ import com.hammy275.immersivemc.Platform;
 import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.api.client.immersive.Immersive;
 import com.hammy275.immersivemc.api.client.immersive.ImmersiveInfo;
+import com.hammy275.immersivemc.api.client.immersive.ModifierPressState;
 import com.hammy275.immersivemc.api.common.hitbox.BoundingBox;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.client.immersive.Immersives;
@@ -76,8 +77,10 @@ public class ClientVRSubscriber {
                 VRBodyPartData controller = vrPose.getHand(hand);
                 Vec3 pos = controller.getPos();
                 Optional<Integer> hit = Util.getFirstIntersect(pos, info.getAllHitboxes());
+                ModifierPressState pressState = ImmersiveClientLogicHelpers.instance().getModifierPressState(InteractionHand.MAIN_HAND);
                 if (hit.isPresent() &&
-                        (Minecraft.getInstance().options.keyAttack.isDown() || !info.getAllHitboxes().get(hit.get()).isTriggerHitbox())) {
+                        (pressState.isDeliberatelyHeld()
+                                || (pressState.isPhysicallyHeld() && !info.getAllHitboxes().get(hit.get()).isTriggerHitbox()))) {
                     if (singleton.isInputHitbox(info, hit.get())) {
                         swapTracker.tick(singleton, info, hit.get(), true);
                         return swapTracker.getCooldown() >= 0;

@@ -6,7 +6,7 @@ import net.minecraft.world.InteractionHand;
 import java.util.List;
 
 /**
- * The state of the modifier key for handling hitbox interactions.
+ * The state of the modifier key for handling Immersive interactions.
  * @see Immersive#handleHitboxInteract(ImmersiveInfo, LocalPlayer, List, InteractionHand, ModifierPressState)
  * @since 1.6.0-beta2
  */

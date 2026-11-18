@@ -106,7 +106,8 @@ public class ClientLogicSubscriber {
         }
         // Separate check on the cooldown after the above so it doesn't go below 0 and so once it hits 0, we still
         // run ImmersiveMC logic.
-        if (Minecraft.getInstance().options.keyAttack.isDown() && ClientUtil.immersiveLeftClickCooldown == 0) {
+        if (ImmersiveClientLogicHelpers.instance().getModifierPressState(InteractionHand.MAIN_HAND).isPhysicallyHeld()
+                && ClientUtil.immersiveLeftClickCooldown == 0) {
             if (handleLeftClick(Minecraft.getInstance().player)) {
                 ClientUtil.immersiveLeftClickCooldown += 6;
             }

@@ -1,6 +1,7 @@
 package com.hammy275.immersivemc.client.ticker;
 
 import com.hammy275.immersivemc.ImmersiveMC;
+import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.client.subscribe.ClientRenderSubscriber;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.network.Network;
@@ -11,6 +12,7 @@ import com.hammy275.immersivemc.common.util.Util;
 import com.hammy275.immersivemc.common.vr.VR;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -39,9 +41,9 @@ public class RangedGrabTickerClient extends AbstractTicker {
         VRPoseHistory history = VR.API.getHistoricalVRPoses(player);
         if (history.ticksOfHistory() >= 1) {
             VRBodyPartData last = history.getHistoricalData(1).getMainHand();
-            if (Minecraft.getInstance().options.keyAttack.isDown() ||
-                    ImmersiveMC.RANGED_GRAB_KEY.isDown()) {
-                boolean grabFromMove = controller.getPos().y - last.getPos().y > threshold && Minecraft.getInstance().options.keyAttack.isDown();
+            boolean mainHandHeld = ImmersiveClientLogicHelpers.instance().getModifierPressState(InteractionHand.MAIN_HAND).isPhysicallyHeld();
+            if (mainHandHeld || ImmersiveMC.RANGED_GRAB_KEY.isDown()) {
+                boolean grabFromMove = controller.getPos().y - last.getPos().y > threshold && mainHandHeld;
                 boolean grabFromKey = ImmersiveMC.RANGED_GRAB_KEY.isDown();
                 if ((grabFromKey || grabFromMove) && selected != null) {
                     Network.INSTANCE.sendToServer(new GrabItemPacket(selected));

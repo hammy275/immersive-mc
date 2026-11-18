@@ -1,5 +1,6 @@
 package com.hammy275.immersivemc.client.ticker;
 
+import com.hammy275.immersivemc.api.client.ImmersiveClientLogicHelpers;
 import com.hammy275.immersivemc.client.ClientUtil;
 import com.hammy275.immersivemc.common.config.ActiveConfig;
 import com.hammy275.immersivemc.common.config.CommonConstants;
@@ -29,7 +30,8 @@ public class ThrowTicker extends AbstractTicker {
     @Override
     protected void tick(Player player, VRPose pose, VRPoseHistory poseHistory) {
         Item mainHandItem = player.getItemInHand(InteractionHand.MAIN_HAND).getItem();
-        if (Minecraft.getInstance().options.keyAttack.isDown() && Util.isThrowableItem(mainHandItem)) {
+        if (ImmersiveClientLogicHelpers.instance().getModifierPressState(InteractionHand.MAIN_HAND).isPhysicallyHeld()
+                && Util.isThrowableItem(mainHandItem)) {
             holdTime++;
             ClientUtil.immersiveLeftClickCooldown = 6; // Prevent left clicking
         } else if (Util.isThrowableItem(mainHandItem)) {
